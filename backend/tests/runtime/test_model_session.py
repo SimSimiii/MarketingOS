@@ -7,11 +7,16 @@ import pytest
 from pydantic import BaseModel
 
 from app.ai.model_router import ModelRouter, ModelTier
-from app.runtime.events import EventBus, ModelCallFinished, ModelCallStarted
+from app.runtime.events import (
+    EventBus,
+    ModelCallFinished,
+    ModelCallRetried,
+    ModelCallStarted,
+)
 from app.runtime.exceptions import OutputValidationError, ProviderError
 from app.runtime.model_session import ModelSession, RoleCall
 from app.runtime.prompt_engine import PromptEngine
-from tests.runtime.conftest import ExplodingProvider, FakeAIProvider
+from tests.runtime.conftest import ExplodingProvider, FakeAIProvider, FlakyProvider
 
 
 class Answer(BaseModel):
@@ -149,3 +154,56 @@ async def test_every_call_announces_itself_so_a_run_never_looks_hung(
         role="blind_reader", tier=ModelTier.BALANCED, system_prompt="x", task="Go."
     )
     assert seen == ["start:blind_reader", "end:blind_reader"]
+
+
+# ------------------------------------------------------- surviving the wire
+
+
+@pytest.mark.asyncio
+async def test_a_call_that_never_landed_is_sent_again(prompts_dir: Path):
+    """The failure this exists for, and the reason it is worth a retry at all.
+
+    Every call is a CLI subprocess spawn, and a spawn that loses a race fails
+    before a single token is consumed - so resending costs latency and nothing
+    else. Without this, one unlucky spawn out of the tens a campaign makes
+    ended the whole run.
+    """
+    provider = FlakyProvider(failures=1)
+    answer = await session(provider, prompts_dir).text(
+        role="email_writer", tier=ModelTier.DEEP, system_prompt="x", task="Go."
+    )
+
+    assert answer == "answered on the retry"
+    assert provider.attempts == 2
+
+
+@pytest.mark.asyncio
+async def test_a_resend_is_announced_rather_than_hidden(prompts_dir: Path):
+    """A retry nobody can see is a provider failing half its calls that looks
+    identical to one that is merely slow - the ledger shows nothing, because a
+    call that failed consumed nothing."""
+    events = EventBus()
+    seen: list[ModelCallRetried] = []
+    events.subscribe(ModelCallRetried, seen.append)
+
+    await session(FlakyProvider(failures=1), prompts_dir, events=events).text(
+        role="blind_reader", tier=ModelTier.BALANCED, system_prompt="x", task="Go."
+    )
+
+    assert [(event.agent_id, event.attempt) for event in seen] == [("blind_reader", 1)]
+    assert "the CLI did not start" in seen[0].error
+
+
+@pytest.mark.asyncio
+async def test_a_provider_that_never_answers_still_fails_the_call(prompts_dir: Path):
+    """Retrying is a floor, not a promise. A provider that is genuinely down
+    has to surface as a typed ProviderError the phase above can account for -
+    and the count is on the error, so a log line says how hard we tried."""
+    provider = FlakyProvider(failures=99)
+    with pytest.raises(ProviderError) as excinfo:
+        await session(provider, prompts_dir).text(
+            role="strategist", tier=ModelTier.DEEP, system_prompt="x", task="Go."
+        )
+
+    assert provider.attempts == excinfo.value.details["attempts"]
+    assert provider.attempts > 1

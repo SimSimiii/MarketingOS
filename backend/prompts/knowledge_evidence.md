@@ -42,6 +42,27 @@ something a customer said, `customer` for a named user, `integration` for what i
 specific but unattributed, `weak` when it is real but vague. Be honest: a weak entry is still
 useful, a weak entry labelled strong will end up carrying an email it cannot support.
 
+**`category`** — which shelf of the company's knowledge base this belongs on. Pick by the
+question a buyer is asking when they would want this fact, not by the words in it:
+
+- `proof` — somebody other than the company vouched for it, or a measured outcome someone got
+- `commercial` — what it costs, plans, trials, credits, contracts, terms
+- `product` — what the thing does and the specific capabilities it has
+- `technical` — how it plugs into what the reader already runs: APIs, integrations, limits,
+  performance, deployment, supported platforms
+- `trust` — certifications, security posture, guarantees, SLAs, awards
+- `market` — who this is for, the category, competitors, positioning
+- `operations` — setup, migration, implementation, support, training
+- `company` — who is behind it: team, founding, funding, mission, location
+- `brand` — how they talk about themselves: taglines, positioning lines, the phrases they repeat
+
+The kind and the category are different axes and they often disagree. "We are SOC 2 Type II
+certified and never train on customer data" is a `feature` by kind and `trust` by category,
+because the reader who wants it is asking whether their data is safe, not what the product does.
+An integration list is `technical` even though each item is a capability. Get this right and the
+company can read its own knowledge back; get it wrong and a security fact goes missing on a
+product shelf nobody with that question opens.
+
 Extract every distinct fact you find, one entry each. Do not merge two facts into one entry, and
 do not repeat the same fact in different words. If a document contains nothing checkable, return
 no entries for it rather than manufacturing some.

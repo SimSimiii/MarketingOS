@@ -51,6 +51,8 @@ class EmailWriter:
         artifacts: KnowledgeArtifacts,
         previous: list[Email],
         opening_move: str = "",
+        idea_override: str = "",
+        history: str = "",
     ) -> Email:
         """One draft of one email.
 
@@ -58,17 +60,30 @@ class EmailWriter:
         several openings are being written for the same brief and compared:
         left free, a model asked for the same email twice writes the same
         email twice, and there is nothing for a cold reader to choose between.
+
+        `idea_override` replaces the claim the email argues with one of the
+        alternatives the strategist named. It is the stronger of the two knobs
+        and the one that makes a bake-off a bake-off: two drafts that open
+        differently on the same claim are one bet phrased twice, and a cold
+        reader choosing between them is choosing a first sentence. The brief is
+        rewritten rather than annotated, because a writer shown both the idea
+        it owns and the idea it is standing in for writes something that hedges
+        between them.
         """
+        if idea_override:
+            brief = brief.model_copy(update={"single_idea": idea_override})
+        sections = [f"Write email {brief.position} now."]
+        if opening_move:
+            sections.append(_opening_constraint(opening_move))
+        if history:
+            sections.append(history)
+        sections.append(_already_sent(previous))
         return await self._write(
             brief=brief,
             campaign=campaign,
             request=request,
             artifacts=artifacts,
-            task=(
-                f"Write email {brief.position} now.\n\n"
-                f"{_opening_constraint(opening_move)}"
-                f"{_already_sent(previous)}"
-            ),
+            task="\n\n".join(sections),
         )
 
     async def revise(
@@ -105,10 +120,24 @@ class EmailWriter:
         ]
         if history:
             sections.append(history)
-        if gates.issues:
+        # Blocking and advisory issues arrive in separate sections, and the
+        # difference is the architecture's own rule handed to the writer.
+        # A blocking issue is arithmetic - an unsupported figure, a paragraph
+        # over the width - and it has to be gone. An advisory is a judgment
+        # call the copy may legitimately answer another way: an email arguing
+        # from mechanism has spent no evidence on purpose. Both used to arrive
+        # under "checks that failed ... every one of them has to be gone in
+        # the rewrite", which is how a writer ends up bolting a fact onto an
+        # email that was right without it.
+        if gates.blocking:
             sections.append(
                 "Automatic checks that failed - these are facts, not opinions, and every one "
-                f"of them has to be gone in the rewrite:\n{gates.render()}"
+                f"of them has to be gone in the rewrite:\n{gates.render_blocking()}"
+            )
+        if gates.advisory:
+            sections.append(
+                "Worth weighing, not orders - decide, and if you disagree, leave it:\n"
+                + "\n".join(f"- {issue.render()}" for issue in gates.advisory)
             )
         if critique_notes:
             sections.append(f"What the conversion critic wants changed:\n{critique_notes}")
@@ -163,6 +192,7 @@ class EmailWriter:
                 "knowledge": artifacts.render_for_writing(slice_),
                 "voice": artifacts.voice.render(),
                 "voice_notes": campaign.voice_notes or "nothing beyond the brand voice above",
+                "sender": _sender(request, artifacts),
             },
         )
 
@@ -206,6 +236,28 @@ class EmailWriter:
         )
 
 
+def _sender(request: CampaignRequest, artifacts: KnowledgeArtifacts) -> str:
+    """Who signs it, phrased as an instruction rather than as a field.
+
+    Without a name the only honest sign-off is the company, and the prompt has
+    to say so - a writer left to guess invents "Sarah from the growth team",
+    which is a real person's name on a stranger's email and the one kind of
+    placeholder no gate can catch.
+    """
+    company = artifacts.business.company_name or "the product"
+    if request.sender:
+        return (
+            f"This email is from {request.sender}. Sign it as that person - their name, and "
+            f"{company} beside it. You may write in the first person singular, because there "
+            "is somebody to be."
+        )
+    return (
+        f"Nobody has told us who this is from, so sign it as {company} and a role that exists "
+        "in the material above. Never invent a person's name: a made-up sender is the one "
+        "thing on the page a reader can catch you out on for certain."
+    )
+
+
 def _evidence_for(brief: EmailBrief, artifacts: KnowledgeArtifacts) -> str:
     """The facts this email was assigned, pulled out of the ledger in full.
 
@@ -240,7 +292,7 @@ def _opening_constraint(opening_move: str) -> str:
         "One constraint on this draft beyond the brief - where it starts:\n\n"
         f"{opening_move}\n\n"
         "The subject line has to follow from that opening rather than from some other one you "
-        "might have written. Everything after the first two sentences is your call.\n\n"
+        "might have written. Everything after the first two sentences is your call."
     )
 
 

@@ -26,6 +26,19 @@ class EmailBrief(BaseModel):
     job: str = ""
     #: The one thing it argues. Two briefs must never be able to swap these.
     single_idea: str = ""
+    #: Other claims this slot could have owned, best first.
+    #:
+    #: Which argument a stranger responds to is not derivable from the brief -
+    #: it is the one thing about a campaign that has to be found out - and
+    #: until this existed the strategist picked one and the whole run defended
+    #: it. The bake-off wrote several openings onto the same claim, so three
+    #: drafts were three first sentences over one bet, and every rewrite was
+    #: told to keep the idea. A run could therefore discover that the idea was
+    #: wrong and had no way to act on it.
+    #:
+    #: These are what the bake-off actually varies, and what the loop pivots to
+    #: when rewriting stops moving the copy.
+    alternative_ideas: list[str] = Field(default_factory=list)
     #: What the reader believes before this email and what they believe after
     #: it. The field that says where an email belongs in a sequence: `job` is
     #: the outcome and `single_idea` is the claim, but neither says what has
@@ -51,6 +64,10 @@ class EmailBrief(BaseModel):
     must_not_reuse: list[str] = Field(default_factory=list)
 
     def render(self) -> str:
+        # Deliberately without `alternative_ideas`. A writer shown the claims
+        # this email could have argued writes an email that gestures at all of
+        # them; the alternatives are for the loop to choose between, one draft
+        # at a time, and each draft is told about exactly one idea - its own.
         return (
             f"Position: {self.position}\n"
             f"Its job: {self.job}\n"

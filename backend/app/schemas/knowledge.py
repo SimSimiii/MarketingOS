@@ -3,6 +3,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.ingestion.documents import SourceType
+from app.knowledge.base import KnowledgeBase, KnowledgeEntry, KnowledgeShelf
 from app.schemas.types import UtcDatetime
 
 
@@ -58,3 +59,78 @@ class KnowledgeDocumentRead(KnowledgeDocumentSummary):
     """A single document, including the extracted text."""
 
     content: str
+
+
+class KnowledgeShelfRead(BaseModel):
+    """One category of the knowledge base, as the browser receives it.
+
+    Counts are computed server-side rather than left to the client because
+    they are also what the strategist reads, and two implementations of "how
+    many facts are strong enough to lead an email" is one too many.
+    """
+
+    category: str
+    label: str
+    blurb: str
+    buyer_question: str
+    sells_by: str
+    when_empty: str
+    count: int
+    headline_count: int
+    entries: list[KnowledgeEntry]
+
+    @classmethod
+    def from_shelf(cls, shelf: KnowledgeShelf) -> "KnowledgeShelfRead":
+        return cls(
+            category=str(shelf.category),
+            label=shelf.label,
+            blurb=shelf.blurb,
+            buyer_question=shelf.buyer_question,
+            sells_by=shelf.sells_by,
+            when_empty=shelf.when_empty,
+            count=shelf.count,
+            headline_count=shelf.headline_count,
+            entries=shelf.entries,
+        )
+
+
+class KnowledgeBaseRead(BaseModel):
+    """The whole classified knowledge base for one business.
+
+    Shipped in full - shelves and entries together - rather than paginated. A
+    large compile is a few hundred entries of a couple of hundred bytes each,
+    which is smaller than one of the source documents it was distilled from,
+    and having all of it client-side is what makes filtering and search
+    instant instead of a round trip per keystroke.
+    """
+
+    brand_id: UUID | None = None
+    campaign_id: UUID | None = None
+    version: int
+    compiled_at: UtcDatetime | None = None
+    total: int
+    citable_total: int
+    headline_total: int
+    shelves: list[KnowledgeShelfRead]
+    #: Gaps the compiler could not close, carried through so the page can say
+    #: what to upload next rather than only what is missing.
+    open_questions: list[str]
+
+    @classmethod
+    def from_base(
+        cls,
+        base: KnowledgeBase,
+        brand_id: UUID | None = None,
+        campaign_id: UUID | None = None,
+    ) -> "KnowledgeBaseRead":
+        return cls(
+            brand_id=brand_id,
+            campaign_id=campaign_id,
+            version=base.version,
+            compiled_at=base.compiled_at,
+            total=base.total,
+            citable_total=base.citable_total,
+            headline_total=base.headline_total,
+            shelves=[KnowledgeShelfRead.from_shelf(shelf) for shelf in base.shelves],
+            open_questions=base.open_questions,
+        )

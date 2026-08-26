@@ -172,11 +172,16 @@ def _preheader(preview: str) -> str:
     """
     if not preview.strip():
         return ""
+    # Built in two steps on purpose: adjacent string literals are joined
+    # before `*` is applied, so multiplying the padding inline multiplies the
+    # opening <div> and the preview with it - eight nested, unclosed divs
+    # around eight copies of the preview line, in every email the system has
+    # ever rendered.
+    padding = "&#8199;&#65279;&#847; " * 8
     return (
         '<div style="display:none;font-size:1px;color:#ffffff;line-height:1px;'
         'max-height:0;max-width:0;opacity:0;overflow:hidden;">'
-        f"{html.escape(preview)}"
-        "&#8199;&#65279;&#847; " * 8 + "</div>\n"
+        f"{html.escape(preview)}{padding}</div>\n"
     )
 
 

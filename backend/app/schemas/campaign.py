@@ -20,6 +20,11 @@ class CampaignCreateRequest(BaseModel):
     product_url: str | None = None
     target_market: str | None = None
     goals: str | None = None
+    #: Who the emails are from - a person and their job. Optional, and the
+    #: cheapest conversion in the form: without it every email is signed by a
+    #: team, which reads as a broadcast because it is one.
+    sender_name: str | None = None
+    sender_role: str | None = None
     #: The business this campaign is for. Attaching it means the knowledge
     #: compiled for an earlier campaign is reused instead of recompiled.
     brand_id: UUID | None = None
@@ -27,6 +32,10 @@ class CampaignCreateRequest(BaseModel):
     policy_preset: PolicyPreset | None = None
     #: Per-role model overrides, e.g. {"email_writer": "opus"} or {"*": "haiku"}.
     model_overrides: dict[str, str] | None = None
+    #: Re-read and recompile the brand's knowledge even if nothing has
+    #: changed since the last compile. None defers to the pipeline's own
+    #: default (reuse) - see ExecutionPolicy.force_recompile.
+    force_recompile: bool | None = None
 
 
 class CampaignRead(BaseModel):
@@ -42,6 +51,8 @@ class CampaignRead(BaseModel):
     product_url: str | None
     target_market: str | None
     goals: str | None
+    sender_name: str | None = None
+    sender_role: str | None = None
     brand_id: UUID | None = None
     status: CampaignStatus
     archived_at: UtcDatetime | None
@@ -99,6 +110,46 @@ class AgentExecutionRead(BaseModel):
     cost_usd: float = 0.0
     duration_ms: float
     attempt: int
+
+
+class RunForecast(BaseModel):
+    """What running this campaign will cost, before anything is spent.
+
+    The call count is arithmetic: no model call in this system decides what
+    happens next, so the shape of a run follows from the policy and from the
+    number of emails parsed out of the request. The money is not arithmetic
+    and is not guessed - it is what the user's own past runs on this preset
+    actually cost, and it is absent until there are some.
+    """
+
+    preset: str
+    emails: int
+    #: False when the user did not name a number, so `emails` is the working
+    #: assumption rather than a promise and the estimate moves with it.
+    count_is_explicit: bool
+
+    #: Model calls: the run where every email lands first time, and the run
+    #: that buys every rewrite and rework it is allowed.
+    low: int
+    high: int
+    #: The share of the above that is reading this business's material.
+    compile_low: int
+    compile_high: int
+    #: True when nothing the user attached has changed since the last compile,
+    #: so this run reads none of it again. The largest saving in the system
+    #: and the one nobody knows about.
+    knowledge_reused: bool
+
+    #: Finished runs on this preset that actually delivered, and what one
+    #: delivered email cost on the middle one of them.
+    #:
+    #: Per email rather than per run, because past runs were different lengths.
+    #: The median rather than the range, for the same reason the reader panel
+    #: reports one: a run that died two calls in and a run that bought every
+    #: rewrite it was allowed are both real and neither is what to plan
+    #: around. Zero runs means no figure is offered, not a figure of zero.
+    observed_runs: int = 0
+    observed_cost_per_email: float = 0.0
 
 
 class CampaignExecutionRead(BaseModel):

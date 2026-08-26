@@ -1,4 +1,6 @@
+import asyncio
 import json
+import logging
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -6,19 +8,52 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from app.ai.base import AIMessage, AIProvider, AIRequest
+from app.ai.base import AIMessage, AIProvider, AIRequest, AIResponse
 from app.ai.model_router import ModelRouter, ModelTier
 from app.ai.models import usage_cost_usd
-from app.runtime.events import EventBus, ModelCallFinished, ModelCallStarted
+from app.runtime.events import (
+    EventBus,
+    ModelCallFinished,
+    ModelCallRetried,
+    ModelCallStarted,
+)
 from app.runtime.exceptions import OutputValidationError, ProviderError
 from app.runtime.json_parsing import JsonOutputError, parse_model_json
 from app.runtime.prompt_engine import PromptEngine
+
+logger = logging.getLogger("marketingos.runtime")
 
 #: A structured answer that came back malformed gets its own errors handed
 #: back once. Past that the call fails: a model that has stopped following a
 #: schema does not usually start again on the third ask, and the phase above
 #: has cheaper recovery than a loop here.
 _STRUCTURED_ATTEMPTS = 2
+
+#: How many times one call may be *sent*, when the failure is transport rather
+#: than content: the CLI refusing to spawn, a dropped socket, a subprocess
+#: that died before it answered.
+#:
+#: Distinct from `_STRUCTURED_ATTEMPTS`, which re-asks a model that answered
+#: badly. This re-asks a model that never answered at all, and it is the
+#: cheaper of the two by a wide margin - a call that failed in transport
+#: consumed no tokens, so a retry costs latency and nothing else.
+#:
+#: It is also the difference between a blip and a lost campaign. A balanced
+#: run makes tens of calls, each one a subprocess spawn; at any per-call
+#: failure rate p, the chance a whole run survives is (1-p)^n, and without a
+#: retry there is nothing between one unlucky spawn and thirteen minutes of
+#: billed work thrown away.
+_PROVIDER_ATTEMPTS = 3
+
+#: Seconds to wait before the *second* resend, and each one after it. The
+#: first resend is immediate on purpose: the failures this exists for - a
+#: subprocess that lost a spawn race, a pipe the peer closed - are already
+#: over by the time they are reported, and a second spent waiting for them to
+#: clear is a second spent against a deadline the pipeline is holding.
+#:
+#: A provider that is genuinely down fails the immediate retry too, and only
+#: then is anything waited on.
+_RETRY_BACKOFF_SECONDS = 1.0
 
 
 def _schema_text(schema: type[BaseModel]) -> str:
@@ -233,6 +268,62 @@ class ModelSession:
 
     # ------------------------------------------------------------- internals
 
+    async def _send(self, request: AIRequest, role: str, model: str) -> AIResponse:
+        """Hand one request to the provider, resending it if it never landed.
+
+        The retry is here rather than in the provider because this is the only
+        place that knows the call is a role turn in a run somebody is paying
+        for. Everything above it - the craft loop, the pipeline - is written to
+        survive a *result* it does not like; none of it is written to survive
+        the transport, and before this a single failed spawn escaped as a
+        `ProviderError` through a pipeline that catches `CampaignError`, taking
+        every finished email in the run with it.
+
+        Only the transport is retried. A model that answered something
+        unusable is `structured`'s problem and has its own, differently-shaped
+        correction turn; resending that same prompt here would buy a second
+        copy of the same bad answer at full price.
+        """
+        last: Exception | None = None
+        for attempt in range(1, _PROVIDER_ATTEMPTS + 1):
+            try:
+                return await self._provider.generate(request)
+            except Exception as exc:  # noqa: BLE001 - re-raised as ProviderError below
+                last = exc
+                if attempt == _PROVIDER_ATTEMPTS:
+                    break
+                detail = str(exc) or type(exc).__name__
+                logger.info(
+                    "model_session: %s call %d/%d failed in transport (%s) - resending",
+                    role,
+                    attempt,
+                    _PROVIDER_ATTEMPTS,
+                    detail,
+                )
+                self._events.publish(
+                    ModelCallRetried(
+                        agent_id=role,
+                        execution_id=self._execution_id,
+                        model=model,
+                        attempt=attempt,
+                        error=detail,
+                    )
+                )
+                if attempt > 1:
+                    await asyncio.sleep(_RETRY_BACKOFF_SECONDS * (attempt - 1))
+
+        # Vendor exceptions often stringify to nothing, so keep the type
+        # name: "" is not a debuggable failure message.
+        detail = str(last) or type(last).__name__
+        raise ProviderError(
+            f"{type(self._provider).__name__} call failed after {_PROVIDER_ATTEMPTS} "
+            f"attempt(s): {detail}",
+            provider=type(self._provider).__name__,
+            role=role,
+            cause=type(last).__name__,
+            attempts=_PROVIDER_ATTEMPTS,
+        ) from last
+
     async def _generate(
         self, role: str, tier: ModelTier, model: str, system: str, task: str, template: str = ""
     ) -> str:
@@ -252,19 +343,7 @@ class ModelSession:
             )
         )
         started = time.perf_counter()
-        try:
-            response = await self._provider.generate(request)
-        except Exception as exc:
-            # Vendor exceptions often stringify to nothing, so keep the type
-            # name: "" is not a debuggable failure message.
-            detail = str(exc) or type(exc).__name__
-            raise ProviderError(
-                f"{type(self._provider).__name__} call failed: {detail}",
-                provider=type(self._provider).__name__,
-                role=role,
-                cause=type(exc).__name__,
-            ) from exc
-
+        response = await self._send(request, role, model)
         duration_ms = (time.perf_counter() - started) * 1000
         resolved_model = response.model or model
         call = RoleCall(

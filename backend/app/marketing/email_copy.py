@@ -11,9 +11,12 @@ sendable email cannot break are checked deterministically rather than hoped
 for.
 """
 
+import logging
 import re
 
 from pydantic import BaseModel, Field
+
+logger = logging.getLogger("marketingos.marketing")
 
 #: Labels the writer puts in front of each field. BODY is last on purpose:
 #: everything after it is the email, so a paragraph that happens to start
@@ -29,6 +32,10 @@ _FIELD_RE = re.compile(
 _PARAGRAPH_SPLIT_RE = re.compile(r"\n\s*\n")
 _BLANK_RUN_RE = re.compile(r"\n{3,}")
 _BULLET_PREFIXES = ("-", "*", "•", "–", "—")
+#: Where one sentence ends and the next begins, for the layout pass. A
+#: closing quote or bracket may follow the stop, and often does at the end
+#: of a testimonial.
+_SENTENCE_SPLIT_RE = re.compile("(?<=[.!?])[\"'”’)\\]]*\\s+")
 
 #: Deliverability and scannability, not taste. A subject over ~65 characters is
 #: truncated in most inboxes; a paragraph over 50 words is the wall of text a
@@ -43,8 +50,8 @@ _BULLET_PREFIXES = ("-", "*", "•", "–", "—")
 #: The slack above 200 is deliberate - a draft is repaired inside the writer's
 #: own turn, so the cost of the ceiling is one retry, not a whole rewrite
 #: cycle, and it should only be paid by drafts that are actually long.
-_MAX_SUBJECT_CHARS = 65
-_MAX_PREVIEW_CHARS = 110
+MAX_SUBJECT_CHARS = 65
+MAX_PREVIEW_CHARS = 110
 _MAX_CTA_WORDS = 8
 #: The writer is asked for 45 (see prompts/writer.md) and checked at 50. The
 #: gap is deliberate slack: the prompt used to say "one to three lines", which
@@ -105,13 +112,20 @@ def parse_email(text: str, position: int) -> Email:
             "Re-send the email with every label on its own line and BODY last."
         )
 
+    laid_out = reflow(body)
+    if laid_out != body:
+        logger.info(
+            "email %d: re-broke the body into blocks - no words changed, only where the "
+            "blank lines fall",
+            position,
+        )
     email = Email(
         position=position,
         role=fields.get("ROLE", ""),
         subject=fields["SUBJECT"],
         preview_text=fields["PREVIEW"],
         greeting=fields["GREETING"],
-        body=body,
+        body=laid_out,
         call_to_action=fields["CTA"],
         sign_off=fields["SIGNOFF"],
         postscript=fields.get("PS", ""),
@@ -122,19 +136,117 @@ def parse_email(text: str, position: int) -> Email:
     return email
 
 
+def reflow(body: str) -> str:
+    """Put the blank lines where the rules already say they belong.
+
+    Two of the structural rules are about layout and nothing else: a block
+    wider than `_MAX_PARAGRAPH_WORDS`, and a body in fewer than
+    `_MIN_PARAGRAPHS` blocks. The repair the writer was sent back to make was
+    literally "split it" - and a whole deep-tier call was bought to move a
+    blank line, at which point the model rewrote the words too, and the draft
+    that came back had to be read cold all over again.
+
+    Splitting at a sentence boundary is that repair, done in code, for
+    nothing, and it changes not one word. It is the same kind of
+    normalisation `_split_fields` already does when it collapses a run of
+    blank lines - the copy is what the writer wrote; where it breaks is
+    typesetting.
+
+    Deliberately conservative:
+
+    - a block already inside the width is left exactly as it was, soft line
+      breaks and all;
+    - a bullet list is never touched - bullets have their own rule and
+      re-breaking them would make a list of lists;
+    - a single sentence over the width is left alone, because shortening it
+      means changing words and that is the writer's job. The gate still fires
+      and the repair still happens - it just happens for a reason a repair can
+      actually fix.
+    """
+    blocks = _paragraphs(body)
+    if not blocks:
+        return body
+
+    widened: list[str] = []
+    for block in blocks:
+        widened.extend(_split_wide(block))
+    # Only after the width pass: a body that is one long block becomes three
+    # by being too wide, and splitting further for the minimum would be
+    # cutting a paragraph that no rule objects to.
+    for _ in range(_MIN_PARAGRAPHS):
+        if len(widened) >= _MIN_PARAGRAPHS:
+            break
+        longest = max(range(len(widened)), key=lambda index: len(widened[index].split()))
+        halves = _halve(widened[longest])
+        if len(halves) == 1:
+            break
+        widened[longest : longest + 1] = halves
+    return "\n\n".join(widened)
+
+
+def _sentences(block: str) -> list[str]:
+    return [piece.strip() for piece in _SENTENCE_SPLIT_RE.split(block) if piece.strip()]
+
+
+def _is_bullets(block: str) -> bool:
+    lines = [line.strip() for line in block.splitlines() if line.strip()]
+    return bool(lines) and all(line.startswith(_BULLET_PREFIXES) for line in lines)
+
+
+def _split_wide(block: str) -> list[str]:
+    """One block, re-broken into pieces inside the width. Sentences are packed
+    greedily so the first piece carries as much as it may - a two-word
+    paragraph left over at the end reads as a mistake."""
+    if _is_bullets(block) or len(block.split()) <= _MAX_PARAGRAPH_WORDS:
+        return [block]
+    sentences = _sentences(block)
+    if len(sentences) < 2:
+        return [block]
+
+    pieces: list[str] = []
+    current: list[str] = []
+    words = 0
+    for sentence in sentences:
+        length = len(sentence.split())
+        if current and words + length > _MAX_PARAGRAPH_WORDS:
+            pieces.append(" ".join(current))
+            current, words = [], 0
+        current.append(sentence)
+        words += length
+    if current:
+        pieces.append(" ".join(current))
+    return pieces
+
+
+def _halve(block: str) -> list[str]:
+    """The same block in two, split as near the middle as a sentence allows."""
+    if _is_bullets(block):
+        return [block]
+    sentences = _sentences(block)
+    if len(sentences) < 2:
+        return [block]
+    half = len(block.split()) / 2
+    taken = 0
+    for index, sentence in enumerate(sentences[:-1], start=1):
+        taken += len(sentence.split())
+        if taken >= half:
+            return [" ".join(sentences[:index]), " ".join(sentences[index:])]
+    return [" ".join(sentences[:-1]), sentences[-1]]
+
+
 def structural_issues(email: Email) -> list[str]:
     """Every way this email is not sendable, phrased as the fix."""
     issues: list[str] = []
 
-    if len(email.subject) > _MAX_SUBJECT_CHARS:
+    if len(email.subject) > MAX_SUBJECT_CHARS:
         issues.append(
             f"the subject is {len(email.subject)} characters and inboxes cut it at "
-            f"{_MAX_SUBJECT_CHARS} - shorten it"
+            f"{MAX_SUBJECT_CHARS} - shorten it"
         )
-    if _normalized(email.preview_text) == _normalized(email.subject):
+    if normalized(email.preview_text) == normalized(email.subject):
         issues.append("the preview text repeats the subject instead of extending it")
-    if len(email.preview_text) > _MAX_PREVIEW_CHARS:
-        issues.append(f"the preview text is longer than {_MAX_PREVIEW_CHARS} characters")
+    if len(email.preview_text) > MAX_PREVIEW_CHARS:
+        issues.append(f"the preview text is longer than {MAX_PREVIEW_CHARS} characters")
     if len(email.call_to_action.split()) > _MAX_CTA_WORDS:
         issues.append(
             f"the call to action is a sentence - it must be the {_MAX_CTA_WORDS} words or "
@@ -248,5 +360,5 @@ def _excerpt(text: str, limit: int = 45) -> str:
     return flat if len(flat) <= limit else flat[:limit].rstrip()
 
 
-def _normalized(text: str) -> str:
+def normalized(text: str) -> str:
     return " ".join(text.lower().split()).strip(" .!?")

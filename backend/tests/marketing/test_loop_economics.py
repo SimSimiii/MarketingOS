@@ -24,7 +24,7 @@ from tests.marketing.conftest import (
     blind_read,
     campaign_brief,
 )
-from tests.marketing.test_pipeline import build
+from tests.marketing.test_pipeline import build, refine_only
 
 
 def _version(
@@ -113,7 +113,12 @@ async def test_the_critic_is_not_bought_after_the_outcome_is_decided(
     rewrite that will not happen.
 
     Each read is better than the last so the loop keeps going - a flat score
-    would trip the stop-early rule and never reach the final attempt."""
+    would trip the stop-early rule and never reach the final attempt.
+
+    The saving is an ordering, not a rule: the critic is bought *after* the
+    loop knows a rewrite will follow. It used to be bought before, so on the
+    attempt where the loop then stopped, a deep-tier call had already been
+    spent producing edits for a pass that never happened."""
     provider.set_default("strategist", campaign_brief(1))
     provider.push(
         "blind_reader",
@@ -123,10 +128,7 @@ async def test_the_critic_is_not_bought_after_the_outcome_is_decided(
     )
     one_email = replace(request_fixture, request="Write me 1 email that sells my app")
 
-    pipeline, _ = build(
-        provider,
-        PRESETS["balanced"].model_copy(update={"max_revisions": 2, "draft_candidates": 1}),
-    )
+    pipeline, _ = build(provider, refine_only(max_revisions=2))
     await pipeline.run(one_email)
 
     # Three attempts, three cold reads - and one fewer critique than attempts.

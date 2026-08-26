@@ -38,15 +38,22 @@ Spend your attention on what a regular expression cannot see.
 email that reads beautifully and makes the wrong argument is the most expensive failure in a
 sequence, because it looks finished. Nobody inside the draft can see it — the writer knows what
 it meant. You have the brief. Check it line by line: the one idea, the objection it was supposed
-to kill, the ask it was supposed to make.
+to kill, the ask it was supposed to make. What drifted goes in `brief_drift`, in one sentence —
+leave it empty when the email argues its brief.
 
-**Unspent evidence.** The brief assigned specific facts to this email. If a fact the *argument
-needs* was assigned and the copy did not use it, list its id in `unspent_evidence`. That evidence
-was chosen for this email, and no other email in the sequence will spend it.
+**Unspent evidence — the judgment, not the lookup.** Which assigned facts are missing from the
+page has already been checked in code, and here is the answer:
 
-Only that. An email that carries its one idea on one fact is finished, not half-empty — do not
-ask for the other three to be worked in because they were on the list. The brief assigns what is
-*available* to this email, not a manifest it has to clear.
+{{ unspent_evidence }}
+
+Do not re-derive that list and do not add to it. What is left for you is the only part of it that
+takes judgment: **did this email's argument need the fact it left out?** Put in
+`unspent_evidence` only the ids where the answer is yes — where the copy makes a claim that this
+fact would have carried and now asks the reader to take on trust instead.
+
+An email that carries its one idea on one fact is finished, not half-empty. The brief assigns what
+is *available* to this email, not a manifest it has to clear, so a fact left out because the
+argument did not need it is a decision, not a defect — leave those out of your answer entirely.
 
 **What to cut.** This is the other half of the job and the half that gets skipped. Every pass
 that only adds turns a sales email into a product page: a feature list, then the pricing, then

@@ -8,6 +8,7 @@ test by hand on every run.
 """
 
 import re
+from html.parser import HTMLParser
 
 import pytest
 
@@ -191,6 +192,69 @@ def test_the_preview_text_is_present_but_not_shown_twice():
 
     assert "the part of shipping nobody scheduled time for" in html
     assert "display:none" in html
+    # Once. The preheader's padding entities used to be multiplied by eight
+    # together with the literals they were written beside, which repeated the
+    # opening <div> and the preview line with them - so the reader saw their
+    # preview text eight times, inside eight divs only one of which closed.
+    assert html.count("the part of shipping nobody scheduled time for") == 1
+
+
+@pytest.mark.parametrize("tier", list(EmailTier))
+def test_every_tag_that_opens_is_closed(tier: EmailTier):
+    """Well-formedness, checked rather than assumed.
+
+    Every other test here reads the document as a string, which is how eight
+    unclosed divs shipped: each assertion passed on markup no client could
+    render. Outlook and Gmail both repair broken structure by guessing, and
+    what they guess is not what the layout was for.
+    """
+    html = render_html(_email(), tier, BRAND)
+
+    unclosed = _unclosed_tags(html)
+
+    assert not unclosed, f"never closed: {unclosed}"
+
+
+def test_a_preview_that_is_only_whitespace_renders_no_preheader():
+    assert "display:none" not in render_html(_email(preview_text="   "))
+
+
+class _TagStack(HTMLParser):
+    """Open tags that never close, in document order.
+
+    `convert_charrefs` stays on so the padding entities are text rather than
+    parse events. Void elements close themselves and are never stacked.
+    """
+
+    VOID = frozenset({"meta", "img", "br", "hr", "input", "link", "area", "base"})
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.open: list[str] = []
+        self.unclosed: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list) -> None:
+        if tag not in self.VOID:
+            self.open.append(tag)
+
+    def handle_startendtag(self, tag: str, attrs: list) -> None:
+        pass
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag in self.open:
+            # Everything opened after the tag being closed is unclosed itself.
+            while self.open:
+                popped = self.open.pop()
+                if popped == tag:
+                    break
+                self.unclosed.append(popped)
+
+
+def _unclosed_tags(markup: str) -> list[str]:
+    parser = _TagStack()
+    parser.feed(markup)
+    parser.close()
+    return parser.unclosed + list(reversed(parser.open))
 
 
 def test_the_logo_falls_back_to_the_name_it_is_blocked():

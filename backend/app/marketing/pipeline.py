@@ -41,7 +41,7 @@ from app.marketing.email_copy import Email
 from app.marketing.exceptions import CampaignError
 from app.marketing.observer import RunObserver
 from app.marketing.policy import ExecutionPolicy
-from app.marketing.preflight import assess
+from app.marketing.preflight import ProofPosture, assess
 from app.marketing.reader import PULL_THRESHOLD, BlindReader, personas_for
 from app.marketing.report import CampaignReport, EmailReportLine
 from app.marketing.request import CampaignRequest
@@ -49,19 +49,33 @@ from app.marketing.sequence import ROLE_ID as SEQUENCE_ROLE
 from app.marketing.sequence import SequenceReport, SequenceReviewer
 from app.marketing.strategist import ROLE_ID as STRATEGIST_ROLE
 from app.marketing.strategist import Strategist
+from app.marketing.subject_lines import SubjectBakeOff
+from app.marketing.tournament import PreferenceJudge
 from app.marketing.writer import EmailWriter
+from app.runtime.exceptions import ModelRuntimeError
 from app.runtime.model_session import ModelSession, Usage
 
 logger = logging.getLogger("marketingos.marketing")
 
 RunStatus = Literal[
-    "completed", "degraded", "failed", "cancelled", "timed_out", "budget_exhausted"
+    "completed",
+    "degraded",
+    "failed",
+    "cancelled",
+    "timed_out",
+    "budget_exhausted",
+    "provider_unavailable",
+    "needs_input",
 ]
 
 _GUARD_MESSAGES: dict[str, str] = {
     "cancelled": "Cancelled by user request.",
     "timed_out": "Execution exceeded its maximum run time.",
     "budget_exhausted": "Execution exceeded its token budget.",
+    "provider_unavailable": (
+        "The model stopped answering and did not come back after several attempts. "
+        "Everything finished before that point is below."
+    ),
 }
 
 
@@ -157,6 +171,8 @@ class EmailCampaignPipeline:
                     "asks": posture.asks[:1],
                 },
             )
+            if self._policy.require_proof and posture.nothing_to_argue_from:
+                return self._needs_input(request, contract, result, posture)
 
             brief = await self._phase_strategy(request, artifacts, corpus, contract, result)
             if (guard := self._guard()) is not None:
@@ -167,13 +183,34 @@ class EmailCampaignPipeline:
                 return self._stopped(request, contract, result, guard)
 
             await self._phase_sequence(request, brief, artifacts, corpus, result)
+        except ModelRuntimeError as exc:
+            # The provider stopped answering, after `ModelSession` had already
+            # resent the call. Treated exactly like running out of time: stop
+            # between steps, keep everything finished, say why.
+            #
+            # It reaches here at all because nothing else could catch it. This
+            # is not a `CampaignError`, so before this the exception went
+            # straight past the pipeline into the orchestrator's crash
+            # handler - which persists no assets and no report, and threw
+            # away every email the run had already written and paid for.
+            logger.warning("pipeline: the provider stopped answering - %s", exc)
+            self._observer.on_role_failed(str(exc.details.get("role", "pipeline")), str(exc))
+            return self._stopped(request, contract, result, "provider_unavailable")
         except CampaignError as exc:
             logger.warning("pipeline: run failed - %s", exc)
             self._observer.on_role_failed(exc.details.get("role", "pipeline"), str(exc))
-            result.status = "failed"
+            # A failure that arrives with finished emails behind it is a
+            # degraded run, not a failed one. Three good emails out of five
+            # are three good emails, and reporting them under a red banner is
+            # what teaches a user to distrust the badge on the runs that
+            # really did fail.
+            result.status = "degraded" if result.delivered else "failed"
             result.abort_reason = str(exc)
             result.report = self._build_report(request, contract, result)
             self._observer.on_report(result.report)
+            self._observer.on_phase(
+                "stopped", result.abort_reason, {"status": result.status}
+            )
             return result
 
         result.report = self._build_report(request, contract, result)
@@ -407,6 +444,11 @@ class EmailCampaignPipeline:
             writer=EmailWriter(self._session, self._observer),
             reader=BlindReader(self._session),
             critic=ConversionCritic(self._session) if self._policy.critic_enabled else None,
+            judge=PreferenceJudge(self._session) if self._policy.tournament else None,
+            subjects=(
+                SubjectBakeOff(self._session) if self._policy.subject_variants else None
+            ),
+            subject_variants=self._policy.subject_variants,
             artifacts=artifacts,
             evidence=EvidenceIndex(artifacts.evidence, corpus.text),
             personas=personas_for(
@@ -418,6 +460,7 @@ class EmailCampaignPipeline:
             max_revisions=self._policy.max_revisions,
             candidates=self._policy.draft_candidates,
             observer=self._observer,
+            cancel_token=self._cancel_token,
         )
 
     def _guard(self) -> str | None:
@@ -448,6 +491,47 @@ class EmailCampaignPipeline:
         self._observer.on_phase("stopped", result.abort_reason, {"status": guard})
         return result
 
+    def _needs_input(
+        self,
+        request: CampaignRequest,
+        contract: DeliverableContract,
+        result: CampaignRunResult,
+        posture: "ProofPosture",
+    ) -> CampaignRunResult:
+        """Stop before the strategy, and say what would unblock it.
+
+        This is the one refusal in the pipeline, and it exists because the
+        alternative is not a worse campaign - it is the same campaign, written,
+        disbelieved by a cold reader, rewritten and disbelieved again. No
+        rewrite has ever added a proof the material did not contain, so a run
+        with nothing to argue from spends its whole budget discovering
+        something `preflight.assess` establishes for free before the first
+        model call.
+
+        Narrow on purpose. It fires only when there is neither third-party
+        proof *nor* anything a reader could check for themselves - the case
+        where every sentence would be this company asserting something about
+        itself - or when the compiler found a hole a campaign cannot be written
+        around at all, like no action to ask for. A business with no
+        testimonials but a real price, a real limit and a real mechanism is not
+        blocked: specific beats persuasive, and that campaign is worth writing.
+        """
+        result.status = "needs_input"
+        result.abort_reason = (
+            "Nothing here can carry a campaign yet: "
+            + posture.summary().lower()
+            + ". Answering the questions below is worth more than any rewrite."
+        )
+        result.report = self._build_report(request, contract, result)
+        result.report.questions = list(posture.asks)
+        self._observer.on_report(result.report)
+        self._observer.on_phase(
+            "stopped",
+            result.abort_reason,
+            {"status": "needs_input", "questions": posture.asks},
+        )
+        return result
+
     def _build_report(
         self,
         request: CampaignRequest,
@@ -465,7 +549,9 @@ class EmailCampaignPipeline:
                 landed=outcome.best.read.landed,
                 rewrites_stopped_helping=outcome.stopped_early,
                 read_reported=outcome.best.read.has_verdict,
-                evidence_spent=outcome.brief.evidence_ids,
+                evidence_assigned=outcome.brief.evidence_ids,
+                evidence_spent=list(outcome.best.substantiation.carried),
+                attributions=outcome.best.substantiation.attributions,
                 unresolved=[issue.detail for issue in outcome.best.gates.blocking],
             )
             for outcome in result.outcomes

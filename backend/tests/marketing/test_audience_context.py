@@ -218,7 +218,14 @@ async def test_the_writer_is_not_handed_the_whole_inventory(
 
     pipeline, _ = build(
         provider,
-        PRESETS["balanced"].model_copy(update={"draft_candidates": 1, "max_revisions": 0}),
+        # `require_proof` off because this ledger is 120 feature claims and
+        # nothing else - no proof and nothing a reader could check - which is
+        # exactly the material the preflight stop refuses to spend a run on.
+        # That refusal is right and it is not what this test is about; the
+        # question here is how much of a large ledger reaches one prompt.
+        PRESETS["balanced"].model_copy(
+            update={"draft_candidates": 1, "max_revisions": 0, "require_proof": False}
+        ),
         artifacts=artifacts,
     )
     await pipeline.run(_one_email(request_fixture))

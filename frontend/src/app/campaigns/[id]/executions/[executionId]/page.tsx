@@ -10,18 +10,20 @@ export default async function ExecutionResultPage({
 }) {
   const { id, executionId } = await params;
 
-  const result = await api.getExecutionResult(executionId).catch((e) => {
-    console.error("DEBUG getExecutionResult failed:", e);
-    return null;
-  });
+  const result = await api.getExecutionResult(executionId).catch(() => null);
   if (!result) {
     notFound();
   }
+  // The brand, so answers to the run's own questions can be kept with the
+  // business rather than with this one campaign - what a company charges is
+  // true of the company, and the next campaign should not have to ask again.
+  const campaign = await api.getCampaign(id).catch(() => null);
 
   return (
     <ExecutionLiveView
       executionId={executionId}
       campaignId={id}
+      brandId={campaign?.brand_id ?? null}
       initialStatus={result.status}
       initialAssets={result.assets}
       initialResult={result.result}

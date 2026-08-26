@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import tempfile
 from functools import cached_property
@@ -21,6 +22,8 @@ from app.ingestion.ocr.tesseract_provider import TesseractOCRProvider
 from app.ingestion.pipeline import IngestionPipeline, default_cleaners
 from app.ingestion.store.in_memory_store import InMemoryKnowledgeStore
 from app.ingestion.vision.claude_vision_provider import ClaudeVisionProvider
+from app.knowledge.base import KnowledgeBase, build_knowledge_base
+from app.knowledge.store import ArtifactScope, ArtifactStore
 from app.models.knowledge_document import KnowledgeDocument
 from app.repositories.knowledge_repository import KnowledgeDocumentRepository
 
@@ -47,6 +50,10 @@ class KnowledgeService:
 
     def __init__(self, session: Session) -> None:
         self._documents = KnowledgeDocumentRepository(session)
+        self._artifacts = ArtifactStore(session)
+        #: Content already filed under a scope, keyed by (campaign_id, brand_id)
+        #: then by content hash - see _persist.
+        self._filed: dict[tuple[UUID | None, UUID | None], dict[str, KnowledgeDocument]] = {}
 
     # The ingestion machinery is built lazily: this service is a per-request
     # FastAPI dependency, and most requests only list or delete documents.
@@ -174,6 +181,27 @@ class KnowledgeService:
     def get_document(self, document_id: UUID) -> KnowledgeDocument | None:
         return self._documents.get(document_id)
 
+    def knowledge_base(
+        self, brand_id: UUID | None = None, campaign_id: UUID | None = None
+    ) -> KnowledgeBase | None:
+        """Everything compiled about one business, on shelves.
+
+        None means nothing has been compiled for that scope yet, which is a
+        normal state - compilation happens on the first campaign run - and is
+        distinct from "compiled and found nothing", which returns an empty
+        base whose empty shelves are the useful part.
+
+        Derived on every call rather than stored. Building it is a few hundred
+        regex matches over data already in memory, and the alternative is a
+        second copy of the truth that goes stale the moment the taxonomy is
+        tuned.
+        """
+        scope = ArtifactScope(brand_id=brand_id, campaign_id=campaign_id)
+        stored = self._artifacts.load(scope)
+        if stored is None:
+            return None
+        return build_knowledge_base(stored.artifacts, version=stored.version)
+
     def delete_document(self, document: KnowledgeDocument) -> None:
         self._documents.delete(document)
 
@@ -194,8 +222,33 @@ class KnowledgeService:
         brand_id: UUID | None,
         title: str | None,
     ) -> KnowledgeDocument:
+        """Store the document, unless this scope already holds it word for word.
+
+        Adding a brand's website is not a one-time act: it happens again every
+        time a campaign is created for that brand. Filing a second identical
+        copy would grow the corpus without adding a fact, make the compiler
+        read the same page twice, and - before fingerprint_documents stopped
+        counting rows - invalidate perfectly good artifacts, which is how
+        "reuse what is already compiled" ended up recompiling anyway.
+
+        Only material the caller filed under a brand or a campaign is
+        de-duplicated. Library material belongs to no scope, so there is
+        nothing to compare it against.
+        """
         metadata = dict(ingested.metadata)
-        return self._documents.create(
+        filed = self._filed_in_scope(campaign_id, brand_id)
+        if filed is not None:
+            digest = hashlib.sha256(ingested.content.encode("utf-8")).hexdigest()
+            already = filed.get(digest)
+            if already is not None:
+                logger.info(
+                    "%s is already filed here word for word - keeping the copy from %s",
+                    ingested.url or ingested.title,
+                    already.created_at,
+                )
+                return already
+
+        document = self._documents.create(
             KnowledgeDocument(
                 campaign_id=campaign_id,
                 brand_id=brand_id,
@@ -207,3 +260,30 @@ class KnowledgeService:
                 document_metadata=metadata,
             )
         )
+        if filed is not None:
+            filed[hashlib.sha256(document.content.encode("utf-8")).hexdigest()] = document
+        return document
+
+    def _filed_in_scope(
+        self, campaign_id: UUID | None, brand_id: UUID | None
+    ) -> dict[str, KnowledgeDocument] | None:
+        """What this scope already holds, keyed by content hash.
+
+        Read once per scope and then kept up to date in memory: a site crawl
+        persists a page at a time, and the fortieth page should not pay for its
+        own query over the same rows.
+        """
+        if campaign_id is None and brand_id is None:
+            return None
+        key = (campaign_id, brand_id)
+        if key not in self._filed:
+            existing = (
+                self._documents.list_for_brand(brand_id)
+                if brand_id is not None
+                else self._documents.list_for_campaign(campaign_id)  # type: ignore[arg-type]
+            )
+            self._filed[key] = {
+                hashlib.sha256(document.content.encode("utf-8")).hexdigest(): document
+                for document in existing
+            }
+        return self._filed[key]

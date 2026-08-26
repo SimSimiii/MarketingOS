@@ -3,6 +3,7 @@
 "ask for copy, get copy" flow already covered by test_campaign_flow.py."""
 
 import asyncio
+from uuid import uuid4
 
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
@@ -210,3 +211,41 @@ def test_campaign_requires_a_valid_policy_preset(client: TestClient):
         f"/api/campaigns/{campaign['id']}/policy", json={"preset": "ultra-max-turbo"}
     )
     assert response.status_code == 422
+
+def test_a_campaign_says_what_it_will_cost_before_it_is_run(client: TestClient):
+    """The estimate is free and instant - nothing here calls a model - and it
+    is the only thing standing between a preset described as "most thorough
+    review" and a bill."""
+    campaign = create_campaign(client)
+
+    response = client.get(f"/api/campaigns/{campaign['id']}/forecast")
+    assert response.status_code == 200, response.text
+    forecast = response.json()
+
+    assert forecast["emails"] == 3 and forecast["count_is_explicit"] is True
+    assert 0 < forecast["low"] <= forecast["high"]
+    assert forecast["knowledge_reused"] is False
+    assert forecast["observed_runs"] == 0, "no history yet, so no figure is offered"
+    assert forecast["observed_cost_per_email"] == 0
+
+
+def test_the_forecast_learns_what_runs_actually_cost(client: TestClient):
+    """The money beside the call count is not a price list - it is what this
+    user's own runs came to, which is why it appears only once there are
+    some."""
+    campaign = create_campaign(client)
+    started = client.post(f"/api/campaigns/{campaign['id']}/start")
+    await_terminal_status(client, started.json()["id"])
+
+    forecast = client.get(f"/api/campaigns/{campaign['id']}/forecast").json()
+    assert forecast["observed_runs"] >= 1
+    # The material has been read once and has not changed, so the next run
+    # reads none of it again - which is the single largest saving available
+    # and was previously invisible until the receipt arrived.
+    assert forecast["knowledge_reused"] is True
+    assert forecast["compile_low"] == 0
+
+
+def test_a_forecast_for_a_campaign_that_does_not_exist_is_a_404(client: TestClient):
+    response = client.get(f"/api/campaigns/{uuid4()}/forecast")
+    assert response.status_code == 404

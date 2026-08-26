@@ -23,6 +23,7 @@ from app.ai.factory import get_ai_provider
 from app.ai.model_router import ModelRouter
 from app.core.config import PROMPTS_DIR
 from app.evaluation.golden import GOLDEN_CASES, GoldenCase, case_named
+from app.evaluation.head_to_head import JUDGE_MODEL, against_control
 from app.evaluation.record import RunRecord, record_from
 from app.marketing.observer import RunObserver
 from app.marketing.pipeline import EmailCampaignPipeline
@@ -112,7 +113,28 @@ async def run_case(case: GoldenCase, preset: PolicyPreset) -> RunRecord:
             )
             elapsed = time.perf_counter() - started
 
-    return record_from(case.name, preset, result, elapsed, repairs=observer.repairs)
+            # After the clock stops: the benchmark's own judging is not part of
+            # what the run cost, and folding it into either the duration or the
+            # token total would make every change to the harness look like a
+            # change to the system.
+            control = await against_control(
+                judge_session=ModelSession(
+                    provider=get_ai_provider(),
+                    prompt_engine=get_prompt_engine(PROMPTS_DIR),
+                    events=EventBus(),
+                    model_router=ModelRouter({"preference_judge": JUDGE_MODEL}),
+                    execution_id=f"eval-judge-{case.name}",
+                ),
+                control_email=case.control_email,
+                delivered=result.emails,
+                artifacts=result.artifacts,
+                segment_name=result.brief.reader_segment if result.brief else "",
+            )
+            print(f"    · {control.render()}", flush=True)
+
+    return record_from(
+        case.name, preset, result, elapsed, repairs=observer.repairs, control=control
+    )
 
 
 async def run_all(cases: tuple[GoldenCase, ...], preset: PolicyPreset, out: Path) -> None:
@@ -143,6 +165,10 @@ def _load(directory: Path) -> dict[str, RunRecord]:
     }
 
 
+def _won(records) -> int:
+    return sum(1 for record in records if record.control_win_rate > 0.5)
+
+
 def _delta(before: float, after: float, higher_is_better: bool) -> str:
     if before == after:
         return "="
@@ -166,11 +192,28 @@ def compare(before_dir: Path, after_dir: Path) -> None:
     for name in shared:
         old, new = before[name], after[name]
         print(f"\n{name}")
+        # First, because it is the only line here that says whether the output
+        # is good rather than whether it moved.
+        print(
+            "  win rate vs human   "
+            f"{_delta(old.control_win_rate, new.control_win_rate, True)}"
+        )
         print(f"  avg pull            {_delta(old.average_pull, new.average_pull, True)}")
         print(f"  landed rate         {_delta(old.landed_rate, new.landed_rate, True)}")
         print(
             "  first-draft ships   "
             f"{_delta(old.first_draft_ship_rate, new.first_draft_ship_rate, True)}"
+        )
+        # The only line here that reads the copy against the material rather
+        # than against another model's opinion - so it is the one number a
+        # drifting judge cannot move.
+        print(
+            "  proof on the page   "
+            f"{_delta(old.substantiation_rate, new.substantiation_rate, True)}"
+        )
+        print(
+            "  emails citing someone "
+            f"{_delta(old.attributed_rate, new.attributed_rate, True)}"
         )
         print(f"  model calls         {_delta(old.model_calls, new.model_calls, False)}")
         print(f"  repairs             {_delta(old.repairs, new.repairs, False)}")
@@ -188,6 +231,10 @@ def compare(before_dir: Path, after_dir: Path) -> None:
             )
 
     print("\nTotals")
+    print(
+        f"  beat the human  {_won(before.values())} → {_won(after.values())} "
+        "case(s) where the system's email took more votes than the control"
+    )
     print(
         f"  cost   ${sum(r.cost_usd for r in before.values()):.2f} → "
         f"${sum(r.cost_usd for r in after.values()):.2f}"
@@ -209,6 +256,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.WARNING)
+
+    # The progress lines and the comparison table are drawn with "→" and "·",
+    # neither of which survives a cp1252 console. Without this a Windows run
+    # dies on its own output - the comparison on its first differing metric,
+    # and a live round on the first role that starts, after the models have
+    # already been paid for.
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
     if args.compare:
         compare(*args.compare)

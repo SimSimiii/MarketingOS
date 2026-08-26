@@ -18,9 +18,11 @@ from app.marketing.observer import RunObserver
 from app.marketing.pipeline import EmailCampaignPipeline
 from app.marketing.policy import PRESETS, ExecutionPolicy
 from app.marketing.request import CampaignRequest
+from app.runtime.model_session import _PROVIDER_ATTEMPTS as PROVIDER_ATTEMPTS
 from tests.marketing.conftest import (
     CRITIQUE_REVISE,
     CRITIQUE_SHIP,
+    FAIL,
     READ_FAIL,
     READ_PASS,
     FakeKnowledgeGateway,
@@ -53,15 +55,48 @@ def build(
 
 
 def refine_only(**overrides) -> ExecutionPolicy:
-    """Balanced with the first-draft bake-off switched off.
+    """Balanced with everything that multiplies calls switched off.
 
     For the tests that are about what happens to a draft *after* it is judged.
-    They script the writer and the reader turn by turn, and three candidate
-    openings would eat the responses queued for the rewrite loop - the test
-    would then fail for a reason that has nothing to do with what it asserts.
-    The bake-off has its own tests below.
+    They script the writer and the reader turn by turn, and anything that buys
+    more than one of a role's calls per attempt eats the responses queued for
+    the rewrite loop - the test then fails for a reason that has nothing to do
+    with what it asserts. Three candidate openings did that; so does a
+    three-reader panel, and so does a subject bake-off with its own reader
+    calls. Each of those has its own tests below.
+
+    The tournament stays on where a test asks for it, but off by default here:
+    with it on, "was this rewrite kept" is answered by a duel, and a test about
+    the rewrite loop should not have to script one.
     """
-    return PRESETS["balanced"].model_copy(update={"draft_candidates": 1, **overrides})
+    return PRESETS["balanced"].model_copy(
+        update={
+            "draft_candidates": 1,
+            "reader_panel": False,
+            "tournament": False,
+            "subject_variants": 0,
+            **overrides,
+        }
+    )
+
+
+def bake_off_only(**overrides) -> ExecutionPolicy:
+    """Balanced with the bake-off intact and every other judge switched off.
+
+    The mirror of `refine_only`: for tests about which of several candidates
+    ships. One cold reader per draft, so a test can script "this opening read
+    at 9 and that one at 2" as three responses rather than nine; no run-off,
+    so the score is what decides; no subject bake-off, so the reader calls a
+    test counts are the ones it queued.
+    """
+    return PRESETS["balanced"].model_copy(
+        update={
+            "reader_panel": False,
+            "tournament": False,
+            "subject_variants": 0,
+            **overrides,
+        }
+    )
 
 
 @pytest.mark.asyncio
@@ -375,6 +410,113 @@ async def test_cancelling_stops_between_emails_and_keeps_what_is_finished(
 
 
 @pytest.mark.asyncio
+async def test_cancelling_mid_email_skips_the_rest_of_its_own_revision_loop(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    """The pipeline's own guard only checks between whole emails - a single
+    email failing its cold read every time would otherwise keep buying a
+    critique and a rewrite for every attempt up to max_revisions, regardless
+    of a stop requested partway through. CraftLoop must catch this itself."""
+    token = CancellationToken()
+
+    class CancelAfterFirstRead(RunObserver):
+        def on_read(self, position, attempt, read):
+            if attempt == 1:
+                token.cancel()
+
+    provider.set_default("strategist", campaign_brief(1))
+    provider.set_default("blind_reader", READ_FAIL)
+
+    pipeline, _ = build(
+        provider,
+        refine_only(max_revisions=3),
+        cancel_token=token,
+        observer=CancelAfterFirstRead(),
+    )
+    result = await pipeline.run(request_fixture)
+
+    outcome = result.outcomes[0]
+    assert len(outcome.versions) == 1, "no revise should follow the cancelled attempt"
+    assert provider.calls_by_role["email_writer"] == 1, "the rewrite must not be bought"
+    assert provider.calls_by_role.get("conversion_critic", 0) == 0, "nor the critique that fed it"
+
+
+@pytest.mark.asyncio
+async def test_the_provider_going_away_hands_over_the_emails_already_written(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    """The most expensive bug this suite ever had, and it was invisible.
+
+    A provider failure is a `ProviderError`, which is a `ModelRuntimeError` and
+    not a `CampaignError` - so it went straight past the pipeline's own
+    handler, past the craft loop, and into the orchestrator's crash path,
+    which persists no assets and no report. A run that had already written and
+    paid for two of three emails reported as a bare failure with nothing to
+    show for it.
+
+    The rule the guards already follow applies here too: stop between emails,
+    keep what is finished, say why.
+    """
+    def writer(call: int) -> str:
+        # Email 1 is drafted; from there the provider has stopped answering.
+        return varied_draft(call) if call == 1 else FAIL
+
+    provider.set_default("email_writer", writer)
+    pipeline, _ = build(provider, refine_only())
+    result = await pipeline.run(request_fixture)
+
+    assert result.status == "provider_unavailable"
+    assert len(result.outcomes) == 1, "the email that was finished must survive"
+    assert result.report.emails[0].subject
+    assert "stopped answering" in (result.abort_reason or "")
+    assert result.report.contract_violations, "a short delivery is still reported as short"
+
+
+@pytest.mark.asyncio
+async def test_one_cold_reader_dropping_out_does_not_take_the_panel_with_it(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    """A panel is read concurrently, so an exception in one persona escapes
+    `gather` and ends the run. `reported=False` already models a reader who
+    never came back - a transport failure is one."""
+    provider.set_default("strategist", campaign_brief(1))
+    # Two readers answer; the third refuses every attempt the session makes.
+    provider.push("blind_reader", READ_PASS, READ_PASS, *([FAIL] * PROVIDER_ATTEMPTS))
+
+    pipeline, _ = build(provider, PRESETS["balanced"].model_copy(
+        update={"draft_candidates": 1, "subject_variants": 0}
+    ))
+    result = await pipeline.run(request_fixture)
+
+    assert result.status in ("completed", "degraded")
+    read = result.outcomes[0].versions[0].read
+    assert len(read.reads) == 3, "the panel keeps its shape"
+    assert len(read.reported) == 2, "the reader that dropped out reports nothing"
+    assert read.has_verdict, "two readers is still a verdict"
+
+
+@pytest.mark.asyncio
+async def test_a_run_that_fails_late_is_degraded_rather_than_failed(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    """Two finished emails behind a red badge is what teaches a user to
+    distrust the badge on the runs that really did fail."""
+    def writer(call: int) -> str:
+        # The third email never comes back in a sendable shape, however often
+        # the writer is asked - which is a CraftError, not a provider failure.
+        return varied_draft(call) if call <= 2 else "not an email at all"
+
+    provider.set_default("email_writer", writer)
+    provider.set_default("strategist", campaign_brief(3))
+    pipeline, _ = build(provider, refine_only())
+    result = await pipeline.run(request_fixture)
+
+    assert result.status == "degraded"
+    assert len(result.outcomes) == 2
+    assert result.report.notes, "and it says what went wrong"
+
+
+@pytest.mark.asyncio
 async def test_a_token_budget_stops_the_run(
     provider: RoleScriptedProvider, request_fixture: CampaignRequest
 ):
@@ -489,10 +631,17 @@ async def test_no_model_call_is_ever_spent_on_deciding_what_runs_next(
     pipeline, _ = build(provider)
     await pipeline.run(request_fixture)
 
+    # Every role here either distils knowledge, decides strategy, writes copy
+    # or judges copy. None of them routes, which is the claim - the list grows
+    # when the system buys more judgment and would be violated by one entry
+    # called anything like "director".
     assert set(provider.calls_by_role) <= {
         "strategist",
         "email_writer",
+        "subject_writer",
         "blind_reader",
+        "preference_judge",
+        "inbox_scanner",
         "conversion_critic",
         "sequence_reviewer",
         "knowledge_compiler",
@@ -644,7 +793,7 @@ async def test_the_opening_a_stranger_responded_to_is_the_one_that_ships(
     )
     provider.push("blind_reader", blind_read(pull=2), blind_read(pull=9), blind_read(pull=4))
 
-    pipeline, _ = build(provider, PRESETS["balanced"].model_copy(update={"max_revisions": 0}))
+    pipeline, _ = build(provider, bake_off_only(max_revisions=0))
     result = await pipeline.run(request_fixture)
 
     assert provider.calls_by_role["email_writer"] == 3, "three openings, one email"
@@ -660,7 +809,7 @@ async def test_the_winning_opening_is_not_read_a_second_time(
     is the whole saving of screening on the cheap judges, spent."""
     provider.set_default("strategist", campaign_brief(1))
 
-    pipeline, _ = build(provider, PRESETS["balanced"].model_copy(update={"max_revisions": 0}))
+    pipeline, _ = build(provider, bake_off_only(max_revisions=0))
     await pipeline.run(request_fixture)
 
     assert provider.calls_by_role["blind_reader"] == 3
@@ -675,7 +824,7 @@ async def test_every_opening_is_written_to_a_different_constraint(
     and a cold reader has nothing to choose between them."""
     provider.set_default("strategist", campaign_brief(1))
 
-    pipeline, _ = build(provider, PRESETS["balanced"].model_copy(update={"max_revisions": 0}))
+    pipeline, _ = build(provider, bake_off_only(max_revisions=0))
     await pipeline.run(request_fixture)
 
     asks = [request.messages[0].content for request in provider.requests_for("email_writer")]
@@ -694,7 +843,7 @@ async def test_an_opening_that_will_not_parse_does_not_sink_the_email(
     # before the second one starts.
     provider.push("email_writer", "not an email", "still not", "nope at all")
 
-    pipeline, _ = build(provider, PRESETS["balanced"].model_copy(update={"max_revisions": 0}))
+    pipeline, _ = build(provider, bake_off_only(max_revisions=0))
     result = await pipeline.run(request_fixture)
 
     assert result.status in {"completed", "degraded"}

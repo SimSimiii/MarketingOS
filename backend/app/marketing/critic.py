@@ -27,6 +27,7 @@ from app.marketing.briefs import CampaignBrief, EmailBrief
 from app.marketing.email_copy import Email, render_email
 from app.marketing.gates import GateReport
 from app.marketing.reader import PanelRead
+from app.marketing.substantiation import Substantiation
 from app.runtime.model_session import ModelSession
 
 ROLE_ID = "conversion_critic"
@@ -124,6 +125,7 @@ class ConversionCritic:
         artifacts: KnowledgeArtifacts,
         read: PanelRead,
         gates: GateReport,
+        substantiation: Substantiation | None = None,
     ) -> Critique:
         return await self._session.structured(
             role=ROLE_ID,
@@ -146,6 +148,16 @@ class ConversionCritic:
                 "voice": artifacts.voice.render(),
                 "reader_report": read.render(),
                 "gate_report": gates.render(),
+                # Which assigned facts are absent from the page is a string
+                # comparison, and it is already done - see
+                # app.marketing.substantiation. Handing the critic the answer
+                # rather than the question is the same trade the rest of the
+                # system makes everywhere else: a model asked to re-derive a
+                # lookup answers it approximately, and spends the attention it
+                # owed to brief drift doing it. What is left for the critic is
+                # the part that is judgment - whether this email's argument
+                # actually needed the fact it left out.
+                "unspent_evidence": _unspent(substantiation),
             },
             task=(
                 "Decide whether this email ships as it stands, and if not, name the lines that "
@@ -153,3 +165,18 @@ class ConversionCritic:
             ),
             schema=Critique,
         )
+
+
+def _unspent(substantiation: Substantiation | None) -> str:
+    if substantiation is None or not substantiation.unspent:
+        return (
+            "Every fact this email was assigned is on the page (or it was assigned none). "
+            "There is nothing to add back."
+        )
+    listing = "\n".join(
+        f"- [{entry.id}] {entry.claim}" for entry in substantiation.unspent
+    )
+    return (
+        "These were assigned to this email and no trace of them reached the page - not the "
+        f"figure, not the name, not the quotation:\n{listing}"
+    )

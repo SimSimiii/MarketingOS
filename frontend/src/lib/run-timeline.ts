@@ -63,6 +63,8 @@ export interface RunState {
     segments: string[];
     gaps: string[];
     voiceLearned: boolean;
+    /** What the compile read but could not use. */
+    notes: string[];
   } | null;
   /** Who this campaign decided to write to, once the brief exists. The
    * compiled segment list is who *could* be written to, which is a different
@@ -174,6 +176,7 @@ export function reduceRun(events: LiveExecutionEvent[]): RunState {
           segments: event.segments,
           gaps: event.gaps,
           voiceLearned: event.voice_learned,
+          notes: event.notes ?? [],
         };
         break;
 

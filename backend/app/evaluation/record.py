@@ -15,6 +15,7 @@ from datetime import UTC, datetime
 
 from pydantic import BaseModel, Field
 
+from app.evaluation.head_to_head import ControlResult
 from app.marketing.pipeline import CampaignRunResult
 from app.marketing.reader import PULL_THRESHOLD
 
@@ -45,7 +46,16 @@ class EmailRecord(BaseModel):
     #: How long the body ran. Watched because every additive pressure in the
     #: system shows up here first.
     word_count: int = 0
+    #: What the Strategist said this email is built on.
+    evidence_assigned: list[str] = Field(default_factory=list)
+    #: Of those, the ones whose figure, name or quotation actually reached the
+    #: page - see app.marketing.substantiation. Checked in code on the version
+    #: that shipped, so it is a measurement rather than an intention.
     evidence_spent: list[str] = Field(default_factory=list)
+    #: Third-party entries the copy names or quotes.
+    attributions: int = 0
+    #: Distinct checkable values from the material that appear in the copy.
+    specifics: int = 0
 
 
 class RunRecord(BaseModel):
@@ -64,6 +74,16 @@ class RunRecord(BaseModel):
     #: Whether the sequence held together when read as a sequence.
     sequence_passed: bool = True
     sequence_summary: str = ""
+
+    #: Blind votes between this run's first email and one a person wrote for
+    #: the same brief, judged by a panel and a model the loop does not optimise
+    #: against. The only number in this record with a referent outside the
+    #: system - everything else says whether a change helped, and this says
+    #: whether the output is worth sending.
+    control_votes_for: int = 0
+    control_votes_against: int = 0
+    control_note: str = ""
+    control_reasons: list[str] = Field(default_factory=list)
 
     model_calls: int = 0
     calls_by_role: dict[str, int] = Field(default_factory=dict)
@@ -99,6 +119,48 @@ class RunRecord(BaseModel):
         return sum(1 for email in self.emails if email.rewrites == 0) / len(self.emails)
 
     @property
+    def substantiation_rate(self) -> float:
+        """The share of emails that actually spent the proof they were built on.
+
+        The one metric here that reads the *copy* against the *material*
+        rather than against another model's opinion, which makes it the only
+        line on this record that cannot be moved by a judge drifting. It is
+        also the thing the architecture spends most of its money on: the
+        crawl, the ledger, the quote verification and the per-email evidence
+        assignment all exist to raise this number, and until it existed
+        nothing said whether any of that reached the page.
+
+        Emails the Strategist assigned nothing are not counted either way -
+        there was nothing to spend, and scoring them would make the number
+        depend on how the brief was written.
+        """
+        assigned = [email for email in self.emails if email.evidence_assigned]
+        if not assigned:
+            return 0.0
+        return sum(1 for email in assigned if email.evidence_spent) / len(assigned)
+
+    @property
+    def attributed_rate(self) -> float:
+        """The share of emails that name or quote somebody other than the
+        company. Reported beside `substantiation_rate` rather than folded into
+        it: spending a price is not the same act as citing a customer, and a
+        run can move one without moving the other."""
+        if not self.emails:
+            return 0.0
+        return sum(1 for email in self.emails if email.attributions > 0) / len(self.emails)
+
+    @property
+    def control_win_rate(self) -> float:
+        """The share of blind votes the system's email took off the human's.
+
+        Read it against 50%, not against 100%: the control is what a competent
+        person sends, so drawing with it is already the system doing the job,
+        and the number to move is the distance above the half.
+        """
+        cast = self.control_votes_for + self.control_votes_against
+        return self.control_votes_for / cast if cast else 0.0
+
+    @property
     def cost_per_shipped_email(self) -> float:
         """Cost per email a cold reader would actually have clicked.
 
@@ -115,12 +177,21 @@ class RunRecord(BaseModel):
         per_email = (
             f"${self.cost_per_shipped_email:.2f}" if shipped else "nothing shipped"
         )
+        cast = self.control_votes_for + self.control_votes_against
+        control = (
+            f"vs. human {self.control_votes_for}-{self.control_votes_against} "
+            f"({self.control_win_rate:.0%})"
+            if cast
+            else self.control_note or "no control"
+        )
         return (
             f"{self.case} [{self.preset}] {self.run_status}: "
+            f"{control}, "
             f"{self.delivered}/{self.promised} delivered, "
             f"{shipped} above the {PULL_THRESHOLD}/10 floor, "
             f"avg pull {self.average_pull:.1f}, "
             f"first-draft ships {self.first_draft_ship_rate:.0%}, "
+            f"proof on the page {self.substantiation_rate:.0%}, "
             f"{self.model_calls} calls, {self.repairs} repair(s), "
             f"${self.cost_usd:.2f} total, {per_email}/shipped email, "
             f"{self.duration_seconds:.0f}s"
@@ -133,6 +204,7 @@ def record_from(
     result: CampaignRunResult,
     duration_seconds: float,
     repairs: int = 0,
+    control: ControlResult | None = None,
 ) -> RunRecord:
     """Read one finished run into a comparable record."""
     calls_by_role: dict[str, int] = {}
@@ -152,7 +224,10 @@ def record_from(
             biggest_doubt=outcome.best.read.worst.biggest_doubt,
             unresolved=[issue.detail for issue in outcome.best.gates.blocking],
             word_count=len(outcome.email.body.split()),
-            evidence_spent=outcome.brief.evidence_ids,
+            evidence_assigned=outcome.brief.evidence_ids,
+            evidence_spent=list(outcome.best.substantiation.carried),
+            attributions=outcome.best.substantiation.attributions,
+            specifics=outcome.best.substantiation.specifics,
         )
         for outcome in result.outcomes
     ]
@@ -173,4 +248,8 @@ def record_from(
         cost_usd=round(result.usage.cost_usd, 4),
         duration_seconds=round(duration_seconds, 1),
         repairs=repairs,
+        control_votes_for=control.votes_for_system if control else 0,
+        control_votes_against=control.votes_for_control if control else 0,
+        control_note=control.skipped if control else "",
+        control_reasons=list(control.reasons) if control else [],
     )

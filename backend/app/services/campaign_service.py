@@ -1,3 +1,4 @@
+import statistics
 from datetime import UTC, datetime
 from uuid import UUID
 
@@ -5,6 +6,9 @@ from sqlalchemy import delete
 from sqlmodel import Session, col
 
 from app.ai.base import AIProvider
+from app.knowledge.store import ArtifactScope, ArtifactStore, fingerprint_documents
+from app.marketing.contract import parse_contract
+from app.marketing.forecast import forecast
 from app.marketing.policy import resolve_policy
 from app.models.agent_execution import AgentExecution
 from app.models.campaign import Campaign
@@ -22,7 +26,13 @@ from app.repositories.campaign_repository import CampaignRepository
 from app.repositories.execution_log_repository import ExecutionLogRepository
 from app.repositories.generated_asset_repository import GeneratedAssetRepository
 from app.repositories.knowledge_repository import KnowledgeDocumentRepository
-from app.schemas.campaign import CampaignCreateRequest, CampaignPolicyUpdate
+from app.schemas.campaign import CampaignCreateRequest, CampaignPolicyUpdate, RunForecast
+
+#: Rough conversion from the word count a document stores to the characters
+#: the evidence pass reads. Only ever feeds a call-count estimate, and the
+#: estimate is a range: an average English word plus its space is close
+#: enough that a page either does or does not need a second reading.
+_CHARS_PER_WORD = 6
 
 
 class CampaignAlreadyRunningError(Exception):
@@ -59,10 +69,14 @@ class CampaignService:
     # --------------------------------------------------------------- CRUD
 
     def create_campaign(self, data: CampaignCreateRequest) -> Campaign:
-        fields = data.model_dump(exclude={"policy_preset", "model_overrides"})
-        policy = None
+        fields = data.model_dump(
+            exclude={"policy_preset", "model_overrides", "force_recompile"}
+        )
+        policy: dict | None = None
         if data.policy_preset is not None:
             policy = {"preset": data.policy_preset}
+        if data.force_recompile is not None:
+            policy = {**(policy or {}), "force_recompile": data.force_recompile}
         return self._campaigns.create(
             Campaign(**fields, policy=policy, model_overrides=data.model_overrides)
         )
@@ -168,6 +182,105 @@ class CampaignService:
         campaign.policy = policy or None
         campaign.updated_at = datetime.now(UTC)
         return self._campaigns.update(campaign)
+
+    # ----------------------------------------------------------- forecast
+
+    def forecast_run(self, campaign: Campaign) -> RunForecast:
+        """What running this campaign will cost, before it is bought.
+
+        Two grounded numbers and no invented ones. The call count is
+        arithmetic - nothing in the pipeline spends a model call deciding what
+        happens next, so the shape of a run is fixed by the policy and by the
+        number of emails parsed out of the request. The money is the user's
+        own history: what past runs on this preset actually cost, which is a
+        measurement rather than a price list, and which gets better the more
+        they run.
+
+        Deliberately no cost-per-call conversion between the two. That would
+        be a made-up constant sitting between two real numbers, and it is
+        exactly the sort of figure that gets quoted back as though somebody
+        had measured it.
+        """
+        policy = resolve_policy(
+            (campaign.policy or {}).get("preset"),
+            {k: v for k, v in (campaign.policy or {}).items() if k != "preset"} or None,
+        )
+        contract = parse_contract(campaign.request)
+
+        store = ArtifactStore(self._session)
+        scope = ArtifactScope.for_campaign(campaign)
+        documents = store.source_documents(scope)
+        stored = store.load(scope)
+        reused = (
+            stored is not None
+            and stored.fingerprint == fingerprint_documents(documents)
+            and not policy.force_recompile
+        )
+        estimate = forecast(
+            policy,
+            contract,
+            material_chars=sum(document.word_count * _CHARS_PER_WORD for document in documents),
+            knowledge_reused=reused,
+        )
+        typical = self._observed_cost(campaign)
+        return RunForecast(
+            preset=(campaign.policy or {}).get("preset") or "balanced",
+            emails=contract.count,
+            count_is_explicit=contract.count_is_explicit,
+            low=estimate.low,
+            high=estimate.high,
+            compile_low=estimate.compile_low,
+            compile_high=estimate.compile_high,
+            knowledge_reused=reused,
+            observed_runs=len(self._comparable_runs(campaign)),
+            observed_cost_per_email=typical,
+        )
+
+    def _comparable_runs(self, campaign: Campaign) -> list[tuple[float, int]]:
+        """(cost, emails delivered) for finished runs configured like this one.
+
+        Same preset, because the preset is what decides how many calls a run
+        makes. Across campaigns, because a new campaign has no history of its
+        own and the user's other runs are the best evidence there is.
+
+        Only runs that **finished and delivered**. A run that died on its
+        first call cost a penny, and quoting that as the bottom of the range
+        would say a campaign might cost a penny - it says nothing except that
+        something went wrong.
+        """
+        preset = (campaign.policy or {}).get("preset") or "balanced"
+        wanted = {
+            other.id
+            for other in self._campaigns.list_all()
+            if ((other.policy or {}).get("preset") or "balanced") == preset
+        }
+        runs: list[tuple[float, int]] = []
+        for campaign_id in wanted:
+            for execution in self._executions.list_by_campaign(campaign_id):
+                delivered = ((execution.result or {}).get("report") or {}).get("delivered") or 0
+                if (
+                    execution.status is ExecutionStatus.COMPLETED
+                    and execution.estimated_cost_usd > 0
+                    and delivered > 0
+                ):
+                    runs.append((execution.estimated_cost_usd, int(delivered)))
+        return runs
+
+    def _observed_cost(self, campaign: Campaign) -> float:
+        """What a delivered email has typically cost. The middle run, not the
+        average one and not the range.
+
+        Per email rather than per run, because past runs were different
+        lengths and a figure across them would be mostly noise about how long
+        each one was. The median for the same reason `PanelRead.pull` uses
+        one: a single run that died two calls in, or one that hit every
+        rewrite it was allowed, should not be the number a user plans around.
+        Multiplying it by the emails this campaign asks for is left to them -
+        doing that arithmetic here would join two real measurements with an
+        assumption and present the result as though it had been measured.
+        """
+        each = sorted(cost / delivered for cost, delivered in self._comparable_runs(campaign))
+        return statistics.median(each) if each else 0.0
 
     # ---------------------------------------------------------- execution
 

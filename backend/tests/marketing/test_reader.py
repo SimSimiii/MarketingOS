@@ -11,10 +11,12 @@ reader whose score no rewrite could move.
 from app.core.config import PROMPTS_DIR
 from app.knowledge.artifacts import AudienceModel, Segment
 from app.marketing.reader import (
+    _PULL_BY_CLICKS,
     PULL_THRESHOLD,
     BlindRead,
     PanelRead,
     personas_for,
+    pull_from_clicks,
 )
 from app.runtime.prompt_engine import PromptEngine
 
@@ -43,19 +45,40 @@ SEGMENT = Segment(
 # ------------------------------------------------------- the scale and the floor
 
 
-def test_the_rubric_and_the_threshold_agree_on_what_seven_means():
+def test_the_floor_is_a_number_the_reader_was_told_the_meaning_of():
     """The floor is only meaningful if the reader's scale puts the same event
     at the same number.
 
-    It did not: the ladder anchored 7 at "you would click if the week were
-    calmer" while `landed` also required "would click today", so a reader
-    answering both honestly could never satisfy them at once and the real
-    floor was an 8 nobody had written down.
+    It did not, twice over. The ladder used to anchor 7 at "you would click if
+    the week were calmer" while `landed` also required "would click today", so
+    a reader answering both honestly could never satisfy them at once. And the
+    event it asked about - would this one person click today - is one a real
+    recipient declines about ninety-seven times in a hundred whatever the copy
+    says, so the floor sat above what any email could reach and every score
+    piled up at the bottom.
+
+    Now the threshold is a click frequency, and the prompt has to state the
+    same frequency in the same units or the reader is aiming at a number
+    nobody described to them.
     """
     prompt = PromptEngine(PROMPTS_DIR).render(
         "reader", {"reader_profile": SEGMENT.name, "email": "Subject: anything"}
     )
-    assert f"{PULL_THRESHOLD} or higher means yes" in prompt
+    floor = next(clicks for clicks, score in _PULL_BY_CLICKS if score == PULL_THRESHOLD)
+
+    assert f"**{floor} in a hundred**" in prompt
+
+
+def test_the_floor_sits_where_a_good_cold_email_actually_lands():
+    """A guard on the calibration itself. Cold email is clicked by 1-3 of a
+    hundred when it works at all, so a floor set anywhere near the middle of
+    the 0-10 scale in click terms would be a floor nothing reaches - which is
+    the failure this whole scale was rebuilt to remove."""
+    floor = next(clicks for clicks, score in _PULL_BY_CLICKS if score == PULL_THRESHOLD)
+
+    assert 4 <= floor <= 10, "the floor has to be reachable by an email that works"
+    assert pull_from_clicks(2) < PULL_THRESHOLD, "ordinary cold copy is not a pass"
+    assert pull_from_clicks(0) == 0
 
 
 def test_a_reader_who_scores_the_floor_and_would_click_has_landed():
@@ -66,8 +89,40 @@ def test_a_reader_below_the_floor_has_not_landed_however_keen_they_sound():
     assert read(PULL_THRESHOLD - 1, would_act=True).landed is False
 
 
-def test_a_reader_who_never_opened_it_has_not_landed():
-    assert BlindRead(opened=False, pull=9, would_act=True).landed is False
+# ------------------------------------------------- the score is derived, not given
+
+
+def test_the_score_comes_off_the_click_frequency():
+    """Reported as "how many of a hundred", turned into 0-10 here. The mapping
+    is in code because it has a correct answer, and asking every reader to
+    apply it themselves is asking each call to re-derive the same table."""
+    assert BlindRead(opens_in_100=30, clicks_in_100=0).pull == 0
+    assert BlindRead(opens_in_100=30, clicks_in_100=2).pull < PULL_THRESHOLD
+    assert BlindRead(opens_in_100=30, clicks_in_100=6).pull >= PULL_THRESHOLD
+
+
+def test_a_reader_cannot_be_clicked_by_more_people_than_opened_it():
+    """Two numbers of which only the first is about the subject line. Clamped
+    rather than rejected: the rest of the report is still worth having, and a
+    read thrown away costs a whole pass."""
+    read_back = BlindRead(opens_in_100=4, clicks_in_100=40)
+
+    assert read_back.clicks_in_100 == 4
+    assert read_back.pull == pull_from_clicks(4)
+
+
+def test_a_reader_nobody_opens_cannot_have_landed():
+    """The old rule said this in an `and` clause. Now it falls out of the
+    arithmetic, which is the better place for it to live."""
+    assert BlindRead(opened=False, opens_in_100=0, clicks_in_100=9, would_act=True).landed is False
+
+
+def test_a_hand_built_read_keeps_the_score_it_was_given():
+    """Nothing in the run builds one of these - every read comes back from a
+    model with both frequencies. Tests and older stored reads do, and silently
+    zeroing their score would make a fixture mean the opposite of what it
+    says."""
+    assert BlindRead(pull=9).pull == 9
 
 
 # -------------------------------------------------------------- the panel's number
@@ -144,6 +199,21 @@ def test_a_panel_is_reported_as_how_many_of_them_would_click():
 
 def test_a_panel_nobody_read_says_so_rather_than_reporting_a_refusal():
     assert PanelRead(reads=[no_verdict()]).verdict_line() == "nobody could read it"
+
+
+def test_a_panel_that_estimated_a_frequency_is_reported_in_that_frequency():
+    """"3 in 100" means something to somebody who has mailed a list. "5.0/10"
+    does not, and it is the same measurement."""
+    panel = PanelRead(
+        reads=[
+            BlindRead(opens_in_100=30, clicks_in_100=2),
+            BlindRead(opens_in_100=25, clicks_in_100=3),
+            BlindRead(opens_in_100=35, clicks_in_100=8),
+        ]
+    )
+
+    assert panel.clicks_in_100 == 3
+    assert panel.verdict_line() == "about 3 in 100 would click"
 
 
 # ----------------------------------------------------------------- who reads it

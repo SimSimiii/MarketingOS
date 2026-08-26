@@ -27,6 +27,12 @@ class Campaign(SQLModel, table=True):
     product_url: str | None = None
     target_market: str | None = None
     goals: str | None = None
+    #: Who the emails are from - a person and their job, e.g. "Marco" and
+    #: "founder". Optional, and worth asking for: without it every email in
+    #: the campaign is signed by a team rather than a human, which is a
+    #: signature readers have learned to read as a broadcast.
+    sender_name: str | None = None
+    sender_role: str | None = None
     status: CampaignStatus = Field(default=CampaignStatus.ACTIVE, index=True)
     archived_at: datetime | None = None
     #: Serialized ExecutionPolicy overrides (see app.marketing.policy) plus

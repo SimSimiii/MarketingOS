@@ -27,6 +27,11 @@ Notewright drafts a release note in about nine seconds.
 Team is $29/month. Every account starts with 1,500 free credits.
 """
 
+PRICING = """# Pricing
+
+Solo is $9/month. Team is $29/month. Enterprise is quoted.
+"""
+
 
 @pytest.fixture
 def session():
@@ -44,11 +49,19 @@ def provider() -> RoleScriptedProvider:
 
 
 def make_campaign(session: Session, brand: Brand | None = None, **overrides) -> Campaign:
+    # These tests are about what a run records, not about whether it should
+    # have started. Most of them attach no material at all, which compiles to
+    # no evidence at all - the one case the preflight stop exists for, and it
+    # would end every one of them before the first role turn. Merged rather
+    # than defaulted so a test that passes its own policy still gets it; the
+    # stop has its own tests, which set it back on.
+    policy = {"preset": "balanced", "require_proof": False, **(overrides.pop("policy", None) or {})}
     campaign = Campaign(
         name="Launch",
         request="Write me 3 emails that make people buy my note-taking app",
         product_description="A note-taking app for developers",
         brand_id=brand.id if brand else None,
+        policy=policy,
         **overrides,
     )
     session.add(campaign)
@@ -57,14 +70,20 @@ def make_campaign(session: Session, brand: Brand | None = None, **overrides) -> 
     return campaign
 
 
-def add_document(session: Session, campaign: Campaign | None, brand: Brand | None) -> None:
+def add_document(
+    session: Session,
+    campaign: Campaign | None,
+    brand: Brand | None,
+    content: str = SITE,
+    title: str = "Home",
+) -> None:
     session.add(
         KnowledgeDocument(
             campaign_id=campaign.id if campaign else None,
             brand_id=brand.id if brand else None,
-            title="Home",
+            title=title,
             source_type="website",
-            content=SITE,
+            content=content,
             source_url="https://example.com",
         )
     )
@@ -83,12 +102,18 @@ async def test_a_run_records_every_role_turn_and_the_emails_that_shipped(
     assert execution.estimated_cost_usd > 0
 
     rows = session.exec(select(AgentExecution)).all()
+    # `inbox_scanner` is deliberately absent: it runs inside the subject
+    # writer's turn, the way the cold reader runs inside the bake-off's. One
+    # decision, one row - the timeline is a list of judgments made, not of
+    # model calls billed.
     assert {row.agent_id for row in rows} == {
         "strategist",
         "email_writer",
         "blind_reader",
         "conversion_critic",
         "sequence_reviewer",
+        "preference_judge",
+        "subject_writer",
     }
     assert all(row.status == ExecutionStatus.COMPLETED for row in rows)
     # Steps are numbered in the order they happened, one per role turn.
@@ -228,12 +253,39 @@ async def test_changed_material_is_recompiled(session: Session, provider: RoleSc
     await CampaignOrchestrator(session, provider).run(make_campaign(session, brand=brand))
     after_first = provider.calls_by_role["knowledge_compiler"]
 
-    add_document(session, None, brand)  # the user uploads their pricing page
+    # The user uploads their pricing page: a page the compiler has not read.
+    add_document(session, None, brand, content=PRICING, title="Pricing")
     await CampaignOrchestrator(session, provider).run(make_campaign(session, brand=brand))
 
     assert provider.calls_by_role["knowledge_compiler"] > after_first
     versions = session.exec(select(KnowledgeArtifactSet)).all()
     assert sorted(row.version for row in versions) == [1, 2], "versions are kept, not overwritten"
+
+
+@pytest.mark.asyncio
+async def test_the_same_page_filed_twice_is_not_new_material(
+    session: Session, provider: RoleScriptedProvider
+):
+    """Adding a brand's website is not a one-time act - it happens again every
+    time a campaign is created for that brand. A second, identical copy of a
+    page the compiler has already read is not a reason to read it again, and
+    treating it as one is how "reuse what's already compiled" ended up
+    recompiling anyway."""
+    brand = Brand(name="Notewright")
+    session.add(brand)
+    session.commit()
+    session.refresh(brand)
+    add_document(session, None, brand)
+
+    await CampaignOrchestrator(session, provider).run(make_campaign(session, brand=brand))
+    after_first = provider.calls_by_role["knowledge_compiler"]
+    assert after_first > 0, "the first run has to read the site"
+
+    add_document(session, None, brand)  # the same home page, word for word
+    await CampaignOrchestrator(session, provider).run(make_campaign(session, brand=brand))
+
+    assert provider.calls_by_role["knowledge_compiler"] == after_first
+    assert len(session.exec(select(KnowledgeArtifactSet)).all()) == 1
 
 
 @pytest.mark.asyncio

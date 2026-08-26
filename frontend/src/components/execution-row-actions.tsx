@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+import { ConfirmDialog, useConfirm } from "@/components/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api-client";
 import type { CampaignExecution } from "@/lib/types";
@@ -19,12 +20,14 @@ export function ExecutionRowActions({
 }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const confirmStop = useConfirm();
 
   async function handleCancel() {
     setBusy(true);
     try {
       await api.cancelExecution(execution.id);
-      toast.success("Asked the campaign to stop");
+      confirmStop.setOpen(false);
+      toast.success("Stopping - it finishes the model call it's on, then stops for good");
       router.refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not cancel");
@@ -46,9 +49,20 @@ export function ExecutionRowActions({
 
   if (execution.status === "pending" || execution.status === "running") {
     return (
-      <Button variant="ghost" size="sm" disabled={busy} onClick={handleCancel}>
-        {busy ? "Stopping..." : "Stop"}
-      </Button>
+      <>
+        <Button variant="ghost" size="sm" disabled={busy} onClick={confirmStop.ask}>
+          {busy ? "Stopping..." : "Stop"}
+        </Button>
+        <ConfirmDialog
+          open={confirmStop.open}
+          onOpenChange={confirmStop.setOpen}
+          title="Stop this campaign?"
+          description="It stops as soon as the model call currently in flight finishes - already-finished emails are kept, but nothing further is generated and the run cannot be resumed."
+          confirmLabel="Stop campaign"
+          pending={busy}
+          onConfirm={handleCancel}
+        />
+      </>
     );
   }
   if (execution.status === "failed" || execution.status === "cancelled") {

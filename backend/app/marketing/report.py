@@ -36,8 +36,28 @@ class EmailReportLine(BaseModel):
     #: False when no cold reader came back at all, which makes `pull` a
     #: placeholder rather than a score.
     read_reported: bool = True
+    #: Ledger ids the Strategist said this email is built on.
+    evidence_assigned: list[str] = Field(default_factory=list)
+    #: Of those, the ones whose figure, name or quotation actually reached the
+    #: page - checked in code on the version that shipped, not assumed from
+    #: the brief. This field used to hold the *assignment*, which is a
+    #: statement about the plan and reads on a receipt as a statement about
+    #: the copy.
     evidence_spent: list[str] = Field(default_factory=list)
+    #: How many third-party entries the copy names or quotes. The only kind of
+    #: support that survives a stranger's first-contact discount.
+    attributions: int = 0
     unresolved: list[str] = Field(default_factory=list)
+
+    @property
+    def argues_from_nothing(self) -> bool:
+        """Built on assigned facts and carrying none of them.
+
+        Not a failure the gates block - the copy invented nothing, which is
+        what they check - and not one a cold reader reliably reports, which is
+        why it is worth naming on the receipt in its own words.
+        """
+        return bool(self.evidence_assigned) and not self.evidence_spent
 
     def render(self) -> str:
         state = "" if self.clean else " (shipped with unresolved automatic checks)"
@@ -53,9 +73,14 @@ class EmailReportLine(BaseModel):
             score = f"pull {self.pull:.0f}/10 - still below the {PULL_THRESHOLD}/10 floor" + (
                 ", and rewriting had stopped moving it" if self.rewrites_stopped_helping else ""
             )
+        proof = (
+            " - and argues from none of the evidence it was assigned"
+            if self.argues_from_nothing
+            else ""
+        )
         return (
             f"- Email {self.position} \"{self.subject}\": {self.single_idea or 'no idea recorded'}"
-            f" - {score} after {rewrites}{state}"
+            f" - {score} after {rewrites}{state}{proof}"
         )
 
 
@@ -70,6 +95,12 @@ class CampaignReport(BaseModel):
     #: The one question the user could answer that would change the next run
     #: most, taken from the worst unanswered gap.
     what_would_help_most: str = ""
+    #: Everything the run needs answered before it is worth spending anything,
+    #: worst first. Only ever filled on a run that stopped to ask - see
+    #: `EmailCampaignPipeline._needs_input`. On every other run the same
+    #: material reaches the user as `what_would_help_most`, which is advice
+    #: rather than a blocker.
+    questions: list[str] = Field(default_factory=list)
     sequence_summary: str = ""
     knowledge_version: int = 0
     notes: list[str] = Field(default_factory=list)
@@ -86,6 +117,19 @@ class CampaignReport(BaseModel):
     @property
     def all_clean(self) -> bool:
         return all(line.clean for line in self.emails) and not self.contract_violations
+
+    @property
+    def unsubstantiated(self) -> list[EmailReportLine]:
+        """Emails that spent none of the proof they were built on.
+
+        Distinct from `below_floor`, and it has to be: an email can read
+        beautifully to a cold panel and still be this company asserting things
+        about itself, which is the failure that only shows up when a real
+        recipient declines to believe it. Nothing in the run blocks on it -
+        the writer is told, the loop prefers the version that carries the
+        proof, and past that it is the user's call.
+        """
+        return [line for line in self.emails if line.argues_from_nothing]
 
     @property
     def below_floor(self) -> list[EmailReportLine]:
@@ -125,13 +169,25 @@ class CampaignReport(BaseModel):
             )
         if self.sequence_summary:
             lines.append(f"Sequence: {self.sequence_summary}")
+        if self.unsubstantiated:
+            positions = ", ".join(str(line.position) for line in self.unsubstantiated)
+            lines.append(
+                f"Email(s) {positions} made no use of the evidence they were built on. "
+                "Nothing in them is invented - but nothing in them is checkable either, and a "
+                "stranger has no reason to believe a company describing itself."
+            )
         if self.contract_violations:
             lines.append("Contract problems: " + "; ".join(self.contract_violations))
         if self.limiting_gaps:
             lines.append(
                 "What held the copy back: " + "; ".join(self.limiting_gaps)
             )
-        if self.what_would_help_most:
+        if self.questions:
+            lines.append(
+                "Answer these and this campaign becomes writable:\n"
+                + "\n".join(f"- {question}" for question in self.questions)
+            )
+        elif self.what_would_help_most:
             lines.append(f"What would help most next time: {self.what_would_help_most}")
         lines.extend(self.notes)
         return "\n".join(lines)

@@ -29,13 +29,17 @@ decides how hard to lean on a statement by reading that label.
 be asked to do, because the material shows those things exist — a trial that can be started, a
 demo that can be booked, a doc that can be read. Writers are allowed to ask for these and nothing
 else, so an invented CTA sends real readers to a page that is not there. If the material only
-supports "reply to this email", say only that.
+supports "reply to this email", say only that. Keep each action's `label` in the material's own
+words, and carry its `url` when one is shown.
 
+- **company_name**: their name exactly as they write it, casing included — every email this
+  system sends is signed with it.
 - **what_it_does**: one sentence, concrete, in their terms. Not "a platform for modern teams".
 - **category**: what a buyer would call this if they were searching for it.
 - **business_model**: how money changes hands — subscription, usage, one-off, marketplace.
 - **plans**: every plan named in the material, with its price exactly as written ("$29/month",
-  "from €500", "custom"). Leave `price` empty if the material does not publish one.
+  "from €500", "custom") and what each includes, when stated. Leave `price` empty if the
+  material does not publish one.
 - **free_entry**: the trial, free tier or free credits, in their exact terms, or empty.
 - **guarantees**: refunds, SLAs, cancellation terms, security commitments — as stated.
 - **purchase_motion**: self-serve, book-a-demo, sales-led — whichever the material shows.

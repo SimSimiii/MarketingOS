@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { RunForecast } from "@/components/run-forecast";
 import { api } from "@/lib/api-client";
 import type { Campaign, PolicyPreset } from "@/lib/types";
 
@@ -28,12 +29,14 @@ function currentPreset(campaign: Campaign): PolicyPreset {
 export function CampaignPolicySelect({ campaign }: { campaign: Campaign }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(currentPreset(campaign) as string);
 
   async function handleChange(value: string | null) {
     if (!value) return;
     setSaving(true);
     try {
       await api.updateCampaignPolicy(campaign.id, { preset: value as PolicyPreset });
+      setSaved(value);
       toast.success("Execution preset updated");
       router.refresh();
     } catch (error) {
@@ -44,17 +47,23 @@ export function CampaignPolicySelect({ campaign }: { campaign: Campaign }) {
   }
 
   return (
-    <Select value={currentPreset(campaign)} onValueChange={handleChange} disabled={saving}>
-      <SelectTrigger className="w-full">
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        {(Object.keys(PRESET_LABELS) as PolicyPreset[]).map((preset) => (
-          <SelectItem key={preset} value={preset}>
-            {PRESET_LABELS[preset]}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <div className="space-y-3">
+      <Select value={currentPreset(campaign)} onValueChange={handleChange} disabled={saving}>
+        <SelectTrigger className="w-full">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {(Object.keys(PRESET_LABELS) as PolicyPreset[]).map((preset) => (
+            <SelectItem key={preset} value={preset}>
+              {PRESET_LABELS[preset]}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {/* Re-fetched on every change of preset, so the picker answers the
+          question it raises. `saved` changes identity only once the server
+          has the new preset, which is what the estimate is computed from. */}
+      <RunForecast campaignId={campaign.id} refreshKey={saved} />
+    </div>
   );
 }

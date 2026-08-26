@@ -99,9 +99,9 @@ def get_execution_assets(
 
 @router.post("/{execution_id}/cancel", status_code=status.HTTP_202_ACCEPTED)
 def cancel_execution(execution_id: UUID, service: CampaignServiceDep) -> dict[str, str]:
-    """Ask a running campaign to stop. Cooperative: the pipeline checks between
-    steps, so the email currently being written finishes and everything up to
-    that point is persisted - never a half-written execution."""
+    """Ask a running campaign to stop. Cooperative: the call currently in
+    flight finishes and everything up to that point is persisted - never a
+    half-written execution - but nothing further is bought after that."""
     execution = service.get_execution(execution_id)
     if execution is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Execution not found")

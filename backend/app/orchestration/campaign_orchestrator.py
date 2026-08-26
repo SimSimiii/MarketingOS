@@ -43,7 +43,12 @@ from app.repositories.campaign_execution_repository import CampaignExecutionRepo
 from app.repositories.campaign_repository import CampaignRepository
 from app.repositories.execution_log_repository import ExecutionLogRepository
 from app.repositories.generated_asset_repository import GeneratedAssetRepository
-from app.runtime.events import EventBus, ModelCallFinished, ModelCallStarted
+from app.runtime.events import (
+    EventBus,
+    ModelCallFinished,
+    ModelCallRetried,
+    ModelCallStarted,
+)
 from app.runtime.model_session import ModelSession, RoleCall
 from app.runtime.prompt_engine import get_prompt_engine
 
@@ -52,7 +57,13 @@ logger = logging.getLogger("marketingos.orchestration")
 #: Statuses that still handed the user usable emails. A run that timed out
 #: after writing four of five did not fail - it delivered four, and saying
 #: otherwise hides real work behind a red banner.
-_DELIVERING_STATUSES = {"completed", "degraded", "timed_out", "budget_exhausted"}
+_DELIVERING_STATUSES = {
+    "completed",
+    "degraded",
+    "timed_out",
+    "budget_exhausted",
+    "provider_unavailable",
+}
 
 #: Human names for the five reasoning roles, for the timeline. The old system
 #: read these off an agent registry; there is no registry now because there is
@@ -64,6 +75,9 @@ ROLE_NAMES: dict[str, str] = {
     "blind_reader": "Blind Reader",
     "conversion_critic": "Conversion Critic",
     "sequence_reviewer": "Sequence Reviewer",
+    "preference_judge": "Side-by-Side Reader",
+    "subject_writer": "Subject Lines",
+    "inbox_scanner": "Inbox Glance",
 }
 
 
@@ -270,6 +284,13 @@ class _PersistenceObserver(RunObserver):
                 "segments": [segment.name for segment in artifacts.audience.segments],
                 "gaps": [gap.missing for gap in artifacts.gaps.unanswered],
                 "voice_learned": artifacts.voice.learned,
+                # What the compile could not use, and why. A thin ledger has
+                # two very different causes - a business with little to say,
+                # or a page whose quotes would not verify because the crawler
+                # got a JavaScript shell - and they need opposite responses
+                # from the user. These were written onto the artifacts and
+                # read by nothing.
+                "notes": list(artifacts.notes),
             },
         )
 
@@ -615,6 +636,8 @@ class CampaignOrchestrator:
             product_url=campaign.product_url,
             target_market=campaign.target_market,
             goals=campaign.goals,
+            sender_name=campaign.sender_name or "",
+            sender_role=campaign.sender_role or "",
         )
 
         try:
@@ -730,6 +753,16 @@ class CampaignOrchestrator:
             execution.error_message = (
                 result.abort_reason if result.status != "completed" else None
             )
+        elif result.status == "needs_input":
+            # Not a crash and not a delivery: the run stopped on purpose,
+            # before spending anything, because the material could not carry a
+            # campaign. There is no lifecycle status for "asked a question", so
+            # it lands on FAILED - but the message is the questions, not a
+            # stack trace, and `report.questions` carries them structured.
+            execution.status = ExecutionStatus.FAILED
+            execution.error_message = "\n".join(
+                [result.abort_reason or "", *result.report.questions]
+            ).strip()
         else:
             execution.status = ExecutionStatus.FAILED
             execution.error_message = (
@@ -801,6 +834,20 @@ def _bridge_runtime_events(events: EventBus, emitter: ExecutionEventEmitter) -> 
             data={"model": event.model, "prompt_chars": event.prompt_chars},
         )
 
+    def on_model_call_retried(event: ModelCallRetried) -> None:
+        # WARNING, not DEBUG: everything else on this bridge is progress a
+        # healthy run also produces, and this is the one line that says the
+        # run is in trouble. A retry that scrolls past with the heartbeat is
+        # a retry nobody sees.
+        emitter.emit(
+            "model_call_retried",
+            f"{event.model} did not answer (attempt {event.attempt}: {event.error}) - "
+            "sending it again",
+            level=LogLevel.WARNING,
+            agent_id=event.agent_id,
+            data={"model": event.model, "attempt": event.attempt, "error": event.error},
+        )
+
     def on_model_call_finished(event: ModelCallFinished) -> None:
         emitter.emit(
             "model_call_finished",
@@ -821,4 +868,5 @@ def _bridge_runtime_events(events: EventBus, emitter: ExecutionEventEmitter) -> 
         )
 
     events.subscribe(ModelCallStarted, on_model_call_started)
+    events.subscribe(ModelCallRetried, on_model_call_retried)
     events.subscribe(ModelCallFinished, on_model_call_finished)

@@ -4,9 +4,12 @@ what the user ends up with on their clipboard."""
 import pytest
 
 from app.marketing.email_copy import (
+    _MAX_PARAGRAPH_WORDS,
+    _MIN_PARAGRAPHS,
     Email,
     EmailCopyError,
     parse_email,
+    reflow,
     render_email,
     structural_issues,
 )
@@ -30,6 +33,22 @@ it, or you send it exactly as it came out.
 Most people ask first whether it sounds like them. It reads your last twenty notes before it
 writes a word, so it does.
 """
+
+
+def email_with(**overrides) -> Email:
+    """A structurally clean email, so a test asserting on one rule is not
+    quietly also asserting on five others."""
+    fields = {
+        "position": 1,
+        "subject": "Your release notes, written for you",
+        "preview_text": "from the commits you already pushed",
+        "greeting": "Hi there,",
+        "body": "One idea.\n\nA second idea here.\n\nAnd a third one to close.",
+        "call_to_action": "Start free",
+        "sign_off": "- The team",
+    }
+    fields.update(overrides)
+    return Email(**fields)
 
 
 def test_a_well_formed_draft_becomes_a_typed_email():
@@ -153,3 +172,61 @@ def test_the_rendered_email_is_complete_enough_to_send_untouched():
 def test_a_postscript_is_not_labelled_twice():
     email = parse_email(WELL_FORMED.replace("PS: The free", "PS: P.S. The free"), position=1)
     assert render_email(email).count("P.S.") == 1
+
+# --------------------------------------------------------------- the layout
+
+
+WIDE_BLOCK = (
+    "You shipped it on Tuesday and nobody has heard about it yet. "
+    "The person who has to describe the work is the person who just spent the week "
+    "doing it, and by now they would rather not. "
+    "Point it at the branch you merged and read whatever comes back to you, then keep "
+    "the half that is right and rewrite the half that is not before you send it on."
+)
+
+
+def test_a_block_too_wide_is_re_broken_instead_of_sent_back():
+    """The repair this replaces cost a full deep-tier writer call to move a
+    blank line - and the model rewrote the words while it was in there, so the
+    draft had to be read cold all over again.
+
+    The only recorded repair in the project's own history was exactly this:
+    "block 3 is 56 words in one paragraph".
+    """
+    laid_out = reflow(WIDE_BLOCK)
+    blocks = laid_out.split("\n\n")
+
+    assert len(blocks) >= _MIN_PARAGRAPHS
+    assert all(len(block.split()) <= _MAX_PARAGRAPH_WORDS for block in blocks)
+    assert structural_issues(
+        email_with(body=laid_out)
+    ) == [], "and the draft now passes without anybody being asked again"
+
+
+def test_the_layout_pass_changes_where_the_breaks_are_and_never_the_words():
+    """The whole justification. The copy is what the writer wrote; where it
+    breaks is typesetting, and typesetting has a correct answer."""
+    assert reflow(WIDE_BLOCK).split() == WIDE_BLOCK.split()
+
+
+def test_a_body_that_already_reads_well_is_left_exactly_alone():
+    """Including its soft line breaks. A pass that reformatted every draft
+    would be rewriting copy nobody objected to."""
+    good = "One idea here.\nWrapped by the writer.\n\nA second idea.\n\nAnd a third."
+    assert reflow(good) == good
+
+
+def test_bullets_are_never_re_broken():
+    """They have their own rule, and splitting them makes a list of lists."""
+    bullets = "- the first thing\n- the second thing\n- the third thing"
+    assert reflow(bullets) == bullets
+
+
+def test_one_sentence_too_long_is_still_the_writers_problem():
+    """Shortening it means changing words, and that is not a layout decision.
+    The gate still fires - it just fires for something a repair can fix."""
+    one_sentence = " ".join(["word"] * 70)
+    assert reflow(one_sentence) == one_sentence
+    assert any("one paragraph" in issue for issue in structural_issues(
+        email_with(body=one_sentence)
+    ))

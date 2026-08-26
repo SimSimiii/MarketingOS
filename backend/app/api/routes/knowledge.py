@@ -5,6 +5,7 @@ from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
 from app.api.deps import KnowledgeServiceDep
 from app.ingestion.exceptions import IngestionError
 from app.schemas.knowledge import (
+    KnowledgeBaseRead,
     KnowledgeDocumentRead,
     KnowledgeDocumentSummary,
     KnowledgeSourceCreate,
@@ -85,6 +86,32 @@ def list_documents(
         KnowledgeDocumentSummary.model_validate(document)
         for document in service.list_documents(campaign_id, brand_id)
     ]
+
+
+@router.get("/base", response_model=KnowledgeBaseRead)
+def get_knowledge_base(
+    service: KnowledgeServiceDep,
+    brand_id: UUID | None = None,
+    campaign_id: UUID | None = None,
+) -> KnowledgeBaseRead:
+    """Everything compiled about one business, classified onto shelves.
+
+    Declared above `/{document_id}` deliberately: FastAPI matches routes in
+    declaration order, and "base" would otherwise be handed to the document
+    route as a malformed UUID and 422 instead of resolving here.
+    """
+    if brand_id is None and campaign_id is None:
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            "Pass either `brand_id` or `campaign_id` - knowledge belongs to one business.",
+        )
+    base = service.knowledge_base(brand_id=brand_id, campaign_id=campaign_id)
+    if base is None:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND,
+            "Nothing has been compiled here yet - it happens on the first campaign run.",
+        )
+    return KnowledgeBaseRead.from_base(base, brand_id=brand_id, campaign_id=campaign_id)
 
 
 @router.get("/{document_id}", response_model=KnowledgeDocumentRead)

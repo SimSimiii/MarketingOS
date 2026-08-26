@@ -8,6 +8,7 @@ from app.schemas.campaign import (
     CampaignExecutionRead,
     CampaignPolicyUpdate,
     CampaignRead,
+    RunForecast,
 )
 from app.services.campaign_service import (
     CampaignAlreadyRunningError,
@@ -89,6 +90,21 @@ def update_campaign_policy(
     if campaign is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Campaign not found")
     return CampaignRead.model_validate(service.update_policy(campaign, data))
+
+
+@router.get("/{campaign_id}/forecast", response_model=RunForecast)
+def forecast_campaign(campaign_id: UUID, service: CampaignServiceDep) -> RunForecast:
+    """What this campaign will cost to run, before it is run.
+
+    Free and instant: nothing here calls a model. The pipeline is a state
+    machine, so the number of model calls a run makes follows from the preset
+    and from the number of emails the request asks for - and the money beside
+    it is what this user's own past runs on this preset actually cost.
+    """
+    campaign = service.get_campaign(campaign_id)
+    if campaign is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Campaign not found")
+    return service.forecast_run(campaign)
 
 
 @router.post(

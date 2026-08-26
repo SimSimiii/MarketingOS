@@ -26,6 +26,20 @@ class GoldenCase:
     documents: tuple[tuple[str, str], ...] = field(default_factory=tuple)
     target_market: str = ""
     goals: str = ""
+    #: An email a person wrote for this brief, from the same material, in the
+    #: labelled-field format the writer emits.
+    #:
+    #: The reason this exists: every other number in the benchmark compares the
+    #: system to an earlier version of itself, which can only ever say whether
+    #: a change helped - never whether the output is any good. "Average pull
+    #: went from 5.1 to 5.4" is compatible with both versions being worse than
+    #: anything a person would send. A control is the only measurement in the
+    #: file with an outside referent, and beating it is the actual goal, so it
+    #: is the number to look at first.
+    #:
+    #: Held inline for the same reason the documents are: a control that drifts
+    #: makes every comparison against it meaningless.
+    control_email: str = ""
 
 
 _NOTEWRIGHT_SITE = """# Notewright
@@ -87,6 +101,60 @@ were by Wednesday." - Marta, operations lead
 """
 
 
+#: Written by hand, from the material above and nothing else, to be the thing
+#: the system has to beat. Deliberately not a straw man and not a showpiece:
+#: this is what a competent freelance copywriter sends on a Tuesday - one idea,
+#: one proof, a small ask, no throat-clearing. A control that is easy to beat
+#: measures nothing, and a control nobody could beat measures nothing either.
+_NOTEWRIGHT_CONTROL = """ROLE: hook
+SUBJECT: Nine seconds versus Friday afternoon
+PREVIEW: the part of shipping that never gets scheduled
+GREETING: Hi there,
+CTA: Point it at your last branch
+SIGNOFF: - the Notewright team
+PS: 1,500 free credits to start, and no card.
+BODY:
+You shipped on Tuesday. You are writing about it on Friday.
+
+That gap is not a discipline problem. The person who has to describe the work
+is the person who just spent a week doing it, and by Friday they would rather
+do almost anything else.
+
+Notewright reads the commits you already merged and drafts the note in about
+nine seconds. It reads your last twenty entries first, so it writes the way
+you do rather than the way a changelog generator does.
+
+Priya, an engineering lead at Halcyon, put it like this: "We stopped arguing
+about who writes the notes. It just does it, and we edit."
+
+Point it at the branch you merged this week and read what comes back.
+"""
+
+_PORTWAY_CONTROL = """ROLE: activation
+SUBJECT: Your first folder is the whole setup
+PREVIEW: ten minutes, and then search starts working
+GREETING: Hi there,
+CTA: Connect one drive
+SIGNOFF: - the Portway team
+PS: Nothing to configure after the first connection.
+BODY:
+Portway is sitting in your account with nothing to search.
+
+That is the one step, and it is smaller than it looks: connect a single drive
+and indexing runs in the background. Most teams are done in under ten minutes.
+
+Search starts working as soon as the first folder finishes, so you are not
+waiting on all of it.
+
+Marta, an operations lead, said her team stopped asking her where things were
+by the Wednesday after she connected Dropbox on the Monday.
+
+You do not have to move anything or tidy anything first. Point it at the
+messiest drive you have; that is the one the search is for.
+
+Connect one drive and let it index while you do something else.
+"""
+
 GOLDEN_CASES: tuple[GoldenCase, ...] = (
     GoldenCase(
         name="rich-sequence",
@@ -95,6 +163,7 @@ GOLDEN_CASES: tuple[GoldenCase, ...] = (
         documents=(("Home", _NOTEWRIGHT_SITE), ("Blog", _NOTEWRIGHT_BLOG)),
         target_market="engineering teams that ship weekly",
         goals="trial signups",
+        control_email=_NOTEWRIGHT_CONTROL,
     ),
     GoldenCase(
         name="rich-single",
@@ -103,6 +172,7 @@ GOLDEN_CASES: tuple[GoldenCase, ...] = (
         documents=(("Home", _NOTEWRIGHT_SITE), ("Blog", _NOTEWRIGHT_BLOG)),
         target_market="engineering teams that ship weekly",
         goals="trial signups",
+        control_email=_NOTEWRIGHT_CONTROL,
     ),
     GoldenCase(
         name="thin-evidence",
@@ -122,6 +192,7 @@ GOLDEN_CASES: tuple[GoldenCase, ...] = (
         documents=(("Home", _ONBOARDING_SITE),),
         target_market="operations leads at small companies",
         goals="get the first source connected",
+        control_email=_PORTWAY_CONTROL,
     ),
 )
 

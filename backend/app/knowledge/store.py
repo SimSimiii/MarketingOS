@@ -58,12 +58,18 @@ def fingerprint_documents(documents: list[KnowledgeDocument]) -> str:
 
     Hashing content rather than ids or timestamps means re-uploading the same
     page does not invalidate perfectly good artifacts, while a single edited
-    sentence does.
+    sentence does. Duplicates collapse for the same reason: a second, identical
+    copy of a page teaches the compiler nothing the first one did not, so a run
+    that re-crawled a site it had already read reuses its artifacts instead of
+    paying to reach the same conclusions. Row ids deliberately play no part -
+    including them made every re-ingest look like new material, which is the
+    one case this is here to forgive.
     """
     digest = hashlib.sha256()
-    for document in sorted(documents, key=lambda item: str(item.id)):
-        digest.update(str(document.id).encode())
-        digest.update(hashlib.sha256(document.content.encode("utf-8")).digest())
+    for content_hash in sorted(
+        {hashlib.sha256(document.content.encode("utf-8")).hexdigest() for document in documents}
+    ):
+        digest.update(content_hash.encode())
     return digest.hexdigest()
 
 

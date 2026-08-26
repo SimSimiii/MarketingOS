@@ -35,7 +35,23 @@ class ExecutionPolicy(BaseModel):
     #: and unspent evidence, which are the failures that look finished.
     critic_enabled: bool = True
     #: Several cold readers per draft instead of one.
-    reader_panel: bool = False
+    #:
+    #: On by default since the reader became the instrument every other
+    #: decision is read off. One reader is one sample of a stochastic judge:
+    #: the median of three is what makes "this rewrite came back better" a
+    #: measurement rather than a coin landing the same way twice, and a cold
+    #: read is the cheapest call in the run.
+    reader_panel: bool = True
+    #: Put two drafts in front of the reader and ask which one they would act
+    #: on, instead of comparing two absolute scores. Off, the loop falls back
+    #: to comparing pull - which is the comparison that could not tell a
+    #: rewrite that changed everything from one that changed nothing.
+    tournament: bool = True
+    #: Alternative subject lines written for the finished email and scored on
+    #: the open decision alone. Zero disables it. The cheapest quality in the
+    #: system after the bake-off: one writer turn and one reaction per reader,
+    #: spent on the only sentence most recipients ever read.
+    subject_variants: int = Field(default=4, ge=0, le=8)
     #: The whole-sequence read after every email passes individually.
     sequence_pass: bool = True
     #: Reworks driven by the sequence pass. Bounded separately: this one
@@ -62,6 +78,17 @@ class ExecutionPolicy(BaseModel):
     #: Recompile the business's knowledge even when the material has not
     #: changed. The normal path reuses it.
     force_recompile: bool = False
+    #: Stop before the strategist when the material contains nothing a stranger
+    #: has any reason to believe - no named customer, no quote, no attributed
+    #: outcome - and hand back the questions that would fix it.
+    #:
+    #: On by default because the alternative is what the system did before:
+    #: plan an outcome-led campaign anyway, write it, have a cold reader
+    #: disbelieve it, rewrite it, and have them disbelieve it again, since no
+    #: rewrite has ever added a proof the material did not contain. That run
+    #: costs real money to arrive at a conclusion `preflight.assess` reaches
+    #: for nothing before the first call.
+    require_proof: bool = True
     #: Pages the crawler may read when ingesting a website.
     max_crawl_pages: int = Field(default=12, ge=1, le=40)
 
@@ -82,7 +109,18 @@ class ExecutionPolicy(BaseModel):
 #:
 #: What `maximum` should widen is how much judgment is bought - more openings,
 #: a full reader panel, more rewrites - not the price of a reaction.
-_DEEP_ROLES = ("strategist", "email_writer", "conversion_critic", "sequence_reviewer")
+#: The preference judge and the inbox scanner are deliberately absent, for the
+#: same reason the cold reader is: a choice between two emails and a glance at
+#: a subject line are reactions, and the strongest preset should widen how many
+#: reactions are bought rather than what each one costs. The subject *writer*
+#: is here - writing eight lines that are eight different bets is craft.
+_DEEP_ROLES = (
+    "strategist",
+    "email_writer",
+    "conversion_critic",
+    "sequence_reviewer",
+    "subject_writer",
+)
 
 PRESETS: dict[PolicyPreset, ExecutionPolicy] = {
     "fast": ExecutionPolicy(
@@ -90,19 +128,30 @@ PRESETS: dict[PolicyPreset, ExecutionPolicy] = {
         draft_candidates=1,
         critic_enabled=False,
         reader_panel=False,
+        tournament=False,
+        subject_variants=0,
         sequence_pass=False,
         max_sequence_reworks=0,
         max_duration_seconds=420,
         max_total_tokens=400_000,
         max_crawl_pages=5,
+        require_proof=False,
         model_overrides={"*": "sonnet", "knowledge_compiler": "haiku"},
     ),
+    # Rebalanced after a measured run in which a third of the budget bought
+    # refinement that moved nothing: a critique whose edits were discarded, a
+    # rewrite that came back level, and a second critique of that. The money
+    # moved to the two places the same run showed were starved - how many
+    # different arguments get written, and whether the instrument comparing
+    # them can tell them apart.
     "balanced": ExecutionPolicy(),
     "maximum": ExecutionPolicy(
         max_revisions=3,
         draft_candidates=4,
         critic_enabled=True,
         reader_panel=True,
+        tournament=True,
+        subject_variants=6,
         sequence_pass=True,
         max_sequence_reworks=3,
         max_duration_seconds=2_400,

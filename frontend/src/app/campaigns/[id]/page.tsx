@@ -2,10 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { StartCampaignButton } from "@/app/campaigns/[id]/start-campaign-button";
+import { NewCampaignDialog } from "@/app/campaigns/new-campaign-dialog";
 import { CampaignActions } from "@/components/campaign-actions";
 import { CampaignPolicySelect } from "@/components/campaign-policy-select";
 import { ExecutionRowActions } from "@/components/execution-row-actions";
 import { StatusBadge } from "@/components/status-badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -48,6 +50,19 @@ export default async function CampaignDetailPage({
         </div>
         <div className="flex items-center gap-2">
           <CampaignActions campaign={campaign} redirectOnDeleteTo="/campaigns" />
+          {campaign.brand_id && (
+            <NewCampaignDialog
+              trigger={<Button variant="outline">Generate another type</Button>}
+              prefill={{
+                brandId: campaign.brand_id,
+                productDescription: campaign.product_description,
+                productUrl: campaign.product_url,
+                targetMarket: campaign.target_market,
+                senderName: campaign.sender_name,
+                senderRole: campaign.sender_role,
+              }}
+            />
+          )}
           <StartCampaignButton campaignId={campaign.id} />
         </div>
       </div>

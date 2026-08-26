@@ -47,6 +47,37 @@ class ExplodingProvider(AIProvider):
         return 0
 
 
+class FlakyProvider(AIProvider):
+    """A provider that drops the first `failures` calls and then answers.
+
+    The shape of the failure this system is most exposed to: the CLI is a
+    subprocess spawned per call, and a spawn that loses a race reports as an
+    exception before a single token has been consumed.
+    """
+
+    def __init__(self, failures: int = 1, reply: str = "answered on the retry") -> None:
+        self.remaining = failures
+        self.reply = reply
+        self.attempts = 0
+
+    async def generate(self, request: AIRequest) -> AIResponse:
+        self.attempts += 1
+        if self.remaining > 0:
+            self.remaining -= 1
+            raise ConnectionError("the CLI did not start")
+        return AIResponse(
+            content=self.reply,
+            model=request.model or "fake-model",
+            usage=AIUsage(input_tokens=10, output_tokens=5),
+        )
+
+    async def stream(self, request: AIRequest) -> AsyncIterator[str]:
+        yield (await self.generate(request)).content
+
+    def count_tokens(self, text: str) -> int:
+        return 0
+
+
 @pytest.fixture
 def prompts_dir(tmp_path: Path) -> Path:
     directory = tmp_path / "prompts"

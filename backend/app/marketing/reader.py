@@ -17,29 +17,70 @@ idea in the codebase and was buried as a private method of one specialist.
 """
 
 import asyncio
+import logging
 import statistics
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from app.ai.model_router import ModelTier
 from app.knowledge.artifacts import AudienceModel, Segment
 from app.marketing.email_copy import Email, render_email
-from app.runtime.exceptions import OutputValidationError
+from app.runtime.exceptions import ModelRuntimeError
 from app.runtime.model_session import ModelSession
+
+logger = logging.getLogger("marketingos.marketing")
 
 ROLE_ID = "blind_reader"
 
 #: What a draft has to make a cold reader feel to ship untouched. Below it the
 #: copy earns a rewrite against the reader's own words.
 #:
-#: The number only means something because the reader's own scale says the same
-#: thing at the same point - see prompts/reader.md, where 7 is where they say
-#: they would click. A threshold and a rubric that disagree produce a floor
-#: nothing can reach: the scale used to anchor 7 at "you would click if the
-#: week were calmer" while `landed` also required "would click today", so a
-#: self-consistent reader scoring exactly 7 had to answer no, and the real
-#: floor was 8 that nobody had written down.
+#: The number means something because `_PULL_BY_CLICKS` says what it is in
+#: units somebody could check against a real send: 7 is "six or more of a
+#: hundred people like me would click", which is a top-decile cold email and a
+#: routine one for a list that already signed up.
+#:
+#: It used to mean "this one person, asked point blank, says they would click
+#: today" - an event a real recipient declines about ninety-seven times in a
+#: hundred however good the email is. A floor placed on a 3% event is not a
+#: high standard, it is a floor no copy can clear, and everything downstream
+#: that compared one draft's score to another's was comparing two saturated
+#: numbers. In a measured run three openings scored 2, 1 and 2, a rewrite came
+#: back at 2, and the loop stopped - not because rewriting had stopped helping
+#: but because the instrument could not tell the drafts apart.
 PULL_THRESHOLD = 7
+
+#: How many of a hundred people like this reader have to click for the copy to
+#: score each point. Read as "at least this many clicks buys this score", worst
+#: first from the bottom.
+#:
+#: The anchors are cold-email arithmetic rather than taste. Ordinary cold copy
+#: lands 1-3 clicks per hundred; 6 is the top of the range a good list sees; 25
+#: is a number no cold send reaches and which only an onboarding email to
+#: people who already signed up ever earns. Spacing the scale on that means
+#: each point up is a real multiple of results, and a model estimating "how
+#: many of a hundred" is answering a frequency question - the kind it is
+#: measurably better calibrated on than "how much did you want it, out of ten".
+_PULL_BY_CLICKS: tuple[tuple[int, int], ...] = (
+    (25, 10),
+    (14, 9),
+    (9, 8),
+    (6, 7),
+    (4, 6),
+    (3, 5),
+    (2, 4),
+    (1, 2),
+)
+
+
+def pull_from_clicks(clicks_in_100: int) -> int:
+    """The 0-10 score a click frequency is worth.
+
+    In code and not in the prompt because it is a mapping, and a mapping has a
+    correct answer. Asking each reader to apply the rubric itself is asking
+    every call to re-derive the same table, slightly differently.
+    """
+    return next((score for floor, score in _PULL_BY_CLICKS if clicks_in_100 >= floor), 0)
 
 
 class BlindRead(BaseModel):
@@ -50,6 +91,17 @@ class BlindRead(BaseModel):
     what_it_sells: str = ""
     biggest_doubt: str = ""
     would_act: bool = False
+    #: Out of a hundred people in exactly this situation, how many open it on
+    #: the subject and preview, and how many then click. `None` means this read
+    #: was built by hand rather than reported, and `pull` stands as given.
+    opens_in_100: int | None = Field(default=None, ge=0, le=100)
+    clicks_in_100: int | None = Field(default=None, ge=0, le=100)
+    #: What the email would have had to say for this reader to click. The one
+    #: generative question in the system: everything else the loop collects is
+    #: a verdict on what was written, and this is the only field that says what
+    #: to write instead - in the reader's own words rather than a critic's.
+    to_click_it_would_have_to: str = ""
+    #: Derived from `clicks_in_100`, never reported. See `pull_from_clicks`.
     pull: int = Field(default=0, ge=0, le=10)
     fixes: list[str] = Field(default_factory=list)
     #: Which reader this was, when a panel read the same draft.
@@ -60,9 +112,26 @@ class BlindRead(BaseModel):
     #: lie in whichever direction it was rounded.
     reported: bool = True
 
+    @model_validator(mode="after")
+    def _derive_pull(self) -> "BlindRead":
+        """Frequencies decide the score, and they have to agree with each other.
+
+        A reader cannot be clicked by more people than opened it, and one that
+        answers as though it can has given two numbers of which only the first
+        is about the subject line. Clamping rather than rejecting: the rest of
+        the report is still worth having, and a read thrown away costs a whole
+        pass.
+        """
+        if self.clicks_in_100 is None:
+            return self
+        if self.opens_in_100 is not None and self.clicks_in_100 > self.opens_in_100:
+            self.clicks_in_100 = self.opens_in_100
+        self.pull = pull_from_clicks(self.clicks_in_100)
+        return self
+
     @property
     def landed(self) -> bool:
-        return self.reported and self.opened and self.would_act and self.pull >= PULL_THRESHOLD
+        return self.reported and self.pull >= PULL_THRESHOLD
 
     def render(self) -> str:
         lines = [
@@ -70,9 +139,19 @@ class BlindRead(BaseModel):
             f"- What they think it sells: {self.what_it_sells or 'they could not say'}",
             f"- Where they stopped reading: {self.stopped_at or 'they read to the end'}",
             f"- What would stop them clicking: {self.biggest_doubt or 'nothing they named'}",
-            f"- Would they click today? {'yes' if self.would_act else 'no'}",
-            f"- How much they wanted it: {self.pull}/10",
         ]
+        if self.opens_in_100 is not None:
+            lines.append(
+                f"- Of a hundred people like them: {self.opens_in_100} open it, "
+                f"{self.clicks_in_100 or 0} click ({self.pull}/10)"
+            )
+        else:
+            lines.append(f"- How much they wanted it: {self.pull}/10")
+        if self.to_click_it_would_have_to:
+            lines.append(
+                f"- What it would have had to say for them to click: "
+                f"{self.to_click_it_would_have_to}"
+            )
         if self.fixes:
             lines.append("- Lines they would cut or change: " + "; ".join(self.fixes))
         return "\n".join(lines)
@@ -114,6 +193,20 @@ class PanelRead(BaseModel):
         return statistics.median(read.pull for read in self.reported) if self.reported else 0.0
 
     @property
+    def clicks_in_100(self) -> float:
+        """The panel's estimate of how many of a hundred people click.
+
+        The number `pull` is derived from, kept because it is the one figure on
+        the receipt a user can compare against a real send they have done -
+        "3 in 100" means something to somebody who has mailed a list, and
+        "5.0/10" does not.
+        """
+        estimates = [
+            read.clicks_in_100 for read in self.reported if read.clicks_in_100 is not None
+        ]
+        return statistics.median(estimates) if estimates else 0.0
+
+    @property
     def landed(self) -> bool:
         """Whether the panel would click: more than half of the readers who
         reported back would have.
@@ -147,6 +240,8 @@ class PanelRead(BaseModel):
         reported = self.reported
         if not reported:
             return "nobody could read it"
+        if any(read.clicks_in_100 is not None for read in reported):
+            return f"about {self.clicks_in_100:.0f} in 100 would click"
         clicked = sum(1 for read in reported if read.would_act)
         if len(reported) == 1:
             return "they would click today" if clicked else "they would not click"
@@ -195,13 +290,23 @@ class BlindReader:
                 task="React now, as the person described above, reading this for the first time.",
                 schema=BlindRead,
             )
-        except OutputValidationError:
+        except ModelRuntimeError as exc:
             # A reader who could not report is not a reason to throw away a
             # draft: it is no verdict, and the copy stands on the other
             # checks. What it must never become is a passing score - scoring
             # the failure at the threshold shipped drafts nobody had read,
             # and averaged a number nobody had given into the campaign's
             # headline result.
+            #
+            # Every runtime failure, not only a malformed answer. A panel is
+            # read concurrently, so a transport failure on one of three
+            # personas used to escape `gather` and take the whole campaign
+            # down - past the craft loop, past the pipeline (which catches
+            # `CampaignError`, and this is not one), and into the
+            # orchestrator's crash handler, which discards every email the run
+            # had already finished. One reader out of three not coming back is
+            # exactly the case `reported=False` was built for.
+            logger.info("reader: a cold read did not come back - %s", exc)
             return BlindRead(
                 reported=False,
                 persona=persona,

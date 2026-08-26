@@ -12,9 +12,11 @@ import type {
   ExecutionLog,
   ExecutionTimeline,
   GeneratedAsset,
+  KnowledgeBase,
   KnowledgeDocument,
   KnowledgeDocumentDetail,
   KnowledgeSourceCreate,
+  RunForecast,
   RunningExecution,
   UserSettings,
   UserSettingsUpdate,
@@ -62,6 +64,9 @@ export const api = {
     request<Campaign>(`/campaigns/${id}/duplicate`, { method: "POST" }),
   updateCampaignPolicy: (id: string, data: CampaignPolicyUpdate) =>
     request<Campaign>(`/campaigns/${id}/policy`, { method: "PUT", body: JSON.stringify(data) }),
+  /** What running this campaign will cost, before it is run. Free and
+   * instant - nothing behind this endpoint calls a model. */
+  getCampaignForecast: (id: string) => request<RunForecast>(`/campaigns/${id}/forecast`),
   startCampaign: (id: string) =>
     request<CampaignExecution>(`/campaigns/${id}/start`, { method: "POST" }),
   restartCampaign: (id: string) =>
@@ -111,6 +116,15 @@ export const api = {
     return request<KnowledgeDocument[]>(`/knowledge${suffix}`);
   },
   getKnowledgeDocument: (id: string) => request<KnowledgeDocumentDetail>(`/knowledge/${id}`),
+  /** Everything compiled about one business, classified onto shelves and
+   * ranked by what each fact is worth to a sale. 404s until the first
+   * campaign run, which is when compilation happens. */
+  getKnowledgeBase: (scope: { brandId?: string; campaignId?: string }) => {
+    const query = new URLSearchParams();
+    if (scope.brandId) query.set("brand_id", scope.brandId);
+    if (scope.campaignId) query.set("campaign_id", scope.campaignId);
+    return request<KnowledgeBase>(`/knowledge/base?${query}`);
+  },
   addKnowledgeSource: (data: KnowledgeSourceCreate) =>
     request<KnowledgeDocumentDetail[]>("/knowledge", {
       method: "POST",

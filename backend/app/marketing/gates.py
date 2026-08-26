@@ -23,8 +23,10 @@ from enum import StrEnum
 from pydantic import BaseModel, Field
 
 from app.knowledge.artifacts import OfferSheet
-from app.knowledge.ledger import EvidenceIndex
+from app.knowledge.ledger import Evidence, EvidenceIndex
 from app.marketing.email_copy import Email, render_email, structural_issues
+from app.marketing.substantiation import Substantiation, unspent_issues
+from app.marketing.substantiation import assess as assess_substantiation
 
 
 class GateSeverity(StrEnum):
@@ -180,8 +182,25 @@ _SPAM_TERMS = (
 _SHOUTING_RE = re.compile(r"\b[A-Z]{4,}\b")
 _EXCESS_PUNCT_RE = re.compile(r"[!?]{2,}|!\s*!")
 _EXCLAMATION_LIMIT = 2
-#: Words that are legitimately capitalized in normal copy.
-_SHOUTING_ALLOWED = frozenset({"SOC2", "GDPR", "HIPAA", "SaaS", "API", "SDK", "CSV", "JSON", "PDF"})
+#: Acronyms that are vocabulary rather than volume. "REST API" is how a
+#: technical product describes itself and "ACT NOW" is shouting; a gate that
+#: cannot tell them apart blocks the copy on the words it needs most - in a
+#: measured run it failed two of three drafts of an email about an HTTP
+#: endpoint, and each failure cost a full rewrite pass to fix nothing.
+#:
+#: Compared case-folded. Entries shorter than four characters never reach this
+#: rule (the pattern needs four capitals in a row) and are kept out of it.
+_SHOUTING_ALLOWED = frozenset(
+    {
+        # what a product built on someone else's API has to say out loud
+        "HTTP", "HTTPS", "REST", "JSON", "YAML", "HTML", "GRPC", "CRUD", "WEBHOOK",
+        "OAUTH", "SAML", "OIDC", "JWT", "CORS", "UUID", "CDN", "DNS", "TLS",
+        # compliance and commerce, which a reader wants to see stated plainly
+        "SOC2", "GDPR", "HIPAA", "CCPA", "ISO", "SLA", "SLAS", "VAT", "SAAS",
+        # the ones that carry a number the reader is meant to check
+        "MRR", "ARR", "ROI", "CPU", "GPU", "RAM",
+    }
+)
 
 
 def spam_gate(email: Email) -> GateReport:
@@ -197,7 +216,7 @@ def spam_gate(email: Email) -> GateReport:
                 f"\"{term}\" is spam-filter vocabulary - say the same thing in your own words"
             )
     shouting = [
-        word for word in _SHOUTING_RE.findall(text) if word not in _SHOUTING_ALLOWED
+        word for word in _SHOUTING_RE.findall(text) if word.upper() not in _SHOUTING_ALLOWED
     ]
     if shouting:
         details.append(
@@ -305,6 +324,28 @@ def call_to_action_gate(email: Email, offer: OfferSheet) -> GateReport:
     )
 
 
+# -------------------------------------------------------------- the proof
+
+
+def substantiation_gate(substantiation: Substantiation) -> GateReport:
+    """Did the email use the facts it was built on?
+
+    The evidence gate's mirror image. That one blocks a claim the material
+    does not support; this one notices copy that supports nothing - an email
+    assigned three facts and carrying none of them, which every check in the
+    system passed happily because inventing nothing is not the same as saying
+    something.
+
+    Advisory, and it has to be. A campaign for a business with no proof is
+    written from mechanism and specifics on purpose (see
+    app.marketing.preflight), and blocking would fail exactly the emails that
+    were right to be written that way. What it does instead is reach the
+    writer's correction turn in the same breath as the reader's report, which
+    is where an unspent fact is actually fixable.
+    """
+    return _report("substantiation", unspent_issues(substantiation), GateSeverity.ADVISORY)
+
+
 # -------------------------------------------------------------- composition
 
 
@@ -322,13 +363,23 @@ def run_all(
     previous: list[Email] | None = None,
     merge_fields: tuple[str, ...] | list[str] | None = None,
     extra_banned: tuple[str, ...] = (),
-) -> GateReport:
-    """Every deterministic check, in one report.
+    assigned: list[Evidence] | None = None,
+    ledger: list[Evidence] | None = None,
+) -> tuple[GateReport, Substantiation]:
+    """Every deterministic check, in one report - plus what the copy is
+    actually standing on.
 
     Order matters only for readability of the feedback: structure first
     (the draft is malformed), then honesty, then deliverability, then variety.
+
+    The substantiation is returned beside the report rather than folded into
+    it because it is not only a finding. Two of its three counts decide which
+    version of an email is kept - see `app.marketing.craft` - and a caller
+    that has already paid to compute them should not have to compute them
+    twice.
     """
     text = render_email(email)
+    substantiation = assess_substantiation(email, assigned or [], ledger or [])
     report = GateReport()
     for part in (
         structure_gate(email),
@@ -338,9 +389,10 @@ def run_all(
         spam_gate(email),
         overlap_gate(email, previous or []),
         call_to_action_gate(email, offer),
+        substantiation_gate(substantiation),
     ):
         report = report.extend(part)
-    return report
+    return report, substantiation
 
 
 def _dedupe(details: list[str]) -> list[str]:

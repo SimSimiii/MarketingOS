@@ -70,6 +70,21 @@ class ProofPosture:
     def has_checkable(self) -> bool:
         return bool(self.checkable)
 
+    @property
+    def nothing_to_argue_from(self) -> bool:
+        """Whether a campaign written from this would be assertion all the way
+        down.
+
+        Not the same as "no testimonials". A business with a price, a limit and
+        a mechanism has plenty to write about even though nobody has vouched
+        for it - see `render_for_strategy`, which lists the four angles that
+        need no proof. This is the case where none of those angles exist
+        either, or where the compiler found a hole a campaign cannot be
+        written around at all, and it is the only case worth stopping a run
+        over.
+        """
+        return (not self.has_proof and not self.has_checkable) or bool(self.blocking)
+
     def summary(self) -> str:
         """One line for the run log and the receipt."""
         if self.has_proof:

@@ -14,9 +14,11 @@ everything in front of it.
 """
 
 import logging
+import re
 
 from app.ai.model_router import ModelTier
 from app.knowledge.artifacts import KnowledgeArtifacts
+from app.knowledge.base import build_knowledge_base
 from app.knowledge.corpus import SourceCorpus
 from app.marketing.briefs import CampaignBrief, EmailBrief
 from app.marketing.contract import DeliverableContract
@@ -43,6 +45,12 @@ _RETRIEVAL_CHUNKS = 6
 #: number, and a number has a correct answer.
 MAX_EVIDENCE_PER_EMAIL = 3
 
+#: Other claims one email slot may carry into the bake-off. Three, because the
+#: bake-off drafts at most four candidates and the first of them argues the
+#: idea the strategist actually chose. Trimmed here rather than asked for in
+#: the prompt, for the same reason the evidence list is: it is a number.
+MAX_ALTERNATIVE_IDEAS = 3
+
 
 class Strategist:
     def __init__(self, session: ModelSession) -> None:
@@ -61,6 +69,12 @@ class Strategist:
             "request": request.request,
             "campaign_context": request.render_context(),
             "knowledge": artifacts.render_for_strategy(),
+            # The shape of what exists, above the facts themselves. A hundred
+            # undifferentiated entries answer "what is true" and hide "what
+            # can this campaign argue from at all" - and the second question
+            # is the one being asked here. An empty shelf is the most useful
+            # line in it: it is why an obvious angle is off the table.
+            "knowledge_map": build_knowledge_base(artifacts).render_map(),
             "proof_posture": assess(artifacts).render_for_strategy(),
             "contract": contract.render(),
             "relevant_material": corpus.render_search(
@@ -166,6 +180,9 @@ class Strategist:
                     "position": position,
                     "evidence_ids": assigned,
                     "must_not_reuse": list(spent),
+                    "alternative_ideas": _distinct_ideas(
+                        email.alternative_ideas, email.single_idea
+                    )[:MAX_ALTERNATIVE_IDEAS],
                 }
             )
             if cta_labels and email.call_to_action and email.call_to_action.lower() not in cta_labels:
@@ -180,3 +197,33 @@ class Strategist:
 
         brief.emails = normalized
         return brief
+
+
+def _distinct_ideas(alternatives: list[str], chosen: str) -> list[str]:
+    """The alternatives that are actually alternatives.
+
+    An alternative that restates `single_idea` costs a whole draft and a cold
+    read to discover that it was the same bet, which is the one thing a
+    bake-off must never spend money on. Compared on significant words rather
+    than exactly, because "your script costs more than you think" and "the
+    in-house script costs more than you think" are one idea.
+    """
+    seen = [_idea_key(chosen)] if chosen else []
+    kept: list[str] = []
+    for idea in alternatives:
+        key = _idea_key(idea)
+        if not key or any(_too_close(key, earlier) for earlier in seen):
+            continue
+        seen.append(key)
+        kept.append(idea.strip())
+    return kept
+
+
+def _idea_key(idea: str) -> frozenset[str]:
+    return frozenset(word for word in re.findall(r"[a-z]{4,}", idea.lower()))
+
+
+def _too_close(left: frozenset[str], right: frozenset[str]) -> bool:
+    if not left or not right:
+        return False
+    return len(left & right) * 2 >= min(len(left), len(right))

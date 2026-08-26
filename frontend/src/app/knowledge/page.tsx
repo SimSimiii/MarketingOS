@@ -1,8 +1,11 @@
+import Link from "next/link";
+
 import { AddKnowledgeDialog } from "@/app/knowledge/add-knowledge-dialog";
 import { BrandKnowledgeDialog } from "@/app/knowledge/brand-knowledge-dialog";
 import { DeleteDocumentButton } from "@/app/knowledge/delete-document-button";
 import { NewBrandDialog } from "@/app/knowledge/new-brand-dialog";
 import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -91,7 +94,13 @@ export default async function KnowledgePage() {
                             still unanswered
                           </p>
                         )}
-                        <div className="pt-1">
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          <Link
+                            href={`/knowledge/base?brand=${brand.id}`}
+                            className={buttonVariants({ variant: "outline", size: "sm" })}
+                          >
+                            Knowledge base
+                          </Link>
                           <BrandKnowledgeDialog brandId={brand.id} brandName={brand.name} />
                         </div>
                       </>

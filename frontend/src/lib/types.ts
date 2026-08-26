@@ -23,6 +23,10 @@ export interface Campaign {
   product_url: string | null;
   target_market: string | null;
   goals: string | null;
+  /** Who the emails are from. Without it the writer signs off as the company,
+   * which reads as a broadcast because it is one. */
+  sender_name: string | null;
+  sender_role: string | null;
   /** The business this campaign belongs to. Set => knowledge is compiled once
    * for the brand and reused by every campaign attached to it. */
   brand_id: string | null;
@@ -45,9 +49,15 @@ export interface CampaignCreateRequest {
   product_url?: string | null;
   target_market?: string | null;
   goals?: string | null;
+  sender_name?: string | null;
+  sender_role?: string | null;
   brand_id?: string | null;
   policy_preset?: PolicyPreset | null;
   model_overrides?: Record<string, string> | null;
+  /** Re-read and recompile the brand's knowledge even if nothing has changed
+   * since the last compile. Omitted/null defers to the pipeline's default
+   * (reuse what's already compiled). */
+  force_recompile?: boolean | null;
 }
 
 /** A business whose knowledge is compiled once and reused by every campaign
@@ -168,6 +178,81 @@ export interface BrandKnowledge {
   artifacts: KnowledgeArtifactsDetail;
 }
 
+/** Which shelf of the knowledge base a fact sits on - the department of the
+ * business it belongs to, and so the buyer question it answers. Mirrors
+ * app.knowledge.taxonomy.FactCategory. */
+export type FactCategory =
+  | "proof"
+  | "commercial"
+  | "product"
+  | "technical"
+  | "trust"
+  | "market"
+  | "operations"
+  | "company"
+  | "brand";
+
+/** What a fact is for in a campaign. Coarser than the score on purpose: the
+ * difference between 71 and 68 is noise, the difference between "lead an email
+ * with this" and "supporting line" is a decision. */
+export type ValueBand = "headline" | "supporting" | "background";
+
+/** Which compiled artifact a fact was lifted out of. Only `evidence` entries
+ * carry an id a copywriter may cite; everything else is context. */
+export type EntryOrigin = "evidence" | "profile" | "offer" | "audience" | "voice";
+
+/** One thing known about the business, on a shelf, with a price on it. */
+export interface KnowledgeEntry {
+  id: string;
+  category: FactCategory;
+  statement: string;
+  /** The text from the user's own material that supports this. Empty for
+   * inferred entries - which is what `grounding` is next to it for. */
+  verbatim: string;
+  source: string;
+  document_id: string | null;
+  origin: EntryOrigin;
+  kind: string;
+  grounding: Grounding;
+  strength: string;
+  /** 0-100. See app.knowledge.taxonomy.assess_value. */
+  value: number;
+  band: ValueBand;
+  /** Why it scored that, in plain sentences - a ranking nobody can
+   * interrogate is a ranking nobody believes. */
+  why: string[];
+  /** Whether a writer may cite this id in copy. True only for evidence. */
+  citable: boolean;
+  tags: string[];
+}
+
+export interface KnowledgeShelf {
+  category: FactCategory;
+  label: string;
+  blurb: string;
+  buyer_question: string;
+  sells_by: string;
+  /** What it costs this business that the shelf is empty. The most useful
+   * line on the page when it is. */
+  when_empty: string;
+  count: number;
+  headline_count: number;
+  entries: KnowledgeEntry[];
+}
+
+/** Everything compiled about one business, classified onto shelves. */
+export interface KnowledgeBase {
+  brand_id: string | null;
+  campaign_id: string | null;
+  version: number;
+  compiled_at: string | null;
+  total: number;
+  citable_total: number;
+  headline_total: number;
+  shelves: KnowledgeShelf[];
+  open_questions: string[];
+}
+
 export interface CampaignPolicyUpdate {
   preset?: PolicyPreset | null;
   overrides?: Record<string, unknown> | null;
@@ -267,6 +352,36 @@ export interface KnowledgeSourceCreate {
   max_pages?: number;
 }
 
+/** What a run will cost, before it is bought. The call count is arithmetic -
+ * nothing in the pipeline spends a model call deciding what happens next - and
+ * the money is what this user's own past runs on this preset actually came to,
+ * never a price list. */
+export interface RunForecast {
+  preset: string;
+  emails: number;
+  /** False when the user named no number, so `emails` is the working
+   * assumption rather than a promise. */
+  count_is_explicit: boolean;
+  /** The run where every email lands first time. */
+  low: number;
+  /** The run that buys every rewrite and rework it is allowed. */
+  high: number;
+  compile_low: number;
+  compile_high: number;
+  /** True when nothing attached has changed since the last compile, so this
+   * run reads none of it again. */
+  knowledge_reused: boolean;
+  /** Finished runs on this preset that actually delivered. Zero means no
+   * figure is offered, not a figure of zero - a run that died on its first
+   * call is not counted. */
+  observed_runs: number;
+  /** What one delivered email cost on the middle run. Per email because past
+   * runs were different lengths; the median because a run that died two calls
+   * in and one that bought every rewrite are both real and neither is what to
+   * plan around. */
+  observed_cost_per_email: number;
+}
+
 export interface UserSettings {
   id: string;
   company_name: string | null;
@@ -335,6 +450,11 @@ export type LiveExecutionEvent = LiveEventBase &
         segments: string[];
         gaps: string[];
         voice_learned: boolean;
+        /** What the compile could not use - candidate facts whose quote was
+         * not really in the source, readings that never came back, material
+         * past the reading budget. A thin ledger has two very different
+         * causes and only one of them is the business's fault. */
+        notes?: string[];
       }
     | {
         type: "brief_ready";

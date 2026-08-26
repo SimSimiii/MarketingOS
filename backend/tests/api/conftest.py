@@ -4,7 +4,7 @@ import time
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy.pool import StaticPool
+from sqlalchemy import event
 from sqlmodel import Session, SQLModel, create_engine
 
 from app.ai.factory import get_ai_provider
@@ -22,10 +22,36 @@ def provider() -> RoleScriptedProvider:
 
 
 @pytest.fixture
-def engine():
+def engine(tmp_path):
+    """A real SQLite file, one connection per session.
+
+    Deliberately not `sqlite://` on a `StaticPool`. That configuration hands
+    every `Session(engine)` in the process the *same* DBAPI connection, and
+    these tests always have at least two live at once: the request thread the
+    `TestClient` drives and the background task running the campaign (see
+    app.orchestration.execution_manager). Two sessions interleaving
+    `commit()` and `rollback()` on one SQLite connection is one transaction,
+    not two - so a commit in the run flushes the request's half-built rows
+    and a rollback throws away the run's, which surfaces as
+    `Could not refresh instance` on whichever row lost the race. That is the
+    entire reason this suite was quarantined as "randomly flaky".
+
+    A file-backed database gives each session its own connection and lets
+    SQLite serialize the writers itself. WAL keeps a reader from blocking the
+    writer, and the busy timeout absorbs the short overlaps that remain.
+    """
     engine = create_engine(
-        "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
+        f"sqlite:///{tmp_path / 'test.db'}",
+        connect_args={"check_same_thread": False, "timeout": 30},
     )
+
+    @event.listens_for(engine, "connect")
+    def _sqlite_pragmas(connection, _record):  # pragma: no cover - driver glue
+        cursor = connection.cursor()
+        cursor.execute("PRAGMA journal_mode=WAL")
+        cursor.execute("PRAGMA busy_timeout=30000")
+        cursor.close()
+
     SQLModel.metadata.create_all(engine)
     return engine
 
@@ -52,7 +78,19 @@ def create_campaign(client: TestClient, **overrides) -> dict:
     payload.update(overrides)
     response = client.post("/api/campaigns", json=payload)
     assert response.status_code == 201, response.text
-    return response.json()
+    campaign = response.json()
+
+    # These tests are about the HTTP surface and the run's lifecycle. They
+    # attach no material, which compiles to nothing a stranger could check -
+    # the one case the preflight stop refuses to spend a run on, and it would
+    # end every one of them before the first role turn. The stop is tested
+    # where it belongs, against the pipeline.
+    policy = client.put(
+        f"/api/campaigns/{campaign['id']}/policy",
+        json={"preset": "balanced", "overrides": {"require_proof": False}},
+    )
+    assert policy.status_code == 200, policy.text
+    return policy.json()
 
 
 def await_terminal_status(client: TestClient, execution_id: str) -> dict:

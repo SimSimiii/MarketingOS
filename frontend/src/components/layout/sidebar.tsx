@@ -10,12 +10,20 @@ const NAV_ITEMS = [
   { href: "/campaigns", label: "Campaigns" },
   { href: "/live", label: "Live" },
   { href: "/knowledge", label: "Product knowledge" },
+  { href: "/knowledge/base", label: "Knowledge base" },
   { href: "/settings", label: "Settings" },
   { href: "/logs", label: "Activity" },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+
+  // Longest prefix wins. With a nested item in the list ("/knowledge/base"
+  // under "/knowledge"), a plain startsWith lights up both and the sidebar
+  // stops telling you where you are.
+  const activeHref = NAV_ITEMS.filter((item) =>
+    item.href === "/" ? pathname === "/" : pathname.startsWith(item.href),
+  ).sort((a, b) => b.href.length - a.href.length)[0]?.href;
 
   return (
     <aside className="flex w-60 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
@@ -25,7 +33,7 @@ export function Sidebar() {
       </div>
       <nav className="flex-1 space-y-1 px-3">
         {NAV_ITEMS.map((item) => {
-          const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+          const active = item.href === activeHref;
           return (
             <Link
               key={item.href}

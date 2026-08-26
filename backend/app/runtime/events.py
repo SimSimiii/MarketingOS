@@ -72,6 +72,24 @@ class ModelCallFinished(Event):
 
 
 @dataclass(frozen=True)
+class ModelCallRetried(Event):
+    """Published when a call failed in transport and is being tried again.
+
+    A retry that leaves no trace is a retry nobody can reason about: the run
+    looks like it stalled for a few seconds, the token ledger shows nothing
+    (a call that failed consumed nothing), and a provider that is failing half
+    its calls is indistinguishable from one that is merely slow. This is the
+    only place that distinction is visible.
+    """
+
+    agent_id: str = ""
+    execution_id: str = ""
+    model: str = ""
+    attempt: int = 1
+    error: str = ""
+
+
+@dataclass(frozen=True)
 class MemoryUpdated(Event):
     key: str = ""
     execution_id: str | None = None

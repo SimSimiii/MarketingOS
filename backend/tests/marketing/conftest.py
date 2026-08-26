@@ -34,6 +34,7 @@ from app.knowledge.corpus import Document, SourceCorpus
 from app.knowledge.ledger import Evidence, EvidenceKind, EvidenceLedger
 from app.knowledge.store import StoredArtifacts
 from app.marketing.pipeline import KnowledgeGateway
+from app.marketing.reader import _PULL_BY_CLICKS
 from app.marketing.request import CampaignRequest
 from app.runtime.events import EventBus
 from app.runtime.model_session import ModelSession
@@ -165,6 +166,15 @@ class RoleScriptedProvider(AIProvider):
 #: Three bodies with no shared six-word run and no shared opening move, so the
 #: overlap gate stays quiet on the fixture itself. Numbers are spelled out:
 #: the evidence gate is real, and a fixture that trips it teaches nothing.
+#:
+#: Every one of them spends the fact the fixture brief assigns (E1, the nine
+#: seconds), and that is not decoration. A real writer is handed the evidence
+#: its email is built on and told to keep it through every rewrite, so a
+#: fixture whose second draft quietly drops it is not a rewrite of the first -
+#: it is a different email. The loop now notices that difference (see
+#: app.marketing.substantiation), so a test about the rewrite mechanism whose
+#: fixture moved the evidence underneath it would be measuring two things at
+#: once. A test that wants a draft arguing from nothing writes one.
 _BODIES = (
     (
         "You wrote the same release note three times last month.\n\n"
@@ -178,14 +188,15 @@ _BODIES = (
         "Friday afternoon is where your shipping week goes to die.\n\n"
         "The work was done on Tuesday. What is left is describing it, and describing it is the\n"
         "part nobody scheduled time for.\n\n"
-        "Point it at the branch and read what comes back. Change the bits that are wrong.\n\n"
+        "Point it at the branch and nine seconds later there is a note to argue with.\n\n"
         "Teams tell us the draft is close enough that arguing with it is faster than starting."
     ),
     (
         "Your changelog has a tone, and it is not the one you would use out loud.\n\n"
         "That happens when writing gets squeezed into whatever minutes are left before a\n"
         "deploy window closes on you.\n\n"
-        "Give it the twenty entries you already published and it will write like those did.\n\n"
+        "Give it the twenty entries you already published and it writes like those did, in\n"
+        "nine seconds.\n\n"
         "Nothing to configure. Paste a branch name, read a paragraph, decide whether to keep it."
     ),
 )
@@ -228,17 +239,35 @@ def varied_draft(call: int) -> str:
 
 
 def blind_read(pull: int = 8, would_act: bool = True, **overrides: Any) -> str:
+    """One cold reader's report, written the way the real one answers.
+
+    `pull` is stated as the score the test means and turned back into the click
+    frequency that produces it, because that frequency is what the reader
+    actually reports now and what `BlindRead` derives the score from - see
+    `app.marketing.reader.pull_from_clicks`. A fixture that sets `pull`
+    directly would be testing a field the validator overwrites.
+    """
     payload = {
         "opened": True,
         "stopped_at": "",
         "what_it_sells": "a faster way to write my release notes",
         "biggest_doubt": "whether my team would switch",
         "would_act": would_act,
-        "pull": pull,
+        "opens_in_100": 30,
+        "clicks_in_100": clicks_for(pull),
+        "to_click_it_would_have_to": "tell me what it costs once the credits run out",
         "fixes": [],
     }
     payload.update(overrides)
     return json.dumps(payload)
+
+
+def clicks_for(pull: int) -> int:
+    """The smallest click frequency that scores `pull`."""
+    return next(
+        (floor for floor, score in _PULL_BY_CLICKS if score <= pull),
+        0,
+    )
 
 
 READ_PASS = blind_read()
@@ -249,6 +278,56 @@ READ_FAIL = blind_read(
     what_it_sells="honestly, I could not tell",
     fixes=["cut the second paragraph"],
 )
+
+#: Whichever draft was shown second. Positional rather than semantic on
+#: purpose: the judge alternates the label order across a ballot, so a default
+#: that always says "A" would hand every duel to whoever happened to be first
+#: and no test could tell a real preference from that.
+VOTE_B = json.dumps({"winner": "B", "why": "it told me what it costs", "margin": "clear"})
+VOTE_A = json.dumps({"winner": "A", "why": "it got to the point", "margin": "clear"})
+
+
+def votes_for_the_challenger(count: int = 4) -> list[str]:
+    """A ballot every reader answers in favour of the newer draft.
+
+    The judge shows the challenger as A on even ballot lines and as B on odd
+    ones, so "the challenger wins every vote" is an alternating list of
+    letters rather than one letter repeated. Pushed onto the role's queue in
+    that order, which is the order the votes are issued in.
+    """
+    return [VOTE_A if index % 2 == 0 else VOTE_B for index in range(count)]
+
+
+def votes_for_the_champion(count: int = 4) -> list[str]:
+    return [VOTE_B if index % 2 == 0 else VOTE_A for index in range(count)]
+
+
+def subject_options(count: int = 4) -> str:
+    return json.dumps(
+        {
+            "options": [
+                {
+                    "subject": f"Release notes, option {index}",
+                    "preview": f"a different bet, number {index}",
+                    "approach": f"approach {index}",
+                }
+                for index in range(1, count + 1)
+            ]
+        }
+    )
+
+
+def inbox_verdict(*opens: int) -> str:
+    """How many of a hundred would tap each listed line, in order. The first
+    number is always the incumbent - see SubjectBakeOff.improve."""
+    return json.dumps(
+        {
+            "scores": [
+                {"option": index, "opens_in_100": value, "why": "specific"}
+                for index, value in enumerate(opens, start=1)
+            ]
+        }
+    )
 
 CRITIQUE_SHIP = json.dumps({"verdict": "ship", "edits": [], "summary": "Ready to send."})
 CRITIQUE_REVISE = json.dumps(
@@ -278,7 +357,12 @@ SEQUENCE_PASS = json.dumps(
 )
 
 
-def campaign_brief(count: int = 3, **overrides: Any) -> str:
+def campaign_brief(
+    count: int = 3, alternatives: list[str] | None = None, **overrides: Any
+) -> str:
+    """A strategist's answer. `alternatives` are the other claims each slot
+    could argue - what the bake-off varies and what a stalled email pivots to.
+    Empty by default, which is the brief that gives the loop one bet."""
     payload: dict[str, Any] = {
         "interpretation": "A conversion sequence for people who have not bought yet.",
         "reader": "a developer who ships weekly and writes release notes by hand",
@@ -291,6 +375,7 @@ def campaign_brief(count: int = 3, **overrides: Any) -> str:
                 "position": position,
                 "job": f"job {position}",
                 "single_idea": f"idea number {position} that nothing else argues",
+                "alternative_ideas": list(alternatives or []),
                 "evidence_ids": ["E1"] if position == 1 else [],
                 "objection": "we already have a script for this",
                 "tone": "matter-of-fact",
@@ -447,7 +532,29 @@ COMPILER_DEFAULTS: dict[str, Default] = {
             },
         }
     ),
-    "knowledge_evidence": json.dumps({"entries": []}),
+    # Two entries rather than none. A compile that finds nothing checkable is
+    # a real case and it has its own tests - but it is not the *default* case,
+    # and using it as the fixture meant every run in the suite went through the
+    # preflight stop for a business with nothing to argue from. A fixture
+    # should be the ordinary path.
+    "knowledge_evidence": json.dumps(
+        {
+            "entries": [
+                {
+                    "id": "E1",
+                    "kind": "metric",
+                    "claim": "writes a release note in about nine seconds",
+                    "verbatim": "Notewright drafts a release note in about nine seconds.",
+                },
+                {
+                    "id": "E2",
+                    "kind": "price",
+                    "claim": "1,500 free credits to start, no card",
+                    "verbatim": "Every account starts with 1,500 free credits and no card.",
+                },
+            ]
+        }
+    ),
     "knowledge_voice": json.dumps({"voice": {"tone": "plain and technical", "exemplars": []}}),
     "knowledge_audience": json.dumps(
         {
@@ -471,6 +578,18 @@ def default_answers() -> dict[str, Default]:
         "blind_reader": READ_PASS,
         "conversion_critic": CRITIQUE_SHIP,
         "sequence_reviewer": SEQUENCE_PASS,
+        # A constant vote is a guaranteed tie, and a tie leaves the version
+        # that already worked standing. That is the property worth having as
+        # the default: the ballot alternates which draft wears which label, so
+        # every reader picking the same *letter* means half of them picked the
+        # challenger. A test that wants a winner scripts one - see
+        # `votes_for_the_challenger`.
+        "preference_judge": VOTE_A,
+        "subject_lines": subject_options(),
+        # The line the email already had, first and highest - so the default
+        # run keeps its own subject and no test has to think about a swap it
+        # did not ask for.
+        "inbox_scanner": inbox_verdict(40, 20, 20, 20, 20),
     }
 
 

@@ -11,16 +11,21 @@ from dataclasses import replace
 import pytest
 
 from app.evaluation.golden import GOLDEN_CASES, case_named
+from app.evaluation.head_to_head import JUDGE_MODEL, against_control, assessor_panel
 from app.evaluation.record import RunRecord, record_from
 from app.marketing.policy import PRESETS
+from app.marketing.reader import personas_for
 from app.marketing.request import CampaignRequest
 from tests.marketing.conftest import (
     READ_FAIL,
     RoleScriptedProvider,
+    artifacts_fixture,
     blind_read,
     campaign_brief,
+    make_session,
+    votes_for_the_challenger,
 )
-from tests.marketing.test_pipeline import build
+from tests.marketing.test_pipeline import build, refine_only
 
 
 @pytest.mark.asyncio
@@ -117,3 +122,91 @@ def test_every_golden_case_names_a_countable_deliverable(case):
     contract = parse_contract(case.request)
     assert contract.count_is_explicit, case.request
     assert case.documents, "a case with no material measures nothing"
+
+
+# ------------------------------------------------------- against a human
+
+
+@pytest.mark.parametrize(
+    "case", [case for case in GOLDEN_CASES if case.control_email], ids=lambda case: case.name
+)
+def test_every_control_email_is_one_the_system_would_be_allowed_to_send(case):
+    """The control is judged against the system's output, so it has to be a
+    real email and not a sketch of one. A control that breaks the structural
+    rules the writer works under is a straw man, and beating it would mean
+    nothing."""
+    from app.marketing.email_copy import parse_email
+
+    control = parse_email(case.control_email, position=1)
+    assert control.subject and control.call_to_action and control.body
+
+
+@pytest.mark.asyncio
+async def test_the_win_rate_is_a_blind_vote_between_two_emails(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    provider.set_default("strategist", campaign_brief(1))
+    provider.push("preference_judge", *votes_for_the_challenger(6))
+    pipeline, _ = build(provider, refine_only(max_revisions=0))
+    result = await pipeline.run(
+        replace(request_fixture, request="Write me 1 email that sells my app")
+    )
+
+    control = await against_control(
+        judge_session=make_session(provider),
+        control_email=case_named("rich-single").control_email,
+        delivered=result.emails,
+        artifacts=result.artifacts,
+        segment_name=result.brief.reader_segment,
+    )
+
+    assert control.cast == 6
+    assert control.beat_the_human is True
+    assert control.win_rate == 1.0
+
+
+@pytest.mark.asyncio
+async def test_a_case_with_no_control_reports_that_rather_than_a_loss(
+    provider: RoleScriptedProvider,
+):
+    """Zero votes for the system and zero against is not a nil-nil draw, and a
+    record that stored it as one would drag the benchmark's headline number
+    down by however many cases nobody has written a control for yet."""
+    control = await against_control(
+        judge_session=make_session(provider),
+        control_email="",
+        delivered=[],
+        artifacts=None,
+    )
+
+    assert control.skipped
+    assert control.cast == 0
+    assert provider.calls_by_role["preference_judge"] == 0
+
+
+def test_the_record_keeps_the_control_result_out_of_the_arithmetic_when_skipped():
+    record = RunRecord(case="c", request="r", preset="balanced", control_note="no control")
+    assert record.control_win_rate == 0.0
+
+
+def test_the_benchmark_is_not_graded_by_the_judge_the_loop_optimises_against():
+    """Beating a judge you tuned against is not evidence. The craft loop's
+    readers run on the balanced tier; this one must not."""
+    from app.ai.model_router import DEFAULT_TIER_MODELS, ModelTier
+
+    assert JUDGE_MODEL != DEFAULT_TIER_MODELS[ModelTier.BALANCED]
+
+
+def test_the_assessor_panel_is_the_buyer_in_moods_the_loop_never_uses():
+    """The same buyer, because grading copy as somebody it was not aimed at
+    measures the mismatch. Different dispositions, because a grader the loop
+    has been rewriting against for three attempts is not an independent one."""
+    artifacts = artifacts_fixture()
+    segment = artifacts.audience.segments[0]
+
+    graders = assessor_panel(artifacts, segment.name)
+    optimised_against = personas_for(artifacts.audience, segment, panel=True)
+
+    assert len(graders) == 3
+    assert all(segment.name in persona for persona in graders)
+    assert not set(graders) & set(optimised_against)

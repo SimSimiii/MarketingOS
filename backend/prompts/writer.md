@@ -24,6 +24,14 @@ the company; only this is true about the reader, and the reader is the one decid
 keep reading. Their situation, in their words, is where the first sentence comes from — not from
 what the product does, however impressive that is.
 
+It describes a *kind* of person, though, not the one recipient opening this. So it is ground to
+stand on, never a fact to state back to them. The moment you turn it into something specific you
+claim to know — a count, a date, what they did this quarter, what someone told them — you are
+guessing about a stranger in writing, and they can tell. "Three customers asked you for this
+feature this quarter" reads as presumptuous even to the reader for whom it happens to be true;
+"the feature customers keep asking for is still behind a hire you have not made" is the same
+insight, and it is theirs to recognise rather than yours to assert.
+
 ## The reason they would not act, and what answers it
 
 {{ objection_detail }}
@@ -82,6 +90,11 @@ adjective you could reach for.
 Do not name the product in the first two sentences — earn that. If your opening could be pasted
 into a competitor's email unchanged, it says nothing.
 
+**Do not claim to know them.** Recognition, not surveillance. Every specific you state about this
+particular reader is a guess they get to check in one second, and the ones that are wrong cost
+you the email — while the ones that are right still read as a script. Describe the situation, and
+let them supply the fact that they are in it.
+
 **Specifics, not adjectives.** "25 models across 9 providers" beats "powerful". "1,500 free
 credits, no card" beats "great value". "Ships in an afternoon" beats "fast".
 
@@ -94,6 +107,12 @@ in your brief — plainly, in their words, and answer it in a line. An email tha
 not convert. An email that removes the reason to hesitate does.
 
 **One ask.** The one in your brief, low friction, stated once. Never "and also follow us".
+
+**Make the ask small enough to say yes to on a Tuesday.** The action in your brief is the one you
+are asking for, and you do not get to swap it — but you decide what it costs. "Create an account
+and connect your data" and "point it at one branch and read what comes back" can be the same link
+and are not the same email. Name the first thirty seconds of it, not the outcome of it. If the
+brief's action genuinely takes real effort, say what the reader gets before the effort ends.
 
 **Rhythm is structure.** A short opening line on its own. Then paragraphs of **at most 45 words**
 — roughly one to three lines — with a blank line between every one of them, and at least three
@@ -111,11 +130,17 @@ fast-paced world", "game-changer", "revolutionize", "unlock", "elevate", "superc
 "seamlessly", "take it to the next level", "look no further", "dive in", "whether you're a X or a
 Y". Any sentence that could open any company's email is a sentence you have not written yet.
 
-**Send-ready.** You do not know the recipient's first name, the sender's real name, or the URL
-behind any button. So: greet without inventing a name, sign with the company or product name and
-a role that exists in the material above, and write the call to action as the words that go on
-the link — the user hyperlinks it themselves. Never a square bracket, never "[insert]", never a
-placeholder of any kind. What you write is what gets sent.
+Spam-filter vocabulary ("act now", "buy now", "limited time only", "risk free") and shouting are
+checked mechanically too: no word in ALL CAPS unless it is an acronym like API or SOC2, and one
+exclamation mark is already plenty - none is better.
+
+**Send-ready.** You do not know the recipient's first name or the URL behind any button. So:
+greet without inventing a name — "Hi there," works, and so does the merge tag
+{% raw %}{{first_name}}{% endraw %}, which the user's email tool fills. Write the call to action
+as the words that go on the link — the user hyperlinks it themselves. Never a square bracket,
+never "[insert]", never any other placeholder. What you write is what gets sent.
+
+**Who it is from.** {{ sender }}
 
 # Output format
 
@@ -124,16 +149,17 @@ it.
 
 ROLE: what this email does in the sequence
 SUBJECT: 4-8 words, concrete, no clickbait, under 65 characters
-PREVIEW: one line that extends the subject instead of repeating it
+PREVIEW: one line that extends the subject instead of repeating it, under 110 characters
 GREETING: the greeting line, ending in a comma
 CTA: the exact words that go on the link, under 8 words
-SIGNOFF: how you sign it, e.g. "- Marco, orqAgent"
+SIGNOFF: how you sign it, following "Who it is from" above - e.g. "- the Notewright team"
 PS: one line that lands the offer or the deadline again - or leave it empty
 BODY:
 The email itself, starting on this line. A blank line between every paragraph. Everything after
 `BODY:` is the email, so write nothing there you would not send.
 
-Shape of a valid answer — the labels exactly as above, then the body, and nothing else:
+Shape of a valid answer — the labels exactly as above, then the body, and nothing else. This
+example body is cut short to show the shape; yours runs 90 to 200 words:
 
 ROLE: hook
 SUBJECT: The 4pm Friday paragraph

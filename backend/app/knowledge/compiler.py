@@ -12,8 +12,11 @@ otherwise poison every campaign written afterwards, and it would do it
 invisibly, because nothing further down ever sees the original page.
 """
 
+import asyncio
 import logging
+import re
 from collections.abc import Callable
+from dataclasses import dataclass
 
 from pydantic import BaseModel, Field
 
@@ -27,13 +30,15 @@ from app.knowledge.artifacts import (
     OfferSheet,
     VoiceProfile,
 )
-from app.knowledge.corpus import SourceCorpus, collapse
+from app.knowledge.corpus import Document, SourceCorpus, collapse, fold
 from app.knowledge.ledger import (
     Evidence,
     EvidenceKind,
     EvidenceLedger,
     EvidenceStrength,
 )
+from app.knowledge.taxonomy import FactCategory, classify
+from app.runtime.exceptions import ModelRuntimeError
 from app.runtime.model_session import ModelSession
 
 logger = logging.getLogger("marketingos.knowledge")
@@ -47,6 +52,24 @@ _EVIDENCE_BATCH_CHARS = 14_000
 _PROFILE_DIGEST_CHARS = 40_000
 _AUDIENCE_DIGEST_CHARS = 24_000
 _VOICE_DIGEST_CHARS = 20_000
+
+#: Ceiling on everything the evidence pass reads, across every call.
+#:
+#: There has to be one, because the number of calls this pass makes is now
+#: driven by how much material there is rather than by how many documents
+#: there are - which is the point, and is also how a single 20 MB upload
+#: could otherwise turn one compile into an open cheque. Generous against the
+#: real case: a full crawl at the default twelve pages plus a couple of
+#: uploaded documents is well inside it. Whatever it cuts off is reported.
+_EVIDENCE_TOTAL_CHARS = 240_000
+
+#: Evidence readings in flight at once. The same order of concurrency the loop
+#: already runs elsewhere - a bake-off reads four candidates by three personas
+#: at the same time - so this is not new pressure on the CLI, and it turns the
+#: longest serial stretch in a run into a handful of rounds.
+_EVIDENCE_CONCURRENCY = 4
+
+_BLOCK_SPLIT_RE = re.compile(r"\n\s*\n")
 
 #: Shortest quote that can support a claim. Below this the "verbatim" is a
 #: fragment that would match almost any page.
@@ -66,6 +89,12 @@ class _EvidenceDraft(BaseModel):
     verbatim: str
     document_id: str = ""
     strength: EvidenceStrength = EvidenceStrength.MODERATE
+    #: Which shelf of the knowledge base this belongs on. A plain string
+    #: rather than the enum on purpose: an unrecognised value here must cost
+    #: one entry's classification, not the whole batch. Anything the model
+    #: does not answer, or answers wrongly, is classified in code instead -
+    #: see `_shelf`.
+    category: str = ""
 
 
 class _EvidencePass(BaseModel):
@@ -107,14 +136,33 @@ class KnowledgeCompiler:
                 notes=["The user provided no website, document or image to read."],
             )
 
-        progress("profile", "Reading the material for what this business is and sells")
-        profile = await self._profile(corpus)
-
-        progress("evidence", "Collecting every fact the copy will be allowed to claim")
-        ledger = await self._evidence(corpus)
-
-        progress("voice", "Learning how this company sounds in its own words")
-        voice = await self._voice(corpus)
+        # Three of the four passes read only the material, so they are three
+        # independent questions about the same pages and there is no reason to
+        # ask them one at a time. Run in sequence - which is how this stood -
+        # a normal twelve-page site is ten serial deep-tier calls before the
+        # Strategist can begin, minutes of a run spent waiting for answers
+        # that never depended on each other. Only the audience pass has real
+        # inputs: it is written from the profile and the ledger, so it waits.
+        progress(
+            "reading",
+            f"Reading {len(corpus.documents)} document(s): what the business is, every fact "
+            "the copy may claim, and how the company sounds",
+        )
+        profile, evidence, voice = await asyncio.gather(
+            self._profile(corpus), self._evidence(corpus), self._voice(corpus)
+        )
+        ledger, intake = evidence
+        progress(
+            "evidence",
+            f"{len(ledger.entries)} fact(s) the copy may claim, from "
+            f"{intake.readings} reading(s)"
+            + (
+                f" - {intake.unverifiable} candidate(s) were dropped because their quote is "
+                "not really in the source"
+                if intake.unverifiable
+                else ""
+            ),
+        )
 
         progress("audience", "Working out who buys this and why they hesitate")
         audience = await self._audience(corpus, profile, ledger)
@@ -126,6 +174,7 @@ class KnowledgeCompiler:
             voice=voice,
             audience=audience,
             source_document_ids=[document.id for document in corpus.documents],
+            notes=intake.notes(),
         )
         artifacts.gaps = find_gaps(artifacts)
         progress(
@@ -147,48 +196,84 @@ class KnowledgeCompiler:
             schema=_ProfilePass,
         )
 
-    async def _evidence(self, corpus: SourceCorpus) -> EvidenceLedger:
-        """Extract candidate facts batch by batch, then keep only the ones
-        whose supporting quote is really in the source."""
+    async def _evidence(self, corpus: SourceCorpus) -> tuple[EvidenceLedger, "_Intake"]:
+        """Every reading of the material, extracted and then verified.
+
+        The readings are independent - each one sees its own pages and quotes
+        from them - so they are made concurrently. They used to run one after
+        another, which on a normal twelve-page site is seven serial deep-tier
+        calls, several minutes of a run in which nothing else can start,
+        for exactly the same answer and exactly the same money.
+
+        Ids are assigned afterwards, in reading order, so a compile of the
+        same material twice produces the same E1..En however the calls
+        happened to return.
+        """
+        plan = _readings(corpus, _EVIDENCE_BATCH_CHARS, _EVIDENCE_TOTAL_CHARS)
+        gate = asyncio.Semaphore(_EVIDENCE_CONCURRENCY)
+
+        async def extract(batch: list["_Reading"]) -> list[_EvidenceDraft] | BaseException:
+            material = "\n\n".join(reading.render() for reading in batch)
+            async with gate:
+                try:
+                    result = await self._session.structured(
+                        role=ROLE_ID,
+                        tier=ModelTier.BALANCED,
+                        template="knowledge_evidence",
+                        variables={"material": material},
+                        task=(
+                            "List every checkable fact in these documents. Quote the exact "
+                            "supporting text for each one and give the document id it came from."
+                        ),
+                        schema=_EvidencePass,
+                    )
+                except ModelRuntimeError as exc:
+                    # One reading that never came back costs the facts on those
+                    # pages, not the compile - and a compile is the artifact
+                    # every future campaign for this business is written from,
+                    # so finishing with a smaller ledger and saying so beats
+                    # failing and starting over.
+                    logger.warning("knowledge compiler: one reading did not come back - %s", exc)
+                    return exc
+            return result.entries
+
+        results = await asyncio.gather(*(extract(batch) for batch in plan.batches))
+
         entries: list[Evidence] = []
-        for batch in _batches(corpus, _EVIDENCE_BATCH_CHARS):
-            material = "\n\n".join(
-                f"<document id=\"{document.id}\" title=\"{document.title}\">\n"
-                f"{document.content[:_EVIDENCE_BATCH_CHARS]}\n</document>"
-                for document in batch
-            )
-            result = await self._session.structured(
-                role=ROLE_ID,
-                tier=ModelTier.BALANCED,
-                template="knowledge_evidence",
-                variables={"material": material},
-                task=(
-                    "List every checkable fact in these documents. Quote the exact supporting "
-                    "text for each one and give the document id it came from."
-                ),
-                schema=_EvidencePass,
-            )
-            by_id = {document.id: document for document in batch}
-            for draft in result.entries:
-                document = by_id.get(draft.document_id) or (batch[0] if len(batch) == 1 else None)
+        intake = _Intake(readings=len(plan.batches), unread=plan.unread)
+        for batch, drafts in zip(plan.batches, results, strict=True):
+            if isinstance(drafts, BaseException):
+                intake.failed_readings += 1
+                continue
+            by_id = {reading.document.id: reading.document for reading in batch}
+            for draft in drafts:
+                document = by_id.get(draft.document_id) or (
+                    batch[0].document if len({reading.document.id for reading in batch}) == 1
+                    else None
+                )
                 haystack = document.content if document else corpus.text
+                intake.proposed += 1
                 if not _quote_is_real(draft.verbatim, haystack):
+                    intake.unverifiable += 1
                     logger.info(
                         "knowledge compiler: dropped unverifiable evidence %r", draft.claim[:80]
                     )
                     continue
+                claim = collapse(draft.claim)
+                verbatim = collapse(draft.verbatim, 400)
                 entries.append(
                     Evidence(
                         id=f"E{len(entries) + 1}",
                         kind=draft.kind,
-                        claim=collapse(draft.claim),
-                        verbatim=collapse(draft.verbatim, 400),
+                        claim=claim,
+                        verbatim=verbatim,
                         source=document.source if document else "",
                         document_id=document.id if document else None,
                         strength=draft.strength,
+                        category=_shelf(draft, claim, verbatim),
                     )
                 )
-        return EvidenceLedger(entries=entries)
+        return EvidenceLedger(entries=entries), intake
 
     async def _voice(self, corpus: SourceCorpus) -> VoiceProfile:
         """Learn the company's voice from copy it actually published.
@@ -247,6 +332,22 @@ class KnowledgeCompiler:
         for objection in audience.objections:
             objection.evidence_ids = [id_ for id_ in objection.evidence_ids if id_ in known]
         return audience
+
+
+def _shelf(draft: _EvidenceDraft, claim: str, verbatim: str) -> FactCategory:
+    """Which shelf a fact lands on: the model's answer if it gave a real one.
+
+    The model read the whole page and knows that "we never train on your data"
+    is a trust fact rather than a technical one, which a lexicon over that one
+    sentence cannot. It also costs nothing to ask - it is another field in a
+    call that was already being made. But it is a model, so the answer is a
+    suggestion: anything unrecognised falls through to the classifier, which
+    is deterministic and never wrong in an interesting way.
+    """
+    try:
+        return FactCategory(draft.category.strip().lower())
+    except ValueError:
+        return classify(f"{claim} {verbatim}", str(draft.kind))
 
 
 # ---------------------------------------------------------------------- gaps
@@ -336,31 +437,169 @@ def find_gaps(artifacts: KnowledgeArtifacts) -> GapReport:
 # ------------------------------------------------------------------ internals
 
 
-def _batches(corpus: SourceCorpus, budget: int) -> list[list]:
-    """Group documents into calls, keeping each call under the budget. A single
-    document over budget gets its own call and is truncated there."""
-    batches: list[list] = []
-    current: list = []
+@dataclass(frozen=True)
+class _Reading:
+    """One slice of one document, as one extraction call will see it."""
+
+    document: Document
+    text: str
+    #: Which slice of the document this is, and how many there are. Told to
+    #: the model so it does not report a sentence as the start of a page when
+    #: it is the middle of one.
+    part: int = 1
+    parts: int = 1
+
+    def render(self) -> str:
+        where = (
+            f' part="{self.part} of {self.parts}"' if self.parts > 1 else ""
+        )
+        return (
+            f'<document id="{self.document.id}" title="{self.document.title}"{where}>\n'
+            f"{self.text}\n</document>"
+        )
+
+
+@dataclass
+class _Intake:
+    """What the evidence pass read, proposed and kept.
+
+    Recorded because every one of these numbers used to be invisible. A
+    compile that read half a page, or threw away a third of what it found
+    because the quotes did not match, produced a thin ledger and a thin
+    campaign, and looked exactly like a business with little to say.
+    """
+
+    readings: int = 0
+    failed_readings: int = 0
+    proposed: int = 0
+    unverifiable: int = 0
+    #: Characters of material the reading budget could not reach.
+    unread: int = 0
+
+    @property
+    def kept(self) -> int:
+        return self.proposed - self.unverifiable
+
+    def notes(self) -> list[str]:
+        notes: list[str] = []
+        if self.unverifiable:
+            notes.append(
+                f"{self.unverifiable} of {self.proposed} candidate fact(s) were discarded "
+                "because the quote supporting them could not be found in the source."
+            )
+        if self.failed_readings:
+            notes.append(
+                f"{self.failed_readings} of {self.readings} reading(s) of the material did not "
+                "come back - facts on those pages are missing from this compile."
+            )
+        if self.unread:
+            notes.append(
+                f"{self.unread:,} characters of material were past the reading budget and were "
+                "not read."
+            )
+        return notes
+
+
+def _split(text: str, budget: int) -> list[str]:
+    """One document's text in pieces no larger than `budget`, cut on blank
+    lines so a piece never starts mid-sentence."""
+    if len(text) <= budget:
+        return [text]
+    pieces: list[str] = []
+    current: list[str] = []
     size = 0
+    for block in _BLOCK_SPLIT_RE.split(text):
+        if not block.strip():
+            continue
+        if size and size + len(block) > budget:
+            pieces.append("\n\n".join(current))
+            current, size = [], 0
+        # A single block over budget is cut where it has to be: the
+        # alternative is one call carrying a whole book.
+        while len(block) > budget:
+            pieces.append(block[:budget])
+            block = block[budget:]
+        current.append(block)
+        size += len(block) + 2
+    if current:
+        pieces.append("\n\n".join(current))
+    return pieces
+
+
+@dataclass(frozen=True)
+class _ReadingPlan:
+    """Every call the evidence pass will make, and what it could not reach."""
+
+    batches: list[list[_Reading]]
+    unread: int = 0
+
+
+def _readings(corpus: SourceCorpus, budget: int, total: int) -> _ReadingPlan:
+    """Every call the evidence pass will make, and what each one reads.
+
+    A document longer than one call's budget used to be *truncated* to it -
+    `document.content[:budget]` - so everything past 14,000 characters was
+    never read by this pass on any code path, ever. That is the same "all or
+    nothing" failure the corpus module was written to remove, still living in
+    the one pass whose entire product is the facts the copy may claim, and it
+    bit hardest on exactly the pages worth reading: a long pricing table, a
+    customers page with eight case studies, an uploaded PDF.
+
+    Long documents are now read in several passes instead. The whole thing is
+    bounded by `total`, because a 20 MB upload should cost a compile rather
+    than an open cheque, and whatever the bound cuts off is reported rather
+    than dropped silently.
+    """
+    readings: list[_Reading] = []
+    spent = 0
+    unread = 0
     for document in corpus.documents:
-        length = len(document.content)
-        if current and size + length > budget:
+        pieces = _split(document.content, budget)
+        for index, piece in enumerate(pieces, start=1):
+            if spent + len(piece) > total:
+                unread += len(piece)
+                continue
+            spent += len(piece)
+            readings.append(
+                _Reading(document=document, text=piece, part=index, parts=len(pieces))
+            )
+    if unread:
+        logger.warning(
+            "knowledge compiler: %d characters past the %d-character reading budget", unread, total
+        )
+
+    # One call per reading where a document needed splitting; several small
+    # documents share a call, which is what keeps a twelve-page site to a
+    # handful of calls rather than twelve.
+    batches: list[list[_Reading]] = []
+    current: list[_Reading] = []
+    size = 0
+    for reading in readings:
+        if current and size + len(reading.text) > budget:
             batches.append(current)
             current, size = [], 0
-        current.append(document)
-        size += length
+        current.append(reading)
+        size += len(reading.text)
     if current:
         batches.append(current)
-    return batches
+    return _ReadingPlan(batches=batches, unread=unread)
 
 
 def _quote_is_real(quote: str, haystack: str) -> bool:
-    """Is this quote actually in the source, ignoring how whitespace fell?
+    """Is this quote actually in the source, ignoring how it was typeset?
 
     Loaders reflow text (markdown conversion, PDF extraction), so an exact
     match is too strict; a normalized substring is the honest test.
+
+    Typography is normalized for the same reason whitespace is, and it was
+    the more expensive of the two. Published pages come out of a CMS with
+    curly quotes, curly apostrophes and en dashes; a model asked to quote one
+    back answers in plain ASCII about half the time. Every one of those was a
+    real fact, correctly quoted, thrown away here for a character - and the
+    entries it hit hardest were testimonials, which is the one kind of
+    evidence the preflight will stop a whole run for the lack of.
     """
-    needle = collapse(quote).lower()
+    needle = fold(quote)
     if len(needle) < _MIN_QUOTE_CHARS:
         return False
-    return needle in collapse(haystack).lower()
+    return needle in fold(haystack)

@@ -234,3 +234,36 @@ def collapse(text: str, limit: int | None = None) -> str:
     if limit is not None and len(flat) > limit:
         return flat[:limit].rstrip() + "…"
     return flat
+
+
+#: Typography a CMS applies and a model does not reproduce.
+#:
+#: Every published web page has been through something that turns "it's" into
+#: "it’s" and "5-10" into "5–10". A model asked to quote that page back
+#: answers in plain ASCII roughly as often as not - it is a different
+#: character, and every comparison in this system that matches a quotation
+#: against its source is an exact substring test.
+#:
+#: Both sides of every such test are folded through this. Nothing *stored* is
+#: folded: the verbatim a user reads and a writer is shown keeps the
+#: typography the company actually publishes.
+_PUNCTUATION_FOLD = str.maketrans(
+    {
+        "“": '"', "”": '"', "„": '"', "‟": '"',
+        "«": '"', "»": '"', "″": '"',
+        "‘": "'", "’": "'", "‚": "'", "‛": "'", "′": "'",
+        "–": "-", "—": "-", "‒": "-", "―": "-", "−": "-",
+        "­": "",
+    }
+)
+
+
+def fold(text: str, limit: int | None = None) -> str:
+    """`collapse`, plus typography folded away and case dropped.
+
+    The form to compare two pieces of text in when the question is "did this
+    sentence come from that page". Never the form to store or display: a
+    verbatim quotation is evidence, and evidence that has been rewritten -
+    even only its punctuation - is not verbatim any more.
+    """
+    return collapse(text.translate(_PUNCTUATION_FOLD).replace("…", "..."), limit).lower()

@@ -25,6 +25,20 @@ that wrong silently produces five well-written emails aimed at the wrong person.
 
 {{ knowledge }}
 
+# What kind of knowledge we have, and where it runs out
+
+{{ knowledge_map }}
+
+Every fact above is filed on one shelf, and a shelf is a conversation a buyer wants to have.
+Read this for shape, not for content: which arguments this material can carry, which are thin,
+and which shelf is empty. **An empty shelf is not a hole to write around — it is an angle that is
+off the table.** Nothing here answers "is it secure" means the security email cannot be written,
+however good an idea it is; the writer would have to invent the answer, and the evidence gate
+sends inventions straight back.
+
+Where two shelves could both carry this campaign, prefer the one with facts a reader can check
+over the one with more facts. Six product capabilities lose to one price.
+
 # What this campaign can actually prove
 
 {{ proof_posture }}
@@ -83,13 +97,28 @@ move email 3's angle to email 2 without anything breaking, you have not designed
 have written the same email three times. `single_idea` is a claim, not a topic — "your in-house
 script costs more than you think", not "cost savings".
 
+**Name the claims you did not pick.** `alternative_ideas` is two or three other claims this same
+slot could have been built on, best first — each one a complete argument you would have been
+willing to send, not a runner-up you are listing to be thorough. They have to be genuinely
+different bets: a different reason to act, not the same reason with a different emphasis. If one
+of them is `single_idea` reworded, drop it.
+
+This is the one field here whose value comes from being wrong. Which argument a stranger responds
+to is the thing about a campaign nobody can know in advance — not you, not the copywriter, not
+the reader model — and it is the only thing about it that can actually be found out. Each of
+these gets written as a real email and read by a cold reader, and when the loop finds that the
+copy has stopped improving, this list is what it moves to instead of rewriting a claim that is
+not landing. A brief that names one claim and no alternatives gives the run nothing to discover
+and one thing to defend.
+
 **Name the belief this email moves.** `belief_shift` is what the reader thinks before it and what
 they think after — "before: assumes switching means a migration week; after: suspects it is an
 afternoon". This is what actually decides whether something belongs in email 1 or email 3, and it
 is the field that makes the order checkable rather than a matter of taste. If two emails have the
 same `belief_shift`, one of them is not needed.
 
-**Assign each email the objection it kills.** From the objection list above, by name. An email
+**Assign each email the objection it kills.** Put it in `objection`, word for word from the
+objection list above. An email
 that only sells does not convert; an email that removes the reason to hesitate does. If an
 objection has no answer in the evidence, do not assign it to an email — say so in
 `sequence_rationale` instead, so nobody downstream goes looking for proof that does not exist.
@@ -98,6 +127,7 @@ objection has no answer in the evidence, do not assign it to an email — say so
 what changes in what they know, believe or feel. The default shape for a sequence is hook, then
 proof, then the objection, then the deadline, but pick the shape this campaign needs rather than
 that one by habit. Each email must still stand alone: assume the reader missed every previous one.
+Say why this order beats the alternatives in `sequence_rationale`.
 
 **Ask only for what exists.** `call_to_action` comes from the offer sheet's list of actions. An
 email that asks for a demo when the product is self-serve sends a real reader to a page that is
@@ -105,6 +135,10 @@ not there.
 
 **`tone`** is how the email should feel — "matter-of-fact", "slightly impatient", "warm and
 unhurried". Vary it across the sequence; five emails in the same register read as one long email.
+
+**`voice_notes`** is anything about voice this one campaign needs beyond the brand default — a
+register the request implies, a word this audience would flinch at. Most campaigns need nothing:
+leave it empty rather than restating the brand voice.
 
 **`subject_strategy`** is the approach, not the line itself: what the subject has to do to earn
 the open, given what the reader already knows.

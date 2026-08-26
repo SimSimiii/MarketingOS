@@ -1,0 +1,25 @@
+Judge bench - 1 source email(s), 11 pair(s), 4 votes each
+
+JUDGMENT-ONLY  (nothing mechanical can catch these)
+  ✓ specifics_to_adjectives  rich-single    4-0  caught
+  ✓ open_on_the_company      rich-single    4-0  caught
+  ✗ strip_the_proof          rich-single    2-2  MISSED
+  ✓ hedge_the_claims         rich-single    4-0  caught
+  ✓ bury_the_ask             rich-single    4-0  caught
+  ✗ clickbait_subject        rich-single    2-2  MISSED
+
+GATE-VISIBLE  (the free checks should catch these too)
+  ✓ stock_phrase_open        rich-single    4-0  caught   gates: 1
+  ✓ wall_of_text             rich-single    3-1  caught   gates: 2
+  ✗ shout_and_exclaim        rich-single    2-2  MISSED   gates: 3
+
+INVARIANCE  (the verdict should not move)
+  · identity                 rich-single    2-2  even
+  · neutral_greeting         rich-single    2-2  even
+
+Detection
+  judgment-only   4/6 (67%)   <- the number that matters
+  gate-visible    2/3 (67%)
+
+Noise floor
+  undamaged pairs split 2-2, 2-2 (average lean 0.0; 0 is a judge reading the copy)

@@ -25,6 +25,15 @@ from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
+from app.knowledge.corpus import fold
+from app.knowledge.taxonomy import (
+    CommercialValue,
+    FactCategory,
+    ValueBand,
+    assess_value,
+    classify,
+)
+
 
 class EvidenceKind(StrEnum):
     """What kind of true thing an entry is. The writer picks evidence by what
@@ -66,10 +75,35 @@ class Evidence(BaseModel):
     #: Set by the compiler when a fact came from the user answering a gap
     #: question rather than from a document.
     user_attested: bool = False
+    #: Which shelf of the knowledge base this sits on. Optional because
+    #: artifact sets compiled before the taxonomy existed do not carry one,
+    #: and `category_of` derives it for them at read time - a stored value
+    #: costs nothing and a derived one costs a regex, so neither case needs a
+    #: migration or a recompile.
+    category: FactCategory | None = None
 
     @property
     def licensing_text(self) -> str:
         return f"{self.claim}\n{self.verbatim}"
+
+
+def category_of(entry: Evidence) -> FactCategory:
+    """The shelf for one fact, stored if the compiler set one, derived if not."""
+    if entry.category is not None:
+        return entry.category
+    return classify(f"{entry.claim} {entry.verbatim}", str(entry.kind))
+
+
+def value_of(entry: Evidence) -> CommercialValue:
+    """What one fact is worth to a sale, and why. Always derived - the inputs
+    are all on the entry, so a stored copy could only ever go stale."""
+    return assess_value(
+        category=category_of(entry),
+        statement=entry.claim,
+        verbatim=entry.verbatim,
+        strength=str(entry.strength),
+        user_attested=entry.user_attested,
+    )
 
 
 #: How many facts reach a writing or critiquing call. Comfortably more than
@@ -78,15 +112,22 @@ class Evidence(BaseModel):
 #: compile produces.
 MAX_EVIDENCE_IN_PROMPT = 15
 
-#: What a cold reader actually moves on, in the order a slice should keep it:
-#: somebody else already bought this, then a number, then what it costs.
-_PERSUASIVE_KINDS = (
-    EvidenceKind.TESTIMONIAL,
-    EvidenceKind.CUSTOMER,
-    EvidenceKind.METRIC,
-    EvidenceKind.GUARANTEE,
-    EvidenceKind.PRICE,
-)
+def _by_commercial_value(entries: list[Evidence]) -> list[Evidence]:
+    """The facts a cold reader actually moves on, strongest first.
+
+    This used to be a fixed list of kinds - testimonial, then customer, then
+    metric, then guarantee, then price - which is the right ranking of kinds
+    and the wrong ranking of facts. Under it a `feature` entry reading "SOC 2
+    Type II, audited by Prescient in March" lost to every price on the page,
+    because two thirds of a real ledger arrives labelled `feature` and the
+    kind was the only thing being read. The scorer reads the entry: what it
+    says, whether anybody is named in it, whether there is a number in it at
+    all. See app.knowledge.taxonomy.
+    """
+    ranked = sorted(
+        enumerate(entries), key=lambda pair: (-value_of(pair[1]).score, pair[0])
+    )
+    return [entry for _, entry in ranked]
 
 
 class EvidenceLedger(BaseModel):
@@ -99,6 +140,18 @@ class EvidenceLedger(BaseModel):
 
     def of_kind(self, *kinds: EvidenceKind) -> list[Evidence]:
         return [entry for entry in self.entries if entry.kind in kinds]
+
+    def of_category(self, *categories: FactCategory) -> list[Evidence]:
+        """Every fact on one shelf of the knowledge base."""
+        return [entry for entry in self.entries if category_of(entry) in categories]
+
+    def headline_facts(self) -> list[Evidence]:
+        """The entries strong enough to carry an email on their own."""
+        return [
+            entry
+            for entry in _by_commercial_value(self.entries)
+            if value_of(entry).band is ValueBand.HEADLINE
+        ]
 
     @property
     def ids(self) -> set[str]:
@@ -125,11 +178,10 @@ class EvidenceLedger(BaseModel):
         wins.
 
         Kept, in order: the facts this email was assigned, then anything that
-        looks like an answer to the objection it has to beat, then the kinds a
-        cold reader actually moves on - proof somebody else bought this, and
-        numbers. Deliberately not "the first N": an arbitrary prefix of the
-        ledger is how the assigned evidence ends up missing from the writer's
-        own evidence list.
+        looks like an answer to the objection it has to beat, then whatever is
+        worth the most commercially - see `_by_commercial_value`. Deliberately
+        not "the first N": an arbitrary prefix of the ledger is how the
+        assigned evidence ends up missing from the writer's own evidence list.
 
         Nothing is lost by this. The evidence *gate* still reads the finished
         draft against the complete ledger and the raw corpus, for free, so a
@@ -147,13 +199,7 @@ class EvidenceLedger(BaseModel):
                 kept.append(entry)
                 seen.add(entry.id)
 
-        for kind in _PERSUASIVE_KINDS:
-            for entry in self.of_kind(kind):
-                if entry.id not in seen and len(kept) < cap:
-                    kept.append(entry)
-                    seen.add(entry.id)
-
-        for entry in self.entries:
+        for entry in _by_commercial_value(self.entries):
             if entry.id not in seen and len(kept) < cap:
                 kept.append(entry)
                 seen.add(entry.id)
@@ -184,10 +230,18 @@ _OBJECTION_STOPWORDS = frozenset(
 
 
 def render_entries(entries: list[Evidence]) -> str:
+    """The inventory as a writer or critic reads it.
+
+    The shelf is printed alongside the kind because it is what the fact can
+    *do* in an email - a `feature` entry filed under trust answers a doubt,
+    the same entry filed under technical answers "will it fit" - and because
+    a writer that can see six product facts and one commercial one beside
+    each other stops reaching for the product facts by default.
+    """
     if not entries:
         return "No evidence was found in the user's material. Make no factual claims."
     return "\n".join(
-        f"- [{entry.id}] ({entry.kind}, {entry.strength}) {entry.claim}\n"
+        f"- [{entry.id}] ({category_of(entry)}/{entry.kind}, {entry.strength}) {entry.claim}\n"
         f'      source says: "{_collapse(entry.verbatim, 240)}"'
         for entry in entries
     )
@@ -325,8 +379,15 @@ def extract_claims(text: str) -> list[Claim]:
     for match in _QUOTE_RE.finditer(text):
         quoted = match.group(1).strip()
         if len(quoted.split()) >= _MIN_QUOTE_WORDS:
+            # Folded, not merely lower-cased. The page a quotation is checked
+            # against was published through a CMS that made every apostrophe
+            # curly and every range an en dash; the copy quoting it back is
+            # plain ASCII about half the time. An exact substring test between
+            # those two forms fails on a testimonial that is genuinely word
+            # for word - and this gate blocks, so the draft is sent back to be
+            # rewritten over a character. See corpus.fold.
             claims.append(
-                Claim(kind=ClaimKind.QUOTE, text=quoted, normalized=_collapse(quoted).lower())
+                Claim(kind=ClaimKind.QUOTE, text=quoted, normalized=fold(quoted))
             )
     return claims
 
@@ -360,8 +421,9 @@ class EvidenceIndex:
         }
         # Quoted passages are checked against the full text rather than against
         # extracted claims: a testimonial is quoted in the copy but sits
-        # unquoted in the source page it came from.
-        self._corpus = _collapse(f"{licensing}\n{source_text}").lower()
+        # unquoted in the source page it came from. Folded on both sides so
+        # the match survives the typography a CMS applied to the page.
+        self._corpus = fold(f"{licensing}\n{source_text}")
 
     @property
     def licensed_values(self) -> set[str]:

@@ -28,6 +28,10 @@ opens email.
 losing an evening a week to invoicing", not "freelancers". Two or three of them, ordered by how
 much of this company's revenue they represent. If the material only supports one, give one.
 
+**`situation`** is the rest of that person's week, in concrete terms — what is on fire, what they
+have tried, what it keeps costing them. It is read back verbatim as the profile of the cold
+reader every draft is tested on, so a thin situation tests the copy against a thin person.
+
 **`job_to_be_done`** is what they are trying to achieve, in life terms, not product terms. Nobody
 wants invoicing software; they want to stop working Sunday night.
 
