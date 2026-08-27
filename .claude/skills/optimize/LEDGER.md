@@ -42,3 +42,27 @@ only instrument left. Commit: 29082bf. Checks: ruff clean (1 pre-existing SIM102
 787 passed. Saves up to (candidates − 1) × readers per email — 9/email on the maximum
 preset, 45 on a five-email campaign — and spends nothing new. Duels are provably
 unchanged: `max` over `measured` already picked the best *clean* loser as runner-up.
+
+### LANDED  a guard fetch no longer serializes the fan-out behind it
+Axis: 6, frontend request waterfalls. Two server components awaited one request only to
+guard on it, then started four or five more that never needed its result - all keyed by a
+route id, not by the guarded record. The brand layout is the expensive one: it wraps four
+routes, and on three of them the child page does not refetch the same set, so no concurrent
+render was hiding the extra round trip behind Next's memoization. Commit: c0d5f28. Checks:
+tsc clean, eslint clean, ruff clean (1 pre-existing SIM102), 787 passed. Removes one round
+trip from TTFB on those routes and on the execution result page; same request count, no
+model spend touched.
+
+### REJECTED  flatten the same waterfall in brands/[brandId]/market/page.tsx
+Reason: its `api.getMarket(brandId)` is uncaught *on purpose* - `MarketView` takes a
+non-nullable `MarketRead`. The serial guard is what turns "no such brand" into a 404 before
+that uncaught fetch turns it into a 500. Flattening it would either mask a real backend
+failure as a 404 or require an error boundary that does not exist yet. The waterfall is
+load-bearing. Not retried without an error-boundary pass first.
+
+### REJECTED  dedupe the four fetches brands/[brandId] layout and page both make
+Reason: not a duplication. Next 16 memoizes GET `fetch` calls with the same URL and options
+across layouts and pages within one server render pass, and every call goes through one
+`request()` helper with identical headers and `cache: "no-store"` - so the two components
+already share one response each. Confirmed in `node_modules/next/dist/docs/01-app/
+03-api-reference/04-functions/fetch.md`, not assumed. Nothing to fix.
