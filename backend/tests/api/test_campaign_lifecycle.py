@@ -297,6 +297,91 @@ def test_changing_the_preset_does_not_reset_the_look(client: TestClient):
     assert updated.json()["policy"]["email_tier"] == "branded"
 
 
+def test_saving_a_model_pin_does_not_reset_the_preset(client: TestClient):
+    """The mirror of the test above, and the one that was actually reachable.
+
+    The model picker sends `model_overrides` on its own, carrying neither
+    preset nor tier, so rebuilding the policy dict from only what the request
+    named moved a `maximum` campaign back to `balanced` - fewer drafts,
+    different judges and a smaller budget than the user chose, with nothing on
+    screen to say it had happened.
+    """
+    campaign = client.post(
+        "/api/campaigns",
+        json={
+            "name": "Launch",
+            "request": "Write exactly 1 email announcing the launch",
+            "product_description": "A note-taking app",
+            "policy_preset": "maximum",
+            "email_tier": "branded",
+        },
+    ).json()
+    assert campaign["policy"]["preset"] == "maximum"
+
+    updated = client.put(
+        f"/api/campaigns/{campaign['id']}/policy",
+        json={"model_overrides": {"email_writer": "opus"}},
+    )
+
+    assert updated.status_code == 200, updated.text
+    body = updated.json()
+    assert body["model_overrides"] == {"email_writer": "opus"}
+    assert body["policy"]["preset"] == "maximum"
+    assert body["policy"]["email_tier"] == "branded"
+
+
+def test_changing_the_look_does_not_reset_the_preset(client: TestClient):
+    """The tier is the one presentation decision a user changes after seeing a
+    run, so it arrives on its own too."""
+    campaign = client.post(
+        "/api/campaigns",
+        json={
+            "name": "Launch",
+            "request": "Write exactly 1 email announcing the launch",
+            "product_description": "A note-taking app",
+            "policy_preset": "maximum",
+        },
+    ).json()
+
+    updated = client.put(
+        f"/api/campaigns/{campaign['id']}/policy", json={"email_tier": "branded"}
+    )
+
+    assert updated.status_code == 200, updated.text
+    assert updated.json()["policy"]["email_tier"] == "branded"
+    assert updated.json()["policy"]["preset"] == "maximum"
+
+
+def test_clearing_the_field_overrides_leaves_the_preset_and_the_look(client: TestClient):
+    """`{}` clears the overrides and `None` leaves them alone, the same split
+    `model_overrides` already makes - so the two stay distinguishable."""
+    campaign = client.post(
+        "/api/campaigns",
+        json={
+            "name": "Launch",
+            "request": "Write exactly 1 email announcing the launch",
+            "product_description": "A note-taking app",
+            "policy_preset": "maximum",
+            "email_tier": "branded",
+        },
+    ).json()
+    pinned = client.put(
+        f"/api/campaigns/{campaign['id']}/policy",
+        json={"overrides": {"max_drafts": 2}},
+    )
+    assert pinned.json()["policy"]["max_drafts"] == 2
+
+    cleared = client.put(
+        f"/api/campaigns/{campaign['id']}/policy", json={"overrides": {}}
+    )
+
+    assert cleared.status_code == 200, cleared.text
+    policy = cleared.json()["policy"]
+    assert "max_drafts" not in policy
+    assert policy["preset"] == "maximum"
+    assert policy["email_tier"] == "branded"
+
+
 def test_a_campaign_that_asks_for_nothing_stays_plain(client: TestClient):
     campaign = client.post(
         "/api/campaigns",

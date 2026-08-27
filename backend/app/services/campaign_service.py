@@ -36,6 +36,12 @@ from app.schemas.campaign import CampaignCreateRequest, CampaignPolicyUpdate, Ru
 _CHARS_PER_WORD = 6
 
 
+#: The keys `update_policy` reconstructs itself. Everything else in the
+#: policy dict is an ExecutionPolicy field override, carried forward as a
+#: group when a request does not restate it.
+_REBUILT_KEYS = frozenset({"preset", "email_tier"})
+
+
 class CampaignAlreadyRunningError(Exception):
     """Raised when a campaign already has an execution in flight - starting
     a second one concurrently would let two pipelines write the same
@@ -192,15 +198,31 @@ class CampaignService:
         # Validated eagerly so a bad preset/override never reaches a running
         # campaign - the router only sees good data.
         resolve_policy(data.preset, data.overrides)
-        policy: dict = {"preset": data.preset} if data.preset else {}
-        if data.overrides:
-            policy.update(data.overrides)
-        # `policy` is rebuilt rather than merged, so anything stored in it that
-        # this form does not carry has to be put back by hand. The email tier
-        # lives in there (see CampaignCreateRequest.email_tier) and is set from
-        # a different screen, so without this line changing the preset would
-        # silently reset a campaign's emails to the plain look.
-        tier = data.email_tier if data.email_tier is not None else (campaign.policy or {}).get("email_tier")
+        # `policy` is rebuilt rather than merged, so every key stored in it that
+        # this request does not carry has to be put back by hand - in all three
+        # directions, not one. The preset, the field overrides and the tier are
+        # each set from a different screen, so whichever is absent from a
+        # request is exactly the one that would otherwise be silently reset.
+        #
+        # Only the tier direction was wired, because at the time no request
+        # arrived without a preset. One does: saving a model pin carries neither
+        # preset nor tier, and quietly moved a `maximum` campaign back to
+        # `balanced` - a different number of drafts, different judges and a
+        # different budget than the user chose.
+        #
+        # `None` leaves what is stored alone and `{}` clears it, matching
+        # model_overrides below.
+        stored = campaign.policy or {}
+        preset = data.preset if data.preset is not None else stored.get("preset")
+        overrides = (
+            data.overrides
+            if data.overrides is not None
+            else {key: value for key, value in stored.items() if key not in _REBUILT_KEYS}
+        )
+        tier = data.email_tier if data.email_tier is not None else stored.get("email_tier")
+
+        policy: dict = {"preset": preset} if preset else {}
+        policy.update(overrides)
         if tier is not None:
             policy["email_tier"] = str(tier)
         campaign.policy = policy or None
