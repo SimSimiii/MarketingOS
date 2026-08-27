@@ -99,6 +99,63 @@ async def test_two_candidates_that_came_back_the_same_are_not_read_twice(
 
 
 @pytest.mark.asyncio
+async def test_a_candidate_a_gate_already_vetoed_is_not_read_cold(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    """The free checks outrank the score, so the reading decides nothing.
+
+    `EmailVersion.measured` puts the gate first: a candidate with a blocking
+    issue loses to any clean one whatever a stranger says about it. Reading it
+    anyway bought a whole panel per blocked draft - three calls each on a
+    preset that writes four candidates - for a number nothing consumes.
+    """
+    provider.set_default("strategist", campaign_brief(1))
+    provider.push(
+        "email_writer",
+        email_draft(subject="The one that reads clean", body=_BODY_ONE),
+        email_draft(subject="Act now, and the spam gate says no", body=_BODY_BLOCKED),
+        email_draft(subject="The other one that reads clean", body=_BODY_THREE),
+    )
+
+    pipeline, _ = build(provider, bake_off_only(max_revisions=0))
+    result = await pipeline.run(one_email(request_fixture))
+
+    assert provider.calls_by_role["email_writer"] == 3, "all three were still written"
+    assert provider.calls_by_role["blind_reader"] == 2, "the vetoed one was not worth reading"
+
+    vetoed = next(
+        item for item in result.outcomes[0].discarded if item.gates.blocking
+    )
+    assert vetoed.read.has_verdict is False
+    assert not result.outcomes[0].best.gates.blocking
+
+
+@pytest.mark.asyncio
+async def test_candidates_that_all_broke_a_check_are_still_read(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    """The mirror of the rule above, and the reason it is stated as "unless".
+
+    When every candidate is vetoed the gates have ranked nothing, so the cold
+    read is the only instrument left that can say which of them to carry into
+    the rewrites. Skipping it there would pick the winner by draft order.
+    """
+    provider.set_default("strategist", campaign_brief(1))
+    provider.push(
+        "email_writer",
+        email_draft(subject="Act now, the first one", body=_BODY_BLOCKED),
+        email_draft(subject="Act now, the second one", body=_BODY_BLOCKED_TWO),
+        email_draft(subject="Act now, the third one", body=_BODY_BLOCKED_THREE),
+    )
+
+    pipeline, _ = build(provider, bake_off_only(max_revisions=0))
+    result = await pipeline.run(one_email(request_fixture))
+
+    assert provider.calls_by_role["blind_reader"] == 3
+    assert result.outcomes[0].best.gates.blocking
+
+
+@pytest.mark.asyncio
 async def test_the_two_best_candidates_are_read_side_by_side(
     provider: RoleScriptedProvider, request_fixture: CampaignRequest
 ):
@@ -509,4 +566,30 @@ _BODY_THREE = (
     "did, in the register you actually use.\n\n"
     "Nothing to configure. Paste a branch name, read a paragraph, decide whether to\n"
     "keep what it handed you."
+)
+
+#: Drafts that break a blocking gate on purpose - "act now" is spam-filter
+#: vocabulary, and `spam_gate` reads the rendered email. Each opens differently
+#: from the others so `_distinct` keeps all three: what these tests are about
+#: is what happens after the checks run, not the duplicate screen before them.
+_BODY_BLOCKED = (
+    "Act now, because the deploy window shuts on you again this Friday.\n\n"
+    "The note is the part that gets squeezed into whatever minutes are left once\n"
+    "the work everybody cares about is already finished and merged.\n\n"
+    "Hand it a branch and read the paragraph that comes back to you.\n\n"
+    "Keep the half that is right, rewrite the half that is not, and send it."
+)
+_BODY_BLOCKED_TWO = (
+    "Every sprint ends with a paragraph nobody volunteered to write.\n\n"
+    "Act now and it is written before the retro starts, from the commits that are\n"
+    "already sitting on the branch you merged this morning.\n\n"
+    "You read it, you change what is wrong, and then it goes out.\n\n"
+    "That is the whole loop, and it takes about as long as reading this did."
+)
+_BODY_BLOCKED_THREE = (
+    "Nobody on your team wants to own the changelog, and it shows.\n\n"
+    "It reads like a list because it is one, and the people it was written for\n"
+    "gave up on opening it some time around the spring.\n\n"
+    "Act now on the twenty entries you already published and it writes like those.\n\n"
+    "Paste a branch name. Read what it gives you. Decide whether to keep it."
 )

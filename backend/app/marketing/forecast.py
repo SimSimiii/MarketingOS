@@ -103,12 +103,15 @@ def compile_forecast(policy: ExecutionPolicy, material_chars: int, reused: bool)
 def email_forecast(policy: ExecutionPolicy) -> Forecast:
     """One email, from the first candidate to the polished subject line.
 
-    Two things the floor deliberately does not assume, because both were
-    measured happening and neither is under the policy's control:
+    Three things the floor deliberately does not assume, because each was
+    measured happening and none is under the policy's control:
 
     - **that every candidate gets read.** Two drafts that come back with the
       same subject or the same opening move are one alternative bought twice,
-      and `_distinct` drops the repeat before anybody pays to read it.
+      and `_distinct` drops the repeat before anybody pays to read it. Nor is
+      a candidate a blocking gate has already vetoed read at all, unless they
+      all are - a veto outranks any score, so the reading would decide
+      nothing.
     - **that the run-off happens.** The two best candidates only go in front
       of a reader together when the free checks could not already separate
       them.

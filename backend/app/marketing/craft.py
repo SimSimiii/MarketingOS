@@ -117,7 +117,16 @@ def _opening_line(email: Email) -> str:
 
 def _attempt_line(version: "EmailVersion", label: str) -> str:
     read = version.read
-    verdict = f"pull {read.pull:.0f}/10" if read.has_verdict else "nobody could read it"
+    if read.has_verdict:
+        verdict = f"pull {read.pull:.0f}/10"
+    elif version.gates.blocking:
+        # A candidate the free checks vetoed is never read cold - see
+        # `_bake_off`. "Nobody could read it" would report that as a reader who
+        # failed to answer, which is a different thing and the wrong lesson:
+        # the writer needs the check it broke, not a missing score.
+        verdict = f"stopped by an automatic check - {version.gates.blocking[0].detail}"
+    else:
+        verdict = "nobody could read it"
     doubt = read.worst.biggest_doubt.strip()
     wanted = read.worst.to_click_it_would_have_to.strip()
     opening = _opening_line(version.email)
@@ -690,15 +699,44 @@ class CraftLoop:
         )
 
         checked = [self._check(draft, brief, previous) for _, draft in kept]
+        # A candidate a blocking gate has already vetoed cannot win this
+        # bake-off however well it reads: `EmailVersion.measured` puts the gate
+        # first and the score second, so the comparison is settled before
+        # anybody is asked. Reading one anyway buys a whole panel per blocked
+        # draft to produce a number nothing downstream consumes - three readers
+        # each, on a preset that writes four candidates. The gates already ran
+        # before anything was paid for; acting on what they said is the other
+        # half of that, and it was missing.
+        #
+        # Unless every candidate is blocked, in which case the gates have said
+        # nothing about *which* to keep and the cold read is the only
+        # instrument left that can.
+        readable = [index for index, (gates, _) in enumerate(checked) if not gates.blocking]
+        if not readable:
+            readable = list(range(len(kept)))
+        vetoed = len(kept) - len(readable)
         self._observer.on_role_started(
             "blind_reader",
-            f"Email {brief.position} · {len(kept)} candidate(s) read cold by "
-            f"{len(self._personas)} reader(s)",
-            {"position": brief.position, "attempt": 1, "candidates": len(kept)},
+            f"Email {brief.position} · {len(readable)} candidate(s) read cold by "
+            f"{len(self._personas)} reader(s)"
+            + (
+                f" ({vetoed} broke an automatic check and cannot win - not read)"
+                if vetoed
+                else ""
+            ),
+            {
+                "position": brief.position,
+                "attempt": 1,
+                "candidates": len(readable),
+                "vetoed": vetoed,
+            },
         )
-        reads = await asyncio.gather(
-            *(self._reader.read(draft, self._personas) for _, draft in kept)
+        reported = await asyncio.gather(
+            *(self._reader.read(kept[index][1], self._personas) for index in readable)
         )
+        reads: list[PanelRead] = [PanelRead() for _ in kept]
+        for index, read in zip(readable, reported, strict=True):
+            reads[index] = read
         candidates = [
             EmailVersion(
                 attempt=1,
@@ -719,9 +757,12 @@ class CraftLoop:
         self._observer.on_role_finished(
             "blind_reader",
             "Candidates scored "
-            + ", ".join(f"{read.pull:.0f}/10" for read in reads)
+            + ", ".join(f"{reads[index].pull:.0f}/10" for index in readable)
             + f' - kept "{winner.email.subject}"',
-            {"pull": winner.read.pull, "scores": [read.pull for read in reads]},
+            {
+                "pull": winner.read.pull,
+                "scores": [reads[index].pull for index in readable],
+            },
         )
         losers = [item for item in candidates if item is not winner]
         winner = await self._run_off(winner, losers, brief)
