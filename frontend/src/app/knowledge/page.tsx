@@ -1,12 +1,10 @@
 import Link from "next/link";
 
 import { AddKnowledgeDialog } from "@/app/knowledge/add-knowledge-dialog";
-import { BrandKnowledgeDialog } from "@/app/knowledge/brand-knowledge-dialog";
 import { DeleteDocumentButton } from "@/app/knowledge/delete-document-button";
-import { NewBrandDialog } from "@/app/knowledge/new-brand-dialog";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -16,124 +14,69 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { api } from "@/lib/api-client";
-import type { Brand, BrandKnowledge } from "@/lib/types";
 
-export default async function KnowledgePage() {
-  const [documents, campaigns, brands] = await Promise.all([
+/** Sources that belong to a single campaign rather than to a business.
+ *
+ * A brand's material lives in that brand's workspace, because that is the
+ * scope the compiler reads it in. What is left here is the one-off: a campaign
+ * run without a brand, whose knowledge is read once and then kept to it. The
+ * two are listed apart on purpose - a flat list of every document the account
+ * holds hides which campaigns can actually see each one. */
+export default async function CampaignSourcesPage() {
+  const [documents, campaigns] = await Promise.all([
     api.listKnowledgeDocuments(),
     api.listCampaigns().catch(() => []),
-    api.listBrands().catch(() => []),
   ]);
+  const oneOffs = documents.filter((document) => document.brand_id === null);
   const campaignNames = new Map(campaigns.map((campaign) => [campaign.id, campaign.name]));
-  const brandNames = new Map(brands.map((brand) => [brand.id, brand.name]));
-  const brandKnowledge = new Map<string, BrandKnowledge>(
-    (
-      await Promise.all(
-        brands.map(async (brand) => {
-          const knowledge = await api.getBrandKnowledge(brand.id).catch(() => null);
-          return [brand.id, knowledge] as const;
-        }),
-      )
-    ).filter((entry): entry is [string, BrandKnowledge] => entry[1] !== null),
-  );
-
-  function locationLabel(document: { campaign_id: string | null; brand_id: string | null }) {
-    if (document.brand_id) return brandNames.get(document.brand_id) ?? "Unknown brand";
-    if (document.campaign_id) return campaignNames.get(document.campaign_id) ?? "—";
-    return "Unattached";
-  }
+  const withoutBrand = campaigns.filter((campaign) => campaign.brand_id === null);
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Product knowledge</h1>
-          <p className="text-sm text-muted-foreground">
-            Everything the copywriters read before they write: your pages, documents and
-            screenshots.
+          <h1 className="text-2xl font-semibold tracking-tight">Campaign sources</h1>
+          <p className="max-w-2xl text-sm text-muted-foreground">
+            Material attached to one campaign and read only by it. A business&rsquo;s own pages,
+            documents and screenshots belong to its brand instead, where they are compiled once
+            and reused by every campaign for it.
           </p>
         </div>
-        <div className="flex gap-2">
-          <NewBrandDialog />
-          <AddKnowledgeDialog campaigns={campaigns} brands={brands} />
+        <div className="flex flex-wrap items-center gap-2">
+          <Link href="/brands" className={buttonVariants({ variant: "outline", size: "sm" })}>
+            Brand knowledge
+          </Link>
+          <AddKnowledgeDialog campaigns={withoutBrand} />
         </div>
-      </div>
-
-      <div className="space-y-2">
-        <h2 className="text-sm font-medium text-muted-foreground">Brands</h2>
-        {brands.length === 0 ? (
-          <Card>
-            <CardContent className="p-6 text-sm text-muted-foreground">
-              No brands yet. Register one so a campaign can reuse compiled knowledge instead of
-              paying to recompile it every run.
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {brands.map((brand: Brand) => {
-              const knowledge = brandKnowledge.get(brand.id);
-              const docCount = documents.filter((d) => d.brand_id === brand.id).length;
-              return (
-                <Card key={brand.id}>
-                  <CardHeader>
-                    <CardTitle className="text-base">{brand.name}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-1 text-sm text-muted-foreground">
-                    <p>
-                      {docCount} source{docCount === 1 ? "" : "s"}
-                    </p>
-                    {knowledge ? (
-                      <>
-                        <p>
-                          Compiled v{knowledge.version} - {knowledge.evidence_count} fact
-                          {knowledge.evidence_count === 1 ? "" : "s"} to cite
-                        </p>
-                        {knowledge.gaps.length > 0 && (
-                          <p className="text-amber-600 dark:text-amber-500">
-                            {knowledge.gaps.length} gap{knowledge.gaps.length === 1 ? "" : "s"}{" "}
-                            still unanswered
-                          </p>
-                        )}
-                        <div className="flex flex-wrap gap-2 pt-1">
-                          <Link
-                            href={`/knowledge/base?brand=${brand.id}`}
-                            className={buttonVariants({ variant: "outline", size: "sm" })}
-                          >
-                            Knowledge base
-                          </Link>
-                          <BrandKnowledgeDialog brandId={brand.id} brandName={brand.name} />
-                        </div>
-                      </>
-                    ) : (
-                      <p>Not compiled yet - happens on the first campaign run.</p>
-                    )}
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        )}
       </div>
 
       <Card>
         <CardContent className="p-0">
-          {documents.length === 0 ? (
-            <p className="p-6 text-sm text-muted-foreground">
-              Nothing yet. Add your website so the copy uses your own words instead of guesses.
-            </p>
+          {oneOffs.length === 0 ? (
+            <div className="space-y-2 p-6 text-sm text-muted-foreground">
+              <p className="font-medium text-foreground">Nothing here.</p>
+              <p>
+                Every source you have added belongs to a brand, which is the arrangement that
+                pays off: the next campaign for that business starts from all of it.{" "}
+                <Link href="/brands" className="underline underline-offset-2">
+                  Open a brand
+                </Link>{" "}
+                to see or add its material.
+              </p>
+            </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Title</TableHead>
                   <TableHead>Source</TableHead>
-                  <TableHead>Saved to</TableHead>
+                  <TableHead>Read by</TableHead>
                   <TableHead>Words</TableHead>
                   <TableHead />
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {documents.map((document) => (
+                {oneOffs.map((document) => (
                   <TableRow key={document.id}>
                     <TableCell className="max-w-xs truncate font-medium">
                       {document.title}
@@ -142,10 +85,22 @@ export default async function KnowledgePage() {
                       <Badge variant="secondary">{document.source_type}</Badge>
                     </TableCell>
                     <TableCell className="text-muted-foreground">
-                      {document.brand_id && <Badge variant="outline">Brand</Badge>}{" "}
-                      {locationLabel(document)}
+                      {document.campaign_id ? (
+                        <Link
+                          href={`/campaigns/${document.campaign_id}`}
+                          className="hover:text-foreground hover:underline"
+                        >
+                          {campaignNames.get(document.campaign_id) ?? "Unknown campaign"}
+                        </Link>
+                      ) : (
+                        <span title="Attached to neither a brand nor a campaign, so no run reads it">
+                          Nothing
+                        </span>
+                      )}
                     </TableCell>
-                    <TableCell className="text-muted-foreground">{document.word_count}</TableCell>
+                    <TableCell className="text-muted-foreground tabular-nums">
+                      {document.word_count}
+                    </TableCell>
                     <TableCell className="text-right">
                       <DeleteDocumentButton documentId={document.id} />
                     </TableCell>

@@ -32,6 +32,8 @@ from app.knowledge.compiler import KnowledgeCompiler
 from app.knowledge.corpus import SourceCorpus
 from app.knowledge.ledger import EvidenceIndex
 from app.knowledge.store import StoredArtifacts
+from app.market.demand import DemandMap
+from app.market.positioning import PositioningMap
 from app.marketing.briefs import CampaignBrief
 from app.marketing.cancellation import CancellationToken
 from app.marketing.contract import DeliverableContract, check_contract, parse_contract
@@ -43,7 +45,7 @@ from app.marketing.observer import RunObserver
 from app.marketing.policy import ExecutionPolicy
 from app.marketing.preflight import ProofPosture, assess
 from app.marketing.reader import PULL_THRESHOLD, BlindReader, personas_for
-from app.marketing.report import CampaignReport, EmailReportLine
+from app.marketing.report import CampaignReport, EmailReportLine, ReaderVerdict
 from app.marketing.request import CampaignRequest
 from app.marketing.sequence import ROLE_ID as SEQUENCE_ROLE
 from app.marketing.sequence import SequenceReport, SequenceReviewer
@@ -101,6 +103,43 @@ class KnowledgeGateway(ABC):
 
     def prior_learnings(self) -> str:
         """What earlier campaigns for this business found out. Empty is fine."""
+        return ""
+
+    def positioning(self) -> PositioningMap | None:
+        """Where this business stands against its market, if anybody has read it.
+
+        On the gateway rather than passed into `run` because it is the same
+        kind of thing as the compiled artifacts: it belongs to the business,
+        it outlives the campaign, and a pipeline running without a database
+        should be able to answer "nobody has scanned this market" without a
+        caller having to say so. None is a first-class answer here - see
+        `PositioningMap.render_for_strategy`, which tells the strategist that
+        it is writing blind rather than that the field is empty.
+        """
+        return None
+
+    def demand(self) -> DemandMap | None:
+        """Who the market says would buy this, if anybody has mapped it.
+
+        Beside `positioning` and for the same reasons: it belongs to the
+        business, it outlives the campaign, and None is a first-class answer -
+        see `DemandMap.render_for_strategy`, which tells the strategist it is
+        working from the company's own idea of its buyer rather than pretending
+        the question was never asked.
+        """
+        return None
+
+    def audience_choice(self) -> str:
+        """The mapped segment this campaign was pointed at, or "" for none.
+
+        Separate from `demand` because they answer different questions: one is
+        what exists, the other is what this run was asked to do with it. The
+        chosen segment is *already* at the head of the artifacts by the time
+        the pipeline sees them (see `app.market.store.merge_audience`), so
+        nothing downstream needs this - the strategist does, because the
+        contrast between the buyer it was given and the ones it was not is
+        what makes the choice legible.
+        """
         return ""
 
 
@@ -174,11 +213,47 @@ class EmailCampaignPipeline:
             if self._policy.require_proof and posture.nothing_to_argue_from:
                 return self._needs_input(request, contract, result, posture)
 
-            brief = await self._phase_strategy(request, artifacts, corpus, contract, result)
+            positioning = self._knowledge.positioning()
+            if positioning is not None and not positioning.is_empty:
+                self._observer.on_phase(
+                    "market",
+                    positioning.summary(),
+                    {
+                        "rivals": positioning.rivals_profiled,
+                        "open_ground": [
+                            str(reading.axis) for reading in positioning.open_ground
+                        ],
+                    },
+                )
+
+            demand = self._knowledge.demand()
+            chosen = self._knowledge.audience_choice()
+            if chosen:
+                # Said out loud for the same reason the proof posture is: this
+                # decides who every draft in the run is written to and graded
+                # by, and a run whose audience was quietly swapped by a form
+                # field is a run whose report nobody can read afterwards.
+                mapped = demand.named(chosen) if demand is not None else None
+                self._observer.on_phase(
+                    "audience",
+                    f"Written to {chosen}"
+                    + (
+                        f" - {round(mapped.fit * 100)}% of them are estimated to bite"
+                        if mapped is not None
+                        else " - which is not on this brand's audience map"
+                    ),
+                    {"segment": chosen, "mapped": mapped is not None},
+                )
+
+            brief = await self._phase_strategy(
+                request, artifacts, corpus, contract, result, positioning, demand, chosen
+            )
             if (guard := self._guard()) is not None:
                 return self._stopped(request, contract, result, guard)
 
-            guard = await self._phase_craft(request, brief, artifacts, corpus, result)
+            guard = await self._phase_craft(
+                request, brief, artifacts, corpus, result, positioning
+            )
             if guard is not None:
                 return self._stopped(request, contract, result, guard)
 
@@ -302,6 +377,9 @@ class EmailCampaignPipeline:
         corpus: SourceCorpus,
         contract: DeliverableContract,
         result: CampaignRunResult,
+        positioning: PositioningMap | None = None,
+        demand: DemandMap | None = None,
+        chosen_segment: str = "",
     ) -> CampaignBrief:
         self._observer.on_role_started(
             STRATEGIST_ROLE, "Deciding what this campaign says, and in what order"
@@ -312,6 +390,9 @@ class EmailCampaignPipeline:
             corpus=corpus,
             contract=contract,
             prior_learnings=self._knowledge.prior_learnings(),
+            positioning=positioning,
+            demand=demand,
+            chosen_segment=chosen_segment,
         )
         result.brief = brief
         self._observer.on_brief(brief)
@@ -352,8 +433,9 @@ class EmailCampaignPipeline:
         artifacts: KnowledgeArtifacts,
         corpus: SourceCorpus,
         result: CampaignRunResult,
+        positioning: PositioningMap | None = None,
     ) -> str | None:
-        loop = self._craft_loop(artifacts, corpus, brief)
+        loop = self._craft_loop(artifacts, corpus, brief, positioning)
         accepted: list[Email] = []
 
         for email_brief in brief.emails:
@@ -438,7 +520,11 @@ class EmailCampaignPipeline:
     # ------------------------------------------------------------- internals
 
     def _craft_loop(
-        self, artifacts: KnowledgeArtifacts, corpus: SourceCorpus, brief: CampaignBrief
+        self,
+        artifacts: KnowledgeArtifacts,
+        corpus: SourceCorpus,
+        brief: CampaignBrief,
+        positioning: PositioningMap | None = None,
     ) -> CraftLoop:
         return CraftLoop(
             writer=EmailWriter(self._session, self._observer),
@@ -459,6 +545,7 @@ class EmailCampaignPipeline:
             merge_fields=self._policy.merge_fields,
             max_revisions=self._policy.max_revisions,
             candidates=self._policy.draft_candidates,
+            positioning=positioning,
             observer=self._observer,
             cancel_token=self._cancel_token,
         )
@@ -553,6 +640,12 @@ class EmailCampaignPipeline:
                 evidence_spent=list(outcome.best.substantiation.carried),
                 attributions=outcome.best.substantiation.attributions,
                 unresolved=[issue.detail for issue in outcome.best.gates.blocking],
+                reader_verdicts=ReaderVerdict.from_panel(outcome.best.read),
+                sameness=[
+                    issue.detail
+                    for issue in outcome.best.gates.issues
+                    if issue.gate == "sameness"
+                ],
             )
             for outcome in result.outcomes
         ]
@@ -569,5 +662,48 @@ class EmailCampaignPipeline:
             what_would_help_most=posture.asks[0] if posture and posture.asks else "",
             sequence_summary=result.sequence.verdict.summary if result.sequence else "",
             knowledge_version=result.artifacts.version if result.artifacts else 0,
-            notes=[result.abort_reason] if result.abort_reason else [],
+            notes=(
+                ([result.abort_reason] if result.abort_reason else [])
+                + self._economy_note(lines)
+            ),
         )
+
+    def _economy_note(self, lines: list[EmailReportLine]) -> list[str]:
+        """Say when the copy scored badly because of what the run was allowed
+        to buy, rather than because of the material.
+
+        A preset is presented as a speed choice and is really a quality one:
+        the cheapest configuration writes one draft instead of several,
+        reads it with one stranger instead of three, skips the critic, skips
+        the subject bake-off and allows one rewrite. Every mechanism this
+        system's quality rests on is off.
+
+        A user who picked it and got a 4/10 has no way to know that, and the
+        number they are shown looks like a verdict on their product. It is a
+        verdict on a run that was not allowed to do any of the work. Naming it
+        is free and it is the difference between "this tool is not very good"
+        and "spend forty cents more".
+        """
+        below = [line for line in lines if line.read_reported and not line.landed]
+        if not below:
+            return []
+        starved = [
+            name
+            for name, on in (
+                ("more than one opening per email", self._policy.draft_candidates > 1),
+                ("a panel of cold readers rather than one", self._policy.reader_panel),
+                ("the conversion critic", self._policy.critic_enabled),
+                ("alternative subject lines", self._policy.subject_variants > 0),
+                ("more than one rewrite", self._policy.max_revisions > 1),
+            )
+            if not on
+        ]
+        if len(starved) < 3:
+            return []
+        return [
+            f"{len(below)} email(s) came in under the floor on a run configured without "
+            + ", ".join(starved)
+            + ". Those are the mechanisms the quality rests on - this run wrote one draft "
+            "and kept it. Before concluding the copy cannot be better, try the same "
+            "request on a preset that buys them."
+        ]

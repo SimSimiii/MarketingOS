@@ -51,6 +51,7 @@ from functools import reduce
 
 from app.knowledge.artifacts import KnowledgeArtifacts
 from app.knowledge.ledger import EvidenceIndex
+from app.market.positioning import PositioningMap
 from app.marketing.briefs import CampaignBrief, EmailBrief
 from app.marketing.cancellation import CancellationToken
 from app.marketing.critic import ConversionCritic, Critique
@@ -379,6 +380,7 @@ class CraftLoop:
         judge: PreferenceJudge | None = None,
         subjects: SubjectBakeOff | None = None,
         subject_variants: int = 0,
+        positioning: PositioningMap | None = None,
         observer: RunObserver | None = None,
         cancel_token: CancellationToken | None = None,
     ) -> None:
@@ -394,6 +396,11 @@ class CraftLoop:
         self._judge = judge
         self._subjects = subjects
         self._subject_variants = subject_variants
+        #: Where this company stands against the field. Only the free
+        #: checks read it - see `gates.sameness_gate`. None means nobody
+        #: has scanned this market, and the check degrades to its closed
+        #: list of interchangeable openings rather than passing everything.
+        self._positioning = positioning
         self._observer = observer or RunObserver()
         #: Checked between an attempt's cold read and the next round of paid
         #: calls (critique, revise) - the pipeline's own guard only checks
@@ -428,6 +435,7 @@ class CraftLoop:
                 if (entry := self._artifacts.evidence.get(id_)) is not None
             ],
             ledger=self._artifacts.evidence.entries,
+            positioning=self._positioning,
         )
 
     async def craft(

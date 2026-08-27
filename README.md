@@ -10,9 +10,30 @@ the campaign says and in what order, writes each email, has every draft read by 
 who knows nothing about your product, rewrites what did not land, and hands you finished
 text you can copy and paste. Not drafts. Not a chatbot. Not a workflow builder.
 
+It also reads the market you are being compared in — who the buyer is really deciding
+between, what each of them promises, which of your claims are yours alone and which make you
+invisible, and whether anybody on the open web has ever vouched for you. That half is not a
+side feature: copy can be true, well-shaped and grounded in your own material and still be
+interchangeable with everybody else's, and nothing a company publishes about itself can tell
+it which of its claims the whole category is also making.
+
+And it reads the demand: who would actually buy this, which is not the same question as who
+the company says it sells to. A company's own material can only ever return the audience it
+already believes in — it was written by people who have been staring at their own product for
+years, and it names the customer they set out to have. So a separate pass reads the open
+market for the buyers that material could not contain: the industry one over with the same
+problem and a different vocabulary, the person who feels the pain daily but does not sign,
+the agency that would put it in front of forty clients, the company that only becomes a buyer
+the week something happens to it. Each one comes back with an estimated hit rate and the
+reasoning behind it, and any of them can be handed to a campaign as the person every draft is
+written to and graded by. Pick one and it will go and find them by name, reading each
+organisation's own pages for a published way in — and keeping only the contact details that
+were actually on a page it fetched, because a fluent guess at an email address is
+indistinguishable from a real one until the mail bounces.
+
 The mission is narrow on purpose: email copy that beats what an experienced professional
 would write. Other channels come later, and the parts that generalize — knowing the
-business, deciding the strategy — are already channel-agnostic.
+business, knowing the market, deciding the strategy — are already channel-agnostic.
 
 ## Stack
 
@@ -42,6 +63,23 @@ npm run dev                     # http://localhost:3000
 
 Image ingestion also needs the `tesseract` binary on PATH for OCR; without it, screenshots
 are still described by the vision provider but no text is extracted.
+
+### GPT models (optional)
+
+Claude works out of the box through the Claude Code CLI. GPT models are opt-in and need the
+Codex CLI, because a ChatGPT plan has no HTTP API and Codex is the only surface OpenAI
+meters against the plan rather than the API balance:
+
+```bash
+npm install -g @openai/codex
+codex login          # sign in with ChatGPT — NOT "log in with an API key"
+```
+
+Without it, the picker still lists the GPT models and any call routed to one fails with an
+error naming this command. Set `CODEX_CLI_PATH` if the binary is not on PATH. Note that
+Codex is metered per *message*, not per token: a campaign makes tens of calls, so a run
+comfortably exceeds a free plan's daily allowance. Free is enough to prove the wiring works
+on one agent, not to run a whole campaign on GPT.
 
 ## Measuring quality
 
@@ -219,6 +257,75 @@ title, whatever the readers vote, because losing the evidence is not a matter of
 receipt says which emails argue from nothing, and `proof on the page` is a benchmark line that
 no drifting judge can move.
 
+**Three checks asked whether the copy was true, well-formed and grounded. None asked whether
+it was *different*.** An email can pass every one of them, first time, and still be the email
+its reader received from four other companies this quarter — because nothing a company
+publishes about itself can say which of its claims every competitor is also making. That was
+measured, not theorised: a run produced a clean draft opening `Your competitor isn't waiting on
+you`, every word of it licensed by the ledger, and a cold reader scored it two clicks in a
+hundred.
+
+So the system now reads the outside world, in `backend/app/market/`, and it is the only part
+allowed to. The door is narrow on purpose (`ResearchTool` — web search and web fetch, nothing
+else, never reachable from any role that writes or judges), and it is split by trust: finding
+out *who* the competitors are needs the open web and cannot be verified, so what comes back is
+a lead. Finding out what they *promise* needs no search at all — their URL is crawled with the
+same crawler that reads the user's own site, claims are extracted from text this process
+fetched, and every quotation is checked back against that page, typography-blind, exactly as
+the evidence gate checks a draft. A model asked "what does Portkey claim?" answers from
+training data of unknown age; a model handed Portkey's pricing page is doing extraction.
+
+**Positioning is arithmetic, not judgment.** Each claim carries the *axis* it competes on, and
+the map is set arithmetic over axes: open ground, contested, table stakes, exposed. A model
+asked "are we differentiated?" answers from whichever claim was written more confidently, and
+differently on Tuesday. The non-obvious half is that on a crowded axis **the only specific
+claim wins it** — four competitors promising fast setup and one saying "first API call in under
+five minutes" is not a crowded axis, it is one checkable claim surrounded by noise. So
+specificity is scored, and an axis where we alone carry a figure comes back as open ground.
+
+That map is what the Strategist plans against, and it feeds a fourth gate the loop was missing.
+The **sameness check** (`backend/app/market/sameness.py`) is free, runs on every draft, and
+blocks — on a short closed list of *argument frames* rather than phrases, because "name the
+reader's competitor as the threat" fails the same way in twenty wordings and the copy has to be
+sent back with the frame named. Beside it sits the swap test, which strips out every word two or
+more competitors also spend and asks whether anything distinctive is left; that one is advisory,
+because its corpus is a handful of crawled sites rather than the category.
+
+**A company with no testimonial usually has one somewhere it forgot.** The run above reported
+`attributions: 0` and "No customer names, quotes or case studies found", and no rewrite has ever
+added a proof the material did not contain. The material did not contain it; that is not the
+same as it not existing. The Proof Hunter searches the open web for anybody who has vouched for
+the business — a marketplace review, a customer's engineering blog, an integration directory —
+and what it produces is deliberately *not* evidence. It is a candidate, and it waits for the
+user. A claim about a company sourced from a page that company does not control is the one kind
+of fact where being wrong is the user's name under somebody else's sentence, and the person
+whose company it is settles that in ten seconds. Approved, it enters the ledger with its
+verbatim quote and URL, `find_gaps` re-derives itself, `G-proof` closes, and the campaign that
+was unprovable last week is not. Approvals live in their own table and are merged onto the
+ledger at read time, so a recompile cannot lose the one class of fact that cost a human a
+decision.
+
+**Positioning decays, and that is why the market is re-read rather than read.** The claim a
+company owned in March is claimed by four competitors in September and nobody tells them. Each
+scan is versioned, the diff between two of them is the product (`backend/app/market/radar.py`),
+and the diff is computed in code — a model asked "what changed?" would occasionally invent a
+change, which is the one unacceptable failure in a feature whose whole value is being
+trustworthy about what moved.
+
+**The most valuable thing the system produced was being thrown away.** The Blind Reader answers
+what it thought the email was selling, where it stopped reading, what really stopped it
+clicking, and — the field `reader.md` calls the most valuable line in the report — what the
+email would have had to say for it to click. All of it was discarded at the end of the craft
+loop, and a run that scored 4/10 persisted exactly `{"pull": 4}`. It is kept on the receipt now,
+per reader, every panel member rather than the median. A user shown "4/10" learns that something
+is wrong; a user shown "I could not tell what this company does" learns what to do on Monday.
+
+And a low score is now allowed to say when it is a verdict on the *run*. The cheapest preset
+writes one draft instead of several, reads it with one stranger instead of three, skips the
+critic, skips the subject bake-off and allows one rewrite — every mechanism the quality rests on
+is off, and the number it produces looks to a user like a verdict on their product. When a run
+comes in under the floor with three or more of those switched off, the receipt says so.
+
 **A role exists when its ignorance is load-bearing.** The Blind Reader is never shown the
 request, the brief or the product docs, and that is the entire mechanism: ask a model that
 has read the brief what an email is selling and it answers from the brief. What it must be
@@ -293,9 +400,27 @@ distrust the badge on the runs that really did fail.
 request and the business's knowledge to the pipeline, watches it through an observer, and
 persists every role turn, deliverable and log line.
 
-**AI provider is abstracted, only Claude exists.** `AIProvider` (backend/app/ai/base.py)
+**AI provider is abstracted; two vendors exist.** `AIProvider` (backend/app/ai/base.py)
 exposes `generate`/`stream`/`count_tokens` with vendor-agnostic types, and every call in
 the system goes through one `ModelSession` — the single place that renders prompts from
 disk, types vendor failures, counts tokens and announces progress. Roles ask for a model
 *tier* (fast / balanced / deep), never a model name, so a new model generation moves one
 mapping instead of every role.
+
+**Both vendors bill a subscription, not an API balance.** `ClaudeProvider` drives the
+Claude Code CLI through the Claude Agent SDK; `OpenAIProvider` drives `codex exec` the
+same way. Neither is a convenience — a Claude Max plan and a ChatGPT plan have no HTTP
+API, and their CLIs are the only surfaces that meter against the plan. In both providers
+one function decides it: `_clean_env()` strips the vendor's API key from the subprocess
+environment, because with the key visible each CLI silently switches to API-key billing.
+That single filter is the difference between a run the operator's subscription covers and
+one that charges their card, so it is the first thing tested in each provider's suite.
+
+**Per-agent model choice, across vendors.** Presets decide the *shape* of a run — how many
+drafts, which judges, what budget. Which model does each job is separate, and can be pinned
+per agent from either vendor in the same campaign (writer on GPT, critic on Claude).
+`RoutingProvider` reads the model on each request and dispatches to the backend that can
+bill for it; `app/ai/models.py` is the catalog both the router and the UI read, so the
+dropdown can never offer a model the router does not know. Market-intelligence roles are
+the one restriction: they pass `web_fetch`, Codex has no equivalent, and pinning one to a
+GPT model is refused at save time rather than discovered mid-run.

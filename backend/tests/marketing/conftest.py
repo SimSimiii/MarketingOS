@@ -33,6 +33,7 @@ from app.knowledge.compiler import find_gaps
 from app.knowledge.corpus import Document, SourceCorpus
 from app.knowledge.ledger import Evidence, EvidenceKind, EvidenceLedger
 from app.knowledge.store import StoredArtifacts
+from app.market.demand import DemandMap
 from app.marketing.pipeline import KnowledgeGateway
 from app.marketing.reader import _PULL_BY_CLICKS
 from app.marketing.request import CampaignRequest
@@ -458,6 +459,8 @@ class FakeKnowledgeGateway(KnowledgeGateway):
         documents: list[Document] | None = None,
         compiled: KnowledgeArtifacts | None = None,
         learnings: str = "",
+        demand: DemandMap | None = None,
+        audience_choice: str = "",
     ) -> None:
         self._corpus = SourceCorpus.from_documents(documents or [])
         self.stored = (
@@ -467,6 +470,8 @@ class FakeKnowledgeGateway(KnowledgeGateway):
         )
         self.saves: list[KnowledgeArtifacts] = []
         self._learnings = learnings
+        self._demand = demand
+        self._audience_choice = audience_choice
 
     def corpus(self) -> SourceCorpus:
         return self._corpus
@@ -484,6 +489,12 @@ class FakeKnowledgeGateway(KnowledgeGateway):
 
     def prior_learnings(self) -> str:
         return self._learnings
+
+    def demand(self) -> DemandMap | None:
+        return self._demand
+
+    def audience_choice(self) -> str:
+        return self._audience_choice
 
 
 def make_session(

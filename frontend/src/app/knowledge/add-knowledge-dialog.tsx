@@ -23,19 +23,29 @@ import type { Brand, Campaign } from "@/lib/types";
 /** Every document needs a home a campaign run can actually find: a brand
  * (reused by every campaign attached to it) or a single campaign (read once,
  * then discarded). There is no unscoped option - a document tied to neither
- * is never read by anything. */
+ * is never read by anything.
+ *
+ * Pass `brand` from inside that brand's workspace and the picker disappears:
+ * the page already answered "whose knowledge is this", and re-asking invites
+ * somebody to file a source under the wrong business by accident. */
 export function AddKnowledgeDialog({
-  campaigns,
-  brands,
+  campaigns = [],
+  brands = [],
+  brand,
 }: {
-  campaigns: Campaign[];
-  brands: Brand[];
+  campaigns?: Campaign[];
+  brands?: Brand[];
+  brand?: Brand;
 }) {
   const router = useRouter();
   const fileInput = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const defaultScope = brands.length > 0 ? `brand:${brands[0].id}` : "";
+  const defaultScope = brand
+    ? `brand:${brand.id}`
+    : brands.length > 0
+      ? `brand:${brands[0].id}`
+      : "";
   const [scopeValue, setScopeValue] = useState(defaultScope);
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
@@ -91,6 +101,12 @@ export function AddKnowledgeDialog({
 
   const scopeAndTitle = (
     <>
+      {brand ? (
+        <p className="rounded-md bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+          Saved to <span className="font-medium text-foreground">{brand.name}</span> — read by
+          every campaign for this brand, and by no other brand&rsquo;s.
+        </p>
+      ) : (
       <div className="space-y-2">
         <Label htmlFor="scope">Save to</Label>
         <select
@@ -104,24 +120,25 @@ export function AddKnowledgeDialog({
           </option>
           {brands.length > 0 && (
             <optgroup label="Brands (reused by every campaign)">
-              {brands.map((brand) => (
-                <option key={brand.id} value={`brand:${brand.id}`}>
-                  {brand.name}
+              {brands.map((option) => (
+                <option key={option.id} value={`brand:${option.id}`}>
+                  {option.name}
                 </option>
               ))}
             </optgroup>
           )}
           {campaigns.length > 0 && (
             <optgroup label="Just one campaign">
-              {campaigns.map((campaign) => (
-                <option key={campaign.id} value={`campaign:${campaign.id}`}>
-                  {campaign.name}
+              {campaigns.map((option) => (
+                <option key={option.id} value={`campaign:${option.id}`}>
+                  {option.name}
                 </option>
               ))}
             </optgroup>
           )}
         </select>
       </div>
+      )}
       <div className="space-y-2">
         <Label htmlFor="title">Title (optional)</Label>
         <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} />

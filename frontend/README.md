@@ -14,13 +14,32 @@ Runs on http://localhost:3000, expects the backend at http://localhost:8000/api 
 
 ## Structure
 
-- `src/app/*` — one route per page (Dashboard, Campaigns, Campaign Details, Live, Knowledge,
-  Settings, Activity). Pages are server components that call the API directly; forms that
-  mutate data are small colocated client components (`"use client"`).
+- `src/app/*` — one route per page (Dashboard, Campaigns, Campaign Details, Live, Brands,
+  Campaign sources, Settings, Activity). Pages are server components that call the API
+  directly; forms that mutate data are small colocated client components (`"use client"`).
 - `src/lib/api-client.ts` — typed fetch wrapper over the backend REST API.
 - `src/lib/types.ts` — TypeScript types mirroring the backend's Pydantic schemas.
 - `src/components/ui/*` — shadcn/ui primitives.
 - `src/components/layout/*` — sidebar + app shell.
+
+## One workspace per brand
+
+Knowledge and market are not top-level pages, and that is a product decision rather than a
+routing one. Both belong to a *business*: two brands have different competitors, different
+proof and different claims that are theirs alone, so an account-wide Market has to pick a brand
+on the reader's behalf, and the one it picks is never the one they meant.
+
+Everything scoped to a business therefore lives under `src/app/brands/[brandId]/`:
+
+- `page.tsx` — what this brand can prove, who it is up against, what it has shipped.
+- `knowledge/` — its sources, and `knowledge/base/` the compiled knowledge base built from them.
+- `market/` — its competitors, positioning map, proof queue and radar.
+
+`layout.tsx` fetches the brand once and renders the header, the brand switcher and the section
+nav around all of them. `/market` and `/knowledge/base?brand=` redirect here rather than 404,
+because bookmarks to the old account-wide pages exist. What is left at `/knowledge` is the one
+thing that has no brand to move into: sources attached to a one-off campaign, read once and
+kept to it.
 
 ## Watching a run
 

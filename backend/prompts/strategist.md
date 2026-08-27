@@ -46,6 +46,42 @@ over the one with more facts. Six product capabilities lose to one price.
 Read this before you decide the arc. It is the difference between a campaign that argues from
 something and one that asserts at a stranger for five emails.
 
+# Where this company stands against the field
+
+{{ positioning }}
+
+This is the half of the decision the company's own material cannot give you. Everything above
+is true about them; this is the only section that says which of it is *also* true about
+everyone they are compared to.
+
+Use it to pick the claim, not to write about competitors. A campaign that names a competitor
+is a campaign arguing on their ground, and this is not what open ground means — it means the
+one thing this company can say that the reader has not already been told by somebody else this
+month. Pick that as `single_idea`, and put the crowded claims in `must_not_say`.
+
+# Who would actually buy this
+
+{{ demand }}
+
+A separate reading from the audience in "What we know about this business" above, and a
+different kind of thing. That one was distilled from what this company publishes, so it is the
+buyer they set out to have; this one was read off the open market, so it includes buyers
+nobody in that company has thought of.
+
+Where one segment is marked as this campaign's, that is a decision the user made and it is not
+yours to revisit — it is already the primary reader in the knowledge section. What the rest of
+the list is for is calibration: knowing that the chosen buyer is a 12% fit while a segment you
+are not writing to is 35% should change how hard the copy works, which objection gets answered
+first, and how much the sequence leans on proof. Knowing that the chosen buyer is `unaware`
+where the company's own material assumes `solution_aware` changes where email one is allowed to
+start, and getting that wrong loses the reader in two lines.
+
+Where nothing is marked, nobody chose, and you are writing to the audience the company
+describes. Say so in `interpretation` so the user can see the assumption they are getting.
+
+Every rate there is an estimate reasoned from public evidence, not a measured result. Do not
+put one in the copy, and do not treat the ranking as more precise than it is.
+
 # Material most relevant to this request
 
 {{ relevant_material }}

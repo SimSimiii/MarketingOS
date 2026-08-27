@@ -22,14 +22,17 @@ from app.knowledge.ledger import (
     EvidenceKind,
     EvidenceLedger,
 )
+from app.market.demand import AudienceSegment, DemandMap, SegmentKind
 from app.marketing.policy import PRESETS
 from app.marketing.request import CampaignRequest
 from app.marketing.strategist import MAX_EVIDENCE_PER_EMAIL
 from tests.marketing.conftest import (
+    FakeKnowledgeGateway,
     RoleScriptedProvider,
     artifacts_fixture,
     campaign_brief,
 )
+from tests.marketing.pipeline_helpers import build_with_gateway
 from tests.marketing.test_pipeline import build
 
 
@@ -239,3 +242,79 @@ async def test_the_writer_is_not_handed_the_whole_inventory(
         f"{listed} facts reached the writer"
     )
     assert "feature number 118 exists" not in prompt
+
+
+# ------------------------------------------------------- the chosen audience
+
+
+def _demand() -> DemandMap:
+    return DemandMap(
+        segments=[
+            AudienceSegment(
+                name="Agencies that ship on behalf of five clients",
+                kind=SegmentKind.CHANNEL,
+                who="an agency lead writing five release notes every Friday",
+                why_them="one conversation puts this in front of five teams",
+                fit=0.35,
+                basis="they already resell adjacent tooling",
+                objection="our clients would have to agree to it",
+                sophistication=Sophistication.UNAWARE,
+            ),
+            AudienceSegment(
+                name="a developer who ships weekly and writes release notes by hand",
+                kind=SegmentKind.CORE,
+                who="ships every Friday",
+                fit=0.12,
+                basis="who the site already talks to",
+            ),
+        ]
+    )
+
+
+@pytest.mark.asyncio
+async def test_the_strategist_sees_the_buyers_it_was_not_pointed_at(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    """The contrast is the information.
+
+    A strategist told "write to agencies" knows less than one told "write to
+    agencies, a 35% fit, rather than to the developers on the homepage, an
+    estimated 12%" - the second one knows what it is trading away, and how
+    hard the copy has to work.
+    """
+    provider.set_default("strategist", campaign_brief(1))
+    pipeline = build_with_gateway(
+        provider,
+        PRESETS["balanced"].model_copy(update={"draft_candidates": 1, "max_revisions": 0}),
+        FakeKnowledgeGateway(
+            compiled=_rich_artifacts(),
+            demand=_demand(),
+            audience_choice="Agencies that ship on behalf of five clients",
+        ),
+    )
+    await pipeline.run(_one_email(request_fixture))
+
+    prompt = provider.requests_for("strategist")[0].system_prompt
+    assert "<- THIS CAMPAIGN" in prompt
+    assert "35% likely to bite" in prompt
+    assert "12% likely to bite" in prompt
+    # And it is told, in the same breath, that neither number was measured.
+    assert "not a measured result" in prompt
+
+
+@pytest.mark.asyncio
+async def test_a_brand_with_no_map_is_told_so_rather_than_shown_an_empty_field(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    """An empty section reads as "the market has no buyers", which is never
+    true and is exactly the wrong thing to plan against."""
+    provider.set_default("strategist", campaign_brief(1))
+    pipeline, _ = build(
+        provider,
+        PRESETS["balanced"].model_copy(update={"draft_candidates": 1, "max_revisions": 0}),
+        artifacts=_rich_artifacts(),
+    )
+    await pipeline.run(_one_email(request_fixture))
+
+    prompt = provider.requests_for("strategist")[0].system_prompt
+    assert "Nobody has mapped this product's demand" in prompt

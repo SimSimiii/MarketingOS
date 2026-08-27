@@ -3,6 +3,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.marketing.policy import PolicyPreset
+from app.marketing.render_html import EmailTier
 from app.models.enums import AssetType, CampaignStatus, ExecutionStatus
 from app.schemas.types import UtcDatetime
 
@@ -28,6 +29,25 @@ class CampaignCreateRequest(BaseModel):
     #: The business this campaign is for. Attaching it means the knowledge
     #: compiled for an earlier campaign is reused instead of recompiled.
     brand_id: UUID | None = None
+    #: The name of a segment from this brand's audience map, if the user
+    #: picked one. Optional, and the single field on this form that changes
+    #: who the emails are written to: with it set the run plans against the
+    #: buyer the market suggested rather than the one the company's own site
+    #: describes. A name rather than an id - see app.models.campaign.
+    audience_segment: str | None = None
+    #: Where the call to action points, if the user knows. Falls back to the
+    #: brand's website; without either, the CTA renders as a marked slot.
+    cta_url: str | None = None
+    #: How designed the finished email should look - see
+    #: app.marketing.render_html. `plain` is typography only and is the right
+    #: answer for cold outreach; `branded` adds the logo, the brand colour, a
+    #: real button and a footer, and is the right answer for the mail a reader
+    #: expects to come from a company. None takes the system default (plain).
+    #:
+    #: Stored inside `policy` rather than as its own column because that is
+    #: where the orchestrator already reads it from, and because it is a
+    #: property of how this campaign is run rather than of what it says.
+    email_tier: EmailTier | None = None
     #: One of "fast" / "balanced" (default) / "maximum" - see app.marketing.policy.
     policy_preset: PolicyPreset | None = None
     #: Per-role model overrides, e.g. {"email_writer": "opus"} or {"*": "haiku"}.
@@ -54,6 +74,8 @@ class CampaignRead(BaseModel):
     sender_name: str | None = None
     sender_role: str | None = None
     brand_id: UUID | None = None
+    audience_segment: str | None = None
+    cta_url: str | None = None
     status: CampaignStatus
     archived_at: UtcDatetime | None
     policy: dict | None
@@ -68,8 +90,22 @@ class CampaignRead(BaseModel):
 
 class CampaignPolicyUpdate(BaseModel):
     preset: PolicyPreset | None = None
+    #: How designed the finished emails look. Here as well as on creation
+    #: because it is the one presentation decision a user changes their mind
+    #: about after seeing a run - and re-running is cheap where re-creating
+    #: the campaign is not. None leaves what is stored alone.
+    email_tier: EmailTier | None = None
     #: Partial ExecutionPolicy field overrides layered on top of `preset`.
     overrides: dict | None = None
+    #: Per-agent model choice, `{role_id: model}` - the "custom models" panel.
+    #: Orthogonal to `preset`, which decides the *shape* of a run (how many
+    #: drafts, which judges, what budget) and not only which models run it. An
+    #: override replaces whatever the preset resolved for that agent; `{}`
+    #: clears every pin and hands the choice back to the preset.
+    #:
+    #: `None` means "leave what is stored alone", so a caller changing only the
+    #: preset does not silently wipe a picker the user filled in.
+    model_overrides: dict[str, str] | None = None
 
 
 class GeneratedAssetRead(BaseModel):

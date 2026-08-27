@@ -20,6 +20,8 @@ from app.ai.model_router import ModelTier
 from app.knowledge.artifacts import KnowledgeArtifacts
 from app.knowledge.base import build_knowledge_base
 from app.knowledge.corpus import SourceCorpus
+from app.market.demand import DemandMap
+from app.market.positioning import PositioningMap
 from app.marketing.briefs import CampaignBrief, EmailBrief
 from app.marketing.contract import DeliverableContract
 from app.marketing.exceptions import StrategyError
@@ -64,6 +66,9 @@ class Strategist:
         corpus: SourceCorpus,
         contract: DeliverableContract,
         prior_learnings: str = "",
+        positioning: PositioningMap | None = None,
+        demand: DemandMap | None = None,
+        chosen_segment: str = "",
     ) -> CampaignBrief:
         variables = {
             "request": request.request,
@@ -76,6 +81,20 @@ class Strategist:
             # line in it: it is why an obvious angle is off the table.
             "knowledge_map": build_knowledge_base(artifacts).render_map(),
             "proof_posture": assess(artifacts).render_for_strategy(),
+            # What the material cannot contain: which of this company's
+            # claims every competitor also makes. Absent, the strategist
+            # is told so plainly rather than left to assume the field is
+            # empty - see PositioningMap.render_for_strategy.
+            "positioning": (
+                positioning or PositioningMap()
+            ).render_for_strategy(),
+            # Who the market says would buy this, and which of them this
+            # campaign was pointed at. The chosen segment is already the
+            # primary one in `knowledge` above - this is the field of buyers
+            # it was chosen *out of*, which is what turns a target into a
+            # decision the strategist can reason about instead of an
+            # instruction it can only obey.
+            "demand": (demand or DemandMap()).render_for_strategy(chosen_segment),
             "contract": contract.render(),
             "relevant_material": corpus.render_search(
                 f"{request.request} {request.product_description}", _RETRIEVAL_CHUNKS

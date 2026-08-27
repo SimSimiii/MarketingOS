@@ -34,3 +34,15 @@ class ProviderError(ModelRuntimeError):
 
 class OutputValidationError(ModelRuntimeError):
     """Raised when a role's answer cannot be parsed into the model it promised."""
+
+
+class CapabilityUnavailableError(ModelRuntimeError):
+    """Raised when a call asked for a tool the configured provider cannot offer.
+
+    Deliberately a hard failure rather than a downgrade. The roles that ask
+    for a `ResearchTool` are the ones whose entire product is what they found
+    outside the prompt; run without it, a competitor scan still answers, in
+    the same shape, with names the model happened to remember - and nothing
+    downstream can tell that apart from a real scan. Failing loudly is what
+    keeps "we looked this up" true.
+    """

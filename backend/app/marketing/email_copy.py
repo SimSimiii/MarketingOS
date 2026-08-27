@@ -21,7 +21,18 @@ logger = logging.getLogger("marketingos.marketing")
 #: Labels the writer puts in front of each field. BODY is last on purpose:
 #: everything after it is the email, so a paragraph that happens to start
 #: "Subject:" is never mistaken for a field.
-_FIELD_NAMES = ("ROLE", "SUBJECT", "PREVIEW", "GREETING", "CTA", "SIGNOFF", "PS", "BODY")
+_FIELD_NAMES = (
+    "ROLE",
+    "SUBJECT",
+    "PREVIEW",
+    "EYEBROW",
+    "HEADLINE",
+    "GREETING",
+    "CTA",
+    "SIGNOFF",
+    "PS",
+    "BODY",
+)
 _REQUIRED_FIELDS = ("SUBJECT", "PREVIEW", "GREETING", "CTA", "SIGNOFF", "BODY")
 
 #: Tolerates the markdown a model decorates its labels with (`**SUBJECT:**`).
@@ -52,6 +63,14 @@ _SENTENCE_SPLIT_RE = re.compile("(?<=[.!?])[\"'”’)\\]]*\\s+")
 #: cycle, and it should only be paid by drafts that are actually long.
 MAX_SUBJECT_CHARS = 65
 MAX_PREVIEW_CHARS = 110
+#: A headline is the first thing read in a broadcast email and it is set large,
+#: so it has to survive being large: past this it wraps to three lines on a
+#: phone and stops being a headline.
+MAX_HEADLINE_CHARS = 62
+#: The eyebrow is two or three words in small capitals. Anything longer is a
+#: sentence pretending to be a label, and letterspaced capitals are the worst
+#: possible setting for a sentence.
+MAX_EYEBROW_CHARS = 22
 _MAX_CTA_WORDS = 8
 #: The writer is asked for 45 (see prompts/writer.md) and checked at 50. The
 #: gap is deliberate slack: the prompt used to say "one to three lines", which
@@ -61,9 +80,66 @@ _MAX_CTA_WORDS = 8
 #: and only a genuinely long paragraph pays for a repair turn.
 _MAX_PARAGRAPH_WORDS = 50
 _MAX_BULLET_WORDS = 16
+#: A callout is the one thing an email is really about, set apart in a box of
+#: its own. Past this it is a paragraph with a border round it, which is worse
+#: than no box: the reader's eye is drawn to a block that then asks them to
+#: read as much as the email around it.
+_MAX_CALLOUT_WORDS = 35
 _MIN_BODY_WORDS = 60
 _MAX_BODY_WORDS = 220
 _MIN_PARAGRAPHS = 3
+
+
+#: The whole markup vocabulary a writer may use, and it is two things.
+#:
+#: `**bold**` marks the few words a skimmer must not miss - the figure, the
+#: date, the limit. `> ` at the start of a line marks one block as the thing
+#: this email is really about, which the renderer draws as a set-apart box.
+#:
+#: Two, and no more, on purpose. Every token added here is a token the writer
+#: will reach for, and an email with six kinds of emphasis has none: the
+#: reader's eye has nothing left to land on. Everything else that would need
+#: markup - a heading, a table, a second link - is a sign the email is trying
+#: to be a landing page.
+_BOLD_RE = re.compile(r"\*\*(.+?)\*\*", re.DOTALL)
+
+#: How a writer marks the block that carries the offer. A space after the
+#: caret is required, so a line that merely begins with a quotation mark in
+#: some client's reply format is not silently turned into a callout.
+CALLOUT_PREFIX = "> "
+
+
+def strip_markup(text: str) -> str:
+    """The same copy with the layout marks taken out.
+
+    Called in two places and for one reason: **nothing that reasons about the
+    words should ever see the marks.** `render_email` is the plain-text
+    deliverable the user pastes, where `**` is noise a real recipient would
+    read; and every gate in the system runs on that same rendering, which
+    makes this the single point where markup is prevented from reaching them.
+
+    That matters more than it looks, and both directions of failure are real.
+    `evidence_gate` matches a quotation whole against the corpus, so three
+    emphasised words inside a testimonial the writer was told to cite produce
+    a string that matches nothing - and a true, correctly-cited quotation is
+    blocked as something nobody said. `stock_phrase_gate` fails the other way:
+    it is a substring test, so `**limited time** only` reads as two harmless
+    fragments and a banned phrase ships. Stripping here fixes both at once,
+    and means a new gate cannot reintroduce either by forgetting markup exists.
+    """
+    without_callouts = "\n".join(
+        line.removeprefix(CALLOUT_PREFIX)
+        for line in text.splitlines()
+    )
+    return _BOLD_RE.sub(r"\1", without_callouts)
+
+
+def has_markup(text: str) -> bool:
+    """Whether the writer marked anything at all. Reported on the receipt, not
+    enforced: an email with nothing worth setting apart is a normal email."""
+    return bool(_BOLD_RE.search(text)) or any(
+        line.startswith(CALLOUT_PREFIX) for line in text.splitlines()
+    )
 
 
 class EmailCopyError(ValueError):
@@ -84,6 +160,16 @@ class Email(BaseModel):
     role: str = ""
     subject: str
     preview_text: str
+    #: Two or three words in small capitals above the headline - "YOUR CART",
+    #: "LAST CALL". Optional, and empty for anything that is one person
+    #: writing to another: an eyebrow is a magazine device and it announces
+    #: that this is a broadcast, which is the truth for a launch and a lie for
+    #: a cold email.
+    eyebrow: str = ""
+    #: The line the reader sees first, set large. Optional for the same reason
+    #: and decided the same way - see prompts/writer.md. An email without one
+    #: opens on its greeting, which is what a letter does.
+    headline: str = ""
     greeting: str
     body: str
     call_to_action: str
@@ -124,6 +210,8 @@ def parse_email(text: str, position: int) -> Email:
         role=fields.get("ROLE", ""),
         subject=fields["SUBJECT"],
         preview_text=fields["PREVIEW"],
+        eyebrow=fields.get("EYEBROW", ""),
+        headline=fields.get("HEADLINE", ""),
         greeting=fields["GREETING"],
         body=laid_out,
         call_to_action=fields["CTA"],
@@ -188,16 +276,48 @@ def _sentences(block: str) -> list[str]:
     return [piece.strip() for piece in _SENTENCE_SPLIT_RE.split(block) if piece.strip()]
 
 
-def _is_bullets(block: str) -> bool:
+def _is_callout(block: str) -> bool:
+    """Whether this block is the one the writer set apart."""
     lines = [line.strip() for line in block.splitlines() if line.strip()]
-    return bool(lines) and all(line.startswith(_BULLET_PREFIXES) for line in lines)
+    return bool(lines) and all(line.startswith(CALLOUT_PREFIX.strip()) for line in lines)
+
+
+def _keeps_its_shape(block: str) -> bool:
+    """Whether the layout pass must leave this block alone.
+
+    A bullet list and a callout are both *one* thing whose shape carries
+    meaning, and the paragraph-splitting rule below would take them apart:
+    splitting a callout at a sentence boundary drops the `> ` from every piece
+    after the first, so the box closes round the opening sentence and the rest
+    of the offer silently becomes ordinary prose. Nothing downstream can
+    detect that, because by then it simply is ordinary prose.
+
+    Over-long ones are not lost, they are reported: `_paragraph_issues` sends
+    them back to the writer as a fix, which is the right place for a block
+    that is too big to be one thing.
+    """
+    return _is_bullets(block) or _is_callout(block)
+
+
+def _is_bullets(block: str) -> bool:
+    """Whether every line here is a list item.
+
+    `**` is excluded explicitly because `*` is one of the bullet prefixes, so
+    a paragraph that opens in bold reads as a list to a naive prefix test -
+    and would then be rendered as one, turning a sentence into a bullet
+    nobody wrote.
+    """
+    lines = [line.strip() for line in block.splitlines() if line.strip()]
+    return bool(lines) and all(
+        line.startswith(_BULLET_PREFIXES) and not line.startswith("**") for line in lines
+    )
 
 
 def _split_wide(block: str) -> list[str]:
     """One block, re-broken into pieces inside the width. Sentences are packed
     greedily so the first piece carries as much as it may - a two-word
     paragraph left over at the end reads as a mistake."""
-    if _is_bullets(block) or len(block.split()) <= _MAX_PARAGRAPH_WORDS:
+    if _keeps_its_shape(block) or len(block.split()) <= _MAX_PARAGRAPH_WORDS:
         return [block]
     sentences = _sentences(block)
     if len(sentences) < 2:
@@ -220,7 +340,7 @@ def _split_wide(block: str) -> list[str]:
 
 def _halve(block: str) -> list[str]:
     """The same block in two, split as near the middle as a sentence allows."""
-    if _is_bullets(block):
+    if _keeps_its_shape(block):
         return [block]
     sentences = _sentences(block)
     if len(sentences) < 2:
@@ -247,14 +367,38 @@ def structural_issues(email: Email) -> list[str]:
         issues.append("the preview text repeats the subject instead of extending it")
     if len(email.preview_text) > MAX_PREVIEW_CHARS:
         issues.append(f"the preview text is longer than {MAX_PREVIEW_CHARS} characters")
+    if len(email.headline) > MAX_HEADLINE_CHARS:
+        issues.append(
+            f"the headline is {len(email.headline)} characters and it is set large - past "
+            f"{MAX_HEADLINE_CHARS} it wraps to three lines on a phone and stops being a "
+            "headline. Cut it, or leave it out and let the email open on the greeting"
+        )
+    if len(email.eyebrow) > MAX_EYEBROW_CHARS:
+        issues.append(
+            f"the eyebrow is {len(email.eyebrow)} characters - it is set in small "
+            f"capitals, where anything past {MAX_EYEBROW_CHARS} is a sentence pretending "
+            "to be a label. Two or three words"
+        )
+    if email.eyebrow and not email.headline:
+        # The eyebrow is a label *for* the headline. On its own it is a stray
+        # line of capitals over a greeting, which reads as a mistake.
+        issues.append(
+            "there is an eyebrow but no headline - the eyebrow labels the headline, so "
+            "either write one or drop the eyebrow"
+        )
     if len(email.call_to_action.split()) > _MAX_CTA_WORDS:
         issues.append(
             f"the call to action is a sentence - it must be the {_MAX_CTA_WORDS} words or "
             "fewer that go on the link"
         )
 
+    # The totals are measured on the words rather than on the marks: `> `
+    # would otherwise count as a word in every callout line. The *blocks* are
+    # taken from the unstripped body, because `_paragraph_issues` has to be
+    # able to tell a callout from a paragraph - and stripping first is exactly
+    # what would hide it.
     paragraphs = _paragraphs(email.body)
-    words = len(email.body.split())
+    words = len(strip_markup(email.body).split())
     if len(paragraphs) < _MIN_PARAGRAPHS:
         issues.append(
             f"the body is {len(paragraphs)} block(s) of text - break it into at least "
@@ -277,21 +421,37 @@ def render_email(email: Email) -> str:
     The subject and preview are labelled at the top because they go in their
     own fields; everything below them is the message itself, complete from the
     greeting to the P.S.
+
+    Every field is stripped, not only the body. The P.S. is where a deadline
+    gets repeated and is the second most likely place for a bolded date, and
+    stripping only the body leaves `**Friday**` in the text a user pastes -
+    which is exactly the bug this was written to prevent, one field over. The
+    subject and the link text are stripped for the same reason and not because
+    they should carry marks: a stray one there must not reach a recipient
+    either, and no email has ever needed a literal `**` in its subject line.
     """
     blocks = [
-        f"Subject: {email.subject}",
-        f"Preview text: {email.preview_text}",
+        f"Subject: {strip_markup(email.subject)}",
+        f"Preview text: {strip_markup(email.preview_text)}",
         "",
-        email.greeting,
+    ]
+    # The headline ships, so it belongs in the text a user pastes and in the
+    # text every gate reads. The eyebrow does not: it is three words of
+    # typography, and in a plain-text email it is a line of shouting that the
+    # spam gate would be right to flag.
+    if email.headline.strip():
+        blocks.extend([strip_markup(email.headline).strip(), ""])
+    blocks += [
+        strip_markup(email.greeting),
         "",
-        email.body.strip(),
+        strip_markup(email.body).strip(),
         "",
-        f"{email.call_to_action} →",
+        f"{strip_markup(email.call_to_action)} →",
         "",
-        email.sign_off,
+        strip_markup(email.sign_off),
     ]
     if email.postscript.strip():
-        blocks.extend(["", _with_ps_prefix(email.postscript.strip())])
+        blocks.extend(["", _with_ps_prefix(strip_markup(email.postscript).strip())])
     return "\n".join(blocks)
 
 
@@ -335,9 +495,27 @@ def _paragraphs(body: str) -> list[str]:
 
 
 def _paragraph_issues(paragraphs: list[str]) -> list[str]:
+    """Every block that is the wrong shape, phrased as the fix.
+
+    Takes the blocks unstripped, so a callout can be recognised and held to
+    its own limit. A callout is not split by the layout pass - see
+    `_keeps_its_shape` - so this is the only thing standing between an
+    over-long one and a box with a whole paragraph in it.
+    """
     issues: list[str] = []
     for index, paragraph in enumerate(paragraphs, start=1):
         lines = [line.strip() for line in paragraph.splitlines() if line.strip()]
+        if _is_callout(paragraph):
+            words = len(strip_markup(paragraph).split())
+            if words > _MAX_CALLOUT_WORDS:
+                issues.append(
+                    f"the block you set apart in block {index} is {words} words "
+                    f'("{_excerpt(strip_markup(paragraph))}...") - a box round a whole '
+                    f"paragraph draws the eye to something that then has to be read like "
+                    f"everything else. Keep it under {_MAX_CALLOUT_WORDS} words or drop "
+                    f"the marks and let it be prose"
+                )
+            continue
         if lines and all(line.startswith(_BULLET_PREFIXES) for line in lines):
             long_bullets = [line for line in lines if len(line.split()) > _MAX_BULLET_WORDS]
             if long_bullets:
@@ -346,7 +524,7 @@ def _paragraph_issues(paragraphs: list[str]) -> list[str]:
                     f'("{_excerpt(long_bullets[0])}") - bullets are for scanning'
                 )
             continue
-        word_count = len(paragraph.split())
+        word_count = len(strip_markup(paragraph).split())
         if word_count > _MAX_PARAGRAPH_WORDS:
             issues.append(
                 f"block {index} is {word_count} words in one paragraph "

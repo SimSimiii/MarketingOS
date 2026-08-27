@@ -11,6 +11,8 @@ import { ConfirmDialog, useConfirm } from "@/components/confirm-dialog";
 import { CopyAllButton } from "@/components/copy-all-button";
 import { RunTimeline } from "@/components/run-timeline";
 import { StatusBadge } from "@/components/status-badge";
+import { ReaderVerdictCard } from "@/components/reader-verdict-card";
+import type { ReaderVerdict } from "@/components/reader-verdict-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,6 +38,10 @@ interface StoredReport {
    * material could not carry a campaign. Answering them is worth more than
    * any rewrite - see AnswerQuestionsCard. */
   questions?: string[];
+  /** Anything the run wants to say about itself - why it stopped, and when
+   * a low score is a verdict on what the run was allowed to buy rather than
+   * on the copy. */
+  notes?: string[];
   emails: {
     position: number;
     subject: string;
@@ -56,6 +62,13 @@ interface StoredReport {
     /** False when no cold reader came back, which makes `pull` a placeholder
      * rather than a score. */
     read_reported?: boolean;
+    /** What the cold readers actually said about the version that shipped -
+     * the only output in the system that says what to write instead, rather
+     * than passing verdict on what was written. */
+    reader_verdicts?: ReaderVerdict[];
+    /** Interchangeable openings and category boilerplate the free
+     * differentiation check found in the shipped copy. */
+    sameness?: string[];
   }[];
 }
 
@@ -376,6 +389,11 @@ export function ExecutionLiveView({
             {report.contract_violations.length > 0 && (
               <p className="text-amber-400">{report.contract_violations.join("; ")}</p>
             )}
+            {(report.notes ?? []).map((note) => (
+              <p key={note} className="text-muted-foreground">
+                {note}
+              </p>
+            ))}
             {report.what_would_help_most && (
               <p className="text-muted-foreground">
                 What would help most next time: {report.what_would_help_most}
@@ -384,6 +402,10 @@ export function ExecutionLiveView({
           </CardContent>
         </Card>
       )}
+
+      {/* The number above says something is wrong; this says what. Both come
+          from the same already-paid-for cold read. */}
+      {report && <ReaderVerdictCard emails={report.emails} />}
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-4">

@@ -31,5 +31,10 @@ class Brand(SQLModel, table=True):
     #: Who is sending this, and any postal address the user's jurisdiction
     #: requires, one line per entry.
     footer_lines: list[str] | None = Field(default=None, sa_column=Column(JSON))
+    #: Where the footer's "Unsubscribe" points. Marketing mail is required to
+    #: carry one almost everywhere this will be sent, and the line is rendered
+    #: only when there is somewhere for it to go - a dead unsubscribe link is
+    #: what turns an unsubscribe into a spam report.
+    unsubscribe_url: str | None = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

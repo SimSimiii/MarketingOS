@@ -249,3 +249,63 @@ def test_the_forecast_learns_what_runs_actually_cost(client: TestClient):
 def test_a_forecast_for_a_campaign_that_does_not_exist_is_a_404(client: TestClient):
     response = client.get(f"/api/campaigns/{uuid4()}/forecast")
     assert response.status_code == 404
+
+
+# ------------------------------------------------------------ presentation
+
+
+def test_the_email_tier_is_stored_where_the_renderer_reads_it(client: TestClient):
+    """`_presentation` reads `policy["email_tier"]`, and until a form wrote
+    that key every email the system had ever produced came out plain - the
+    branded tier was unreachable rather than unwanted."""
+    created = client.post(
+        "/api/campaigns",
+        json={
+            "name": "Launch",
+            "request": "Write exactly 1 email announcing the launch",
+            "product_description": "A note-taking app",
+            "email_tier": "branded",
+            "cta_url": "https://acme.test/launch",
+        },
+    )
+
+    assert created.status_code == 201, created.text
+    body = created.json()
+    assert body["policy"]["email_tier"] == "branded"
+    assert body["cta_url"] == "https://acme.test/launch"
+
+
+def test_changing_the_preset_does_not_reset_the_look(client: TestClient):
+    """The policy dict is rebuilt rather than merged on update, so anything
+    stored in it that the form does not carry has to be put back by hand."""
+    campaign = client.post(
+        "/api/campaigns",
+        json={
+            "name": "Launch",
+            "request": "Write exactly 1 email announcing the launch",
+            "product_description": "A note-taking app",
+            "email_tier": "branded",
+        },
+    ).json()
+
+    updated = client.put(
+        f"/api/campaigns/{campaign['id']}/policy", json={"preset": "fast"}
+    )
+
+    assert updated.status_code == 200, updated.text
+    assert updated.json()["policy"]["preset"] == "fast"
+    assert updated.json()["policy"]["email_tier"] == "branded"
+
+
+def test_a_campaign_that_asks_for_nothing_stays_plain(client: TestClient):
+    campaign = client.post(
+        "/api/campaigns",
+        json={
+            "name": "Cold",
+            "request": "Write exactly 1 email to people who have never heard of us",
+            "product_description": "A note-taking app",
+        },
+    ).json()
+
+    assert (campaign["policy"] or {}).get("email_tier") is None
+    assert campaign["cta_url"] is None

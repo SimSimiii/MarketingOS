@@ -1,14 +1,17 @@
 import asyncio
 import os
-import sys
-import threading
-from collections.abc import AsyncIterator, Callable, Coroutine
+from collections.abc import AsyncIterator
 from pathlib import Path
 from typing import Any
 
 from claude_agent_sdk import AssistantMessage, ClaudeAgentOptions, ResultMessage, TextBlock, query
 
-from app.ai.base import AIProvider, AIRequest, AIResponse, AIUsage
+from app.ai._win_loop import (
+    _needs_proactor_thread,
+    _ProactorLoopThread,
+    _run_in_proactor_loop,
+)
+from app.ai.base import AIProvider, AIRequest, AIResponse, AIUsage, ResearchTool
 
 #: Marks the end of a bridged stream (see `_stream_via_proactor`).
 _STREAM_DONE = object()
@@ -18,6 +21,20 @@ _STREAM_DONE = object()
 #: there is nothing to loop on, so this is a runaway guard rather than a
 #: budget - keep it well clear of normal generations.
 _MAX_TURNS = 8
+
+#: The same guard for a call that may search and read. Here it *is* a budget:
+#: every turn is a search or a page fetch the operator pays for, and a research
+#: role with an unbounded loop is the one way this system could spend real
+#: money without a phase deciding to. Twenty is comfortably more than the
+#: four-to-six round trips a competitor profile actually takes, and far short
+#: of a runaway.
+_MAX_RESEARCH_TURNS = 20
+
+#: How a vendor-agnostic capability is spelled for this CLI.
+_CLI_TOOL_NAMES: dict[ResearchTool, str] = {
+    ResearchTool.WEB_SEARCH: "WebSearch",
+    ResearchTool.WEB_FETCH: "WebFetch",
+}
 
 #: The SDK passes the system prompt to the CLI as a command-line argument
 #: (`--system-prompt <text>`), and Windows caps an entire command line at
@@ -41,85 +58,6 @@ _OVERSIZED_SYSTEM_NOTICE = (
 )
 
 _TASK_SEPARATOR = "\n\n--- TASK ---\n\n"
-
-
-def _needs_proactor_thread() -> bool:
-    """True when the running loop cannot spawn the CLI subprocess.
-
-    On Windows only `ProactorEventLoop` supports subprocesses; a
-    `SelectorEventLoop` raises a bare `NotImplementedError`, which the SDK
-    surfaces as the message-less "Failed to start Claude Code: ". Uvicorn
-    picks the selector loop for its worker whenever it spawns one - i.e. with
-    `--reload` or `--workers` - so the API would fail exactly where it is
-    most likely to be run.
-    """
-    if sys.platform != "win32":
-        return False
-    try:
-        loop = asyncio.get_running_loop()
-    except RuntimeError:
-        return False
-    proactor = getattr(asyncio, "ProactorEventLoop", None)
-    return proactor is not None and not isinstance(loop, proactor)
-
-
-def _run_in_proactor_loop[T](factory: Callable[[], Coroutine[Any, Any, T]]) -> T:
-    """Run one coroutine on a private ProactorEventLoop. Blocking - call it
-    from a worker thread, never from the event loop."""
-    loop = asyncio.ProactorEventLoop()  # type: ignore[attr-defined]
-    try:
-        asyncio.set_event_loop(loop)
-        return loop.run_until_complete(factory())
-    finally:
-        asyncio.set_event_loop(None)
-        loop.close()
-
-
-class _ProactorLoopThread:
-    """One ProactorEventLoop, on one background thread, alive for the process
-    - every CLI spawn on Windows runs on it instead of getting its own.
-
-    `generate()` used to reach the CLI through `asyncio.to_thread(
-    _run_in_proactor_loop, ...)`, which builds a fresh OS thread and a fresh
-    ProactorEventLoop (with the IOCP handle underneath it) for every single
-    model call and tears both down straight after. A knowledge compilation
-    does that 4-6 times in a row and a campaign many more times, so this is
-    pure per-call overhead on the hot path.
-
-    This is an efficiency fix, not a correctness one - it is deliberately not
-    what makes oversized prompts work; see
-    `_MAX_INLINE_SYSTEM_PROMPT_CHARS` for that.
-    """
-
-    _instance: "_ProactorLoopThread | None" = None
-    _instance_lock = threading.Lock()
-
-    def __init__(self) -> None:
-        self.loop = asyncio.ProactorEventLoop()  # type: ignore[attr-defined]
-        self._thread = threading.Thread(
-            target=self._run_forever, name="claude-cli-proactor", daemon=True
-        )
-        self._thread.start()
-
-    def _run_forever(self) -> None:
-        asyncio.set_event_loop(self.loop)
-        self.loop.run_forever()
-
-    @classmethod
-    def instance(cls) -> "_ProactorLoopThread":
-        if cls._instance is None:
-            with cls._instance_lock:
-                if cls._instance is None:
-                    cls._instance = cls()
-        return cls._instance
-
-    async def run[T](self, factory: Callable[[], Coroutine[Any, Any, T]]) -> T:
-        """Schedule one coroutine on the persistent loop and await it from
-        the caller's own loop - `run_coroutine_threadsafe` is the standard
-        bridge for exactly this, and `wrap_future` hands its result back as
-        something the caller's loop can `await` directly."""
-        future = asyncio.run_coroutine_threadsafe(factory(), self.loop)
-        return await asyncio.wrap_future(future)
 
 
 def _usage_from(message: ResultMessage) -> AIUsage:
@@ -182,13 +120,26 @@ class ClaudeProvider(AIProvider):
     def __init__(self, default_model: str) -> None:
         self._default_model = default_model
 
+    def available_tools(self, model: str | None = None) -> frozenset[ResearchTool]:
+        return frozenset(_CLI_TOOL_NAMES)
+
     def _options(self, request: AIRequest, system_prompt: str) -> ClaudeAgentOptions:
+        tools = [_CLI_TOOL_NAMES[tool] for tool in dict.fromkeys(request.tools)]
         return ClaudeAgentOptions(
             model=request.model or self._default_model,
             system_prompt=system_prompt,
-            max_turns=_MAX_TURNS,
-            allowed_tools=[],
-            permission_mode="default",
+            max_turns=request.max_turns
+            or (_MAX_RESEARCH_TURNS if tools else _MAX_TURNS),
+            allowed_tools=tools,
+            # A tool the CLI must ask a human about is a tool that never runs:
+            # nothing is attached to this process's stdin, so the prompt has
+            # no one to answer it and the call hangs until the deadline takes
+            # it. `bypassPermissions` is scoped by `allowed_tools` in the same
+            # breath - with the list empty, which is every campaign call, it
+            # grants nothing because there is nothing to grant, and on a
+            # research call it grants exactly WebSearch and WebFetch. No
+            # file, shell or edit tool is ever reachable from this process.
+            permission_mode="bypassPermissions" if tools else "default",
             cli_path=_cli_path(),
             env=_clean_env(),
             setting_sources=[],

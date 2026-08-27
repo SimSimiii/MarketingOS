@@ -28,11 +28,15 @@ export function NewBrandDialog() {
     event.preventDefault();
     setSubmitting(true);
     try {
-      await api.createBrand({ name, website_url: websiteUrl || null });
+      const brand = await api.createBrand({ name, website_url: websiteUrl || null });
       toast.success("Brand created");
       setOpen(false);
       setName("");
       setWebsiteUrl("");
+      // Straight into the new workspace: a brand with nothing in it is not a
+      // row worth returning to a list for - the next thing to do is add its
+      // material, and that lives inside it.
+      router.push(`/brands/${brand.id}/knowledge`);
       router.refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to create brand");
@@ -50,8 +54,9 @@ export function NewBrandDialog() {
             <DialogTitle>Register a business</DialogTitle>
           </DialogHeader>
           <p className="text-sm text-muted-foreground">
-            Knowledge you attach to a brand is compiled once and reused by every campaign for it,
-            instead of being recompiled from scratch each time.
+            A brand gets its own workspace: its sources, its compiled knowledge base and its
+            market. Knowledge you attach to it is compiled once and reused by every campaign for
+            it, instead of being recompiled from scratch each time.
           </p>
           <div className="space-y-2">
             <Label htmlFor="brand_name">Name</Label>

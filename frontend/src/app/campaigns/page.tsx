@@ -19,24 +19,48 @@ import { formatAbsolute, timeAgo } from "@/lib/format";
 export default async function CampaignsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ archived?: string }>;
+  searchParams: Promise<{ archived?: string; brand?: string }>;
 }) {
-  const { archived } = await searchParams;
+  const { archived, brand: brandId } = await searchParams;
   const includeArchived = archived === "1";
-  const campaigns = await api.listCampaigns(includeArchived);
+  const [all, brands] = await Promise.all([
+    api.listCampaigns(includeArchived),
+    api.listBrands().catch(() => []),
+  ]);
+  // A campaign belongs to a business, so this list can be read as one
+  // business's work rather than as everything the account has ever run.
+  const brand = brands.find((item) => item.id === brandId) ?? null;
+  const campaigns = brand ? all.filter((item) => item.brand_id === brand.id) : all;
+  const brandNames = new Map(brands.map((item) => [item.id, item.name]));
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Campaigns</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Campaigns{brand ? ` — ${brand.name}` : ""}
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Describe your product, say what you need, get material you can send.
+            {brand
+              ? "Everything this business has asked for, written from its own knowledge base."
+              : "Describe your product, say what you need, get material you can send."}
           </p>
         </div>
         <div className="flex items-center gap-3">
+          {brand && (
+            <Link
+              href={`/campaigns${includeArchived ? "?archived=1" : ""}`}
+              className="text-sm text-muted-foreground hover:text-foreground hover:underline"
+            >
+              All brands
+            </Link>
+          )}
           <Link
-            href={includeArchived ? "/campaigns" : "/campaigns?archived=1"}
+            href={
+              includeArchived
+                ? `/campaigns${brand ? `?brand=${brand.id}` : ""}`
+                : `/campaigns?${brand ? `brand=${brand.id}&` : ""}archived=1`
+            }
             className="text-sm text-muted-foreground hover:text-foreground hover:underline"
           >
             {includeArchived ? "Hide archived" : "Show archived"}
@@ -65,6 +89,7 @@ export default async function CampaignsPage({
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
+                  <TableHead>Brand</TableHead>
                   <TableHead>What was asked</TableHead>
                   <TableHead>Last run</TableHead>
                   <TableHead>Created</TableHead>
@@ -86,6 +111,20 @@ export default async function CampaignsPage({
                           <Badge variant="secondary">archived</Badge>
                         )}
                       </div>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {campaign.brand_id ? (
+                        <Link
+                          href={`/brands/${campaign.brand_id}`}
+                          className="hover:text-foreground hover:underline"
+                        >
+                          {brandNames.get(campaign.brand_id) ?? "Unknown brand"}
+                        </Link>
+                      ) : (
+                        <span title="Knowledge for this run was read once, then kept to the campaign">
+                          One-off
+                        </span>
+                      )}
                     </TableCell>
                     <TableCell className="max-w-md truncate text-muted-foreground">
                       {campaign.request}

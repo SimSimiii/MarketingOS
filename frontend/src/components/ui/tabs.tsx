@@ -73,7 +73,17 @@ function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
   return (
     <TabsPrimitive.Panel
       data-slot="tabs-content"
-      className={cn("flex-1 text-sm outline-none", className)}
+      className={cn(
+        "flex-1 text-sm outline-none",
+        // Base UI keeps the outgoing panel mounted and marks it
+        // `data-ending-style` so a transition can play it out, removing it when
+        // that transition ends. Nothing here defines one, so the event never
+        // fires and the old panel stays on the page - switching tabs rendered
+        // both panels stacked. It is already `inert` by then; this is the rule
+        // that stops it being drawn.
+        "data-ending-style:hidden",
+        className
+      )}
       {...props}
     />
   )

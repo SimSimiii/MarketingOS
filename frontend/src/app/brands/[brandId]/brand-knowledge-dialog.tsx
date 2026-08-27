@@ -34,7 +34,9 @@ export function BrandKnowledgeDialog({
   brandName,
 }: {
   brandId: string;
-  brandName: string;
+  /** Only for the dialog title. Omitted where the page already names the
+   * brand in its header, which is every page inside a brand's workspace. */
+  brandName?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -59,7 +61,7 @@ export function BrandKnowledgeDialog({
       <DialogTrigger render={<Button variant="outline" size="sm">View facts</Button>} />
       <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>What we know about {brandName}</DialogTitle>
+          <DialogTitle>What we know about {brandName ?? "this brand"}</DialogTitle>
         </DialogHeader>
 
         {loading && <p className="text-sm text-muted-foreground">Loading...</p>}

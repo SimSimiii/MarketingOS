@@ -27,6 +27,19 @@ class Campaign(SQLModel, table=True):
     product_url: str | None = None
     target_market: str | None = None
     goals: str | None = None
+    #: Where the call to action points. The writer never knows this - it is
+    #: told so, and told to write the words that go on the link rather than
+    #: the link itself - so it is asked for here instead. Without it (and
+    #: without a brand website to fall back on) a branded email renders its
+    #: CTA as a styled link rather than a button, because a button that goes
+    #: nowhere costs a real reader a click and the sender the reply.
+    cta_url: str | None = None
+    #: The name of an audience segment from the brand's demand map, chosen by
+    #: the user for this campaign. Optional, and the whole point of mapping
+    #: demand: with it set, the run is written to the buyer the market says
+    #: would answer rather than to the one the company's website describes.
+    #: A plain name rather than an id - see app.models.market.ProspectRow.
+    audience_segment: str | None = None
     #: Who the emails are from - a person and their job, e.g. "Marco" and
     #: "founder". Optional, and worth asking for: without it every email in
     #: the campaign is signed by a team rather than a human, which is a

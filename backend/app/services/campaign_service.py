@@ -6,6 +6,7 @@ from sqlalchemy import delete
 from sqlmodel import Session, col
 
 from app.ai.base import AIProvider
+from app.ai.roles import validate_overrides
 from app.knowledge.store import ArtifactScope, ArtifactStore, fingerprint_documents
 from app.marketing.contract import parse_contract
 from app.marketing.forecast import forecast
@@ -70,15 +71,28 @@ class CampaignService:
 
     def create_campaign(self, data: CampaignCreateRequest) -> Campaign:
         fields = data.model_dump(
-            exclude={"policy_preset", "model_overrides", "force_recompile"}
+            exclude={"policy_preset", "model_overrides", "force_recompile", "email_tier"}
         )
         policy: dict | None = None
         if data.policy_preset is not None:
             policy = {"preset": data.policy_preset}
         if data.force_recompile is not None:
             policy = {**(policy or {}), "force_recompile": data.force_recompile}
+        if data.email_tier is not None:
+            # Into the policy dict, which is where `_presentation` reads it
+            # from. Stored as its value rather than the enum so the JSON column
+            # round-trips to a plain string.
+            policy = {**(policy or {}), "email_tier": str(data.email_tier)}
         return self._campaigns.create(
-            Campaign(**fields, policy=policy, model_overrides=data.model_overrides)
+            Campaign(
+                **fields,
+                policy=policy,
+                # Checked before the row exists. An override that names an
+                # agent nothing answers to, or a model that cannot do what the
+                # agent needs, is a mistake worth catching at the dialog rather
+                # than thirteen minutes into the run it breaks.
+                model_overrides=validate_overrides(data.model_overrides) or None,
+            )
         )
 
     def get_campaign(self, campaign_id: UUID) -> Campaign | None:
@@ -153,6 +167,8 @@ class CampaignService:
                 product_url=campaign.product_url,
                 target_market=campaign.target_market,
                 goals=campaign.goals,
+                audience_segment=campaign.audience_segment,
+                cta_url=campaign.cta_url,
                 policy=campaign.policy,
                 model_overrides=campaign.model_overrides,
             )
@@ -179,7 +195,21 @@ class CampaignService:
         policy: dict = {"preset": data.preset} if data.preset else {}
         if data.overrides:
             policy.update(data.overrides)
+        # `policy` is rebuilt rather than merged, so anything stored in it that
+        # this form does not carry has to be put back by hand. The email tier
+        # lives in there (see CampaignCreateRequest.email_tier) and is set from
+        # a different screen, so without this line changing the preset would
+        # silently reset a campaign's emails to the plain look.
+        tier = data.email_tier if data.email_tier is not None else (campaign.policy or {}).get("email_tier")
+        if tier is not None:
+            policy["email_tier"] = str(tier)
         campaign.policy = policy or None
+        if data.model_overrides is not None:
+            # `None` leaves the stored pins alone; `{}` is how the picker says
+            # "back to the preset's models". The two have to stay distinct, or
+            # changing the preset from a screen that does not show the picker
+            # would clear it.
+            campaign.model_overrides = validate_overrides(data.model_overrides) or None
         campaign.updated_at = datetime.now(UTC)
         return self._campaigns.update(campaign)
 

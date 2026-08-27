@@ -8,10 +8,14 @@ from sqlmodel import Session
 
 from app.ai.base import AIProvider
 from app.ai.model_router import ModelRouter
+from app.ai.roles import WILDCARD_ROLE
 from app.core.config import PROMPTS_DIR
 from app.knowledge.artifacts import KnowledgeArtifacts
 from app.knowledge.corpus import SourceCorpus
 from app.knowledge.store import ArtifactScope, ArtifactStore, StoredArtifacts, fingerprint_documents
+from app.market.demand import DemandMap
+from app.market.positioning import PositioningMap
+from app.market.store import MarketStore, merge_audience, merge_proof
 from app.marketing.briefs import CampaignBrief
 from app.marketing.cancellation import CancellationToken
 from app.marketing.craft import EmailVersion
@@ -24,7 +28,7 @@ from app.marketing.pipeline import (
     EmailCampaignPipeline,
     KnowledgeGateway,
 )
-from app.marketing.policy import resolve_policy
+from app.marketing.policy import ExecutionPolicy, resolve_policy
 from app.marketing.reader import PanelRead
 from app.marketing.render_html import MAX_EMAIL_BYTES, BrandStyle, EmailTier, render_html
 from app.marketing.report import CampaignReport
@@ -95,6 +99,7 @@ class _DbKnowledgeGateway(KnowledgeGateway):
         self._scope = ArtifactScope.for_campaign(campaign)
         self._documents = self._store.source_documents(self._scope)
         self._corpus: SourceCorpus | None = None
+        self._market = MarketStore(session) if campaign.brand_id is not None else None
 
     @property
     def scope(self) -> ArtifactScope:
@@ -109,10 +114,74 @@ class _DbKnowledgeGateway(KnowledgeGateway):
         return fingerprint_documents(self._documents)
 
     def load(self) -> StoredArtifacts | None:
-        return self._store.load(self._scope)
+        stored = self._store.load(self._scope)
+        return self._with_market(stored)
 
     def save(self, artifacts: KnowledgeArtifacts, fingerprint: str) -> StoredArtifacts:
-        return self._store.save(self._scope, artifacts, fingerprint)
+        return self._with_market(self._store.save(self._scope, artifacts, fingerprint))
+
+    def positioning(self) -> PositioningMap | None:
+        """The latest market scan for this brand, if there is one.
+
+        Brand-scoped only. A one-off campaign with no brand has nowhere to
+        keep a competitor list between runs, so scanning for it would buy a
+        reading that is thrown away with the campaign.
+        """
+        if self._market is None or self._campaign.brand_id is None:
+            return None
+        snapshot = self._market.latest_scan(self._campaign.brand_id)
+        return snapshot.positioning if snapshot is not None else None
+
+    def demand(self) -> DemandMap | None:
+        """The latest audience map for this brand, if there is one.
+
+        Brand-scoped for the same reason the positioning is: a one-off
+        campaign has nowhere to keep a map between runs.
+        """
+        if self._market is None or self._campaign.brand_id is None:
+            return None
+        return self._market.latest_map(self._campaign.brand_id)
+
+    def audience_choice(self) -> str:
+        return self._campaign.audience_segment or ""
+
+    def _with_market(self, stored: StoredArtifacts | None) -> StoredArtifacts | None:
+        """Fold in what the market pages decided, on top of what was compiled.
+
+        Two merges, both at read time rather than written into the stored set,
+        so a recompile cannot lose either - see `app.market.store`.
+
+        The first is every third-party proof the user has approved: this is
+        where a testimonial they ticked in the UI becomes a fact the writer
+        may spend and the evidence gate will license.
+
+        The second is the audience segment this campaign was pointed at, which
+        goes to the head of the audience model. That single move is what makes
+        the choice reach the copy: the strategist plans against it, the cold
+        reader panel is built from it, and the critic grades against it, none
+        of them knowing where it came from.
+
+        Version and fingerprint are carried through untouched. They describe
+        the *material* this was compiled from, and neither merge changed any
+        material - treating them as changed would recompile the business every
+        time somebody targeted a different buyer.
+        """
+        if stored is None or self._market is None or self._campaign.brand_id is None:
+            return stored
+        artifacts = stored.artifacts
+        if approved := self._market.approved_evidence(self._campaign.brand_id):
+            artifacts = merge_proof(artifacts, approved)
+        if chosen := (self._campaign.audience_segment or ""):
+            artifacts = merge_audience(
+                artifacts, self._market.segment_named(self._campaign.brand_id, chosen)
+            )
+        if artifacts is stored.artifacts:
+            return stored
+        return StoredArtifacts(
+            artifacts=artifacts,
+            version=stored.version,
+            fingerprint=stored.fingerprint,
+        )
 
     def prior_learnings(self) -> str:
         """What the last finished campaign for this business found out.
@@ -611,9 +680,7 @@ class CampaignOrchestrator:
             provider=self._ai_provider,
             prompt_engine=get_prompt_engine(PROMPTS_DIR),
             events=events,
-            model_router=ModelRouter(
-                {**policy.model_overrides, **(campaign.model_overrides or {})}
-            ),
+            model_router=ModelRouter(_resolve_overrides(policy, campaign)),
             execution_id=str(execution.id),
             on_call=observer.record_call,
         )
@@ -727,19 +794,28 @@ class CampaignOrchestrator:
         with filters and converts worse than a message that looks like it came
         from a person. A campaign asks for the branded tier explicitly, and
         only a campaign attached to a brand has anything to brand it with.
+
+        The CTA URL is the one field here the campaign may override, because
+        it is the one that changes per campaign: a launch points at the launch
+        page and a cart recovery points at the cart. The brand's own website
+        is the fallback, which is right far more often than nothing is - and
+        nothing is still the answer when neither exists, since the renderer
+        would otherwise draw a button to a page that does not exist.
         """
         requested = (campaign.policy or {}).get("email_tier")
         tier = EmailTier.BRANDED if requested == EmailTier.BRANDED else EmailTier.PLAIN
         if campaign.brand_id is None:
-            return tier, BrandStyle()
+            return tier, BrandStyle(cta_url=campaign.cta_url or "")
         brand = BrandRepository(self._session).get(campaign.brand_id)
         if brand is None:
-            return tier, BrandStyle()
+            return tier, BrandStyle(cta_url=campaign.cta_url or "")
         return tier, BrandStyle(
             name=brand.name,
             logo_url=brand.logo_url or "",
             primary_color=brand.primary_color or BrandStyle.primary_color,
             footer_lines=tuple(brand.footer_lines or ()),
+            cta_url=campaign.cta_url or brand.website_url or "",
+            unsubscribe_url=brand.unsubscribe_url or "",
         )
 
     def _finalize(self, execution: CampaignExecution, result: CampaignRunResult) -> None:
@@ -814,6 +890,29 @@ def _html_or_none(email: Email, tier: EmailTier, brand: BrandStyle) -> str | Non
         )
         return None
     return rendered
+
+
+def _resolve_overrides(policy: ExecutionPolicy, campaign: Campaign) -> dict[str, str]:
+    """The model map this run routes on: the preset's, then the operator's.
+
+    A plain merge is wrong in one case, and it is the case the picker exists
+    for. `ModelRouter` checks an exact role id before it looks at the wildcard,
+    and the `maximum` preset ships per-role overrides for the five craft roles.
+    So an operator who chose "every agent -> GPT" on that preset would get a
+    run where the strategist, writer, critic, sequence reviewer and subject
+    writer all quietly stayed on Opus - the five roles they most likely meant.
+    Nothing would say so; the picker would show GPT and the receipt would show
+    Claude.
+
+    A wildcard the operator set is a statement about the whole run, so it
+    displaces the preset's suggestions entirely. Their own per-agent pins are
+    applied on top and still win, which is exactly what the panel promises.
+    """
+    overrides: dict[str, str] = {} if WILDCARD_ROLE in (
+        campaign.model_overrides or {}
+    ) else dict(policy.model_overrides)
+    overrides.update(campaign.model_overrides or {})
+    return overrides
 
 
 def _bridge_runtime_events(events: EventBus, emitter: ExecutionEventEmitter) -> None:

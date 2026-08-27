@@ -20,10 +20,18 @@ const STEPS = [
 ];
 
 export default async function DashboardPage() {
-  const [campaigns, documents] = await Promise.all([
+  const [campaigns, documents, brands] = await Promise.all([
     api.listCampaigns().catch(() => []),
     api.listKnowledgeDocuments().catch(() => []),
+    api.listBrandOverviews().catch(() => []),
   ]);
+  // What is waiting for a person, summed across businesses but never merged
+  // into one: each number belongs to a brand, and the link goes to the list
+  // that says which.
+  const waiting = brands.reduce(
+    (total, brand) => total + brand.pending_proof + brand.unseen_alerts,
+    0,
+  );
 
   return (
     <div className="space-y-8">
@@ -51,7 +59,22 @@ export default async function DashboardPage() {
         ))}
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Link href="/brands" className="block">
+          <Card className="h-full transition-colors hover:bg-accent/40">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Brands</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-semibold">{brands.length}</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {waiting > 0
+                  ? `${waiting} thing${waiting === 1 ? "" : "s"} waiting for you across them`
+                  : "Each with its own knowledge base and market"}
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Campaigns</CardTitle>

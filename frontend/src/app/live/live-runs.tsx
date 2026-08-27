@@ -3,24 +3,33 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
+import { MarketJobCard } from "@/components/market-job-card";
 import { StatusBadge } from "@/components/status-badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { api } from "@/lib/api-client";
 import { formatDuration } from "@/lib/format";
-import type { RunningExecution } from "@/lib/types";
+import type { MarketJob, RunningExecution } from "@/lib/types";
 
 //: Campaigns start and finish over minutes, not seconds - this is a "what is
 //: happening" board, not a metrics feed, so a slow poll is enough. Each run's
 //: own page is where the second-by-second detail lives.
 const REFRESH_MS = 4000;
 
-export function LiveRuns({ initialRuns }: { initialRuns: RunningExecution[] }) {
+export function LiveRuns({
+  initialRuns,
+  initialJobs,
+}: {
+  initialRuns: RunningExecution[];
+  initialJobs: MarketJob[];
+}) {
   const [runs, setRuns] = useState(initialRuns);
+  const [jobs, setJobs] = useState(initialJobs);
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
     const refresh = setInterval(() => {
       api.listRunningExecutions().then(setRuns).catch(() => undefined);
+      api.listMarketJobs().then(setJobs).catch(() => undefined);
     }, REFRESH_MS);
     const clock = setInterval(() => setNow(Date.now()), 1000);
     return () => {
@@ -29,11 +38,19 @@ export function LiveRuns({ initialRuns }: { initialRuns: RunningExecution[] }) {
     };
   }, []);
 
-  if (runs.length === 0) {
+  const running = jobs.filter((job) => job.state === "running");
+  // A finished job is kept on the board rather than dropped: five minutes
+  // after a scan lands, "what happened" is still the question, and the answer
+  // includes what it cost. Two is enough to answer it without becoming a
+  // history page - that is what each brand's own market tab is for.
+  const recent = jobs.filter((job) => job.state !== "running").slice(0, 2);
+
+  if (runs.length === 0 && jobs.length === 0) {
     return (
       <Card>
         <CardContent className="py-10 text-center text-sm text-muted-foreground">
-          Nothing is running right now. Start a campaign and it will show up here.
+          Nothing is running right now. Start a campaign, or scan a brand&rsquo;s market, and it
+          will show up here.
         </CardContent>
       </Card>
     );
@@ -41,6 +58,9 @@ export function LiveRuns({ initialRuns }: { initialRuns: RunningExecution[] }) {
 
   return (
     <div className="space-y-3">
+      {[...running, ...recent].map((job) => (
+        <MarketJobCard key={`${job.brand_id}-${job.started_at}`} job={job} now={now} />
+      ))}
       {runs.map((run) => (
         <Link
           key={run.id}

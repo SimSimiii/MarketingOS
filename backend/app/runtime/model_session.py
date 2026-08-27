@@ -8,7 +8,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from app.ai.base import AIMessage, AIProvider, AIRequest, AIResponse
+from app.ai.base import AIMessage, AIProvider, AIRequest, AIResponse, ResearchTool
 from app.ai.model_router import ModelRouter, ModelTier
 from app.ai.models import usage_cost_usd
 from app.runtime.events import (
@@ -17,7 +17,11 @@ from app.runtime.events import (
     ModelCallRetried,
     ModelCallStarted,
 )
-from app.runtime.exceptions import OutputValidationError, ProviderError
+from app.runtime.exceptions import (
+    CapabilityUnavailableError,
+    OutputValidationError,
+    ProviderError,
+)
 from app.runtime.json_parsing import JsonOutputError, parse_model_json
 from app.runtime.prompt_engine import PromptEngine
 
@@ -206,6 +210,7 @@ class ModelSession:
         template: str | None = None,
         variables: dict[str, Any] | None = None,
         system_prompt: str | None = None,
+        tools: list[ResearchTool] | None = None,
     ) -> str:
         """One turn: a system prompt (rendered from `template`, or passed in
         already rendered) plus the task message, answered as free text."""
@@ -215,7 +220,9 @@ class ModelSession:
             else self._prompts.render(template or role, variables or {})
         )
         model = self._router.resolve(role, tier)
-        return await self._generate(role, tier, model, system, task, template or "")
+        return await self._generate(
+            role, tier, model, system, task, template or "", tools=tools or []
+        )
 
     async def structured[T: BaseModel](
         self,
@@ -227,6 +234,7 @@ class ModelSession:
         template: str | None = None,
         variables: dict[str, Any] | None = None,
         system_prompt: str | None = None,
+        tools: list[ResearchTool] | None = None,
     ) -> T:
         """One turn answered as a single JSON object matching `schema`.
 
@@ -248,7 +256,9 @@ class ModelSession:
 
         last_error: JsonOutputError | None = None
         for _ in range(_STRUCTURED_ATTEMPTS):
-            response = await self._generate(role, tier, model, system, message, template or "")
+            response = await self._generate(
+                role, tier, model, system, message, template or "", tools=tools or []
+            )
             try:
                 return parse_model_json(response, schema)
             except JsonOutputError as exc:
@@ -325,14 +335,40 @@ class ModelSession:
         ) from last
 
     async def _generate(
-        self, role: str, tier: ModelTier, model: str, system: str, task: str, template: str = ""
+        self,
+        role: str,
+        tier: ModelTier,
+        model: str,
+        system: str,
+        task: str,
+        template: str = "",
+        tools: list[ResearchTool] | None = None,
     ) -> str:
+        wanted = list(dict.fromkeys(tools or []))
+        if wanted:
+            # Checked here, once, rather than trusted to the provider. See
+            # `CapabilityUnavailableError`: the cost of finding out late is
+            # not a failed call, it is a successful-looking one.
+            # Asked about *this* model, not about the provider in general:
+            # once roles can be pinned to different vendors, "can we search the
+            # web" has a different answer per call.
+            offered = self._provider.available_tools(model)
+            if missing := [tool for tool in wanted if tool not in offered]:
+                raise CapabilityUnavailableError(
+                    f"Role '{role}' asked for {', '.join(missing)}, which '{model}' "
+                    "cannot offer. This role reads the open web and has nothing to "
+                    "report without it - put it on a Claude model.",
+                    role=role,
+                    provider=type(self._provider).__name__,
+                    missing=[str(tool) for tool in missing],
+                )
         request = AIRequest(
             system_prompt=system,
             messages=[AIMessage(role="user", content=task)],
             model=model,
             role=role,
             template=template,
+            tools=wanted,
         )
         self._events.publish(
             ModelCallStarted(

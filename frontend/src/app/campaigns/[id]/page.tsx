@@ -100,7 +100,22 @@ export default async function CampaignDetailPage({
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Audience</CardTitle>
           </CardHeader>
-          <CardContent className="text-sm">{campaign.target_market ?? "—"}</CardContent>
+          {/* One card for one question, matching the form: a campaign either
+              names a segment somebody mapped or describes its buyer in the
+              user's own words, and showing only the second reads as "no
+              audience" for every campaign that used the first. */}
+          <CardContent className="space-y-1 text-sm">
+            {campaign.audience_segment ? (
+              <>
+                <p>{campaign.audience_segment}</p>
+                <p className="text-xs text-muted-foreground">
+                  from this brand&rsquo;s audience map
+                </p>
+              </>
+            ) : (
+              (campaign.target_market ?? "—")
+            )}
+          </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">

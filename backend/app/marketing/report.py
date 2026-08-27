@@ -11,7 +11,70 @@ and a system that gets better at one company's marketing.
 
 from pydantic import BaseModel, Field
 
-from app.marketing.reader import PULL_THRESHOLD
+from app.marketing.reader import PULL_THRESHOLD, PanelRead
+
+
+class ReaderVerdict(BaseModel):
+    """What the cold reader actually said, kept.
+
+    The system's most expensive judgment used to reach the user as a single
+    digit. A run that scored 4/10 persisted exactly `{"pull": 4}` - and the
+    reader had, in the same call, said what it thought the email was selling,
+    where it stopped reading, what was really stopping it clicking, and the
+    one thing the email would have had to say for it to click. All of it was
+    thrown away at the end of the craft loop.
+
+    That is the wrong thing to discard twice over. It is the only output in
+    the system that says what to write *instead* rather than passing verdict
+    on what was written - `reader.md` calls it the most valuable line in the
+    report - and it is already paid for. A user shown "4/10" learns that
+    something is wrong; a user shown "I could not tell what this company
+    does" and "I would have clicked if it had told me who else uses it"
+    learns what to do on Monday.
+
+    Kept per email on the receipt, so it survives the run and is still there
+    when they come back to the campaign a week later.
+    """
+
+    #: What a stranger thought was being offered, in their words. The single
+    #: most diagnostic line here: an answer that does not match what the
+    #: product is means the copy failed before any of its arguments were
+    #: judged.
+    what_it_sells: str = ""
+    #: The first line where they lost interest, quoted from the email.
+    stopped_at: str = ""
+    #: The real reason they would not click.
+    biggest_doubt: str = ""
+    #: "I would have clicked if this email had told me ___".
+    to_click_it_would_have_to: str = ""
+    #: Lines they would cut or rewrite, quoted.
+    fixes: list[str] = Field(default_factory=list)
+    #: Out of a hundred people like them.
+    opens_in_100: int | None = None
+    clicks_in_100: int | None = None
+    #: Which reader this was, when a panel read the same draft. Every panel
+    #: member is kept rather than only the median: copy that one reader loved
+    #: and another could not parse is not finished, and a single stored
+    #: verdict hides exactly that.
+    persona: str = ""
+    pull: int = 0
+
+    @classmethod
+    def from_panel(cls, panel: PanelRead) -> list["ReaderVerdict"]:
+        return [
+            cls(
+                what_it_sells=read.what_it_sells,
+                stopped_at=read.stopped_at,
+                biggest_doubt=read.biggest_doubt,
+                to_click_it_would_have_to=read.to_click_it_would_have_to,
+                fixes=list(read.fixes),
+                opens_in_100=read.opens_in_100,
+                clicks_in_100=read.clicks_in_100,
+                persona=read.persona,
+                pull=read.pull,
+            )
+            for read in panel.reported
+        ]
 
 
 class EmailReportLine(BaseModel):
@@ -48,6 +111,29 @@ class EmailReportLine(BaseModel):
     #: support that survives a stranger's first-contact discount.
     attributions: int = 0
     unresolved: list[str] = Field(default_factory=list)
+    #: What the cold readers said about the version that shipped. Empty
+    #: only when nobody could read it. See `ReaderVerdict`.
+    reader_verdicts: list[ReaderVerdict] = Field(default_factory=list)
+    #: Interchangeable openings and category boilerplate found in the
+    #: shipped copy, as the free differentiation check reported them.
+    #: Present on the receipt even when the run was too cheap to act on
+    #: them, because they are the cheapest thing a user can fix by hand.
+    sameness: list[str] = Field(default_factory=list)
+
+    @property
+    def what_would_have_worked(self) -> list[str]:
+        """Every reader's answer to what the email should have said instead.
+
+        The one place a user is told what to do rather than what went wrong.
+        Deduplicated, because three panel members who wanted the same thing
+        are one instruction and printing it three times reads as noise.
+        """
+        wanted: list[str] = []
+        for verdict in self.reader_verdicts:
+            line = verdict.to_click_it_would_have_to.strip()
+            if line and line not in wanted:
+                wanted.append(line)
+        return wanted
 
     @property
     def argues_from_nothing(self) -> bool:

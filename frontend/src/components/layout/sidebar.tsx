@@ -5,12 +5,16 @@ import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
+//: Knowledge and market are not listed here, and that is the point: both
+//: belong to a business, so both live inside one, under /brands/[id]. A
+//: top-level "Market" would have to pick a brand for the reader, and the one
+//: it picks is never the one they meant.
 const NAV_ITEMS = [
   { href: "/", label: "Dashboard" },
   { href: "/campaigns", label: "Campaigns" },
   { href: "/live", label: "Live" },
-  { href: "/knowledge", label: "Product knowledge" },
-  { href: "/knowledge/base", label: "Knowledge base" },
+  { href: "/brands", label: "Brands" },
+  { href: "/knowledge", label: "Campaign sources" },
   { href: "/settings", label: "Settings" },
   { href: "/logs", label: "Activity" },
 ];
@@ -18,9 +22,8 @@ const NAV_ITEMS = [
 export function Sidebar() {
   const pathname = usePathname();
 
-  // Longest prefix wins. With a nested item in the list ("/knowledge/base"
-  // under "/knowledge"), a plain startsWith lights up both and the sidebar
-  // stops telling you where you are.
+  // Longest prefix wins, so a nested item would not light up its parent as
+  // well and leave the sidebar unable to say where you are.
   const activeHref = NAV_ITEMS.filter((item) =>
     item.href === "/" ? pathname === "/" : pathname.startsWith(item.href),
   ).sort((a, b) => b.href.length - a.href.length)[0]?.href;

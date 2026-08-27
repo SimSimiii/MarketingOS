@@ -24,11 +24,29 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { ModelOverridePanel } from "@/components/model-override-panel";
 import { api } from "@/lib/api-client";
-import type { Brand, BrandKnowledge, PolicyPreset } from "@/lib/types";
+import { useModelCatalog } from "@/lib/use-model-catalog";
+import type {
+  Brand,
+  BrandKnowledge,
+  EmailTier,
+  MappedSegment,
+  PolicyPreset,
+} from "@/lib/types";
 
 const NO_BRAND = "__none__";
 const NEW_BRAND = "__new__";
+
+//: Written to whoever the company's own material describes - the default,
+//: and what every campaign did before demand could be mapped.
+const NO_SEGMENT = "__default__";
+//: The user describes the buyer in their own words. Kept in the same control
+//: as the mapped segments rather than beside it: "who is this for" is one
+//: question with one answer, and a form that asks it twice - once as a
+//: dropdown and once as a text box - invites somebody to answer both and
+//: leaves the run to guess which they meant.
+const CUSTOM_AUDIENCE = "__custom__";
 
 const PRESET_LABELS: Record<PolicyPreset, string> = {
   fast: "Fast - cheaper models, shorter budget",
@@ -56,6 +74,25 @@ const TONE_INSTRUCTIONS: Record<Tone, string> = {
 };
 
 type ContentType = "cart_recovery" | "launch_email";
+
+const TIER_LABELS: Record<EmailTier, string> = {
+  plain: "Plain - typography only, looks like a person wrote it",
+  branded: "Branded - logo, colour, a real button and a footer",
+};
+
+//: What each deliverable should look like unless the user says otherwise.
+//:
+//: The tier is not a global preference, and treating it as one is how every
+//: email in a product ends up either a mailshot or a plain-text note. A cart
+//: recovery and a launch announcement are mail the reader expects from a
+//: company, and looking like one is the honest signal; a cold sequence is one
+//: person writing to another, where a template scores worse with filters and
+//: converts worse. So the choice follows the thing being made, and the user
+//: can still override it.
+const TIER_FOR_TYPE: Record<ContentType, EmailTier> = {
+  cart_recovery: "branded",
+  launch_email: "branded",
+};
 
 //: Each template is a sentence the backend's contract parser can read an
 //: exact email count out of (see app.marketing.contract.parse_contract) -
@@ -124,6 +161,12 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
   const [files, setFiles] = useState<File[]>([]);
   const [policyPreset, setPolicyPreset] = useState<PolicyPreset>("balanced");
   const [tone, setTone] = useState<Tone>("professional");
+  //: Per-agent model pins, empty until the operator opens the panel. Sent
+  //: as null when empty so a campaign created without touching it stores
+  //: nothing rather than an empty object.
+  const [modelOverrides, setModelOverrides] = useState<Record<string, string>>({});
+  const [customModelsOpen, setCustomModelsOpen] = useState(false);
+  const modelCatalog = useModelCatalog();
 
   const [brands, setBrands] = useState<Brand[]>([]);
   const [brandChoice, setBrandChoice] = useState<string>(NO_BRAND);
@@ -139,6 +182,20 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
   const [brandKnowledge, setBrandKnowledge] = useState<BrandKnowledge | null | undefined>(
     undefined,
   );
+  //: The buyers somebody mapped for this brand, and which of them this
+  //: campaign is written to. Empty for a brand nobody has mapped, which is
+  //: most of them - the picker only appears when there is a real choice.
+  const [segments, setSegments] = useState<MappedSegment[]>([]);
+  const [audienceSegment, setAudienceSegment] = useState<string>(NO_SEGMENT);
+  //: Where the button goes. The writer is told it does not know this and
+  //: writes the words on the link instead, so it is asked for here - without
+  //: it a branded email renders a styled link rather than a button, because a
+  //: button that goes nowhere is worse than no button.
+  const [ctaUrl, setCtaUrl] = useState("");
+  //: Null until the user picks one, so each deliverable's own default
+  //: applies - see TIER_FOR_TYPE. A stored choice would quietly make every
+  //: later campaign look like the first one they made.
+  const [emailTier, setEmailTier] = useState<EmailTier | null>(null);
   //: Whether to re-read and recompile the brand's knowledge from scratch.
   //: Defaults to true for a brand that has never been compiled (there is
   //: nothing to reuse yet) and flips to false the moment we learn a compiled
@@ -162,6 +219,9 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
       setProductDescription(prefill.productDescription ?? "");
       setProductUrl(prefill.productUrl ?? "");
       setTargetMarket(prefill.targetMarket ?? "");
+      // A prefilled description is the answer to the same question, so the
+      // control opens on it rather than on the default with a hidden value.
+      if (prefill.targetMarket) setAudienceSegment(CUSTOM_AUDIENCE);
       setSenderName(prefill.senderName ?? "");
       setSenderRole(prefill.senderRole ?? "");
     }
@@ -172,6 +232,11 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
     setExistingKnowledgeCount(null);
     setExistingSources([]);
     setBrandKnowledge(undefined);
+    setSegments([]);
+    // A typed description belongs to the campaign, not to the brand, so
+    // changing brand keeps it. A *mapped* segment belongs to the brand that
+    // was mapped, and cannot survive the switch.
+    setAudienceSegment((current) => (current === CUSTOM_AUDIENCE ? current : NO_SEGMENT));
     if (value === NO_BRAND || value === NEW_BRAND) {
       // Nothing to reuse either way - a one-off or a brand new brand always
       // compiles fresh on its first run, so default to "regenerate" since
@@ -191,6 +256,19 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
         if (knowledgeRequestId.current !== requestId) return;
         setExistingKnowledgeCount(null);
         setExistingSources([]);
+      });
+    //: A one-off has nowhere to keep a map between runs, so this only ever
+    //: runs for a saved brand. A failure is silent on purpose: an unmapped
+    //: audience is the normal state and is not worth a toast on a form.
+    api
+      .getAudience(value)
+      .then((audience) => {
+        if (knowledgeRequestId.current !== requestId) return;
+        setSegments(audience.map?.segments ?? []);
+      })
+      .catch(() => {
+        if (knowledgeRequestId.current !== requestId) return;
+        setSegments([]);
       });
     api
       .getBrandKnowledge(value)
@@ -219,11 +297,17 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
     setFiles([]);
     setPolicyPreset("balanced");
     setTone("professional");
+    setModelOverrides({});
+    setCustomModelsOpen(false);
     setBrandChoice(NO_BRAND);
     setNewBrandName("");
     setExistingKnowledgeCount(null);
     setExistingSources([]);
     setBrandKnowledge(undefined);
+    setSegments([]);
+    setAudienceSegment(NO_SEGMENT);
+    setCtaUrl("");
+    setEmailTier(null);
     setForceRecompile(true);
     if (fileInput.current) fileInput.current.value = "";
   }
@@ -259,11 +343,25 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
         request: buildRequest(type, tone),
         product_description: productDescription,
         product_url: productUrl || null,
-        target_market: targetMarket || null,
+        // One question, one answer: whichever half of the control was used
+        // is sent and the other is null, so nothing downstream has to decide
+        // which of two audiences the user meant.
+        target_market:
+          audienceSegment === CUSTOM_AUDIENCE ? targetMarket.trim() || null : null,
         sender_name: senderName || null,
         sender_role: senderRole || null,
         brand_id: brandId,
+        //: Only meaningful for a brand whose demand was mapped, and only when
+        //: the user picked one - otherwise the run is written to the audience
+        //: the company's own material describes, as it always was.
+        audience_segment:
+          brandId && audienceSegment !== NO_SEGMENT && audienceSegment !== CUSTOM_AUDIENCE
+            ? audienceSegment
+            : null,
+        cta_url: ctaUrl.trim() || null,
+        email_tier: emailTier ?? TIER_FOR_TYPE[type],
         policy_preset: policyPreset,
+        model_overrides: Object.keys(modelOverrides).length > 0 ? modelOverrides : null,
         force_recompile: brandId ? forceRecompile : null,
       });
 
@@ -307,6 +405,7 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
   }
 
   const usingExistingBrand = brandChoice !== NO_BRAND && brandChoice !== NEW_BRAND;
+  const selectedSegment = segments.find((segment) => segment.name === audienceSegment);
   //: The brand has already read this page. Crawling it again would cost a
   //: fetch per page to arrive at the same text, and the compiled knowledge it
   //: produced is exactly what "reuse what's already compiled" promises to
@@ -364,6 +463,107 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
                 onChange={(e) => setNewBrandName(e.target.value)}
               />
             )}
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="tier">How it looks</Label>
+              <Select
+                value={emailTier ?? ""}
+                onValueChange={(value) => value && setEmailTier(value as EmailTier)}
+              >
+                <SelectTrigger id="tier" className="w-full">
+                  <SelectValue placeholder="Follow the deliverable">
+                    {(value: string) =>
+                      value ? TIER_LABELS[value as EmailTier] : "Follow the deliverable"
+                    }
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="plain">{TIER_LABELS.plain}</SelectItem>
+                  <SelectItem value="branded">{TIER_LABELS.branded}</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                {emailTier === "branded"
+                  ? usingExistingBrand
+                    ? "Set the logo, colour and footer on the brand page, or it renders as plain."
+                    : "Nothing to brand it with until this campaign is attached to a brand."
+                  : emailTier === "plain"
+                    ? "One person writing to another. The right answer for cold outreach."
+                    : "Cart recovery and launches come out branded; anything cold stays plain."}
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="cta-url">Where the button goes (optional)</Label>
+              <Input
+                id="cta-url"
+                type="url"
+                placeholder="https://yourproduct.com/cart"
+                value={ctaUrl}
+                onChange={(e) => setCtaUrl(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                The writer never invents a link. Without one here the brand&rsquo;s website is
+                used, and with neither the call to action stays a marked slot for you to fill.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="audience">Who this is for</Label>
+            <Select
+              value={audienceSegment}
+              onValueChange={(value) => value && setAudienceSegment(value)}
+            >
+              <SelectTrigger id="audience" className="w-full">
+                {/* The trigger renders the raw value, so a sentinel would read
+                    as "__default__" to a user. Every other select in this form
+                    gets away with it because its values are already words. */}
+                <SelectValue>
+                  {(value: string) =>
+                    value === NO_SEGMENT
+                      ? "Whoever your own material describes"
+                      : value === CUSTOM_AUDIENCE
+                        ? "Let me describe them"
+                        : value
+                  }
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={NO_SEGMENT}>Whoever your own material describes</SelectItem>
+                {segments.map((segment) => (
+                  <SelectItem key={segment.name} value={segment.name}>
+                    {segment.name} — {Math.round(segment.fit * 100)}%
+                    {segment.unobvious ? " · not on your site" : ""}
+                  </SelectItem>
+                ))}
+                <SelectItem value={CUSTOM_AUDIENCE}>Let me describe them</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {audienceSegment === CUSTOM_AUDIENCE && (
+              <Input
+                id="target_market"
+                autoFocus
+                placeholder="Independent repair shops that resell refurbished laptops"
+                value={targetMarket}
+                onChange={(e) => setTargetMarket(e.target.value)}
+              />
+            )}
+
+            <p className="text-xs text-muted-foreground">
+              {audienceSegment === CUSTOM_AUDIENCE
+                ? "What you write here outranks what the compiler inferred — you know something about this campaign that no crawl of your site could."
+                : audienceSegment !== NO_SEGMENT
+                  ? selectedSegment?.angle
+                    ? `The copy will open on: ${selectedSegment.angle}`
+                    : "The whole sequence will be planned against this buyer."
+                  : usingExistingBrand && segments.length === 0
+                    ? "Nobody has mapped this brand's audience yet. Market → Audience finds the buyers your own site does not name, and they show up in this list."
+                    : "Every email will be planned against the buyer your website names — the opening line, the objection it answers, and the reader who grades every draft."}
+            </p>
           </div>
 
           {usingExistingBrand && (
@@ -445,15 +645,6 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="target_market">Who are you selling to? (optional)</Label>
-            <Input
-              id="target_market"
-              value={targetMarket}
-              onChange={(e) => setTargetMarket(e.target.value)}
-            />
-          </div>
-
           {/* Two fields, and the cheapest conversion in the form. Left empty,
               every email in the campaign is signed by the company - a
               signature readers have learned to skim past because it is a
@@ -498,6 +689,44 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
               </SelectContent>
             </Select>
           </div>
+
+          {/* Separate from the preset on purpose: the preset decides the shape
+              of a run (how many drafts, which judges, what budget), this
+              decides which model does each job. Folding them together would
+              mean picking a model silently changed how many drafts get
+              written. */}
+          {modelCatalog && (
+            <div className="rounded-lg border border-border">
+              <button
+                type="button"
+                onClick={() => setCustomModelsOpen((open) => !open)}
+                aria-expanded={customModelsOpen}
+                className="flex w-full items-center justify-between gap-2 p-3 text-left"
+              >
+                <span className="min-w-0">
+                  <span className="block text-sm font-medium">Custom models</span>
+                  <span className="block text-xs text-muted-foreground">
+                    {Object.keys(modelOverrides).length > 0
+                      ? `${Object.keys(modelOverrides).length} pinned - Claude and GPT can be mixed in one run`
+                      : "Optional. Choose the model behind each agent, from Claude or GPT."}
+                  </span>
+                </span>
+                <span className="shrink-0 text-xs text-muted-foreground">
+                  {customModelsOpen ? "Hide" : "Show"}
+                </span>
+              </button>
+              {customModelsOpen && (
+                <div className="border-t border-border p-3">
+                  <ModelOverridePanel
+                    catalog={modelCatalog}
+                    value={modelOverrides}
+                    onChange={setModelOverrides}
+                    disabled={submitting}
+                  />
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="tone">Brand tone</Label>

@@ -2,6 +2,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, status
 
+from app.ai.roles import InvalidOverrideError
 from app.api.deps import CampaignServiceDep
 from app.schemas.campaign import (
     CampaignCreateRequest,
@@ -20,7 +21,13 @@ router = APIRouter(prefix="/campaigns", tags=["campaigns"])
 
 @router.post("", response_model=CampaignRead, status_code=status.HTTP_201_CREATED)
 def create_campaign(data: CampaignCreateRequest, service: CampaignServiceDep) -> CampaignRead:
-    campaign = service.create_campaign(data)
+    try:
+        campaign = service.create_campaign(data)
+    except InvalidOverrideError as exc:
+        # 422, not 400: the body parsed fine and one field in it is not
+        # satisfiable. The message names the agent and the model, so the dialog
+        # can put it next to the row the user got wrong.
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from exc
     return CampaignRead.model_validate(campaign)
 
 
@@ -89,7 +96,11 @@ def update_campaign_policy(
     campaign = service.get_campaign(campaign_id)
     if campaign is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Campaign not found")
-    return CampaignRead.model_validate(service.update_policy(campaign, data))
+    try:
+        updated = service.update_policy(campaign, data)
+    except InvalidOverrideError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from exc
+    return CampaignRead.model_validate(updated)
 
 
 @router.get("/{campaign_id}/forecast", response_model=RunForecast)

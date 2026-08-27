@@ -1,39 +1,20 @@
-from enum import StrEnum
+from app.ai.models import DEFAULT_TIER_MODELS, ModelTier
 
-from app.ai.models import ClaudeModel
-
-
-class ModelTier(StrEnum):
-    """What a call is worth paying for, named by the kind of thinking it does.
-
-    Roles ask for a tier, never a model. A role that extracts fields from text
-    it was handed is not doing the same work as one judging whether a piece of
-    copy will make somebody buy, and the difference between those two is the
-    only thing that should decide model spend. Naming the tier after the work
-    also means a new model generation moves one mapping instead of every role.
-    """
-
-    #: Mechanical extraction and reformatting of text already in the prompt.
-    FAST = "fast"
-    #: Distillation and synthesis - reading a lot, writing down what matters.
-    BALANCED = "balanced"
-    #: Judgment and craft: strategy, copy, criticism. Never economize here.
-    DEEP = "deep"
-
-
-DEFAULT_TIER_MODELS: dict[ModelTier, str] = {
-    ModelTier.FAST: ClaudeModel.HAIKU,
-    ModelTier.BALANCED: ClaudeModel.SONNET,
-    ModelTier.DEEP: ClaudeModel.OPUS,
-}
+#: `ModelTier` and the tier map moved to `app.ai.models`, where the catalog
+#: that has to name a tier per model lives. Re-exported here because every
+#: caller in the system spells it `from app.ai.model_router import ModelTier`,
+#: and a rename that touches thirty call sites to move one class is churn, not
+#: a refactor.
+__all__ = ["DEFAULT_TIER_MODELS", "ModelRouter", "ModelTier"]
 
 
 class ModelRouter:
     """Resolves which model a role's call actually goes to.
 
     Three layers, most specific first: an override for that exact role id, a
-    blanket "*" override (how a policy preset moves the whole run onto one
-    model), then the tier map. Override wins outright; there is no blending.
+    blanket "*" override (how a policy preset - or an operator picking "every
+    agent" - moves the whole run onto one model), then the tier map. Override
+    wins outright; there is no blending.
     """
 
     def __init__(

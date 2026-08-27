@@ -1,6 +1,13 @@
 export type ExecutionStatus = "pending" | "running" | "completed" | "failed" | "cancelled";
 export type CampaignStatus = "active" | "archived";
 export type PolicyPreset = "fast" | "balanced" | "maximum";
+/** How designed a finished email looks.
+ *
+ * "plain" is typography only and is the right answer for cold outreach — a
+ * branded template reads as a mailshot and converts worse there. "branded"
+ * adds the logo, the accent colour, a real button and a footer, which is the
+ * honest signal for mail a reader expects to come from a company. */
+export type EmailTier = "plain" | "branded";
 export type SourceType =
   | "website"
   | "markdown"
@@ -30,6 +37,13 @@ export interface Campaign {
   /** The business this campaign belongs to. Set => knowledge is compiled once
    * for the brand and reused by every campaign attached to it. */
   brand_id: string | null;
+  /** The audience segment from the brand's map this campaign is written to,
+   * or null for "whoever the company's own site describes". The one field on
+   * the form that changes who the emails are for. */
+  audience_segment: string | null;
+  /** Where the call to action points. Falls back to the brand's website; with
+   * neither, the CTA renders as a marked slot rather than a dead button. */
+  cta_url: string | null;
   status: CampaignStatus;
   archived_at: string | null;
   /** {"preset": "fast" | "balanced" | "maximum", ...field overrides} or null. */
@@ -52,6 +66,10 @@ export interface CampaignCreateRequest {
   sender_name?: string | null;
   sender_role?: string | null;
   brand_id?: string | null;
+  audience_segment?: string | null;
+  cta_url?: string | null;
+  /** Omitted/null takes the system default, which is "plain". */
+  email_tier?: EmailTier | null;
   policy_preset?: PolicyPreset | null;
   model_overrides?: Record<string, string> | null;
   /** Re-read and recompile the brand's knowledge even if nothing has changed
@@ -71,8 +89,31 @@ export interface Brand {
   logo_url: string | null;
   primary_color: string | null;
   footer_lines: string[] | null;
+  /** Where the branded footer's "Unsubscribe" points. The line renders only
+   * when this is set — a dead unsubscribe link is what turns an unsubscribe
+   * into a spam report. */
+  unsubscribe_url: string | null;
   created_at: string;
   updated_at: string;
+}
+
+/** One brand as the brand list shows it: the state of its own workspace.
+ *
+ * Counts rather than payloads, so a list of businesses costs one request
+ * instead of three per card. Everything here is scoped to the brand - there is
+ * no source, competitor or alert that belongs to all of them. */
+export interface BrandOverview extends Brand {
+  sources: number;
+  campaigns: number;
+  /** Latest compiled knowledge version, or null when nothing was compiled yet
+   * - which happens on the first campaign run, not on registration. */
+  knowledge_version: number | null;
+  compiled_at: string | null;
+  /** Competitors the user has not muted. */
+  rivals: number;
+  scanned_at: string | null;
+  pending_proof: number;
+  unseen_alerts: number;
 }
 
 export interface BrandCreateRequest {
@@ -84,6 +125,7 @@ export interface BrandStyleUpdate {
   logo_url?: string | null;
   primary_color?: string | null;
   footer_lines?: string[] | null;
+  unsubscribe_url?: string | null;
 }
 
 export type Grounding = "grounded" | "inferred" | "user_stated";
@@ -256,6 +298,49 @@ export interface KnowledgeBase {
 export interface CampaignPolicyUpdate {
   preset?: PolicyPreset | null;
   overrides?: Record<string, unknown> | null;
+  /** Per-agent model pins, `{role_id: model}`. Omit to leave the stored pins
+   * alone; send `{}` to clear them and hand every agent back to the preset. */
+  model_overrides?: Record<string, string> | null;
+}
+
+export type ModelVendor = "anthropic" | "openai";
+export type ModelTier = "fast" | "balanced" | "deep";
+export type RolePhase = "knowledge" | "campaign" | "market";
+
+/** One model the picker can offer. Served by the backend rather than listed
+ * here: a copy in TypeScript is a copy that disagrees with the router. */
+export interface ModelOption {
+  id: string;
+  vendor: ModelVendor;
+  label: string;
+  blurb: string;
+  /** The tier this model is the automatic choice for, if any. */
+  default_for: ModelTier | null;
+  /** Capability names (`web_search`, `web_fetch`). */
+  tools: string[];
+  /** A plan or install this model needs, when it needs one. */
+  requires: string | null;
+}
+
+/** One agent a model can be pinned to. */
+export interface AgentOption {
+  id: string;
+  label: string;
+  blurb: string;
+  phase: RolePhase;
+  /** What this agent resolves to when nothing is pinned. */
+  tier: ModelTier;
+  /** Non-empty means the agent reads the open web, which narrows the models
+   * that can run it. */
+  tools: string[];
+}
+
+export interface ModelCatalog {
+  models: ModelOption[];
+  agents: AgentOption[];
+  tier_defaults: Record<ModelTier, string>;
+  /** The role id meaning "every agent" - the blanket override. */
+  wildcard: string;
 }
 
 export interface AgentExecution {
@@ -613,4 +698,312 @@ export interface ExecutionTimeline {
   events: LiveExecutionEvent[];
   last_event_id: number;
   is_running: boolean;
+}
+
+// --------------------------------------------------------------------- market
+
+/** The dimension a claim competes on. A closed list on the backend - see
+ * app.market.claims.ClaimAxis - because positioning is arithmetic over these
+ * and an open taxonomy is one nothing can compare across. */
+export type ClaimAxis =
+  | "speed"
+  | "price"
+  | "breadth"
+  | "quality"
+  | "effort"
+  | "control"
+  | "security"
+  | "proof"
+  | "support"
+  | "other";
+
+/** Who holds an axis. The whole strategic payload of a scan. */
+export type Territory = "open" | "contested" | "table_stakes" | "exposed";
+
+export type RivalKind = "alternative" | "incumbent" | "status_quo";
+export type ProofStatus = "pending" | "approved" | "rejected";
+export type RadarSeverity = "acts_on_copy" | "notable" | "routine";
+
+/** One competitor on the brand's list. Editable by the user, and the edits
+ * survive every rescan. */
+export interface Rival {
+  id: string;
+  name: string;
+  url: string;
+  kind: RivalKind;
+  why: string;
+  /** "user" or "scout" - "you told us this" and "we found this" are different
+   * claims and the page says which. */
+  added_by: string;
+  muted: boolean;
+  created_at: string;
+}
+
+export interface RivalCreateRequest {
+  name: string;
+  url?: string;
+  kind?: RivalKind;
+  why?: string;
+}
+
+export interface Claim {
+  text: string;
+  verbatim: string;
+  source: string;
+  axis: ClaimAxis;
+  /** Whether there is a figure, a limit or a name in it a reader could check.
+   * The difference between "25 models across 9 providers" and "the broadest
+   * coverage available". */
+  specific: boolean;
+}
+
+/** One competitor as read from their own pages. */
+export interface RivalProfile {
+  name: string;
+  url: string;
+  kind: RivalKind;
+  why: string;
+  one_liner: string;
+  promise: string;
+  pricing: string;
+  free_entry: string;
+  icp: string;
+  /** False when their site could not be read - everything else is empty by
+   * construction and the page must say so rather than show a blank profile. */
+  verified: boolean;
+  pages_read: number;
+  /** Claims the extractor produced that were not really on the page, and were
+   * discarded. A profile that lost several is one to distrust. */
+  unverified_claims: number;
+  note: string;
+  checked_at: string;
+  claims: Claim[];
+  proof_shown: Claim[];
+}
+
+export interface AxisReading {
+  axis: ClaimAxis;
+  territory: Territory;
+  /** True when we are the only one on this axis carrying a checkable figure,
+   * which is what makes a crowded axis ours anyway. */
+  only_specific: boolean;
+  ours: Claim[];
+  theirs: Record<string, Claim[]>;
+}
+
+export interface Positioning {
+  summary: string;
+  rivals_profiled: number;
+  rivals_with_proof: number;
+  we_have_proof: boolean;
+  /** Every competitor shows a named customer and we show none. The most
+   * expensive asymmetry in cold email, and the one a user can fix in an
+   * afternoon. */
+  proof_deficit: boolean;
+  crowd_words: string[];
+  readings: AxisReading[];
+  /** The section the strategist is actually planned against, rendered. Shown
+   * verbatim: the point is that the user can read what the machine was told. */
+  brief_for_strategy: string;
+}
+
+export interface MarketRead {
+  brand_id: string;
+  scanned_at: string | null;
+  positioning: Positioning | null;
+  profiles: RivalProfile[];
+  rivals: Rival[];
+  pending_proof: number;
+  unseen_alerts: number;
+  /** How much of the demand side exists. Counts rather than payloads, so the
+   * brand shell can badge a tab without fetching the map. */
+  audience_segments: number;
+  prospects: number;
+  /** Why the page is empty, when it is. */
+  note: string;
+}
+
+/** Something the web says about this brand, waiting for a human to confirm it. */
+export interface ProofCandidate {
+  id: string;
+  kind: string;
+  claim: string;
+  /** The exact sentence on the page. Approving it licenses these words in a
+   * finished email, which is why a person decides and not a score. */
+  verbatim: string;
+  url: string;
+  attributed_to: string;
+  venue: string;
+  confidence: number;
+  /** Why this might not be what it looks like. What makes the decision take
+   * ten seconds instead of ten minutes. */
+  caveat: string;
+  status: ProofStatus;
+  /** The ledger id it became when approved (P1, P2, ...). */
+  evidence_id: string;
+  found_at: string;
+  decided_at: string | null;
+}
+
+export interface RadarEvent {
+  id: string;
+  headline: string;
+  detail: string;
+  severity: RadarSeverity;
+  rival: string;
+  axis: string;
+  what_to_do: string;
+  created_at: string;
+  seen_at: string | null;
+}
+
+
+/** How a mapped buyer was arrived at.
+ *
+ * Everything except `core` is a buyer the company's own material would never
+ * have produced, which is the entire reason to map demand: a list the user
+ * recognises in full cost them a search to restate their own homepage. */
+export type SegmentKind =
+  | "core"
+  | "adjacent"
+  | "influencer"
+  | "channel"
+  | "triggered"
+  | "unintended";
+
+export type ContactKind = "email" | "phone" | "form" | "social";
+export type ProspectStatus = "new" | "kept" | "dismissed";
+
+/** One kind of buyer, described well enough to write to and to go and find.
+ *
+ * Distinct from `AudienceSegment` above, which is what the knowledge compiler
+ * distilled from the company's own material. This one was read off the open
+ * market, which is why it carries a rate, the reasoning behind it, and the
+ * signals that make it findable - none of which a company's own site contains. */
+export interface MappedSegment {
+  name: string;
+  kind: SegmentKind;
+  /** One person in a situation, not a category. */
+  who: string;
+  why_them: string;
+  trigger: string;
+  pains: string[];
+  objection: string;
+  /** The one line to open an email to them on. A segment nobody can write a
+   * first sentence for is research, not an audience. */
+  angle: string;
+  /** Where an email to them is allowed to start. Same vocabulary the
+   * compiled audience model uses, because a chosen segment becomes one. */
+  sophistication: string;
+  /** Roughly what share of the people matching `who` would be interested.
+   * **An estimate, never a measurement** - nobody has sent these emails yet,
+   * so it is only worth what `basis` beside it is worth. */
+  fit: number;
+  basis: string;
+  population: string;
+  /** Observable markers that identify one from the outside. What makes the
+   * segment findable by name - and a segment with none cannot be prospected,
+   * advertised to, or targeted by any other means either. */
+  signals: string[];
+  /** Named places they are findable in bulk. */
+  where: string[];
+  /** True for every kind except `core`. */
+  unobvious: boolean;
+}
+
+export interface DemandMap {
+  summary: string;
+  /** One paragraph on where the demand in this market really is. */
+  reading: string;
+  note: string;
+  searched: string[];
+  mapped_at: string;
+  /** Best fit first. The order is the recommendation. */
+  segments: MappedSegment[];
+}
+
+/** One published way to reach an organisation.
+ *
+ * Everything that reaches this client was found, character for character, on
+ * a page the server fetched. Unverified values are dropped server-side rather
+ * than shipped marked, because a list where some rows are real and some are
+ * invented is one whose rows get told apart by sending mail to them. */
+export interface Contact {
+  kind: ContactKind;
+  value: string;
+  label: string;
+  source: string;
+  verified: boolean;
+}
+
+/** One named organisation that could buy this, read from its own pages. */
+export interface Prospect {
+  id: string;
+  segment: string;
+  name: string;
+  url: string;
+  what_they_do: string;
+  why_them: string;
+  /** The sentence on their page that supports `why_them`. Empty when the
+   * extractor's reason was not actually there. */
+  verbatim: string;
+  fit: number;
+  caveat: string;
+  /** False when their site could not be read; everything above is then a lead
+   * nobody confirmed, and the card has to say so. */
+  verified: boolean;
+  pages_read: number;
+  /** Contact details the extractor reported that were nowhere on their site.
+   * A row that had to discard several is one whose other claims deserve the
+   * same suspicion. */
+  invented_contacts: number;
+  note: string;
+  status: ProspectStatus;
+  found_at: string;
+  decided_at: string | null;
+  contacts: Contact[];
+}
+
+export interface AudienceRead {
+  brand_id: string;
+  map: DemandMap | null;
+  prospects: Prospect[];
+  note: string;
+}
+
+export interface ProspectSearchRequest {
+  segment: string;
+  limit?: number;
+  /** Read each organisation's own pages for a published way in. Off returns
+   * names only, at one call instead of one per company. */
+  with_contacts?: boolean;
+}
+
+/** Where a running (or last finished) scan or proof hunt got to. Polled -
+ * a scan is a handful of calls, not a run with a timeline. */
+export interface MarketJob {
+  /** "scan" | "proof" | "audience" | "prospects". */
+  kind: string;
+  state: "running" | "done" | "failed";
+  /** The stage the job is at, in the user's language. */
+  message: string;
+  /** Every line so far — progress lines and one row per finished model call,
+   * so a page that opens late is not blank and the trace explains the spend. */
+  log: string[];
+  started_at: string;
+  finished_at: string | null;
+  error: string;
+  summary: string;
+  found: number;
+  /** Present on the /market/jobs board so a row can name and link its brand
+   * without a lookup per row; null on the per-brand endpoint. */
+  brand_id: string | null;
+  brand_name: string;
+  /** What this job has spent. Cached input is counted into input_tokens — it
+   * is what the quota paid for. */
+  calls: number;
+  input_tokens: number;
+  output_tokens: number;
+  cache_read_tokens: number;
+  cost_usd: number;
 }

@@ -24,6 +24,8 @@ from pydantic import BaseModel, Field
 
 from app.knowledge.artifacts import OfferSheet
 from app.knowledge.ledger import Evidence, EvidenceIndex
+from app.market.positioning import PositioningMap
+from app.market.sameness import check as sameness_check
 from app.marketing.email_copy import Email, render_email, structural_issues
 from app.marketing.substantiation import Substantiation, unspent_issues
 from app.marketing.substantiation import assess as assess_substantiation
@@ -355,6 +357,50 @@ def structure_gate(email: Email) -> GateReport:
     return _report("structure", structural_issues(email), GateSeverity.BLOCKING)
 
 
+# ----------------------------------------------------------------- sameness
+
+
+def sameness_gate(email: Email, positioning: PositioningMap | None = None) -> GateReport:
+    """Could somebody else have sent this?
+
+    The gate that was missing. Everything above asks whether the copy is
+    well-formed, honest and grounded; a draft can be all three and still be
+    the email this reader received from four other companies this quarter.
+    The one that prompted this scored 4/10 with a clean report and the
+    subject line "Your competitor isn't waiting on you".
+
+    Two severities, from two different sources - see `app.market.sameness`.
+    The closed list of interchangeable openings blocks, because it is a
+    pattern match on a frame with a named replacement, which is exactly the
+    kind of thing a gate should decide. The swap test against the competitor
+    corpus is advisory, because that corpus is a handful of crawled sites
+    rather than the category, and a check whose evidence is thin must reach
+    the writer as an argument rather than as a verdict.
+    """
+    report = sameness_check(
+        subject=email.subject,
+        preview=email.preview_text,
+        body=email.body,
+        positioning=positioning,
+    )
+    return GateReport(
+        issues=[
+            GateIssue(
+                gate="sameness",
+                detail=(
+                    f"the {finding.where} - {finding.as_issue()}"
+                    if finding.where != "body"
+                    else finding.as_issue()
+                ),
+                severity=(
+                    GateSeverity.BLOCKING if finding.blocking else GateSeverity.ADVISORY
+                ),
+            )
+            for finding in report.findings
+        ]
+    )
+
+
 def run_all(
     email: Email,
     *,
@@ -365,6 +411,7 @@ def run_all(
     extra_banned: tuple[str, ...] = (),
     assigned: list[Evidence] | None = None,
     ledger: list[Evidence] | None = None,
+    positioning: PositioningMap | None = None,
 ) -> tuple[GateReport, Substantiation]:
     """Every deterministic check, in one report - plus what the copy is
     actually standing on.
@@ -390,6 +437,7 @@ def run_all(
         overlap_gate(email, previous or []),
         call_to_action_gate(email, offer),
         substantiation_gate(substantiation),
+        sameness_gate(email, positioning),
     ):
         report = report.extend(part)
     return report, substantiation

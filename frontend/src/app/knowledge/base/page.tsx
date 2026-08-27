@@ -1,52 +1,46 @@
-import Link from "next/link";
+import { redirect } from "next/navigation";
 
-import { KnowledgeBaseExplorer } from "@/app/knowledge/base/knowledge-base-explorer";
+import { KnowledgeBaseExplorer } from "@/app/brands/[brandId]/knowledge/base/knowledge-base-explorer";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { api } from "@/lib/api-client";
 import { formatAbsolute } from "@/lib/format";
-import type { Brand } from "@/lib/types";
 
-/** The knowledge base for one business: every fact the compiler established,
- * filed on the shelf that matches the question a buyer would be asking, and
- * priced by what it is worth to a sale.
+/** A one-off campaign's knowledge base.
  *
- * The same index the agents plan and write from. Nothing here is a separate
- * copy for humans - if a fact is missing from this page, the copywriters do
- * not have it either, which is what makes the empty shelf actionable. */
+ * A brand's base moved into that brand's workspace, where the rest of what
+ * belongs to it lives, so `?brand=` redirects there. What is left is the case
+ * that has no brand to move into: a campaign that was run without one and
+ * keeps its knowledge to itself. */
 export default async function KnowledgeBasePage({
   searchParams,
 }: {
   searchParams: Promise<{ brand?: string; campaign?: string }>;
 }) {
   const { brand: brandId, campaign: campaignId } = await searchParams;
-  const brands = await api.listBrands().catch(() => []);
 
-  if (!brandId && !campaignId) {
-    return <BrandPicker brands={brands} />;
+  if (brandId) {
+    redirect(`/brands/${brandId}/knowledge/base`);
+  }
+  if (!campaignId) {
+    redirect("/brands");
   }
 
-  const base = await api
-    .getKnowledgeBase({ brandId, campaignId })
-    .catch(() => null);
-  const brand = brands.find((item) => item.id === brandId);
+  const [base, campaign] = await Promise.all([
+    api.getKnowledgeBase({ campaignId }).catch(() => null),
+    api.getCampaign(campaignId).catch(() => null),
+  ]);
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Knowledge base{brand ? ` — ${brand.name}` : ""}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Everything we established about this business, on the shelf that matches the question
-            a buyer is asking. This is the same index the copywriters work from.
-          </p>
-        </div>
-        <Link href="/knowledge" className={buttonVariants({ variant: "outline", size: "sm" })}>
-          Back to sources
-        </Link>
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Knowledge base{campaign ? ` — ${campaign.name}` : ""}
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Everything this one-off campaign established, kept to itself. Attach it to a brand
+          instead and the next campaign starts from all of it rather than from an empty page.
+        </p>
       </div>
 
       {base === null ? (
@@ -54,9 +48,8 @@ export default async function KnowledgeBasePage({
           <CardContent className="space-y-2 p-6 text-sm text-muted-foreground">
             <p className="font-medium text-foreground">Nothing compiled here yet.</p>
             <p>
-              Knowledge is compiled on the first campaign run for this business — reading the
-              material costs a model call, so it is not paid for until something needs it. Add
-              your website and start a campaign, and this page fills in.
+              Knowledge is compiled on the first run — reading the material costs a model call, so
+              it is not paid for until something needs it.
             </p>
           </CardContent>
         </Card>
@@ -74,9 +67,11 @@ export default async function KnowledgeBasePage({
               value={base.headline_total}
               hint="Specific, attributed, and checkable by a stranger."
             />
-            <Stat label="Compiled" value={`v${base.version}`} hint={
-              base.compiled_at ? formatAbsolute(base.compiled_at) : undefined
-            } />
+            <Stat
+              label="Compiled"
+              value={`v${base.version}`}
+              hint={base.compiled_at ? formatAbsolute(base.compiled_at) : undefined}
+            />
           </div>
 
           {base.open_questions.length > 0 && (
@@ -93,10 +88,6 @@ export default async function KnowledgeBasePage({
                     <li key={question}>{question}</li>
                   ))}
                 </ul>
-                <p className="text-muted-foreground">
-                  Each of these is a sentence the copy currently cannot write. Uploading the page
-                  that answers one is the cheapest improvement available to this account.
-                </p>
               </CardContent>
             </Card>
           )}
@@ -125,48 +116,5 @@ function Stat({
         {hint && <p className="mt-1 text-xs text-muted-foreground/80">{hint}</p>}
       </CardContent>
     </Card>
-  );
-}
-
-function BrandPicker({ brands }: { brands: Brand[] }) {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Knowledge base</h1>
-        <p className="text-sm text-muted-foreground">
-          Pick a business to read what we know about it.
-        </p>
-      </div>
-      {brands.length === 0 ? (
-        <Card>
-          <CardContent className="p-6 text-sm text-muted-foreground">
-            No brands yet. Register one on{" "}
-            <Link href="/knowledge" className="underline underline-offset-2">
-              Product knowledge
-            </Link>{" "}
-            and its knowledge base appears here after the first campaign run.
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {brands.map((brand) => (
-            <Card key={brand.id}>
-              <CardContent className="space-y-2 p-4">
-                <p className="font-medium">{brand.name}</p>
-                {brand.website_url && (
-                  <p className="truncate text-sm text-muted-foreground">{brand.website_url}</p>
-                )}
-                <Link
-                  href={`/knowledge/base?brand=${brand.id}`}
-                  className={buttonVariants({ variant: "outline", size: "sm" })}
-                >
-                  Open knowledge base
-                </Link>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-    </div>
   );
 }
