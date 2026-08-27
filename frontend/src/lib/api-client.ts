@@ -9,7 +9,6 @@ import type {
   Campaign,
   CampaignCreateRequest,
   CampaignExecution,
-  CampaignExecutionDetail,
   CampaignPolicyUpdate,
   CampaignResult,
   ExecutionLog,
@@ -105,8 +104,6 @@ export const api = {
   listCampaignExecutions: (id: string) =>
     request<CampaignExecution[]>(`/campaigns/${id}/executions`),
 
-  getExecutionStatus: (executionId: string) =>
-    request<CampaignExecutionDetail>(`/executions/${executionId}/status`),
   getExecutionResult: (executionId: string) =>
     request<CampaignResult>(`/executions/${executionId}/result`),
   getExecutionAssets: (executionId: string) =>
@@ -146,7 +143,6 @@ export const api = {
     const suffix = query.size > 0 ? `?${query}` : "";
     return request<KnowledgeDocument[]>(`/knowledge${suffix}`);
   },
-  getKnowledgeDocument: (id: string) => request<KnowledgeDocumentDetail>(`/knowledge/${id}`),
   /** Everything compiled about one business, classified onto shelves and
    * ranked by what each fact is worth to a sale. 404s until the first
    * campaign run, which is when compilation happens. */
@@ -184,7 +180,6 @@ export const api = {
   createBrand: (data: BrandCreateRequest) =>
     request<Brand>("/brands", { method: "POST", body: JSON.stringify(data) }),
   getBrandKnowledge: (id: string) => request<BrandKnowledge>(`/brands/${id}/knowledge`),
-  deleteBrand: (id: string) => request<void>(`/brands/${id}`, { method: "DELETE" }),
   /** How this brand's email looks once it is rendered. Every field optional —
    * a brand with none of it set still renders, in the typographic tier. */
   updateBrandStyle: (id: string, data: BrandStyleUpdate) =>
@@ -212,7 +207,6 @@ export const api = {
 
   /** Everything the market page shows, in one request. */
   getMarket: (brandId: string) => request<MarketRead>(`/market/${brandId}`),
-  listRivals: (brandId: string) => request<Rival[]>(`/market/${brandId}/rivals`),
   addRival: (brandId: string, data: RivalCreateRequest) =>
     request<Rival>(`/market/${brandId}/rivals`, {
       method: "POST",
@@ -284,15 +278,6 @@ export const api = {
       method: "POST",
       body: JSON.stringify(data),
     }),
-  listProspects: (brandId: string, segment?: string, status?: ProspectStatus) => {
-    const query = new URLSearchParams();
-    if (segment) query.set("segment", segment);
-    if (status) query.set("status_filter", status);
-    const suffix = query.toString();
-    return request<Prospect[]>(
-      `/market/${brandId}/prospects${suffix ? `?${suffix}` : ""}`,
-    );
-  },
   /** Keep or dismiss one organisation. A dismissal is remembered rather than
    * deleted, or the next search finds them again. */
   decideProspect: (brandId: string, prospectId: string, status: ProspectStatus) =>
