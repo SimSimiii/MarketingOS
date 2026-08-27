@@ -125,3 +125,46 @@ so asserting the reverse would fail on correct code.
 Verified by injecting a real rename (`forecast` -> `forecasts`): the gate fails and names
 the offending path. Reverted before commit. A gate nobody has watched fail is not known to
 work.
+
+### LANDED  saving a model pin no longer resets the campaign's preset
+Axis: 5, correctness in a service. `update_policy` rebuilds the policy dict from what the
+request carried and hand-restores what it did not - but only the tier was ever restored, so
+any request without a preset lost it, along with any stored field overrides. The model
+picker sends exactly that request: clicking "Save models" on a `maximum` campaign moved it
+to `balanced`, so the run that followed was not the run that was configured - fewer drafts,
+different judges, smaller budget, nothing on screen saying so. Commit: 1b74d90. Checks: ruff
+clean, 800 passed (797 + 3 new). Live bug, not latent.
+
+Found by reading the *frontend*: the UI could not send `email_tier` on a policy update at
+all, and chasing why led into the rebuild. Worth generalising - the existing comment named
+the hazard exactly ("anything stored in it that this form does not carry has to be put back
+by hand") and a test pinned the tier direction, but the preset direction had no caller until
+the picker grew a save of its own, so the asymmetry was invisible from the only side anyone
+looked at. When a comment says "must be restored by hand", check every direction it applies
+to, not the one the test covers.
+
+Each of the three regression tests was confirmed to fail on the old code with
+`KeyError: 'preset'` by reverting the fix and re-running. Not assumed.
+
+### LANDED  the email tier can be changed after a run, not only at creation
+Axis: 6, frontend. The backend has accepted `email_tier` on a policy update all along and
+its comment says why; the frontend type omitted the field, so reaching a capability built
+for exactly this meant deleting the campaign and making another. Commit: 7caa313. Checks:
+tsc clean, eslint clean, ruff clean, 800 passed. Needed 1b74d90 first - before that fix a
+tier-only request would have destroyed the preset the same way a model pin did.
+
+No new test: there is no frontend test runner, and the API path the control uses is pinned
+by `test_changing_the_look_does_not_reset_the_preset`.
+
+### REJECTED  a gate comparing types.ts field-by-field against the OpenAPI component schemas
+Reason: measured, not guessed, and it does not hold up. Matching a Pydantic schema to a TS
+interface by name (exact, else strip the `Read` suffix) leaves 16 of 52 object schemas
+unmatched, and - worse - produces a confident *false positive*: backend
+`AudienceSegmentRead` (who/where/why_them/angle) and `knowledge/artifacts.Segment`
+(situation/job_to_be_done/trigger) are unrelated models, and the frontend's `AudienceSegment`
+mirrors the second while the name matches the first. The gate reports 13 fields of drift on
+correct code. Making it sound needs a hand-maintained name map, which reintroduces exactly
+the drift it exists to catch. Only the two genuine differences it surfaced were worth
+anything, and both were found by reading the output rather than by the check blocking.
+Do not build this on name matching. If it is retried, the match has to come from the route
+that returns the type, not from its name.
