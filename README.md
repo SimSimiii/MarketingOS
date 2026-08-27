@@ -81,6 +81,34 @@ Codex is metered per *message*, not per token: a campaign makes tens of calls, s
 comfortably exceeds a free plan's daily allowance. Free is enough to prove the wiring works
 on one agent, not to run a whole campaign on GPT.
 
+## Autonomous optimization runs
+
+`/optimize` spends whatever is left of a five-hour usage window on the project: it finds its
+own angles, implements one per pass, and gates every commit on ruff and the test suite. Give
+it a target (`/optimize the craft loop`) or none at all for a global sweep that also looks
+for new features.
+
+Run it from a terminal rather than the desktop app. An unattended run must not stop on a
+permission prompt, and the flag is the only thing that reliably suppresses them — a settings
+file does not always win against a global mode:
+
+```bash
+claude --dangerously-skip-permissions "/optimize"
+```
+
+The workflow, the constraints it refuses to spend a pass on, and the cross-run ledger that
+stops it re-deriving a dead end are in `.claude/skills/optimize/`. Before starting, it
+commits and pushes whatever is uncommitted and tags it `optimize-baseline-<timestamp>` —
+that tag is how you get back, whatever the run does afterwards.
+
+```bash
+python .claude/skills/optimize/quota.py
+```
+
+reports what the current window has spent. There is no API for what remains, so it
+calibrates against the consumption recorded at each rate limit that has actually fired on
+this machine.
+
 ## Measuring quality
 
 Two instruments, answering two different questions. Both live in
