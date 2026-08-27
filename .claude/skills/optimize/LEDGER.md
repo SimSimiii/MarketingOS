@@ -95,3 +95,33 @@ Frontend axes checked and found clean this run, so the next run need not re-deri
 client/server boundary (every client-side `api.*` call but three is a mutation, which is the
 documented architecture), and request fan-out (every page but the two fixed above already
 uses one flat `Promise.all`).
+
+## 2026-08-27 15:4x — branch optimize/20260827-1420 (continued, new window)
+
+### LANDED  a gate licensing every frontend path against the backend's OpenAPI schema
+Axis: 4, new deterministic gates, pointed at the frontend. `api-client.ts` hardcodes 48
+paths and `types.ts` mirrors the schemas by hand; renaming a route 404s the UI where no
+backend test can see it and no frontend check looks - there is no CI and no frontend test
+runner. Commit: 6a7cd13. Checks: ruff clean (1 pre-existing SIM102), 797 passed (787 + 10
+new), tsc clean, eslint clean. Free - `app.openapi()` spends no model call.
+
+Supersedes the previous entry's "retry as (a), and only as (a)". That entry was wrong: it
+assumed extracting the paths needed a heuristic, so it deferred behind a refactor of
+`request()`. It does not. One exact rule covers every form in the client - **a path
+parameter is always preceded by `/`, a query append never is** - so the literal
+`?limit=${n}`, the ternary `${archived ? "?..." : ""}` and the prebuilt `${suffix}` all
+normalise correctly with no guessing. Eight cases are pinned as a parametrised test so the
+rule is checked, not trusted. The refactor was never needed.
+
+Two things worth carrying forward. Extraction must cover **three** ways the client names a
+path - template literals, plain strings, and URLs built straight from `API_URL` (the SSE
+stream and the CSV export, which bypass the request helpers). Missing that third group made
+ten endpoints look uncalled on the first attempt, and a gate with a blind spot is worse than
+none. Hence the second test pinning the extracted count above 30: without it the whole check
+passes vacuously the day a helper is renamed. The gate is also deliberately one-directional
+- a backend route with no frontend caller is not a defect (`/api/health` is exactly that),
+so asserting the reverse would fail on correct code.
+
+Verified by injecting a real rename (`forecast` -> `forecasts`): the gate fails and names
+the offending path. Reverted before commit. A gate nobody has watched fail is not known to
+work.
