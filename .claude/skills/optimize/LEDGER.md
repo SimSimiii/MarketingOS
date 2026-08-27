@@ -196,3 +196,41 @@ schema change.
 
 ### CHECKED CLEAN  unused exported types in types.ts
 All 74 are referenced. No dead weight there.
+
+### LANDED  the campaign goal, which no form had ever collected
+Axis: 6, frontend - but the consequence is strategic. `render_context()` puts the user's
+framing in front of the strategist and every line is optional; the dialog sent all fourteen
+other `CampaignCreateRequest` fields and omitted `goals`, so "What the user wants out of it:
+..." never once appeared in a context the product generated. Commit: 43ab010. Checks: tsc
+clean, eslint clean, ruff clean, 804 passed (800 + 4 new). No extra spend - one more line in
+a prompt already being sent.
+
+The part worth remembering: **the evaluation harness sets it.** `golden.py` gives every case
+a goal and `runner.py` passes `goals=case.goals`, so the bench was grading a strategist
+receiving an input the shipped product could not supply. Eval and production differed by a
+line of context. When auditing what the UI cannot reach, check the eval harness too - it is
+the other caller, and where the two disagree the bench is measuring the wrong system.
+
+An optional field no form fills looks exactly like one the user left blank, which is why it
+survived. Nothing anywhere looked wrong.
+
+### CORRECTION  the pass-7 "no unreachable request fields" result was wrong
+It searched all of `frontend/src` **including `types.ts`**, which mirrors every backend
+field by hand - so a field declared there and used nowhere read as "used". Any
+reachability check over this frontend must exclude `types.ts`, or it cannot fail. Re-run
+correctly it found three: `goals` (fixed above), `KnowledgeSourceCreate.max_pages` and
+`ProspectSearchRequest.with_contacts`.
+
+### GAPS (not acted on)  two request fields and four response fields the UI cannot reach
+Request: `KnowledgeSourceCreate.max_pages` (crawl depth) and
+`ProspectSearchRequest.with_contacts`. Neither reaches a prompt, so neither changes the copy
+- lower value than `goals` was, and both are defaults someone chose deliberately.
+
+Response, computed by the backend and dropped by the UI: `PositioningRead.we_have_proof`,
+`RivalProfileRead.one_liner`, `AudienceSegmentRead.pains`, and the per-run token counts
+(`total_input_tokens`, `total_output_tokens`, `total_cache_read_tokens` on three schemas,
+plus the per-agent cache split on `AgentExecutionRead`). The token ones are the interesting
+set: the run view shows a USD estimate, but the subscription bills a five-hour window
+denominated in tokens with cache reads at 0.1x, so what is on screen is not the currency
+that runs out. Showing them is a product decision about what the operator wants to watch,
+not a refactor - left for a human.
