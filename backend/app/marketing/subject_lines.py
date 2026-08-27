@@ -24,6 +24,7 @@ it - the incumbent wins ties here for the same reason it does everywhere else.
 import asyncio
 import logging
 import statistics
+from collections.abc import Callable
 
 from pydantic import BaseModel, Field
 
@@ -91,6 +92,14 @@ class InboxVerdict(BaseModel):
     reported: bool = True
 
 
+def _swapped(email: Email, option: SubjectOption) -> Email:
+    """The email this option would produce. The body is never touched - the
+    reading already on the record still describes what ships."""
+    return email.model_copy(
+        update={"subject": option.subject, "preview_text": option.preview}
+    )
+
+
 class SubjectBakeOff:
     """Writes alternative subject lines for a finished email and picks one."""
 
@@ -105,26 +114,46 @@ class SubjectBakeOff:
         artifacts: KnowledgeArtifacts,
         personas: list[str],
         variants: int,
+        screen: Callable[[Email], bool] | None = None,
     ) -> tuple[Email, str]:
         """The same email, with the subject most people would open.
 
         Returns the email and one line saying what happened, which the caller
         announces. A no-op - no alternatives, none sendable, none preferred -
         returns the email it was given, unchanged and undamaged.
+
+        `screen` is the free checks, pointed at the email each option would
+        produce. Everything else in this loop screens before it pays - the
+        gates run before a cold read, near-identical candidates are dropped
+        before the bake-off reads them - and this step did not: an option that
+        repeated an earlier email's subject word for word, or carried a figure
+        the ledger does not license, was written, scanned at full price, could
+        win the field, and was then thrown away by the caller's re-check. The
+        run kept the line it started with even when a clean alternative had
+        scanned better than it. Screened here, the field the readers rank is
+        the field the winner can actually be taken from.
         """
         options = await self._write(email, brief, artifacts, variants)
         sendable = [option for option in options if option.sendable]
-        if not sendable:
-            return email, "no alternative subject line came back sendable"
+        clean = [option for option in sendable if screen is None or screen(_swapped(email, option))]
+        dropped = len(sendable) - len(clean)
+        if not clean:
+            return email, (
+                f"no alternative subject line survived the automatic checks ({dropped} dropped)"
+                if dropped
+                else "no alternative subject line came back sendable"
+            )
 
         # The line the email already has, judged on the same terms as the
         # alternatives. Without it in the running the bake-off can only replace
         # the subject, never keep it, and a set of four weak alternatives would
-        # evict a strong incumbent every time.
+        # evict a strong incumbent every time. Never screened: it is what ships
+        # if nothing beats it, and it has already been through these checks as
+        # part of the draft that won.
         incumbent = SubjectOption(
             subject=email.subject, preview=email.preview_text, approach="the line it already had"
         )
-        field = [incumbent, *sendable]
+        field = [incumbent, *clean]
         opens = await self._scan(field, artifacts, personas)
         if not opens:
             return email, "nobody could judge the subject lines"
@@ -133,16 +162,16 @@ class SubjectBakeOff:
         summary = (
             "subject lines scored "
             + ", ".join(f"{opens[index]:.0f}/100" for index in range(len(field)))
+            + (
+                f" ({dropped} more broke an automatic check and was never read)"
+                if dropped
+                else ""
+            )
             + f' - kept "{field[best].subject}"'
         )
         if best == 0:
             return email, summary
-        return (
-            email.model_copy(
-                update={"subject": field[best].subject, "preview_text": field[best].preview}
-            ),
-            summary,
-        )
+        return _swapped(email, field[best]), summary
 
     # ------------------------------------------------------------- internals
 

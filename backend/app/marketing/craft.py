@@ -1068,13 +1068,36 @@ class CraftLoop:
         measured was measured with the subject the body arrived with, and this
         step only ever swaps in a line more of a hundred people would open.
 
-        A swapped subject is re-gated, because a subject can repeat an earlier
-        email's word for word, and a swap that breaks a gate is reverted rather
-        than shipped - the free checks outrank the improvement.
+        Every alternative is gated *before* it is read, because a subject can
+        repeat an earlier email's word for word or carry a figure the ledger
+        does not license. That used to happen afterwards: the broken line was
+        scanned at full price, could win the field, and was then reverted - so
+        the email kept the line it started with even when a clean alternative
+        had scanned better than it. Screening first costs the same and makes
+        the winner takeable.
         """
         if self._subjects is None or self._subject_variants < 1:
             return
         best = outcome.best
+        # Checked once per distinct line: the screen and the swap that follows
+        # it ask the same question of the same email, and `_check` walks the
+        # ledger and the whole sequence to answer it.
+        checked: dict[tuple[str, str], tuple[GateReport, Substantiation]] = {}
+
+        def check(candidate: Email) -> tuple[GateReport, Substantiation]:
+            key = (candidate.subject, candidate.preview_text)
+            if key not in checked:
+                checked[key] = self._check(candidate, brief, previous)
+            return checked[key]
+
+        def clean(candidate: Email) -> bool:
+            # A draft that was already blocked cannot be made worse by a
+            # subject that is blocked too, and screening those out would leave
+            # the field empty on exactly the emails most in need of a better
+            # line. Only a line that breaks something the draft had not is out.
+            gates, _ = check(candidate)
+            return not gates.blocking or bool(best.gates.blocking)
+
         self._observer.on_role_started(
             "subject_writer",
             f"Email {brief.position} · {self._subject_variants} alternative subject lines",
@@ -1086,26 +1109,13 @@ class CraftLoop:
             artifacts=self._artifacts,
             personas=self._personas,
             variants=self._subject_variants,
+            screen=clean,
         )
         self._observer.on_role_finished("subject_writer", summary, {"subject": improved.subject})
         if improved.subject == best.email.subject:
             return
-        gates, substantiation = self._check(improved, brief, previous)
-        if gates.blocking and not best.gates.blocking:
-            logger.info(
-                "craft: email %d kept its own subject - the better-scanning line broke a check",
-                brief.position,
-            )
-            self._observer.on_phase(
-                "craft",
-                f"Email {brief.position}: the subject that scanned best broke an automatic "
-                "check, so the original line stands",
-                {"position": brief.position},
-            )
-            return
         best.email = improved
-        best.gates = gates
-        best.substantiation = substantiation
+        best.gates, best.substantiation = check(improved)
 
 
 def _bets(brief: EmailBrief, candidates: int) -> list[tuple[str, str]]:
