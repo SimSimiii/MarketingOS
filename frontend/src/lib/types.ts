@@ -298,6 +298,11 @@ export interface KnowledgeBase {
 export interface CampaignPolicyUpdate {
   preset?: PolicyPreset | null;
   overrides?: Record<string, unknown> | null;
+  /** How designed the finished emails look. Accepted here as well as on
+   * creation because it is the one presentation decision a user changes their
+   * mind about after seeing a run, and re-running is cheap where re-creating
+   * the campaign is not. Omit to leave the stored tier alone. */
+  email_tier?: EmailTier | null;
   /** Per-agent model pins, `{role_id: model}`. Omit to leave the stored pins
    * alone; send `{}` to clear them and hand every agent back to the preset. */
   model_overrides?: Record<string, string> | null;

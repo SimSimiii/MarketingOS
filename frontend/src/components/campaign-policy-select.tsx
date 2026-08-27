@@ -16,7 +16,7 @@ import { ModelOverridePanel } from "@/components/model-override-panel";
 import { RunForecast } from "@/components/run-forecast";
 import { api } from "@/lib/api-client";
 import { useModelCatalog } from "@/lib/use-model-catalog";
-import type { Campaign, PolicyPreset } from "@/lib/types";
+import type { Campaign, EmailTier, PolicyPreset } from "@/lib/types";
 
 const PRESET_LABELS: Record<PolicyPreset, string> = {
   fast: "Fast - cheaper models, shorter budget",
@@ -24,9 +24,23 @@ const PRESET_LABELS: Record<PolicyPreset, string> = {
   maximum: "Maximum - best models, most thorough review",
 };
 
+const TIER_LABELS: Record<EmailTier, string> = {
+  plain: "Plain - typography only, looks like a person wrote it",
+  branded: "Branded - logo, colour, a real button and a footer",
+};
+
 function currentPreset(campaign: Campaign): PolicyPreset {
   const preset = campaign.policy?.preset;
   return preset === "fast" || preset === "maximum" ? preset : "balanced";
+}
+
+/** What this campaign's emails will actually render as.
+ *
+ * An absent tier renders plain, so an unset one and an explicit "plain" are
+ * the same picture to the reader; showing them as different states would
+ * invent a distinction the output does not have. */
+function currentTier(campaign: Campaign): EmailTier {
+  return campaign.policy?.email_tier === "branded" ? "branded" : "plain";
 }
 
 export function CampaignPolicySelect({ campaign }: { campaign: Campaign }) {
@@ -78,6 +92,36 @@ export function CampaignPolicySelect({ campaign }: { campaign: Campaign }) {
           ))}
         </SelectContent>
       </Select>
+
+      {/* Presentation, not shape: it changes nothing about how the run is
+          bought, which is why it does not move the forecast below. Offered
+          after the run rather than only on the creation form because it is the
+          one decision a user revises once they have seen the emails, and
+          re-running a campaign is cheap where re-creating it is not. */}
+      <div className="space-y-1">
+        <Select
+          value={currentTier(campaign)}
+          onValueChange={(value) =>
+            value && save({ email_tier: value as EmailTier }, "Look updated")
+          }
+          disabled={saving}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="plain">{TIER_LABELS.plain}</SelectItem>
+            <SelectItem value="branded">{TIER_LABELS.branded}</SelectItem>
+          </SelectContent>
+        </Select>
+        {currentTier(campaign) === "branded" && (
+          <p className="text-xs text-muted-foreground">
+            {campaign.brand_id
+              ? "Set the logo, colour and footer on the brand page, or it renders as plain."
+              : "Nothing to brand it with until this campaign is attached to a brand."}
+          </p>
+        )}
+      </div>
 
       {/* The preset decides the shape of a run - how many drafts, which judges,
           what budget. This decides which model does each job, and the two are
