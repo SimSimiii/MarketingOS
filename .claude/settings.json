@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Edit",
+      "Write",
+      "Bash(git *)",
+      "Bash(python *)",
+      "Bash(py *)",
+      "Bash(.venv/Scripts/python.exe *)",
+      "Bash(./.venv/Scripts/python.exe *)",
+      "Bash(.venv/Scripts/ruff.exe *)",
+      "Bash(./.venv/Scripts/ruff.exe *)",
+      "Bash(alembic *)",
+      "Bash(uvicorn *)",
+      "Bash(npm run *)",
+      "Bash(npm ci)",
+      "Bash(npm install)",
+      "Bash(npx tsc *)",
+      "Bash(npx tsc)",
+      "Bash(npx eslint *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)",
+      "Bash(find *)",
+      "Bash(grep *)",
+      "Bash(sed *)",
+      "Bash(diff *)",
+      "Bash(sort *)",
+      "Bash(uniq *)",
+      "Bash(du *)",
+      "Bash(echo *)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(mv *)"
+    ],
+    "ask": [
+      "Bash(python -m app.evaluation.*)",
+      "Bash(.venv/Scripts/python.exe -m app.evaluation.*)",
+      "Bash(./.venv/Scripts/python.exe -m app.evaluation.*)"
+    ],
+    "deny": [
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git push origin --force*)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~*)"
+    ]
+  }
+}
