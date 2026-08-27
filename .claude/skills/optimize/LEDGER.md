@@ -168,3 +168,31 @@ the drift it exists to catch. Only the two genuine differences it surfaced were 
 anything, and both were found by reading the output rather than by the check blocking.
 Do not build this on name matching. If it is retried, the match has to come from the route
 that returns the type, not from its name.
+
+### LANDED  five api-client methods nothing calls
+Axis: 7, dead weight. `getExecutionStatus`, `getKnowledgeDocument`, `deleteBrand`,
+`listRivals`, `listProspects` had no caller in src/. Four are superseded by the richer
+endpoint the app actually uses. Commit: 5b05146. Checks: tsc clean, eslint clean, ruff clean,
+800 passed. Since 6a7cd13 an unused method is no longer free - the contract gate would fail
+the build over drift in an endpoint nothing calls - so the gate's surface drops 48 -> 45
+paths, which is the frontend's real dependency set.
+
+Method note: the first scan reported **nine**, and four were false positives.
+`market/page.tsx` calls `api` then `.getAudience(...)` on the next line, so a regex anchored
+on `api\.` misses it. Any dead-code scan here needs `api\s*\.\s*` and a per-name grep before
+anything is deleted. This nearly deleted live code.
+
+### GAP (not acted on)  the backend serves DELETE /api/brands/{id} and no screen exposes it
+Same class as the `email_tier` gap, but deliberately left for a human: deleting a brand
+cascades to its knowledge, its market and its campaigns, so what the control warns about
+before it fires is a product decision, not a refactor. The client method was removed with the
+others rather than kept as the only record of it - this line is the record.
+
+### CHECKED CLEAN  backend request fields the frontend cannot express
+Ran every write endpoint's request-body schema against every identifier in src/: after
+7caa313 there are none. That check is what confirmed `email_tier` was the only such gap, and
+it is cheap to re-run - 13 endpoints, one script, no model call. Worth repeating after a
+schema change.
+
+### CHECKED CLEAN  unused exported types in types.ts
+All 74 are referenced. No dead weight there.
