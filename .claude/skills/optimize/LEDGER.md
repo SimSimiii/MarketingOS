@@ -66,3 +66,32 @@ across layouts and pages within one server render pass, and every call goes thro
 `request()` helper with identical headers and `cache: "no-store"` - so the two components
 already share one response each. Confirmed in `node_modules/next/dist/docs/01-app/
 03-api-reference/04-functions/fetch.md`, not assumed. Nothing to fix.
+
+### REJECTED (for now)  a gate asserting every path api-client.ts calls exists in the backend
+Reason: right idea, wrong order. This is the one real gap on the frontend - `types.ts` (1009
+lines) mirrors the Pydantic schemas by hand and nothing checks it, so a renamed route is a
+silent runtime 404. But 5 of the 34 paths append a query string through an interpolation
+(`/knowledge${suffix}`, `/campaigns${includeArchived ? "?..." : ""}`, `/executions/${id}/
+logs${suffix}`), so extracting them statically needs a heuristic - and a gate that
+false-positives would block a correct change, which this codebase does not allow of anything
+that blocks. Two honest routes: (a) regularise `request()` to take path and query as separate
+arguments first, making extraction exact, then add the gate - two passes, not one; or (b)
+stub `fetch` and call every `api.*` function to record real URLs, which is exact but needs a
+frontend test runner the repo does not have. Retry as (a), and only as (a).
+
+### REJECTED  server-render the model catalog instead of fetching it from a client hook
+Reason: the current design is better. `use-model-catalog.ts` already caches the in-flight
+promise at module scope, so the whole app makes one request, a failure does not poison the
+cache, and the picker degrades to the preset rather than taking down the screen it sits on.
+Passing it from a server component would fetch the catalog on every page that merely renders
+a dialog *trigger*, whether or not the picker is ever opened. Strictly worse. Not retried.
+
+### REJECTED  memoize or incrementalise the SSE timeline fold
+Reason: already memoized (`useMemo(() => reduceRun(events), [events])`), and the O(n^2) that
+remains is nominal - a run emits a few hundred events, so re-folding costs milliseconds. The
+per-second `now` tick does not re-enter the fold. Checked, clean, nothing to buy.
+
+Frontend axes checked and found clean this run, so the next run need not re-derive them:
+client/server boundary (every client-side `api.*` call but three is a mutation, which is the
+documented architecture), and request fan-out (every page but the two fixed above already
+uses one flat `Promise.all`).
