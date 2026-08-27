@@ -493,6 +493,51 @@ async def test_a_better_scanning_subject_that_breaks_a_check_is_not_shipped(
     assert not result.outcomes[0].best.gates.blocking
 
 
+@pytest.mark.asyncio
+async def test_a_broken_line_does_not_take_the_clean_one_down_with_it(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    """Screening before the scan, rather than reverting after it.
+
+    The line that scans best breaks the spam gate; the other alternative is
+    clean and still scans well above the line the email arrived with. Reverting
+    the winner afterwards threw the whole bake-off away and kept the incumbent,
+    so a step the run paid for delivered nothing. Screened first, the field the
+    readers rank contains only lines that could ship, and the best of those is
+    the one delivered.
+    """
+    import json
+
+    provider.set_default("strategist", campaign_brief(1))
+    provider.set_default(
+        "subject_lines",
+        json.dumps(
+            {
+                "options": [
+                    {
+                        "subject": "Act now before this offer ends",
+                        "preview": "the spam gate will refuse this one",
+                        "approach": "urgency",
+                    },
+                    {
+                        "subject": "Release notes, option 2",
+                        "preview": "a different bet, number 2",
+                        "approach": "the cost of doing nothing",
+                    },
+                ]
+            }
+        ),
+    )
+    # Two lines are read, not three: the incumbent and the one that survived.
+    provider.set_default("inbox_scanner", inbox_verdict(5, 60))
+
+    pipeline, _ = build(provider, refine_only(max_revisions=0, subject_variants=2))
+    result = await pipeline.run(one_email(request_fixture))
+
+    assert result.emails[0].subject == "Release notes, option 2"
+    assert not result.outcomes[0].best.gates.blocking
+
+
 # ------------------------------------------------- nothing to argue from
 
 

@@ -37,13 +37,14 @@ def email(subject: str = "The line it already had") -> Email:
     )
 
 
-async def improve(provider: RoleScriptedProvider, variants: int = 4):
+async def improve(provider: RoleScriptedProvider, variants: int = 4, screen=None):
     return await SubjectBakeOff(make_session(provider)).improve(
         email=email(),
         brief=BRIEF,
         artifacts=artifacts_fixture(),
         personas=PERSONAS,
         variants=variants,
+        screen=screen,
     )
 
 
@@ -119,6 +120,43 @@ async def test_unsendable_options_are_dropped_before_anybody_scores_them():
 
     # Two lines were scored, not three: the incumbent and the one that fits.
     assert improved.subject == "This one fits"
+
+
+@pytest.mark.asyncio
+async def test_a_line_that_breaks_a_check_is_dropped_before_anybody_reads_it():
+    """The free checks screen the field, the way they screen everything else
+    in the loop that costs money.
+
+    Option 2 breaks a gate, so it is never read: three lines are written and
+    the readers rank two of them beside the incumbent. The line that wins is
+    the best of the ones that could actually have shipped, rather than the
+    incumbent by default - which is what a revert after the scan produced.
+    """
+    provider = RoleScriptedProvider(
+        {"subject_lines": subject_options(3), "inbox_scanner": inbox_verdict(10, 20, 90)}
+    )
+
+    improved, summary = await improve(
+        provider, variants=3, screen=lambda candidate: "option 2" not in candidate.subject
+    )
+
+    assert improved.subject == "Release notes, option 3"
+    assert "1 more broke an automatic check" in summary
+
+
+@pytest.mark.asyncio
+async def test_a_field_where_nothing_survives_the_checks_leaves_the_line_alone():
+    """And says so. "No alternative was sendable" and "every alternative broke
+    a check" are different facts about the run, and only the second one is
+    about the copy."""
+    provider = RoleScriptedProvider(
+        {"subject_lines": subject_options(3), "inbox_scanner": inbox_verdict(10, 90, 40)}
+    )
+
+    improved, summary = await improve(provider, variants=3, screen=lambda candidate: False)
+
+    assert improved == email()
+    assert "survived the automatic checks" in summary
 
 
 # --------------------------------------------------------------- when it fails
