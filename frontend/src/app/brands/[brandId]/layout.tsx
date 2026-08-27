@@ -23,17 +23,22 @@ export default async function BrandLayout({
 }) {
   const { brandId } = await params;
 
-  const brand = await api.getBrand(brandId).catch(() => null);
-  if (!brand) {
-    notFound();
-  }
-
-  const [brands, documents, base, market] = await Promise.all([
-    api.listBrands().catch(() => [brand]),
+  // All five are keyed by the brand id in the route, so none of them needs the
+  // brand record to know what to ask for. Awaiting the guard alone first put a
+  // whole round trip in front of the other four, and this layout wraps four
+  // routes - on three of them the child page does not refetch the set, so
+  // nothing else was already in flight to hide it.
+  const [brand, allBrands, documents, base, market] = await Promise.all([
+    api.getBrand(brandId).catch(() => null),
+    api.listBrands().catch(() => null),
     api.listKnowledgeDocuments({ brandId }).catch(() => []),
     api.getKnowledgeBase({ brandId }).catch(() => null),
     api.getMarket(brandId).catch(() => null),
   ]);
+  if (!brand) {
+    notFound();
+  }
+  const brands = allBrands ?? [brand];
 
   return (
     <div className="space-y-6">
