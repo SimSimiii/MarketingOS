@@ -133,6 +133,7 @@ export interface NewCampaignDialogPrefill {
   productDescription?: string | null;
   productUrl?: string | null;
   targetMarket?: string | null;
+  goals?: string | null;
   senderName?: string | null;
   senderRole?: string | null;
 }
@@ -156,6 +157,7 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
   const [productDescription, setProductDescription] = useState("");
   const [productUrl, setProductUrl] = useState("");
   const [targetMarket, setTargetMarket] = useState("");
+  const [goals, setGoals] = useState("");
   const [senderName, setSenderName] = useState("");
   const [senderRole, setSenderRole] = useState("");
   const [files, setFiles] = useState<File[]>([]);
@@ -222,6 +224,7 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
       // A prefilled description is the answer to the same question, so the
       // control opens on it rather than on the default with a hidden value.
       if (prefill.targetMarket) setAudienceSegment(CUSTOM_AUDIENCE);
+      setGoals(prefill.goals ?? "");
       setSenderName(prefill.senderName ?? "");
       setSenderRole(prefill.senderRole ?? "");
     }
@@ -348,6 +351,7 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
         // which of two audiences the user meant.
         target_market:
           audienceSegment === CUSTOM_AUDIENCE ? targetMarket.trim() || null : null,
+        goals: goals.trim() || null,
         sender_name: senderName || null,
         sender_role: senderRole || null,
         brand_id: brandId,
@@ -669,6 +673,26 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
                 onChange={(e) => setSenderRole(e.target.value)}
               />
             </div>
+          </div>
+
+          {/* The last line of render_context() that no form filled. The
+              strategist is told the product, the audience and the sender; what
+              the campaign is *for* was the one input it had to infer, and a
+              sequence planned toward "trial signups" escalates differently
+              from one planned toward a reply. Optional, and omitted when
+              blank, so a run that says nothing here plans exactly as before. */}
+          <div className="space-y-2">
+            <Label htmlFor="goals">What do you want out of it? (optional)</Label>
+            <Input
+              id="goals"
+              placeholder="Trial signups"
+              value={goals}
+              onChange={(e) => setGoals(e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground">
+              The outcome the sequence is planned toward, not the copy&apos;s subject. It
+              decides what each email escalates to and what the last one asks for.
+            </p>
           </div>
 
           <div className="space-y-2">

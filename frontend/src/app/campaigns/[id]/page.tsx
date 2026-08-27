@@ -58,6 +58,7 @@ export default async function CampaignDetailPage({
                 productDescription: campaign.product_description,
                 productUrl: campaign.product_url,
                 targetMarket: campaign.target_market,
+                goals: campaign.goals,
                 senderName: campaign.sender_name,
                 senderRole: campaign.sender_role,
               }}

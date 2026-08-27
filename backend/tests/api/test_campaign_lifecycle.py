@@ -382,6 +382,27 @@ def test_clearing_the_field_overrides_leaves_the_preset_and_the_look(client: Tes
     assert policy["email_tier"] == "branded"
 
 
+def test_the_goal_survives_the_round_trip(client: TestClient):
+    """The campaign form had no field for this until the strategist's context
+    was audited against it, so the create-and-read path was never exercised
+    even though both ends had always declared it."""
+    created = client.post(
+        "/api/campaigns",
+        json={
+            "name": "Launch",
+            "request": "Write exactly 1 email announcing the launch",
+            "product_description": "A note-taking app",
+            "goals": "trial signups",
+        },
+    )
+
+    assert created.status_code == 201, created.text
+    assert created.json()["goals"] == "trial signups"
+
+    fetched = client.get(f"/api/campaigns/{created.json()['id']}")
+    assert fetched.json()["goals"] == "trial signups"
+
+
 def test_a_campaign_that_asks_for_nothing_stays_plain(client: TestClient):
     campaign = client.post(
         "/api/campaigns",
