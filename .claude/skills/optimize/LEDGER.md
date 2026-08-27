@@ -234,3 +234,27 @@ set: the run view shows a USD estimate, but the subscription bills a five-hour w
 denominated in tokens with cache reads at 0.1x, so what is on screen is not the currency
 that runs out. Showing them is a product decision about what the operator wants to watch,
 not a refactor - left for a human.
+
+### REJECTED  make the eval runner pass sender_name/sender_role like the product does
+Reason: **do not do this.** Following the `goals` find, the runner builds `CampaignRequest`
+with five fields where the orchestrator passes eight - missing `product_url`, `sender_name`
+and `sender_role` - which looks like the same bug. It is not. The control emails in
+`golden.py` sign off `SIGNOFF: - the Notewright team` and `- the Portway team`, so *neither*
+arm has a personal sender and the duel is fair by construction. Passing one to the generated
+arm only would hand it a lever `request.py` calls "real conversion" that the human control
+cannot use, and every duel after it would be measuring that handicap instead of the copy.
+`product_url` is deliberate too: eval cases supply their material inline as `documents`, so
+nothing crawls.
+
+Worth keeping though: `GoldenCase` has no sender field at all, so the bench cannot measure
+whether the sender lever works - `request.py` asserts it converts and nothing here tests
+that. Closing the gap means giving both arms a sender, which means rewriting the control
+emails, and the comment on `control_email` says a control that drifts makes every comparison
+against it meaningless. So it is a known unmeasured claim, not a defect. Retire it only as a
+deliberate re-baselining of the controls, never as a fix to the runner.
+
+### NOT VERIFIED IN A BROWSER  the two new controls
+The goal input (43ab010) and the tier select (7caa313) pass tsc and eslint and both follow
+the markup of siblings in the same form, but no run of this workflow has rendered them. There
+is no frontend test runner, and standing a dev server up against a seeded campaign costs more
+than the change did. Worth one look before merging.
