@@ -120,6 +120,40 @@ def test_a_finished_run_tells_a_connecting_client_it_is_over(client: TestClient)
     assert '"status": "completed"' in body
 
 
+def test_a_run_that_ended_while_the_page_was_loading_still_sends_what_it_owes(
+    client: TestClient,
+):
+    """The page loads its timeline over HTTP, then connects to the stream from
+    the position that gave it. A run can finish in between - the end of a run
+    is dense, and it is a couple of hundred milliseconds - and the events in
+    that gap are the ones that matter: the report, the emails, the finish line.
+
+    Before this the stream saw a run that was no longer running, sent one
+    synthetic `execution_finished` and closed, so the page sat under a finished
+    badge showing a timeline that stopped mid-run, with nothing saying why and
+    nothing but a reload to fix it.
+    """
+    execution_id = run_campaign(client)
+    timeline = client.get(f"/api/executions/{execution_id}/timeline").json()
+    assert timeline["events"], "the run happened"
+
+    # Connect as a client that had read only the first few events.
+    resumed_from = 3
+    with client.stream(
+        "GET", f"/api/executions/{execution_id}/stream?after_event_id={resumed_from}"
+    ) as response:
+        assert response.status_code == 200
+        body = "".join(response.iter_text())
+
+    assert '"type": "execution_finished"' in body
+    assert '"type": "campaign_report"' in body, "the report is in the gap it was skipping"
+    assert '"type": "email_ready"' in body
+    # Everything after the client's position, and nothing before it.
+    ids = [int(line[len("id: ") :]) for line in body.splitlines() if line.startswith("id: ")]
+    assert ids and min(ids) > resumed_from
+    assert ids == sorted(ids), "replayed in the order they happened"
+
+
 def test_logs_and_timeline_404_on_an_unknown_execution(client: TestClient):
     unknown = "00000000-0000-0000-0000-000000000000"
     assert client.get(f"/api/executions/{unknown}/logs").status_code == 404

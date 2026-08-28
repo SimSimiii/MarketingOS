@@ -59,12 +59,26 @@ class ExecutionEventBroker:
         order even if the run publishes something mid-call.
         """
         queue: asyncio.Queue = asyncio.Queue()
-        if after_id is not None:
-            for event in self._history.get(execution_id, ()):
-                if event.id > after_id:
-                    queue.put_nowait(event)
+        for event in self.replay(execution_id, after_id):
+            queue.put_nowait(event)
         self._queues[execution_id].append(queue)
         return queue
+
+    def replay(self, execution_id: UUID, after_id: int | None) -> list[LiveEvent]:
+        """Everything still buffered for this run past `after_id`.
+
+        Separate from `subscribe` because a client can be owed history without
+        being owed a subscription: a run that ended between the page loading
+        its timeline and the stream connecting has no live events left to send,
+        and the last few - the report, the deliverables, the finish line - are
+        exactly the ones it is missing. `None` is a client with no position,
+        which is owed nothing here: it loads its history over HTTP.
+        """
+        if after_id is None:
+            return []
+        return [
+            event for event in self._history.get(execution_id, ()) if event.id > after_id
+        ]
 
     def unsubscribe(self, execution_id: UUID, queue: asyncio.Queue) -> None:
         subscribers = self._queues.get(execution_id)

@@ -184,6 +184,17 @@ async def stream_execution(execution_id: UUID, request: Request, service: Campai
 
     async def event_stream():
         if not service.is_execution_running(execution_id):
+            # Owed history first. A run can finish between the page loading its
+            # timeline over HTTP and this connection opening - a few hundred
+            # milliseconds, and the very end of a run is dense - and the events
+            # in that gap are the ones that matter most: the report, the
+            # deliverables, the finish line. Closing on a synthetic "finished"
+            # without them leaves exactly the hole this endpoint promises never
+            # to leave, and nothing on the page says so; the user sees a
+            # timeline that stops mid-run under a finished badge, and only a
+            # reload fixes it.
+            for event in broker.replay(execution_id, after_id):
+                yield _sse(event.payload, event_id=event.id)
             yield _sse(
                 {
                     "type": "execution_finished",
