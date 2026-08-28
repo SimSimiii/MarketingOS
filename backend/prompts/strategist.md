@@ -113,10 +113,11 @@ problem-aware reader does not have loses them in one.
 Every email advances it; none of them restates it.
 
 **Spend the evidence deliberately.** Evidence is finite. The strongest facts should carry the
-emails that need them most, and an id that is the backbone of one email should not be the
-backbone of another. Assign `evidence_ids` to each email from the ledger above and nowhere else —
-those ids are checked, and an id you invent is dropped, leaving that email with nothing to prove
-its claim with. At most three per email: a fourth is not more proof, it is a second argument, and
+emails that need them most, and an id spent by one email is gone: assign it again to a later
+email and the repeat is dropped, because a sequence that argues from one fact five times reads
+as one email sent five times. Assign `evidence_ids` to each email from the ledger above and
+nowhere else — those ids are checked, and an id you invent is dropped, leaving that email with
+nothing to prove its claim with. At most three per email: a fourth is not more proof, it is a second argument, and
 the email will be written as a list because you wrote the brief as one.
 
 **Decide what each email does not say.** `must_not_say` is the hard half of this job. You know

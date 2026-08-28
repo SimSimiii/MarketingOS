@@ -389,6 +389,61 @@ async def test_each_brief_is_told_what_the_earlier_ones_already_spent(
 
 
 @pytest.mark.asyncio
+async def test_a_fact_one_email_spends_is_not_assigned_to_the_next(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    """prompts/strategist.md asks for evidence to be spent once and nothing
+    checked, so a brief could hand the same proof to every email in the
+    sequence. No gate can see that failure: five emails arguing from one
+    testimonial share no phrase, so `overlap_gate` passes every one of them,
+    and the sequence still reads as one email sent five times.
+    """
+    artifacts = artifacts_fixture()
+    artifacts.evidence.entries.append(
+        Evidence(
+            id="E3",
+            kind=EvidenceKind.FEATURE,
+            claim="imports the last hundred commits on connect",
+            verbatim="Connecting a repo imports its last hundred commits.",
+            source="https://example.com",
+        )
+    )
+    provider.set_default(
+        "strategist",
+        campaign_brief(
+            3,
+            emails=[
+                {
+                    "position": position,
+                    "job": f"job {position}",
+                    "single_idea": f"idea number {position} that nothing else argues",
+                    "evidence_ids": ids,
+                    "objection": "we already have a script for this",
+                    "tone": "matter-of-fact",
+                    "call_to_action": "Start the trial",
+                    "subject_strategy": "concrete, names the outcome",
+                }
+                for position, ids in enumerate(
+                    [["E1", "E2"], ["E1", "E3"], ["E1"]], start=1
+                )
+            ],
+        ),
+    )
+
+    pipeline, _ = build(provider, artifacts=artifacts)
+    result = await pipeline.run(request_fixture)
+
+    assert result.brief is not None
+    briefs = result.brief.emails
+    assert briefs[0].evidence_ids == ["E1", "E2"]
+    assert briefs[1].evidence_ids == ["E3"], "E1 was already spent by email 1"
+    # Email 3 asked for nothing else, and an email with no proof to spend is
+    # worse than one arguing from a fact the reader has already seen - so the
+    # repeat stands rather than leaving the slot empty.
+    assert briefs[2].evidence_ids == ["E1"]
+
+
+@pytest.mark.asyncio
 async def test_cancelling_stops_between_emails_and_keeps_what_is_finished(
     provider: RoleScriptedProvider, request_fixture: CampaignRequest
 ):

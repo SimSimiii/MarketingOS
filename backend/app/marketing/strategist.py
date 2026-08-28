@@ -156,7 +156,8 @@ class Strategist:
     ) -> CampaignBrief:
         """Fix in code everything about a brief that has a correct answer.
 
-        Positions must be 1..n in order, evidence ids must exist, and the
+        Positions must be 1..n in order, evidence ids must exist, a fact one
+        email spends is not there for the next one to spend again, and the
         "already spent" list is derivable from the briefs before it - asking a
         model to keep those consistent is asking it to do bookkeeping instead
         of thinking.
@@ -179,11 +180,39 @@ class Strategist:
 
         normalized: list[EmailBrief] = []
         spent: list[str] = []
+        spent_evidence: set[str] = set()
         for position, email in enumerate(emails, start=1):
             unknown = [id_ for id_ in email.evidence_ids if id_ not in known_evidence]
             if unknown:
                 logger.info("strategist: dropped unknown evidence ids %s", unknown)
             assigned = [id_ for id_ in email.evidence_ids if id_ in known_evidence]
+            # Evidence is finite, and prompts/strategist.md asks for it to be
+            # spent that way - "an id that is the backbone of one email should
+            # not be the backbone of another". Nothing checked, and the failure
+            # it leaves is invisible to every gate in the loop: five emails
+            # arguing from one testimonial repeat no phrase, so `overlap_gate`
+            # passes each of them, and the sequence still reads as one email
+            # sent five times. Which fact belongs to which slot is bookkeeping
+            # over a set, so it is settled here rather than asked for.
+            fresh = [id_ for id_ in assigned if id_ not in spent_evidence]
+            if fresh and fresh != assigned:
+                logger.info(
+                    "strategist: email %d re-assigned %s, already spent earlier - dropped",
+                    position,
+                    [id_ for id_ in assigned if id_ in spent_evidence],
+                )
+                assigned = fresh
+            elif assigned and not fresh:
+                # Every fact it asked for is gone. A business with two proofs
+                # and a five-email sequence is the ordinary case, not an error,
+                # and an email with nothing assigned is written from mechanism
+                # with no proof to spend - which is strictly worse than one
+                # arguing from a fact the reader has seen before.
+                logger.info(
+                    "strategist: email %d has only facts earlier emails spent - kept, because "
+                    "nothing assigned is worse than something repeated",
+                    position,
+                )
             if len(assigned) > MAX_EVIDENCE_PER_EMAIL:
                 # Kept in the strategist's own order: it ranked them, and the
                 # first ones are the proof it built the idea on.
@@ -213,6 +242,7 @@ class Strategist:
             normalized.append(email)
             if email.single_idea:
                 spent.append(email.single_idea)
+            spent_evidence.update(assigned)
 
         brief.emails = normalized
         return brief
