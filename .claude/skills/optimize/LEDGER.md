@@ -258,3 +258,34 @@ The goal input (43ab010) and the tier select (7caa313) pass tsc and eslint and b
 the markup of siblings in the same form, but no run of this workflow has rendered them. There
 is no frontend test runner, and standing a dev server up against a seeded campaign costs more
 than the change did. Worth one look before merging.
+
+## 2026-08-28 02:36 — branch optimize/20260828-0236
+
+Global sweep. Baseline `optimize-baseline-20260828-0236`, master still at b7dbb9e and
+pushed. Budget at start: ~9.72M weighted, 299 min left in the window. Verified baseline
+before touching anything: ruff 1 pre-existing SIM102, **804 passed**.
+
+Branched from `optimize/20260827-1420` rather than from master, deliberately. Master never
+moves either way, so `git checkout master` is still the undo; branching from master instead
+would have forked a second unmerged line over the same files as the previous run's fifteen
+commits, and left the operator to merge two branches that both rewrote `craft.py`.
+
+### LANDED  a verified pass from a previous run that had been stranded off-branch
+Axis: none of the eight — this is a process failure, not a code one. `git branch -r` shows
+two prior run branches, and the *earlier*-numbered one (`optimize/20260827-1420`) does not
+descend from the later (`optimize/20260827-1500`). The 1500 branch forked from `2f9425a`,
+before the 1420 run's baseline commit existed, so its one landed pass — 92d824a, screening
+subject alternatives through the free checks before they are read — was reachable from
+nothing anyone would merge. Fifteen commits of later work sat on a branch that did not
+contain it. Cherry-picked as 6656fc5 (`-x`, so the original sha is in the message).
+Auto-merged into `craft.py` with no conflict against 29082bf, which touched `_bake_off`
+while this touches `_polish_subject`. Checks: ruff clean (1 pre-existing SIM102),
+**807 passed** (804 + 3). No change in spend — the screen runs before the scan, over a
+field that can only get smaller.
+
+Worth carrying forward as a rule for this workflow: **Phase 0 must check `git branch -r`
+for other `optimize/*` branches before creating one.** Two runs that both branch from
+master produce work that can only be reconciled by hand, and a landed, verified,
+pushed pass is invisible to every run after it. This run branches from the previous run's
+tip for exactly that reason. The remaining orphan on 1500 is `72594fe`, a ledger entry
+only — its content is the paragraph above.
