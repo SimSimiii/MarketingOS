@@ -289,3 +289,22 @@ master produce work that can only be reconciled by hand, and a landed, verified,
 pushed pass is invisible to every run after it. This run branches from the previous run's
 tip for exactly that reason. The remaining orphan on 1500 is `72594fe`, a ledger entry
 only — its content is the paragraph above.
+
+### LANDED  the forecast reads the run history once, in one query
+Axis: 5, runtime and data. Two faults in one panel, both on a page that renders on every
+visit to a campaign. `forecast_run` called `_comparable_runs` twice - through
+`_observed_cost` and again for `len(...)` - to print two views of one set; and each call was
+an N+1, asking `list_by_campaign` once per campaign on the same preset, two rows below the
+`latest_by_campaign` whose docstring names that exact pattern as the thing to avoid. Four
+campaigns meant eight queries. Commit: bc4cec6. Checks: ruff clean (1 pre-existing SIM102),
+**808 passed** (807 + 1). No model spend either way - the forecast calls nothing.
+
+Pinned by counting statements against `campaignexecution` while one forecast is served for
+one of four campaigns, asserting exactly one. Confirmed it reports 8 on the pre-change code
+by reverting the two app files and re-running - the test fails, so it is known to work
+rather than assumed to.
+
+Method note for the next run: every predicate that decides which runs count stayed in the
+service. `base.py` says repositories "never contain business logic", and "a run that died on
+its first call cost a penny" is business logic - so the new `list_by_campaigns` is the exact
+plural of `list_by_campaign` and nothing more.
