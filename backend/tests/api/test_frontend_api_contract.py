@@ -139,3 +139,71 @@ def test_a_query_append_is_not_mistaken_for_a_path_parameter(
     template: str, expected: str
 ) -> None:
     assert _to_openapi_path(template) == expected
+
+
+# -------------------------------------------------- the live event contract
+
+TYPES_TS = Path(__file__).resolve().parents[3] / "frontend" / "src" / "lib" / "types.ts"
+
+#: Where the union starts. Everything after it up to the closing `);` is the
+#: list of event shapes the page knows how to receive.
+_UNION_START = "export type LiveExecutionEvent = LiveEventBase &"
+
+
+def _emitted_event_types() -> set[str]:
+    """Every `type` the run can put on the wire.
+
+    One extractor, one rule: every live event in the system is published by
+    `ExecutionEventEmitter.emit`, whose first argument is the type as a string
+    literal. Nothing constructs one another way - `emit` is the only funnel,
+    which is the property that makes both the live stream and the replayed
+    history the same data.
+    """
+    source = (Path(__file__).resolve().parents[1] / ".." / "app").resolve()
+    found: set[str] = set()
+    for path in source.rglob("*.py"):
+        if "__pycache__" in str(path):
+            continue
+        text = path.read_text(encoding="utf-8")
+        found.update(re.findall(r'\bemit\(\s*\n?\s*"([a-z_]+)"', text))
+    return found
+
+
+def _named_in_the_union() -> set[str]:
+    text = TYPES_TS.read_text(encoding="utf-8")
+    start = text.index(_UNION_START)
+    end = text.index("\n  );", start)
+    return set(re.findall(r'type:\s*"([a-z_]+)"', text[start:end]))
+
+
+def test_every_event_the_run_emits_is_one_the_page_knows_how_to_receive() -> None:
+    """`types.ts` mirrors the backend by hand and nothing checked this half.
+
+    Same move as the path gate above, and easier: both sides name the event
+    with a string literal, so there is no name-mapping heuristic to get wrong.
+    It found three that had drifted - `model_call_retried`, `repair` and
+    `run_error`, each of them a line the run deliberately announces because it
+    is the one thing a user needs to see when a run is in trouble.
+
+    One-directional, like the path gate. A shape the page can receive and the
+    backend does not send is not a defect.
+    """
+    emitted = _emitted_event_types()
+    missing = sorted(emitted - _named_in_the_union())
+
+    assert not missing, (
+        "the run emits event type(s) types.ts does not name: "
+        + ", ".join(missing)
+        + "\n\nThe page still renders them as log lines, so nothing crashes - "
+        "which is exactly why this drifts silently. Add them to "
+        "LiveExecutionEvent with the fields the emitter's `data` carries."
+    )
+
+
+def test_the_event_extractor_is_not_matching_nothing() -> None:
+    """Without this the check above passes vacuously the day `emit` is renamed
+    or the union moves - the same guard the path count above carries."""
+    emitted = _emitted_event_types()
+    assert len(emitted) >= 18, f"only found {len(emitted)} event type(s): {sorted(emitted)}"
+    assert "execution_finished" in emitted and "email_ready" in emitted
+    assert len(_named_in_the_union()) >= 18

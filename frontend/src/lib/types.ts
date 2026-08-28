@@ -630,6 +630,12 @@ export type LiveExecutionEvent = LiveEventBase &
         what_would_help_most: string;
       }
     | { type: "model_call_started"; model: string; prompt_chars: number }
+    /** A call that never landed, being sent again. WARNING rather than DEBUG
+     * on purpose: everything else on this bridge is progress a healthy run
+     * also produces, and this is the one line that says the run is in
+     * trouble. A failed call consumed nothing, so the resend is cheap - what
+     * it costs is the seconds a deadline is still counting. */
+    | { type: "model_call_retried"; model: string; attempt: number; error: string }
     | {
         type: "model_call_finished";
         model: string;
@@ -692,6 +698,13 @@ export type LiveExecutionEvent = LiveEventBase &
           fixes: string[];
         }[];
       }
+    /** A draft the writer had to send again inside its own turn, and what it
+     * broke. The reasons used to go back to the model and nowhere else, so
+     * nobody could tell whether the writer was fighting one rule or twenty. */
+    | { type: "repair"; position: number; repair: number; reason: string }
+    /** A role that failed with no open step to attach the failure to. Carries
+     * nothing but its message, which is the error. */
+    | { type: "run_error" }
     | { type: "execution_finished"; status: ExecutionStatus }
     /** Anything the backend adds later still renders as its message. */
     | { type: "log" }
