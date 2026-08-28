@@ -425,3 +425,32 @@ that false-positives blocks correct copy - which this codebase does not allow of
 that blocks, and an advisory that is wrong half the time is noise in the writer's correction
 turn. Do not retry on string rules. If it is ever retried it needs a different instrument,
 not a better regex.
+
+### LANDED  the markup budget the writer is given is now checked
+Axis: 4, a new deterministic gate, found by the same method as pass 5: read the prompts for
+rules with a *number* in them and check whether anything enforces it.
+`prompts/writer.md` states two - `**bold**` "at most twice in an email", `> ` "at most one
+per email" - and nothing did. `_BOLD_RE` existed only to strip and to render;
+`_paragraph_issues` held a callout to its own word count without counting how many there
+were. Commit: b020ac4. Checks: ruff clean (1 pre-existing SIM102), **814 passed** (811 + 3,
+no test changed). Free.
+
+Not taste: `render_html` sets the first bolded phrase inside a callout very large and treats
+it as the one thing the email is about, so a second box is a second headline. Both checks
+went into `structural_issues`, which reaches the writer inside its own turn - one repair,
+not a rewrite cycle and a fresh cold read.
+
+Bold asked at two, checked at three - the same deliberate slack as 45 words asked / 50
+checked. The box gets none: one and two are not degrees of the same thing.
+
+Two method notes. **A gate that introduces its own constant cannot be shown to fail by
+reverting the module** - the tests stop importing. Raise the constants to 99 instead and
+watch the negative tests fail; that is what was done here. And **the golden control emails
+are a free validation corpus for any new structural rule** (`app/evaluation/golden.py`,
+`GOLDEN_CASES[*].control_email`): they are hand-written and known good, so a rule that fires
+on one is wrong. Neither uses a mark at all, so this rule is only confirmed not to conflict
+- a stronger check would need controls that actually use markup.
+
+**The prompt-with-a-number sweep is not exhausted.** Still unchecked and worth a later pass:
+"at most four bullets" (`_paragraph_issues` checks bullet *length* at 16 words but never
+counts them) and "one ask, stated once".
