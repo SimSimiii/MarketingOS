@@ -61,6 +61,7 @@ from app.marketing.gates import (
     structure_gate,
 )
 from app.marketing.reader import BlindReader
+from app.marketing.subject_lines import SubjectBakeOff, SubjectOption
 from app.marketing.tournament import PreferenceJudge
 from app.runtime.events import EventBus
 from app.runtime.exceptions import ProviderError
@@ -85,6 +86,30 @@ DEFAULT_VOTES = 4
 #: model id, which it rejects. `--judge-model` is validated against
 #: `ClaudeModel` before anything is billed.
 DEFAULT_JUDGE_MODEL: str | None = None
+
+
+def _subject_only(original: Email, mutant: Email) -> bool:
+    """Whether the damage is entirely above the body.
+
+    Derived rather than declared on the `Mutation`, because it is a property of
+    what a mutation *did* to this email and code can see it: two emails that
+    render identically once their subject and preview are made the same differ
+    in nothing else.
+
+    It decides which instrument is asked. A duel shows a reader two whole
+    emails and asks which they would act on - both are already open by then, so
+    the subject barely enters into it, and a pair identical below the subject
+    line comes back an even split whatever the lines say. That is not the judge
+    failing to see damage; it is the wrong judge. The system already has the
+    right one: the inbox scanner, which is shown lines with no bodies, because
+    that is the decision a recipient actually makes.
+    """
+    if original.subject == mutant.subject and original.preview_text == mutant.preview_text:
+        return False
+    levelled = mutant.model_copy(
+        update={"subject": original.subject, "preview_text": original.preview_text}
+    )
+    return render_email(levelled) == render_email(original)
 
 
 def _free_gates(email: Email) -> GateReport:
@@ -125,6 +150,14 @@ class PairResult:
     original_pull: float | None = None
     mutant_pull: float | None = None
     gate_issues: tuple[str, ...] = ()
+    #: Opens in a hundred, when this pair was scored in an inbox rather than
+    #: duelled - see `_subject_only`. None means the inbox arm did not run.
+    original_opens: float | None = None
+    mutant_opens: float | None = None
+
+    @property
+    def by_inbox(self) -> bool:
+        return self.original_opens is not None and self.mutant_opens is not None
 
     @property
     def cast(self) -> int:
@@ -132,13 +165,20 @@ class PairResult:
 
     @property
     def decided(self) -> bool:
-        return not self.skipped and self.cast > 0
+        return not self.skipped and (self.cast > 0 or self.by_inbox)
 
     @property
     def caught(self) -> bool:
         """Strictly preferred the original. A tie is a miss - see the module
         docstring: a judge that cannot separate the pair has not detected the
-        damage, it has declined to."""
+        damage, it has declined to.
+
+        The inbox arm is held to the same rule for the same reason: two lines
+        the scanner expects the same number of opens from are two lines it
+        could not separate.
+        """
+        if self.by_inbox:
+            return self.original_opens > self.mutant_opens
         return self.decided and self.original_votes > self.mutant_votes
 
     @property
@@ -167,10 +207,13 @@ class PairResult:
         else:
             verdict = "caught" if self.caught else "MISSED"
         mark = "·" if self.mutation.invariant else ("✓" if self.caught else "✗")
-        line = (
-            f"  {mark} {self.mutation.name:<24} {self.source:<14} "
-            f"{self.original_votes}-{self.mutant_votes}  {verdict}"
-        )
+        # An inbox pair has no ballot, so the column that holds one says what
+        # was asked instead - printing 0-0 there would read as a duel nobody
+        # could judge, which is a different result entirely.
+        tally = "in inbox" if self.by_inbox else f"{self.original_votes}-{self.mutant_votes}"
+        line = f"  {mark} {self.mutation.name:<24} {self.source:<14} {tally:<8}  {verdict}"
+        if self.by_inbox:
+            line += f"   opens {self.original_opens:.0f} vs {self.mutant_opens:.0f} in 100"
         if self.original_pull is not None and self.mutant_pull is not None:
             line += f"   pull {self.original_pull:.0f} → {self.mutant_pull:.0f}"
         if self.gate_issues:
@@ -192,6 +235,7 @@ class BenchReport:
             if pair.mutation.invariant is invariant
             and (gate_visible is None or pair.mutation.gate_visible is gate_visible)
             and pair.decided
+            and not pair.by_inbox
         ]
 
     @staticmethod
@@ -205,6 +249,26 @@ class BenchReport:
     @property
     def gate_visible(self) -> list[PairResult]:
         return self._of(invariant=False, gate_visible=True)
+
+    @property
+    def by_inbox(self) -> list[PairResult]:
+        """Pairs the inbox scanner ranked instead of the judge duelling them.
+
+        Their own section rather than folded into the judgment-only rate,
+        because they measure a different instrument. Folding them in is what
+        made the first round read 4/6: the sixth pair was two identical bodies
+        under different subject lines, handed to a judge that is shown whole
+        emails, and it could only ever come back even.
+        """
+        return [
+            pair
+            for pair in self.pairs
+            if pair.by_inbox and not pair.mutation.invariant and pair.decided
+        ]
+
+    @property
+    def inbox_detection_rate(self) -> float:
+        return self._rate(self.by_inbox)
 
     @property
     def invariants(self) -> list[PairResult]:
@@ -253,6 +317,7 @@ class BenchReport:
         for title, pairs, note in (
             ("JUDGMENT-ONLY", self.judgment_only, "nothing mechanical can catch these"),
             ("GATE-VISIBLE", self.gate_visible, "the free checks should catch these too"),
+            ("INBOX", self.by_inbox, "damage above the body - ranked as lines, not duelled"),
             ("INVARIANCE", self.invariants, "the verdict should not move"),
         ):
             if not pairs:
@@ -274,6 +339,12 @@ class BenchReport:
             lines.append(
                 f"  gate-visible    {sum(1 for p in self.gate_visible if p.caught)}"
                 f"/{len(self.gate_visible)} ({self.gate_detection_rate:.0%})"
+            )
+        if self.by_inbox:
+            lines.append(
+                f"  inbox           {sum(1 for p in self.by_inbox if p.caught)}"
+                f"/{len(self.by_inbox)} ({self.inbox_detection_rate:.0%})   "
+                "<- the subject decision, asked of the scanner rather than the judge"
             )
         graded = [p for p in self.pairs if not p.mutation.invariant and p.original_pull is not None]
         if graded:
@@ -333,6 +404,29 @@ def pairs_for(
     return built
 
 
+async def _inbox_arm(
+    scanner: SubjectBakeOff, original: Email, mutant: Email, persona: str
+) -> tuple[float, float] | None:
+    """Both lines put in an inbox, in both orders.
+
+    Two calls rather than one, for the reason the duel casts an even ballot: a
+    list is read top down, and a scanner shown one line above another will
+    favour the position unless the pairing is cancelled. Still cheaper than the
+    four-vote ballot it replaces.
+
+    The sender is deliberately unnamed. The bench has no compiled knowledge, so
+    there is no company name to give - and a scanner told nothing about who
+    sent it is judging the line, which is what this arm is for.
+    """
+    first = SubjectOption(subject=original.subject, preview=original.preview_text)
+    second = SubjectOption(subject=mutant.subject, preview=mutant.preview_text)
+    forward = await scanner.rank([first, second], "", [persona])
+    backward = await scanner.rank([second, first], "", [persona])
+    if len(forward) != 2 or len(backward) != 2:
+        return None
+    return (forward[0] + backward[1]) / 2, (forward[1] + backward[0]) / 2
+
+
 async def run_bench(
     *,
     judge_session: ModelSession,
@@ -341,9 +435,16 @@ async def run_bench(
     mutations: tuple[Mutation, ...] = MUTATIONS,
     votes: int = DEFAULT_VOTES,
 ) -> BenchReport:
-    """Judge every pair. The originals are read once each, not once per pair."""
+    """Judge every pair. The originals are read once each, not once per pair.
+
+    Damage that lives entirely above the body does not go to the judge at all -
+    see `_subject_only`. It goes to the inbox scanner, on the same session,
+    because that is the instrument the system actually uses to decide between
+    two subject lines.
+    """
     sources = sources if sources is not None else bench_sources()
     judge = PreferenceJudge(judge_session)
+    scanner = SubjectBakeOff(judge_session)
     reader = BlindReader(reader_session) if reader_session is not None else None
     report = BenchReport(votes_per_pair=votes)
 
@@ -369,6 +470,25 @@ async def run_bench(
         # judge is recorded as unjudged rather than as a miss - the same rule
         # the reader panel already applies to a read that never came back.
         try:
+            if _subject_only(original, mutant):
+                ranked = await _inbox_arm(scanner, original, mutant, persona)
+                if ranked is None:
+                    report.pairs.append(
+                        unjudged(name, mutation, "nobody could rank the two subject lines")
+                    )
+                    continue
+                report.pairs.append(
+                    PairResult(
+                        source=name,
+                        mutation=mutation,
+                        original_opens=ranked[0],
+                        mutant_opens=ranked[1],
+                        gate_issues=tuple(
+                            issue.detail for issue in _free_gates(mutant).issues
+                        ),
+                    )
+                )
+                continue
             duel = await judge.duel(
                 challenger=mutant, champion=original, personas=[persona], votes=votes
             )
@@ -416,9 +536,16 @@ async def run_bench(
 # --------------------------------------------------------------------- cli
 
 
-def _estimate(pair_count: int, votes: int, sources: int, with_reader: bool) -> str:
+#: Calls one subject-only pair costs: the two lines ranked in both orders. See
+#: `_inbox_arm`.
+_INBOX_CALLS = 2
+
+
+def _estimate(
+    pair_count: int, votes: int, sources: int, with_reader: bool, inbox_pairs: int = 0
+) -> str:
     ballot = max(2, votes + votes % 2)
-    calls = pair_count * ballot
+    calls = (pair_count - inbox_pairs) * ballot + inbox_pairs * _INBOX_CALLS
     if with_reader:
         calls += sources + pair_count
     return f"about {calls} model call(s)"
@@ -475,6 +602,11 @@ def main(argv: list[str] | None = None) -> int:
         mutations = tuple(item for item in chosen if item is not None)
 
     pairs = pairs_for(sources, mutations)
+    inbox_pairs = sum(
+        1
+        for _, original, mutant, _, mutation in pairs
+        if not mutation.invariant and _subject_only(original, mutant)
+    )
 
     if args.dry_run:
         for name, original, mutant, _, mutation in pairs:
@@ -482,16 +614,18 @@ def main(argv: list[str] | None = None) -> int:
             print(f"\n{'=' * 70}\n{name} · {mutation.name}\n  breaks: {mutation.breaks}")
             if unchanged and not mutation.invariant:
                 print("  !! no-op on this email - the bench will skip this pair")
+            elif not mutation.invariant and _subject_only(original, mutant):
+                print("  -> identical below the subject: ranked in an inbox, not duelled")
             print(f"{'-' * 70}\n{render_email(mutant)}")
         print(
             f"\n{len(pairs)} pair(s). Running for real would cost "
-            f"{_estimate(len(pairs), args.votes, len(sources), args.with_reader)}."
+            f"{_estimate(len(pairs), args.votes, len(sources), args.with_reader, inbox_pairs)}."
         )
         return 0
 
     print(
         f"Benching the judges on {len(pairs)} pair(s) against REAL models "
-        f"({_estimate(len(pairs), args.votes, len(sources), args.with_reader)}).\n"
+        f"({_estimate(len(pairs), args.votes, len(sources), args.with_reader, inbox_pairs)}).\n"
         "This spends quota.",
         flush=True,
     )

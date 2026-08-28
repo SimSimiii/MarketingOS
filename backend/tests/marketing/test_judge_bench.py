@@ -25,6 +25,7 @@ from app.evaluation.judge_bench import (
     BenchReport,
     PairResult,
     _free_gates,
+    _subject_only,
     bench_sources,
     run_bench,
 )
@@ -35,6 +36,7 @@ from tests.marketing.conftest import (
     FAIL,
     VOTE_A,
     RoleScriptedProvider,
+    inbox_verdict,
     make_session,
     votes_for_the_champion,
 )
@@ -323,3 +325,99 @@ def test_a_pair_nobody_could_judge_is_left_out_of_the_rate():
 
     assert len(report.judgment_only) == 1
     assert report.detection_rate == 1.0
+
+
+# ----------------------------------------------- the subject decision's judge
+
+
+@pytest.mark.asyncio
+async def test_damage_above_the_body_goes_to_the_inbox_and_not_to_a_duel(
+    provider: RoleScriptedProvider,
+):
+    """A duel shows a reader two whole emails and asks which they would act on.
+    Both are open by then, so a pair identical below the subject can only come
+    back even however bad one line is - which is what the first bench round
+    recorded as a missed detection. The system already owns the right
+    instrument for that decision, and this is it.
+    """
+    clickbait = mutation_named("clickbait_subject")
+    assert clickbait is not None
+    # The original is listed first in one pass and second in the other, so the
+    # two answers here are (original 60, mutant 20) and (mutant 20, original 60).
+    provider.push("inbox_scanner", inbox_verdict(60, 20), inbox_verdict(20, 60))
+
+    report = await run_bench(
+        judge_session=make_session(provider),
+        sources=[("rich", controls()[0], PERSONA)],
+        mutations=(clickbait,),
+        votes=4,
+    )
+
+    pair = report.pairs[0]
+    assert not provider.requests_for("preference_judge"), "no ballot is cast on this pair"
+    assert provider.calls_by_role["inbox_scanner"] == 2, "one pass per listing order"
+    assert pair.by_inbox and pair.caught
+    assert (pair.original_opens, pair.mutant_opens) == (60, 20)
+    assert report.by_inbox == [pair]
+    assert report.judgment_only == [], "it does not inflate the rate it never measured"
+    assert report.inbox_detection_rate == 1.0
+
+
+@pytest.mark.asyncio
+async def test_two_lines_the_scanner_cannot_separate_are_a_miss(
+    provider: RoleScriptedProvider,
+):
+    """The same rule the duel is held to: an instrument that ranks the pair
+    level has declined to detect the damage, not failed to see it."""
+    clickbait = mutation_named("clickbait_subject")
+    assert clickbait is not None
+    provider.set_default("inbox_scanner", inbox_verdict(40, 40))
+
+    report = await run_bench(
+        judge_session=make_session(provider),
+        sources=[("rich", controls()[0], PERSONA)],
+        mutations=(clickbait,),
+        votes=4,
+    )
+
+    assert report.pairs[0].caught is False
+    assert report.inbox_detection_rate == 0.0
+
+
+@pytest.mark.asyncio
+async def test_the_listing_order_is_cancelled_rather_than_trusted(
+    provider: RoleScriptedProvider,
+):
+    """A list is read top down. A scanner that simply favours the first line
+    scores both passes the same way, and the two orders cancel to a tie - the
+    same property the duel buys by alternating its labels.
+    """
+    clickbait = mutation_named("clickbait_subject")
+    assert clickbait is not None
+    provider.set_default("inbox_scanner", inbox_verdict(70, 10))
+
+    report = await run_bench(
+        judge_session=make_session(provider),
+        sources=[("rich", controls()[0], PERSONA)],
+        mutations=(clickbait,),
+        votes=4,
+    )
+
+    pair = report.pairs[0]
+    assert pair.original_opens == pair.mutant_opens == 40
+    assert pair.caught is False
+
+
+def test_only_damage_that_leaves_the_body_alone_is_ranked_rather_than_duelled():
+    """The routing rule itself, over every mutation the bench carries. It is
+    derived from what a mutation did to this email rather than declared on the
+    mutation, so it cannot drift out of step with the mutation it describes.
+    """
+    original = controls()[0]
+    routed = {
+        mutation.name
+        for mutation in MUTATIONS
+        if not mutation.invariant and _subject_only(original, mutation.apply(original))
+    }
+
+    assert routed == {"clickbait_subject"}

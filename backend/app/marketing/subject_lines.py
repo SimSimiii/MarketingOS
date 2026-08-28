@@ -154,7 +154,7 @@ class SubjectBakeOff:
             subject=email.subject, preview=email.preview_text, approach="the line it already had"
         )
         field = [incumbent, *clean]
-        opens = await self._scan(field, artifacts, personas)
+        opens = await self.rank(field, artifacts.business.company_name, personas)
         if not opens:
             return email, "nobody could judge the subject lines"
 
@@ -213,8 +213,8 @@ class SubjectBakeOff:
             return []
         return written.options[:variants]
 
-    async def _scan(
-        self, field: list[SubjectOption], artifacts: KnowledgeArtifacts, personas: list[str]
+    async def rank(
+        self, field: list[SubjectOption], sender: str, personas: list[str]
     ) -> list[float]:
         """Every reader ranks the whole field in one turn.
 
@@ -222,9 +222,14 @@ class SubjectBakeOff:
         by comparison - a subject is tapped or skipped relative to what sits
         above and below it - and asking about one line in isolation is asking a
         question the inbox never poses.
+
+        Public because this is the instrument that makes the open decision,
+        and the craft loop is not the only thing that needs to ask it: the
+        judge bench does too, for the one damaged pair whose two emails are
+        identical below the subject line.
         """
         listing = "\n".join(option.render(index + 1) for index, option in enumerate(field))
-        sender = artifacts.business.company_name or "a company you have not heard of"
+        sender = sender or "a company you have not heard of"
         verdicts = await asyncio.gather(
             *(self._scan_once(listing, sender, persona) for persona in personas or [""])
         )
