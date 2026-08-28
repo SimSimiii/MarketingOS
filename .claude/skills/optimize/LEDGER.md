@@ -454,3 +454,26 @@ on one is wrong. Neither uses a mark at all, so this rule is only confirmed not 
 **The prompt-with-a-number sweep is not exhausted.** Still unchecked and worth a later pass:
 "at most four bullets" (`_paragraph_issues` checks bullet *length* at 16 words but never
 counts them) and "one ask, stated once".
+
+### LANDED  market jobs are held while they run, not only weakly by the event loop
+Axis: 5, runtime - and a live bug, not a latent one. All four launchers in `market_service`
+called `asyncio.create_task` and discarded the task. The loop keeps only a *weak* reference,
+which is the warning in `create_task`'s own documentation, so any of them could be collected
+mid-run. Commit: f306f1b. Checks: ruff clean (1 pre-existing SIM102), **816 passed**
+(814 + 2).
+
+What makes it worth fixing is the *shape* of the failure. `_jobs` looks like the reference
+and is not - it holds the `JobStatus`, and a status is not a task. So a collected job does
+not surface as a lost scan; it leaves a status reading "running" forever, `_require_idle`
+reads that, and **every further market job for that brand is refused for the life of the
+process**. A restart is the only fix, and nothing on screen says why.
+
+The campaign path never had the hole: `ExecutionRegistry.register` holds the task and drops
+it in a done callback. `_spawn` is that guarantee in the same shape, and is deliberately the
+*only* door - the four launchers are written by copying one another, so a guard written into
+each is a guard the fifth will not have. Pinned both ways: a real job run through `_spawn`,
+and a source assertion that `create_task` appears once in the module.
+
+Worth carrying: this repo has exactly two places that hand work to a background task, and
+they had opposite answers to the same question. When one subsystem gets a registry, check
+whether the other one that needs it got the copy.
