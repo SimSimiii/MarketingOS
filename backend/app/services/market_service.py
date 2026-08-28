@@ -22,8 +22,10 @@ who buys, and this module's whole job is sessions, background tasks and rows.
 
 import asyncio
 import logging
+from collections.abc import Coroutine
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import Engine
@@ -132,6 +134,31 @@ class JobStatus:
 #: would lose its findings; two scans of *different* brands are independent
 #: and both allowed.
 _jobs: dict[UUID, JobStatus] = {}
+
+#: The tasks those jobs are running in. Held here because the event loop holds
+#: only a *weak* reference to a task, so one that nothing else references may
+#: be garbage collected at any point before it finishes - which is what
+#: `asyncio.create_task`'s own documentation warns about.
+#:
+#: `_jobs` was not that reference. It holds the `JobStatus` the polling route
+#: reads, and a status is not a task: a scan could vanish between two polls and
+#: leave a status that says "running" for the life of the process, at which
+#: point `_require_idle` refuses every further job for that brand and the only
+#: fix is a restart. The campaign path never had this hole - `ExecutionRegistry`
+#: holds its task and drops it on completion - and this is the same guarantee
+#: for market work, in the same shape.
+_running: set[asyncio.Task] = set()
+
+
+def _spawn(coro: Coroutine[Any, Any, None]) -> None:
+    """Start one background market job and keep hold of it until it ends.
+
+    The only place in this module allowed to call `create_task`, so that no
+    future launcher can reintroduce the unheld task by copying its neighbour.
+    """
+    task = asyncio.create_task(coro)
+    _running.add(task)
+    task.add_done_callback(_running.discard)
 
 
 def job_for(brand_id: UUID) -> JobStatus | None:
@@ -243,7 +270,7 @@ class MarketService:
         status = JobStatus(kind="scan", brand_id=brand.id, brand_name=brand.name)
         status.say("Starting")
         _jobs[brand.id] = status
-        asyncio.create_task(_run_scan(brand.id, provider, engine, discover, status))
+        _spawn(_run_scan(brand.id, provider, engine, discover, status))
         return status
 
     def launch_proof_hunt(
@@ -255,7 +282,7 @@ class MarketService:
         status = JobStatus(kind="proof", brand_id=brand.id, brand_name=brand.name)
         status.say("Searching for anyone who has vouched for this company")
         _jobs[brand.id] = status
-        asyncio.create_task(_run_hunt(brand.id, provider, engine, status))
+        _spawn(_run_hunt(brand.id, provider, engine, status))
         return status
 
     def launch_audience_map(
@@ -267,7 +294,7 @@ class MarketService:
         status = JobStatus(kind="audience", brand_id=brand.id, brand_name=brand.name)
         status.say("Working out who would actually buy this")
         _jobs[brand.id] = status
-        asyncio.create_task(_run_audience_map(brand.id, provider, engine, status))
+        _spawn(_run_audience_map(brand.id, provider, engine, status))
         return status
 
     def launch_prospect_search(
@@ -305,7 +332,7 @@ class MarketService:
         status = JobStatus(kind="prospects", brand_id=brand.id, brand_name=brand.name)
         status.say(f"Looking for organisations that match {found.name}")
         _jobs[brand.id] = status
-        asyncio.create_task(
+        _spawn(
             _run_prospects(
                 brand.id,
                 provider,
