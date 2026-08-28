@@ -560,3 +560,37 @@ failure in a pre-existing test, which the real change does not cause (the file's
 pass with it). Byte-surgery reverts are not a clean control on a file with a generator in
 it. Prefer `git checkout -- <file>` when the change is one hunk, or flip a constant when it
 is guarded by one.
+
+### LANDED  a gate licensing the live event union, and the three types that had drifted
+Axis: 4, a new deterministic gate, pointed at the *other* half of the hand-written mirror.
+6a7cd13 licensed every URL `api-client.ts` calls; nothing licensed `LiveExecutionEvent` in
+`types.ts`, and it was three short. Commit: 7d99877. Checks: ruff clean, **825 passed**
+(823 + 2), tsc clean, eslint clean. Free.
+
+The three - `model_call_retried`, `repair`, `run_error` - are each a line the run announces
+*because* it was previously invisible (the retry is raised to WARNING for that reason;
+`repair`'s own comment says the reasons "went back to the model and nowhere else"). Nothing
+crashed, which is why it drifted silently: `run-timeline.tsx` renders any event carrying a
+step as a log line from `message`, so they reached the page while being absent from the type
+that describes what the page can receive - and absent from the union they can never grow a
+detail view.
+
+**Why this one works where the field-by-field schema gate failed** (rejected on 2026-08-27):
+both sides name the event with a *string literal*, so there is no name matching and no
+heuristic. It rests on one property that is load-bearing anyway - `emit` is the only funnel,
+which is what makes the live stream and the replayed history the same data - so the
+extractor is one regex over `emit("...")` with no second form to miss. One-directional like
+the path gate, plus a count floor so it cannot pass vacuously. Verified by deleting the
+`repair` member and watching the gate name it.
+
+Method note, learned the hard way this pass: `git checkout -- <file>` to undo a *revert
+experiment* also throws away the pass's own edits to that file. Copy the file aside first,
+as the other verification steps in this run did.
+
+### CHECKED CLEAN  the crawler, orphan reaping, and the stream resume path
+`extract_links` already refuses off-origin links with the exact reasoning that would
+motivate the check ("a crawler that wandered onto a competitor's domain ... would quietly
+file someone else's claims as this company's evidence"), and the crawl is semaphore-bounded.
+`reap_orphaned_executions` runs once at startup before anything can register. And the
+frontend really does drive the resume path pass 11 fixed: `use-execution-stream.ts` loads
+the timeline, takes `last_event_id` and passes it as `after_event_id`.
