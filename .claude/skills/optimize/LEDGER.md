@@ -356,3 +356,28 @@ Worth a future pass, but not this one: `positioning.claims_from_knowledge` inlin
 different threshold and applied to every axis rather than only `OTHER`. Two near-identical
 rules in two modules. Consolidating them **changes positioning behaviour**, so it is a
 behavioural pass with its own tests, not a cleanup.
+
+### LANDED  a fact one email spends is not assigned to the next
+Axis: 1, replace judgment with code - the project's central move, applied to a rule the
+prompt already stated. `prompts/strategist.md` said "an id that is the backbone of one email
+should not be the backbone of another" and nothing checked, so a brief could hand the same
+proof to every slot. Commit: f3bbf41. Checks: ruff clean (1 pre-existing SIM102),
+**810 passed** (809 + 1). Free - no model call, forecast untouched.
+
+The reason this one is worth having: **no gate in the loop can see the failure.** Five
+emails arguing from one testimonial share no phrase, so `overlap_gate` passes each; the
+evidence gate is happy because every claim is licensed; `substantiation` is happy because
+each email spent what it was assigned. Every check says yes and the sequence still reads as
+one email sent five times. Repetition of *proof* had no instrument at all - repetition of
+*phrasing* has had one since the beginning.
+
+Guarded rather than absolute, and the guard is the interesting half: a business with two
+proofs and a five-email sequence is the ordinary case, so an email whose every id is already
+spent keeps them. Nothing assigned is strictly worse than something repeated - it leaves a
+slot briefed to argue from proof with none. Only a partial overlap is trimmed.
+
+The prompt line was rewritten in the same commit to state what the code now guarantees.
+Leaving it asking for something weaker than the code enforces is how a strategist ends up
+planning against a rule it is silently corrected on.
+
+Confirmed the test fails on the pre-change code by reverting `strategist.py` and re-running.
