@@ -1,3 +1,4 @@
+from collections.abc import Collection
 from uuid import UUID
 
 from sqlmodel import col, func, select
@@ -14,6 +15,23 @@ class CampaignExecutionRepository(BaseRepository[CampaignExecution]):
         statement = (
             select(CampaignExecution)
             .where(CampaignExecution.campaign_id == campaign_id)
+            .order_by(CampaignExecution.created_at.desc())
+        )
+        return list(self.session.exec(statement))
+
+    def list_by_campaigns(self, campaign_ids: Collection[UUID]) -> list[CampaignExecution]:
+        """The same rows for a set of campaigns, in one query.
+
+        The plural exists because the forecast compares a campaign against
+        every other run the user has made on the same preset, and asking
+        `list_by_campaign` once per campaign is the same N+1 that
+        `latest_by_campaign` below was written to avoid.
+        """
+        if not campaign_ids:
+            return []
+        statement = (
+            select(CampaignExecution)
+            .where(col(CampaignExecution.campaign_id).in_(list(campaign_ids)))
             .order_by(CampaignExecution.created_at.desc())
         )
         return list(self.session.exec(statement))

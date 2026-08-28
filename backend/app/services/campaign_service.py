@@ -274,7 +274,9 @@ class CampaignService:
             material_chars=sum(document.word_count * _CHARS_PER_WORD for document in documents),
             knowledge_reused=reused,
         )
-        typical = self._observed_cost(campaign)
+        # Read once. Both figures below describe the same set of past runs,
+        # and finding it walks every campaign the user has ever made.
+        runs = self._comparable_runs(campaign)
         return RunForecast(
             preset=(campaign.policy or {}).get("preset") or "balanced",
             emails=contract.count,
@@ -284,8 +286,8 @@ class CampaignService:
             compile_low=estimate.compile_low,
             compile_high=estimate.compile_high,
             knowledge_reused=reused,
-            observed_runs=len(self._comparable_runs(campaign)),
-            observed_cost_per_email=typical,
+            observed_runs=len(runs),
+            observed_cost_per_email=_observed_cost(runs),
         )
 
     def _comparable_runs(self, campaign: Campaign) -> list[tuple[float, int]]:
@@ -307,32 +309,15 @@ class CampaignService:
             if ((other.policy or {}).get("preset") or "balanced") == preset
         }
         runs: list[tuple[float, int]] = []
-        for campaign_id in wanted:
-            for execution in self._executions.list_by_campaign(campaign_id):
-                delivered = ((execution.result or {}).get("report") or {}).get("delivered") or 0
-                if (
-                    execution.status is ExecutionStatus.COMPLETED
-                    and execution.estimated_cost_usd > 0
-                    and delivered > 0
-                ):
-                    runs.append((execution.estimated_cost_usd, int(delivered)))
+        for execution in self._executions.list_by_campaigns(wanted):
+            delivered = ((execution.result or {}).get("report") or {}).get("delivered") or 0
+            if (
+                execution.status is ExecutionStatus.COMPLETED
+                and execution.estimated_cost_usd > 0
+                and delivered > 0
+            ):
+                runs.append((execution.estimated_cost_usd, int(delivered)))
         return runs
-
-    def _observed_cost(self, campaign: Campaign) -> float:
-        """What a delivered email has typically cost. The middle run, not the
-        average one and not the range.
-
-        Per email rather than per run, because past runs were different
-        lengths and a figure across them would be mostly noise about how long
-        each one was. The median for the same reason `PanelRead.pull` uses
-        one: a single run that died two calls in, or one that hit every
-        rewrite it was allowed, should not be the number a user plans around.
-        Multiplying it by the emails this campaign asks for is left to them -
-        doing that arithmetic here would join two real measurements with an
-        assumption and present the result as though it had been measured.
-        """
-        each = sorted(cost / delivered for cost, delivered in self._comparable_runs(campaign))
-        return statistics.median(each) if each else 0.0
 
     # ---------------------------------------------------------- execution
 
@@ -409,6 +394,26 @@ class CampaignService:
             if campaign.id in {execution.campaign_id for execution in executions}
         }
         return [(execution, campaigns.get(execution.campaign_id)) for execution in executions]
+
+
+def _observed_cost(runs: list[tuple[float, int]]) -> float:
+    """What a delivered email has typically cost, over `_comparable_runs`. The
+    middle run, not the average one and not the range.
+
+    Per email rather than per run, because past runs were different lengths
+    and a figure across them would be mostly noise about how long each one
+    was. The median for the same reason `PanelRead.pull` uses one: a single
+    run that died two calls in, or one that hit every rewrite it was allowed,
+    should not be the number a user plans around. Multiplying it by the emails
+    this campaign asks for is left to them - doing that arithmetic here would
+    join two real measurements with an assumption and present the result as
+    though it had been measured.
+
+    Takes the runs rather than the campaign because the caller already has
+    them: computing the set twice per forecast is what this argument replaced.
+    """
+    each = sorted(cost / delivered for cost, delivered in runs)
+    return statistics.median(each) if each else 0.0
 
 
 def _payload_from_row(row: ExecutionLog) -> dict:

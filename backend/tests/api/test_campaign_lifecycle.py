@@ -6,6 +6,7 @@ import asyncio
 from uuid import uuid4
 
 from fastapi.testclient import TestClient
+from sqlalchemy import event
 from sqlmodel import Session, select
 
 from app.ai.factory import get_ai_provider
@@ -244,6 +245,33 @@ def test_the_forecast_learns_what_runs_actually_cost(client: TestClient):
     # and was previously invisible until the receipt arrived.
     assert forecast["knowledge_reused"] is True
     assert forecast["compile_low"] == 0
+
+
+def test_the_forecast_reads_the_run_history_in_one_query(client: TestClient, engine):
+    """The forecast's money figure is the user's own history on this preset,
+    so it looks across every campaign they have - and both numbers it prints,
+    the run count and the median, describe that same set.
+
+    Asked per campaign, and asked once for each of the two, that is 2N queries
+    on a panel the campaign page renders every visit. Pinned at one so it
+    stays one whatever N is: this is the check that fails if either the loop
+    or the double read comes back.
+    """
+    campaigns = [create_campaign(client) for _ in range(4)]
+    reads: list[str] = []
+
+    @event.listens_for(engine, "before_cursor_execute")
+    def _record(conn, cursor, statement, parameters, context, executemany):
+        if "FROM campaignexecution" in statement:
+            reads.append(statement)
+
+    try:
+        response = client.get(f"/api/campaigns/{campaigns[0]['id']}/forecast")
+    finally:
+        event.remove(engine, "before_cursor_execute", _record)
+
+    assert response.status_code == 200, response.text
+    assert len(reads) == 1, f"expected one query over the run history, got {len(reads)}"
 
 
 def test_a_forecast_for_a_campaign_that_does_not_exist_is_a_404(client: TestClient):
