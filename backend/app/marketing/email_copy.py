@@ -108,6 +108,17 @@ _MIN_PARAGRAPHS = 3
 MAX_BOLD_SPANS = 3
 MAX_CALLOUTS = 1
 
+#: How many bullets the whole body may carry. prompts/writer.md asks for at
+#: most four; checked at five, the same slack the bullet *width* already gets
+#: (asked at ten words, checked at sixteen).
+#:
+#: Counted across the body rather than per block, because two lists of three
+#: is the thing the rule is about and splitting them changes nothing: a
+#: 90-to-200-word email whose argument arrives as six fragments has stopped
+#: arguing. Bullets are for the one thing worth scanning; past that the reader
+#: is holding a spec sheet, and a spec sheet has no reason to be in an inbox.
+MAX_BULLETS = 5
+
 
 #: The whole markup vocabulary a writer may use, and it is two things.
 #:
@@ -429,6 +440,12 @@ def structural_issues(email: Email) -> list[str]:
             "is the ask. Bold is for the figure, the date, the limit - the words a skimmer "
             "must not miss - and marking that many marks none of them"
         )
+    if (bullets := _bullet_count(paragraphs)) > MAX_BULLETS:
+        issues.append(
+            f"the body is {bullets} bullets - {MAX_BULLETS} at the outside, and four is the "
+            "ask. A list that long is the argument broken into fragments, and a reader who "
+            "wanted a spec sheet would have opened the pricing page"
+        )
     if (boxes := sum(1 for block in paragraphs if _is_callout(block))) > MAX_CALLOUTS:
         issues.append(
             f"{boxes} blocks are set apart in a box - {MAX_CALLOUTS} at most. The first bolded "
@@ -556,6 +573,18 @@ def _paragraph_issues(paragraphs: list[str]) -> list[str]:
                 f'("{_excerpt(paragraph)}...") - split it, no paragraph over three lines'
             )
     return issues
+
+
+def _bullet_count(paragraphs: list[str]) -> int:
+    """Bullets anywhere in the body, counted the way `_paragraph_issues` finds
+    them: a block is a list when every line in it starts with a bullet mark, so
+    a paragraph that happens to open on a dash is not one."""
+    total = 0
+    for paragraph in paragraphs:
+        lines = [line.strip() for line in paragraph.splitlines() if line.strip()]
+        if lines and all(line.startswith(_BULLET_PREFIXES) for line in lines):
+            total += len(lines)
+    return total
 
 
 def _excerpt(text: str, limit: int = 45) -> str:

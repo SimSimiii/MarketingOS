@@ -13,6 +13,7 @@ from app.marketing.email_copy import (
     _MAX_PARAGRAPH_WORDS,
     CALLOUT_PREFIX,
     MAX_BOLD_SPANS,
+    MAX_BULLETS,
     Email,
     has_markup,
     render_email,
@@ -505,3 +506,35 @@ def test_a_second_box_is_a_second_headline():
     issues = structural_issues(two_boxes)
 
     assert any("set apart in a box" in issue for issue in issues)
+
+
+def test_a_body_that_arrives_as_six_bullets_comes_back_to_the_writer():
+    """prompts/writer.md asks for at most four. An email whose argument is a
+    list of fragments has stopped arguing, and nothing counted them."""
+    listy = email(
+        _body(
+            "Here is what changed this week, and why it matters to you now.",
+            "- it reads your commits\n- it writes the note\n- it matches your voice\n"
+            "- it takes nine seconds\n- it costs nothing to try\n- it needs no card",
+            "Point it at the branch you merged and read what comes back today.",
+        )
+    )
+
+    issues = structural_issues(listy)
+
+    assert any("bullets" in issue for issue in issues)
+    assert f"{MAX_BULLETS} at the outside" in " ".join(issues)
+
+
+def test_four_bullets_are_what_the_prompt_asks_for_and_stay():
+    inside = email(
+        _body(
+            "You shipped on Tuesday and wrote it up on Friday. That gap is not a "
+            "discipline problem, and it is not going to fix itself either.",
+            "- it reads your commits\n- it writes the note\n- it matches your voice\n"
+            "- it takes nine seconds",
+            "Point it at the branch you merged this week and read what comes back.",
+        )
+    )
+
+    assert structural_issues(inside) == []
