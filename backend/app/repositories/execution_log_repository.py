@@ -10,6 +10,21 @@ from app.repositories.base import BaseRepository
 class ExecutionLogRepository(BaseRepository[ExecutionLog]):
     model = ExecutionLog
 
+    def append(self, row: ExecutionLog) -> None:
+        """Persist one line of a run's narration, without reading it back.
+
+        `BaseRepository.create` refreshes what it inserted, which is a second
+        round trip so the caller gets the stored object. This caller does not
+        want it: `ExecutionEventEmitter` has already broadcast the identical
+        payload and drops the row on the floor. A balanced run narrates itself
+        in around 170 lines, so that was 170 SELECTs re-reading rows nobody
+        looks at - and they land on the run's own critical path, between
+        model calls, against the same SQLite file the live page is being
+        served from.
+        """
+        self.session.add(row)
+        self.session.commit()
+
     def list_by_execution(
         self,
         campaign_execution_id: UUID,

@@ -66,7 +66,7 @@ class ExecutionEventEmitter:
 
         live_event = broker.publish(self._execution_id, payload)
         try:
-            self._logs.create(
+            self._logs.append(
                 ExecutionLog(
                     campaign_execution_id=self._execution_id,
                     agent_execution_id=agent_execution_id,
