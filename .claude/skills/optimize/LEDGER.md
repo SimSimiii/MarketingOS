@@ -519,3 +519,20 @@ already partition the mutations by whether code can see them, and both still pas
 new markup rules in `structural_issues` - so pass 7's gate is confirmed not to fire on any
 control or on any judgment-only mutant. That pair of tests is the cheapest validation
 available for any new gate; run them first.
+
+### LANDED  the bullet budget is checked, not only asked for
+Axis: 4, and the last item on pass 7's list. `prompts/writer.md` asks for "at most four
+bullets of under ten words each"; the *width* was checked (`_MAX_BULLET_WORDS`, sixteen) and
+the *count* never was, so an email could arrive as eight fragments and pass every structural
+rule. Commit: 9e33c2e. Checks: ruff clean (1 pre-existing SIM102), **822 passed** (820 + 2).
+Free.
+
+Counted across the whole body, not per block: two lists of three is what the rule is about.
+Checked at five, asked at four - the same slack the width already carries. Confirmed
+load-bearing by raising the constant to 99.
+
+**The prompt-with-a-number vein is now exhausted.** Every numeric rule in every prompt is
+enforced somewhere, or deliberately not (critic.md asks five edits, `MAX_EDITS_PER_PASS`
+keeps the three most damaging). A later run should not re-walk it. What remains in
+writer.md is prose without a number - "one ask, stated once", "open on them" - and the
+second of those is rejected above with reasons.
