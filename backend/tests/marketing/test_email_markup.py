@@ -12,10 +12,12 @@ from app.knowledge.ledger import Evidence, EvidenceIndex, EvidenceKind, Evidence
 from app.marketing.email_copy import (
     _MAX_PARAGRAPH_WORDS,
     CALLOUT_PREFIX,
+    MAX_BOLD_SPANS,
     Email,
     has_markup,
     render_email,
     strip_markup,
+    structural_issues,
 )
 from app.marketing.gates import evidence_gate, stock_phrase_gate
 from app.marketing.render_html import BrandStyle, EmailTier, render_html
@@ -441,3 +443,65 @@ def test_a_branded_email_stays_far_inside_the_clipping_limit():
     )
 
     assert len(out.encode("utf-8")) < MAX_EMAIL_BYTES // 4
+
+
+# --------------------------------------------------------- the markup budget
+
+
+def _body(*blocks: str) -> str:
+    return "\n\n".join(blocks)
+
+
+def test_a_fourth_bold_phrase_comes_back_to_the_writer():
+    """prompts/writer.md asks for at most two and says why - "three bold
+    phrases is the same as none, because the eye has nothing left to land on".
+    Nothing checked it, and a rule nothing checks is a suggestion.
+    """
+    over = email(
+        _body(
+            "**Nine seconds** is what it takes.",
+            "You shipped on **Tuesday** and wrote it up on **Friday**, which is the "
+            "gap this closes.",
+            "It reads your last **twenty** entries first.",
+        )
+    )
+
+    issues = structural_issues(over)
+
+    assert any("in bold" in issue for issue in issues)
+    assert f"{MAX_BOLD_SPANS} at the outside" in " ".join(issues)
+
+
+def test_the_budget_leaves_room_for_the_two_the_prompt_asks_for():
+    """Checked at three and asked for at two, the same slack as 45 words asked
+    and 50 checked: ordinary variation must not cost a repair turn."""
+    inside = email(
+        _body(
+            "**Nine seconds** is what it takes.",
+            "You shipped on Tuesday and wrote it up on Friday. That gap is not a "
+            "discipline problem: the person who has to describe the work is the person "
+            "who just spent a week doing it.",
+            "It reads the commits you already merged, and your last twenty entries "
+            "before that, so the note comes out sounding like you wrote it.",
+            f"{CALLOUT_PREFIX}**1,500 free credits** - no card, and it stays free.",
+        )
+    )
+
+    assert structural_issues(inside) == []
+
+
+def test_a_second_box_is_a_second_headline():
+    """`render_html` sets the first bolded phrase inside a callout very large
+    and treats it as the one thing the email is about, so two boxes leave the
+    layout with no focal point rather than with two."""
+    two_boxes = email(
+        _body(
+            "You shipped on Tuesday and wrote it up on Friday, which is the gap.",
+            f"{CALLOUT_PREFIX}**1,500 free credits** to start.",
+            f"{CALLOUT_PREFIX}**20% off** until Friday.",
+        )
+    )
+
+    issues = structural_issues(two_boxes)
+
+    assert any("set apart in a box" in issue for issue in issues)

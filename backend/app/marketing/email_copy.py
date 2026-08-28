@@ -89,6 +89,25 @@ _MIN_BODY_WORDS = 60
 _MAX_BODY_WORDS = 220
 _MIN_PARAGRAPHS = 3
 
+#: How many `**bold**` phrases the body may carry, and how many blocks may be
+#: set apart in a box. Both numbers are already in prompts/writer.md - "at most
+#: twice in an email", "at most one per email" - and nothing checked either,
+#: which makes them suggestions in exactly the way the 200-word ask was before
+#: the 220-word ceiling existed.
+#:
+#: Bold is checked at three and asked for at two, the same deliberate slack as
+#: 45 words asked and 50 checked: ordinary variation costs nothing and only a
+#: genuinely over-marked draft pays for a repair turn. The prompt's own reason
+#: is why there is a limit at all - "three bold phrases is the same as none,
+#: because the eye has nothing left to land on".
+#:
+#: The box has no slack, because it is not a matter of degree. `render_html`
+#: sets the first bolded phrase inside a callout very large and treats it as
+#: the one thing the email is about, so a second box is a second headline and
+#: the layout has no focal point left.
+MAX_BOLD_SPANS = 3
+MAX_CALLOUTS = 1
+
 
 #: The whole markup vocabulary a writer may use, and it is two things.
 #:
@@ -403,6 +422,19 @@ def structural_issues(email: Email) -> list[str]:
         issues.append(
             f"the body is {words} words - over {_MAX_BODY_WORDS} means a second idea crept in, "
             "cut it"
+        )
+    if (bold := len(_BOLD_RE.findall(email.body))) > MAX_BOLD_SPANS:
+        issues.append(
+            f"the body sets {bold} phrases in bold - {MAX_BOLD_SPANS} at the outside, and two "
+            "is the ask. Bold is for the figure, the date, the limit - the words a skimmer "
+            "must not miss - and marking that many marks none of them"
+        )
+    if (boxes := sum(1 for block in paragraphs if _is_callout(block))) > MAX_CALLOUTS:
+        issues.append(
+            f"{boxes} blocks are set apart in a box - {MAX_CALLOUTS} at most. The first bolded "
+            "phrase inside a box is set very large and is what the eye lands on before "
+            "anything else, so a second box is a second headline. Keep the one that carries "
+            "the offer and let the other be prose"
         )
     issues.extend(_paragraph_issues(paragraphs))
     return issues
