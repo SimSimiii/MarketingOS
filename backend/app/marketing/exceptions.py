@@ -14,10 +14,6 @@ class CampaignError(Exception):
         return f"{type(self).__name__}({self.message!r}, details={self.details!r})"
 
 
-class KnowledgeCompilationError(CampaignError):
-    """Raised when the knowledge phase cannot produce artifacts to write from."""
-
-
 class StrategyError(CampaignError):
     """Raised when no usable campaign brief could be produced - there is
     nothing for the craft phase to execute."""

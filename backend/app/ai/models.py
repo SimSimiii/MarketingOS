@@ -273,19 +273,6 @@ _CACHE_WRITE_MULTIPLIER = 1.25
 _CACHE_READ_MULTIPLIER = 0.10
 
 
-def estimate_cost_usd(model: str, input_tokens: int, output_tokens: int) -> float:
-    """Cost of one call from token counts alone.
-
-    Kept for callers that only have the two flat numbers. Anything holding a
-    full `AIUsage` should call `usage_cost_usd`, which prices cached input
-    correctly and defers to the provider's own figure when it gave one.
-    """
-    input_rate, output_rate = MODEL_COST_PER_1K_TOKENS.get(
-        model, MODEL_COST_PER_1K_TOKENS[ClaudeModel.SONNET]
-    )
-    return (input_tokens / 1000) * input_rate + (output_tokens / 1000) * output_rate
-
-
 def usage_cost_usd(model: str, usage: AIUsage) -> float:
     """What one call cost, preferring the provider's own accounting.
 

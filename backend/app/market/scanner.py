@@ -17,7 +17,6 @@ from pydantic import BaseModel, Field
 
 from app.knowledge.artifacts import KnowledgeArtifacts
 from app.market import positioning as positioning_module
-from app.market.claims import ClaimSet
 from app.market.radar import MarketSnapshot, RadarEvent, diff
 from app.market.rivals import RivalLead, RivalScout
 from app.marketing.preflight import PROOF_KINDS
@@ -140,13 +139,6 @@ class MarketScanner:
             searched_web=discover,
             notes=notes,
         )
-
-
-def our_claims(artifacts: KnowledgeArtifacts) -> ClaimSet:
-    """Re-exported so callers that only need our own side of the map - the
-    campaign pipeline, which never scans - do not import the positioning
-    module for one function."""
-    return positioning_module.claims_from_knowledge(artifacts)
 
 
 def _we_have_proof(artifacts: KnowledgeArtifacts) -> bool:

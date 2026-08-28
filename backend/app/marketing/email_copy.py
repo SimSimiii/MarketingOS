@@ -14,7 +14,7 @@ for.
 import logging
 import re
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 logger = logging.getLogger("marketingos.marketing")
 
@@ -175,13 +175,6 @@ class Email(BaseModel):
     call_to_action: str
     sign_off: str
     postscript: str = ""
-
-
-class EmailSequence(BaseModel):
-    """As many emails as the user asked for, in send order."""
-
-    emails: list[Email] = Field(default_factory=list)
-    sequence_rationale: str = ""
 
 
 def parse_email(text: str, position: int) -> Email:

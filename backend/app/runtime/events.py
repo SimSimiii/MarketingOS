@@ -89,12 +89,6 @@ class ModelCallRetried(Event):
     error: str = ""
 
 
-@dataclass(frozen=True)
-class MemoryUpdated(Event):
-    key: str = ""
-    execution_id: str | None = None
-
-
 class EventBus:
     """Simple synchronous pub/sub. Handlers are called in subscription order for
     the exact event type published - no wildcards, no priorities, no async."""

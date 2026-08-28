@@ -46,10 +46,9 @@ from app.market.demand import (
     Prospect,
     ProspectStatus,
 )
-from app.market.positioning import PositioningMap
 from app.market.proof import ProofCandidate, ProofKind, ProofStatus, next_evidence_id
 from app.market.radar import MarketSnapshot, RadarEvent, RadarSeverity
-from app.market.rivals import RivalLead, RivalProfile
+from app.market.rivals import RivalLead
 from app.models.market import (
     AudienceMapRow,
     MarketScan,
@@ -506,12 +505,6 @@ def _prospect_key(url: str, name: str) -> str:
         host = host.removeprefix(prefix)
     host = host.removeprefix("www.").split("/")[0].strip()
     return host or " ".join(name.lower().split())
-
-
-def snapshot_from(
-    rivals: list[RivalProfile], positioning: PositioningMap
-) -> MarketSnapshot:
-    return MarketSnapshot(rivals=rivals, positioning=positioning)
 
 
 def unseen_alerts(rows: list[RadarEventRow]) -> int:

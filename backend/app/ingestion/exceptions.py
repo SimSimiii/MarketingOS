@@ -22,14 +22,6 @@ class LoaderError(IngestionError):
     """Raised when a loader fails to fetch or parse its source."""
 
 
-class NormalizationError(IngestionError):
-    """Raised when a raw document cannot be turned into a KnowledgeDocument."""
-
-
-class ChunkingError(IngestionError):
-    """Raised when a chunker fails to split a document."""
-
-
 class DuplicateDocumentError(IngestionError):
     """Raised by a KnowledgeStore when a document with the same content hash
     already exists. `details['existing_id']` carries the stored document's id."""
