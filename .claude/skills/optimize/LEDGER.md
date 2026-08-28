@@ -594,3 +594,18 @@ file someone else's claims as this company's evidence"), and the crawl is semaph
 `reap_orphaned_executions` runs once at startup before anything can register. And the
 frontend really does drive the resume path pass 11 fixed: `use-execution-stream.ts` loads
 the timeline, takes `last_event_id` and passes it as `after_event_id`.
+
+### RUN CLOSED  12 passes landed, 2 rejected, budget stopped it
+Stopped on the budget rather than on a 429: ~690k weighted left of an observed ~9.8M
+ceiling, with 231 minutes still on the window. A pass this run has cost between 200k and
+1M, so starting a thirteenth would more likely have been cut off mid-edit than finished.
+Tree clean, everything pushed, master never moved from b7dbb9e.
+
+Final state: ruff 1 pre-existing SIM102, **825 passed** (804 at the start of the run), tsc
+clean, eslint clean.
+
+Two things a later run should pick up first, both already argued above: run the judge bench
+for real if the invocation carries `--with-evals` (pass 9 changed what it measures and
+nothing has confirmed it against a model), and look at the whole `README.md` "Architecture
+decisions" section against the code - this run read it once for orientation and never came
+back to check whether any of it has drifted into prose.
