@@ -609,3 +609,21 @@ for real if the invocation carries `--with-evals` (pass 9 changed what it measur
 nothing has confirmed it against a model), and look at the whole `README.md` "Architecture
 decisions" section against the code - this run read it once for orientation and never came
 back to check whether any of it has drifted into prose.
+
+### VERIFIED IN A BROWSER  the two controls the 1420 run could not check
+That run's closing note said the goal input (43ab010) and the tier select (7caa313) passed
+tsc and eslint but had never been rendered, and asked for one look before merging. Done,
+against the operator's own running dev server on :3000, after the merge to master.
+
+- `#goals` is in the DOM, visible, 30px tall, labelled "What do you want out of it?
+  (optional)", placeholder "Trial signups", sitting between `sender_role` and
+  `policy_preset` exactly as the source places it.
+- A completed campaign's page carries two enabled comboboxes, `balanced ▼` (preset) and
+  `plain ▼` (the look). Before 7caa313 the second one did not exist after creation.
+
+Method note: **`read_page` silently truncated the dialog** - it returned seven fields and
+stopped, omitting the goals input, the sender fields, the preset select and even the submit
+button, which is what made it look absent. The dialog scrolls and the tree came back short.
+`javascript_tool` querying `document.getElementById` settled it in one call. When a control
+is "missing" from `read_page` in a scrolling dialog, check the DOM before believing it.
+Screenshots still time out here (the pane does not composite), so the DOM is the instrument.
