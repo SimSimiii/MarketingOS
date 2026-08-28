@@ -324,3 +324,35 @@ put rows behind the events that announced them, and "persist and broadcast in on
 the property that makes the live page and the replayed history agree by construction.
 
 Confirmed the test fails on `create` by swapping the call back and re-running.
+
+### LANDED  eight backend definitions nothing reaches, one of them a trap
+Axis: 7, dead weight - the frontend got this sweep two runs ago, the backend never had.
+Commit: 21814a0. Checks: ruff clean (1 pre-existing SIM102), **809 passed** - the same 809,
+because nothing here changes behaviour.
+
+The one that justifies the pass is `ai/models.py:estimate_cost_usd`. It is not merely
+unused: it prices cached input as fresh, which is the error `usage_cost_usd` exists to
+correct, and cached input is most of what a campaign spends at a tenth of the rate. A dead
+function whose name is *shorter and more obvious* than the correct one is a trap for the
+next caller. The rest: `our_claims` (a re-export for a caller that never arrived),
+`snapshot_from`, `EmailSequence`, `NormalizationError`, `ChunkingError`,
+`KnowledgeCompilationError`, `MemoryUpdated` (left from the deleted memory blackboard), and
+all of `runtime/logging.py`.
+
+Method, so the next run does not redo it: parse every module under `app/` with `ast`, take
+top-level `def`/`class` names, count `\bname\b` across app + tests + prompts + alembic. 46
+of 656 came back with one occurrence. **36 of those are route handlers** - reached by their
+decorator, never by name - so any such sweep here must exclude `app/api/routes/` or it is
+80% noise. Then read the remaining ten individually; two survived reading.
+
+### KEPT DELIBERATELY  `same_claim` / `SAME_CLAIM_OVERLAP` in market/claims.py
+Uncalled, and staying. `positioning._SAME_WORDING` justifies its own 0.7 by explicit
+contrast with that 0.34 ("higher, because this decides whether to *drop* a claim rather than
+whether to show two side by side"), so deleting the pair trades twelve dead lines for a live
+calibration comment that no longer means anything.
+
+Worth a future pass, but not this one: `positioning.claims_from_knowledge` inlines
+`other.axis is claim.axis and overlap(...) >= _SAME_WORDING`, which is `same_claim` with a
+different threshold and applied to every axis rather than only `OTHER`. Two near-identical
+rules in two modules. Consolidating them **changes positioning behaviour**, so it is a
+behavioural pass with its own tests, not a cleanup.
