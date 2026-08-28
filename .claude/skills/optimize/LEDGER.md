@@ -477,3 +477,45 @@ and a source assertion that `create_task` appears once in the module.
 Worth carrying: this repo has exactly two places that hand work to a background task, and
 they had opposite answers to the same question. When one subsystem gets a registry, check
 whether the other one that needs it got the copy.
+
+### LANDED  the bench asks the subject decision of the instrument that makes it
+Axis: 1, replace judgment with code - pointed at the *measuring* instrument rather than at
+the pipeline. Commit: 13da33a. Checks: ruff clean (1 pre-existing SIM102), **820 passed**
+(816 + 4). Makes the bench *cheaper*: 126 calls where it was 132.
+
+Found by reading `eval/judges.txt`, the one real bench round, which is free and had not been
+read by any run of this workflow. It reports judgment-only detection at 4/6 with "<- the
+number that matters", and one of the two misses is not a miss. `clickbait_subject` changes
+only the subject and preview; its own docstring says it "isolates what the inbox scanner is
+for"; and the bench handed it to the preference judge, which shows two whole emails and asks
+which the reader would act on. Both are open by then. It came back 2-2 and 2-2 was scored as
+the judges failing to see damage.
+
+`SubjectBakeOff._scan` became public as `rank(field, sender, personas)` - it only ever used
+one string off `KnowledgeArtifacts`, so the bench can now ask it without compiled knowledge.
+Routing is **derived** (`_subject_only` levels the two subject/preview pairs and compares
+renders) rather than declared on `Mutation`, so it cannot drift; a test asserts the derived
+set over every mutation is exactly `{clickbait_subject}`. Two calls per pair in both listing
+orders, summed, for the reason the duel alternates labels.
+
+**Two things a reader of this file must know.** The headline rate is now over five pairs,
+not six, and is *not comparable to the stored `eval/judges.txt`* - that is the change, not a
+side effect. And **none of this has been run against a real model**: everything is pinned
+with the scripted provider and `--dry-run` (which prints which pairs take the new arm), but
+whether the scanner actually catches a clickbait line is the open question this makes
+askable. If a future run has `--with-evals`, that is the first thing to spend it on.
+
+### CHECKED CLEAN  numeric rules in the other prompts
+Following pass 7's method across every prompt but writer.md. All already enforced:
+`reader.md` "clicks never more than opens" (`BlindRead._derive_pull`), `subject_lines.md`
+65/110 chars and preview-extends-subject (`SubjectOption.sendable`), `strategist.md` "at
+most three per email" (`MAX_EVIDENCE_PER_EMAIL`). `critic.md` asks for five edits and
+`MAX_EDITS_PER_PASS` keeps three - deliberate, ask wide and keep the most damaging. The vein
+is now worked out except for writer.md's "at most four bullets" and "one ask, stated once".
+
+### CHECKED CLEAN  the free checks against the bench mutants, after pass 7
+`test_judgment_only_damage_is_invisible_to_the_free_checks` and its gate-visible twin
+already partition the mutations by whether code can see them, and both still pass with the
+new markup rules in `structural_issues` - so pass 7's gate is confirmed not to fire on any
+control or on any judgment-only mutant. That pair of tests is the cheapest validation
+available for any new gate; run them first.
