@@ -536,3 +536,27 @@ enforced somewhere, or deliberately not (critic.md asks five edits, `MAX_EDITS_P
 keeps the three most damaging). A later run should not re-walk it. What remains in
 writer.md is prose without a number - "one ask, stated once", "open on them" - and the
 second of those is rejected above with reasons.
+
+### LANDED  a run that ended while the page was loading still sends what it owes
+Axis: 5, and a live bug on the surface the whole live view rests on. Commit: 4aebc5d.
+Checks: ruff clean (1 pre-existing SIM102), **823 passed** (822 + 1).
+
+The stream endpoint's own docstring promises "catching up never leaves a hole". The page
+loads its timeline over HTTP, takes the last sequence number, and connects with
+`after_event_id=`. If the run reached a terminal state in that window - a few hundred
+milliseconds, and the end of a run is its densest stretch - the `not is_execution_running`
+branch sent one synthetic `execution_finished` and closed **without replaying anything**.
+The skipped events are the ones that matter: `campaign_report`, every `email_ready`, the
+finish line. The page then sat under a finished badge showing a timeline that stopped
+mid-run, with nothing saying it was incomplete and only a reload to fix it. The buffer had
+all of it the whole time; `subscribe` would have replayed it, and that branch never
+subscribes.
+
+`ExecutionEventBroker.replay` is the filter `subscribe` already ran, lifted out - a client
+can be owed history without being owed a subscription.
+
+Method note: the crude "delete the lines and re-run" revert check reported a *second*
+failure in a pre-existing test, which the real change does not cause (the file's ten tests
+pass with it). Byte-surgery reverts are not a clean control on a file with a generator in
+it. Prefer `git checkout -- <file>` when the change is one hunk, or flip a constant when it
+is guarded by one.
