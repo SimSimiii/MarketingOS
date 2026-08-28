@@ -389,6 +389,41 @@ async def test_each_brief_is_told_what_the_earlier_ones_already_spent(
 
 
 @pytest.mark.asyncio
+async def test_a_rewrite_that_came_back_unchanged_is_not_read_or_duelled_again(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    """A writer handed a draft and told to fix it sometimes hands the same
+    draft back. Nothing then needs measuring again - the gates would return
+    the same report, and a second cold read of the same words returns a
+    different number, which the loop would act on as though something had
+    moved.
+    """
+    provider.set_default("strategist", campaign_brief(1))
+    provider.set_default("email_writer", email_draft())
+    provider.set_default("blind_reader", READ_FAIL)
+    provider.set_default("conversion_critic", CRITIQUE_REVISE)
+
+    # The tournament is on: a ballot cast on two copies of one email is a coin
+    # flip that can hand the title to the later attempt, after which the
+    # receipt says a rewrite was preferred when no word moved.
+    pipeline, _ = build(provider, refine_only(max_revisions=2, tournament=True))
+    result = await pipeline.run(request_fixture)
+
+    outcome = result.outcomes[0]
+    assert provider.calls_by_role["email_writer"] == 2, "one draft and one rewrite"
+    assert provider.calls_by_role["blind_reader"] == 1, (
+        "the rewrite is the same email - reading it again buys a different number "
+        "for the same words"
+    )
+    assert provider.calls_by_role["preference_judge"] == 0, (
+        "there is nothing to prefer between an email and itself"
+    )
+    assert len(outcome.versions) == 2, "the attempt still happened and is on the record"
+    assert outcome.champion_attempt == 1, "the incumbent stands, as it does on any tie"
+    assert outcome.stopped_early, "an unchanged rewrite is the plainest stall there is"
+
+
+@pytest.mark.asyncio
 async def test_a_fact_one_email_spends_is_not_assigned_to_the_next(
     provider: RoleScriptedProvider, request_fixture: CampaignRequest
 ):

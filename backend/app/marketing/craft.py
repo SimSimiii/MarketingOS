@@ -55,7 +55,7 @@ from app.market.positioning import PositioningMap
 from app.marketing.briefs import CampaignBrief, EmailBrief
 from app.marketing.cancellation import CancellationToken
 from app.marketing.critic import ConversionCritic, Critique
-from app.marketing.email_copy import Email, normalized
+from app.marketing.email_copy import Email, normalized, render_email
 from app.marketing.gates import GateReport, run_all
 from app.marketing.observer import RunObserver
 from app.marketing.reader import BlindReader, PanelRead
@@ -530,6 +530,21 @@ class CraftLoop:
                 critique_notes=version.critique.render() if version.critique else "",
                 history=_history(outcome.versions, outcome.discarded),
             )
+            if _unchanged(draft, version.email):
+                # Nothing changed, so nothing needs measuring again: the gates
+                # would return the same report and a cold read would return a
+                # different number for the same words, which is noise the loop
+                # would then act on. Handing the last attempt's readings
+                # forward makes the comparison exact - the two versions score
+                # identically, `_prefers` says so deterministically, and the
+                # loop treats it as the stall it is and pivots or stops.
+                self._observer.on_phase(
+                    "craft",
+                    f"Email {brief.position}: rewrite {attempt} came back as the draft it was "
+                    "rewriting - not reading it again",
+                    {"position": brief.position, "attempt": attempt + 1},
+                )
+                screened = (version.gates, version.substantiation, version.read)
 
         if not self._cancelled():
             await self._critique_for_the_record(outcome, brief, campaign)
@@ -838,6 +853,13 @@ class CraftLoop:
         """
         if bool(challenger.gates.blocking) is not bool(champion.gates.blocking):
             return not challenger.gates.blocking
+        if _unchanged(challenger.email, champion.email):
+            # The rewrite came back as the email it was rewriting. There is
+            # nothing here to prefer, and a ballot cast on two copies of one
+            # email is a coin flip that can hand the title to the later
+            # attempt - after which the receipt says a rewrite was preferred
+            # when no word moved. The incumbent stands, as it does on any tie.
+            return False
         if challenger.substantiation.weaker_than(champion.substantiation):
             logger.info(
                 "craft: email %d attempt %d dropped evidence the version before it carried "
@@ -1174,6 +1196,18 @@ def _bets(brief: EmailBrief, candidates: int) -> list[tuple[str, str]]:
     ideas = [brief.single_idea, *brief.alternative_ideas][:candidates]
     ideas += [brief.single_idea] * (candidates - len(ideas))
     return list(zip(ideas, _OPENING_MOVES[:candidates], strict=True))
+
+
+def _unchanged(draft: Email, previous: Email) -> bool:
+    """Whether a rewrite came back as the email it was rewriting.
+
+    Exact, on the rendered deliverable, so it can only ever be true of a draft
+    where provably nothing moved - not even a blank line, which is copy here
+    and which the structural rules count. A looser comparison would have to
+    guess whether a change was a real one, and this decides whether a whole
+    panel is bought.
+    """
+    return render_email(draft).strip() == render_email(previous).strip()
 
 
 def _distinct(
