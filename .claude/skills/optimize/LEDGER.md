@@ -381,3 +381,47 @@ Leaving it asking for something weaker than the code enforces is how a strategis
 planning against a rule it is silently corrected on.
 
 Confirmed the test fails on the pre-change code by reverting `strategist.py` and re-running.
+
+### LANDED  a rewrite that came back unchanged is not read or duelled again
+Axis: 2, quota per run, with a correctness bug behind it. A writer told to fix a draft
+sometimes hands the same draft back; the loop bought a full cold-reader panel on identical
+words and then a full ballot between an email and itself. Commit: 33d58c2. Checks: ruff
+clean (1 pre-existing SIM102), **811 passed** (810 + 1). Saves 7 calls per occurrence on
+balanced and on maximum, adds none.
+
+The correctness half is the part worth remembering. `Duel.decided` is `cast > 0`, so a
+ballot on two copies of one email can break 3-1 on noise and hand the title to the later
+attempt - and the receipt then reports a rewrite as preferred when no word moved. With the
+tournament off, `measured` does the same thing one step down, comparing two independent
+reads of the same text.
+
+Both fixes went where that class of question is already settled: a third precedence rule in
+`_prefers`, beside "a blocking gate outranks any vote" and "a rewrite that dropped its proof
+does not take the title"; and the existing `screened` channel, which already carries the
+bake-off winner's paid readings forward, now also carries the champion's forward to an
+identical rewrite. The two versions then score *identically*, which is what makes `_prefers`
+exact rather than a coin flip, and the loop treats it as the stall it is - pivoting where
+the brief named an alternative, stopping where it did not.
+
+Comparison is exact on the rendered deliverable, deliberately. A looser one would have to
+guess whether a change was real, and blank lines are copy here - the structural rules count
+blocks - so a whitespace-collapsing compare could mask a genuine reflow.
+
+### REJECTED  a deterministic gate for "the email opens on the company, not the reader"
+Reason: measured against the instrument that motivated it and it does not hold. This is one
+of the four judge-bench mutations the brief lists as still unmeasured
+(`open_on_the_company`), and `_INTERCHANGEABLE` in `market/sameness.py` genuinely does not
+cover it - so the gap is real. Every rule that catches it also catches good copy:
+
+- "first word is We/I/Our/<company>" fails `I noticed your release notes stop in March.`,
+  which is a correct opener.
+- "no second-person pronoun in the first sentence" passes the bench's own mutant, whose
+  opening sentence ends `...put it in front of you`.
+- "second person must appear before first person" fails the same good opener as the first
+  rule.
+
+Whether a sentence is *about* the reader is not recoverable from token order, and a gate
+that false-positives blocks correct copy - which this codebase does not allow of anything
+that blocks, and an advisory that is wrong half the time is noise in the writer's correction
+turn. Do not retry on string rules. If it is ever retried it needs a different instrument,
+not a better regex.
