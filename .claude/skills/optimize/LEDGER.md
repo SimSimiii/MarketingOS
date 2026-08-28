@@ -308,3 +308,19 @@ Method note for the next run: every predicate that decides which runs count stay
 service. `base.py` says repositories "never contain business logic", and "a run that died on
 its first call cost a penny" is business logic - so the new `list_by_campaigns` is the exact
 plural of `list_by_campaign` and nothing more.
+
+### LANDED  a run's narration is written without being read back
+Axis: 5, runtime and data, on the hottest path in the system. `ExecutionEventEmitter.emit`
+persisted through `BaseRepository.create`, which add/commit/**refresh**es so a caller can
+have the stored row - and this caller keeps neither the row nor the return value. Measured
+rather than guessed: a balanced run through the scripted provider writes **171** log lines,
+so 171 SELECTs re-reading rows nobody looks at, between model calls, on the same SQLite file
+the live page is being served from concurrently. Commit: 0c976eb. Checks: ruff clean (1
+pre-existing SIM102), **809 passed** (808 + 1). No model spend either way.
+
+`create` untouched - every other caller does want the refresh. The new `append` is the
+write-only door beside it. The commit *per line* was deliberately left alone: batching would
+put rows behind the events that announced them, and "persist and broadcast in one call" is
+the property that makes the live page and the replayed history agree by construction.
+
+Confirmed the test fails on `create` by swapping the call back and re-running.
