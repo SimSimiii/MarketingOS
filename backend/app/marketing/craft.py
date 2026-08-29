@@ -78,11 +78,24 @@ logger = logging.getLogger("marketingos.marketing")
 #: than the whole one: candidate n argues alternative claim n and opens on move
 #: n, and where the brief named no alternatives the opening move is all the
 #: variety there is - which is the behaviour this list was written for.
+#:
+#: The second move exists because the brief now carries the argument and not
+#: only the claim. "Open on why what you already do cannot work" is the bet
+#: that most often separates copy that convinces from copy that merely reads
+#: well, and it was unavailable while `why_it_fails` had nowhere to live. It
+#: replaced "open on what it costs them to change nothing", which was the same
+#: bet with the mechanism taken out - fear about a cost rather than a reason.
 _OPENING_MOVES: tuple[str, ...] = (
     (
         "Open on the reader's own situation, in the words they would use for it themselves - "
         "the specific Tuesday this lands on. No product, no company, no claim in the first "
         "two sentences."
+    ),
+    (
+        "Open on what this reader already does about the problem, and on the specific thing "
+        "that approach structurally cannot do - the brief's third beat, first. Not that they "
+        "chose badly: that the limit follows from what the thing is. Earn the product by "
+        "naming the limit before you name anything of yours."
     ),
     (
         "Open on the single most concrete thing in the evidence you were given - a number, a "
@@ -93,10 +106,6 @@ _OPENING_MOVES: tuple[str, ...] = (
         "Open on the objection this email has to beat, stated more plainly and more bluntly "
         "than the reader would put it themselves, then spend the email earning the right to "
         "answer it."
-    ),
-    (
-        "Open on what it costs them to change nothing, in terms they can check against their "
-        "own week. Not fear, not urgency you invented - the arithmetic they have not done."
     ),
 )
 
@@ -117,7 +126,13 @@ def _opening_line(email: Email) -> str:
 
 def _attempt_line(version: "EmailVersion", label: str) -> str:
     read = version.read
-    if read.has_verdict:
+    if read.has_verdict and not read.understood:
+        # Reported ahead of the score, because it is the reason the score is
+        # what it is. A history line reading "pull 2/10" invites the next
+        # attempt to write the same email harder; "nobody could tell what it
+        # was" says which ground has to change.
+        verdict = "the readers could not say what it was selling"
+    elif read.has_verdict:
         verdict = f"pull {read.pull:.0f}/10"
     elif version.gates.blocking:
         # A candidate the free checks vetoed is never read cold - see
@@ -234,7 +249,7 @@ class EmailVersion:
         return self.critique is not None
 
     @property
-    def measured(self) -> tuple[int, float, int, int]:
+    def measured(self) -> tuple[int, int, float, int, int]:
         """What the free checks and the cold reader made of this version.
 
         Separate from `score` because it is the half of the judgment that does
@@ -242,6 +257,14 @@ class EmailVersion:
         the copy *before* it decides whether to buy a critique of it. Whether
         the critic likes a draft is also not what "did this rewrite help" is
         asking.
+
+        Comprehension comes *before* pull, and it is the only thing that
+        does. Every other term here is a judgment about copy the reader
+        understood; a click estimate on an email whose reader could not say
+        what it was selling is not a low score but an answer to a different
+        question, and the loop used to compare it to real ones. A draft the
+        panel could not decode losing to one it could is not a close call -
+        it is the whole difference between an email and a paragraph.
 
         Substantiation comes *after* pull and never before it. It is a
         tiebreak, and only a tiebreak: how much a stranger wanted the thing is
@@ -255,25 +278,28 @@ class EmailVersion:
         """
         return (
             0 if self.gates.blocking else 1,
+            1 if self.read.understood else 0,
             self.read.pull,
             len(self.substantiation.carried),
             self.substantiation.attributions,
         )
 
     @property
-    def score(self) -> tuple[int, int, float]:
+    def score(self) -> tuple[int, int, int, float]:
         """How to choose between two versions of the same email.
 
         Ordered by what a user would actually care about: an email with an
         unsupported claim or a broken structure is not in the running however
-        well it reads, then the critic's verdict, then how much the cold
-        reader wanted the thing.
+        well it reads, then whether a stranger could say what it was selling,
+        then the critic's verdict, then how much the cold reader wanted the
+        thing.
 
         Only valid between two versions the critic treated alike - see
         `better_of`, which is what `EmailOutcome.best` actually uses.
         """
         return (
             0 if self.gates.blocking else 1,
+            1 if self.read.understood else 0,
             1 if self.approved else 0,
             self.read.pull,
         )
@@ -293,8 +319,8 @@ def better_of(left: EmailVersion, right: EmailVersion) -> EmailVersion:
     """Which of two versions of the same email is the one to keep.
 
     Gates first - an email making an unsupported claim is not in the running
-    however well it reads. Then the critic's verdict, but *only when it judged
-    both*: the final attempt deliberately goes uncritiqued, and scoring an
+    however well it reads. Then whether the reader could say what it sells.
+    Then the critic's verdict, but *only when it judged both*: the final attempt deliberately goes uncritiqued, and scoring an
     unasked version as approved would hand it a point it never earned, letting
     a draft nobody vetted beat one the critic had explicitly sent back. Then
     how much the cold reader wanted the thing, which is the question the whole
@@ -310,6 +336,14 @@ def better_of(left: EmailVersion, right: EmailVersion) -> EmailVersion:
     """
     if bool(left.gates.blocking) is not bool(right.gates.blocking):
         return right if left.gates.blocking else left
+    # Then comprehension, ahead of the critic and ahead of the score. A draft
+    # a cold panel could not decode is not a weaker email than one they could
+    # - it is not yet an email, and no amount of pull or approval buys past
+    # that. This is the comparison the loop was missing: without it, a
+    # beautifully written paragraph that never says what the product is beats
+    # a plainer draft that does, on a click estimate neither number is about.
+    if left.read.understood is not right.read.understood:
+        return left if left.read.understood else right
     if left.critic_judged and right.critic_judged and left.approved is not right.approved:
         return left if left.approved else right
     if left.read.pull != right.read.pull:
@@ -436,6 +470,7 @@ class CraftLoop:
             draft,
             evidence=self._evidence,
             offer=self._artifacts.offer,
+            business=self._artifacts.business,
             previous=previous,
             merge_fields=self._merge_fields,
             assigned=[

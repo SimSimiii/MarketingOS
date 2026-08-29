@@ -276,10 +276,19 @@ function LineDetail({ line }: { line: LiveExecutionEvent }) {
                   {reader.would_act ? "would click today" : "would not click"}
                 </span>
               )}
+              {reader.reported && reader.understood === false && (
+                /* Ahead of the score, not beside it. A reader who could not
+                   decode the email did not decline the offer, so their click
+                   estimate answers a question they were never able to reach. */
+                <span className="ml-2 text-destructive">could not say what it is</span>
+              )}
             </p>
             {reader.reported && (
               <ul className="space-y-0.5 text-muted-foreground">
-                <li>Thinks it sells: {reader.what_it_sells || "they could not say"}</li>
+                <li>
+                  {reader.understood === false ? "Guessed it sells" : "Thinks it sells"}:{" "}
+                  {reader.what_it_sells || "they could not say"}
+                </li>
                 <li>Stopped at: {reader.stopped_at || "they read to the end"}</li>
                 <li>Biggest doubt: {reader.biggest_doubt || "nothing they named"}</li>
                 {reader.fixes.map((fix, fixIndex) => (
@@ -355,6 +364,7 @@ function LineDetail({ line }: { line: LiveExecutionEvent }) {
                     Leaves out on purpose: {email.must_not_say?.join("; ")}
                   </p>
                 )}
+                <EmailArgument email={email} />
               </li>
             ))}
           </ol>
@@ -405,6 +415,39 @@ function LineDetail({ line }: { line: LiveExecutionEvent }) {
         </>
       )}
     </div>
+  );
+}
+
+/** The four beats of one email's argument, when the strategist wrote them.
+ *
+ * `single_idea` above is the claim; this is the reasoning that makes the claim
+ * worth reading, and beat three - why the reader's current approach keeps
+ * falling short - is the one that most often decides whether the copy lands.
+ * Shown here because a brief is the only place it can be checked before an
+ * email has been written from it. Beats the strategist left empty are left
+ * out rather than rendered as blanks: an unfilled beat is a decision not to
+ * invent one, not a missing value. */
+function EmailArgument({
+  email,
+}: {
+  email: { felt_need?: string; status_quo?: string; why_it_fails?: string; mechanism?: string };
+}) {
+  const beats = [
+    ["Living with", email.felt_need],
+    ["Does today", email.status_quo],
+    ["Why that fails", email.why_it_fails],
+    ["This instead", email.mechanism],
+  ].filter(([, value]) => value) as [string, string][];
+  if (beats.length === 0) return null;
+  return (
+    <ol className="mt-1 space-y-0.5 border-l border-border/60 pl-3 text-muted-foreground/70">
+      {beats.map(([label, value]) => (
+        <li key={label}>
+          <span className="text-muted-foreground">{label}: </span>
+          {value}
+        </li>
+      ))}
+    </ol>
   );
 }
 

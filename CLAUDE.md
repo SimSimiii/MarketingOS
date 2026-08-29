@@ -127,13 +127,21 @@ tests; do not weaken it, and do not put `ANTHROPIC_API_KEY` in `.env`.
 ### Checks that block are deterministic; judgment never blocks
 
 `app/marketing/gates.py` reads every draft back and licenses each number, price, quotation and
-URL against the Evidence Ledger or the user's own material. Comparisons are typography-blind
+URL against the Evidence Ledger or the user's own material. `clarity_gate` beside it blocks a
+draft that never names the offering anywhere the reader is looking - the sign-off does not count,
+because it answers who sent this rather than what this is. Comparisons are typography-blind
 on purpose (a CMS makes apostrophes curly; a model quotes back in ASCII, and an exact
 substring test silently drops correctly quoted proof). `app/marketing/substantiation.py` points
 the same check the other way — did the email actually *spend* the evidence it was built on —
 and `app/market/sameness.py` blocks a short closed list of argument frames every competitor
 also uses. Taste never blocks: a cold reader can send a draft back for a rewrite, but only
 code stops it shipping.
+
+The one thing a cold reader *does* decide is comprehension. `BlindRead.understood` is whether
+they could say what was being sold without guessing, and it is a veto rather than a term: a
+draft the panel could not decode loses to one they could at any click estimate, and a click
+estimate on an email nobody parsed is an answer to a different question. See
+`EmailVersion.measured`, where it sits above `pull` and below the gates.
 
 ### Only `app/market/` may touch the open web
 

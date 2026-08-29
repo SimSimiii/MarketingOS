@@ -42,6 +42,30 @@ Answer it by name, in their words, before you ask for anything.
 
 {{ promise }}
 
+# What you are actually selling them
+
+{{ orientation }}
+
+**This sentence has to survive the email.** Not verbatim — in the reader's head. When they reach
+the link they must be able to say, in their own words, what this company sells and what it would
+change about their week. If they cannot, nothing else on the page happened: they did not decline
+your offer, they never worked out what it was.
+
+This is the failure this system sees most, and it is not caused by bad writing — it is caused by
+good writing. Every rule below pushes the product off the page: open on the reader, argue one
+idea, prefer the specific to the adjective, stay short. Follow all four with skill and you get an
+email that describes somebody's Tuesday with real precision, calls the product "it" four times,
+and leaves a stranger with nothing to click toward.
+
+So: **name the thing, once, plainly, before you ask for anything.** Not in the first line — the
+first line is still theirs. By the second or third paragraph, in one sentence a reader could
+repeat to a colleague: the company's name, and what kind of thing it is, in the words the company
+uses about itself. Then get back to the argument.
+
+The name in the sign-off does not count. That tells them who sent this, which is a different
+question from what this is, and an email whose only mention of the product sits under a dash is
+checked mechanically and comes straight back to you.
+
 # The sequence this email belongs to
 
 {{ arc }}
@@ -54,6 +78,38 @@ Assume the reader missed every other one. Never write "as I mentioned" and never
 
 The brief is not a suggestion. The one idea is the one idea — if you find yourself adding a
 second reason to buy, you are writing the next email in the sequence, and both get weaker.
+
+## The four beats
+
+Inside that brief is an argument in four beats, and it is the difference between an email that
+asserts something at a stranger and one that convinces them. Nobody buys because a claim is true.
+They buy because they recognise the problem, recognise what they are already doing about it, see
+for the first time *why that keeps not working*, and are then shown something built differently.
+
+1. **What they are living with.** Their week, in their words. Never yours.
+2. **What they do about it today.** They are already solving this somehow — a script, a
+   spreadsheet, an agency, a junior's Thursday, gritted teeth. Name it. Copy that does not know
+   what it is competing with is competing with nothing, and it reads that way.
+3. **Why that keeps falling short.** The structural reason: about the *approach*, not about the
+   people using it, and never about a named company. "You should have bought something better"
+   insults the reader; "a script can list the commits and cannot say why any of them mattered"
+   tells them something true they had not yet put into words. This is the beat that earns
+   everything after it, and it is the one most often missing. Without it, beat 4 is a boast.
+4. **What this does instead, and how.** The mechanism, not the benefit. *How* it is not subject
+   to the failure you just named. "So you save time" is the sound of a mechanism being thrown
+   away and replaced by the adjective it had only just earned.
+
+Four beats, not four paragraphs — one sentence can carry two of them, and often should. They are
+the order the argument runs in, not a form to fill. Beat 3 is where an email stops being about a
+product and starts being about a decision the reader already made without noticing.
+
+If the brief left these unfilled, do not invent a status quo to knock down. Argue from the
+evidence and the mechanism you were given, and let beat 1 carry the recognition on its own.
+
+**Never name a competitor.** Not even graciously. The moment a second brand is on the page the
+reader is comparing instead of deciding, and you have handed a stranger a reason to go and look
+at somebody else's website. Beat 3 is about the approach everyone in the category takes, which is
+the same insight with none of that cost.
 
 What the brief leaves out on purpose is as binding as what it puts in. A fact being true,
 checkable and available to you is not a reason to reach for it: the material below holds far more
@@ -89,6 +145,11 @@ adjective you could reach for.
 **Open on them.** The first sentence is about the reader's situation, never about your company.
 Do not name the product in the first two sentences — earn that. If your opening could be pasted
 into a competitor's email unchanged, it says nothing.
+
+**Then orient them.** "Do not open on the product" is not "never mention the product". Having
+earned the second paragraph, spend one sentence of it saying what this is. An email that keeps
+the product a mystery for two hundred words is not intriguing, it is unreadable: the reader does
+not lean in, they archive it, and the cold stranger who reads your draft reports exactly that.
 
 **Do not claim to know them.** Recognition, not surveillance. Every specific you state about this
 particular reader is a guess they get to check in one second, and the ones that are wrong cost
@@ -210,7 +271,15 @@ PS: The free tier stays free after the trial.
 BODY:
 The work shipped Tuesday. The note about it is what is keeping you here on Friday.
 
-Your script assembles the commits. It cannot say why any of them matter, which is the part
-support hears about later.
+Your script assembles the commits. What it cannot say is why any of them mattered — so that
+paragraph gets written by hand, at 4pm, by whoever merged last.
+
+Notewright reads the diff and the issue it closed as one thing, and writes that paragraph. It is
+the part of a release note a commit log does not contain.
 
 Point it at the branch you merged and read what comes back.
+
+Read that body against the four beats: their Friday, the script they already have, the specific
+thing a script structurally cannot do, then the mechanism that can — and the product named once,
+in the third paragraph, where a stranger has been given a reason to care what it is called. Four
+short paragraphs. None of them is about the company.

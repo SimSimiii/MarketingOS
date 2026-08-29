@@ -181,7 +181,7 @@ _BODIES = (
         "You wrote the same release note three times last month.\n\n"
         "Every one of them started as a changelog nobody read, and ended as a paragraph you\n"
         "rewrote twice before shipping it.\n\n"
-        "This turns commits you already pushed into that paragraph, in about nine seconds.\n"
+        "Notewright turns commits you already pushed into that paragraph, in about nine seconds.\n"
         "You edit it or you send it.\n\n"
         "Most people ask whether it sounds like them. It reads your older notes first, so it does."
     ),
@@ -189,14 +189,14 @@ _BODIES = (
         "Friday afternoon is where your shipping week goes to die.\n\n"
         "The work was done on Tuesday. What is left is describing it, and describing it is the\n"
         "part nobody scheduled time for.\n\n"
-        "Point it at the branch and nine seconds later there is a note to argue with.\n\n"
+        "Point Notewright at the branch and nine seconds later there is a note to argue with.\n\n"
         "Teams tell us the draft is close enough that arguing with it is faster than starting."
     ),
     (
         "Your changelog has a tone, and it is not the one you would use out loud.\n\n"
         "That happens when writing gets squeezed into whatever minutes are left before a\n"
         "deploy window closes on you.\n\n"
-        "Give it the twenty entries you already published and it writes like those did, in\n"
+        "Give Notewright the twenty entries you already published and it writes like those did, in\n"
         "nine seconds.\n\n"
         "Nothing to configure. Paste a branch name, read a paragraph, decide whether to keep it."
     ),

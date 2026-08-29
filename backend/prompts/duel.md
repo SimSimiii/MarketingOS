@@ -25,10 +25,16 @@ move your thumb on a Tuesday morning with four hundred unread.
 Read them in the order they are in. If the first line of one of them lost you, that is the
 answer and you do not have to be fair about it.
 
-Things that decide it, roughly in the order they decide it:
+Things that decide it, in the order they decide it:
 
+- **whether you can say what is being sold.** Not "roughly what area it is in" — what the thing
+  is, well enough to repeat to somebody. If one of these leaves you guessing and the other does
+  not, that is the answer and nothing below it matters: you cannot want something you could not
+  describe, and an email you cannot describe is one you archive.
 - whether the subject and the first line are about something true in your week
-- whether you can tell what you are being offered without reading twice
+- whether it tells you something about your own situation you had not put into words — the
+  reason the way you do this now keeps not working. That is rarer than it sounds and it is what
+  separates an email you finish from one you skim.
 - whether anything on the page gives you a reason to believe it, rather than asking you to
 - how much the thing it asks you to do costs you
 
