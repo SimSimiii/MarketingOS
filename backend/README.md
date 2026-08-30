@@ -61,8 +61,17 @@ business starts from everything the first one learned.
 
 **Phase 1 — strategy.** The deliverable contract ("5 emails") is parsed out of the
 request in code, then one strong-model `Strategist` call turns request + artifacts into a
-Campaign Brief: the reader, the promise, the arc, and one Email Brief per email naming
-the single idea it owns, the evidence ids it spends, and the objection it kills.
+Campaign Brief: the reader, the promise, the arc, one sentence saying what this reader is
+being sold, and one Email Brief per email naming the single idea it owns, the evidence ids
+it spends, the objection it kills, and the argument that carries it.
+
+That argument is four fields and it is the difference between copy that converts and copy
+that merely reads well: what the reader is living with, what they already do about it, why
+that approach structurally keeps falling short, and what this product does instead. A
+writer handed only a claim, proof for the claim and an objection writes an assertion with
+a citation attached. The third beat is the one nothing else in the system can supply — it
+is read off the positioning map, argued against the category's shared approach and never
+against a named competitor, and without it the fourth beat is a boast.
 
 **Phase 2 — craft.** Per email: the **Writer** drafts it, deterministic **gates** check
 it, a **Blind Reader** who has never seen the brief reads it cold, a **Conversion Critic**
@@ -87,7 +96,22 @@ testimonial would otherwise poison every campaign written afterwards.
 The other gates are the same shape — free, deterministic, phrased as the fix: structure
 (`email_copy.py`), unfilled placeholders (with a configurable merge-field vocabulary, so
 `{{first_name}}` is personalization rather than an error), stock phrasing, spam-filter
-vocabulary, and cross-email repetition.
+vocabulary, cross-email repetition, and clarity.
+
+`clarity_gate` is the cheapest of them and catches the failure this system saw most. Every
+rule the writer follows pushes the product off the page — open on the reader, argue one
+idea, prefer the specific to the adjective, stay under two hundred words — and followed
+well they produce an email that describes somebody's Tuesday with real precision, calls
+the product "it" four times, and leaves a stranger with nothing to click toward. The gate
+searches everywhere the reader is actually reading and deliberately *not* the sign-off: a
+name that appears only under "- the Notewright team" has answered who sent this, which is
+a different question from what this is.
+
+The half a regular expression cannot do is the cold reader's, and it is a veto rather than
+a score. `BlindRead.understood` asks whether they could say what was being sold *without
+guessing*; a draft the panel could not decode loses to one they could at any click
+estimate, does not ship, and the rewrite is handed their guesses — "one of them thought it
+was an agency retainer" names a distance a writer can close, where a low number does not.
 
 ## The five roles
 

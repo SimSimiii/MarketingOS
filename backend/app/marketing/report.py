@@ -41,6 +41,11 @@ class ReaderVerdict(BaseModel):
     #: product is means the copy failed before any of its arguments were
     #: judged.
     what_it_sells: str = ""
+    #: Whether `what_it_sells` is what they knew or what they guessed. The
+    #: line above has always been on the receipt and has always been
+    #: ambiguous without this: a fluent sentence reads as comprehension
+    #: whether the reader assembled it from the copy or from thin air.
+    understood: bool = True
     #: The first line where they lost interest, quoted from the email.
     stopped_at: str = ""
     #: The real reason they would not click.
@@ -64,6 +69,7 @@ class ReaderVerdict(BaseModel):
         return [
             cls(
                 what_it_sells=read.what_it_sells,
+                understood=read.understood,
                 stopped_at=read.stopped_at,
                 biggest_doubt=read.biggest_doubt,
                 to_click_it_would_have_to=read.to_click_it_would_have_to,
@@ -99,6 +105,13 @@ class EmailReportLine(BaseModel):
     #: False when no cold reader came back at all, which makes `pull` a
     #: placeholder rather than a score.
     read_reported: bool = True
+    #: Whether a majority of the cold readers could say what this email was
+    #: selling. False is the most serious thing this receipt can report and
+    #: it is not a low score: an email a stranger cannot decode has not been
+    #: declined, it has not been read. Kept beside `pull` rather than folded
+    #: into it because the two answer different questions, and averaging them
+    #: would hide the one that has to be fixed first.
+    understood: bool = True
     #: Ledger ids the Strategist said this email is built on.
     evidence_assigned: list[str] = Field(default_factory=list)
     #: Of those, the ones whose figure, name or quotation actually reached the
@@ -164,6 +177,13 @@ class EmailReportLine(BaseModel):
             if self.argues_from_nothing
             else ""
         )
+        if self.read_reported and not self.understood:
+            # Said instead of the score, not beside it. A line reading
+            # "pull 3/10, and they could not say what it was" invites the
+            # reader of this receipt to treat 3 as the finding; the score is
+            # an estimate of what people do with an email they understood,
+            # and this one was not.
+            score = "the cold readers could not say what it was selling"
         return (
             f"- Email {self.position} \"{self.subject}\": {self.single_idea or 'no idea recorded'}"
             f" - {score} after {rewrites}{state}{proof}"
@@ -222,6 +242,19 @@ class CampaignReport(BaseModel):
         return [line for line in self.emails if line.read_reported and not line.landed]
 
     @property
+    def misunderstood(self) -> list[EmailReportLine]:
+        """Emails whose own cold readers could not say what they sold.
+
+        A subset of `below_floor` by construction - comprehension is a
+        precondition of `BlindRead.landed` - and worth reporting separately
+        because the two ask the user to do different things. Below the floor
+        means the argument did not persuade them; this means there was no
+        argument, because there was no subject. One is a reason to try another
+        claim and the other is a reason to add a sentence.
+        """
+        return [line for line in self.emails if line.read_reported and not line.understood]
+
+    @property
     def healthy(self) -> bool:
         """Whether this run produced what it set out to produce.
 
@@ -233,6 +266,12 @@ class CampaignReport(BaseModel):
         """
         return (
             self.all_clean
+            # Implied by `below_floor` today, because comprehension is a
+            # precondition of `BlindRead.landed`. Stated anyway: if that veto
+            # is ever softened into a term, this is the line that stops a run
+            # reporting itself healthy while a stranger could not say what any
+            # of its emails were selling.
+            and self.clear
             and not self.below_floor
             and bool(self.emails)
             and all(line.read_reported for line in self.emails)
@@ -247,6 +286,14 @@ class CampaignReport(BaseModel):
             ),
             *[line.render() for line in self.emails],
         ]
+        if self.misunderstood:
+            positions = ", ".join(str(line.position) for line in self.misunderstood)
+            lines.append(
+                f"Email(s) {positions} left a stranger unable to say what is being sold. "
+                "Fix that before anything else on this page: a reader who cannot name the "
+                "thing has not turned the offer down, they never found it. Usually it is one "
+                "missing sentence rather than a rewrite."
+            )
         if self.below_floor:
             positions = ", ".join(str(line.position) for line in self.below_floor)
             lines.append(
@@ -277,6 +324,11 @@ class CampaignReport(BaseModel):
             lines.append(f"What would help most next time: {self.what_would_help_most}")
         lines.extend(self.notes)
         return "\n".join(lines)
+
+    @property
+    def clear(self) -> bool:
+        """Whether every delivered email said what it was selling."""
+        return not self.misunderstood
 
     def render_learnings(self) -> str:
         """What the next campaign for this business should know.

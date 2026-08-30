@@ -118,6 +118,13 @@ class EmailWriter:
             f"--- what you sent ---\n{render_email(draft)}\n--- end ---",
             f"What happened to the reader:\n{read.render()}",
         ]
+        if failure := _comprehension_failure(read):
+            # First, and in its own section, because it is not one note among
+            # several: an email a stranger cannot decode has no conversion
+            # problem to diagnose yet. Every other line of feedback below is
+            # about copy that got read, and answering those first is how a
+            # rewrite polishes a paragraph nobody could parse.
+            sections.append(failure)
         if history:
             sections.append(history)
         # Blocking and advisory issues arrive in separate sections, and the
@@ -143,10 +150,11 @@ class EmailWriter:
             sections.append(f"What the conversion critic wants changed:\n{critique_notes}")
         sections.append(
             "Rewrite it. Not a polish - fix what actually happened. If they could not say what "
-            "it sells, the promise is not on the page. If they stopped at a line, that line "
-            "goes. If their doubt went unanswered, answer it before the ask. Keep what worked, "
-            f"keep the same idea ({brief.single_idea or 'as briefed'}), and stay off the ground "
-            "already covered.\n\n" + _already_sent(previous)
+            "it sells, that is the only thing this rewrite is for: one plain sentence naming "
+            "what this is, early enough that they reach it. If they stopped at a line, that "
+            "line goes. If their doubt went unanswered, answer it before the ask. Keep what "
+            f"worked, keep the same idea ({brief.single_idea or 'as briefed'}), and stay off "
+            "the ground already covered.\n\n" + _already_sent(previous)
         )
         return await self._write(
             brief=brief,
@@ -186,6 +194,7 @@ class EmailWriter:
                 ),
                 "objection_detail": artifacts.objection_detail(brief.objection),
                 "promise": campaign.promise,
+                "orientation": _orientation(campaign, artifacts),
                 "arc": campaign.render_arc(),
                 "brief": brief.render(),
                 "evidence": _evidence_for(brief, artifacts),
@@ -234,6 +243,76 @@ class EmailWriter:
             position=brief.position,
             raw_response=response[:2000],
         )
+
+
+def _orientation(campaign: CampaignBrief, artifacts: KnowledgeArtifacts) -> str:
+    """The one sentence the reader has to finish this email holding.
+
+    The strategist's line where it wrote one, because that is the sentence
+    aimed at *this* reader. The business profile's own where it did not,
+    because "what it does, in the company's words" is a worse answer than a
+    reader-shaped one and an enormously better answer than nothing - and
+    nothing is what the writer had before this existed. A prompt cannot ask
+    for the product to be named plainly and then decline to say what the
+    plain naming of it is.
+    """
+    if campaign.orientation.strip():
+        return campaign.orientation.strip()
+    business = artifacts.business
+    if business.what_it_does.strip():
+        return (
+            f"{business.company_name or 'This company'}: {business.what_it_does.strip()}"
+            + (f" ({business.category})" if business.category else "")
+            + ". That is the profile's own sentence rather than one written for this "
+            "reader - say the same thing in their language, not in this one."
+        )
+    return (
+        "Nobody wrote one. Say what this is from the material below, in the plainest "
+        "sentence you can build out of what the company says about itself - and if the "
+        "material genuinely does not support one, that is the single most important thing "
+        "wrong with this campaign and the copy cannot paper over it."
+    )
+
+
+def _comprehension_failure(read: PanelRead) -> str:
+    """What to hand a writer whose readers could not say what the email sold.
+
+    The reader has answered this question since the role existed, and the
+    answer went into a rendered block alongside eight other lines, where it
+    read as one complaint among several. It is not one among several. A
+    stranger who cannot name the thing has not declined the offer - they
+    never received one, and every other note in the report is a judgment
+    about copy that was never decoded.
+
+    Their guess is the useful half. "I think it is some kind of agency
+    retainer" names the distance between what the email implied and what the
+    product is, and a writer can close a named distance. A count cannot be.
+    """
+    confused = read.confused
+    if not confused:
+        return ""
+    guesses = "\n".join(
+        f'- {item.persona or "one reader"} thought it was: '
+        + (item.what_it_sells.strip() or "they could not even guess")
+        for item in confused
+    )
+    total = len(read.reported)
+    who = f"{len(confused)} of the {total} readers" if total > 1 else "The reader"
+    return (
+        "**They could not tell what this is.** "
+        f"{who} finished this email unable to say what is being sold:\n\n"
+        f"{guesses}\n\n"
+        "That is the whole problem with this draft, and it comes before every other note "
+        "below. They did not decline the offer - they never worked out what it was, so there "
+        "was nothing to decline. Nothing else in this report is worth acting on until a "
+        "stranger can finish the email and say, in their own words, what this company sells "
+        "and what it would change about their week.\n\n"
+        "The fix is one plain sentence, and it is almost never the first one: keep the "
+        "opening on their situation, then - by the second or third paragraph, before you ask "
+        "for anything - name the thing. What it is, in the words the company uses about "
+        "itself, concretely enough that the guesses above become impossible. Not a "
+        "description of the problem it solves; the thing itself."
+    )
 
 
 def _sender(request: CampaignRequest, artifacts: KnowledgeArtifacts) -> str:

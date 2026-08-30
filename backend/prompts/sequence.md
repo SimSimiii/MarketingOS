@@ -41,6 +41,20 @@ Does any email depend on one before it? A back-reference ("as I mentioned", "fol
 last note"), an unexplained term introduced earlier, a joke whose setup was in email two — each of
 those turns a missed email into a confusing one.
 
+**Does the reader ever learn what this is?** Read the sequence as somebody who opened exactly one
+of these, and check each email separately: can they say what is being sold from that email alone?
+An email that leans on a previous one to establish what the product is has failed the same test
+as one with a back-reference in it, and it fails it more quietly — there is no phrase to point
+at, only a stranger who reaches the link with nothing to attach it to. Note the position of any
+email that only makes sense to somebody who read an earlier one.
+
+**Does the sequence argue, or take turns asserting?** Each email owns one claim, and across the
+whole arc there should be a reason the reader's current way of doing this keeps not working — the
+thing they had not put into words. If no email in the sequence contains that, the campaign is a
+list of things the product does, sent five times, and the reader has been given no moment where
+anything changed for them. Say so against the position best placed to carry it, usually the first
+or second.
+
 **notes** — one entry per problem, attached to the `position` of the email that should change.
 Prefer fixing the later email of a pair: the earlier one has already earned its place, and the
 reader met it first. `problem` says what is wrong across the sequence; `fix` says what that

@@ -54,10 +54,28 @@ This is the half of the decision the company's own material cannot give you. Eve
 is true about them; this is the only section that says which of it is *also* true about
 everyone they are compared to.
 
-Use it to pick the claim, not to write about competitors. A campaign that names a competitor
-is a campaign arguing on their ground, and this is not what open ground means — it means the
-one thing this company can say that the reader has not already been told by somebody else this
-month. Pick that as `single_idea`, and put the crowded claims in `must_not_say`.
+Use it for two things, and there is a line between them that matters.
+
+**To pick the claim.** Open ground is the one thing this company can say that the reader has not
+already been told by somebody else this month. Pick that as `single_idea`, and put the crowded
+claims in `must_not_say`.
+
+**To find where the category falls short.** This is the half that used to go unused, and it is
+where most of the persuasion in a campaign actually lives. Everything above tells you what every
+competitor also claims — the table stakes, the crowd words, the axes where nobody carries a
+figure. Read that as a description of *how this category solves the problem*, and then ask the
+question the material makes answerable: what does that shared approach structurally fail at?
+"Everyone in this field sells on integration count" is not just a warning about vocabulary; it
+says the category competes on breadth, which means nothing in it is built for the reader who
+needs one thing to work properly. That sentence is `why_it_fails`, and it is the strongest thing
+a campaign can own, because it is true, checkable against the reader's own experience, and no
+competitor will ever write it about themselves.
+
+**Never name a competitor.** A campaign that names one is a campaign arguing on their ground, and
+it hands the reader a second brand to go and look up. The distinction is not subtle and it is not
+a matter of tact: `why_it_fails` is about an *approach* that a whole category shares, and the
+reader recognises it from what they already do. The moment it becomes about a company, you have
+written an email about somebody else's product.
 
 # Who would actually buy this
 
@@ -128,6 +146,52 @@ yet", "the full model list — email 3 owns it". Every other field here is a rea
 something on the page, so if nobody decides what stays off it, the copy accumulates until it
 argues nothing. An email that says one thing and gets read beats an email that says six and gets
 archived, and the second one is what you get by default.
+
+**Build the argument, not just the claim.** `single_idea` says what an email asserts. Four more
+fields say why anybody should care, and they are the ones that decide whether the copy converts
+or merely reads well. A writer handed a claim, evidence for the claim and an objection to answer
+writes an assertion with a citation attached — true, checkable, and no reason for a stranger to
+act. Fill these for every email:
+
+- **`felt_need`** — the problem in the reader's own words. What they would say if somebody asked
+  what their week was like, not what the product's landing page calls it. Comes from the audience
+  model's situation and pains, not from the offer.
+- **`status_quo`** — what they do about it *today*. Every reader is already solving this
+  somehow: a spreadsheet, an in-house script, an agency, a junior's Thursday, or deliberately
+  nothing. The material usually says, and where it does not, the awareness stage does: a
+  `solution_aware` reader is doing something manual, an `unaware` one is absorbing the cost
+  without having named it. Copy that does not know what it is competing with is competing with
+  nothing.
+- **`why_it_fails`** — the structural reason that approach keeps falling short. About the
+  approach, never about the person taking it, and never about a named company. "A script can list
+  the commits and cannot say why any of them mattered" is the shape: a limit that follows from
+  what the thing *is*, which the reader will recognise the moment they read it. This is the beat
+  the copy cannot invent for itself and the one that earns every sentence after it.
+- **`mechanism`** — what this product does instead, at the level of *how*. The design decision,
+  the constraint, the thing it does differently that means it is not subject to the failure you
+  just named. Not the benefit: "so you save time" is a mechanism thrown away and replaced by the
+  adjective it had just earned. Where the evidence carries the mechanism, the two reinforce; where
+  it does not, the mechanism is still the more persuasive half.
+
+These four are the same argument every time and different in every email, because each email
+argues its own `single_idea`: the need, the status quo and the failure are all read *through*
+that claim. If two emails' `why_it_fails` are the same sentence, one of them is not needed.
+
+Leave a field empty rather than filling it with something the material does not support. An
+invented status quo is worse than none — the reader knows what they actually do, and being told
+wrong loses them faster than being told nothing.
+
+**Write the orientation.** `orientation` is one plain sentence saying what this company sells, to
+*this* reader, that a stranger could repeat back to a colleague. It is not the promise and it is
+not the positioning: it is the answer to "what is it", in the language of the person receiving
+the email rather than the language of the company's home page. The same product is "a way to stop
+losing Friday afternoons" to one segment and "an audit trail your compliance team will accept" to
+another, and the copy is written to one of them.
+
+This is the single most common failure in the finished copy, and it is caused by good writing
+rather than bad: every rule the writer follows pushes the product off the page, and an email that
+describes somebody's Tuesday beautifully and never says what is being sold has not sold anything.
+Deciding the sentence here is what makes it checkable later.
 
 **Every email owns one idea, and the ideas cannot be swapped.** This is the test: if you could
 move email 3's angle to email 2 without anything breaking, you have not designed a sequence, you

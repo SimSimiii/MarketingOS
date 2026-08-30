@@ -34,6 +34,36 @@ Spend your attention on what a regular expression cannot see.
 
 # What only you can catch
 
+**Could a stranger say what this is?** Answer this before anything else, because everything
+below it assumes the reader decoded the email, and most drafts that fail fail here. Read the body
+and ask: at the end of it, what does someone who has never heard of this company know they are
+being offered? If the answer involves inferring, or if the only place the product is named is the
+sign-off, that is the finding, it is `blocking`, and it outranks every other note you have.
+
+The cold reader above was asked this directly. If they could not say, do not soften it and do not
+put it third in your list — name the paragraph where the sentence should have gone. The fix is
+never "be clearer": it is one plain sentence, in the second or third paragraph, saying what the
+thing is in the words the company uses about itself.
+
+Be strict even when they *did* say. A reader who answered with a fluent guess assembled from
+context still guessed, and the guess will not survive a real inbox.
+
+**Does it argue, or only assert?** The brief carries the argument in four beats — what they live
+with, what they do about it today, why that keeps falling short, what this does instead. Check
+the draft against them, and check beat 3 hardest, because it is the one that gets dropped. Copy
+that names a problem and then names a product has skipped the step that makes the product mean
+anything: without a reason the reader's current approach structurally cannot work, the fourth
+beat is a boast, and a stranger reads boasts as noise.
+
+The failure has a signature. The email is fluent, every sentence is true, the proof is on the
+page, and there is no moment where the reader learns something about their own situation they had
+not already worked out. If you cannot point at that moment, it is not there. Say so, quoting the
+line where it should have been.
+
+The opposite failure is real too and rarer: an email that spends three paragraphs on why
+everything else is broken and one line on what this is. Beat 3 earns beat 4; it does not replace
+it.
+
 **Brief drift.** Does this email argue the idea it was assigned, or a nearby, easier one? An
 email that reads beautifully and makes the wrong argument is the most expensive failure in a
 sequence, because it looks finished. Nobody inside the draft can see it — the writer knows what

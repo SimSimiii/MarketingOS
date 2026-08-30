@@ -89,6 +89,21 @@ class BlindRead(BaseModel):
     opened: bool = False
     stopped_at: str = ""
     what_it_sells: str = ""
+    #: Whether they could actually say what is being sold, without guessing.
+    #:
+    #: `what_it_sells` has been collected since this role existed and was
+    #: never anything but prose: a reader could answer "honestly, no idea -
+    #: some kind of consulting?" and the draft still competed on its click
+    #: estimate alone, because that sentence reached no comparison, no gate
+    #: and no rewrite rule. This is the same answer as a fact the loop can
+    #: act on, and it is the one the whole system was missing - a stranger
+    #: who cannot say what the thing is has not been sold anything, however
+    #: well the email reads.
+    #:
+    #: True by default so a read built by hand - a test, a replayed history -
+    #: is not silently counted as a confused one. Only a reader who was asked
+    #: can say no.
+    understood: bool = True
     biggest_doubt: str = ""
     would_act: bool = False
     #: Out of a hundred people in exactly this situation, how many open it on
@@ -131,12 +146,24 @@ class BlindRead(BaseModel):
 
     @property
     def landed(self) -> bool:
-        return self.reported and self.pull >= PULL_THRESHOLD
+        """Whether this reader would have clicked.
+
+        Comprehension first, and as a veto rather than as a term. A click
+        estimate on an email the reader could not parse is not a low score -
+        it is a number about a different question, and letting it clear the
+        floor ships copy whose own reader could not say what it was for.
+        """
+        return self.reported and self.understood and self.pull >= PULL_THRESHOLD
 
     def render(self) -> str:
         lines = [
             f"- Would they have opened it? {'yes' if self.opened else 'no'}",
-            f"- What they think it sells: {self.what_it_sells or 'they could not say'}",
+            (
+                f"- What they think it sells: {self.what_it_sells or 'they could not say'}"
+                if self.understood
+                else "- COULD NOT SAY WHAT THIS IS. Their best guess: "
+                + (self.what_it_sells or "nothing at all")
+            ),
             f"- Where they stopped reading: {self.stopped_at or 'they read to the end'}",
             f"- What would stop them clicking: {self.biggest_doubt or 'nothing they named'}",
         ]
@@ -207,6 +234,27 @@ class PanelRead(BaseModel):
         return statistics.median(estimates) if estimates else 0.0
 
     @property
+    def understood(self) -> bool:
+        """Whether the panel could say what the email was selling.
+
+        Majority, like `landed`, and for the same reason: one reader in three
+        who missed it is what copy that works looks like, and two is a draft
+        with a real problem. An unread panel is not a confused one - it has
+        no verdict on this either, so it answers yes and the other checks
+        decide.
+        """
+        got = sum(1 for read in self.reported if read.understood)
+        return not self.reported or got * 2 > len(self.reported)
+
+    @property
+    def confused(self) -> list[BlindRead]:
+        """The readers who could not say what it was, and what they guessed
+        instead. What the rewrite is actually handed - "one of them thought it
+        was an agency retainer" names the paragraph that has to change, and a
+        bare count does not."""
+        return [read for read in self.reported if not read.understood]
+
+    @property
     def landed(self) -> bool:
         """Whether the panel would click: more than half of the readers who
         reported back would have.
@@ -240,6 +288,14 @@ class PanelRead(BaseModel):
         reported = self.reported
         if not reported:
             return "nobody could read it"
+        if (lost := len(self.confused)) :
+            # Said first and instead of the frequency, because the frequency
+            # is an estimate of what people do with an email they understood.
+            return (
+                f"{lost} of {len(reported)} could not say what it was"
+                if len(reported) > 1
+                else "they could not say what it was"
+            )
         if any(read.clicks_in_100 is not None for read in reported):
             return f"about {self.clicks_in_100:.0f} in 100 would click"
         clicked = sum(1 for read in reported if read.would_act)

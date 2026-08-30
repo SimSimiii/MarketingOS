@@ -636,6 +636,7 @@ class EmailCampaignPipeline:
                 landed=outcome.best.read.landed,
                 rewrites_stopped_helping=outcome.stopped_early,
                 read_reported=outcome.best.read.has_verdict,
+                understood=outcome.best.read.understood,
                 evidence_assigned=outcome.brief.evidence_ids,
                 evidence_spent=list(outcome.best.substantiation.carried),
                 attributions=outcome.best.substantiation.attributions,

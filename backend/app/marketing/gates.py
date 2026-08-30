@@ -22,11 +22,11 @@ from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
-from app.knowledge.artifacts import OfferSheet
+from app.knowledge.artifacts import BusinessProfile, OfferSheet
 from app.knowledge.ledger import Evidence, EvidenceIndex
 from app.market.positioning import PositioningMap
 from app.market.sameness import check as sameness_check
-from app.marketing.email_copy import Email, render_email, structural_issues
+from app.marketing.email_copy import Email, render_email, strip_markup, structural_issues
 from app.marketing.substantiation import Substantiation, unspent_issues
 from app.marketing.substantiation import assess as assess_substantiation
 
@@ -401,11 +401,140 @@ def sameness_gate(email: Email, positioning: PositioningMap | None = None) -> Ga
     )
 
 
+# ----------------------------------------------------------------- clarity
+
+
+#: Words in a company name that identify nothing. "Acme Labs" and "Acme" are
+#: the same company to a reader; "Labs" on its own in a sentence is not the
+#: company being named. Without this the check passes on any email containing
+#: the word "group".
+_NAME_NOISE = frozenset(
+    {
+        "inc", "ltd", "llc", "plc", "gmbh", "co", "corp", "corporation",
+        "company", "group", "labs", "lab", "studio", "studios", "technologies",
+        "technology", "software", "systems", "solutions", "digital", "team",
+        "the", "and", "app", "ai", "io", "hq",
+    }
+)
+
+#: Words that appear in every category description and so cannot tell a reader
+#: what kind of thing they are being offered.
+_CATEGORY_NOISE = frozenset(
+    {
+        "platform", "tool", "tools", "solution", "solutions", "software",
+        "service", "services", "product", "products", "system", "systems",
+        "app", "application", "company", "business", "based", "cloud", "saas",
+        "management", "modern", "with", "that", "your", "their", "and", "for",
+        "the",
+    }
+)
+
+
+def _identifying_words(name: str) -> list[str]:
+    words = [word for word in re.findall(r"[a-z0-9]{2,}", name.lower())]
+    distinctive = [word for word in words if word not in _NAME_NOISE]
+    # A company genuinely called "The Software Group" has no distinctive word,
+    # and refusing to check is better than checking against "group".
+    return distinctive or ([] if len(words) > 1 else words)
+
+
+def clarity_gate(email: Email, business: BusinessProfile) -> GateReport:
+    """Would a stranger finish this email knowing what is being sold?
+
+    The check that was missing, and the cheapest one in the file. Every other
+    gate here asks whether the copy is well-formed, honest, grounded and not
+    interchangeable - and a draft can pass all of them while never once saying
+    what the thing is. That is not a rare failure: it is what the rest of the
+    system's own advice produces when followed too well. The writer is told to
+    open on the reader rather than the product, to argue one idea, to prefer
+    specifics over adjectives and to stay under two hundred words, and the
+    email that results describes a Tuesday with great precision and leaves the
+    product an unnamed "it".
+
+    Two findings, and only the first blocks.
+
+    **The offering is never named.** Searched everywhere a reader looks for it
+    and deliberately *not* in the sign-off: a name that appears only under
+    "- the Notewright team" has answered who sent this, which is a different
+    question from what this is. A reader who reaches the link without ever
+    meeting the name has nothing to attach the click to, and no amount of
+    rewriting the argument fixes it. Blocking, because it is a fact about the
+    text rather than a matter of taste - and because the cold reader, who is
+    the only other thing in the system that would notice, costs a model call
+    and reports it as one line among nine.
+
+    **The email never says what kind of thing it is.** Named, but named the
+    way a stranger's surname is: the reader now has a proper noun and still
+    could not say whether it is software, an agency or a newsletter. Advisory,
+    because a company whose category is "developer tooling" can legitimately
+    establish that through a mechanism rather than by using either word, and a
+    gate that blocked on vocabulary would fail exactly the concrete drafts it
+    is supposed to protect.
+    """
+    wanted = _identifying_words(business.company_name)
+    if not wanted:
+        return GateReport()
+
+    # Everywhere the reader is actually looking, and nowhere else. The
+    # greeting and the sign-off are the envelope: they say who this is from.
+    visible = _normalized(
+        " ".join(
+            (
+                email.subject,
+                email.preview_text,
+                email.eyebrow,
+                email.headline,
+                strip_markup(email.body),
+                email.call_to_action,
+                email.postscript,
+            )
+        )
+    )
+    named = any(re.search(rf"\b{re.escape(word)}\b", visible) for word in wanted)
+    if not named:
+        return _report(
+            "clarity",
+            [
+                (
+                    f"the email never names {business.company_name} anywhere the reader is "
+                    "reading - not in the subject, not in the body, not on the link. It is "
+                    "under the sign-off, which tells them who sent this and not what it is. "
+                    "A stranger finishes this with nothing to attach the click to: name the "
+                    "thing once, plainly, before the ask"
+                )
+            ],
+            GateSeverity.BLOCKING,
+        )
+
+    category = [
+        word
+        for word in re.findall(r"[a-z]{3,}", business.category.lower())
+        if word not in _CATEGORY_NOISE
+    ]
+    if category and not any(
+        re.search(rf"\b{re.escape(word)}", visible) for word in category
+    ):
+        return _report(
+            "clarity",
+            [
+                (
+                    f"{business.company_name} is named, but nothing on the page says what kind "
+                    f"of thing it is - the reader gets a proper noun and never learns this is "
+                    f"{business.category}. If the mechanism you describe does not make that "
+                    "obvious on one reading, say it in the sentence that introduces the name"
+                )
+            ],
+            GateSeverity.ADVISORY,
+        )
+    return GateReport()
+
+
 def run_all(
     email: Email,
     *,
     evidence: EvidenceIndex,
     offer: OfferSheet,
+    business: BusinessProfile | None = None,
     previous: list[Email] | None = None,
     merge_fields: tuple[str, ...] | list[str] | None = None,
     extra_banned: tuple[str, ...] = (),
@@ -417,7 +546,8 @@ def run_all(
     actually standing on.
 
     Order matters only for readability of the feedback: structure first
-    (the draft is malformed), then honesty, then deliverability, then variety.
+    (the draft is malformed), then honesty, then deliverability, then whether
+    a stranger can tell what it is, then variety.
 
     The substantiation is returned beside the report rather than folded into
     it because it is not only a finding. Two of its three counts decide which
@@ -436,6 +566,7 @@ def run_all(
         spam_gate(email),
         overlap_gate(email, previous or []),
         call_to_action_gate(email, offer),
+        clarity_gate(email, business or BusinessProfile()),
         substantiation_gate(substantiation),
         sameness_gate(email, positioning),
     ):

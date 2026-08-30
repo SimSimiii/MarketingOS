@@ -26,6 +26,49 @@ class EmailBrief(BaseModel):
     job: str = ""
     #: The one thing it argues. Two briefs must never be able to swap these.
     single_idea: str = ""
+    #: --- the argument, in four beats -------------------------------------
+    #:
+    #: `single_idea` is the claim this email makes. These four are the
+    #: argument that makes the claim mean anything, and until they existed
+    #: the brief had no place to put one. A writer given a claim, proof for
+    #: the claim and an objection to answer writes an assertion with a
+    #: citation attached: true, checkable, and no reason for a stranger to
+    #: care. What was missing is the shape every piece of persuasion has -
+    #: here is what you are living with, here is what you do about it now,
+    #: here is why that keeps failing, here is what this does instead.
+    #:
+    #: Filled by the Strategist, the only role with both the audience model
+    #: and the positioning map in front of it. Left empty they render as a
+    #: refusal to invent one, which is the honest answer and the one that
+    #: tells the writer to argue from what it does have.
+    #:
+    #: The problem as the reader would say it out loud, in their words. Not
+    #: the problem the product solves - the one they would name unprompted if
+    #: somebody asked what their week was like.
+    felt_need: str = ""
+    #: What they do about it today. A spreadsheet, an in-house script, an
+    #: agency, a junior's Thursday, or nothing at all. Every reader is
+    #: already solving this somehow, and copy that does not know how is
+    #: arguing against an alternative it has never met.
+    status_quo: str = ""
+    #: Where that approach structurally falls short - the reason it fails
+    #: that is about the approach and not about the people using it. This is
+    #: the beat the system had no field for and could therefore never argue.
+    #: It is what makes a claim land: "we are fast" is a boast, and "the
+    #: reason every one of these is slow is that it re-reads the whole corpus
+    #: per call" is an argument. Only the second earns the sentence after it.
+    #:
+    #: About the category's approach, never about a named competitor. Naming
+    #: a rival moves the email onto their ground and hands the reader a
+    #: second brand to think about; naming the mechanism they all share is
+    #: the same insight with none of that cost.
+    why_it_fails: str = ""
+    #: What this product does instead, at the level of how rather than what.
+    #: The reason it is not subject to the failure above - the design
+    #: decision, the constraint, the thing it does differently. Not a
+    #: benefit: "so you save time" is where a mechanism gets thrown away and
+    #: replaced by the adjective it was supposed to have earned.
+    mechanism: str = ""
     #: Other claims this slot could have owned, best first.
     #:
     #: Which argument a stranger responds to is not derivable from the brief -
@@ -63,6 +106,33 @@ class EmailBrief(BaseModel):
     #: Angles, proofs and opening moves already spent by earlier emails.
     must_not_reuse: list[str] = Field(default_factory=list)
 
+    def render_argument(self) -> str:
+        """The four beats, as the shape of the email rather than as fields.
+
+        Rendered together and in order, because the order is the point. A
+        writer handed `why_it_fails` inside a flat list of eleven attributes
+        treats it as one more thing that could go on the page; handed it as
+        the third beat of an argument, it is the sentence without which the
+        fourth one means nothing.
+        """
+        beats = [
+            ("What they are actually living with", self.felt_need),
+            ("What they do about it today", self.status_quo),
+            ("Why that keeps falling short", self.why_it_fails),
+            ("What this does instead, and how", self.mechanism),
+        ]
+        written = [(label, value.strip()) for label, value in beats if value.strip()]
+        if not written:
+            return (
+                "    Not established - nothing was handed down about what this reader does "
+                "today or why it falls short. Do not invent a status quo to knock down: "
+                "argue from the evidence and the specifics you were given."
+            )
+        return "\n".join(
+            f"    {index}. {label}: {value}"
+            for index, (label, value) in enumerate(written, start=1)
+        )
+
     def render(self) -> str:
         # Deliberately without `alternative_ideas`. A writer shown the claims
         # this email could have argued writes an email that gestures at all of
@@ -72,6 +142,7 @@ class EmailBrief(BaseModel):
             f"Position: {self.position}\n"
             f"Its job: {self.job}\n"
             f"The one idea it owns: {self.single_idea}\n"
+            f"The argument it makes, in this order:\n{self.render_argument()}\n"
             f"What has to change in their head: {self.belief_shift or 'not specified'}\n"
             f"Evidence it spends: {', '.join(self.evidence_ids) or 'none assigned'}\n"
             f"What it leaves out on purpose: {'; '.join(self.must_not_say) or 'nothing named'}\n"
@@ -103,6 +174,27 @@ class CampaignBrief(BaseModel):
     reader_segment: str = ""
     #: The one promise the whole campaign makes.
     promise: str = ""
+    #: What this company sells, in one plain sentence a stranger could repeat
+    #: back. The sentence every email in the sequence has to leave the reader
+    #: holding, however it gets there.
+    #:
+    #: Campaign-level rather than per-email because it is the same sentence
+    #: every time and it is not the argument - each email argues its own idea
+    #: and all of them are selling the same thing. Written by the Strategist
+    #: rather than lifted from the business profile because the profile says
+    #: what the company does and this says what it is *to this reader*: the
+    #: same product is "a way to stop losing Friday afternoons" to one
+    #: segment and "an audit trail your compliance team will accept" to
+    #: another, and a writer handed the wrong one writes past its reader.
+    #:
+    #: This exists because of a specific, repeatable failure. Every rule the
+    #: writer follows pushes the product off the page - open on the reader,
+    #: argue one idea, prefer specifics to adjectives, stay under two hundred
+    #: words - and followed well they produce an email that describes a
+    #: Tuesday with real precision and never says what is being sold. The
+    #: cold reader would report it and nothing consumed the report. Now the
+    #: sentence is decided once, in the brief, where it can be checked.
+    orientation: str = ""
     #: How the sequence escalates from first to last.
     arc: str = ""
     sequence_rationale: str = ""
@@ -118,6 +210,7 @@ class CampaignBrief(BaseModel):
         return (
             f"How the request was read: {self.interpretation}\n"
             f"Writing to: {self.reader}\n"
+            f"What we are selling them, in one sentence: {self.orientation}\n"
             f"The promise: {self.promise}\n"
             f"The arc: {self.arc}\n"
             f"Why this order: {self.sequence_rationale}\n\n"

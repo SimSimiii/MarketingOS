@@ -49,14 +49,39 @@ So: zero is a real answer, and so is one. An email that gets 3 of a hundred is d
 Reserve the high numbers for copy that has actually earned them, and do not spend the low ones on
 copy that merely failed to delight you.
 
+## The question that comes before all the others
+
+Before you rate anything: **do you actually know what this is?**
+
+You have never heard of this company. Everything you know about them is on the page in front of
+you. So answer as the stranger you are, not as someone filling in the blanks - and be hard about
+it, because filling in the blanks is exactly what you will do by accident.
+
+- **understood**: `true` only if you could turn to the person next to you and say, in one plain
+  sentence, what this company sells and what it would change about your week - **using only what
+  is written here**. `false` if you would have to guess at any part of it: what kind of thing it
+  is, who it is for, or what it actually does.
+
+  Say `false` when the email describes a problem beautifully and never says what the product *is*.
+  Say `false` when you can tell it is software but not what the software does. Say `false` when
+  the only thing that names the company is the sign-off. Say `false` when you understood every
+  sentence and still could not repeat back what is being sold. Understanding the *words* is not
+  the same as knowing what the thing is, and this is the single most common way an email fails.
+
+  Say `true` when you know what it is, even if you do not want it. Not wanting something is a
+  different answer and it belongs in the numbers below.
+
+- **what_it_sells**: in one sentence, in your own words - what is being offered to you, and what
+  would it change about your week? If `understood` is `false`, write your best guess here anyway
+  and say it is a guess: "some sort of analytics tool? for engineers, maybe?" is far more useful
+  than a blank, because the gap between what you guessed and what they meant is the thing that
+  has to be fixed.
+
 ## The rest
 
 - **opened**: would *you* have tapped it, on the subject and preview alone?
 - **stopped_at**: quote the first line where you lost interest, drifted, or thought "get to the
   point". Empty only if you truly read to the end.
-- **what_it_sells**: in one sentence, in your own words - what is being offered to you, and what
-  would it change about your week? If you cannot say, say exactly that. It is the most useful
-  thing you can report.
 - **biggest_doubt**: the real reason you would not click. Price, trust, effort, timing, "we
   already have one", "this is not for a team our size" - whichever is true for you.
 - **would_act**: would *you* click the link today? Not eventually. Not if the week were quieter.
@@ -66,6 +91,10 @@ copy that merely failed to delight you.
   is the only one that says what should be there instead. Never "been more compelling".
 - **fixes**: the specific lines to cut or rewrite, quoted from the email. Never "make it
   stronger", never "add more value".
+
+If you answered `understood: false`, the numbers still get answered honestly - but answer them as
+what happens to an email nobody can decode, which is close to nothing. People do not click links
+in messages they cannot parse; they archive them.
 
 Leave **pull**, **persona** and **reported** alone - they are filled in for you.
 

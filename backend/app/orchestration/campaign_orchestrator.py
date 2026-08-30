@@ -381,6 +381,15 @@ class _PersistenceObserver(RunObserver):
                         "objection": item.objection,
                         "evidence_ids": item.evidence_ids,
                         "must_not_say": item.must_not_say,
+                        # The argument, not only the claim. `single_idea` is
+                        # what the email asserts; these four are why anybody
+                        # should care, and a timeline that shows the first
+                        # without the others cannot say whether the brief was
+                        # the problem.
+                        "felt_need": item.felt_need,
+                        "status_quo": item.status_quo,
+                        "why_it_fails": item.why_it_fails,
+                        "mechanism": item.mechanism,
                     }
                     for item in brief.emails
                 ],
@@ -466,11 +475,21 @@ class _PersistenceObserver(RunObserver):
         # entirely - which is the variance the panel is bought for.
         self._emitter.emit(
             "review",
-            f"Email {position} read cold: {read.pull:.0f}/10 - {read.verdict_line()}",
+            (
+                f"Email {position} read cold: {read.verdict_line()}"
+                if not read.understood
+                else f"Email {position} read cold: {read.pull:.0f}/10 - {read.verdict_line()}"
+            ),
             agent_id="blind_reader",
             data={
                 "approved": read.landed,
                 "conversion_score": round(read.pull),
+                # Whether the panel could say what the email sold, beside the
+                # score rather than folded into it. A timeline row showing
+                # "3/10" for copy nobody could decode reports the wrong
+                # problem: the number is an estimate of what people do with an
+                # email they understood.
+                "understood": read.understood,
                 "summary": primary.what_it_sells,
                 "issues": primary.fixes,
                 "position": position,
@@ -485,6 +504,7 @@ class _PersistenceObserver(RunObserver):
                         "pull": item.pull,
                         "would_act": item.would_act,
                         "what_it_sells": item.what_it_sells,
+                        "understood": item.understood,
                         "biggest_doubt": item.biggest_doubt,
                         "stopped_at": item.stopped_at,
                         "fixes": item.fixes,

@@ -560,6 +560,14 @@ export type LiveExecutionEvent = LiveEventBase &
           single_idea: string;
           objection: string;
           evidence_ids: string[];
+          /** The argument the email makes, in four beats: what the reader is
+           * living with, what they do about it today, why that keeps falling
+           * short, and what this product does instead. `single_idea` is the
+           * claim; these are what make the claim mean anything. */
+          felt_need?: string;
+          status_quo?: string;
+          why_it_fails?: string;
+          mechanism?: string;
           /** What this email deliberately leaves out, though it could say it. */
           must_not_say?: string[];
         }[];
@@ -679,6 +687,12 @@ export type LiveExecutionEvent = LiveEventBase &
         type: "review";
         approved: boolean;
         conversion_score: number;
+        /** Whether a majority of the panel could say what the email was
+         * selling. False is not a low score - it means the readers never
+         * decoded the email, which makes `conversion_score` an estimate of a
+         * question they were not able to answer. Render it instead of the
+         * number, not beside it. */
+        understood?: boolean;
         summary: string;
         issues: string[];
         position: number;
@@ -693,6 +707,9 @@ export type LiveExecutionEvent = LiveEventBase &
           pull: number;
           would_act: boolean;
           what_it_sells: string;
+          /** Whether `what_it_sells` is what this reader knew or what they
+           * guessed. A fluent sentence reads the same either way. */
+          understood?: boolean;
           biggest_doubt: string;
           stopped_at: string;
           fixes: string[];

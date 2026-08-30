@@ -121,7 +121,7 @@ _CLICHE_DRAFT = (
     "Every one of them started as a changelog nobody read, and ended as a paragraph\n"
     "you rewrote twice before shipping it. The work was done on Tuesday, and\n"
     "describing it is the part nobody scheduled time for.\n\n"
-    "This turns commits you already pushed into that paragraph, in about nine seconds.\n"
+    "Notewright turns commits you already pushed into that paragraph, in nine seconds.\n"
     "You edit it or you send it, and either way the afternoon is yours again.\n\n"
     "Most people ask whether it sounds like them. It reads your older notes first,\n"
     "so it does, and you can tell in one read whether that is true.\n"

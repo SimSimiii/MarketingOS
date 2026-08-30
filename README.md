@@ -354,6 +354,36 @@ critic, skips the subject bake-off and allows one rewrite — every mechanism th
 is off, and the number it produces looks to a user like a verdict on their product. When a run
 comes in under the floor with three or more of those switched off, the receipt says so.
 
+**The most common failure was not bad writing. It was good writing.** Every rule the writer
+follows pushes the product off the page: open on the reader and not on the company, argue one
+idea, prefer the specific to the adjective, stay under two hundred words. Followed with skill,
+they produce an email that describes somebody's Tuesday with real precision, calls the product
+"it" four times, and leaves a stranger with nothing to click toward. The Blind Reader had been
+reporting this the whole time — "what it sells: honestly, I could not tell" — and the sentence
+reached no comparison, no gate and no rewrite rule. The draft competed on its click estimate,
+which is an estimate of what people do with an email they understood.
+
+It is measured twice now, once free and once as judgment. `clarity_gate` is a string search: it
+looks for the offering everywhere the reader is actually reading and deliberately *not* in the
+sign-off, because a name under "- the Notewright team" answers who sent this rather than what
+this is. `BlindRead.understood` is the half a regular expression cannot do — could they say what
+was being sold *without guessing* — and it is a veto rather than a term. A draft the panel could
+not decode loses to one they could at any score, does not ship, and the rewrite is handed their
+guesses rather than a number: "one of them thought it was an agency retainer" names a distance a
+writer can close.
+
+**A claim with a citation is not an argument.** The brief named the one idea an email owns, the
+evidence that carries it and the objection it kills, and a writer given those three writes
+something true, checkable and with no reason for a stranger to act on it. What was missing is the
+shape persuasion actually has: here is what you are living with, here is what you already do
+about it, here is why that keeps failing, here is what this does instead. Those are four fields
+on the Email Brief now, and the third is the one nothing else could supply. It is read off the
+positioning map — which had been used only to *avoid* crowded claims, never to argue — and it is
+about the approach a whole category shares, never about a named competitor. Naming a rival moves
+the email onto their ground and hands the reader a second brand to go and look up; naming the
+mechanism they all share is the same insight with none of that cost. Without that beat, the
+fourth one is a boast, and a stranger reads boasts as noise.
+
 **A role exists when its ignorance is load-bearing.** The Blind Reader is never shown the
 request, the brief or the product docs, and that is the entire mechanism: ask a model that
 has read the brief what an email is selling and it answers from the brief. What it must be
