@@ -14,7 +14,7 @@ import sys
 import pytest
 
 from app.ai import claude_provider
-from app.ai.base import AIMessage, AIRequest
+from app.ai.base import AIMessage, AIRequest, ProviderCallError
 from app.ai.claude_provider import ClaudeProvider, _needs_proactor_thread
 
 
@@ -24,8 +24,9 @@ class _FakeTextBlock:
 
 
 class _FakeAssistantMessage:
-    def __init__(self, text: str) -> None:
+    def __init__(self, text: str, error: str | None = None) -> None:
         self.content = [_FakeTextBlock(text)]
+        self.error = error
 
 
 def _install_fake_query(monkeypatch, chunks: list[str], loops: list[object]) -> None:
@@ -117,6 +118,27 @@ async def test_stream_failures_reach_the_caller(monkeypatch):
     with pytest.raises(RuntimeError, match="cli exploded"):
         async for _ in ClaudeProvider(default_model="test-model").stream(_request()):
             pass
+
+
+@pytest.mark.asyncio
+async def test_authentication_failure_keeps_the_actionable_cli_message(monkeypatch):
+    async def failed_query(prompt: str, options):
+        yield _FakeAssistantMessage(
+            "Failed to authenticate: OAuth session expired and could not be refreshed",
+            error="authentication_failed",
+        )
+
+    monkeypatch.setattr(claude_provider, "query", failed_query)
+    monkeypatch.setattr(claude_provider, "AssistantMessage", _FakeAssistantMessage)
+    monkeypatch.setattr(claude_provider, "TextBlock", _FakeTextBlock)
+    monkeypatch.setattr(claude_provider, "_needs_proactor_thread", lambda: False)
+
+    with pytest.raises(ProviderCallError) as excinfo:
+        await ClaudeProvider(default_model="test-model").generate(_request())
+
+    assert excinfo.value.retryable is False
+    assert "OAuth session expired" in str(excinfo.value)
+    assert "claude auth login" in str(excinfo.value)
 
 
 def _captured_call(monkeypatch) -> dict:

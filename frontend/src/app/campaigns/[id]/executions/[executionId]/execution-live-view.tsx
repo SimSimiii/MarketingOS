@@ -187,7 +187,21 @@ export function ExecutionLiveView({
 
   async function handleRestart() {
     try {
-      const execution = await api.restartCampaign(campaignId);
+      const advice = await api.getCampaignGenerationAdvice(campaignId);
+      if (
+        advice.override_required &&
+        !window.confirm(
+          [
+            `${advice.recommendation?.state.replaceAll("_", " ") ?? advice.readiness}: ${advice.user_message}`,
+            ...advice.reasons.map((reason) => `• ${reason}`),
+            "",
+            "Generate anyway? This override will be recorded with the new run.",
+          ].join("\n"),
+        )
+      ) {
+        return;
+      }
+      const execution = await api.restartCampaign(campaignId, advice.override_required);
       router.push(`/campaigns/${campaignId}/executions/${execution.id}`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not restart");

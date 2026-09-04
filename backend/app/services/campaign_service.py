@@ -19,6 +19,7 @@ from app.models.execution_log import ExecutionLog
 from app.models.generated_asset import GeneratedAsset
 from app.models.knowledge_artifacts import KnowledgeArtifactSet
 from app.models.knowledge_document import KnowledgeDocument
+from app.models.market import ProspectRow
 from app.orchestration import execution_manager
 from app.orchestration.execution_registry import registry
 from app.repositories.agent_execution_repository import AgentExecutionRepository
@@ -27,7 +28,12 @@ from app.repositories.campaign_repository import CampaignRepository
 from app.repositories.execution_log_repository import ExecutionLogRepository
 from app.repositories.generated_asset_repository import GeneratedAssetRepository
 from app.repositories.knowledge_repository import KnowledgeDocumentRepository
-from app.schemas.campaign import CampaignCreateRequest, CampaignPolicyUpdate, RunForecast
+from app.schemas.campaign import (
+    CampaignCreateRequest,
+    CampaignGenerationAdvice,
+    CampaignPolicyUpdate,
+    RunForecast,
+)
 
 #: Rough conversion from the word count a document stores to the characters
 #: the evidence pass reads. Only ever feeds a call-count estimate, and the
@@ -42,6 +48,10 @@ _CHARS_PER_WORD = 6
 _REBUILT_KEYS = frozenset({"preset", "email_tier"})
 
 
+def _audience_key(value: str) -> str:
+    return " ".join(value.casefold().split())
+
+
 class CampaignAlreadyRunningError(Exception):
     """Raised when a campaign already has an execution in flight - starting
     a second one concurrently would let two pipelines write the same
@@ -54,6 +64,10 @@ class NoExecutionToRestartError(Exception):
 
 class ExecutionNotCancellableError(Exception):
     """Raised when /cancel is called on an execution that isn't running."""
+
+
+class CampaignTargetError(ValueError):
+    """A company target does not belong to this brand/audience."""
 
 
 class CampaignService:
@@ -89,6 +103,19 @@ class CampaignService:
             # from. Stored as its value rather than the enum so the JSON column
             # round-trips to a plain string.
             policy = {**(policy or {}), "email_tier": str(data.email_tier)}
+        if data.prospect_id is not None:
+            prospect = self._session.get(ProspectRow, data.prospect_id)
+            if prospect is None:
+                raise CampaignTargetError("The selected company no longer exists.")
+            if data.brand_id is None or prospect.brand_id != data.brand_id:
+                raise CampaignTargetError("The selected company does not belong to this brand.")
+            if data.audience_segment and _audience_key(prospect.segment) != _audience_key(
+                data.audience_segment
+            ):
+                raise CampaignTargetError(
+                    "The selected company was qualified for a different audience segment."
+                )
+            fields["audience_segment"] = prospect.segment
         return self._campaigns.create(
             Campaign(
                 **fields,
@@ -174,6 +201,9 @@ class CampaignService:
                 target_market=campaign.target_market,
                 goals=campaign.goals,
                 audience_segment=campaign.audience_segment,
+                prospect_id=campaign.prospect_id,
+                sender_name=campaign.sender_name,
+                sender_role=campaign.sender_role,
                 cta_url=campaign.cta_url,
                 policy=campaign.policy,
                 model_overrides=campaign.model_overrides,
@@ -321,18 +351,142 @@ class CampaignService:
 
     # ---------------------------------------------------------- execution
 
-    async def start_execution(self, campaign: Campaign) -> CampaignExecution:
+    def generation_advice(self, campaign: Campaign) -> CampaignGenerationAdvice:
+        """Free deterministic preflight; it never launches or calls a model."""
+        from app.market.qualification import QualificationClass
+        from app.market.relevance import (
+            CampaignReadiness,
+            CampaignRecommendation,
+            DossierState,
+            RecommendationState,
+        )
+        from app.services.market_service import MarketService
+
+        selected = (campaign.audience_segment or "").strip()
+        if campaign.brand_id is None or not selected:
+            return CampaignGenerationAdvice(
+                campaign_id=campaign.id,
+                readiness=CampaignReadiness.GO,
+                reasons=["No persisted market recommendation applies to this campaign."],
+                user_message="No audience-level qualification recommendation applies.",
+            )
+
+        market = MarketService(self._session)
+        status = market.relevance_status(campaign.brand_id, selected)
+        recommendation = status.dossier.recommendation if status.dossier else None
+        if recommendation is None:
+            recommendation = CampaignRecommendation(
+                state=RecommendationState.DISCOVERY_ONLY,
+                readiness=CampaignReadiness.DISCOVERY_ONLY,
+                reasons=[
+                    "No current V2 recommendation establishes product-to-audience fit."
+                ],
+                recommended_next_action=(
+                    "Build or rebuild the Relevance Dossier V2, or generate explicitly as "
+                    "an audience-level hypothesis."
+                ),
+                override_risk=(
+                    "The campaign may be weak because product fit has not been qualified. "
+                    "Copy remains limited to licensed product claims."
+                ),
+            )
+        elif status.status is not DossierState.CURRENT:
+            recommendation = recommendation.model_copy(
+                update={
+                    "state": RecommendationState.DISCOVERY_ONLY,
+                    "readiness": CampaignReadiness.DISCOVERY_ONLY,
+                    "reasons": [
+                        *recommendation.reasons,
+                        "The V2 recommendation is stale against its current inputs.",
+                    ],
+                    "recommended_next_action": (
+                        "Rebuild the relevance dossier before treating this audience or "
+                        "its companies as qualified."
+                    ),
+                    "override_risk": (
+                        "The product profile, research, market scan, or company "
+                        "qualifications changed after this recommendation was built."
+                    ),
+                }
+            )
+
+        reasons = list(recommendation.reasons)
+        selected_name = ""
+        selected_qualification = None
+        company_requires_override = False
+        if campaign.prospect_id is not None:
+            row = self._session.get(ProspectRow, campaign.prospect_id)
+            if row is None or row.brand_id != campaign.brand_id:
+                reasons.append("The selected company is no longer available for qualification.")
+                company_requires_override = True
+            else:
+                selected_name = row.name
+                selected_qualification = market.current_company_qualification(
+                    campaign.brand_id, selected, row
+                )
+                if selected_qualification.classification is not QualificationClass.QUALIFIED:
+                    reasons.append(
+                        f"{row.name} is {selected_qualification.classification}, not QUALIFIED."
+                    )
+                    company_requires_override = True
+
+        negative = recommendation.readiness in {
+            CampaignReadiness.DISCOVERY_ONLY,
+            CampaignReadiness.NO_GO,
+        }
+        narrow_outside = (
+            recommendation.readiness is CampaignReadiness.GO_NARROW
+            and campaign.prospect_id is not None
+            and company_requires_override
+        )
+        override_required = negative or narrow_outside or company_requires_override
+        message = (
+            recommendation.override_risk
+            if override_required
+            else recommendation.recommended_next_action
+        )
+        return CampaignGenerationAdvice(
+            campaign_id=campaign.id,
+            readiness=recommendation.readiness,
+            recommendation=recommendation,
+            dossier_status=str(status.status),
+            selected_company_name=selected_name,
+            selected_company_qualification=selected_qualification,
+            reasons=list(dict.fromkeys(reasons)),
+            override_required=override_required,
+            user_message=message,
+        )
+
+    async def start_execution(
+        self, campaign: Campaign, *, generate_anyway: bool = False
+    ) -> CampaignExecution:
         if registry.is_campaign_running(campaign.id):
             raise CampaignAlreadyRunningError(
                 "This campaign already has a run in progress."
             )
-        return execution_manager.launch(campaign, self._ai_provider, self._engine)
+        advice = self.generation_advice(campaign)
+        snapshot = advice.model_dump(mode="json")
+        # The recommendation is advisory, not an API permission system. The
+        # UI uses ``generate_anyway`` to record that the warning was the
+        # deliberate action the operator clicked; API clients remain free to
+        # launch without a confirmation handshake, and the receipt still says
+        # the run happened despite a negative/narrow recommendation.
+        snapshot["override_explicit"] = generate_anyway
+        return execution_manager.launch(
+            campaign,
+            self._ai_provider,
+            self._engine,
+            recommendation_snapshot=snapshot,
+            generated_despite_recommendation=advice.override_required,
+        )
 
-    async def restart_execution(self, campaign: Campaign) -> CampaignExecution:
+    async def restart_execution(
+        self, campaign: Campaign, *, generate_anyway: bool = False
+    ) -> CampaignExecution:
         executions = self._executions.list_by_campaign(campaign.id)
         if not executions:
             raise NoExecutionToRestartError("This campaign has never been run.")
-        return await self.start_execution(campaign)
+        return await self.start_execution(campaign, generate_anyway=generate_anyway)
 
     def cancel_execution(self, execution: CampaignExecution) -> None:
         if not registry.cancel(execution.id):

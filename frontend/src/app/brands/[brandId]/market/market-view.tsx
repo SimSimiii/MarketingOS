@@ -138,6 +138,41 @@ export function MarketView({
     [brand.id],
   );
 
+  const researchAudience = useCallback(
+    async (segment: string) => {
+      setStarting(true);
+      try {
+        setJob(await api.startAudienceResearch(brand.id, segment));
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : "Could not start audience research");
+      } finally {
+        setStarting(false);
+      }
+    },
+    [brand.id],
+  );
+
+  const buildDossier = useCallback(
+    async (segment: string, rebuild: boolean) => {
+      setStarting(true);
+      try {
+        const started = await api.startRelevanceDossier(brand.id, segment, rebuild);
+        setJob(started);
+        // Exact-triple reuse finishes inside the request and therefore never
+        // enters the polling effect. Refresh the server data here too.
+        if (started.state === "done") {
+          toast.success(started.summary || "Relevance dossier is current");
+          router.refresh();
+        }
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : "Could not build that dossier");
+      } finally {
+        setStarting(false);
+      }
+    },
+    [brand.id, router],
+  );
+
   const { positioning, profiles, rivals, note } = initialMarket;
   const pendingProof = initialProof.filter((row) => row.status === "pending").length;
   const alerts = initialRadar.filter(
@@ -257,11 +292,13 @@ export function MarketView({
                actually appears. The panel keeps the user's keep/dismiss
                decisions in local state, which would otherwise survive a
                `router.refresh()` and hide the rows it just fetched. */
-            key={`${initialAudience.map?.mapped_at ?? "none"}:${initialAudience.prospects.length}`}
+            key={`${initialAudience.map?.mapped_at ?? "none"}:${initialAudience.prospects.length}:${initialAudience.research.map((item) => item.version).join("-")}:${initialAudience.relevance.map((item) => `${item.status}-${item.generation_version ?? 0}`).join("-")}`}
             brandId={brand.id}
             audience={initialAudience}
             onMap={() => start("audience")}
             onProspect={findProspects}
+            onResearch={researchAudience}
+            onDossier={buildDossier}
             busy={starting || running}
             runningKind={running ? (job?.kind ?? null) : null}
           />

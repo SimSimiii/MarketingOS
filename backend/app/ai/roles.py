@@ -55,6 +55,7 @@ class RoleSpec:
 
 
 _WEB = frozenset({ResearchTool.WEB_SEARCH, ResearchTool.WEB_FETCH})
+_SEARCH = frozenset({ResearchTool.WEB_SEARCH})
 
 
 ROLE_CATALOG: dict[str, RoleSpec] = {
@@ -161,6 +162,29 @@ ROLE_CATALOG: dict[str, RoleSpec] = {
             # judgment and is the whole product of the pass.
             tier=ModelTier.DEEP,
             tools=_WEB,
+        ),
+        RoleSpec(
+            id="audience_researcher",
+            label="Audience researcher",
+            blurb=(
+                "Locates audience sources, then extracts only what our own fetch can verify."
+            ),
+            phase=RolePhase.MARKET,
+            tier=ModelTier.BALANCED,
+            # Only the locating turn asks for this. The synthesis turn passes
+            # an explicit empty tool list and sees only process-fetched text.
+            tools=_SEARCH,
+        ),
+        RoleSpec(
+            id="relevance_analyst",
+            label="Relevance analyst",
+            blurb=(
+                "Ranks verified product evidence for one researched audience in its current "
+                "market position."
+            ),
+            phase=RolePhase.MARKET,
+            tier=ModelTier.DEEP,
+            # Deliberately closed-world: the call site also passes tools=[].
         ),
         RoleSpec(
             id="prospect_finder",

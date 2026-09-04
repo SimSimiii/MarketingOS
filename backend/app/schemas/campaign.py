@@ -2,6 +2,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.market.qualification import CompanyQualification
+from app.market.relevance import CampaignReadiness, CampaignRecommendation
 from app.marketing.policy import PolicyPreset
 from app.marketing.render_html import EmailTier
 from app.models.enums import AssetType, CampaignStatus, ExecutionStatus
@@ -35,6 +37,9 @@ class CampaignCreateRequest(BaseModel):
     #: buyer the market suggested rather than the one the company's own site
     #: describes. A name rather than an id - see app.models.campaign.
     audience_segment: str | None = None
+    #: Optional named company from the qualified prospect list. Without it
+    #: the campaign remains audience-level.
+    prospect_id: UUID | None = None
     #: Where the call to action points, if the user knows. Falls back to the
     #: brand's website; without either, the CTA renders as a marked slot.
     cta_url: str | None = None
@@ -75,6 +80,7 @@ class CampaignRead(BaseModel):
     sender_role: str | None = None
     brand_id: UUID | None = None
     audience_segment: str | None = None
+    prospect_id: UUID | None = None
     cta_url: str | None = None
     status: CampaignStatus
     archived_at: UtcDatetime | None
@@ -106,6 +112,23 @@ class CampaignPolicyUpdate(BaseModel):
     #: `None` means "leave what is stored alone", so a caller changing only the
     #: preset does not silently wipe a picker the user filled in.
     model_overrides: dict[str, str] | None = None
+
+
+class CampaignStartRequest(BaseModel):
+    generate_anyway: bool = False
+
+
+class CampaignGenerationAdvice(BaseModel):
+    campaign_id: UUID
+    readiness: CampaignReadiness
+    recommendation: CampaignRecommendation | None = None
+    dossier_status: str = "missing"
+    selected_company_name: str = ""
+    selected_company_qualification: CompanyQualification | None = None
+    reasons: list[str] = Field(default_factory=list)
+    override_required: bool = False
+    can_generate: bool = True
+    user_message: str = ""
 
 
 class GeneratedAssetRead(BaseModel):
@@ -204,6 +227,8 @@ class CampaignExecutionRead(BaseModel):
     #: runs recorded before the column existed still deserialize.
     total_cache_read_tokens: int = 0
     estimated_cost_usd: float
+    recommendation_snapshot: dict | None = None
+    generated_despite_recommendation: bool = False
 
 
 class RunningExecutionRead(CampaignExecutionRead):

@@ -39,6 +39,8 @@ from sqlmodel import Session, col, select
 from app.knowledge.artifacts import KnowledgeArtifacts
 from app.knowledge.compiler import find_gaps
 from app.knowledge.ledger import Evidence
+from app.market.audience_research import AudienceResearch
+from app.market.capabilities import ProductCapabilityProfile
 from app.market.demand import (
     AudienceSegment,
     Contact,
@@ -47,14 +49,19 @@ from app.market.demand import (
     ProspectStatus,
 )
 from app.market.proof import ProofCandidate, ProofKind, ProofStatus, next_evidence_id
+from app.market.qualification import CompanyQualification
 from app.market.radar import MarketSnapshot, RadarEvent, RadarSeverity
+from app.market.relevance import RelevanceDossier
 from app.market.rivals import RivalLead
 from app.models.market import (
     AudienceMapRow,
+    AudienceResearchRow,
     MarketScan,
+    ProductCapabilityProfileRow,
     ProofCandidateRow,
     ProspectRow,
     RadarEventRow,
+    RelevanceDossierRow,
     Rival,
 )
 
@@ -140,6 +147,10 @@ class MarketStore:
     def latest_scan(self, brand_id: UUID) -> MarketSnapshot | None:
         row = self._latest_scan_row(brand_id)
         return MarketSnapshot.model_validate(row.payload) if row and row.payload else None
+
+    def latest_scan_row(self, brand_id: UUID) -> MarketScan | None:
+        """The persisted identity/version behind :meth:`latest_scan`."""
+        return self._latest_scan_row(brand_id)
 
     def scan_history(self, brand_id: UUID, limit: int = 20) -> list[MarketScan]:
         statement = (
@@ -263,6 +274,10 @@ class MarketStore:
         row = self._latest_map_row(brand_id)
         return DemandMap.model_validate(row.payload) if row and row.payload else None
 
+    def latest_map_row(self, brand_id: UUID) -> AudienceMapRow | None:
+        """The current map row when a derived artifact needs its exact version."""
+        return self._latest_map_row(brand_id)
+
     def save_map(self, brand_id: UUID, demand: DemandMap) -> AudienceMapRow:
         previous = self._latest_map_row(brand_id)
         row = AudienceMapRow(
@@ -292,6 +307,283 @@ class MarketStore:
         demand = self.latest_map(brand_id)
         return demand.named(name) if demand is not None else None
 
+    # ----------------------------------------------------- audience research
+
+    def latest_research_row(
+        self, brand_id: UUID, audience: str
+    ) -> AudienceResearchRow | None:
+        key = _audience_key(audience)
+        if not key:
+            return None
+        statement = (
+            select(AudienceResearchRow)
+            .where(col(AudienceResearchRow.brand_id) == brand_id)
+            .where(col(AudienceResearchRow.audience_key) == key)
+            .order_by(col(AudienceResearchRow.version).desc())
+        )
+        return self._session.exec(statement).first()
+
+    def latest_research(
+        self, brand_id: UUID, audience: str
+    ) -> tuple[AudienceResearchRow, AudienceResearch] | None:
+        row = self.latest_research_row(brand_id, audience)
+        if row is None or not row.payload:
+            return None
+        try:
+            return row, AudienceResearch.model_validate(row.payload)
+        except ValidationError:
+            logger.info("market: unreadable audience research payload on row %s", row.id)
+            return None
+
+    def latest_researches(self, brand_id: UUID) -> list[AudienceResearchRow]:
+        """The newest readable row for each audience, preserving older versions."""
+        statement = (
+            select(AudienceResearchRow)
+            .where(col(AudienceResearchRow.brand_id) == brand_id)
+            .order_by(
+                col(AudienceResearchRow.audience_key),
+                col(AudienceResearchRow.version).desc(),
+            )
+        )
+        latest: dict[str, AudienceResearchRow] = {}
+        for row in self._session.exec(statement):
+            if row.audience_key not in latest and row.payload:
+                try:
+                    AudienceResearch.model_validate(row.payload)
+                except ValidationError:
+                    logger.info("market: unreadable audience research payload on row %s", row.id)
+                    continue
+                latest[row.audience_key] = row
+        return list(latest.values())
+
+    def research_history(
+        self, brand_id: UUID, audience: str, limit: int = 20
+    ) -> list[AudienceResearchRow]:
+        statement = (
+            select(AudienceResearchRow)
+            .where(col(AudienceResearchRow.brand_id) == brand_id)
+            .where(col(AudienceResearchRow.audience_key) == _audience_key(audience))
+            .order_by(col(AudienceResearchRow.version).desc())
+            .limit(limit)
+        )
+        return list(self._session.exec(statement))
+
+    def save_research(
+        self,
+        brand_id: UUID,
+        research: AudienceResearch,
+        source_map: AudienceMapRow | None,
+    ) -> AudienceResearchRow:
+        previous = self.latest_research_row(brand_id, research.audience_name)
+        row = AudienceResearchRow(
+            brand_id=brand_id,
+            audience_key=_audience_key(research.audience_name),
+            audience_name=research.audience_name,
+            source_map_id=source_map.id if source_map else None,
+            source_map_version=source_map.version if source_map else None,
+            version=(previous.version + 1) if previous else 1,
+            payload=research.model_dump(mode="json"),
+        )
+        self._session.add(row)
+        self._session.commit()
+        self._session.refresh(row)
+        return row
+
+    # --------------------------------------------------- product truth V2
+
+    def latest_capability_profile_row(
+        self, brand_id: UUID
+    ) -> ProductCapabilityProfileRow | None:
+        statement = (
+            select(ProductCapabilityProfileRow)
+            .where(col(ProductCapabilityProfileRow.brand_id) == brand_id)
+            .order_by(col(ProductCapabilityProfileRow.version).desc())
+        )
+        return self._session.exec(statement).first()
+
+    def latest_capability_profile(
+        self, brand_id: UUID
+    ) -> tuple[ProductCapabilityProfileRow, ProductCapabilityProfile] | None:
+        row = self.latest_capability_profile_row(brand_id)
+        if row is None or not row.payload:
+            return None
+        try:
+            return row, ProductCapabilityProfile.model_validate(row.payload)
+        except ValidationError:
+            logger.info("market: unreadable capability profile payload on row %s", row.id)
+            return None
+
+    def capability_profile_for_knowledge(
+        self,
+        brand_id: UUID,
+        *,
+        knowledge_id: UUID,
+        knowledge_version: int,
+    ) -> tuple[ProductCapabilityProfileRow, ProductCapabilityProfile] | None:
+        statement = (
+            select(ProductCapabilityProfileRow)
+            .where(col(ProductCapabilityProfileRow.brand_id) == brand_id)
+            .where(col(ProductCapabilityProfileRow.knowledge_id) == knowledge_id)
+            .where(col(ProductCapabilityProfileRow.knowledge_version) == knowledge_version)
+            .order_by(col(ProductCapabilityProfileRow.version).desc())
+        )
+        for row in self._session.exec(statement):
+            if not row.payload:
+                continue
+            try:
+                return row, ProductCapabilityProfile.model_validate(row.payload)
+            except ValidationError:
+                logger.info("market: unreadable capability profile payload on row %s", row.id)
+        return None
+
+    def save_capability_profile(
+        self, brand_id: UUID, profile: ProductCapabilityProfile
+    ) -> ProductCapabilityProfileRow:
+        previous = self.latest_capability_profile_row(brand_id)
+        version = (previous.version + 1) if previous else 1
+        normalized = profile.model_copy(update={"version": version})
+        row = ProductCapabilityProfileRow(
+            brand_id=brand_id,
+            knowledge_id=normalized.knowledge_id,
+            knowledge_version=normalized.knowledge_version,
+            version=version,
+            schema_version=normalized.schema_version,
+            payload=normalized.model_dump(mode="json"),
+        )
+        self._session.add(row)
+        self._session.commit()
+        self._session.refresh(row)
+        return row
+
+    # --------------------------------------------------- relevance dossiers
+
+    def latest_dossier_row(
+        self, brand_id: UUID, audience: str
+    ) -> RelevanceDossierRow | None:
+        statement = (
+            select(RelevanceDossierRow)
+            .where(col(RelevanceDossierRow.brand_id) == brand_id)
+            .where(col(RelevanceDossierRow.audience_key) == _audience_key(audience))
+            .order_by(col(RelevanceDossierRow.generation_version).desc())
+        )
+        return self._session.exec(statement).first()
+
+    def latest_dossier(
+        self, brand_id: UUID, audience: str
+    ) -> tuple[RelevanceDossierRow, RelevanceDossier] | None:
+        row = self.latest_dossier_row(brand_id, audience)
+        if row is None or not row.payload:
+            return None
+        try:
+            return row, RelevanceDossier.model_validate(row.payload)
+        except ValidationError:
+            logger.info("market: unreadable relevance dossier payload on row %s", row.id)
+            return None
+
+    def dossier_for_triple(
+        self,
+        brand_id: UUID,
+        audience: str,
+        *,
+        knowledge_id: UUID,
+        knowledge_version: int,
+        research_id: UUID,
+        research_version: int,
+        market_scan_id: UUID,
+        market_scan_version: int,
+    ) -> RelevanceDossierRow | None:
+        statement = (
+            select(RelevanceDossierRow)
+            .where(col(RelevanceDossierRow.brand_id) == brand_id)
+            .where(col(RelevanceDossierRow.audience_key) == _audience_key(audience))
+            .where(col(RelevanceDossierRow.knowledge_id) == knowledge_id)
+            .where(col(RelevanceDossierRow.knowledge_version) == knowledge_version)
+            .where(col(RelevanceDossierRow.audience_research_id) == research_id)
+            .where(
+                col(RelevanceDossierRow.audience_research_version) == research_version
+            )
+            .where(col(RelevanceDossierRow.market_scan_id) == market_scan_id)
+            .where(col(RelevanceDossierRow.market_scan_version) == market_scan_version)
+            .order_by(col(RelevanceDossierRow.generation_version).desc())
+        )
+        return self._session.exec(statement).first()
+
+    def dossier_for_v2_inputs(
+        self,
+        brand_id: UUID,
+        audience: str,
+        *,
+        knowledge_id: UUID,
+        knowledge_version: int,
+        research_id: UUID,
+        research_version: int,
+        market_scan_id: UUID,
+        market_scan_version: int,
+        capability_profile_id: UUID,
+        capability_profile_version: int,
+        qualification_fingerprint: str,
+    ) -> RelevanceDossierRow | None:
+        statement = (
+            select(RelevanceDossierRow)
+            .where(col(RelevanceDossierRow.brand_id) == brand_id)
+            .where(col(RelevanceDossierRow.audience_key) == _audience_key(audience))
+            .where(col(RelevanceDossierRow.knowledge_id) == knowledge_id)
+            .where(col(RelevanceDossierRow.knowledge_version) == knowledge_version)
+            .where(col(RelevanceDossierRow.audience_research_id) == research_id)
+            .where(col(RelevanceDossierRow.audience_research_version) == research_version)
+            .where(col(RelevanceDossierRow.market_scan_id) == market_scan_id)
+            .where(col(RelevanceDossierRow.market_scan_version) == market_scan_version)
+            .where(col(RelevanceDossierRow.capability_profile_id) == capability_profile_id)
+            .where(
+                col(RelevanceDossierRow.capability_profile_version)
+                == capability_profile_version
+            )
+            .where(
+                col(RelevanceDossierRow.qualification_fingerprint)
+                == qualification_fingerprint
+            )
+            .where(col(RelevanceDossierRow.schema_version) == 2)
+            .order_by(col(RelevanceDossierRow.generation_version).desc())
+        )
+        return self._session.exec(statement).first()
+
+    def dossier_history(
+        self, brand_id: UUID, audience: str
+    ) -> list[RelevanceDossierRow]:
+        statement = (
+            select(RelevanceDossierRow)
+            .where(col(RelevanceDossierRow.brand_id) == brand_id)
+            .where(col(RelevanceDossierRow.audience_key) == _audience_key(audience))
+            .order_by(col(RelevanceDossierRow.generation_version).desc())
+        )
+        return list(self._session.exec(statement))
+
+    def save_dossier(
+        self, brand_id: UUID, dossier: RelevanceDossier
+    ) -> RelevanceDossierRow:
+        previous = self.latest_dossier_row(brand_id, dossier.audience_name)
+        row = RelevanceDossierRow(
+            brand_id=brand_id,
+            audience_key=_audience_key(dossier.audience_name),
+            audience_name=dossier.audience_name,
+            audience_research_id=dossier.audience_research_id,
+            audience_research_version=dossier.audience_research_version,
+            knowledge_id=dossier.knowledge_id,
+            knowledge_version=dossier.knowledge_version,
+            market_scan_id=dossier.market_scan_id,
+            market_scan_version=dossier.market_scan_version,
+            capability_profile_id=dossier.capability_profile_id,
+            capability_profile_version=dossier.capability_profile_version,
+            qualification_fingerprint=dossier.qualification_fingerprint,
+            schema_version=dossier.schema_version,
+            generation_version=(previous.generation_version + 1) if previous else 1,
+            payload=dossier.model_dump(mode="json"),
+        )
+        self._session.add(row)
+        self._session.commit()
+        self._session.refresh(row)
+        return row
+
     # ------------------------------------------------------------ prospects
 
     def prospects(
@@ -314,40 +606,52 @@ class MarketStore:
     def record_prospects(
         self, brand_id: UUID, prospects: list[Prospect]
     ) -> list[ProspectRow]:
-        """Store a search's findings, skipping organisations already on the list.
+        """Store new findings and refresh explicitly re-read organisations.
 
         Deduplicated on the host rather than the full URL, because the same
         company is reached at `acme.com`, `www.acme.com` and `acme.com/en` by
         three different searches, and re-offering a company the user already
         dismissed is the fastest way to teach them the list is not curated.
-        Falls back to the name where there is no URL to compare.
+        A current read may replace the extracted fields on that row while its
+        keep/dismiss decision survives. Falls back to the name where there is
+        no URL to compare.
         """
-        seen = {_prospect_key(row.url, row.name) for row in self.prospects(brand_id)}
+        existing = {
+            _prospect_key(row.url, row.name): row for row in self.prospects(brand_id)
+        }
         stored: list[ProspectRow] = []
         for prospect in prospects:
             key = _prospect_key(prospect.url, prospect.name)
-            if key in seen:
-                continue
-            seen.add(key)
-            row = ProspectRow(
-                brand_id=brand_id,
-                segment=prospect.segment,
-                name=prospect.name,
-                url=prospect.url,
-                what_they_do=prospect.what_they_do,
-                why_them=prospect.why_them,
-                verbatim=prospect.verbatim,
-                fit=prospect.fit,
-                contacts=[
+            row = existing.get(key)
+            payload = {
+                "segment": prospect.segment,
+                "name": prospect.name,
+                "url": prospect.url,
+                "what_they_do": prospect.what_they_do,
+                "why_them": prospect.why_them,
+                "verbatim": prospect.verbatim,
+                "fit": prospect.fit,
+                "contacts": [
                     contact.model_dump(mode="json") for contact in prospect.contacts
                 ],
-                caveat=prospect.caveat,
-                verified=prospect.verified,
-                pages_read=prospect.pages_read,
-                invented_contacts=prospect.invented_contacts,
-                note=prospect.note,
-                found_at=prospect.found_at,
-            )
+                "caveat": prospect.caveat,
+                "verified": prospect.verified,
+                "pages_read": prospect.pages_read,
+                "invented_contacts": prospect.invented_contacts,
+                "qualification": (
+                    prospect.qualification.model_dump(mode="json")
+                    if prospect.qualification is not None
+                    else None
+                ),
+                "note": prospect.note,
+                "found_at": prospect.found_at,
+            }
+            if row is None:
+                row = ProspectRow(brand_id=brand_id, **payload)
+                existing[key] = row
+            else:
+                for field, value in payload.items():
+                    setattr(row, field, value)
             self._session.add(row)
             stored.append(row)
         if stored:
@@ -499,12 +803,26 @@ def prospect_contacts(row: ProspectRow) -> list[Contact]:
     return contacts
 
 
+def prospect_qualification(row: ProspectRow) -> CompanyQualification | None:
+    if not row.qualification:
+        return None
+    try:
+        return CompanyQualification.model_validate(row.qualification)
+    except ValidationError:
+        logger.info("market: unreadable company qualification payload on row %s", row.id)
+        return None
+
+
 def _prospect_key(url: str, name: str) -> str:
     host = url.strip().lower()
     for prefix in ("https://", "http://"):
         host = host.removeprefix(prefix)
     host = host.removeprefix("www.").split("/")[0].strip()
     return host or " ".join(name.lower().split())
+
+
+def _audience_key(name: str) -> str:
+    return " ".join(name.casefold().split())
 
 
 def unseen_alerts(rows: list[RadarEventRow]) -> int:

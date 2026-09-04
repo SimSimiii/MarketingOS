@@ -19,10 +19,13 @@ from app.models.knowledge_artifacts import KnowledgeArtifactSet
 from app.models.knowledge_document import KnowledgeDocument
 from app.models.market import (
     AudienceMapRow,
+    AudienceResearchRow,
     MarketScan,
+    ProductCapabilityProfileRow,
     ProofCandidateRow,
     ProspectRow,
     RadarEventRow,
+    RelevanceDossierRow,
     Rival,
 )
 from app.models.user_settings import UserSettings
@@ -31,6 +34,7 @@ __all__ = [
     "AgentExecution",
     "AssetType",
     "AudienceMapRow",
+    "AudienceResearchRow",
     "Brand",
     "Campaign",
     "CampaignExecution",
@@ -41,9 +45,11 @@ __all__ = [
     "KnowledgeDocument",
     "LogLevel",
     "MarketScan",
+    "ProductCapabilityProfileRow",
     "ProofCandidateRow",
     "ProspectRow",
     "RadarEventRow",
+    "RelevanceDossierRow",
     "Rival",
     "UserSettings",
 ]

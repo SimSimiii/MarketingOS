@@ -39,7 +39,22 @@ export function ExecutionRowActions({
   async function handleRestart() {
     setBusy(true);
     try {
-      const restarted = await api.restartCampaign(campaignId);
+      const advice = await api.getCampaignGenerationAdvice(campaignId);
+      if (
+        advice.override_required &&
+        !window.confirm(
+          [
+            `${advice.recommendation?.state.replaceAll("_", " ") ?? advice.readiness}: ${advice.user_message}`,
+            ...advice.reasons.map((reason) => `• ${reason}`),
+            "",
+            "Generate anyway? This override will be recorded with the new run.",
+          ].join("\n"),
+        )
+      ) {
+        setBusy(false);
+        return;
+      }
+      const restarted = await api.restartCampaign(campaignId, advice.override_required);
       router.push(`/campaigns/${campaignId}/executions/${restarted.id}`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not restart");

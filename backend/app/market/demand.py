@@ -50,6 +50,7 @@ looking for them.
 """
 
 import asyncio
+import json
 import logging
 import re
 from collections.abc import Iterable
@@ -64,15 +65,28 @@ from app.ingestion.documents import RawDocument
 from app.ingestion.exceptions import LoaderError
 from app.ingestion.loaders.site_crawler import SiteCrawler
 from app.knowledge.artifacts import (
+    _MIN_SEGMENT_OVERLAP,
     Fact,
     Grounding,
     KnowledgeArtifacts,
     Objection,
     Segment,
     Sophistication,
+    _significant_words,
 )
 from app.knowledge.corpus import fold
+from app.market.capabilities import ProductCapabilityProfile
 from app.market.positioning import PositioningMap
+from app.market.qualification import (
+    AudienceDefinition,
+    CompanyCapabilityRequirement,
+    CompanyQualification,
+    CompanySignal,
+    QualificationClass,
+    SignalGrounding,
+    UnmappedCompanyRequirement,
+    qualify_company,
+)
 from app.runtime.model_session import ModelSession
 
 logger = logging.getLogger("marketingos.market")
@@ -100,6 +114,176 @@ _READ_CONCURRENCY = 3
 #: choice of one audience, and a list that ranks a 5% segment beside a 40% one
 #: invites the user to treat the ranking as noise.
 MIN_USEFUL_FIT = 0.10
+
+#: Places that name a channel but not a venue. A qualifier makes them useful:
+#: "LinkedIn" fails, while "LinkedIn RevOps Co-op group" passes. This is
+#: deliberately a small list, not an ontology of everywhere buyers gather.
+_VAGUE_VENUES = frozenset(
+    {
+        "anywhere",
+        "everywhere",
+        "internet",
+        "linkedin",
+        "online",
+        "social media",
+        "the internet",
+        "web",
+    }
+)
+_VENUE_FILLER = frozenset(
+    {
+        "at",
+        "for",
+        "in",
+        "internet",
+        "linkedin",
+        "media",
+        "of",
+        "on",
+        "online",
+        "social",
+        "the",
+        "web",
+    }
+)
+
+#: Signals that can be true of almost anybody and therefore identify nobody.
+_VAGUE_SIGNALS = frozenset(
+    {
+        "active online",
+        "has a website",
+        "interested in ai",
+        "needs help",
+        "uses software",
+        "uses social media",
+        "wants to grow",
+    }
+)
+_OBSERVABLE_SIGNAL_RE = re.compile(
+    r"\b(?:certif(?:ied|ication)|complain(?:s|ed|ing)?|directory|exhibitor|"
+    r"fund(?:ed|ing)|github|hir(?:e|es|ed|ing)|issue|job post(?:s|ing)?|member|"
+    r"pricing page|review|return(?:s)? page|warranty page)\b",
+    re.IGNORECASE,
+)
+
+#: A situation has work happening in it (the common -ing/-ed forms) or a small
+#: structural marker that locates the workflow in time or context. This avoids
+#: maintaining an ontology of every job an audience could do.
+_SITUATION_RE = re.compile(
+    r"\b(?:after|before|first|manual(?:ly)?|across|daily|multiple|recently|"
+    r"several|shared|through|weekly|without|[a-z]{4,}(?:ed|ing))\b",
+    re.IGNORECASE,
+)
+_TRIGGER_RE = re.compile(
+    r"\b(?:after|before|deadline|first|fund(?:ed|ing)|hir(?:e|es|ed|ing)|"
+    r"launch(?:es|ed|ing)?|migrat(?:e|es|ed|ing)|new|recently|renewal|"
+    r"replac(?:e|es|ed|ing)|requirement|switch(?:es|ed|ing)?|audit|fine|incident)\b",
+    re.IGNORECASE,
+)
+_GENERIC_AUDIENCES = frozenset(
+    {
+        "business owner",
+        "business owners",
+        "companies that want to grow",
+        "company that wants to grow",
+        "developer",
+        "developers",
+        "marketer",
+        "marketers",
+        "people interested in ai",
+        "person interested in ai",
+    }
+)
+
+
+class Researchability(StrEnum):
+    """How worthwhile a segment is to investigate, never how likely it is to buy."""
+
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+    UNRESEARCHABLE = "unresearchable"
+
+
+class AudienceAdmission(BaseModel):
+    """A deterministic receipt for whether more research should be spent."""
+
+    researchable: bool
+    researchability: Researchability
+    reasons: list[str] = Field(default_factory=list)
+
+
+def _normalised(text: str) -> str:
+    return " ".join(re.findall(r"[a-z0-9]+", text.lower()))
+
+
+def _useful_signal(signal: str) -> bool:
+    normalised = _normalised(signal)
+    if not normalised or normalised in _VAGUE_SIGNALS:
+        return False
+    meaningful = _significant_words(signal)
+    return len(meaningful) >= 3 or bool(_OBSERVABLE_SIGNAL_RE.search(signal))
+
+
+def _specific_venue(venue: str) -> bool:
+    normalised = _normalised(venue)
+    if not normalised or normalised in _VAGUE_VENUES:
+        return False
+    qualifiers = {word for word in normalised.split() if word not in _VENUE_FILLER}
+    return bool(qualifiers)
+
+
+def _clear_trigger(trigger: str) -> bool:
+    normalised = _normalised(trigger)
+    return (
+        normalised not in {"", "none", "unknown", "not established"}
+        and len(_significant_words(trigger)) >= 2
+        and bool(_TRIGGER_RE.search(trigger))
+    )
+
+
+def _situation_specificity(segment: "AudienceSegment") -> int:
+    description = f"{segment.name} {segment.who}".strip()
+    meaningful = _significant_words(description)
+    generic = _normalised(segment.name) in _GENERIC_AUDIENCES and not segment.who.strip()
+    structural = bool(_SITUATION_RE.search(description)) or _clear_trigger(segment.trigger)
+    if generic or len(meaningful) < 4 or not structural:
+        return 0
+    return 2 if segment.who.strip() and len(meaningful) >= 7 else 1
+
+
+def _population_is_specific(population: str) -> bool:
+    normalised = _normalised(population)
+    if normalised in {"", "many", "large", "unknown", "unclear", "not established"}:
+        return False
+    return bool(re.search(r"\d", population)) or len(_significant_words(population)) >= 2
+
+
+def _matching_words(text: str) -> set[str]:
+    """The existing matcher words, with tiny inflection forgiveness for duplicates."""
+
+    words: set[str] = set()
+    for word in _significant_words(text):
+        if word.endswith("ies") and len(word) > 5:
+            word = f"{word[:-3]}y"
+        elif word.endswith("ing") and len(word) > 6:
+            word = word[:-3]
+        elif word.endswith("s") and not word.endswith("ss") and len(word) > 4:
+            word = word[:-1]
+        words.add(word)
+    return words
+
+
+def _same_segment(candidate: "AudienceSegment", existing: "AudienceSegment") -> bool:
+    wanted = _normalised(candidate.name)
+    known = _normalised(existing.name)
+    if wanted and known and (wanted == known or wanted in known or known in wanted):
+        return True
+    candidate_words = _matching_words(f"{candidate.name} {candidate.who}")
+    existing_words = _matching_words(f"{existing.name} {existing.who}")
+    overlap = len(candidate_words & existing_words)
+    smaller = min(len(candidate_words), len(existing_words))
+    return overlap >= _MIN_SEGMENT_OVERLAP and smaller > 0 and overlap / smaller >= 0.6
 
 
 class SegmentKind(StrEnum):
@@ -229,12 +413,93 @@ class AudienceSegment(BaseModel):
     #: list, an association's member register, a conference's exhibitor list,
     #: a forum. Named places, not "online".
     where: list[str] = Field(default_factory=list)
+    #: Machine-readable qualification requirements. Defaulted so every V1
+    #: demand-map payload remains readable, but an empty definition cannot
+    #: qualify a named company.
+    definition: AudienceDefinition = Field(default_factory=AudienceDefinition)
 
     @property
     def unobvious(self) -> bool:
         """Whether this is a segment the company's own material would not have
         produced. What the user is really paying for here."""
         return self.kind is not SegmentKind.CORE
+
+    def admission(
+        self, existing: Iterable["AudienceSegment"] = ()
+    ) -> AudienceAdmission:
+        """Whether another research pass can learn something concrete about this buyer.
+
+        This deliberately reads no product, campaign or evidence state. A
+        segment is researchable because people matching it can be recognised
+        and found, not because MarketingOS thinks they will buy.
+        """
+        useful_signals = [signal for signal in self.signals if _useful_signal(signal)]
+        specific_venues = [venue for venue in self.where if _specific_venue(venue)]
+        situation = _situation_specificity(self)
+        failures: list[str] = []
+        if not useful_signals:
+            failures.append("No useful observable signal identifies this audience.")
+        if not specific_venues:
+            failures.append(
+                "No specific venue or source says where this audience can be found."
+            )
+        if not situation:
+            failures.append(
+                "Audience describes a broad category rather than an observable "
+                "situation or workflow."
+            )
+        duplicate = next((item for item in existing if _same_segment(self, item)), None)
+        if duplicate is not None:
+            failures.append(f"Too similar to existing segment: {duplicate.name}.")
+        if failures:
+            return AudienceAdmission(
+                researchable=False,
+                researchability=Researchability.UNRESEARCHABLE,
+                reasons=failures,
+            )
+
+        score = 0
+        reasons = [
+            (
+                f"{len(useful_signals)} useful observable signal"
+                f"{'s' if len(useful_signals) != 1 else ''} and "
+                f"{len(specific_venues)} specific research venue"
+                f"{'s' if len(specific_venues) != 1 else ''}."
+            )
+        ]
+        if len(useful_signals) >= 2:
+            score += 1
+        else:
+            reasons.append("Only one useful observable signal is available.")
+        if len(specific_venues) >= 2:
+            score += 1
+        else:
+            reasons.append("Only one specific research venue is available.")
+        if situation == 2:
+            score += 1
+            reasons.append("The audience is anchored in a concrete workflow or situation.")
+        if _clear_trigger(self.trigger):
+            score += 1
+            reasons.append("A clear trigger narrows the evidence to look for.")
+        else:
+            reasons.append("No clear trigger narrows the research.")
+        if _population_is_specific(self.population):
+            score += 1
+            reasons.append("A population basis is stated.")
+        else:
+            reasons.append("No population basis is stated.")
+
+        if score >= 4:
+            researchability = Researchability.HIGH
+        elif score >= 2:
+            researchability = Researchability.MEDIUM
+        else:
+            researchability = Researchability.LOW
+        return AudienceAdmission(
+            researchable=True,
+            researchability=researchability,
+            reasons=reasons,
+        )
 
     def render(self) -> str:
         lines = [
@@ -319,6 +584,36 @@ class DemandMap(BaseModel):
     @property
     def ranked(self) -> list["AudienceSegment"]:
         return sorted(self.segments, key=lambda segment: segment.fit, reverse=True)
+
+    def admission_for(self, segment: AudienceSegment) -> AudienceAdmission:
+        """Admission in map order, so only later duplicates are rejected."""
+        index = next(
+            (position for position, item in enumerate(self.segments) if item is segment),
+            None,
+        )
+        if index is None:
+            index = next(
+                (position for position, item in enumerate(self.segments) if item == segment),
+                len(self.segments),
+            )
+        return segment.admission(self.segments[:index])
+
+    @property
+    def researchability_ranked(self) -> list["AudienceSegment"]:
+        """High, medium, low, then failed; fit only breaks ties for compatibility."""
+        order = {
+            Researchability.HIGH: 0,
+            Researchability.MEDIUM: 1,
+            Researchability.LOW: 2,
+            Researchability.UNRESEARCHABLE: 3,
+        }
+        return sorted(
+            self.segments,
+            key=lambda segment: (
+                order[self.admission_for(segment).researchability],
+                -segment.fit,
+            ),
+        )
 
     def named(self, name: str) -> AudienceSegment | None:
         """The segment a campaign chose, matched forgivingly.
@@ -440,6 +735,9 @@ class Prospect(BaseModel):
     #: all invented is a prospect whose *fit* deserves distrust too.
     invented_contacts: int = 0
     note: str = ""
+    #: Categorical V2 qualification. None only for a legacy stored prospect
+    #: that predates the qualification payload.
+    qualification: CompanyQualification | None = None
     found_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     @property
@@ -475,6 +773,9 @@ class _ReadProspect(BaseModel):
     fit: float = 0.5
     contacts: list[Contact] = Field(default_factory=list)
     caveat: str = ""
+    company_signals: list[CompanySignal] = Field(default_factory=list)
+    company_requirements: list[CompanyCapabilityRequirement] = Field(default_factory=list)
+    unmapped_requirements: list[UnmappedCompanyRequirement] = Field(default_factory=list)
 
 
 class AudienceCartographer:
@@ -557,6 +858,8 @@ class ProspectFinder:
         limit: int = 10,
         known: Iterable[str] = (),
         with_contacts: bool = True,
+        capability_profile: ProductCapabilityProfile | None = None,
+        refresh: Iterable[ProspectLead] = (),
     ) -> list[Prospect]:
         """Named organisations for one segment, each read from its own site.
 
@@ -566,7 +869,22 @@ class ProspectFinder:
         addresses, and only the second is worth reading four pages per company
         for.
         """
-        leads = await self._search(artifacts, segment, limit, known)
+        refresh_leads: list[ProspectLead] = []
+        refreshed: set[str] = set()
+        if with_contacts:
+            for lead in refresh:
+                key = lead.url.strip().casefold() or lead.name.strip().casefold()
+                if not key or key in refreshed:
+                    continue
+                refreshed.add(key)
+                lead.segment = segment.name
+                refresh_leads.append(lead)
+                if len(refresh_leads) >= limit:
+                    break
+        leads = list(refresh_leads)
+        remaining = max(0, limit - len(leads))
+        if remaining:
+            leads.extend(await self._search(artifacts, segment, remaining, known))
         if not leads:
             return []
         if not with_contacts:
@@ -577,6 +895,18 @@ class ProspectFinder:
                     segment=segment.name,
                     why_them=lead.why_them,
                     note="their site was not read - names only",
+                    qualification=(
+                        CompanyQualification(
+                            classification=QualificationClass.UNVERIFIED,
+                            audience_structure_fit="unknown",
+                            product_capability_fit="unknown",
+                            evidence_completeness="missing",
+                            reachability="unknown",
+                            reason_codes=["site_not_read"],
+                        )
+                        if capability_profile is not None
+                        else None
+                    ),
                 )
                 for lead in leads
             ]
@@ -585,7 +915,9 @@ class ProspectFinder:
 
         async def one(lead: ProspectLead) -> Prospect:
             async with semaphore:
-                return await self._read(lead, segment, artifacts)
+                return await self._read(
+                    lead, segment, artifacts, capability_profile=capability_profile
+                )
 
         return list(await asyncio.gather(*(one(lead) for lead in leads)))
 
@@ -631,7 +963,12 @@ class ProspectFinder:
         return leads[:limit]
 
     async def _read(
-        self, lead: ProspectLead, segment: AudienceSegment, artifacts: KnowledgeArtifacts
+        self,
+        lead: ProspectLead,
+        segment: AudienceSegment,
+        artifacts: KnowledgeArtifacts,
+        *,
+        capability_profile: ProductCapabilityProfile | None = None,
     ) -> Prospect:
         """Read one organisation's pages and record how to reach them.
 
@@ -650,6 +987,18 @@ class ProspectFinder:
                 segment=segment.name,
                 why_them=lead.why_them,
                 note="their site could not be read, so there is no way in and nothing confirmed",
+                qualification=(
+                    qualify_company(
+                        definition=segment.definition,
+                        profile=capability_profile,
+                        evidence=[],
+                        site_verified=False,
+                        pages_read=0,
+                        reachable=False,
+                    )
+                    if capability_profile is not None
+                    else None
+                ),
             )
 
         material = _material(pages)
@@ -660,6 +1009,18 @@ class ProspectFinder:
                 segment=segment.name,
                 why_them=lead.why_them,
                 note="their site returned no readable text",
+                qualification=(
+                    qualify_company(
+                        definition=segment.definition,
+                        profile=capability_profile,
+                        evidence=[],
+                        site_verified=False,
+                        pages_read=0,
+                        reachable=False,
+                    )
+                    if capability_profile is not None
+                    else None
+                ),
             )
 
         read = await self._session.structured(
@@ -674,15 +1035,33 @@ class ProspectFinder:
                 "segment": segment.name,
                 "signals": "\n".join(f"- {signal}" for signal in segment.signals)
                 or "- none named",
+                "qualification_definition": segment.definition.model_dump_json(indent=2),
+                "capability_catalog": json.dumps(
+                    (
+                        capability_profile.extraction_catalog()
+                        if capability_profile is not None
+                        else []
+                    ),
+                    ensure_ascii=False,
+                    indent=2,
+                ),
                 "material": material,
             },
             task=(
                 "Read the pages above. Say what this organisation does, whether it really "
-                "matches the segment, and quote every contact detail exactly as it appears."
+                "matches the segment, map its directly evidenced requirements to the supplied "
+                "product capability catalogue, and quote every contact detail exactly as it appears."
             ),
             schema=_ReadProspect,
         )
-        return _verify(lead, segment, read, material, len(pages))
+        return _verify(
+            lead,
+            segment,
+            read,
+            material,
+            len(pages),
+            capability_profile=capability_profile,
+        )
 
 
 # ------------------------------------------------------------------ internals
@@ -706,12 +1085,26 @@ def _verify(
     read: _ReadProspect,
     material: str,
     pages: int,
+    *,
+    capability_profile: ProductCapabilityProfile | None = None,
 ) -> Prospect:
     """Keep only what the fetched pages actually contain."""
     haystack = fold(material)
     quote = fold(read.verbatim)
     supported = len(quote) >= 12 and quote in haystack
     contacts, invented = _verify_contacts(read.contacts, material, lead.url)
+    signals, dropped_signals = _verify_company_signals(
+        read.company_signals, material, lead.url
+    )
+    requirements, unmapped_requirements, dropped_requirements = (
+        _verify_company_requirements(
+            read.company_requirements,
+            read.unmapped_requirements,
+            material,
+            lead.url,
+            capability_profile,
+        )
+    )
 
     notes: list[str] = []
     if not supported and read.verbatim.strip():
@@ -720,6 +1113,16 @@ def _verify(
         notes.append(
             f"{invented} contact detail(s) the extractor reported were nowhere on their "
             "site and were discarded"
+        )
+    if dropped_signals:
+        notes.append(
+            f"{dropped_signals} company qualification signal(s) were not supported by "
+            "the fetched pages and were discarded"
+        )
+    if dropped_requirements:
+        notes.append(
+            f"{dropped_requirements} company requirement(s) were not bound to the active "
+            "capability catalogue and fetched pages and were discarded"
         )
     if not contacts:
         notes.append("no contact detail is published anywhere we could read")
@@ -742,7 +1145,146 @@ def _verify(
         pages_read=pages,
         invented_contacts=invented,
         note="; ".join(notes),
+        qualification=(
+            qualify_company(
+                definition=segment.definition,
+                profile=capability_profile,
+                evidence=signals,
+                requirements=requirements,
+                unmapped_requirements=unmapped_requirements,
+                site_verified=True,
+                pages_read=pages,
+                reachable=bool(contacts),
+            )
+            if capability_profile is not None
+            else None
+        ),
     )
+
+
+def _verify_company_requirements(
+    reported: list[CompanyCapabilityRequirement],
+    reported_unmapped: list[UnmappedCompanyRequirement],
+    material: str,
+    fallback_source: str,
+    profile: ProductCapabilityProfile | None,
+) -> tuple[
+    list[CompanyCapabilityRequirement],
+    list[UnmappedCompanyRequirement],
+    int,
+]:
+    """Bind every extracted requirement to both fetched text and this profile."""
+    haystack = fold(material)
+    mapped: list[CompanyCapabilityRequirement] = []
+    unmapped: list[UnmappedCompanyRequirement] = []
+    seen_mapped: set[tuple[str, str]] = set()
+    seen_unmapped: set[tuple[str, str]] = set()
+    dropped = 0
+
+    def supported(
+        evidence_state: SignalGrounding, quote: str, source_url: str
+    ) -> bool:
+        if evidence_state is SignalGrounding.MISSING:
+            return False
+        # Capability names can be short published phrases ("voice agent",
+        # "HIPAA"). Exact source binding carries the trust boundary here;
+        # the longer generic-signal floor would discard valid requirements.
+        if len(fold(quote)) < 4 or fold(quote) not in haystack:
+            return False
+        return not source_url.strip() or fold(source_url) in haystack
+
+    for requirement in reported:
+        capability_id = re.sub(
+            r"[^a-z0-9]+", "_", requirement.capability_id.casefold()
+        ).strip("_")
+        quote = requirement.quote.strip()
+        source = requirement.source_url.strip() or fallback_source
+        if not capability_id or not supported(requirement.evidence_state, quote, source):
+            dropped += 1
+            continue
+        capability = profile.capability(capability_id) if profile is not None else None
+        if capability is None:
+            key = (capability_id, fold(quote))
+            if key not in seen_unmapped:
+                unmapped.append(
+                    UnmappedCompanyRequirement(
+                        raw_requirement=requirement.capability_id,
+                        evidence_state=requirement.evidence_state,
+                        quote=quote,
+                        source_url=source,
+                        reasoning=requirement.reasoning,
+                    )
+                )
+                seen_unmapped.add(key)
+            continue
+        key = (capability.id, fold(quote))
+        if key in seen_mapped:
+            continue
+        mapped.append(
+            requirement.model_copy(
+                update={
+                    "capability_id": capability.id,
+                    "quote": quote,
+                    "source_url": source,
+                }
+            )
+        )
+        seen_mapped.add(key)
+
+    for requirement in reported_unmapped:
+        raw_requirement = requirement.raw_requirement.strip()
+        quote = requirement.quote.strip()
+        source = requirement.source_url.strip() or fallback_source
+        key = (raw_requirement.casefold(), fold(quote))
+        if (
+            not raw_requirement
+            or key in seen_unmapped
+            or not supported(requirement.evidence_state, quote, source)
+        ):
+            if raw_requirement and key not in seen_unmapped:
+                dropped += 1
+            continue
+        unmapped.append(
+            requirement.model_copy(
+                update={"quote": quote, "source_url": source, "mapped_capability_id": None}
+            )
+        )
+        seen_unmapped.add(key)
+    return mapped, unmapped, dropped
+
+
+def _verify_company_signals(
+    reported: list[CompanySignal], material: str, fallback_source: str
+) -> tuple[list[CompanySignal], int]:
+    """Retain only signal bases actually present in fetched company pages."""
+    haystack = fold(material)
+    kept: list[CompanySignal] = []
+    seen: set[tuple[str, str]] = set()
+    dropped = 0
+    for signal in reported:
+        code = re.sub(r"[^a-z0-9]+", "_", signal.code.casefold()).strip("_")
+        quote = signal.quote.strip()
+        source = signal.source_identifier.strip() or fallback_source
+        key = (code, signal.value.casefold().strip())
+        if not code or key in seen:
+            continue
+        if signal.grounding is SignalGrounding.MISSING:
+            kept.append(signal.model_copy(update={"code": code, "source_identifier": source}))
+            seen.add(key)
+            continue
+        if len(fold(quote)) < 12 or fold(quote) not in haystack:
+            dropped += 1
+            continue
+        if signal.source_identifier.strip() and fold(signal.source_identifier) not in haystack:
+            dropped += 1
+            continue
+        kept.append(
+            signal.model_copy(
+                update={"code": code, "quote": quote, "source_identifier": source}
+            )
+        )
+        seen.add(key)
+    return kept, dropped
 
 
 #: Where an address ends. Deliberately generous on the local part, because

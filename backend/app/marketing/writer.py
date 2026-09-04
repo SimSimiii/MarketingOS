@@ -179,7 +179,11 @@ class EmailWriter:
         # business. See EvidenceLedger.slice_for: the full ledger in a writing
         # prompt is both the largest cost in a run and the standing temptation
         # that the brief's `must_not_say` exists to resist.
-        slice_ = artifacts.evidence.slice_for(brief.evidence_ids, brief.objection)
+        slice_ = artifacts.evidence.slice_for(
+            brief.evidence_ids,
+            brief.objection,
+            excluded_ids=frozenset(brief.forbidden_evidence_ids),
+        )
         segment = artifacts.audience.match(campaign.reader_segment, campaign.reader)
         system_prompt = self._session.render(
             "writer",

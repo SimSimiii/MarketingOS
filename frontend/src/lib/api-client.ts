@@ -1,6 +1,8 @@
 import { API_URL } from "@/lib/config";
 import type {
   AudienceRead,
+  AudienceResearch,
+  RelevanceStatus,
   Brand,
   BrandCreateRequest,
   BrandStyleUpdate,
@@ -9,6 +11,7 @@ import type {
   Campaign,
   CampaignCreateRequest,
   CampaignExecution,
+  CampaignGenerationAdvice,
   CampaignPolicyUpdate,
   CampaignResult,
   ExecutionLog,
@@ -26,6 +29,7 @@ import type {
   Prospect,
   ProspectSearchRequest,
   ProspectStatus,
+  ProductCapabilityProfile,
   RadarEvent,
   Rival,
   RivalCreateRequest,
@@ -47,6 +51,14 @@ async function errorMessage(response: Response): Promise<string> {
   try {
     const parsed = JSON.parse(body) as { detail?: unknown };
     if (typeof parsed.detail === "string" && parsed.detail) return parsed.detail;
+    if (
+      parsed.detail &&
+      typeof parsed.detail === "object" &&
+      "message" in parsed.detail &&
+      typeof parsed.detail.message === "string"
+    ) {
+      return parsed.detail.message;
+    }
   } catch {
     // Not JSON - fall through to the raw body below.
   }
@@ -97,10 +109,18 @@ export const api = {
   /** What running this campaign will cost, before it is run. Free and
    * instant - nothing behind this endpoint calls a model. */
   getCampaignForecast: (id: string) => request<RunForecast>(`/campaigns/${id}/forecast`),
-  startCampaign: (id: string) =>
-    request<CampaignExecution>(`/campaigns/${id}/start`, { method: "POST" }),
-  restartCampaign: (id: string) =>
-    request<CampaignExecution>(`/campaigns/${id}/restart`, { method: "POST" }),
+  getCampaignGenerationAdvice: (id: string) =>
+    request<CampaignGenerationAdvice>(`/campaigns/${id}/generation-advice`),
+  startCampaign: (id: string, generateAnyway = false) =>
+    request<CampaignExecution>(`/campaigns/${id}/start`, {
+      method: "POST",
+      body: JSON.stringify({ generate_anyway: generateAnyway }),
+    }),
+  restartCampaign: (id: string, generateAnyway = false) =>
+    request<CampaignExecution>(`/campaigns/${id}/restart`, {
+      method: "POST",
+      body: JSON.stringify({ generate_anyway: generateAnyway }),
+    }),
   listCampaignExecutions: (id: string) =>
     request<CampaignExecution[]>(`/campaigns/${id}/executions`),
 
@@ -270,6 +290,46 @@ export const api = {
       method: "POST",
       body: JSON.stringify({}),
     }),
+  /** Locate, process-fetch, synthesize and verify independent research for
+   * one admitted mapped audience. Refreshes append a new persisted version. */
+  startAudienceResearch: (brandId: string, segment: string) =>
+    request<MarketJob>(`/market/${brandId}/audience/research`, {
+      method: "POST",
+      body: JSON.stringify({ segment }),
+    }),
+  getAudienceResearch: (brandId: string, segment: string) =>
+    request<AudienceResearch>(
+      `/market/${brandId}/audience/research/latest?segment=${encodeURIComponent(segment)}`,
+    ),
+  getCapabilityProfile: (brandId: string) =>
+    request<ProductCapabilityProfile>(`/market/${brandId}/capability-profile`),
+  deriveCapabilityProfile: (brandId: string) =>
+    request<ProductCapabilityProfile>(`/market/${brandId}/capability-profile/derive`, {
+      method: "POST",
+      body: JSON.stringify({}),
+    }),
+  saveCapabilityProfile: (
+    brandId: string,
+    data: Pick<ProductCapabilityProfile, "capabilities" | "constraints" | "claims">,
+  ) =>
+    request<ProductCapabilityProfile>(`/market/${brandId}/capability-profile`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  /** Build from the latest persisted knowledge, audience research and market scan.
+   * An unchanged exact triple is reused without spending another call. */
+  startRelevanceDossier: (brandId: string, segment: string, rebuild = false) =>
+    request<MarketJob>(
+      `/market/${brandId}/audience/relevance${rebuild ? "/rebuild" : ""}`,
+      {
+        method: "POST",
+        body: JSON.stringify({ segment }),
+      },
+    ),
+  getRelevanceStatus: (brandId: string, segment: string) =>
+    request<RelevanceStatus>(
+      `/market/${brandId}/audience/relevance/status?segment=${encodeURIComponent(segment)}`,
+    ),
   /** Name real organisations that match one mapped segment. Every contact it
    * produces was read off a page the server fetched and checked back against
    * it, so the list is short and it is real. */

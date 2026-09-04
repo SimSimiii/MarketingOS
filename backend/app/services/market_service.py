@@ -1,10 +1,11 @@
 """Running and reading a brand's market intelligence.
 
-Four background jobs, one shape: scan the competitors, hunt for proof, map the
-demand, find prospects. Each is a background task for exactly the reason a
+Six background jobs, one shape: scan the competitors, hunt for proof, map the
+demand, research one audience, build its relevance dossier, find prospects. Each is a
+background task for exactly the reason a
 campaign is: it makes model calls and crawls half a dozen sites, so it takes
 minutes, and a request that blocks on it is a request that times out behind a
-proxy. All four are much smaller than a campaign, though - a search call plus
+proxy. All six are much smaller than a campaign, though - a few bounded calls
 one extraction per site - so they get a small in-process status record and
 polling rather than the whole execution/event/SSE apparatus. A job lost to a
 restart costs the user a button press, and there is nothing half-written to
@@ -21,6 +22,8 @@ who buys, and this module's whole job is sessions, background tasks and rows.
 """
 
 import asyncio
+import hashlib
+import json
 import logging
 from collections.abc import Coroutine
 from dataclasses import dataclass, field
@@ -37,18 +40,67 @@ from app.ai.roles import ROLE_CATALOG
 from app.core.config import PROMPTS_DIR
 from app.knowledge.artifacts import KnowledgeArtifacts
 from app.knowledge.store import ArtifactScope, ArtifactStore
+from app.market.audience_research import (
+    AudienceResearch,
+    AudienceResearcher,
+    AudienceResearchError,
+)
+from app.market.capabilities import (
+    CapabilityProfileDraft,
+    ProductCapabilityProfile,
+    capability_ledger_fingerprint,
+    derive_capability_profile,
+    normalize_capability_profile,
+)
 from app.market.demand import (
     AudienceCartographer,
     DemandMap,
     ProspectFinder,
+    ProspectLead,
     ProspectStatus,
 )
 from app.market.proof import ProofHunter, ProofStatus
+from app.market.qualification import (
+    COMPANY_QUALIFIER_VERSION,
+    COMPANY_REQUIREMENT_EXTRACTOR_VERSION,
+    COMPANY_REQUIREMENT_NORMALIZER_VERSION,
+    AudienceDefinition,
+    CompanyQualification,
+    EvidenceCompleteness,
+    QualificationClass,
+    QualificationDimension,
+    Reachability,
+    qualify_company,
+    stale_company_qualification,
+)
 from app.market.radar import MarketSnapshot
+from app.market.relevance import (
+    DossierState,
+    MissingPrerequisite,
+    QualifiedCompanySnapshot,
+    RelevanceAnalyst,
+    RelevanceDossier,
+    RelevanceStatus,
+    RelevanceValidationError,
+)
 from app.market.scanner import MarketScanner
-from app.market.store import MarketStore, merge_proof
+from app.market.store import (
+    MarketStore,
+    merge_proof,
+    prospect_contacts,
+    prospect_qualification,
+)
 from app.models.brand import Brand
-from app.models.market import ProofCandidateRow, ProspectRow, Rival
+from app.models.knowledge_artifacts import KnowledgeArtifactSet
+from app.models.market import (
+    AudienceResearchRow,
+    MarketScan,
+    ProductCapabilityProfileRow,
+    ProofCandidateRow,
+    ProspectRow,
+    Rival,
+)
+from app.repositories.knowledge_artifact_repository import KnowledgeArtifactRepository
 from app.runtime.events import EventBus
 from app.runtime.exceptions import CapabilityUnavailableError, ModelRuntimeError
 from app.runtime.model_session import ModelSession, RoleCall
@@ -150,6 +202,20 @@ _jobs: dict[UUID, JobStatus] = {}
 _running: set[asyncio.Task] = set()
 
 
+@dataclass(frozen=True)
+class _RelevanceInputs:
+    knowledge_row: KnowledgeArtifactSet
+    artifacts: KnowledgeArtifacts
+    research_row: AudienceResearchRow
+    research: AudienceResearch
+    market_scan_row: MarketScan
+    snapshot: MarketSnapshot
+    capability_profile_row: ProductCapabilityProfileRow
+    capability_profile: ProductCapabilityProfile
+    company_qualifications: list[QualifiedCompanySnapshot]
+    qualification_fingerprint: str
+
+
 def _spawn(coro: Coroutine[Any, Any, None]) -> None:
     """Start one background market job and keep hold of it until it ends.
 
@@ -180,7 +246,7 @@ def all_jobs() -> list[JobStatus]:
 
 
 class MarketService:
-    """A brand's competitors, scans, proof queue, radar, audience and prospects."""
+    """A brand's competitors, scans, proof, audience, relevance and prospects."""
 
     def __init__(self, session: Session) -> None:
         self._session = session
@@ -226,6 +292,167 @@ class MarketService:
         if stored is None:
             return None
         return merge_proof(stored.artifacts, self._store.approved_evidence(brand_id))
+
+    def capability_profile(
+        self, brand_id: UUID
+    ) -> tuple[ProductCapabilityProfileRow, ProductCapabilityProfile] | None:
+        """Return the latest readable profile without silently deriving support."""
+        return self._store.latest_capability_profile(brand_id)
+
+    def current_company_qualification(
+        self, brand_id: UUID, audience: str, row: ProspectRow
+    ) -> CompanyQualification:
+        """Re-evaluate stored company evidence against current V2 inputs.
+
+        The classification can be replayed for the same capability catalogue.
+        A profile or extractor change can alter semantic requirement mapping,
+        so that extraction is explicitly stale until the company is read
+        again instead of being silently interpreted under a different input.
+        """
+        stored = prospect_qualification(row)
+        if stored is None:
+            return _unverified_company_qualification(
+                "legacy_prospect_has_no_qualification"
+            )
+        profile = self.capability_profile(brand_id)
+        if profile is None:
+            return _unverified_company_qualification("capability_profile_missing")
+        if stored.stale_reasons(profile[1]):
+            return stale_company_qualification(stored, profile[1])
+        research = self._store.latest_research(brand_id, audience)
+        mapped_segment = self._store.segment_named(brand_id, audience)
+        definition = (
+            research[1].definition
+            if research is not None
+            else mapped_segment.definition
+            if mapped_segment is not None
+            else None
+        )
+        if definition is None:
+            return stored
+        return qualify_company(
+            definition=definition,
+            profile=profile[1],
+            evidence=stored.evidence,
+            requirements=stored.requirements,
+            unmapped_requirements=stored.unmapped_requirements,
+            site_verified=row.verified,
+            pages_read=row.pages_read,
+            reachable=bool(prospect_contacts(row)),
+        )
+
+    def save_capability_profile(
+        self, brand_id: UUID, draft: CapabilityProfileDraft
+    ) -> ProductCapabilityProfileRow:
+        knowledge = KnowledgeArtifactRepository(self._session).latest_for_brand(brand_id)
+        artifacts = self.artifacts_for(brand_id)
+        if knowledge is None or artifacts is None:
+            raise MarketError("Compile Product Knowledge before editing product capabilities.")
+        previous = self._store.latest_capability_profile_row(brand_id)
+        profile = normalize_capability_profile(
+            draft,
+            ledger=artifacts.evidence,
+            knowledge_id=knowledge.id,
+            knowledge_version=knowledge.version,
+            version=(previous.version + 1) if previous else 1,
+        )
+        return self._store.save_capability_profile(brand_id, profile)
+
+    def ensure_capability_profile(
+        self, brand_id: UUID
+    ) -> tuple[ProductCapabilityProfileRow, ProductCapabilityProfile]:
+        knowledge = KnowledgeArtifactRepository(self._session).latest_for_brand(brand_id)
+        artifacts = self.artifacts_for(brand_id)
+        if knowledge is None or artifacts is None:
+            raise MarketError("Compile Product Knowledge before qualifying an audience.")
+        current_fingerprint = capability_ledger_fingerprint(artifacts.evidence)
+        existing = self._store.capability_profile_for_knowledge(
+            brand_id,
+            knowledge_id=knowledge.id,
+            knowledge_version=knowledge.version,
+        )
+        if existing is not None and existing[1].ledger_fingerprint == current_fingerprint:
+            return existing
+        previous = self._store.latest_capability_profile(brand_id)
+        profile = derive_capability_profile(
+            artifacts.evidence,
+            knowledge_id=knowledge.id,
+            knowledge_version=knowledge.version,
+            previous=previous[1] if previous is not None else None,
+        )
+        row = self._store.save_capability_profile(brand_id, profile)
+        return row, profile.model_copy(update={"version": row.version})
+
+    def relevance_status(self, brand_id: UUID, audience: str) -> RelevanceStatus:
+        """Current/stale/missing derived only from persisted version pointers."""
+        knowledge = KnowledgeArtifactRepository(self._session).latest_for_brand(brand_id)
+        research = self._store.latest_research_row(brand_id, audience)
+        scan = self._store.latest_scan_row(brand_id)
+        missing = _missing_relevance_prerequisites(knowledge, research, scan)
+        latest = self._store.latest_dossier(brand_id, audience)
+        if latest is None:
+            return RelevanceStatus(
+                audience_name=audience,
+                status=DossierState.MISSING,
+                missing_prerequisites=missing,
+            )
+
+        row, dossier = latest
+        stale: list[str] = []
+        if (
+            knowledge is None
+            or row.knowledge_id != knowledge.id
+            or row.knowledge_version != knowledge.version
+        ):
+            stale.append("knowledge_changed")
+        if (
+            research is None
+            or row.audience_research_id != research.id
+            or row.audience_research_version != research.version
+        ):
+            stale.append("audience_research_changed")
+        if (
+            scan is None
+            or row.market_scan_id != scan.id
+            or row.market_scan_version != scan.version
+        ):
+            stale.append("market_scan_changed")
+        if row.schema_version >= 2 and row.capability_profile_id is not None:
+            profile = self._store.latest_capability_profile_row(brand_id)
+            if (
+                profile is None
+                or profile.id != row.capability_profile_id
+                or profile.version != row.capability_profile_version
+            ):
+                stale.append("capability_profile_changed")
+            profile_read = self._store.latest_capability_profile(brand_id)
+            research_read = self._store.latest_research(brand_id, row.audience_name)
+            fingerprint = _qualification_fingerprint(
+                _qualification_snapshots(
+                    self._store.prospects(brand_id, row.audience_name),
+                    definition=(research_read[1].definition if research_read else None),
+                    profile=(profile_read[1] if profile_read else None),
+                ),
+                profile=(profile_read[1] if profile_read else None),
+            )
+            if fingerprint != row.qualification_fingerprint:
+                stale.append("company_qualification_changed")
+        return RelevanceStatus(
+            audience_name=row.audience_name,
+            status=DossierState.STALE if stale else DossierState.CURRENT,
+            stale_reasons=stale,
+            missing_prerequisites=missing,
+            dossier_id=row.id,
+            generation_version=row.generation_version,
+            created_at=row.created_at,
+            dossier=dossier,
+        )
+
+    def relevance_statuses(self, brand_id: UUID) -> list[RelevanceStatus]:
+        return [
+            self.relevance_status(brand_id, row.audience_name)
+            for row in self._store.latest_researches(brand_id)
+        ]
 
     # --------------------------------------------------------------- edits
 
@@ -322,11 +549,18 @@ class MarketService:
         # about how the server is configured. Telling somebody who mistyped a
         # segment that their provider cannot read the web sends them to fix
         # the wrong thing.
-        found = self._store.segment_named(brand.id, segment)
+        demand = self._store.latest_map(brand.id)
+        found = demand.named(segment) if demand is not None else None
         if found is None:
             raise MarketError(
                 f"No segment called '{segment}' is on this brand's audience map. Map the "
                 "audience first, then pick one of the segments it found."
+            )
+        admission = demand.admission_for(found)
+        if not admission.researchable:
+            raise MarketError(
+                f"'{found.name}' is not researchable, so no prospect search was started. "
+                + " ".join(admission.reasons)
             )
         _require_web(provider)
         status = JobStatus(kind="prospects", brand_id=brand.id, brand_name=brand.name)
@@ -345,6 +579,124 @@ class MarketService:
         )
         return status
 
+    def launch_audience_research(
+        self,
+        brand: Brand,
+        provider: AIProvider,
+        engine: Engine,
+        *,
+        segment: str,
+    ) -> JobStatus:
+        """Research one current, admitted audience without product context."""
+        self._require_idle(brand.id)
+        demand = self._store.latest_map(brand.id)
+        found = demand.named(segment) if demand is not None else None
+        if found is None:
+            raise MarketError(
+                f"No segment called '{segment}' is on this brand's current audience map. "
+                "Map the audience first, then pick one of the segments it found."
+            )
+        admission = demand.admission_for(found)
+        if not admission.researchable:
+            raise MarketError(
+                f"'{found.name}' did not pass audience research admission. "
+                + " ".join(admission.reasons)
+            )
+        _require_search(provider)
+        status = JobStatus(
+            kind="audience_research", brand_id=brand.id, brand_name=brand.name
+        )
+        status.say(f"Starting deep research for {found.name}")
+        _jobs[brand.id] = status
+        _spawn(
+            _run_audience_research(
+                brand.id,
+                provider,
+                engine,
+                status,
+                segment=found.name,
+            )
+        )
+        return status
+
+    def launch_relevance_dossier(
+        self,
+        brand: Brand,
+        provider: AIProvider,
+        engine: Engine,
+        *,
+        segment: str,
+        force: bool = False,
+    ) -> JobStatus:
+        """Build or reuse one dossier for the latest persisted input triple."""
+        self._require_idle(brand.id)
+        inputs = self._relevance_inputs(brand.id, segment)
+        exact = self._store.dossier_for_v2_inputs(
+            brand.id,
+            inputs.research.audience_name,
+            knowledge_id=inputs.knowledge_row.id,
+            knowledge_version=inputs.knowledge_row.version,
+            research_id=inputs.research_row.id,
+            research_version=inputs.research_row.version,
+            market_scan_id=inputs.market_scan_row.id,
+            market_scan_version=inputs.market_scan_row.version,
+            capability_profile_id=inputs.capability_profile_row.id,
+            capability_profile_version=inputs.capability_profile_row.version,
+            qualification_fingerprint=inputs.qualification_fingerprint,
+        )
+        # A stored V1 exact-triple receipt remains reusable and inspectable.
+        # Campaign preflight treats its missing recommendation as discovery-only,
+        # so compatibility never silently becomes permission to assert fit.
+        if exact is None:
+            legacy = self._store.dossier_for_triple(
+                brand.id,
+                inputs.research.audience_name,
+                knowledge_id=inputs.knowledge_row.id,
+                knowledge_version=inputs.knowledge_row.version,
+                research_id=inputs.research_row.id,
+                research_version=inputs.research_row.version,
+                market_scan_id=inputs.market_scan_row.id,
+                market_scan_version=inputs.market_scan_row.version,
+            )
+            exact = legacy if legacy is not None and legacy.schema_version == 1 else None
+        if exact is not None and exact.payload and not force:
+            # An unreadable row is not a reusable success receipt.
+            try:
+                RelevanceDossier.model_validate(exact.payload)
+            except ValueError:
+                exact = None
+        if exact is not None and not force:
+            status = JobStatus(
+                kind="relevance_dossier",
+                brand_id=brand.id,
+                brand_name=brand.name,
+                state="done",
+            )
+            status.summary = (
+                f"Reused relevance dossier v{exact.generation_version}; the knowledge, "
+                "audience research and market scan are unchanged"
+            )
+            status.say(status.summary)
+            status.finished_at = datetime.now(UTC)
+            _jobs[brand.id] = status
+            return status
+
+        status = JobStatus(
+            kind="relevance_dossier", brand_id=brand.id, brand_name=brand.name
+        )
+        status.say(f"Connecting verified product evidence to {inputs.research.audience_name}")
+        _jobs[brand.id] = status
+        _spawn(
+            _run_relevance_dossier(
+                brand.id,
+                provider,
+                engine,
+                status,
+                segment=inputs.research.audience_name,
+            )
+        )
+        return status
+
     def _require_idle(self, brand_id: UUID) -> None:
         running = _jobs.get(brand_id)
         if running is not None and running.state == "running":
@@ -358,6 +710,76 @@ class MarketService:
                 "This brand's knowledge has not been compiled yet. Add its website or a "
                 "document and run a campaign once, so there is something to position."
             )
+
+    def _relevance_inputs(self, brand_id: UUID, audience: str) -> _RelevanceInputs:
+        knowledge = KnowledgeArtifactRepository(self._session).latest_for_brand(brand_id)
+        found = self._store.latest_research(brand_id, audience)
+        scan = self._store.latest_scan_row(brand_id)
+        missing = _missing_relevance_prerequisites(
+            knowledge, found[0] if found is not None else None, scan
+        )
+        if missing:
+            raise MarketError(
+                "A relevance dossier needs three current persisted inputs. "
+                + " ".join(item.message for item in missing)
+            )
+        artifacts = self.artifacts_for(brand_id)
+        assert knowledge is not None and found is not None and scan is not None
+        if artifacts is None or not scan.payload:
+            raise MarketError(
+                "The current Product Knowledge or Market Scan payload cannot be read. "
+                "Recompile knowledge or run the market scan again."
+            )
+        profile_row, profile = self.ensure_capability_profile(brand_id)
+        companies = _qualification_snapshots(
+            self._store.prospects(brand_id, found[1].audience_name),
+            definition=found[1].definition,
+            profile=profile,
+        )
+        return _RelevanceInputs(
+            knowledge_row=knowledge,
+            artifacts=artifacts,
+            research_row=found[0],
+            research=found[1],
+            market_scan_row=scan,
+            snapshot=MarketSnapshot.model_validate(scan.payload),
+            capability_profile_row=profile_row,
+            capability_profile=profile,
+            company_qualifications=companies,
+            qualification_fingerprint=_qualification_fingerprint(companies, profile=profile),
+        )
+
+
+def _missing_relevance_prerequisites(
+    knowledge: KnowledgeArtifactSet | None,
+    research: AudienceResearchRow | None,
+    scan: MarketScan | None,
+) -> list[MissingPrerequisite]:
+    missing: list[MissingPrerequisite] = []
+    if knowledge is None or not knowledge.payload:
+        missing.append(
+            MissingPrerequisite(
+                code="knowledge",
+                message=(
+                    "Compile Product Knowledge from this brand's website or documents first."
+                ),
+            )
+        )
+    if research is None or not research.payload:
+        missing.append(
+            MissingPrerequisite(
+                code="audience_research",
+                message="Run Deep Audience Research for this audience first.",
+            )
+        )
+    if scan is None or not scan.payload:
+        missing.append(
+            MissingPrerequisite(
+                code="market_scan",
+                message="Run a Market Scan so a current Positioning Map exists first.",
+            )
+        )
+    return missing
 
 
 def _require_web(provider: AIProvider) -> None:
@@ -376,6 +798,14 @@ def _require_web(provider: AIProvider) -> None:
         raise MarketError(
             "The configured AI provider cannot read the web, so there is nothing to "
             "discover. Competitors you add by hand can still be profiled."
+        )
+
+
+def _require_search(provider: AIProvider) -> None:
+    if ResearchTool.WEB_SEARCH not in provider.available_tools():
+        raise MarketError(
+            "The configured AI provider cannot search the web, so audience research "
+            "cannot locate sources."
         )
 
 
@@ -545,13 +975,32 @@ async def _run_prospects(
             # Every organisation already on this brand's list, whatever
             # segment it came from, so a second search does not spend its
             # budget re-finding what the user has already decided about.
-            known = [row.name for row in store.prospects(brand_id)]
+            existing_prospects = store.prospects(brand_id)
+            known = [row.name for row in existing_prospects]
+            _, capability_profile = service.ensure_capability_profile(brand_id)
+            refresh = [
+                ProspectLead(
+                    name=row.name,
+                    url=row.url,
+                    why_them=row.why_them,
+                    segment=row.segment,
+                )
+                for row in existing_prospects
+                if row.segment == found.name
+                and row.url.strip()
+                and (
+                    (qualification := prospect_qualification(row)) is None
+                    or qualification.stale_reasons(capability_profile)
+                )
+            ]
             prospects = await ProspectFinder(_session_for(provider, brand_id, status)).find(
                 artifacts=artifacts,
                 segment=found,
                 limit=limit,
                 known=known,
                 with_contacts=with_contacts,
+                capability_profile=capability_profile,
+                refresh=refresh,
             )
             stored = store.record_prospects(brand_id, prospects)
 
@@ -568,7 +1017,7 @@ async def _run_prospects(
                     "companies' sites. They were discarded, not shown."
                 )
             status.summary = (
-                f"{len(stored)} new organisation(s) for {found.name}, "
+                f"{len(stored)} organisation(s) refreshed or added for {found.name}, "
                 f"{reachable} with a published way in"
                 if stored
                 else (
@@ -589,6 +1038,192 @@ async def _run_prospects(
             status.say(status.error)
         finally:
             status.finished_at = datetime.now(UTC)
+
+
+async def _run_audience_research(
+    brand_id: UUID,
+    provider: AIProvider,
+    engine: Engine,
+    status: JobStatus,
+    *,
+    segment: str,
+) -> None:
+    with Session(engine) as session:
+        store = MarketStore(session)
+        try:
+            demand = store.latest_map(brand_id)
+            found = demand.named(segment) if demand is not None else None
+            if found is None:
+                raise MarketError(
+                    "This brand's audience map changed while research was starting. "
+                    "Choose the audience again."
+                )
+            admission = demand.admission_for(found)
+            if not admission.researchable:
+                raise MarketError(
+                    f"'{found.name}' no longer passes audience research admission. "
+                    + " ".join(admission.reasons)
+                )
+            research = await AudienceResearcher(
+                _session_for(provider, brand_id, status)
+            ).research(found, on_progress=status.say)
+            row = store.save_research(brand_id, research, store.latest_map_row(brand_id))
+            status.state = "done"
+            status.found = len(research.problems) + len(research.buyer_phrases)
+            status.summary = (
+                f"Audience research v{row.version}: {len(research.sources)} source(s), "
+                f"{len(research.problems)} verified problem(s), "
+                f"{research.dropped_claims} unverifiable item(s) dropped"
+            )
+            status.say(status.summary)
+        except (
+            AudienceResearchError,
+            MarketError,
+            ModelRuntimeError,
+            CapabilityUnavailableError,
+        ) as exc:
+            logger.info("market: audience research failed - %s", exc)
+            status.state = "failed"
+            status.error = str(exc)
+            status.say(f"Stopped: {exc}")
+        except Exception:
+            logger.exception("market: audience research crashed")
+            status.state = "failed"
+            status.error = "Audience research crashed unexpectedly. Check server logs."
+            status.say(status.error)
+        finally:
+            status.finished_at = datetime.now(UTC)
+
+
+async def _run_relevance_dossier(
+    brand_id: UUID,
+    provider: AIProvider,
+    engine: Engine,
+    status: JobStatus,
+    *,
+    segment: str,
+) -> None:
+    with Session(engine) as session:
+        service = MarketService(session)
+        try:
+            inputs = service._relevance_inputs(brand_id, segment)
+            status.say("Reading the complete Evidence Ledger and current Positioning Map")
+            dossier = await RelevanceAnalyst(
+                _session_for(provider, brand_id, status)
+            ).analyse(
+                artifacts=inputs.artifacts,
+                knowledge_id=inputs.knowledge_row.id,
+                knowledge_version=inputs.knowledge_row.version,
+                research=inputs.research,
+                research_id=inputs.research_row.id,
+                research_version=inputs.research_row.version,
+                positioning=inputs.snapshot.positioning,
+                market_scan_id=inputs.market_scan_row.id,
+                market_scan_version=inputs.market_scan_row.version,
+                capability_profile=inputs.capability_profile,
+                capability_profile_id=inputs.capability_profile_row.id,
+                capability_profile_version=inputs.capability_profile_row.version,
+                company_qualifications=inputs.company_qualifications,
+                qualification_fingerprint=inputs.qualification_fingerprint,
+            )
+            row = service.store.save_dossier(brand_id, dossier)
+            status.state = "done"
+            status.found = (
+                len(dossier.ranked_relevance)
+                + len(dossier.problem_fits)
+                + len(dossier.silences)
+            )
+            counts = dossier.validation_counts
+            status.summary = (
+                f"Relevance dossier v{row.generation_version}: "
+                f"{len(dossier.ranked_relevance)} ranked fact(s), "
+                f"{len(dossier.problem_fits)} problem fit(s), "
+                f"{len(dossier.silences)} silence(s); "
+                f"{counts.dropped_items} dropped and "
+                f"{counts.normalized_items} normalized"
+            )
+            status.say(status.summary)
+        except (MarketError, ModelRuntimeError, RelevanceValidationError) as exc:
+            logger.info("market: relevance dossier failed - %s", exc)
+            status.state = "failed"
+            status.error = str(exc)
+            status.say(f"Stopped: {exc}")
+        except Exception:
+            logger.exception("market: relevance dossier crashed")
+            status.state = "failed"
+            status.error = "Building the relevance dossier crashed unexpectedly. Check server logs."
+            status.say(status.error)
+        finally:
+            status.finished_at = datetime.now(UTC)
+
+
+def _qualification_snapshots(
+    rows: list[ProspectRow],
+    *,
+    definition: AudienceDefinition | None = None,
+    profile: ProductCapabilityProfile | None = None,
+) -> list[QualifiedCompanySnapshot]:
+    """Current company-level inputs, with legacy rows explicitly unverified."""
+    snapshots: list[QualifiedCompanySnapshot] = []
+    for row in rows:
+        qualification = prospect_qualification(row)
+        if qualification is None:
+            qualification = _unverified_company_qualification(
+                "legacy_prospect_has_no_qualification"
+            )
+        elif definition is not None and profile is not None:
+            if qualification.stale_reasons(profile):
+                qualification = stale_company_qualification(qualification, profile)
+            else:
+                qualification = qualify_company(
+                    definition=definition,
+                    profile=profile,
+                    evidence=qualification.evidence,
+                    requirements=qualification.requirements,
+                    unmapped_requirements=qualification.unmapped_requirements,
+                    site_verified=row.verified,
+                    pages_read=row.pages_read,
+                    reachable=bool(prospect_contacts(row)),
+                )
+        snapshots.append(
+            QualifiedCompanySnapshot(
+                prospect_id=row.id,
+                name=row.name,
+                url=row.url,
+                qualification=qualification,
+            )
+        )
+    return snapshots
+
+
+def _unverified_company_qualification(reason: str) -> CompanyQualification:
+    return CompanyQualification(
+        classification=QualificationClass.UNVERIFIED,
+        audience_structure_fit=QualificationDimension.UNKNOWN,
+        product_capability_fit=QualificationDimension.UNKNOWN,
+        evidence_completeness=EvidenceCompleteness.MISSING,
+        reachability=Reachability.UNKNOWN,
+        reason_codes=[reason],
+    )
+
+
+def _qualification_fingerprint(
+    items: list[QualifiedCompanySnapshot],
+    *,
+    profile: ProductCapabilityProfile | None = None,
+) -> str:
+    payload = {
+        "capability_profile_version": profile.version if profile is not None else 0,
+        "requirement_extractor_version": COMPANY_REQUIREMENT_EXTRACTOR_VERSION,
+        "requirement_normalizer_version": COMPANY_REQUIREMENT_NORMALIZER_VERSION,
+        "qualifier_version": COMPANY_QUALIFIER_VERSION,
+        "companies": [
+            item.model_dump(mode="json")
+            for item in sorted(items, key=lambda item: str(item.prospect_id))
+        ],
+    }
+    encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def _session_for(

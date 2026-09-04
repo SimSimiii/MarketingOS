@@ -8,6 +8,7 @@ from app.knowledge.ledger import Evidence, EvidenceIndex, EvidenceKind, Evidence
 from app.marketing.email_copy import Email
 from app.marketing.gates import (
     call_to_action_gate,
+    capability_scope_gate,
     evidence_gate,
     overlap_gate,
     placeholder_gate,
@@ -97,6 +98,38 @@ def test_small_bare_numbers_are_rhetoric_not_claims(index: EvidenceIndex):
     """Blocking "three reasons to switch" would make the gate noise, and a
     gate that gets ignored protects nothing."""
     assert evidence_gate("There are 3 reasons teams switch, and one of them matters.", index).passed
+
+
+# -------------------------------------------------------- capability scope
+
+
+def test_non_verified_voice_product_claim_is_blocked():
+    report = capability_scope_gate(
+        "orqAgent supports voice and telephony calls.",
+        ["voice_telephony"],
+    )
+
+    assert not report.passed
+    assert "voice_telephony" in report.render()
+
+
+def test_audience_voice_context_is_not_a_product_claim():
+    report = capability_scope_gate(
+        "Your receptionist answers phone calls all day.",
+        ["voice_telephony"],
+    )
+
+    assert report.passed
+
+
+def test_non_verified_full_backend_replacement_claim_is_blocked():
+    report = capability_scope_gate(
+        "We replace your entire backend.",
+        ["full_saas_backend"],
+    )
+
+    assert not report.passed
+    assert "full_saas_backend" in report.render()
 
 
 # -------------------------------------------------------------- placeholders

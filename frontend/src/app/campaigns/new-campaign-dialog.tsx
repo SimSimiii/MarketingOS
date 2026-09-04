@@ -28,11 +28,13 @@ import { ModelOverridePanel } from "@/components/model-override-panel";
 import { api } from "@/lib/api-client";
 import { useModelCatalog } from "@/lib/use-model-catalog";
 import type {
+  AudienceRead,
   Brand,
   BrandKnowledge,
   EmailTier,
   MappedSegment,
   PolicyPreset,
+  Prospect,
 } from "@/lib/types";
 
 const NO_BRAND = "__none__";
@@ -47,6 +49,7 @@ const NO_SEGMENT = "__default__";
 //: dropdown and once as a text box - invites somebody to answer both and
 //: leaves the run to guess which they meant.
 const CUSTOM_AUDIENCE = "__custom__";
+const NO_PROSPECT = "__audience_level__";
 
 const PRESET_LABELS: Record<PolicyPreset, string> = {
   fast: "Fast - cheaper models, shorter budget",
@@ -128,6 +131,10 @@ function buildRequest(type: ContentType, tone: Tone): string {
   return `${CONTENT_TEMPLATES[type]}\n\nTone of voice: ${TONE_INSTRUCTIONS[tone]}`;
 }
 
+function audienceKey(value: string): string {
+  return value.toLocaleLowerCase().trim().split(/\s+/).join(" ");
+}
+
 export interface NewCampaignDialogPrefill {
   brandId: string;
   productDescription?: string | null;
@@ -188,7 +195,9 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
   //: campaign is written to. Empty for a brand nobody has mapped, which is
   //: most of them - the picker only appears when there is a real choice.
   const [segments, setSegments] = useState<MappedSegment[]>([]);
+  const [audienceData, setAudienceData] = useState<AudienceRead | null>(null);
   const [audienceSegment, setAudienceSegment] = useState<string>(NO_SEGMENT);
+  const [prospectChoice, setProspectChoice] = useState<string>(NO_PROSPECT);
   //: Where the button goes. The writer is told it does not know this and
   //: writes the words on the link instead, so it is asked for here - without
   //: it a branded email renders a styled link rather than a button, because a
@@ -236,6 +245,8 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
     setExistingSources([]);
     setBrandKnowledge(undefined);
     setSegments([]);
+    setAudienceData(null);
+    setProspectChoice(NO_PROSPECT);
     // A typed description belongs to the campaign, not to the brand, so
     // changing brand keeps it. A *mapped* segment belongs to the brand that
     // was mapped, and cannot survive the switch.
@@ -268,10 +279,12 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
       .then((audience) => {
         if (knowledgeRequestId.current !== requestId) return;
         setSegments(audience.map?.segments ?? []);
+        setAudienceData(audience);
       })
       .catch(() => {
         if (knowledgeRequestId.current !== requestId) return;
         setSegments([]);
+        setAudienceData(null);
       });
     api
       .getBrandKnowledge(value)
@@ -308,7 +321,9 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
     setExistingSources([]);
     setBrandKnowledge(undefined);
     setSegments([]);
+    setAudienceData(null);
     setAudienceSegment(NO_SEGMENT);
+    setProspectChoice(NO_PROSPECT);
     setCtaUrl("");
     setEmailTier(null);
     setForceRecompile(true);
@@ -362,6 +377,8 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
           brandId && audienceSegment !== NO_SEGMENT && audienceSegment !== CUSTOM_AUDIENCE
             ? audienceSegment
             : null,
+        prospect_id:
+          brandId && prospectChoice !== NO_PROSPECT ? prospectChoice : null,
         cta_url: ctaUrl.trim() || null,
         email_tier: emailTier ?? TIER_FOR_TYPE[type],
         policy_preset: policyPreset,
@@ -392,7 +409,7 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
         toast.warning(`Campaign created, but we could not read: ${failures.join(", ")}`);
       }
 
-      const execution = await api.startCampaign(campaign.id);
+      const execution = await api.startCampaign(campaign.id, requiresOverride);
       setOpen(false);
       reset();
       router.push(`/campaigns/${campaign.id}/executions/${execution.id}`);
@@ -410,6 +427,36 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
 
   const usingExistingBrand = brandChoice !== NO_BRAND && brandChoice !== NEW_BRAND;
   const selectedSegment = segments.find((segment) => segment.name === audienceSegment);
+  const selectedProspects = (audienceData?.prospects ?? []).filter(
+    (prospect) => prospect.segment === audienceSegment && prospect.status !== "dismissed",
+  );
+  const selectedProspect: Prospect | undefined = selectedProspects.find(
+    (prospect) => prospect.id === prospectChoice,
+  );
+  const selectedRelevance = audienceData?.relevance.find(
+    (item) => audienceKey(item.audience_name) === audienceKey(audienceSegment),
+  );
+  const recommendation = selectedRelevance?.dossier?.recommendation ?? null;
+  const mappedAudienceSelected =
+    audienceSegment !== NO_SEGMENT && audienceSegment !== CUSTOM_AUDIENCE;
+  const audienceNeedsOverride =
+    mappedAudienceSelected &&
+    (selectedRelevance?.status !== "current" ||
+      !recommendation ||
+      recommendation.readiness === "DISCOVERY_ONLY" ||
+      recommendation.readiness === "NO_GO");
+  const companyNeedsOverride = Boolean(
+    selectedProspect?.qualification &&
+      selectedProspect.qualification.classification !== "QUALIFIED",
+  );
+  const companyUnqualified = Boolean(selectedProspect && !selectedProspect.qualification);
+  const narrowCompanyOutside = Boolean(
+    recommendation?.readiness === "GO_NARROW" &&
+      selectedProspect &&
+      selectedProspect.qualification?.classification !== "QUALIFIED",
+  );
+  const requiresOverride =
+    audienceNeedsOverride || companyNeedsOverride || companyUnqualified || narrowCompanyOutside;
   //: The brand has already read this page. Crawling it again would cost a
   //: fetch per page to arrive at the same text, and the compiled knowledge it
   //: produced is exactly what "reuse what's already compiled" promises to
@@ -519,7 +566,11 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
             <Label htmlFor="audience">Who this is for</Label>
             <Select
               value={audienceSegment}
-              onValueChange={(value) => value && setAudienceSegment(value)}
+              onValueChange={(value) => {
+                if (!value) return;
+                setAudienceSegment(value);
+                setProspectChoice(NO_PROSPECT);
+              }}
             >
               <SelectTrigger id="audience" className="w-full">
                 {/* The trigger renders the raw value, so a sentinel would read
@@ -568,6 +619,65 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
                     ? "Nobody has mapped this brand's audience yet. Market → Audience finds the buyers your own site does not name, and they show up in this list."
                     : "Every email will be planned against the buyer your website names — the opening line, the objection it answers, and the reader who grades every draft."}
             </p>
+
+            {mappedAudienceSelected && selectedProspects.length > 0 && (
+              <div className="space-y-2 pt-1">
+                <Label htmlFor="prospect">Specific company (optional)</Label>
+                <Select
+                  value={prospectChoice}
+                  onValueChange={(value) => value && setProspectChoice(value)}
+                >
+                  <SelectTrigger id="prospect" className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={NO_PROSPECT}>Audience-level campaign</SelectItem>
+                    {selectedProspects.map((prospect) => (
+                      <SelectItem key={prospect.id} value={prospect.id}>
+                        {prospect.name} — {prospect.qualification?.classification ?? "UNVERIFIED"}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Choosing a company makes its evidence-backed qualification part of the
+                  generation preflight. Leaving this at audience level never treats every found
+                  company as eligible.
+                </p>
+              </div>
+            )}
+
+            {mappedAudienceSelected && (
+              <div
+                className={`rounded-md p-3 text-xs ${
+                  requiresOverride
+                    ? "bg-amber-500/10 text-amber-200"
+                    : "bg-primary/10 text-foreground/80"
+                }`}
+              >
+                <p className="font-medium">
+                  {recommendation
+                    ? selectedRelevance?.status === "current"
+                      ? `${recommendation.state.replaceAll("_", " ")} · ${recommendation.readiness.replaceAll("_", " ")}`
+                      : "DISCOVERY ONLY · dossier is stale"
+                    : "DISCOVERY ONLY · no current V2 dossier"}
+                </p>
+                <p className="mt-1">
+                  {selectedProspect
+                    ? `${selectedProspect.name}: ${selectedProspect.qualification?.classification ?? "UNVERIFIED"}.`
+                    : selectedRelevance?.status === "current"
+                      ? recommendation?.recommended_next_action ||
+                        "Build the audience's V2 relevance dossier before treating it as qualified."
+                      : "Rebuild the audience's V2 relevance dossier before treating it as qualified."}
+                </p>
+                {requiresOverride && (
+                  <p className="mt-1">
+                    Generation remains available, but the action below changes to “Generate
+                    anyway” and the override is recorded with the run.
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           {usingExistingBrand && (
@@ -780,7 +890,9 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
                 disabled={submitting}
                 onClick={() => handleGenerate("cart_recovery")}
               >
-                <span className="font-semibold">Abandoned Cart Sequence</span>
+                <span className="font-semibold">
+                  {requiresOverride ? "Generate anyway: Cart Sequence" : "Abandoned Cart Sequence"}
+                </span>
                 <span className="text-xs font-normal opacity-80">3 emails</span>
               </Button>
               <Button
@@ -790,7 +902,9 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
                 disabled={submitting}
                 onClick={() => handleGenerate("launch_email")}
               >
-                <span className="font-semibold">Launch Email</span>
+                <span className="font-semibold">
+                  {requiresOverride ? "Generate anyway: Launch Email" : "Launch Email"}
+                </span>
                 <span className="text-xs font-normal opacity-80">1 email</span>
               </Button>
               <Button

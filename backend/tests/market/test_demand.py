@@ -8,6 +8,8 @@ was on a page we fetched. `test_an_address_not_on_the_page_is_discarded` is
 that difference, expressed.
 """
 
+from uuid import uuid4
+
 import pytest
 
 from app.ai.base import ResearchTool
@@ -21,6 +23,7 @@ from app.knowledge.artifacts import (
     Segment,
     Sophistication,
 )
+from app.market.capabilities import ProductCapability, ProductCapabilityProfile
 from app.market.demand import (
     MIN_USEFUL_FIT,
     AudienceCartographer,
@@ -32,6 +35,7 @@ from app.market.demand import (
     SegmentKind,
     contacts_of,
 )
+from app.market.qualification import QualificationClass
 from app.market.store import merge_audience
 from tests.market.conftest import ScriptedCrawler, ScriptedProvider
 
@@ -238,6 +242,83 @@ async def test_a_prospect_is_read_from_its_own_pages(provider: ScriptedProvider,
     # The reading step gets no web access at all: everything it sees was
     # fetched by us, which is what makes the check below possible.
     assert provider.tools_used_by("prospect_read") == []
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("company_name", "quote"),
+    [
+        (
+            "DentalReception AI",
+            "Our AI receptionist answers phone calls for dental practices 24/7.",
+        ),
+        (
+            "Orthia AI",
+            "Orthia answers calls, books appointments, and verifies insurance 24/7.",
+        ),
+        ("Voice Agent Co", "voice agent"),
+    ],
+)
+async def test_company_reader_maps_requirements_only_against_the_supplied_profile(
+    provider: ScriptedProvider, session, company_name: str, quote: str
+) -> None:
+    url = "https://dental.example"
+    provider.push(
+        "prospect_hunt",
+        {"leads": [{"name": company_name, "url": url}]},
+    )
+    provider.push(
+        "prospect_read",
+        read_payload(
+            what_they_do=quote,
+            verbatim=quote,
+            contacts=[],
+            company_requirements=[
+                {
+                    "capability_id": "voice_telephony",
+                    "evidence_state": "direct",
+                    "quote": quote,
+                    "source_url": url,
+                    "reasoning": "Answering calls requires the catalogued telephony runtime.",
+                }
+            ],
+        ),
+    )
+    profile = ProductCapabilityProfile(
+        version=7,
+        knowledge_id=uuid4(),
+        knowledge_version=3,
+        capabilities=[
+            ProductCapability(
+                id="voice_telephony",
+                label="Voice and telephony runtime",
+                description="Runtime for agent-based inbound and outbound calling.",
+                aliases=["call handling"],
+                state="unsupported",
+            )
+        ],
+    )
+
+    prospect = (
+        await ProspectFinder(
+            session,
+            crawler=ScriptedCrawler({url: [(url, quote)]}),
+        ).find(
+            artifacts=artifacts(),
+            segment=segment(),
+            capability_profile=profile,
+        )
+    )[0]
+
+    assert prospect.qualification is not None
+    assert prospect.qualification.classification is QualificationClass.EXCLUDED
+    assert prospect.qualification.reason_codes[0] == (
+        "unsupported_required_capability:voice_telephony"
+    )
+    assert prospect.qualification.identity.capability_profile_version == 7
+    request = next(item for item in provider.requests if item.template == "prospect_read")
+    assert "voice_telephony" in (request.system_prompt or "")
+    assert "call handling" in (request.system_prompt or "")
 
 
 @pytest.mark.asyncio

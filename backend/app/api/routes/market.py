@@ -23,6 +23,9 @@ from app.models.market import ProofCandidateRow, ProspectRow, Rival
 from app.repositories.brand_repository import BrandRepository
 from app.schemas.market import (
     AudienceRead,
+    AudienceResearchRead,
+    CapabilityProfileRead,
+    CapabilityProfileRequest,
     DemandMapRead,
     JobStatusRead,
     MapAudienceRequest,
@@ -33,6 +36,9 @@ from app.schemas.market import (
     ProspectRead,
     ProspectSearchRequest,
     RadarEventRead,
+    RelevanceDossierRequest,
+    RelevanceStatus,
+    ResearchAudienceRequest,
     RivalCreate,
     RivalMuteUpdate,
     RivalRead,
@@ -85,6 +91,16 @@ def _prospect(session: SessionDep, brand_id: UUID, prospect_id: UUID) -> Prospec
     if row is None or row.brand_id != brand_id:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Prospect not found")
     return row
+
+
+def _current_prospect_reads(
+    service: MarketService, brand_id: UUID, rows: list[ProspectRow]
+) -> list[ProspectRead]:
+    qualifications = {
+        row.id: service.current_company_qualification(brand_id, row.segment, row)
+        for row in rows
+    }
+    return prospect_reads(rows, qualifications)
 
 
 @router.get("/jobs", response_model=list[JobStatusRead])
@@ -249,12 +265,68 @@ def read_audience(
             "is written to the audience this company describes on its own website - which is "
             "the audience it set out to have, not necessarily the one most likely to answer."
         )
+    profile = service.capability_profile(brand_id)
     return AudienceRead(
         brand_id=brand_id,
         map=DemandMapRead.of(demand) if demand is not None else None,
-        prospects=prospect_reads(service.prospects(brand_id, segment)),
+        prospects=_current_prospect_reads(
+            service, brand_id, service.prospects(brand_id, segment)
+        ),
+        research=[
+            AudienceResearchRead.of(row)
+            for row in service.store.latest_researches(brand_id)
+        ],
+        relevance=service.relevance_statuses(brand_id),
+        capability_profile=(CapabilityProfileRead.of(profile[0]) if profile else None),
         note=note,
     )
+
+
+@router.get(
+    "/{brand_id}/capability-profile",
+    response_model=CapabilityProfileRead,
+)
+def read_capability_profile(
+    brand_id: UUID, session: SessionDep
+) -> CapabilityProfileRead:
+    _brand(session, brand_id)
+    found = MarketService(session).capability_profile(brand_id)
+    if found is None:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND,
+            "No product capability profile exists yet. Compile Product Knowledge first.",
+        )
+    return CapabilityProfileRead.of(found[0])
+
+
+@router.post(
+    "/{brand_id}/capability-profile/derive",
+    response_model=CapabilityProfileRead,
+)
+def derive_product_capability_profile(
+    brand_id: UUID, session: SessionDep
+) -> CapabilityProfileRead:
+    _brand(session, brand_id)
+    try:
+        row, _ = MarketService(session).ensure_capability_profile(brand_id)
+    except MarketError as exc:
+        raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
+    return CapabilityProfileRead.of(row)
+
+
+@router.post(
+    "/{brand_id}/capability-profile",
+    response_model=CapabilityProfileRead,
+)
+def save_product_capability_profile(
+    brand_id: UUID, data: CapabilityProfileRequest, session: SessionDep
+) -> CapabilityProfileRead:
+    _brand(session, brand_id)
+    try:
+        row = MarketService(session).save_capability_profile(brand_id, data)
+    except MarketError as exc:
+        raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
+    return CapabilityProfileRead.of(row)
 
 
 @router.post(
@@ -282,6 +354,116 @@ async def start_audience_map(
     except MarketError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
     return JobStatusRead(**vars(job))
+
+
+@router.post(
+    "/{brand_id}/audience/research",
+    response_model=JobStatusRead,
+    status_code=status.HTTP_202_ACCEPTED,
+)
+async def start_audience_research(
+    brand_id: UUID,
+    data: ResearchAudienceRequest,
+    session: SessionDep,
+    provider: AIProviderDep,
+) -> JobStatusRead:
+    """Research one current audience only after deterministic admission."""
+    brand = _brand(session, brand_id)
+    try:
+        job = MarketService(session).launch_audience_research(
+            brand, provider, engine, segment=data.segment
+        )
+    except MarketError as exc:
+        raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
+    return JobStatusRead(**vars(job))
+
+
+@router.get(
+    "/{brand_id}/audience/research/latest",
+    response_model=AudienceResearchRead,
+)
+def read_latest_audience_research(
+    brand_id: UUID, segment: str, session: SessionDep
+) -> AudienceResearchRead:
+    _brand(session, brand_id)
+    found = MarketService(session).store.latest_research(brand_id, segment)
+    if found is None:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND,
+            f"No persisted audience research exists for '{segment}'.",
+        )
+    row, _ = found
+    return AudienceResearchRead.of(row)
+
+
+@router.post(
+    "/{brand_id}/audience/relevance",
+    response_model=JobStatusRead,
+    status_code=status.HTTP_202_ACCEPTED,
+)
+async def start_relevance_dossier(
+    brand_id: UUID,
+    data: RelevanceDossierRequest,
+    session: SessionDep,
+    provider: AIProviderDep,
+) -> JobStatusRead:
+    brand = _brand(session, brand_id)
+    try:
+        job = MarketService(session).launch_relevance_dossier(
+            brand, provider, engine, segment=data.segment
+        )
+    except MarketError as exc:
+        raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
+    return JobStatusRead(**vars(job))
+
+
+@router.post(
+    "/{brand_id}/audience/relevance/rebuild",
+    response_model=JobStatusRead,
+    status_code=status.HTTP_202_ACCEPTED,
+)
+async def rebuild_relevance_dossier(
+    brand_id: UUID,
+    data: RelevanceDossierRequest,
+    session: SessionDep,
+    provider: AIProviderDep,
+) -> JobStatusRead:
+    brand = _brand(session, brand_id)
+    try:
+        job = MarketService(session).launch_relevance_dossier(
+            brand, provider, engine, segment=data.segment, force=True
+        )
+    except MarketError as exc:
+        raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
+    return JobStatusRead(**vars(job))
+
+
+@router.get(
+    "/{brand_id}/audience/relevance/status",
+    response_model=RelevanceStatus,
+)
+def read_relevance_status(
+    brand_id: UUID, segment: str, session: SessionDep
+) -> RelevanceStatus:
+    _brand(session, brand_id)
+    return MarketService(session).relevance_status(brand_id, segment)
+
+
+@router.get(
+    "/{brand_id}/audience/relevance/latest",
+    response_model=RelevanceStatus,
+)
+def read_latest_relevance_dossier(
+    brand_id: UUID, segment: str, session: SessionDep
+) -> RelevanceStatus:
+    _brand(session, brand_id)
+    result = MarketService(session).relevance_status(brand_id, segment)
+    if result.dossier is None:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND,
+            f"No persisted relevance dossier exists for '{segment}'.",
+        )
+    return result
 
 
 @router.post(
@@ -326,7 +508,10 @@ def list_prospects(
 ) -> list[ProspectRead]:
     _brand(session, brand_id)
     wanted = ProspectStatus(status_filter) if status_filter else None
-    return prospect_reads(MarketService(session).prospects(brand_id, segment, wanted))
+    service = MarketService(session)
+    return _current_prospect_reads(
+        service, brand_id, service.prospects(brand_id, segment, wanted)
+    )
 
 
 @router.post("/{brand_id}/prospects/{prospect_id}", response_model=ProspectRead)
@@ -347,7 +532,14 @@ def decide_prospect(
             status.HTTP_422_UNPROCESSABLE_ENTITY,
             f"'{data.status}' is not a prospect status. Use 'kept' or 'dismissed'.",
         ) from exc
-    return ProspectRead.of(MarketService(session).decide_prospect(row, wanted))
+    service = MarketService(session)
+    updated = service.decide_prospect(row, wanted)
+    return ProspectRead.of(
+        updated,
+        qualification=service.current_company_qualification(
+            brand_id, updated.segment, updated
+        ),
+    )
 
 
 @router.delete(
@@ -373,7 +565,8 @@ def export_prospects(
     of the review - the user believes they exported the eleven they checked.
     """
     _brand(session, brand_id)
-    rows = MarketService(session).prospects(brand_id, segment, ProspectStatus.KEPT)
+    service = MarketService(session)
+    rows = service.prospects(brand_id, segment, ProspectStatus.KEPT)
 
     buffer = io.StringIO()
     writer = csv.writer(buffer)
@@ -384,7 +577,15 @@ def export_prospects(
             "segment",
             "what_they_do",
             "why_them",
-            "fit",
+            "legacy_fit_estimate",
+            "qualification",
+            "audience_structure_fit",
+            "product_capability_fit",
+            "evidence_completeness",
+            "reachability",
+            "reason_codes",
+            "hard_disqualifiers",
+            "qualification_evidence",
             "emails",
             "phones",
             "contact_form",
@@ -394,6 +595,9 @@ def export_prospects(
     )
     for row in rows:
         contacts = prospect_contacts(row)
+        qualification = service.current_company_qualification(
+            brand_id, row.segment, row
+        )
         writer.writerow(
             [
                 row.name,
@@ -401,7 +605,27 @@ def export_prospects(
                 row.segment,
                 row.what_they_do,
                 row.why_them,
-                f"{row.fit:.2f}",
+                f"{row.fit:.2f}" if qualification is None else "",
+                str(qualification.classification) if qualification else "legacy_unqualified",
+                str(qualification.audience_structure_fit) if qualification else "",
+                str(qualification.product_capability_fit) if qualification else "",
+                str(qualification.evidence_completeness) if qualification else "",
+                str(qualification.reachability) if qualification else "",
+                "; ".join(qualification.reason_codes) if qualification else "",
+                (
+                    "; ".join(qualification.hard_disqualifiers_triggered)
+                    if qualification
+                    else ""
+                ),
+                (
+                    "; ".join(
+                        f"{item.code}: {item.quote} [{item.source_identifier}]"
+                        for item in qualification.evidence
+                        if item.quote
+                    )
+                    if qualification
+                    else ""
+                ),
                 contacts_of(contacts, ContactKind.EMAIL),
                 contacts_of(contacts, ContactKind.PHONE),
                 contacts_of(contacts, ContactKind.FORM),

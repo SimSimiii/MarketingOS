@@ -1,6 +1,6 @@
 """Where market intelligence lives between runs.
 
-Six tables, and the split between them is the important part: they have
+Eight tables, and the split between them is the important part: they have
 different lifetimes and different owners, and folding them into one payload
 would break whichever one is inconvenient that week.
 
@@ -33,6 +33,18 @@ map because the user works on it. They dismiss the one that is obviously too
 big and keep the eleven they will write to on Monday, and those decisions must
 survive the next search - a list that re-offers a dismissed company is a list
 somebody stops reading.
+
+An **audience research version** is the verified reading of one mapped
+audience. Refreshes append rather than overwrite so the source set and the
+claims that survived it remain inspectable.
+
+A **relevance dossier** is one verified Product x Audience x Market judgment.
+It points at all three exact input versions and appends on rebuild, so a stale
+result remains readable and explainable rather than being replaced in place.
+
+A **product capability profile** is the inspectable positive, negative and
+unknown product boundary used by V2 qualification. It points at the Knowledge
+version whose Evidence Ledger licensed its positive claims.
 """
 
 from datetime import UTC, datetime
@@ -136,6 +148,67 @@ class AudienceMapRow(SQLModel, table=True):
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
+class AudienceResearchRow(SQLModel, table=True):
+    """One verified, versioned research payload for one mapped audience."""
+
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
+    brand_id: UUID = Field(foreign_key="brand.id", index=True)
+    #: Stable comparison key; the display name remains exactly as mapped.
+    audience_key: str = Field(index=True)
+    audience_name: str
+    source_map_id: UUID | None = Field(default=None, foreign_key="audiencemaprow.id")
+    source_map_version: int | None = None
+    version: int = 1
+    #: Serialized app.market.audience_research.AudienceResearch.
+    payload: dict = Field(default_factory=dict, sa_column=Column(JSON))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class ProductCapabilityProfileRow(SQLModel, table=True):
+    """One versioned product-truth snapshot for a brand."""
+
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
+    brand_id: UUID = Field(foreign_key="brand.id", index=True)
+    knowledge_id: UUID = Field(foreign_key="knowledgeartifactset.id", index=True)
+    knowledge_version: int
+    version: int = 1
+    schema_version: int = 2
+    #: Serialized app.market.capabilities.ProductCapabilityProfile.
+    payload: dict = Field(default_factory=dict, sa_column=Column(JSON))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class RelevanceDossierRow(SQLModel, table=True):
+    """One normalized dossier built from one exact version triple."""
+
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
+    brand_id: UUID = Field(foreign_key="brand.id", index=True)
+    audience_key: str = Field(index=True)
+    audience_name: str
+    audience_research_id: UUID = Field(foreign_key="audienceresearchrow.id", index=True)
+    audience_research_version: int
+    knowledge_id: UUID = Field(foreign_key="knowledgeartifactset.id", index=True)
+    knowledge_version: int
+    market_scan_id: UUID = Field(foreign_key="marketscan.id", index=True)
+    market_scan_version: int
+    #: V1 rows leave these null. V2 cache identity is the exact V1 triple plus
+    #: the capability-profile version and the company-qualification fingerprint.
+    #: That fingerprint also carries the requirement extractor/normalizer and
+    #: qualifier versions, so a code upgrade cannot reuse pre-upgrade results.
+    capability_profile_id: UUID | None = Field(
+        default=None, foreign_key="productcapabilityprofilerow.id", index=True
+    )
+    capability_profile_version: int | None = None
+    qualification_fingerprint: str = ""
+    schema_version: int = 1
+    #: Monotonic per brand/audience across every input triple. A forced
+    #: rebuild of the same triple gets a new generation and preserves the old.
+    generation_version: int = 1
+    #: Serialized app.market.relevance.RelevanceDossier.
+    payload: dict = Field(default_factory=dict, sa_column=Column(JSON))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
 class ProspectRow(SQLModel, table=True):
     """One named organisation that could buy this, and what the user did with it."""
 
@@ -162,6 +235,9 @@ class ProspectRow(SQLModel, table=True):
     verified: bool = False
     pages_read: int = 0
     invented_contacts: int = 0
+    #: Serialized app.market.qualification.CompanyQualification. Null/empty
+    #: for legacy prospects; never reconstructed from their old match score.
+    qualification: dict | None = Field(default=None, sa_column=Column(JSON))
     note: str = ""
     #: `new`, `kept` or `dismissed`.
     status: str = Field(default="new", index=True)

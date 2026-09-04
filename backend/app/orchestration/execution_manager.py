@@ -16,7 +16,14 @@ from app.orchestration.execution_registry import registry
 logger = logging.getLogger("marketingos.orchestration")
 
 
-def launch(campaign: Campaign, ai_provider: AIProvider, engine: Engine) -> CampaignExecution:
+def launch(
+    campaign: Campaign,
+    ai_provider: AIProvider,
+    engine: Engine,
+    *,
+    recommendation_snapshot: dict | None = None,
+    generated_despite_recommendation: bool = False,
+) -> CampaignExecution:
     """Create the execution row synchronously (so the caller has an id to
     return immediately) and hand the actual multi-minute run off to a
     background task on its own database session.
@@ -32,7 +39,11 @@ def launch(campaign: Campaign, ai_provider: AIProvider, engine: Engine) -> Campa
     task must never touch it. It opens a fresh one instead.
     """
     with Session(engine) as session:
-        execution = CampaignOrchestrator(session, ai_provider).create_execution(campaign)
+        execution = CampaignOrchestrator(session, ai_provider).create_execution(
+            campaign,
+            recommendation_snapshot=recommendation_snapshot,
+            generated_despite_recommendation=generated_despite_recommendation,
+        )
 
     cancel_token = CancellationToken()
     task = asyncio.create_task(_run(execution.id, campaign.id, ai_provider, engine, cancel_token))

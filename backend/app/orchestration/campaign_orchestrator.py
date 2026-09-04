@@ -15,13 +15,24 @@ from app.knowledge.corpus import SourceCorpus
 from app.knowledge.store import ArtifactScope, ArtifactStore, StoredArtifacts, fingerprint_documents
 from app.market.demand import DemandMap
 from app.market.positioning import PositioningMap
-from app.market.store import MarketStore, merge_audience, merge_proof
+from app.market.store import (
+    MarketStore,
+    merge_audience,
+    merge_proof,
+    prospect_qualification,
+)
 from app.marketing.briefs import CampaignBrief
 from app.marketing.cancellation import CancellationToken
 from app.marketing.craft import EmailVersion
 from app.marketing.critic import Critique
 from app.marketing.email_copy import Email, render_email
 from app.marketing.gates import GateReport
+from app.marketing.intelligence import (
+    CampaignIntelligenceBundle,
+    adapt_researched_audience,
+    build_campaign_intelligence,
+    resolve_audience_research,
+)
 from app.marketing.observer import RunObserver
 from app.marketing.pipeline import (
     CampaignRunResult,
@@ -39,6 +50,7 @@ from app.models.campaign import Campaign
 from app.models.campaign_execution import CampaignExecution
 from app.models.enums import AssetType, ExecutionStatus, LogLevel
 from app.models.generated_asset import GeneratedAsset
+from app.models.market import ProspectRow
 from app.orchestration.event_emitter import ExecutionEventEmitter
 from app.orchestration.live_broker import broker
 from app.repositories.agent_execution_repository import AgentExecutionRepository
@@ -55,6 +67,7 @@ from app.runtime.events import (
 )
 from app.runtime.model_session import ModelSession, RoleCall
 from app.runtime.prompt_engine import get_prompt_engine
+from app.services.market_service import MarketService
 
 logger = logging.getLogger("marketingos.orchestration")
 
@@ -144,6 +157,44 @@ class _DbKnowledgeGateway(KnowledgeGateway):
 
     def audience_choice(self) -> str:
         return self._campaign.audience_segment or ""
+
+    def campaign_intelligence(
+        self, artifacts: KnowledgeArtifacts
+    ) -> CampaignIntelligenceBundle | None:
+        """Resolve one selected researched audience without creating anything."""
+        if self._market is None or self._campaign.brand_id is None:
+            return None
+        selected = (self._campaign.audience_segment or "").strip()
+        if not selected:
+            return None
+
+        match = resolve_audience_research(
+            selected,
+            self._market.latest_researches(self._campaign.brand_id),
+        )
+        dossier_status = None
+        if match.research is not None:
+            dossier_status = MarketService(self._session).relevance_status(
+                self._campaign.brand_id, match.research.audience_name
+            )
+        context = build_campaign_intelligence(
+            selected_audience=selected,
+            match=match,
+            dossier_status=dossier_status,
+            ledger=artifacts.evidence,
+        )
+        if self._campaign.prospect_id is not None:
+            prospect = self._session.get(ProspectRow, self._campaign.prospect_id)
+            if prospect is not None and prospect.brand_id == self._campaign.brand_id:
+                context.selected_company_name = prospect.name
+                context.selected_company_url = prospect.url
+                context.selected_company_qualification = prospect_qualification(prospect)
+        adapted = (
+            adapt_researched_audience(artifacts, match.research, context)
+            if match.research is not None
+            else artifacts
+        )
+        return CampaignIntelligenceBundle(artifacts=adapted, context=context)
 
     def _with_market(self, stored: StoredArtifacts | None) -> StoredArtifacts | None:
         """Fold in what the market pages decided, on top of what was compiled.
@@ -660,12 +711,20 @@ class CampaignOrchestrator:
     def _emitter_for(self, execution_id: UUID) -> ExecutionEventEmitter:
         return ExecutionEventEmitter(self._logs, execution_id)
 
-    def create_execution(self, campaign: Campaign) -> CampaignExecution:
+    def create_execution(
+        self,
+        campaign: Campaign,
+        *,
+        recommendation_snapshot: dict | None = None,
+        generated_despite_recommendation: bool = False,
+    ) -> CampaignExecution:
         execution = self._campaign_executions.create(
             CampaignExecution(
                 campaign_id=campaign.id,
                 status=ExecutionStatus.RUNNING,
                 started_at=datetime.now(UTC),
+                recommendation_snapshot=recommendation_snapshot,
+                generated_despite_recommendation=generated_despite_recommendation,
             )
         )
         self._emitter_for(execution.id).emit(
@@ -866,12 +925,19 @@ class CampaignOrchestrator:
             )
 
         execution.completed_at = datetime.now(UTC)
-        execution.result = {
+        execution_result = {
             "run_status": result.status,
             "report": result.report.model_dump(mode="json"),
             "brief": result.brief.model_dump(mode="json") if result.brief else None,
             "knowledge_version": result.artifacts.version if result.artifacts else 0,
+            "recommendation_at_generation": execution.recommendation_snapshot,
+            "generated_despite_recommendation": (
+                execution.generated_despite_recommendation
+            ),
         }
+        if result.intelligence is not None:
+            execution_result["intelligence"] = result.intelligence.model_dump(mode="json")
+        execution.result = execution_result
         # Every input token the run consumed, cached input included - that is
         # what the user's quota paid for, and recording only the uncached
         # remainder is what made every earlier run look ~40% cheaper than it

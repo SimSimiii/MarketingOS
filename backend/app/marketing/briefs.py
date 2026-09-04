@@ -96,6 +96,12 @@ class EmailBrief(BaseModel):
     #: to put something on the page, and a system with only additive pressure
     #: turns every email into a product page by the third rewrite.
     must_not_say: list[str] = Field(default_factory=list)
+    #: V2 product facts that remain in the complete ledger for gates/history
+    #: but must not enter writer or critic prompt material.
+    forbidden_evidence_ids: list[str] = Field(default_factory=list)
+    #: Capability ids the current product profile does not license. Unlike a
+    #: prose warning, these feed a deterministic scope gate on every draft.
+    forbidden_capability_ids: list[str] = Field(default_factory=list)
     #: The reason this reader would not act, which this email answers by name.
     objection: str = ""
     #: How it should feel - "matter-of-fact", "slightly impatient", "warm".

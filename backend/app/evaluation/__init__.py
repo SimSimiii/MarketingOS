@@ -22,4 +22,13 @@ instrument. The blind reader panel is a measurement of the copy by someone who
 knows nothing about it; the gates are deterministic checks; the sequence pass
 judges the set. None of that had to be invented here - it only had to be
 written down in a form two runs can be compared with.
+
+There is a third thing here now and it is a different shape from both: a
+controlled experiment rather than a benchmark. `audience.py`, `audience_bench.py`
+and `persona_bench.py` run the same golden case several times with one variable
+changed - what the campaign knows about its buyer - to answer whether audience
+intelligence is worth building before any of it is built. A benchmark asks "did
+this change help"; an experiment asks "would this change help", and it needs
+things a benchmark does not: arms, a control that is proved to be a control, and
+an instrument (`probe.py`) that says the arms actually differed inside the run.
 """

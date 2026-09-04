@@ -349,7 +349,7 @@ def claims_from_knowledge(artifacts: KnowledgeArtifacts) -> ClaimSet:
             text=entry.claim,
             verbatim=entry.verbatim,
             source=entry.source or "our own material",
-            axis=_axis_for(entry),
+            axis=axis_for_evidence(entry),
             specific=None,
         )
         # A compiled ledger routinely holds the same fact several times over,
@@ -420,7 +420,13 @@ _AXIS_WORDS: tuple[tuple[ClaimAxis, tuple[str, ...]], ...] = (
 )
 
 
-def _axis_for(entry: Evidence) -> ClaimAxis:
+def axis_for_evidence(entry: Evidence) -> ClaimAxis:
+    """The market axis a verified ledger entry competes on.
+
+    Public because relevance dossiers use the same deterministic taxonomy to
+    attach an existing territory to an evidence id.  It is classification of
+    a product fact, never a new market claim.
+    """
     kind = _AXIS_BY_KIND.get(str(entry.kind))
     if kind is not None:
         return kind

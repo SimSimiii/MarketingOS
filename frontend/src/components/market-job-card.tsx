@@ -17,6 +17,8 @@ const KIND_LABELS: Record<string, string> = {
   scan: "Reading the competition",
   proof: "Searching for proof",
   audience: "Working out who buys this",
+  audience_research: "Researching one audience",
+  relevance_dossier: "Building audience relevance",
   prospects: "Finding named organisations",
 };
 

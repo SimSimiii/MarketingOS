@@ -108,6 +108,20 @@ to work harder, and the strategist needs to know which one it is holding.
   list, an association register, a conference exhibitor list, a subreddit, a trade body. Real
   names, not "LinkedIn" and not "online".
 
+- **definition** - the structured qualification contract. Put observable machine-readable
+  codes in `required_structural_signals` and `required_workflow_signals`; put capability ids
+  the product must have in `required_product_capabilities`; put weaker indicators in
+  `optional_signals`; and put overriding exclusions in `hard_disqualifiers` with an outcome of
+  `ADJACENT` or `EXCLUDED`. Also name `eligible_subsegments`, `excluded_subsegments`, and a
+  `max_team_size` only when the audience definition genuinely has one. Prefer stable codes such
+  as `founder_led`, `owns_ai_layer`, `repeated_client_deployments`, `rebuilds_agent_config`,
+  `agency_services`, `platform_powered`, `multi_founder`, `mature_platform`, `voice_required`,
+  and `deep_vertical_integrations_required`. Required capability ids must come from what is
+  sold: `rest_api`, `text_chat_agent`, `knowledge_base`, `guardrails`,
+  `per_client_configuration`, `agent_api_keys`, `run_history_analytics`, `byok`,
+  `voice_telephony`, `full_saas_backend`, `hipaa_compliance`, or
+  `deep_vertical_integrations`. Do not encode a company name as a requirement or exclusion.
+
 Fill **searched** with the queries you actually ran, and **reading** with one paragraph on
 where the demand in this market really is - the thing you would say out loud to the founder
 if you had thirty seconds.

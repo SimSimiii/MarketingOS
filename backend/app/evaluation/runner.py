@@ -22,15 +22,17 @@ from sqlmodel import Session, SQLModel, create_engine
 from app.ai.factory import get_ai_provider
 from app.ai.model_router import ModelRouter
 from app.core.config import PROMPTS_DIR
+from app.evaluation.audience import AudienceCondition, all_markers, arm_for
 from app.evaluation.golden import GOLDEN_CASES, GoldenCase, case_named
 from app.evaluation.head_to_head import JUDGE_MODEL, against_control
+from app.evaluation.probe import PromptProbe
 from app.evaluation.record import RunRecord, record_from
+from app.evaluation.scaffold import PROBED_ROLES, describe, prepare_case
 from app.marketing.observer import RunObserver
-from app.marketing.pipeline import EmailCampaignPipeline
-from app.marketing.policy import PolicyPreset, resolve_policy
+from app.marketing.pipeline import CampaignRunResult, EmailCampaignPipeline
+from app.marketing.policy import ExecutionPolicy, PolicyPreset, resolve_policy
+from app.marketing.reader import personas_for
 from app.marketing.request import CampaignRequest
-from app.models.campaign import Campaign
-from app.models.knowledge_document import KnowledgeDocument
 from app.orchestration.campaign_orchestrator import _DbKnowledgeGateway
 from app.runtime.events import EventBus
 from app.runtime.model_session import ModelSession
@@ -58,38 +60,60 @@ class _RepairCounter(RunObserver):
         print(f"  → {role_id}: {label}", flush=True)
 
 
-async def run_case(case: GoldenCase, preset: PolicyPreset) -> RunRecord:
-    """One golden case, through the real pipeline, against real models."""
+def personas_used(result: CampaignRunResult, policy: ExecutionPolicy) -> list[str]:
+    """The cold readers the run was actually graded by.
+
+    Recomputed rather than observed, from the artifacts the run finished with
+    and the brief it wrote - the same two inputs, through the same pure
+    function, as `EmailCampaignPipeline._craft_loop`. It is the cheapest
+    faithful answer available: the alternative is an observer callback inside
+    the loop, which is production code changed for a benchmark's benefit.
+    """
+    if result.artifacts is None or result.brief is None:
+        return []
+    audience = result.artifacts.audience
+    chosen = audience.match(result.brief.reader_segment, result.brief.reader)
+    return personas_for(audience, chosen, panel=policy.reader_panel)
+
+
+async def run_case(
+    case: GoldenCase,
+    preset: PolicyPreset,
+    condition: AudienceCondition | None = None,
+) -> RunRecord:
+    """One golden case, through the real pipeline, against real models.
+
+    `condition` is the audience-intelligence arm - see
+    `app.evaluation.audience`. `None` is the benchmark as it has always been: a
+    campaign attached to no brand, which is also a campaign no market
+    intelligence can reach.
+    """
     with tempfile.TemporaryDirectory() as workspace:
         engine = create_engine(f"sqlite:///{Path(workspace) / 'eval.db'}")
         SQLModel.metadata.create_all(engine)
         with Session(engine) as session:
-            campaign = Campaign(
-                name=f"[eval] {case.name}",
-                request=case.request,
-                product_description=case.product_description,
-                target_market=case.target_market,
-                goals=case.goals,
-                policy={"preset": preset},
-            )
-            session.add(campaign)
-            session.commit()
-            session.refresh(campaign)
-            for title, content in case.documents:
-                session.add(
-                    KnowledgeDocument(
-                        campaign_id=campaign.id,
-                        title=title,
-                        source_type="markdown",
-                        content=content,
-                    )
+            campaign = prepare_case(session, case, preset, condition)
+            chosen_segment = campaign.audience_segment or ""
+            if condition is not None:
+                print(
+                    f"    · audience [{condition}]: "
+                    f"{describe(arm_for(case.name, condition))}",
+                    flush=True,
                 )
-            session.commit()
 
             policy = resolve_policy(preset)
             observer = _RepairCounter()
+            # Only the campaign's own provider is wrapped. The judge below runs
+            # unprobed on purpose: it is the benchmark's instrument, not part of
+            # the run, and what reached its prompts says nothing about whether
+            # the arm changed the campaign.
+            probe = (
+                PromptProbe(get_ai_provider(), all_markers(case.name))
+                if condition is not None
+                else None
+            )
             model_session = ModelSession(
-                provider=get_ai_provider(),
+                provider=probe or get_ai_provider(),
                 prompt_engine=get_prompt_engine(PROMPTS_DIR),
                 events=EventBus(),
                 model_router=ModelRouter(policy.model_overrides),
@@ -133,7 +157,16 @@ async def run_case(case: GoldenCase, preset: PolicyPreset) -> RunRecord:
             print(f"    · {control.render()}", flush=True)
 
     return record_from(
-        case.name, preset, result, elapsed, repairs=observer.repairs, control=control
+        case.name,
+        preset,
+        result,
+        elapsed,
+        repairs=observer.repairs,
+        control=control,
+        audience_condition=str(condition) if condition is not None else "",
+        audience_segment=chosen_segment,
+        audience_reached=probe.reached(*PROBED_ROLES) if probe is not None else {},
+        reader_personas=personas_used(result, policy),
     )
 
 

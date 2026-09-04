@@ -41,6 +41,14 @@ from app.marketing.craft import CraftLoop, EmailOutcome
 from app.marketing.critic import ConversionCritic
 from app.marketing.email_copy import Email
 from app.marketing.exceptions import CampaignError
+from app.marketing.intelligence import (
+    AudienceResolution,
+    CampaignIntelligence,
+    CampaignIntelligenceBundle,
+    CampaignIntelligenceTrace,
+    DossierPosture,
+    attach_selected_dossier_objection,
+)
 from app.marketing.observer import RunObserver
 from app.marketing.policy import ExecutionPolicy
 from app.marketing.preflight import ProofPosture, assess
@@ -79,6 +87,23 @@ _GUARD_MESSAGES: dict[str, str] = {
         "Everything finished before that point is below."
     ),
 }
+
+
+def _intelligence_message(intelligence: CampaignIntelligence) -> str:
+    trace = intelligence.trace
+    if trace.audience_resolution_status is AudienceResolution.AMBIGUOUS:
+        return "Researched audience match is ambiguous; using the legacy audience fallback"
+    if trace.audience_resolution_status is AudienceResolution.MISSING:
+        return "No matching Audience Research; using the legacy audience fallback"
+    if trace.dossier_status is DossierPosture.CURRENT:
+        return "Researched audience and current Relevance Dossier loaded"
+    if trace.dossier_status is DossierPosture.STALE:
+        return (
+            "Researched audience loaded; stale Relevance Dossier is advisory ("
+            + ", ".join(trace.stale_reasons)
+            + ")"
+        )
+    return "Researched audience loaded; no Relevance Dossier, using legacy relevance fallback"
 
 
 class KnowledgeGateway(ABC):
@@ -142,6 +167,17 @@ class KnowledgeGateway(ABC):
         """
         return ""
 
+    def campaign_intelligence(
+        self, artifacts: KnowledgeArtifacts
+    ) -> CampaignIntelligenceBundle | None:
+        """Verified context for the selected audience, if this gateway has one.
+
+        Database-free and historical gateways inherit the no-op. A run
+        without a brand or explicit audience therefore takes exactly the old
+        path and performs no market-intelligence lookup.
+        """
+        return None
+
 
 @dataclass
 class CampaignRunResult:
@@ -153,6 +189,7 @@ class CampaignRunResult:
     report: CampaignReport = field(default_factory=CampaignReport)
     usage: Usage = field(default_factory=Usage)
     abort_reason: str | None = None
+    intelligence: CampaignIntelligenceTrace | None = None
 
     @property
     def emails(self) -> list[Email]:
@@ -195,6 +232,18 @@ class EmailCampaignPipeline:
             artifacts, corpus = await self._phase_knowledge(result)
             if (guard := self._guard()) is not None:
                 return self._stopped(request, contract, result, guard)
+
+            intelligence: CampaignIntelligence | None = None
+            if bundle := self._knowledge.campaign_intelligence(artifacts):
+                artifacts = bundle.artifacts
+                intelligence = bundle.context
+                result.artifacts = artifacts
+                result.intelligence = intelligence.trace
+                self._observer.on_phase(
+                    "intelligence",
+                    _intelligence_message(intelligence),
+                    intelligence.trace.model_dump(mode="json"),
+                )
 
             # Said out loud before the strategy is decided rather than
             # discovered on the receipt: what the copy is allowed to argue
@@ -246,7 +295,15 @@ class EmailCampaignPipeline:
                 )
 
             brief = await self._phase_strategy(
-                request, artifacts, corpus, contract, result, positioning, demand, chosen
+                request,
+                artifacts,
+                corpus,
+                contract,
+                result,
+                positioning,
+                demand,
+                chosen,
+                intelligence,
             )
             if (guard := self._guard()) is not None:
                 return self._stopped(request, contract, result, guard)
@@ -380,6 +437,7 @@ class EmailCampaignPipeline:
         positioning: PositioningMap | None = None,
         demand: DemandMap | None = None,
         chosen_segment: str = "",
+        intelligence: CampaignIntelligence | None = None,
     ) -> CampaignBrief:
         self._observer.on_role_started(
             STRATEGIST_ROLE, "Deciding what this campaign says, and in what order"
@@ -393,9 +451,22 @@ class EmailCampaignPipeline:
             positioning=positioning,
             demand=demand,
             chosen_segment=chosen_segment,
+            intelligence=intelligence,
         )
         result.brief = brief
+        if intelligence is not None:
+            attach_selected_dossier_objection(
+                artifacts,
+                intelligence,
+                [item.objection for item in brief.emails if item.objection],
+            )
         self._observer.on_brief(brief)
+        if intelligence is not None:
+            self._observer.on_phase(
+                "intelligence",
+                "Campaign intelligence applied to the normalized brief",
+                intelligence.trace.model_dump(mode="json"),
+            )
         self._observer.on_role_finished(
             STRATEGIST_ROLE,
             f"{len(brief.emails)} email(s) to {brief.reader or 'the target reader'}",

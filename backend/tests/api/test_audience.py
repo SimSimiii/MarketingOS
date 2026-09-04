@@ -17,7 +17,9 @@ from app.ai.base import ResearchTool
 from app.ai.factory import get_ai_provider
 from app.core.database import get_session
 from app.main import app
-from app.market.demand import AudienceSegment, DemandMap, SegmentKind
+from app.market.audience_research import AudienceResearch
+from app.market.demand import AudienceSegment, DemandMap, Prospect, SegmentKind
+from app.market.qualification import CompanyQualification
 from app.market.store import MarketStore
 from app.models.campaign import Campaign
 from app.models.market import ProspectRow
@@ -41,6 +43,7 @@ def segment(name: str = "Independent repair shops", **overrides: object) -> Audi
         "fit": 0.3,
         "basis": "they complain about it publicly",
         "signals": ["a warranty page with an email address"],
+        "where": ["UK repair association member directory"],
     }
     payload.update(overrides)
     return AudienceSegment(**payload)
@@ -94,12 +97,47 @@ def test_an_unmapped_brand_says_why_it_is_empty(client: TestClient):
     assert "Nobody has mapped" in body["note"]
 
 
-def test_the_map_comes_back_best_fit_first(client: TestClient, engine):
+def test_unreadable_v2_company_has_qualification_but_no_match_percentage(
+    client: TestClient, engine
+):
+    brand = make_brand(client, "Helpdesk")
+    store_prospect(
+        engine,
+        brand["id"],
+        name="Directory-only Dental AI",
+        verified=False,
+        pages_read=0,
+        qualification={
+            "classification": "UNVERIFIED",
+            "audience_structure_fit": "unknown",
+            "product_capability_fit": "unknown",
+            "evidence_completeness": "missing",
+            "reachability": "unknown",
+            "reason_codes": ["site_unreadable"],
+        },
+    )
+
+    response = client.get(f"/api/market/{brand['id']}/prospects")
+
+    assert response.status_code == 200
+    prospect = response.json()[0]
+    assert prospect["qualification"]["classification"] == "UNVERIFIED"
+    assert prospect["fit"] is None
+
+
+def test_researchability_ties_keep_the_existing_best_fit_order(client: TestClient, engine):
     brand = make_brand(client, "Helpdesk")
     store_map(
         engine,
         brand["id"],
-        segment("Core buyers", kind=SegmentKind.CORE, fit=0.15),
+        segment(
+            "Core buyers",
+            kind=SegmentKind.CORE,
+            who="e-commerce support teams triaging order questions across a shared queue",
+            signals=["job postings for e-commerce support agents"],
+            where=["G2 reviews for customer support tools"],
+            fit=0.15,
+        ),
         segment("Independent repair shops", fit=0.34),
     )
 
@@ -114,6 +152,37 @@ def test_the_map_comes_back_best_fit_first(client: TestClient, engine):
     # explicitly or it silently ships as absent.
     assert body["map"]["segments"][0]["unobvious"] is True
     assert body["map"]["segments"][1]["unobvious"] is False
+    assert body["map"]["segments"][0]["researchable"] is True
+    assert body["map"]["segments"][0]["researchability"] == "low"
+    assert body["map"]["segments"][0]["researchability_reasons"]
+
+
+def test_the_api_ranks_researchability_before_fit(client: TestClient, engine):
+    brand = make_brand(client, "Helpdesk")
+    store_map(
+        engine,
+        brand["id"],
+        segment("Repair shops answering warranty requests", fit=0.9),
+        segment(
+            "SaaS teams shipping their first AI feature",
+            who="small SaaS engineering teams shipping their first customer-facing AI feature",
+            signals=[
+                "job postings for AI platform engineers",
+                "GitHub issues discussing production evaluation failures",
+            ],
+            where=["r/devops", "GitHub issues in LangChain repositories"],
+            trigger="their first AI feature recently entered customer beta",
+            population="roughly 3,000 seed-stage SaaS companies",
+            fit=0.1,
+        ),
+    )
+
+    body = client.get(f"/api/market/{brand['id']}/audience").json()
+
+    assert [item["researchability"] for item in body["map"]["segments"]] == [
+        "high",
+        "low",
+    ]
 
 
 def test_the_market_page_counts_the_demand_side_without_fetching_it(
@@ -162,6 +231,58 @@ def test_a_prospect_can_be_kept_or_dismissed(client: TestClient, engine):
     assert kept.status_code == 200, kept.text
     assert kept.json()["status"] == "kept"
     assert kept.json()["decided_at"] is not None
+
+
+def test_a_stale_prospect_reread_updates_evidence_without_losing_the_user_decision(
+    client: TestClient, engine
+) -> None:
+    brand = make_brand(client, "Helpdesk")
+    existing = store_prospect(
+        engine,
+        brand["id"],
+        status="kept",
+        qualification={
+            "classification": "UNVERIFIED",
+            "audience_structure_fit": "unknown",
+            "product_capability_fit": "unknown",
+            "evidence_completeness": "missing",
+            "reachability": "unknown",
+            "reason_codes": ["company_qualification_stale"],
+        },
+    )
+    refreshed_qualification = CompanyQualification(
+        classification="EXCLUDED",
+        audience_structure_fit="unknown",
+        product_capability_fit="mismatch",
+        evidence_completeness="missing",
+        reachability="reachable",
+        reason_codes=["unsupported_required_capability:warehouse_robotics"],
+        hard_disqualifiers_triggered=[
+            "unsupported_required_capability:warehouse_robotics"
+        ],
+    )
+
+    with Session(engine) as session:
+        stored = MarketStore(session).record_prospects(
+            UUID(brand["id"]),
+            [
+                Prospect(
+                    name=existing.name,
+                    url=existing.url,
+                    segment=existing.segment,
+                    what_they_do="Freshly verified company description",
+                    verified=True,
+                    pages_read=3,
+                    qualification=refreshed_qualification,
+                )
+            ],
+        )[0]
+
+        assert stored.id == existing.id
+        assert stored.status == "kept"
+        assert stored.what_they_do == "Freshly verified company description"
+        assert stored.qualification["classification"] == "EXCLUDED"
+        assert len(MarketStore(session).prospects(UUID(brand["id"]))) == 1
 
 
 def test_an_unknown_decision_is_refused_rather_than_stored(client: TestClient, engine):
@@ -214,6 +335,92 @@ def test_a_segment_that_is_not_on_the_map_is_refused_at_the_request(
 
     assert response.status_code == 409
     assert "audience map" in response.json()["detail"]
+
+
+def test_an_unresearchable_segment_is_refused_before_a_search_can_spend(
+    client: TestClient, engine
+):
+    brand = make_brand(client, "Helpdesk")
+    compile_for_brand(engine, brand["id"])
+    store_map(
+        engine,
+        brand["id"],
+        segment(
+            "developers",
+            who="",
+            signals=["uses software"],
+            where=["LinkedIn"],
+        ),
+    )
+
+    response = client.post(
+        f"/api/market/{brand['id']}/audience/prospects",
+        json={"segment": "developers"},
+    )
+
+    assert response.status_code == 409
+    assert "not researchable" in response.json()["detail"]
+    assert "no prospect search was started" in response.json()["detail"].lower()
+
+
+def test_audience_research_rejects_missing_unknown_and_unadmitted_candidates(
+    client: TestClient, engine
+):
+    brand = make_brand(client, "Helpdesk research admission")
+    store_map(
+        engine,
+        brand["id"],
+        segment(
+            "developers",
+            who="",
+            signals=["uses software"],
+            where=["LinkedIn"],
+        ),
+    )
+
+    missing = client.post(f"/api/market/{brand['id']}/audience/research", json={})
+    unknown = client.post(
+        f"/api/market/{brand['id']}/audience/research",
+        json={"segment": "not on the map"},
+    )
+    unadmitted = client.post(
+        f"/api/market/{brand['id']}/audience/research",
+        json={"segment": "developers"},
+    )
+
+    assert missing.status_code == 422
+    assert unknown.status_code == 409
+    assert "current audience map" in unknown.json()["detail"]
+    assert unadmitted.status_code == 409
+    assert "No useful observable signal" in unadmitted.json()["detail"]
+
+
+def test_api_returns_the_latest_persisted_audience_research(client: TestClient, engine):
+    brand = make_brand(client, "Helpdesk researched")
+    chosen = segment()
+    store_map(engine, brand["id"], chosen)
+    with Session(engine) as session:
+        store = MarketStore(session)
+        for _ in range(2):
+            store.save_research(
+                UUID(brand["id"]),
+                AudienceResearch(
+                    audience_name=chosen.name,
+                    candidate_kind=str(chosen.kind),
+                ),
+                store.latest_map_row(UUID(brand["id"])),
+            )
+
+    latest = client.get(
+        f"/api/market/{brand['id']}/audience/research/latest",
+        params={"segment": chosen.name},
+    )
+    audience = client.get(f"/api/market/{brand['id']}/audience")
+
+    assert latest.status_code == 200
+    assert latest.json()["version"] == 2
+    assert latest.json()["audience_name"] == chosen.name
+    assert [item["version"] for item in audience.json()["research"]] == [2]
 
 
 def test_the_export_carries_only_the_rows_a_human_kept(client: TestClient, engine):
@@ -408,6 +615,23 @@ def test_mapping_the_audience_actually_starts_a_job(web_client: TestClient, engi
     response = web_client.post(f"/api/market/{brand['id']}/audience/map", json={})
 
     assert response.status_code == 202, response.text
+    assert job_for(UUID(brand["id"])) is not None
+
+
+def test_an_admitted_audience_research_actually_starts_a_job(
+    web_client: TestClient, engine
+):
+    brand = make_brand(web_client, "Helpdesk audience research")
+    chosen = segment()
+    store_map(engine, brand["id"], chosen)
+
+    response = web_client.post(
+        f"/api/market/{brand['id']}/audience/research",
+        json={"segment": chosen.name},
+    )
+
+    assert response.status_code == 202, response.text
+    assert response.json()["kind"] == "audience_research"
     assert job_for(UUID(brand["id"])) is not None
 
 

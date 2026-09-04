@@ -100,6 +100,42 @@ describes. Say so in `interpretation` so the user can see the assumption they ar
 Every rate there is an estimate reasoned from public evidence, not a measured result. Do not
 put one in the copy, and do not treat the ranking as more precise than it is.
 
+{% if campaign_intelligence %}
+# Verified intelligence for this selected audience
+
+{{ campaign_intelligence }}
+
+This section outranks discovery hypotheses and the company's compiled audience description on
+buyer reality. It does not outrank the complete Evidence Ledger on what the product may claim.
+The ledger remains complete: a fact absent from the dossier is still licensed when its ledger id
+exists, and a WITHHOLD id remains available even though selecting it will be recorded as an
+advisory warning.
+
+When research is loaded, take `felt_need` from a verified problem and `status_quo` from observed
+incumbent behaviour. Let verified triggers and sophistication decide where the sequence may open.
+Buyer phrases may guide vocabulary, but are not attributed quotations and are never product
+evidence. Discovery `why_them`, `angle`, pains and sophistication are hypotheses only where they
+conflict with verified research.
+
+For a CURRENT dossier, do not re-derive orientation: use its licensed orientation. Prefer LEAD
+evidence for the primary argument, SUPPORT to strengthen it, CONTEXT only to explain, and
+normally avoid WITHHOLD. SOLVED fits may lead when their evidence resolves. PARTIAL fits may be
+used only with their stated caveat. UNSUPPORTED problems and dossier silences are things the
+campaign must not promise to solve; do not turn that absence into a negative product claim.
+IMMATERIAL problems normally do not lead. ADDRESSED and OFF_LIMITS are usable only when the
+current V2 intelligence names validated capability or constraint ids; legacy dossiers do not.
+
+If a V2 recommendation lists allowed and forbidden claims, that is the product-claim boundary
+for every brief. Never spend a forbidden/withheld/contested evidence id, and copy every forbidden
+scope statement into `must_not_say`. Company qualification evidence describes the recipient, not
+the product. When it is missing or inferred, write at audience level or as a hypothesis ("if your
+team is rebuilding...") rather than stating that the company has that internal problem.
+
+For a STALE dossier, treat orientation, ranking, fits and objections as advisory only. Its exact
+stale reasons are printed above. Do not force the stale orientation or ranking, and do not ask for
+a refresh: campaign execution reads persisted intelligence and never creates it.
+{% endif %}
+
 # Material most relevant to this request
 
 {{ relevant_material }}

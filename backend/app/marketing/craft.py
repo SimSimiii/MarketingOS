@@ -480,6 +480,7 @@ class CraftLoop:
             ],
             ledger=self._artifacts.evidence.entries,
             positioning=self._positioning,
+            forbidden_capability_ids=brief.forbidden_capability_ids,
         )
 
     async def craft(

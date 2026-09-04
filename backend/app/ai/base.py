@@ -120,6 +120,20 @@ class AIResponse(BaseModel):
     usage: AIUsage = Field(default_factory=AIUsage)
 
 
+class ProviderCallError(RuntimeError):
+    """A provider understood a failed model call well enough to classify it.
+
+    Providers raise this before the runtime normalizes the failure into its
+    public ``ProviderError``. The retry flag belongs to the failure itself:
+    authentication, billing and hard rate-limit failures need operator action,
+    while a server-side interruption may genuinely clear on retry.
+    """
+
+    def __init__(self, message: str, *, retryable: bool) -> None:
+        super().__init__(message)
+        self.retryable = retryable
+
+
 class AIProvider(ABC):
     """Contract every AI backend (Claude, OpenAI, Gemini, local) must implement.
 

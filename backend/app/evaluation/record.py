@@ -16,6 +16,7 @@ from datetime import UTC, datetime
 from pydantic import BaseModel, Field
 
 from app.evaluation.head_to_head import ControlResult
+from app.marketing.email_copy import Email
 from app.marketing.pipeline import CampaignRunResult
 from app.marketing.reader import PULL_THRESHOLD
 
@@ -57,6 +58,23 @@ class EmailRecord(BaseModel):
     #: Distinct checkable values from the material that appear in the copy.
     specifics: int = 0
 
+    #: The claim the version that shipped actually argued. Equal to
+    #: `single_idea` unless a bake-off candidate on an alternative claim won,
+    #: or the loop pivoted - which makes this the field that says whether two
+    #: runs of the same brief chose the same bet.
+    idea: str = ""
+    #: The claims of the bake-off candidates that lost. Recorded because
+    #: "which argument won" is only readable next to what it beat.
+    discarded_ideas: list[str] = Field(default_factory=list)
+    #: The attempt a duel handed the title to, or 0 when scores decided it.
+    champion_attempt: int = 0
+    #: The email itself. Every other field here is a number *about* the copy,
+    #: and two runs whose numbers match can still have delivered different
+    #: emails - which is precisely the question an audience experiment asks.
+    #: It is also what lets the persona experiment re-read a draft that has
+    #: already been paid for instead of writing a new one.
+    email: Email | None = None
+
 
 class RunRecord(BaseModel):
     """One golden-set case, run end to end."""
@@ -84,6 +102,21 @@ class RunRecord(BaseModel):
     control_votes_against: int = 0
     control_note: str = ""
     control_reasons: list[str] = Field(default_factory=list)
+
+    #: Which audience-intelligence arm this run was: "", "none", "current" or
+    #: "researched_fixture". Empty is the original benchmark, which belongs to
+    #: no arm at all - see `app.evaluation.audience`.
+    audience_condition: str = ""
+    #: The mapped segment the campaign row pointed at, if any.
+    audience_segment: str = ""
+    #: What each reasoning role's prompts actually contained, as marker labels
+    #: - see `app.evaluation.probe`. The line that says whether the experiment
+    #: changed anything downstream, or only changed the database.
+    audience_reached: dict[str, list[str]] = Field(default_factory=dict)
+    #: The cold readers the run was graded by, recomputed from the merged
+    #: artifacts exactly as the pipeline built them. Two arms with identical
+    #: personas here did not differ where it matters most.
+    reader_personas: list[str] = Field(default_factory=list)
 
     model_calls: int = 0
     calls_by_role: dict[str, int] = Field(default_factory=dict)
@@ -205,8 +238,17 @@ def record_from(
     duration_seconds: float,
     repairs: int = 0,
     control: ControlResult | None = None,
+    audience_condition: str = "",
+    audience_segment: str = "",
+    audience_reached: dict[str, list[str]] | None = None,
+    reader_personas: list[str] | None = None,
 ) -> RunRecord:
-    """Read one finished run into a comparable record."""
+    """Read one finished run into a comparable record.
+
+    The audience arguments default to the empty answers a run outside the
+    audience experiment gives, so every existing caller keeps working and every
+    record written before the experiment existed still loads.
+    """
     calls_by_role: dict[str, int] = {}
     for call in result.usage.calls:
         calls_by_role[call.role] = calls_by_role.get(call.role, 0) + 1
@@ -228,6 +270,10 @@ def record_from(
             evidence_spent=list(outcome.best.substantiation.carried),
             attributions=outcome.best.substantiation.attributions,
             specifics=outcome.best.substantiation.specifics,
+            idea=outcome.best.idea or outcome.brief.single_idea,
+            discarded_ideas=[item.idea for item in outcome.discarded if item.idea],
+            champion_attempt=outcome.champion_attempt,
+            email=outcome.email,
         )
         for outcome in result.outcomes
     ]
@@ -252,4 +298,8 @@ def record_from(
         control_votes_against=control.votes_for_control if control else 0,
         control_note=control.skipped if control else "",
         control_reasons=list(control.reasons) if control else [],
+        audience_condition=audience_condition,
+        audience_segment=audience_segment,
+        audience_reached=dict(audience_reached or {}),
+        reader_personas=list(reader_personas or []),
     )

@@ -11,7 +11,14 @@ from app.ai._win_loop import (
     _ProactorLoopThread,
     _run_in_proactor_loop,
 )
-from app.ai.base import AIProvider, AIRequest, AIResponse, AIUsage, ResearchTool
+from app.ai.base import (
+    AIProvider,
+    AIRequest,
+    AIResponse,
+    AIUsage,
+    ProviderCallError,
+    ResearchTool,
+)
 
 #: Marks the end of a bridged stream (see `_stream_via_proactor`).
 _STREAM_DONE = object()
@@ -58,6 +65,50 @@ _OVERSIZED_SYSTEM_NOTICE = (
 )
 
 _TASK_SEPARATOR = "\n\n--- TASK ---\n\n"
+
+_NON_RETRYABLE_ASSISTANT_ERRORS = frozenset(
+    {"authentication_failed", "billing_error", "rate_limit", "invalid_request"}
+)
+
+
+def _assistant_failure(kind: str, detail: str) -> ProviderCallError:
+    """Preserve the CLI's useful synthetic error before the SDK discards it.
+
+    Claude Code represents authentication and billing failures as an
+    ``AssistantMessage`` followed by a contradictory result carrying
+    ``is_error=true`` and ``subtype=success``. Ignoring the assistant's
+    ``error`` field is what turns an actionable failure into the SDK's
+    misleading ``error result: success``.
+    """
+    label = kind.replace("_", " ")
+    explanation = detail.strip() or "Claude Code returned no error detail."
+    guidance = (
+        " Sign in again with Claude Code (`claude auth login`) and retry."
+        if kind == "authentication_failed"
+        else ""
+    )
+    message = f"Claude Code {label}: {explanation}"
+    if not message.endswith("."):
+        message += "."
+    return ProviderCallError(
+        message + guidance,
+        retryable=kind not in _NON_RETRYABLE_ASSISTANT_ERRORS,
+    )
+
+
+def _result_failure(message: ResultMessage) -> ProviderCallError:
+    """Classify an error result that arrived without a synthetic assistant."""
+    errors = getattr(message, "errors", None) or []
+    detail = "; ".join(errors) or (getattr(message, "result", None) or "").strip()
+    status = getattr(message, "api_error_status", None)
+    subtype = getattr(message, "subtype", "unknown error")
+    if not detail:
+        detail = f"HTTP {status}" if status else f"result subtype {subtype}"
+    retryable = bool(status and status >= 500) or subtype == "error_during_execution"
+    return ProviderCallError(
+        f"Claude Code call failed: {detail}",
+        retryable=retryable,
+    )
 
 
 def _usage_from(message: ResultMessage) -> AIUsage:
@@ -235,10 +286,14 @@ class ClaudeProvider(AIProvider):
                 ]
                 if blocks:
                     final_text = "\n".join(blocks)
+                if error := getattr(message, "error", None):
+                    raise _assistant_failure(error, final_text)
             elif isinstance(message, ResultMessage):
                 usage = _usage_from(message)
                 if getattr(message, "result", None):
                     final_text = message.result
+                if getattr(message, "is_error", False):
+                    raise _result_failure(message)
 
         return AIResponse(content=final_text, model=model, usage=usage)
 
@@ -247,9 +302,15 @@ class ClaudeProvider(AIProvider):
 
         async for message in query(prompt=prompt, options=options):
             if isinstance(message, AssistantMessage):
-                for block in message.content:
-                    if isinstance(block, TextBlock) and block.text:
-                        yield block.text
+                blocks = [
+                    block.text
+                    for block in message.content
+                    if isinstance(block, TextBlock) and block.text
+                ]
+                if error := getattr(message, "error", None):
+                    raise _assistant_failure(error, "\n".join(blocks))
+                for block in blocks:
+                    yield block
 
     def count_tokens(self, text: str) -> int:
         """Rough approximation (~4 chars/token). The Claude Agent SDK doesn't

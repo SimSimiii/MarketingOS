@@ -20,11 +20,13 @@ from app.ai.model_router import ModelTier
 from app.knowledge.artifacts import KnowledgeArtifacts
 from app.knowledge.base import build_knowledge_base
 from app.knowledge.corpus import SourceCorpus
+from app.knowledge.ledger import EvidenceLedger
 from app.market.demand import DemandMap
 from app.market.positioning import PositioningMap
 from app.marketing.briefs import CampaignBrief, EmailBrief
 from app.marketing.contract import DeliverableContract
 from app.marketing.exceptions import StrategyError
+from app.marketing.intelligence import CampaignIntelligence
 from app.marketing.preflight import assess
 from app.marketing.request import CampaignRequest
 from app.runtime.model_session import ModelSession
@@ -69,18 +71,35 @@ class Strategist:
         positioning: PositioningMap | None = None,
         demand: DemandMap | None = None,
         chosen_segment: str = "",
+        intelligence: CampaignIntelligence | None = None,
     ) -> CampaignBrief:
+        prompt_artifacts = artifacts
+        if intelligence is not None:
+            intelligence.validate_against(artifacts.evidence)
+            if intelligence.v2_claim_boundary:
+                forbidden = set(intelligence.forbidden_evidence_ids)
+                prompt_artifacts = artifacts.model_copy(
+                    update={
+                        "evidence": EvidenceLedger(
+                            entries=[
+                                item
+                                for item in artifacts.evidence.entries
+                                if item.id not in forbidden
+                            ]
+                        )
+                    }
+                )
         variables = {
             "request": request.request,
             "campaign_context": request.render_context(),
-            "knowledge": artifacts.render_for_strategy(),
+            "knowledge": prompt_artifacts.render_for_strategy(),
             # The shape of what exists, above the facts themselves. A hundred
             # undifferentiated entries answer "what is true" and hide "what
             # can this campaign argue from at all" - and the second question
             # is the one being asked here. An empty shelf is the most useful
             # line in it: it is why an obvious angle is off the table.
-            "knowledge_map": build_knowledge_base(artifacts).render_map(),
-            "proof_posture": assess(artifacts).render_for_strategy(),
+            "knowledge_map": build_knowledge_base(prompt_artifacts).render_map(),
+            "proof_posture": assess(prompt_artifacts).render_for_strategy(),
             # What the material cannot contain: which of this company's
             # claims every competitor also makes. Absent, the strategist
             # is told so plainly rather than left to assume the field is
@@ -95,6 +114,9 @@ class Strategist:
             # decision the strategist can reason about instead of an
             # instruction it can only obey.
             "demand": (demand or DemandMap()).render_for_strategy(chosen_segment),
+            "campaign_intelligence": (
+                intelligence.render_for_strategy() if intelligence is not None else ""
+            ),
             "contract": contract.render(),
             "relevant_material": corpus.render_search(
                 f"{request.request} {request.product_description}", _RETRIEVAL_CHUNKS
@@ -112,7 +134,7 @@ class Strategist:
             ),
             schema=CampaignBrief,
         )
-        brief = self._normalize(brief, contract, artifacts)
+        brief = self._normalize(brief, contract, artifacts, intelligence)
 
         if contract.count_is_explicit and len(brief.emails) != contract.count:
             # One correction turn: the count is arithmetic, and a brief that
@@ -136,7 +158,7 @@ class Strategist:
                 ),
                 schema=CampaignBrief,
             )
-            brief = self._normalize(brief, contract, artifacts)
+            brief = self._normalize(brief, contract, artifacts, intelligence)
 
         if not brief.emails:
             raise StrategyError(
@@ -153,6 +175,7 @@ class Strategist:
         brief: CampaignBrief,
         contract: DeliverableContract,
         artifacts: KnowledgeArtifacts,
+        intelligence: CampaignIntelligence | None = None,
     ) -> CampaignBrief:
         """Fix in code everything about a brief that has a correct answer.
 
@@ -162,6 +185,11 @@ class Strategist:
         model to keep those consistent is asking it to do bookkeeping instead
         of thinking.
         """
+        if intelligence is not None:
+            intelligence.validate_against(artifacts.evidence)
+            if intelligence.dossier_current and intelligence.orientation:
+                brief.orientation = intelligence.orientation
+
         segment = artifacts.audience.match(brief.reader_segment, brief.reader)
         if segment is not None:
             # Store it back exactly as the audience model spells it, so the
@@ -186,6 +214,25 @@ class Strategist:
             if unknown:
                 logger.info("strategist: dropped unknown evidence ids %s", unknown)
             assigned = [id_ for id_ in email.evidence_ids if id_ in known_evidence]
+            forbidden_evidence: list[str] = []
+            if intelligence is not None and intelligence.v2_claim_boundary:
+                allowed = set(intelligence.allowed_evidence_ids)
+                forbidden = set(intelligence.forbidden_evidence_ids)
+                removed = [
+                    evidence_id
+                    for evidence_id in assigned
+                    if evidence_id not in allowed or evidence_id in forbidden
+                ]
+                if removed:
+                    logger.info(
+                        "strategist: dropped V2-forbidden evidence ids %s", removed
+                    )
+                assigned = [
+                    evidence_id
+                    for evidence_id in assigned
+                    if evidence_id in allowed and evidence_id not in forbidden
+                ]
+                forbidden_evidence = sorted(forbidden | set(removed))
             # Evidence is finite, and prompts/strategist.md asks for it to be
             # spent that way - "an id that is the backbone of one email should
             # not be the backbone of another". Nothing checked, and the failure
@@ -223,10 +270,64 @@ class Strategist:
                     MAX_EVIDENCE_PER_EMAIL,
                 )
                 assigned = assigned[:MAX_EVIDENCE_PER_EMAIL]
+            constraints = list(email.must_not_say)
+            felt_need = email.felt_need
+            status_quo = email.status_quo
+            if intelligence is not None:
+                if intelligence.research_loaded:
+                    felt_need = intelligence.normalized_felt_need(felt_need)
+                    status_quo = intelligence.normalized_status_quo(status_quo)
+                caveats = intelligence.constraints_for(assigned, artifacts.evidence)
+                if intelligence.v2_claim_boundary:
+                    constraints = _distinct_constraints(
+                        [*constraints, *intelligence.forbidden_claims]
+                    )
+                if intelligence.selected_company_name:
+                    constraints = _distinct_constraints(
+                        [
+                            *constraints,
+                            (
+                                f"Do not state that {intelligence.selected_company_name} has "
+                                "an internal problem or workflow unless the direct company "
+                                "evidence establishes it; otherwise use conditional or "
+                                "audience-level language."
+                            ),
+                        ]
+                    )
+                existing_constraints = {
+                    " ".join(item.casefold().split()) for item in constraints
+                }
+                injected = [
+                    caveat
+                    for caveat in caveats
+                    if " ".join(caveat.casefold().split()) not in existing_constraints
+                ]
+                constraints = _distinct_constraints([*constraints, *caveats])
+                for caveat in injected:
+                    if caveat not in intelligence.trace.partial_caveats_injected:
+                        intelligence.trace.partial_caveats_injected.append(caveat)
+                for evidence_id in intelligence.selected_withhold(
+                    assigned, artifacts.evidence
+                ):
+                    if evidence_id not in intelligence.trace.withhold_evidence_selected:
+                        intelligence.trace.withhold_evidence_selected.append(evidence_id)
+                        intelligence.trace.warn(
+                            f"WITHHOLD evidence selected by the Strategist: {evidence_id}."
+                        )
             email = email.model_copy(
                 update={
                     "position": position,
                     "evidence_ids": assigned,
+                    "felt_need": felt_need,
+                    "status_quo": status_quo,
+                    "must_not_say": constraints,
+                    "forbidden_evidence_ids": forbidden_evidence,
+                    "forbidden_capability_ids": (
+                        list(intelligence.forbidden_capability_ids)
+                        if intelligence is not None
+                        and intelligence.v2_claim_boundary
+                        else []
+                    ),
                     "must_not_reuse": list(spent),
                     "alternative_ideas": _distinct_ideas(
                         email.alternative_ideas, email.single_idea
@@ -265,6 +366,18 @@ def _distinct_ideas(alternatives: list[str], chosen: str) -> list[str]:
             continue
         seen.append(key)
         kept.append(idea.strip())
+    return kept
+
+
+def _distinct_constraints(items: list[str]) -> list[str]:
+    seen: set[str] = set()
+    kept: list[str] = []
+    for item in items:
+        value = item.strip()
+        key = " ".join(value.casefold().split())
+        if key and key not in seen:
+            kept.append(value)
+            seen.add(key)
     return kept
 
 

@@ -14,6 +14,10 @@ class CampaignExecution(SQLModel, table=True):
     campaign_id: UUID = Field(foreign_key="campaign.id", index=True)
     status: ExecutionStatus = Field(default=ExecutionStatus.PENDING, index=True)
     result: dict | None = Field(default=None, sa_column=Column(JSON))
+    #: The exact persisted recommendation shown before this run. Kept even if
+    #: the run crashes, so an override remains auditable.
+    recommendation_snapshot: dict | None = Field(default=None, sa_column=Column(JSON))
+    generated_despite_recommendation: bool = False
     error_message: str | None = None
     started_at: datetime | None = None
     completed_at: datetime | None = None

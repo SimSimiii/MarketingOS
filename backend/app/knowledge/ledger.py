@@ -165,6 +165,7 @@ class EvidenceLedger(BaseModel):
         assigned_ids: list[str],
         objection: str = "",
         cap: int = MAX_EVIDENCE_IN_PROMPT,
+        excluded_ids: set[str] | frozenset[str] = frozenset(),
     ) -> "EvidenceLedger":
         """The facts one email plausibly needs, out of everything true.
 
@@ -188,18 +189,21 @@ class EvidenceLedger(BaseModel):
         fact outside the slice that the writer happens to know is still
         licensed - it simply stops being shouted at every draft.
         """
-        by_id = {entry.id: entry for entry in self.entries}
+        by_id = {
+            entry.id: entry for entry in self.entries if entry.id not in excluded_ids
+        }
         kept: list[Evidence] = [
             by_id[id_] for id_ in dict.fromkeys(assigned_ids) if id_ in by_id
         ]
         seen = {entry.id for entry in kept}
 
-        for entry in _answering(self.entries, objection):
+        eligible = [entry for entry in self.entries if entry.id not in excluded_ids]
+        for entry in _answering(eligible, objection):
             if entry.id not in seen and len(kept) < cap:
                 kept.append(entry)
                 seen.add(entry.id)
 
-        for entry in _by_commercial_value(self.entries):
+        for entry in _by_commercial_value(eligible):
             if entry.id not in seen and len(kept) < cap:
                 kept.append(entry)
                 seen.add(entry.id)

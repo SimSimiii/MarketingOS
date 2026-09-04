@@ -16,6 +16,22 @@ you. If something is not in the text below, it does not exist for the purposes o
 
 {{ signals }}
 
+## Deterministic qualification definition
+
+{{ qualification_definition }}
+
+You extract evidence for this definition; you do not decide the final classification.
+
+## Active product capability catalogue
+
+{{ capability_catalog }}
+
+This is the complete capability namespace for the active product profile. Capability matching
+is semantic: a company's concrete workflow may use different words from a capability's display
+name, description, or aliases. Map the requirement only when the quoted company text directly
+requires that capability's described scope. Product state does not change whether the
+requirement maps; code compares the mapped ID to the state after extraction.
+
 # The organisation
 
 {{ name }} - {{ url }}
@@ -43,6 +59,39 @@ you. If something is not in the text below, it does not exist for the purposes o
   using a competitor. It is a franchise and the head office buys everything. Whatever it is,
   a human is going to spend two seconds on this row and this is the field that makes those
   two seconds enough.
+
+## company_signals
+
+Return one item for each directly evidenced structural, workflow, or disqualifying signal
+relevant to the qualification definition. Use its exact machine-readable `code`, a compact
+`value`, `grounding=direct`, the verbatim `quote`, and the page URL from the `###` heading as
+`source_identifier`. A team size or founder count needs an explicit number or named people on
+the page. Never infer `solo`, `founder-led`, a team size, or the absence of a platform merely
+because the site has no team page. If the page does not establish a required signal, omit it;
+the deterministic qualifier records it as missing.
+
+## company_requirements
+
+Return every capability the organisation's own published offering directly requires from the
+active product catalogue. Use only a `capability_id` present in that catalogue. For each item:
+
+- `capability_id` — the exact supplied ID;
+- `evidence_state=direct`;
+- `quote` — the verbatim company wording that establishes the requirement;
+- `source_url` — the URL from the matching `###` heading; and
+- `reasoning` — one sentence connecting the quoted workflow to the catalogue description.
+
+Do not invent a phrase-to-ID mapping and do not restrict matching to exact words. If a company
+sells behavior that semantically depends on a catalogued capability, map it even when its copy
+uses a concrete action while the catalogue uses a broader technical name.
+
+## unmapped_requirements
+
+If the pages directly establish a material product requirement but no supplied capability
+describes it, return it here instead of forcing it onto the closest ID. Include
+`raw_requirement`, `evidence_state=direct`, the verbatim `quote`, its `source_url`, and concise
+`reasoning`; `mapped_capability_id` must be null. An unmapped requirement is unresolved, never
+evidence that the active product supports or does not support it.
 
 ## contacts
 

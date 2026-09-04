@@ -11,13 +11,24 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.market.audience_research import AudienceResearch
+from app.market.capabilities import CapabilityProfileDraft, ProductCapabilityProfile
 from app.market.claims import Claim
-from app.market.demand import AudienceSegment, DemandMap
+from app.market.demand import AudienceAdmission, AudienceSegment, DemandMap, Researchability
 from app.market.positioning import PositioningMap
+from app.market.qualification import CompanyQualification
 from app.market.radar import MarketSnapshot
+from app.market.relevance import RelevanceStatus
 from app.market.rivals import RivalProfile
-from app.market.store import prospect_contacts
-from app.models.market import ProofCandidateRow, ProspectRow, RadarEventRow, Rival
+from app.market.store import prospect_contacts, prospect_qualification
+from app.models.market import (
+    AudienceResearchRow,
+    ProductCapabilityProfileRow,
+    ProofCandidateRow,
+    ProspectRow,
+    RadarEventRow,
+    Rival,
+)
 
 
 class RivalRead(BaseModel):
@@ -297,9 +308,18 @@ class AudienceSegmentRead(BaseModel):
     #: for free - it is carried explicitly because it is the one flag the page
     #: sorts and filters by.
     unobvious: bool = False
+    researchable: bool = False
+    researchability: Researchability = Researchability.UNRESEARCHABLE
+    researchability_reasons: list[str] = Field(default_factory=list)
+    definition: dict = Field(default_factory=dict)
 
     @classmethod
-    def of(cls, segment: AudienceSegment) -> "AudienceSegmentRead":
+    def of(
+        cls,
+        segment: AudienceSegment,
+        admission: AudienceAdmission | None = None,
+    ) -> "AudienceSegmentRead":
+        admission = admission or segment.admission()
         return cls(
             name=segment.name,
             kind=str(segment.kind),
@@ -316,6 +336,10 @@ class AudienceSegmentRead(BaseModel):
             signals=list(segment.signals),
             where=list(segment.where),
             unobvious=segment.unobvious,
+            researchable=admission.researchable,
+            researchability=admission.researchability,
+            researchability_reasons=list(admission.reasons),
+            definition=segment.definition.model_dump(mode="json"),
         )
 
 
@@ -335,10 +359,12 @@ class DemandMapRead(BaseModel):
             note=demand.note,
             searched=demand.searched[:12],
             mapped_at=demand.mapped_at,
-            # Best fit first. The order is the recommendation, and re-sorting
-            # it in the client would be a second place that decides which
-            # segment the user reads first.
-            segments=[AudienceSegmentRead.of(item) for item in demand.ranked],
+            # Research-worthy audiences first; fit remains the tie-break and
+            # remains available to every existing consumer.
+            segments=[
+                AudienceSegmentRead.of(item, demand.admission_for(item))
+                for item in demand.researchability_ranked
+            ],
         )
 
 
@@ -362,7 +388,10 @@ class ProspectRead(BaseModel):
     what_they_do: str
     why_them: str
     verbatim: str
-    fit: float
+    #: The legacy propensity estimate. V2 deliberately withholds it for an
+    #: unreadable company: "unverified" is not a low score, and displaying a
+    #: percentage there would manufacture precision from missing evidence.
+    fit: float | None
     caveat: str
     verified: bool
     pages_read: int
@@ -375,9 +404,16 @@ class ProspectRead(BaseModel):
     found_at: datetime
     decided_at: datetime | None
     contacts: list[ContactRead] = Field(default_factory=list)
+    qualification: dict | None = None
 
     @classmethod
-    def of(cls, row: ProspectRow) -> "ProspectRead":
+    def of(
+        cls,
+        row: ProspectRow,
+        *,
+        qualification: CompanyQualification | None = None,
+    ) -> "ProspectRead":
+        qualification = qualification or prospect_qualification(row)
         return cls(
             id=row.id,
             segment=row.segment,
@@ -386,7 +422,10 @@ class ProspectRead(BaseModel):
             what_they_do=row.what_they_do,
             why_them=row.why_them,
             verbatim=row.verbatim,
-            fit=row.fit,
+            # V2 replaces the blended percentage with categorical dimensions.
+            # The numeric value survives only for legacy rows so old stored
+            # prospects remain readable without presenting it as new truth.
+            fit=None if qualification is not None else row.fit,
             caveat=row.caveat,
             verified=row.verified,
             pages_read=row.pages_read,
@@ -405,6 +444,56 @@ class ProspectRead(BaseModel):
                 )
                 for contact in prospect_contacts(row)
             ],
+            qualification=(
+                qualification.model_dump(mode="json")
+                if qualification is not None
+                else None
+            ),
+        )
+
+
+class CapabilityProfileRead(ProductCapabilityProfile):
+    id: UUID
+    brand_id: UUID
+    created_at: datetime
+
+    @classmethod
+    def of(cls, row: ProductCapabilityProfileRow) -> "CapabilityProfileRead":
+        return cls.model_validate(
+            {
+                **row.payload,
+                "id": row.id,
+                "brand_id": row.brand_id,
+                "version": row.version,
+                "created_at": row.created_at,
+            }
+        )
+
+
+class AudienceResearchRead(AudienceResearch):
+    """A verified research payload plus its persistence receipt."""
+
+    id: UUID
+    brand_id: UUID
+    audience_key: str
+    version: int
+    source_map_id: UUID | None = None
+    source_map_version: int | None = None
+    created_at: datetime
+
+    @classmethod
+    def of(cls, row: AudienceResearchRow) -> "AudienceResearchRead":
+        return cls.model_validate(
+            {
+                **row.payload,
+                "id": row.id,
+                "brand_id": row.brand_id,
+                "audience_key": row.audience_key,
+                "version": row.version,
+                "source_map_id": row.source_map_id,
+                "source_map_version": row.source_map_version,
+                "created_at": row.created_at,
+            }
         )
 
 
@@ -414,6 +503,9 @@ class AudienceRead(BaseModel):
     brand_id: UUID
     map: DemandMapRead | None = None
     prospects: list[ProspectRead] = Field(default_factory=list)
+    research: list[AudienceResearchRead] = Field(default_factory=list)
+    relevance: list[RelevanceStatus] = Field(default_factory=list)
+    capability_profile: CapabilityProfileRead | None = None
     #: Why the page is empty, when it is.
     note: str = ""
 
@@ -422,6 +514,18 @@ class MapAudienceRequest(BaseModel):
     """Nothing to configure yet, and the shape exists so there is somewhere to
     put the first thing that is - a body added later does not change the
     method or the client call."""
+
+
+class ResearchAudienceRequest(BaseModel):
+    segment: str = Field(min_length=1)
+
+
+class RelevanceDossierRequest(BaseModel):
+    segment: str = Field(min_length=1)
+
+
+class CapabilityProfileRequest(CapabilityProfileDraft):
+    """Editable product truth; evidence ids are validated before persistence."""
 
 
 class ProspectSearchRequest(BaseModel):
@@ -441,8 +545,17 @@ class ProspectDecision(BaseModel):
     status: str
 
 
-def prospect_reads(rows: list[ProspectRow]) -> list[ProspectRead]:
-    return [ProspectRead.of(row) for row in rows]
+def prospect_reads(
+    rows: list[ProspectRow],
+    qualifications: dict[UUID, CompanyQualification] | None = None,
+) -> list[ProspectRead]:
+    return [
+        ProspectRead.of(
+            row,
+            qualification=(qualifications or {}).get(row.id),
+        )
+        for row in rows
+    ]
 
 
 def proof_reads(rows: list[ProofCandidateRow]) -> list[ProofCandidateRead]:

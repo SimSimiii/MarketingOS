@@ -7,6 +7,7 @@ import { CampaignActions } from "@/components/campaign-actions";
 import { CampaignPolicySelect } from "@/components/campaign-policy-select";
 import { ExecutionRowActions } from "@/components/execution-row-actions";
 import { StatusBadge } from "@/components/status-badge";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -32,12 +33,13 @@ export default async function CampaignDetailPage({
     notFound();
   }
 
-  const [executions, campaignKnowledge, brandKnowledge] = await Promise.all([
+  const [executions, campaignKnowledge, brandKnowledge, generationAdvice] = await Promise.all([
     api.listCampaignExecutions(id),
     api.listKnowledgeDocuments({ campaignId: id }).catch(() => []),
     campaign.brand_id
       ? api.listKnowledgeDocuments({ brandId: campaign.brand_id }).catch(() => [])
       : Promise.resolve([]),
+    api.getCampaignGenerationAdvice(id).catch(() => null),
   ]);
   const knowledge = [...campaignKnowledge, ...brandKnowledge];
 
@@ -64,9 +66,44 @@ export default async function CampaignDetailPage({
               }}
             />
           )}
-          <StartCampaignButton campaignId={campaign.id} />
+          <StartCampaignButton campaignId={campaign.id} advice={generationAdvice} />
         </div>
       </div>
+
+      {generationAdvice?.recommendation && (
+        <Card
+          className={
+            generationAdvice.override_required
+              ? "border-amber-500/50 bg-amber-500/5"
+              : "border-primary/30 bg-primary/5"
+          }
+        >
+          <CardHeader className="pb-2">
+            <CardTitle className="flex flex-wrap items-center gap-2 text-base">
+              {generationAdvice.recommendation.state.replaceAll("_", " ")}
+              <span className="text-xs font-normal text-muted-foreground">
+                {generationAdvice.readiness.replaceAll("_", " ")}
+              </span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm">
+            <p>{generationAdvice.user_message}</p>
+            {generationAdvice.reasons.length > 0 && (
+              <ul className="space-y-1 text-xs text-muted-foreground">
+                {generationAdvice.reasons.map((reason) => (
+                  <li key={reason}>— {reason}</li>
+                ))}
+              </ul>
+            )}
+            {generationAdvice.override_required && (
+              <p className="text-xs text-amber-300">
+                Running is still available. “Generate anyway” records this recommendation and
+                your explicit override with the execution.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader className="pb-2">
@@ -170,6 +207,11 @@ export default async function CampaignDetailPage({
                   <TableRow key={execution.id}>
                     <TableCell>
                       <StatusBadge status={execution.status} />
+                      {execution.generated_despite_recommendation && (
+                        <Badge variant="outline" className="ml-2 border-amber-500/50 text-amber-300">
+                          recommendation overridden
+                        </Badge>
+                      )}
                     </TableCell>
                     <TableCell
                       className="text-muted-foreground"

@@ -84,6 +84,25 @@ judges can tell good copy from deliberately damaged copy (~132 calls), and
 `runner --preset balanced --out eval/after` runs whole campaigns end to end, duelling the
 first email against a human-written one. Both take `--case` to run a single case.
 
+Beside them sit two **experiments** rather than benchmarks — they hold a golden case still
+and vary one thing, what the campaign knows about its buyer, to answer whether audience
+intelligence is worth building. Both have free `--dry-run`s.
+
+```bash
+.venv/Scripts/python.exe -m app.evaluation.audience_bench --case rich-single --dry-run
+```
+
+```bash
+.venv/Scripts/python.exe -m app.evaluation.persona_bench --case rich-single --dry-run
+```
+
+`audience_bench` runs three whole campaigns per case (no map / today's cartographer shape /
+a hand-written researched record) and is the expensive one; `persona_bench` holds the drafts
+fixed and re-reads them as two personas, so it costs cold reads only. Everything in
+`app/evaluation/audience.py` is a **test fixture, never production intelligence**. Read the
+Validity block under each table first: an arm whose fixture phrases reached no role did not
+run the experiment, and its numbers are run-to-run noise.
+
 ## Architecture
 
 ### The run is a state machine, not an agent

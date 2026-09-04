@@ -143,7 +143,9 @@ class ConversionCritic:
                 # another sentence. It is the additive ratchet with a budget
                 # line attached.
                 "evidence": artifacts.evidence.slice_for(
-                    brief.evidence_ids, brief.objection
+                    brief.evidence_ids,
+                    brief.objection,
+                    excluded_ids=frozenset(brief.forbidden_evidence_ids),
                 ).render(),
                 "voice": artifacts.voice.render(),
                 "reader_report": read.render(),

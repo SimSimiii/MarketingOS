@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 from pydantic import BaseModel
 
+from app.ai.base import ProviderCallError
 from app.ai.model_router import ModelRouter, ModelTier
 from app.runtime.events import (
     EventBus,
@@ -207,3 +208,24 @@ async def test_a_provider_that_never_answers_still_fails_the_call(prompts_dir: P
 
     assert provider.attempts == excinfo.value.details["attempts"]
     assert provider.attempts > 1
+
+
+@pytest.mark.asyncio
+async def test_a_terminal_provider_failure_is_not_pointlessly_resent(prompts_dir: Path):
+    class AuthenticationFailed(FakeAIProvider):
+        async def generate(self, request):
+            self.calls.append(request)
+            raise ProviderCallError("OAuth session expired", retryable=False)
+
+    provider = AuthenticationFailed()
+    with pytest.raises(ProviderError) as excinfo:
+        await session(provider, prompts_dir).text(
+            role="audience_cartographer",
+            tier=ModelTier.DEEP,
+            system_prompt="x",
+            task="Go.",
+        )
+
+    assert len(provider.calls) == 1
+    assert excinfo.value.details["attempts"] == 1
+    assert "OAuth session expired" in str(excinfo.value)

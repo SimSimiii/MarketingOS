@@ -8,7 +8,14 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from app.ai.base import AIMessage, AIProvider, AIRequest, AIResponse, ResearchTool
+from app.ai.base import (
+    AIMessage,
+    AIProvider,
+    AIRequest,
+    AIResponse,
+    ProviderCallError,
+    ResearchTool,
+)
 from app.ai.model_router import ModelRouter, ModelTier
 from app.ai.models import usage_cost_usd
 from app.runtime.events import (
@@ -295,12 +302,16 @@ class ModelSession:
         copy of the same bad answer at full price.
         """
         last: Exception | None = None
+        attempts = 0
         for attempt in range(1, _PROVIDER_ATTEMPTS + 1):
+            attempts = attempt
             try:
                 return await self._provider.generate(request)
             except Exception as exc:  # noqa: BLE001 - re-raised as ProviderError below
                 last = exc
-                if attempt == _PROVIDER_ATTEMPTS:
+                if attempt == _PROVIDER_ATTEMPTS or (
+                    isinstance(exc, ProviderCallError) and not exc.retryable
+                ):
                     break
                 detail = str(exc) or type(exc).__name__
                 logger.info(
@@ -326,12 +337,12 @@ class ModelSession:
         # name: "" is not a debuggable failure message.
         detail = str(last) or type(last).__name__
         raise ProviderError(
-            f"{type(self._provider).__name__} call failed after {_PROVIDER_ATTEMPTS} "
+            f"{type(self._provider).__name__} call failed after {attempts} "
             f"attempt(s): {detail}",
             provider=type(self._provider).__name__,
             role=role,
             cause=type(last).__name__,
-            attempts=_PROVIDER_ATTEMPTS,
+            attempts=attempts,
         ) from last
 
     async def _generate(

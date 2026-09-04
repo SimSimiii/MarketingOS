@@ -21,14 +21,24 @@ from app.marketing.forecast import (
     compile_forecast,
     forecast,
 )
+from app.marketing.intelligence import (
+    AudienceResolution,
+    CampaignIntelligence,
+    CampaignIntelligenceBundle,
+    CampaignIntelligenceTrace,
+)
+from app.marketing.pipeline import EmailCampaignPipeline
 from app.marketing.policy import PRESETS, ExecutionPolicy, PolicyPreset
 from app.marketing.request import CampaignRequest
 from tests.marketing.conftest import (
     CRITIQUE_REVISE,
     READ_FAIL,
+    FakeKnowledgeGateway,
     RoleScriptedProvider,
+    artifacts_fixture,
     campaign_brief,
     default_answers,
+    make_session,
 )
 from tests.marketing.test_pipeline import build
 
@@ -179,3 +189,34 @@ def test_the_estimate_is_read_from_the_request_this_campaign_actually_made():
     )
 
     assert five.low > one.low
+
+
+@pytest.mark.asyncio
+async def test_campaign_intelligence_adds_no_calls_to_the_forecasted_run():
+    """Persisted research is context for the existing Strategist, not a phase."""
+    baseline = await calls_made("fast", 1, rewriting=False)
+    provider = RoleScriptedProvider(default_answers())
+    provider.set_default("strategist", campaign_brief(1))
+    compiled = artifacts_fixture()
+    intelligence = CampaignIntelligence(
+        selected_audience="Developers shipping weekly",
+        trace=CampaignIntelligenceTrace(
+            selected_audience="Developers shipping weekly",
+            audience_resolution_status=AudienceResolution.MISSING,
+        ),
+    )
+
+    class Gateway(FakeKnowledgeGateway):
+        def campaign_intelligence(self, artifacts):
+            return CampaignIntelligenceBundle(artifacts=artifacts, context=intelligence)
+
+    pipeline = EmailCampaignPipeline(
+        session=make_session(provider),
+        knowledge=Gateway(compiled=compiled),
+        policy=PRESETS["fast"],
+    )
+    await pipeline.run(request_for(1))
+
+    assert sum(provider.calls_by_role.values()) == baseline
+    assert provider.calls_by_role["audience_researcher"] == 0
+    assert provider.calls_by_role["relevance_analyst"] == 0

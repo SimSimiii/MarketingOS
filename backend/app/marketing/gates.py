@@ -170,6 +170,56 @@ def evidence_gate(text: str, index: EvidenceIndex) -> GateReport:
     )
 
 
+# Product-scope claims whose truth can be checked from the V2 capability
+# profile without asking a judge. The phrases are intentionally narrow: this
+# gate blocks "we support voice calls", not an audience-level line such as
+# "your receptionist answers calls".
+_CAPABILITY_TERMS: dict[str, tuple[str, ...]] = {
+    "voice_telephony": ("voice", "telephony", "phone calls", "sip"),
+    "full_saas_backend": ("full backend", "entire backend", "whole backend"),
+    "hipaa_compliance": ("hipaa",),
+    "deep_vertical_integrations": (
+        "deep vertical integration",
+        "domain-specific integration",
+    ),
+}
+_PRODUCT_SUBJECT = re.compile(
+    r"\b(?:orqagent|we|our (?:product|platform|agent|api)|"
+    r"this (?:product|platform|agent)|the (?:product|platform|agent))\b",
+    re.IGNORECASE,
+)
+_CAPABILITY_PREDICATE = re.compile(
+    r"\b(?:support(?:s|ed)?|handle(?:s|d)?|include(?:s|d)?|provide(?:s|d)?|"
+    r"built[ -]in|available|compliant|certified|replace(?:s|d|ment|ing)?)\b",
+    re.IGNORECASE,
+)
+
+
+def capability_scope_gate(
+    text: str, forbidden_capability_ids: tuple[str, ...] | list[str]
+) -> GateReport:
+    """Block a narrow, explicit product claim for a non-verified capability."""
+    details: list[str] = []
+    sentences = re.split(r"(?<=[.!?])\s+|\n+", strip_markup(text))
+    for capability_id in dict.fromkeys(forbidden_capability_ids):
+        terms = _CAPABILITY_TERMS.get(capability_id, ())
+        for sentence in sentences:
+            lowered = sentence.casefold()
+            if not any(term in lowered for term in terms):
+                continue
+            if not (
+                _PRODUCT_SUBJECT.search(sentence)
+                and _CAPABILITY_PREDICATE.search(sentence)
+            ):
+                continue
+            details.append(
+                f"'{sentence.strip()}' claims non-verified product capability "
+                f"{capability_id} - remove the claim or supply licensed product evidence"
+            )
+            break
+    return _report("capability-scope", details, GateSeverity.BLOCKING)
+
+
 # --------------------------------------------------------------------- spam
 
 #: Vocabulary that moves an email toward the promotions tab or the spam folder.
@@ -541,6 +591,7 @@ def run_all(
     assigned: list[Evidence] | None = None,
     ledger: list[Evidence] | None = None,
     positioning: PositioningMap | None = None,
+    forbidden_capability_ids: tuple[str, ...] | list[str] = (),
 ) -> tuple[GateReport, Substantiation]:
     """Every deterministic check, in one report - plus what the copy is
     actually standing on.
@@ -563,6 +614,7 @@ def run_all(
         placeholder_gate(text, merge_fields),
         stock_phrase_gate(text, extra_banned),
         evidence_gate(text, evidence),
+        capability_scope_gate(text, forbidden_capability_ids),
         spam_gate(email),
         overlap_gate(email, previous or []),
         call_to_action_gate(email, offer),

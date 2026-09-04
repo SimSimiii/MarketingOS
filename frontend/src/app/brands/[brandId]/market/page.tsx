@@ -28,7 +28,15 @@ export default async function BrandMarketPage({
     api.listRadar(brandId).catch(() => []),
     api
       .getAudience(brandId)
-      .catch(() => ({ brand_id: brandId, map: null, prospects: [], note: "" })),
+      .catch(() => ({
+        brand_id: brandId,
+        map: null,
+        prospects: [],
+        research: [],
+        relevance: [],
+        capability_profile: null,
+        note: "",
+      })),
     api.getMarketJob(brandId).catch(() => null),
   ]);
 

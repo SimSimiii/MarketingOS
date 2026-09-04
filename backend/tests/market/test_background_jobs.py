@@ -38,7 +38,7 @@ async def test_a_launched_job_is_held_until_it_finishes():
 
 
 def test_every_launcher_goes_through_the_one_place_that_holds_the_task():
-    """The four launchers are written by copying each other, so the guard has
+    """The launchers are written by copying each other, so the guard has
     to be the only door rather than a line in each of them."""
     source = inspect.getsource(market_service)
 
@@ -47,4 +47,4 @@ def test_every_launcher_goes_through_the_one_place_that_holds_the_task():
         "can be collected mid-run"
     )
     assert "asyncio.create_task(" in inspect.getsource(market_service._spawn)
-    assert source.count("_spawn(") == 5, "one definition and four launchers"
+    assert source.count("_spawn(") == 7, "one definition and six launchers"

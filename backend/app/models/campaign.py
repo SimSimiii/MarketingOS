@@ -40,6 +40,10 @@ class Campaign(SQLModel, table=True):
     #: would answer rather than to the one the company's website describes.
     #: A plain name rather than an id - see app.models.market.ProspectRow.
     audience_segment: str | None = None
+    #: Optional qualified company target from the brand's prospect list. A
+    #: campaign without one stays audience-level; a company-specific campaign
+    #: cannot silently name a company that has never been qualified.
+    prospect_id: UUID | None = Field(default=None, foreign_key="prospectrow.id", index=True)
     #: Who the emails are from - a person and their job, e.g. "Marco" and
     #: "founder". Optional, and worth asking for: without it every email in
     #: the campaign is signed by a team rather than a human, which is a

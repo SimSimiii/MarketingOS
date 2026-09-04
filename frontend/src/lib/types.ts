@@ -41,6 +41,9 @@ export interface Campaign {
    * or null for "whoever the company's own site describes". The one field on
    * the form that changes who the emails are for. */
   audience_segment: string | null;
+  /** Optional organisation inside the mapped audience. Qualification remains
+   * audience-level when this is null. */
+  prospect_id: string | null;
   /** Where the call to action points. Falls back to the brand's website; with
    * neither, the CTA renders as a marked slot rather than a dead button. */
   cta_url: string | null;
@@ -67,6 +70,7 @@ export interface CampaignCreateRequest {
   sender_role?: string | null;
   brand_id?: string | null;
   audience_segment?: string | null;
+  prospect_id?: string | null;
   cta_url?: string | null;
   /** Omitted/null takes the system default, which is "plain". */
   email_tier?: EmailTier | null;
@@ -402,6 +406,10 @@ export interface CampaignExecution {
   total_output_tokens: number;
   total_cache_read_tokens: number;
   estimated_cost_usd: number;
+  /** Immutable preflight receipt recorded when the run was launched. */
+  recommendation_snapshot: Record<string, unknown> | null;
+  /** True only when the operator used the explicit Generate anyway path. */
+  generated_despite_recommendation: boolean;
 }
 
 export interface CampaignExecutionDetail extends CampaignExecution {
@@ -908,6 +916,93 @@ export type SegmentKind =
 
 export type ContactKind = "email" | "phone" | "form" | "social";
 export type ProspectStatus = "new" | "kept" | "dismissed";
+export type Researchability = "high" | "medium" | "low" | "unresearchable";
+
+export type QualificationClass = "QUALIFIED" | "ADJACENT" | "EXCLUDED" | "UNVERIFIED";
+export type QualificationDimension = "strong" | "partial" | "mismatch" | "unknown";
+export type EvidenceCompleteness = "complete" | "partial" | "missing";
+export type Reachability = "reachable" | "unreachable" | "unknown";
+export type SignalGrounding = "direct" | "inference" | "missing";
+
+export interface AudienceRequirement {
+  code: string;
+  description: string;
+}
+
+export interface AudienceExclusion extends AudienceRequirement {
+  outcome: QualificationClass;
+}
+
+export interface AudienceDefinition {
+  schema_version: number;
+  required_structural_signals: AudienceRequirement[];
+  required_workflow_signals: AudienceRequirement[];
+  required_product_capabilities: string[];
+  optional_signals: AudienceRequirement[];
+  hard_disqualifiers: AudienceExclusion[];
+  eligible_subsegments: string[];
+  excluded_subsegments: string[];
+  max_team_size: number | null;
+}
+
+export interface CompanySignal {
+  code: string;
+  value: string;
+  grounding: SignalGrounding;
+  quote: string;
+  source_identifier: string;
+}
+
+export interface CompanyCapabilityRequirement {
+  capability_id: string;
+  evidence_state: SignalGrounding;
+  quote: string;
+  source_url: string;
+  reasoning: string;
+}
+
+export interface UnmappedCompanyRequirement {
+  raw_requirement: string;
+  evidence_state: SignalGrounding;
+  quote: string;
+  source_url: string;
+  mapped_capability_id: null;
+  reasoning: string;
+}
+
+export interface CapabilityRequirementMatch {
+  capability_id: string;
+  display_name: string;
+  company_evidence_state: SignalGrounding;
+  quote: string;
+  source_url: string;
+  reasoning: string;
+  product_capability_state: CapabilityState;
+  reason_code: string;
+}
+
+export interface CompanyQualificationIdentity {
+  capability_profile_version: number;
+  capability_catalog_fingerprint: string;
+  requirement_extractor_version: number;
+  requirement_normalizer_version: number;
+  qualifier_version: number;
+}
+
+export interface CompanyQualification {
+  classification: QualificationClass;
+  audience_structure_fit: QualificationDimension;
+  product_capability_fit: QualificationDimension;
+  evidence_completeness: EvidenceCompleteness;
+  reachability: Reachability;
+  reason_codes: string[];
+  hard_disqualifiers_triggered: string[];
+  evidence: CompanySignal[];
+  requirements: CompanyCapabilityRequirement[];
+  unmapped_requirements: UnmappedCompanyRequirement[];
+  capability_matches: CapabilityRequirementMatch[];
+  identity: CompanyQualificationIdentity;
+}
 
 /** One kind of buyer, described well enough to write to and to go and find.
  *
@@ -944,6 +1039,13 @@ export interface MappedSegment {
   where: string[];
   /** True for every kind except `core`. */
   unobvious: boolean;
+  /** Whether another external research pass has enough concrete handles to run. */
+  researchable: boolean;
+  /** Evidence findability, not propensity to buy. */
+  researchability: Researchability;
+  /** The deterministic receipt behind the admission result. */
+  researchability_reasons: string[];
+  definition: AudienceDefinition;
 }
 
 export interface DemandMap {
@@ -953,7 +1055,7 @@ export interface DemandMap {
   note: string;
   searched: string[];
   mapped_at: string;
-  /** Best fit first. The order is the recommendation. */
+  /** Researchability first, with fit used only to break ties. */
   segments: MappedSegment[];
 }
 
@@ -982,7 +1084,7 @@ export interface Prospect {
   /** The sentence on their page that supports `why_them`. Empty when the
    * extractor's reason was not actually there. */
   verbatim: string;
-  fit: number;
+  fit: number | null;
   caveat: string;
   /** False when their site could not be read; everything above is then a lead
    * nobody confirmed, and the card has to say so. */
@@ -997,12 +1099,275 @@ export interface Prospect {
   found_at: string;
   decided_at: string | null;
   contacts: Contact[];
+  qualification: CompanyQualification | null;
+}
+
+export type AudienceSourceTier = 1 | 2 | 3;
+export type BuyerPhraseKind =
+  | "names_the_problem"
+  | "names_a_tool"
+  | "complaint"
+  | "avoided";
+
+export interface AudienceResearchSource {
+  id: string;
+  requested_url: string;
+  final_url: string;
+  title: string;
+  tier: AudienceSourceTier;
+  venue: string;
+  fetched_at: string;
+  published_date: string | null;
+  content_hash: string;
+}
+
+export interface AudienceEvidenceReference {
+  source_id: string;
+  quote: string;
+}
+
+export interface AudienceSourcedObservation {
+  text: string;
+  grounding: Grounding;
+  evidence: AudienceEvidenceReference[];
+  inference_basis: string;
+}
+
+export interface AudienceResearchProblem {
+  id: string;
+  statement: string;
+  grounding: Grounding;
+  evidence: AudienceEvidenceReference[];
+  corroboration: number;
+  cost: string;
+  cost_evidence: AudienceEvidenceReference | null;
+}
+
+export interface AudienceBuyerPhrase {
+  text: string;
+  kind: BuyerPhraseKind;
+  evidence: AudienceEvidenceReference;
+}
+
+export interface AudienceResearch {
+  id: string;
+  brand_id: string;
+  audience_key: string;
+  audience_name: string;
+  candidate_kind: string;
+  version: number;
+  source_map_id: string | null;
+  source_map_version: number | null;
+  created_at: string;
+  situation: AudienceSourcedObservation | null;
+  incumbent_behaviour: AudienceSourcedObservation[];
+  sophistication: string | null;
+  sophistication_basis: AudienceSourcedObservation | null;
+  problems: AudienceResearchProblem[];
+  buyer_phrases: AudienceBuyerPhrase[];
+  triggers: AudienceSourcedObservation[];
+  desired_outcomes: AudienceSourcedObservation[];
+  signals: AudienceSourcedObservation[];
+  where: AudienceSourcedObservation[];
+  sources: AudienceResearchSource[];
+  dropped_claims: number;
+  researched_at: string;
+  definition: AudienceDefinition;
+}
+
+export type RelevanceBand = "LEAD" | "SUPPORT" | "CONTEXT" | "WITHHOLD";
+export type ProblemFitVerdict =
+  | "SOLVED"
+  | "ADDRESSED"
+  | "PARTIAL"
+  | "UNSUPPORTED"
+  | "IMMATERIAL"
+  | "OFF_LIMITS";
+export type RelevanceState = "current" | "stale" | "missing";
+export type RecommendationState =
+  | "RECOMMENDED"
+  | "RECOMMENDED_NARROW"
+  | "DISCOVERY_ONLY"
+  | "NOT_RECOMMENDED";
+export type CampaignReadiness = "GO" | "GO_NARROW" | "DISCOVERY_ONLY" | "NO_GO";
+
+export interface RelevanceEvidence {
+  id: string;
+  kind: string;
+  claim: string;
+  verbatim: string;
+  source: string;
+  strength: string;
+  category: FactCategory;
+  value_band: ValueBand;
+}
+
+export interface RankedRelevance {
+  evidence_id: string;
+  band: RelevanceBand;
+  why: string;
+  problem_ids: string[];
+  territory: Territory | null;
+}
+
+export interface RelevanceProblemFit {
+  problem_id: string;
+  verdict: ProblemFitVerdict;
+  evidence_ids: string[];
+  capability_ids: string[];
+  blocked_by: string[];
+  caveat: string;
+  why: string;
+  materiality_basis: string;
+}
+
+export interface RelevanceObjection {
+  objection: string;
+  severity: string;
+  answer: string;
+  grounding: Grounding;
+  evidence_ids: string[];
+}
+
+export interface RelevanceSilence {
+  problem_id: string;
+  reason: string;
+  question: string;
+}
+
+export interface RecommendedCompany {
+  prospect_id: string;
+  name: string;
+  url: string;
+  classification: QualificationClass;
+  reason_codes: string[];
+  hard_disqualifiers_triggered: string[];
+}
+
+export interface CampaignRecommendation {
+  state: RecommendationState;
+  readiness: CampaignReadiness;
+  reasons: string[];
+  eligible_subsegment: string;
+  qualified_companies: RecommendedCompany[];
+  adjacent_companies: RecommendedCompany[];
+  excluded_companies: RecommendedCompany[];
+  unverified_companies: RecommendedCompany[];
+  allowed_claims: string[];
+  allowed_evidence_ids: string[];
+  forbidden_claims: string[];
+  forbidden_capability_ids: string[];
+  forbidden_evidence_ids: string[];
+  unresolved_objections: string[];
+  recommended_next_action: string;
+  override_risk: string;
+}
+
+export interface RelevanceDossier {
+  schema_version: number;
+  audience_research_id: string;
+  audience_name: string;
+  audience_research_version: number;
+  knowledge_id: string;
+  knowledge_version: number;
+  market_scan_id: string;
+  market_scan_version: number;
+  capability_profile_id: string | null;
+  capability_profile_version: number | null;
+  qualification_fingerprint: string;
+  built_at: string;
+  orientation: string;
+  ranked_relevance: RankedRelevance[];
+  problem_fits: RelevanceProblemFit[];
+  segment_objections: RelevanceObjection[];
+  silences: RelevanceSilence[];
+  evidence: RelevanceEvidence[];
+  validation_counts: { dropped_items: number; normalized_items: number };
+  validation_warnings: string[];
+  recommendation: CampaignRecommendation | null;
+}
+
+export type CapabilityState = "verified" | "unsupported" | "unknown";
+export type ClaimVisibility = "customer" | "internal";
+
+export interface CapabilityEvidence {
+  evidence_id: string;
+  claim: string;
+  quote: string;
+  source_identifier: string;
+}
+
+export interface ProductCapability {
+  id: string;
+  label: string;
+  description: string;
+  state: CapabilityState;
+  evidence: CapabilityEvidence[];
+  aliases: string[];
+  customer_copy_visibility: ClaimVisibility;
+  note: string;
+}
+
+export interface ProductClaim {
+  text: string;
+  visibility: ClaimVisibility;
+  evidence_ids: string[];
+  reason: string;
+}
+
+export interface ScopeBoundary {
+  id: string;
+  statement: string;
+  capability_ids: string[];
+  source_identifier: string;
+  supporting_quote: string;
+}
+
+export interface ProductCapabilityProfile {
+  id: string;
+  brand_id: string;
+  schema_version: number;
+  version: number;
+  knowledge_id: string;
+  knowledge_version: number;
+  ledger_fingerprint: string;
+  capabilities: ProductCapability[];
+  constraints: ScopeBoundary[];
+  claims: ProductClaim[];
+  created_at: string;
+}
+
+export interface CampaignGenerationAdvice {
+  campaign_id: string;
+  readiness: CampaignReadiness;
+  recommendation: CampaignRecommendation | null;
+  dossier_status: RelevanceState;
+  selected_company_name: string;
+  selected_company_qualification: CompanyQualification | null;
+  reasons: string[];
+  override_required: boolean;
+  can_generate: boolean;
+  user_message: string;
+}
+
+export interface RelevanceStatus {
+  audience_name: string;
+  status: RelevanceState;
+  stale_reasons: string[];
+  missing_prerequisites: { code: string; message: string }[];
+  dossier_id: string | null;
+  generation_version: number | null;
+  created_at: string | null;
+  dossier: RelevanceDossier | null;
 }
 
 export interface AudienceRead {
   brand_id: string;
   map: DemandMap | null;
   prospects: Prospect[];
+  research: AudienceResearch[];
+  relevance: RelevanceStatus[];
+  capability_profile: ProductCapabilityProfile | null;
   note: string;
 }
 
@@ -1012,6 +1377,10 @@ export interface ProspectSearchRequest {
   /** Read each organisation's own pages for a published way in. Off returns
    * names only, at one call instead of one per company. */
   with_contacts?: boolean;
+}
+
+export interface AudienceResearchRequest {
+  segment: string;
 }
 
 /** Where a running (or last finished) scan or proof hunt got to. Polled -

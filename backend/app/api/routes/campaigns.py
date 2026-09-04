@@ -7,12 +7,15 @@ from app.api.deps import CampaignServiceDep
 from app.schemas.campaign import (
     CampaignCreateRequest,
     CampaignExecutionRead,
+    CampaignGenerationAdvice,
     CampaignPolicyUpdate,
     CampaignRead,
+    CampaignStartRequest,
     RunForecast,
 )
 from app.services.campaign_service import (
     CampaignAlreadyRunningError,
+    CampaignTargetError,
     NoExecutionToRestartError,
 )
 
@@ -23,7 +26,7 @@ router = APIRouter(prefix="/campaigns", tags=["campaigns"])
 def create_campaign(data: CampaignCreateRequest, service: CampaignServiceDep) -> CampaignRead:
     try:
         campaign = service.create_campaign(data)
-    except InvalidOverrideError as exc:
+    except (InvalidOverrideError, CampaignTargetError) as exc:
         # 422, not 400: the body parsed fine and one field in it is not
         # satisfiable. The message names the agent and the model, so the dialog
         # can put it next to the row the user got wrong.
@@ -118,12 +121,29 @@ def forecast_campaign(campaign_id: UUID, service: CampaignServiceDep) -> RunFore
     return service.forecast_run(campaign)
 
 
+@router.get(
+    "/{campaign_id}/generation-advice",
+    response_model=CampaignGenerationAdvice,
+)
+def campaign_generation_advice(
+    campaign_id: UUID, service: CampaignServiceDep
+) -> CampaignGenerationAdvice:
+    campaign = service.get_campaign(campaign_id)
+    if campaign is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Campaign not found")
+    return service.generation_advice(campaign)
+
+
 @router.post(
     "/{campaign_id}/start",
     response_model=CampaignExecutionRead,
     status_code=status.HTTP_202_ACCEPTED,
 )
-async def start_campaign(campaign_id: UUID, service: CampaignServiceDep) -> CampaignExecutionRead:
+async def start_campaign(
+    campaign_id: UUID,
+    service: CampaignServiceDep,
+    data: CampaignStartRequest | None = None,
+) -> CampaignExecutionRead:
     """Hand the campaign to the pipeline. Returns immediately with
     the new execution in RUNNING state - the run itself continues in the
     background; poll GET /executions/{id}/status or open
@@ -132,7 +152,9 @@ async def start_campaign(campaign_id: UUID, service: CampaignServiceDep) -> Camp
     if campaign is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Campaign not found")
     try:
-        execution = await service.start_execution(campaign)
+        execution = await service.start_execution(
+            campaign, generate_anyway=data.generate_anyway if data else False
+        )
     except CampaignAlreadyRunningError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
     return CampaignExecutionRead.model_validate(execution)
@@ -143,7 +165,11 @@ async def start_campaign(campaign_id: UUID, service: CampaignServiceDep) -> Camp
     response_model=CampaignExecutionRead,
     status_code=status.HTTP_202_ACCEPTED,
 )
-async def restart_campaign(campaign_id: UUID, service: CampaignServiceDep) -> CampaignExecutionRead:
+async def restart_campaign(
+    campaign_id: UUID,
+    service: CampaignServiceDep,
+    data: CampaignStartRequest | None = None,
+) -> CampaignExecutionRead:
     """Start a fresh run of a campaign that has run before (typically after
     a failed or cancelled execution) - same as /start, but 404s instead of
     silently behaving like a first run when there is nothing to restart."""
@@ -151,7 +177,9 @@ async def restart_campaign(campaign_id: UUID, service: CampaignServiceDep) -> Ca
     if campaign is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Campaign not found")
     try:
-        execution = await service.restart_execution(campaign)
+        execution = await service.restart_execution(
+            campaign, generate_anyway=data.generate_anyway if data else False
+        )
     except NoExecutionToRestartError as exc:
         raise HTTPException(status.HTTP_404_NOT_FOUND, str(exc)) from exc
     except CampaignAlreadyRunningError as exc:
