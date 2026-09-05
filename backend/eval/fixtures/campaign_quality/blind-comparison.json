@@ -1,0 +1,67 @@
+{
+  "id": "blind-comparison",
+  "name": "Two competing drafts for blind persona review",
+  "context": {
+    "product_name": "RelayDesk",
+    "target_audience": "Support operations leaders managing a growing email queue",
+    "evidence": [
+      {
+        "id": "E-REPLY-1",
+        "text": "RelayDesk drafts suggested replies from approved knowledge articles and leaves the final send to an agent.",
+        "scope": "product"
+      },
+      {
+        "id": "E-AUDIT-1",
+        "text": "Every suggestion records which approved knowledge article it used.",
+        "scope": "product"
+      }
+    ],
+    "claim_contract": [
+      {
+        "id": "SAFE-REPLY-DRAFT",
+        "text": "RelayDesk drafts suggested support replies from approved knowledge articles for an agent to review.",
+        "scope": "campaign"
+      },
+      {
+        "id": "SAFE-TRACE",
+        "text": "RelayDesk records the approved knowledge article behind each suggestion.",
+        "scope": "campaign"
+      },
+      {
+        "id": "SAFE-GENERIC-BENEFIT",
+        "text": "RelayDesk helps support teams keep response work moving while agents retain the final send decision.",
+        "scope": "campaign"
+      }
+    ],
+    "buyer_personas": [
+      "A support operations lead accountable for response quality and queue health",
+      "A skeptical customer experience director whose last automation pilot produced unreliable answers"
+    ]
+  },
+  "drafts": [
+    {
+      "id": "evidence-led",
+      "email": {
+        "position": 1,
+        "subject": "A reply draft with its source attached",
+        "preview_text": "Agents can inspect the approved article before they send",
+        "greeting": "Hi there,",
+        "body": "A faster first reply is useful only if the agent can tell where the answer came from. Otherwise review becomes a second research job.\n\nRelayDesk drafts a suggested reply from approved knowledge articles and records the article behind the suggestion. The final send stays with the agent who owns the conversation.\n\nThat gives reviewers something concrete to inspect: the proposed answer beside the source it used. They can correct the wording without hunting through a separate knowledge base first.\n\nUse one recurring email question as the test and compare the suggestion with the answer an experienced agent would trust.",
+        "call_to_action": "Review a sourced reply",
+        "sign_off": "- the RelayDesk team"
+      }
+    },
+    {
+      "id": "benefit-led",
+      "email": {
+        "position": 1,
+        "subject": "Keep the support queue moving",
+        "preview_text": "A simpler way to help agents answer routine questions",
+        "greeting": "Hi there,",
+        "body": "A growing support queue puts pressure on every part of the team. Routine questions compete with the conversations that genuinely need judgment and care.\n\nRelayDesk helps support teams keep response work moving while agents retain the final send decision. It offers a practical way to organise the work around answers the team already uses.\n\nThat can give people more room to focus on customers and fewer routine tasks to manage. The workflow stays familiar while the first step becomes easier to handle.\n\nIf a smoother support process is worth exploring, look at the workflow and decide whether it fits the way the team prefers to work.",
+        "call_to_action": "See how the workflow works",
+        "sign_off": "- the RelayDesk team"
+      }
+    }
+  ]
+}

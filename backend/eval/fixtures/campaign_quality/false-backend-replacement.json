@@ -1,0 +1,46 @@
+{
+  "id": "false-backend-replacement",
+  "name": "Unsupported full backend replacement",
+  "context": {
+    "product_name": "LaunchPad",
+    "target_audience": "Product engineers adding a small workflow to an existing application",
+    "evidence": [
+      {
+        "id": "E-WIDGET-1",
+        "text": "LaunchPad provides an embeddable workflow widget and a REST API.",
+        "scope": "product"
+      }
+    ],
+    "claim_contract": [
+      {
+        "id": "SAFE-WIDGET",
+        "text": "LaunchPad provides an embeddable workflow widget and a REST API for an existing application.",
+        "scope": "campaign"
+      }
+    ],
+    "forbidden_claims": [
+      {
+        "id": "F-NO-BACKEND-REPLACEMENT",
+        "description": "Do not claim LaunchPad replaces a full backend",
+        "patterns": ["\\breplace(?:s)?\\s+(?:your|the|their)?\\s*(?:entire|full|whole)\\s+back[ -]?end\\b"]
+      }
+    ],
+    "buyer_personas": [
+      "A senior product engineer who owns an existing production application"
+    ]
+  },
+  "drafts": [
+    {
+      "id": "backend-promise-a",
+      "email": {
+        "position": 1,
+        "subject": "Retire the backend behind your next workflow",
+        "preview_text": "Ship the product surface without maintaining server code",
+        "greeting": "Hi there,",
+        "body": "A small customer workflow can turn into a long queue of API routes, permissions, and maintenance work before anyone sees the feature.\n\nLaunchPad provides an embeddable workflow widget and a REST API for an existing application. It replaces your entire backend, including authentication, business logic, data storage, and every production integration.\n\nThe team can then work only on the product surface while LaunchPad owns everything behind it. There is no server code to operate, no database to maintain, and no infrastructure work left for the release.\n\nChoose one workflow that is still waiting on backend work and see how the widget fits the existing product.",
+        "call_to_action": "Inspect the workflow widget",
+        "sign_off": "- the LaunchPad team"
+      }
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "id": "strong-grounded",
+  "name": "Strong, evidence-grounded email",
+  "context": {
+    "product_name": "Notewright",
+    "target_audience": "Engineering leads who ship weekly and still write release notes by hand",
+    "evidence": [
+      {
+        "id": "E-MECHANISM-1",
+        "text": "Notewright drafts release notes from a merged pull request in about 9 seconds.",
+        "scope": "product"
+      },
+      {
+        "id": "E-WORKFLOW-1",
+        "text": "A draft can be reviewed and edited before it is published.",
+        "scope": "product"
+      }
+    ],
+    "claim_contract": [
+      {
+        "id": "SAFE-DRAFTING",
+        "text": "Notewright turns merged pull requests into draft release notes for review in about 9 seconds.",
+        "scope": "campaign"
+      }
+    ],
+    "buyer_personas": [
+      "An engineering lead who ships weekly and writes release notes after the work is done",
+      "A skeptical VP Engineering whose last documentation tool added more review work"
+    ]
+  },
+  "drafts": [
+    {
+      "id": "grounded-a",
+      "email": {
+        "position": 1,
+        "subject": "Release notes in 9 seconds",
+        "preview_text": "A first draft from the pull request you already merged",
+        "greeting": "Hi there,",
+        "body": "The release is finished. The note explaining it is still waiting for the engineer who just spent a week shipping it.\n\nNotewright turns a merged pull request into a draft release note in about 9 seconds. Nothing publishes automatically: the draft stays open for review and editing first.\n\nThat moves the blank-page work out of Friday afternoon without moving judgment out of the team. The engineer checks the language, adds context, and publishes only when it reads like the release they built.\n\nIf the next merge is a useful test, put one real change through it and inspect the draft.",
+        "call_to_action": "See a draft from your last merge",
+        "sign_off": "- the Notewright team"
+      }
+    }
+  ]
+}
