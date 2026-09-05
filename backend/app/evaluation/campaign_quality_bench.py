@@ -44,6 +44,7 @@ from app.evaluation.campaign_quality import (
 )
 from app.evaluation.head_to_head import assessor_panel
 from app.knowledge.artifacts import Grounding, KnowledgeArtifacts
+from app.market.relevance import ClaimContract
 from app.marketing.briefs import CampaignBrief
 from app.marketing.email_copy import Email, EmailCopyError, parse_email
 from app.models.campaign import Campaign
@@ -197,6 +198,28 @@ def _artifacts_for_run(
     return KnowledgeArtifacts.model_validate(row.payload), ""
 
 
+def _withheld_only_evidence(contract: ClaimContract | None) -> set[str]:
+    """Ledger ids the contract withheld without also forbidding them.
+
+    Empty for a legacy snapshot that predates the contract, where
+    `forbidden_evidence_ids` did mean forbidden alone and every id in it is
+    still a prohibition.
+    """
+    if contract is None:
+        return set()
+    forbidden = {
+        evidence_id
+        for claim in contract.forbidden_claims
+        for evidence_id in claim.evidence_ids
+    }
+    withheld = {
+        evidence_id
+        for claim in contract.withheld_claims
+        for evidence_id in claim.evidence_ids
+    }
+    return withheld - forbidden
+
+
 def _context_from_stored(
     campaign: Campaign,
     brief: CampaignBrief | None,
@@ -280,6 +303,17 @@ def _context_from_stored(
             for capability_id in intelligence.forbidden_capability_ids
             if capability_id.strip()
         )
+        # `forbidden_evidence_ids` carries two different verdicts now that the
+        # claim contract ships: evidence behind an unverified capability (a
+        # lie) and evidence the dossier ranked WITHHOLD or contested (a fact
+        # that may well be true and this campaign chose not to spend).  Only
+        # the first is a forbidden claim.  Reporting a withheld fact as
+        # forbidden is the exact collapse `ClaimContract` exists to prevent -
+        # it tells the operator the product cannot do something it can.
+        # Withheld evidence is already absent from `evidence` and `contract`
+        # above, so CQ-SAF-004 and CQ-SAF-005 still fail closed on it under an
+        # accurate rule.
+        withheld_only = _withheld_only_evidence(intelligence.claim_contract)
         by_id = {item.id: item for item in all_evidence}
         forbidden.extend(
             ForbiddenClaim(
@@ -287,7 +321,7 @@ def _context_from_stored(
                 description=by_id[evidence_id].text,
             )
             for evidence_id in intelligence.forbidden_evidence_ids
-            if evidence_id in by_id
+            if evidence_id in by_id and evidence_id not in withheld_only
         )
 
     company_evidence: list[EvidenceReference] = []

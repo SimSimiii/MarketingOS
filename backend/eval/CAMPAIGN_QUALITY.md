@@ -36,8 +36,10 @@ revisions. The three verdicts are `SAFE_TO_REVIEW`, `NEEDS_REVISION`, and `UNSAF
 Database campaigns are evaluated against their persisted final email assets, the exact stored
 knowledge version when available, and the V2 `recommendation_snapshot` used for generation. The
 snapshot's allowed claims and evidence form the campaign-safe contract; its prohibited claims and
-capabilities remain prohibited. The loader does not substitute newer evidence when the exact
-historical version is missing.
+capabilities remain prohibited. Evidence the snapshot's claim contract merely *withheld* - true,
+and not spent by this campaign - is not reported as prohibited; it is simply absent from the
+campaign-safe contract, so `CQ-SAF-004` and `CQ-SAF-005` still catch a draft that spends it. The
+loader does not substitute newer evidence when the exact historical version is missing.
 
 ## Deterministic rules
 

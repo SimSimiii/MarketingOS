@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from collections import deque
 from collections.abc import AsyncIterator
+from uuid import uuid4
 
 import pytest
 from pydantic import ValidationError
@@ -40,6 +41,8 @@ from app.market.qualification import (
 from app.market.relevance import (
     CampaignReadiness,
     CampaignRecommendation,
+    ClaimContract,
+    ContractClaim,
     RecommendationState,
 )
 from app.models.campaign import Campaign
@@ -358,3 +361,121 @@ def test_markdown_says_when_live_commercial_review_was_not_run():
 
     assert "Commercial model review was not run" in markdown
     assert "spends no model quota" in markdown
+
+
+def _snapshot_with_contract(contract: ClaimContract | None) -> CampaignGenerationAdvice:
+    """A stored V2 snapshot whose `forbidden_evidence_ids` holds both kinds.
+
+    `E-voice` is forbidden - an unverified capability, a thing the product does
+    not do.  `E-price` is withheld - true, and this campaign chose not to spend
+    it.  `recommend_campaign` puts both in `forbidden_evidence_ids`, which is
+    the union of the two sets.
+    """
+    campaign_id = uuid4()
+    return CampaignGenerationAdvice(
+        campaign_id=campaign_id,
+        readiness=CampaignReadiness.GO,
+        recommendation=CampaignRecommendation(
+            state=RecommendationState.RECOMMENDED,
+            readiness=CampaignReadiness.GO,
+            allowed_claims=["RelayDesk drafts text replies."],
+            allowed_evidence_ids=["E-allowed"],
+            forbidden_claims=["Do not claim voice telephony."],
+            forbidden_evidence_ids=["E-price", "E-voice"],
+            claim_contract=contract,
+        ),
+    )
+
+
+def _snapshot_artifacts() -> KnowledgeArtifacts:
+    return KnowledgeArtifacts(
+        business=BusinessProfile(company_name="RelayDesk", what_it_does="Support automation"),
+        evidence=EvidenceLedger(
+            entries=[
+                Evidence(
+                    id="E-allowed",
+                    kind=EvidenceKind.FEATURE,
+                    claim="RelayDesk drafts text replies.",
+                    verbatim="RelayDesk drafts text replies.",
+                ),
+                Evidence(
+                    id="E-price",
+                    kind=EvidenceKind.FEATURE,
+                    claim="RelayDesk costs $49 per seat.",
+                    verbatim="RelayDesk costs $49 per seat.",
+                ),
+                Evidence(
+                    id="E-voice",
+                    kind=EvidenceKind.FEATURE,
+                    claim="RelayDesk handles voice calls.",
+                    verbatim="An old page said RelayDesk handles voice calls.",
+                ),
+            ]
+        ),
+    )
+
+
+def test_withheld_evidence_is_not_reported_to_the_operator_as_forbidden():
+    """A choice not to spend a fact is not a claim that the fact is false.
+
+    `forbidden_evidence_ids` became the union of forbidden and withheld
+    evidence when the claim contract landed.  The evaluator turns every id in
+    it into a CQ-SAF-001 "forbidden capability or claim", so a withheld price
+    was being reported as something the product cannot do.  Withheld evidence
+    is already excluded from the campaign-safe contract, so CQ-SAF-004 and
+    CQ-SAF-005 still fail closed on it - under a rule that says what is
+    actually wrong.
+    """
+    contract = ClaimContract(
+        campaign_allowed_claims=[
+            ContractClaim(
+                id="allowed",
+                text="RelayDesk drafts text replies.",
+                evidence_ids=["E-allowed"],
+            )
+        ],
+        forbidden_claims=[
+            ContractClaim(
+                id="forbidden",
+                text="Do not claim voice telephony.",
+                evidence_ids=["E-voice"],
+            )
+        ],
+        withheld_claims=[
+            ContractClaim(
+                id="withheld",
+                text="RelayDesk costs $49 per seat.",
+                evidence_ids=["E-price"],
+                reason="Contested territory.",
+            )
+        ],
+    )
+    advice = _snapshot_with_contract(contract)
+
+    context = _context_from_stored(
+        Campaign(name="V2 campaign"), None, _snapshot_artifacts(), advice
+    )
+
+    forbidden_ids = {item.id for item in context.forbidden_claims}
+    assert "V2-EVIDENCE-E-voice" in forbidden_ids
+    assert "V2-EVIDENCE-E-price" not in forbidden_ids
+    # Withheld evidence still never reaches the campaign-safe support sets.
+    assert "E-price" not in {item.id for item in context.evidence}
+    assert "E-price" not in {item.id for item in context.claim_contract}
+
+
+def test_a_legacy_snapshot_keeps_every_forbidden_evidence_id_forbidden():
+    """Before the contract, `forbidden_evidence_ids` meant forbidden alone.
+
+    A snapshot persisted then carries no `claim_contract` to separate the two
+    kinds, so nothing may be downgraded and every id stays a prohibition.
+    """
+    advice = _snapshot_with_contract(None)
+
+    context = _context_from_stored(
+        Campaign(name="Legacy campaign"), None, _snapshot_artifacts(), advice
+    )
+
+    forbidden_ids = {item.id for item in context.forbidden_claims}
+    assert "V2-EVIDENCE-E-voice" in forbidden_ids
+    assert "V2-EVIDENCE-E-price" in forbidden_ids
