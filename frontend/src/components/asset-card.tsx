@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +22,11 @@ type View = "text" | "html";
 export function AssetCard({ asset }: { asset: GeneratedAsset }) {
   const [copied, setCopied] = useState<View | null>(null);
   const [view, setView] = useState<View>("text");
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => {
+    if (copyTimer.current !== null) clearTimeout(copyTimer.current);
+  }, []);
 
   const html = asset.content_html;
 
@@ -30,8 +35,9 @@ export function AssetCard({ asset }: { asset: GeneratedAsset }) {
     if (!payload) return;
     try {
       await navigator.clipboard.writeText(payload);
+      if (copyTimer.current !== null) clearTimeout(copyTimer.current);
       setCopied(which);
-      setTimeout(() => setCopied(null), 2000);
+      copyTimer.current = setTimeout(() => setCopied(null), 2000);
     } catch {
       toast.error("Could not copy - select the text and copy it manually");
     }
@@ -41,10 +47,10 @@ export function AssetCard({ asset }: { asset: GeneratedAsset }) {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-start justify-between gap-4">
-        <div className="space-y-1">
+      <CardHeader className="flex flex-row flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0 space-y-1">
           <CardTitle className="text-base">{asset.title}</CardTitle>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Badge variant="secondary">{ASSET_LABELS[asset.asset_type] ?? asset.asset_type}</Badge>
             {asset.position > 0 && (
               <span className="text-xs text-muted-foreground">#{asset.position}</span>
@@ -54,20 +60,20 @@ export function AssetCard({ asset }: { asset: GeneratedAsset }) {
         </div>
         <div className="flex items-center gap-2">
           {html && (
-            <div className="flex rounded-md border p-0.5" role="tablist">
+            <div className="flex rounded-md border p-0.5" role="group" aria-label="Email preview format">
               {(["text", "html"] as const).map((option) => (
                 <button
                   key={option}
-                  role="tab"
-                  aria-selected={view === option}
+                  type="button"
+                  aria-pressed={view === option}
                   onClick={() => setView(option)}
-                  className={`rounded px-2 py-1 text-xs capitalize transition-colors ${
+                  className={`rounded px-3 py-2 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-ring ${
                     view === option
                       ? "bg-secondary text-secondary-foreground"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  {option}
+                  {option === "text" ? "Text" : "Design"}
                 </button>
               ))}
             </div>
@@ -75,6 +81,7 @@ export function AssetCard({ asset }: { asset: GeneratedAsset }) {
           <Button variant="outline" size="sm" onClick={() => copy(view)}>
             {copied === view ? "Copied" : view === "html" ? "Copy HTML" : "Copy"}
           </Button>
+          <span role="status" className="sr-only">{copied ? "Copied to clipboard" : ""}</span>
         </div>
       </CardHeader>
       <CardContent>
@@ -90,7 +97,7 @@ export function AssetCard({ asset }: { asset: GeneratedAsset }) {
             className="h-[32rem] w-full rounded-md border bg-white"
           />
         ) : (
-          <pre className="whitespace-pre-wrap break-words font-sans text-sm leading-relaxed">
+          <pre className="max-w-prose whitespace-pre-wrap break-words font-sans text-sm leading-7">
             {asset.content}
           </pre>
         )}

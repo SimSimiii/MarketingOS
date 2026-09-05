@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { NewBrandDialog } from "@/app/brands/new-brand-dialog";
+import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,20 +16,11 @@ import { timeAgo } from "@/lib/format";
  * and a page that averages them describes nobody.
  */
 export default async function BrandsPage() {
-  const brands = await api.listBrandOverviews().catch(() => []);
+  const brands = await api.listBrandOverviews();
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Brands</h1>
-          <p className="text-sm text-muted-foreground">
-            One workspace per business: what it can prove, who it is up against, and what its
-            copy is allowed to say.
-          </p>
-        </div>
-        <NewBrandDialog />
-      </div>
+      <PageHeader eyebrow="Your businesses" title="Brand workspaces" description="The knowledge, market context and proof behind every campaign. A dedicated home for each business." actions={<NewBrandDialog />} />
 
       {brands.length === 0 ? (
         <Card>
@@ -53,8 +45,8 @@ export default async function BrandsPage() {
           {brands.map((brand) => (
             <Card key={brand.id}>
               <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
                     <CardTitle className="text-base">
                       <Link href={`/brands/${brand.id}`} className="hover:underline">
                         {brand.name}
@@ -77,7 +69,7 @@ export default async function BrandsPage() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <dl className="grid grid-cols-4 gap-2 text-sm">
+                <dl className="grid grid-cols-2 gap-4 rounded-xl border border-border bg-background/40 p-4 text-sm sm:grid-cols-4">
                   <Figure label="Sources" value={brand.sources} />
                   <Figure
                     label="Knowledge"

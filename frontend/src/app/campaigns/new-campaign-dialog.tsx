@@ -175,7 +175,7 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
   //: nothing rather than an empty object.
   const [modelOverrides, setModelOverrides] = useState<Record<string, string>>({});
   const [customModelsOpen, setCustomModelsOpen] = useState(false);
-  const modelCatalog = useModelCatalog();
+  const modelCatalog = useModelCatalog(open);
 
   const [brands, setBrands] = useState<Brand[]>([]);
   const [brandChoice, setBrandChoice] = useState<string>(NO_BRAND);
@@ -217,10 +217,12 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
 
   useEffect(() => {
     if (!open) return;
+    let cancelled = false;
     api
       .listBrands()
-      .then(setBrands)
-      .catch(() => setBrands([]));
+      .then((result) => { if (!cancelled) setBrands(result); })
+      .catch(() => { if (!cancelled) setBrands([]); });
+    return () => { cancelled = true; };
   }, [open]);
 
   function handleOpenChange(nextOpen: boolean) {
@@ -240,6 +242,7 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
   }
 
   function handleBrandChange(value: string) {
+    const requestId = ++knowledgeRequestId.current;
     setBrandChoice(value);
     setExistingKnowledgeCount(null);
     setExistingSources([]);
@@ -258,7 +261,6 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
       setForceRecompile(true);
       return;
     }
-    const requestId = ++knowledgeRequestId.current;
     api
       .listKnowledgeDocuments({ brandId: value })
       .then((docs) => {
@@ -304,6 +306,7 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
   }
 
   function reset() {
+    ++knowledgeRequestId.current;
     setName("");
     setProductDescription("");
     setProductUrl("");

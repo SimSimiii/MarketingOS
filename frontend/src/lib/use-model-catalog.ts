@@ -32,10 +32,11 @@ function load(): Promise<ModelCatalog> {
  * over the preset, and a backend that cannot serve the catalog should cost the
  * user the picker, not the screen it sits on.
  */
-export function useModelCatalog(): ModelCatalog | null {
+export function useModelCatalog(enabled = true): ModelCatalog | null {
   const [catalog, setCatalog] = useState<ModelCatalog | null>(null);
 
   useEffect(() => {
+    if (!enabled) return;
     let live = true;
     load()
       .then((result) => {
@@ -45,7 +46,7 @@ export function useModelCatalog(): ModelCatalog | null {
     return () => {
       live = false;
     };
-  }, []);
+  }, [enabled]);
 
   return catalog;
 }

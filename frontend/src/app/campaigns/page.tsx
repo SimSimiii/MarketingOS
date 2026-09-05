@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { NewCampaignDialog } from "@/app/campaigns/new-campaign-dialog";
+import { PageHeader } from "@/components/page-header";
 import { CampaignActions } from "@/components/campaign-actions";
 import { StatusBadge } from "@/components/status-badge";
 import { Badge } from "@/components/ui/badge";
@@ -35,18 +36,11 @@ export default async function CampaignsPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Campaigns{brand ? ` — ${brand.name}` : ""}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {brand
-              ? "Everything this business has asked for, written from its own knowledge base."
-              : "Describe your product, say what you need, get material you can send."}
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
+      <PageHeader
+        eyebrow="Email studio"
+        title={`Campaigns${brand ? ` — ${brand.name}` : ""}`}
+        description={brand ? "Everything this business has asked for, written from its own knowledge base." : "From the first brief to the final email. Manage your work here."}
+        actions={<>
           {brand && (
             <Link
               href={`/campaigns${includeArchived ? "?archived=1" : ""}`}
@@ -66,8 +60,8 @@ export default async function CampaignsPage({
             {includeArchived ? "Hide archived" : "Show archived"}
           </Link>
           <NewCampaignDialog />
-        </div>
-      </div>
+        </>}
+      />
 
       <Card>
         <CardContent className="p-0">
@@ -85,7 +79,7 @@ export default async function CampaignsPage({
               </div>
             </div>
           ) : (
-            <Table>
+            <Table className="campaign-table">
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
@@ -93,7 +87,7 @@ export default async function CampaignsPage({
                   <TableHead>What was asked</TableHead>
                   <TableHead>Last run</TableHead>
                   <TableHead>Created</TableHead>
-                  <TableHead />
+                  <TableHead><span className="sr-only">Actions</span></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -103,7 +97,7 @@ export default async function CampaignsPage({
                       <div className="flex items-center gap-2">
                         <Link
                           href={`/campaigns/${campaign.id}`}
-                          className="font-medium text-primary hover:underline"
+                          className="font-medium text-violet-300 hover:underline"
                         >
                           {campaign.name}
                         </Link>
@@ -112,7 +106,7 @@ export default async function CampaignsPage({
                         )}
                       </div>
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
+                    <TableCell data-label="Brand" className="text-muted-foreground">
                       {campaign.brand_id ? (
                         <Link
                           href={`/brands/${campaign.brand_id}`}
@@ -126,10 +120,10 @@ export default async function CampaignsPage({
                         </span>
                       )}
                     </TableCell>
-                    <TableCell className="max-w-md truncate text-muted-foreground">
+                    <TableCell data-label="Brief" className="max-w-md truncate text-muted-foreground">
                       {campaign.request}
                     </TableCell>
-                    <TableCell>
+                    <TableCell data-label="Last run">
                       {campaign.last_run_status ? (
                         <span
                           className="flex items-center gap-2"
@@ -149,6 +143,7 @@ export default async function CampaignsPage({
                       )}
                     </TableCell>
                     <TableCell
+                      data-label="Created"
                       className="text-muted-foreground"
                       title={formatAbsolute(campaign.created_at)}
                     >
