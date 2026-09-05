@@ -2,6 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Branch policy
+
+Make all changes and commits on the branch that is currently checked out. Do not create
+or switch branches, and do not create a separate worktree. This applies to every task,
+including `optimize`, in both Codex and Claude Code. Only depart from this policy if the
+user explicitly requests a different branch or worktree for that task.
+
 ## What this is
 
 An email-copy generator: it reads a business's own material into a set of facts it is

@@ -1,6 +1,6 @@
 ---
 name: optimize
-description: Autonomously find and implement optimizations in MarketingOS, in committed passes, until the Codex usage window runs out. Use when the user says "optimize <something>" (a feature, a module, performance, the frontend) or just "optimize the project" / "/optimize" for a global sweep looking for new features and new angles. Runs without asking questions; every pass is its own commit on a throwaway branch.
+description: Autonomously find and implement optimizations in MarketingOS, in committed passes, until the Codex usage window runs out. Use when the user says "optimize <something>" (a feature, a module, performance, the frontend) or just "optimize the project" / "/optimize" for a global sweep looking for new features and new angles. Runs without asking questions; every pass is its own commit on the current branch; never create or switch branches or worktrees.
 ---
 
 # Autonomous optimization run
@@ -22,19 +22,21 @@ Everything downstream depends on there being a pushed commit to fall back to.
 python .Codex/skills/optimize/quota.py
 ```
 
-Report the budget in one line, then:
+Report the budget in one line. Record `git branch --show-current` and stay on that branch
+for the entire run; never create or switch branches or worktrees. If HEAD is detached,
+stop and report it rather than creating a branch. Then:
 
 1. `git status --porcelain`. If anything is uncommitted, commit it all as
    `baseline: state before autonomous optimization run` — including work in progress. It
    is the operator's code and it is going into history, not the bin.
-2. `git push origin master`. **If the push fails, stop the run and say why.** The whole
-   safety model is that master is recoverable from the remote; without the push there is
+2. `git push origin HEAD`. **If the push fails, stop the run and say why.** The whole
+   safety model is that the current branch is recoverable from the remote; without the push there is
    no baseline, only a local commit on a machine that is about to be edited for hours.
 3. Tag it: `git tag optimize-baseline-<YYYYMMDD-HHMM> && git push origin --tags`.
-4. Branch: `git checkout -b optimize/<YYYYMMDD-HHMM>`.
+4. Keep working on the current branch. Every pass is committed there.
 
-Master now sits at the pushed baseline and is never touched again during the run. Every
-pass lands on the branch. The operator can merge it, cherry-pick from it, or delete it.
+The pushed baseline tag records the starting point. To undo a completed run, revert its
+commits on the same branch; do not switch branches or reset away unrelated work.
 
 Read `.Codex/skills/optimize/LEDGER.md` before doing anything else. It is what stops run
 number four from re-proposing what run number two already rejected.
@@ -151,9 +153,9 @@ Whether the run ended on the budget or on a 429, finish with:
 
 - The branch name, the number of passes landed and rejected.
 - One line per landed change, in the order they were committed.
-- Anything a human should look at before merging.
-- How to undo everything: `git checkout master` — the branch holds every change and master
-  never moved.
+- Anything a human should review.
+- The baseline tag and the run's commit hashes, so its changes can be undone with
+  `git revert` in reverse chronological order without changing branches.
 
 If the run died on a 429 mid-pass, say which pass was in flight and whether the tree is
 clean. Then stop. Do not wait for the window to reset.
@@ -164,7 +166,7 @@ clean. Then stop. Do not wait for the window to reset.
 that makes "find *new* angles" possible across runs that cannot see each other.
 
 ```markdown
-## 2026-08-27 14:02 — branch optimize/20260827-1402
+## 2026-08-27 14:02 — branch master
 
 ### LANDED  subject-variant calls now run concurrently
 Axis: latency/parallelism. Four independent writer calls were awaited in a loop.
