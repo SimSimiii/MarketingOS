@@ -215,6 +215,20 @@ class ClaudeProvider(AIProvider):
         already fits behaving exactly as before.
         """
         system = request.system_prompt or ""
+        if request.tools:
+            turn_limit = request.max_turns or _MAX_RESEARCH_TURNS
+            research_turns = max(0, turn_limit - 4)
+            system += (
+                "\n\n# Research budget\n"
+                f"This call has a hard limit of {turn_limit} assistant turns, including "
+                "tool use and your final answer. "
+                f"Use at most {research_turns} turns for research; reserve the remaining "
+                "turns for producing the requested final answer. Batch independent "
+                "searches where possible. Stop earlier when searches stop yielding "
+                "useful evidence. Return the supported findings you have, even if "
+                "fewer than requested or empty, and explain the limitation in the "
+                "requested output format. Do not keep searching to fill a quota."
+            )
         task = self._prompt_text(request)
         if len(system) <= _MAX_INLINE_SYSTEM_PROMPT_CHARS:
             return self._options(request, system), task

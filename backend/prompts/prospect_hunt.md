@@ -26,6 +26,13 @@ go to the directories, the marketplaces, the member registers, the exhibitor lis
 review-site category pages, the "companies like this" listings. Those are enumerable, which
 is the whole reason the segment named them.
 
+Treat the segment and its signals as hypotheses, not verified facts. If it depends on a
+specific event (an outage, shutdown, migration, or deadline), first check that event and
+look for public evidence that each organisation was affected. Using a related product
+does not establish that a company suffered an outage. If a few distinct targeted searches
+do not establish the signal, stop and return an empty or shorter list with the limitation
+in **note**. Do not broaden the segment silently or keep searching to reach the limit.
+
 **Match on the signal, not on the vibe.** The test for every entry is: can you point at
 something on their site or in a listing that shows they are this kind of organisation? A
 company that merely feels like it belongs is the failure mode here - it produces a list that

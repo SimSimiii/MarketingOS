@@ -89,3 +89,28 @@ def test_the_claude_provider_declares_what_it_can_offer(
     assert provider.available_tools() == frozenset(
         {ResearchTool.WEB_SEARCH, ResearchTool.WEB_FETCH}
     )
+
+
+@pytest.mark.parametrize("turn_limit,research_turns", [(20, 16), (3, 0)])
+def test_research_budget_reaches_the_model_with_room_to_answer(
+    provider: ClaudeProvider, turn_limit: int, research_turns: int,
+) -> None:
+    options, _ = provider._payload(
+        AIRequest(tools=[ResearchTool.WEB_SEARCH], max_turns=turn_limit)
+    )
+    assert options.max_turns == turn_limit
+    assert f"hard limit of {turn_limit} assistant turns" in options.system_prompt
+    assert f"at most {research_turns} turns for research" in options.system_prompt
+
+
+def test_research_budget_survives_windows_prompt_relocation(provider: ClaudeProvider) -> None:
+    options, task = provider._payload(
+        AIRequest(system_prompt="x" * 15_000, tools=[ResearchTool.WEB_SEARCH])
+    )
+    assert "hard limit of 20 assistant turns" in task
+    assert len(options.system_prompt) < 15_000
+
+
+def test_generation_prompt_does_not_get_research_instructions(provider: ClaudeProvider) -> None:
+    options, _ = provider._payload(AIRequest(system_prompt="Write an email."))
+    assert options.system_prompt == "Write an email."
