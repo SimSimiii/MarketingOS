@@ -13,9 +13,11 @@ import type {
   AudienceEvidenceReference,
   AudienceRead,
   AudienceResearch,
+  CampaignRecommendation,
   CapabilityState,
   CompanyQualification,
   Contact,
+  ContractClaim,
   MappedSegment,
   Prospect,
   ProductCapabilityProfile,
@@ -436,6 +438,52 @@ function CapabilityProfileCard({
   );
 }
 
+/**
+ * One quote and where it came from. A missing quote is stated as missing
+ * rather than rendered as an empty pair of quotation marks — an empty
+ * blockquote reads as evidence that says nothing, which is a different and
+ * much worse claim than evidence we never captured.
+ */
+function EvidenceQuote({
+  quote,
+  source,
+}: {
+  quote?: string | null;
+  source?: string | null;
+}) {
+  const text = quote?.trim();
+  const origin = source?.trim();
+  return (
+    <>
+      {text ? (
+        <blockquote className="mt-1 border-l-2 border-border pl-2 text-muted-foreground">
+          &ldquo;{text}&rdquo;
+        </blockquote>
+      ) : (
+        <p className="mt-1 border-l-2 border-dashed border-border/60 pl-2 italic text-muted-foreground/70">
+          No quote recorded for this evidence.
+        </p>
+      )}
+      {origin ? (
+        /^https?:\/\//.test(origin) ? (
+          <a
+            href={origin}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="mt-1 block break-all text-primary hover:underline"
+          >
+            {origin}
+          </a>
+        ) : (
+          <p className="mt-1 text-muted-foreground">Source: {origin}</p>
+        )
+      ) : (
+        <p className="mt-1 italic text-muted-foreground/70">Source not recorded.</p>
+      )}
+    </>
+  );
+}
+
 function DossierEvidenceReference({ evidence }: { evidence?: RelevanceEvidence }) {
   if (!evidence) return null;
   return (
@@ -447,12 +495,7 @@ function DossierEvidenceReference({ evidence }: { evidence?: RelevanceEvidence }
         <p className="capitalize">
           {evidence.category} · {evidence.kind} · {evidence.value_band}
         </p>
-        {evidence.verbatim && (
-          <blockquote className="border-l-2 border-border pl-2">
-            &ldquo;{evidence.verbatim}&rdquo;
-          </blockquote>
-        )}
-        {evidence.source && <p>Source: {evidence.source}</p>}
+        <EvidenceQuote quote={evidence.verbatim} source={evidence.source} />
       </div>
     </details>
   );
@@ -490,19 +533,7 @@ function QualificationReceipt({ qualification }: { qualification: CompanyQualifi
                   product: {match.product_capability_state}
                 </Badge>
               </div>
-              <blockquote className="mt-1 border-l-2 border-border pl-2 text-muted-foreground">
-                &ldquo;{match.quote}&rdquo;
-              </blockquote>
-              {match.source_url && (
-                <a
-                  href={match.source_url}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="mt-1 block break-all text-primary hover:underline"
-                >
-                  {match.source_url}
-                </a>
-              )}
+              <EvidenceQuote quote={match.quote} source={match.source_url} />
               <p className="mt-1 font-mono text-[10px] text-muted-foreground">
                 {match.reason_code}
               </p>
@@ -515,19 +546,7 @@ function QualificationReceipt({ qualification }: { qualification: CompanyQualifi
           {qualification.unmapped_requirements.map((requirement, index) => (
             <div key={`${requirement.raw_requirement}-${index}`} className="rounded bg-amber-500/10 p-2">
               <p className="font-medium">Unmapped requirement: {requirement.raw_requirement}</p>
-              <blockquote className="mt-1 border-l-2 border-border pl-2 text-muted-foreground">
-                &ldquo;{requirement.quote}&rdquo;
-              </blockquote>
-              {requirement.source_url && (
-                <a
-                  href={requirement.source_url}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="mt-1 block break-all text-primary hover:underline"
-                >
-                  {requirement.source_url}
-                </a>
-              )}
+              <EvidenceQuote quote={requirement.quote} source={requirement.source_url} />
             </div>
           ))}
         </div>
@@ -566,6 +585,161 @@ function QualificationReceipt({ qualification }: { qualification: CompanyQualifi
   );
 }
 
+function ClaimList({
+  title,
+  note,
+  tone,
+  empty,
+  claims,
+}: {
+  title: string;
+  note: string;
+  tone: string;
+  empty: string;
+  claims: ContractClaim[];
+}) {
+  return (
+    <div>
+      <p className={cn("font-medium", tone)}>
+        {title} · {claims.length}
+      </p>
+      <p className="text-[11px] text-muted-foreground/80">{note}</p>
+      <ul className="mt-1 space-y-1">
+        {claims.map((claim) => (
+          <li key={claim.id} title={claim.reason}>
+            — {claim.text}
+          </li>
+        ))}
+        {claims.length === 0 && (
+          <li className="italic text-muted-foreground/70">{empty}</li>
+        )}
+      </ul>
+    </div>
+  );
+}
+
+/**
+ * The claim contract, as three mutually exclusive sets plus the inventory they
+ * were drawn from. The separation is the point: forbidden is what is not true
+ * of us, withheld is what we are choosing not to spend here, and only the
+ * campaign-safe set is ever handed to a writer.
+ */
+function ClaimContractView({
+  recommendation,
+}: {
+  recommendation: CampaignRecommendation;
+}) {
+  const contract = recommendation.claim_contract;
+
+  if (!contract) {
+    // Persisted before the contract existed. Show what this dossier actually
+    // has rather than inventing a contract for it, and say so.
+    return (
+      <div className="space-y-2">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <p className="font-medium text-foreground/80">
+              Allowed claims · {recommendation.allowed_claims.length}
+            </p>
+            <ul className="mt-1 space-y-1">
+              {recommendation.allowed_claims.map((claim) => (
+                <li key={claim}>— {claim}</li>
+              ))}
+              {recommendation.allowed_claims.length === 0 && (
+                <li className="italic text-muted-foreground/70">None licensed.</li>
+              )}
+            </ul>
+          </div>
+          <div>
+            <p className="font-medium text-foreground/80">
+              Forbidden claims · {recommendation.forbidden_claims.length}
+            </p>
+            <ul className="mt-1 space-y-1">
+              {recommendation.forbidden_claims.map((claim) => (
+                <li key={claim}>— {claim}</li>
+              ))}
+              {recommendation.forbidden_claims.length === 0 && (
+                <li className="italic text-muted-foreground/70">None added.</li>
+              )}
+            </ul>
+          </div>
+        </div>
+        <p className="italic text-muted-foreground/70">
+          This dossier was built before the claim contract, so its two lists are not
+          guaranteed to be disjoint. Regenerate it to get the stricter separation.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="grid gap-3 sm:grid-cols-3">
+        <ClaimList
+          title="Campaign-safe claims"
+          note="The only claims the writer receives."
+          tone="text-foreground/80"
+          empty="None licensed for this audience."
+          claims={contract.campaign_allowed_claims}
+        />
+        <ClaimList
+          title="Forbidden"
+          note="Not true of us. Never sayable."
+          tone="text-destructive"
+          empty="None added."
+          claims={contract.forbidden_claims}
+        />
+        <ClaimList
+          title="Withheld"
+          note="Arguable, deliberately unspent here."
+          tone="text-amber-500"
+          empty="Nothing held back."
+          claims={contract.withheld_claims}
+        />
+      </div>
+      {contract.warnings.length > 0 && (
+        <details className="rounded-md border border-amber-500/40 bg-amber-500/5 p-2">
+          <summary className="cursor-pointer font-medium text-amber-500">
+            Contract warnings · {contract.warnings.length}
+          </summary>
+          <ul className="mt-2 space-y-1">
+            {contract.warnings.map((warning) => (
+              <li key={warning}>— {warning}</li>
+            ))}
+          </ul>
+        </details>
+      )}
+      <details className="rounded-md border border-border/60 bg-background/40 p-2">
+        <summary className="cursor-pointer font-medium text-foreground/90">
+          Full verified product facts · {contract.verified_product_claims.length}
+        </summary>
+        <p className="mt-1 text-[11px] text-muted-foreground/80">
+          Everything the product knowledge establishes, campaign-safe or not. This is
+          the inventory the three sets above were drawn from, not a list of things
+          this campaign may say.
+        </p>
+        <ul className="mt-2 space-y-1">
+          {contract.verified_product_claims.map((claim) => (
+            <li key={claim.id} title={claim.reason}>
+              — {claim.text}
+              {claim.evidence_ids.length > 0 && (
+                <span className="ml-1 font-mono text-[10px] text-muted-foreground">
+                  [{claim.evidence_ids.join(", ")}]
+                </span>
+              )}
+            </li>
+          ))}
+          {contract.verified_product_claims.length === 0 && (
+            <li className="italic text-muted-foreground/70">
+              No product claims recorded.
+            </li>
+          )}
+        </ul>
+      </details>
+    </div>
+  );
+}
+
 function DossierResult({
   research,
   relevance,
@@ -597,6 +771,11 @@ function DossierResult({
                 : "border-primary/40 bg-primary/10",
             )}
           >
+            {/*
+              One label. `readiness` is the same verdict under a second name —
+              the two were rendered side by side and read as "NOT RECOMMENDEDNO
+              GO", which looked like two findings rather than one.
+            */}
             <div className="flex flex-wrap items-center gap-2">
               <Badge
                 variant={
@@ -607,9 +786,6 @@ function DossierResult({
               >
                 {dossier.recommendation.state.replaceAll("_", " ")}
               </Badge>
-              <span className="font-medium text-foreground">
-                {dossier.recommendation.readiness.replaceAll("_", " ")}
-              </span>
             </div>
             <ul className="space-y-1">
               {dossier.recommendation.reasons.map((reason) => (
@@ -640,26 +816,7 @@ function DossierResult({
                 </div>
               ))}
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <p className="font-medium text-foreground/80">Allowed claims</p>
-                <ul className="mt-1 space-y-1">
-                  {dossier.recommendation.allowed_claims.map((claim) => (
-                    <li key={claim}>— {claim}</li>
-                  ))}
-                  {dossier.recommendation.allowed_claims.length === 0 && <li>None licensed.</li>}
-                </ul>
-              </div>
-              <div>
-                <p className="font-medium text-foreground/80">Forbidden claims</p>
-                <ul className="mt-1 space-y-1">
-                  {dossier.recommendation.forbidden_claims.map((claim) => (
-                    <li key={claim}>— {claim}</li>
-                  ))}
-                  {dossier.recommendation.forbidden_claims.length === 0 && <li>None added.</li>}
-                </ul>
-              </div>
-            </div>
+            <ClaimContractView recommendation={dossier.recommendation} />
             {dossier.recommendation.unresolved_objections.length > 0 && (
               <p>
                 Unresolved objections: {dossier.recommendation.unresolved_objections.join(" · ")}

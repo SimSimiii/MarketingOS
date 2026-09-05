@@ -1244,6 +1244,27 @@ export interface RecommendedCompany {
   hard_disqualifiers_triggered: string[];
 }
 
+export interface ContractClaim {
+  id: string;
+  text: string;
+  evidence_ids: string[];
+  reason: string;
+}
+
+/**
+ * The mutually exclusive claim sets one campaign is bound by. Allowed,
+ * forbidden and withheld are pairwise disjoint by construction;
+ * `verified_product_claims` is the broad inventory and overlaps all three.
+ */
+export interface ClaimContract {
+  contract_version: number;
+  verified_product_claims: ContractClaim[];
+  campaign_allowed_claims: ContractClaim[];
+  forbidden_claims: ContractClaim[];
+  withheld_claims: ContractClaim[];
+  warnings: string[];
+}
+
 export interface CampaignRecommendation {
   state: RecommendationState;
   readiness: CampaignReadiness;
@@ -1261,6 +1282,8 @@ export interface CampaignRecommendation {
   unresolved_objections: string[];
   recommended_next_action: string;
   override_risk: string;
+  /** `null` for a dossier persisted before the contract existed. */
+  claim_contract: ClaimContract | null;
 }
 
 export interface RelevanceDossier {

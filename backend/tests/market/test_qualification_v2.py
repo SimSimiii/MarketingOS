@@ -457,7 +457,16 @@ def test_recommendation_excludes_withheld_evidence_from_writer_allowlist() -> No
     assert "E-allowed" in result.allowed_evidence_ids
     assert "E-withheld" not in result.allowed_evidence_ids
     assert "E-withheld" in result.forbidden_evidence_ids
-    assert "The product handles voice calls." in result.forbidden_claims
+    # Withheld is not forbidden. The voice-call claim may well be true; it is
+    # simply not this campaign's to spend, so it belongs in the withheld set
+    # and nowhere near the writer's allowlist.
+    contract = result.claim_contract
+    assert contract is not None
+    assert "The product handles voice calls." not in result.allowed_claims
+    assert "The product handles voice calls." in [
+        item.text for item in contract.withheld_claims
+    ]
+    assert "The product handles voice calls." not in result.forbidden_claims
 
 
 def test_recommendation_excludes_contested_evidence_even_when_ranked_support() -> None:
