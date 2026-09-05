@@ -11,6 +11,7 @@ objections and silences are different views of the same bounded judgment.
 
 import json
 import re
+from collections.abc import Iterable
 from datetime import UTC, datetime
 from enum import StrEnum
 from uuid import UUID
@@ -28,7 +29,11 @@ from app.knowledge.ledger import (
     value_of,
 )
 from app.market.audience_research import AudienceResearch
-from app.market.capabilities import CapabilityState, ProductCapabilityProfile
+from app.market.capabilities import (
+    CapabilityState,
+    ClaimVisibility,
+    ProductCapabilityProfile,
+)
 from app.market.positioning import PositioningMap, Territory, axis_for_evidence
 from app.market.qualification import CompanyQualification, QualificationClass
 from app.runtime.model_session import ModelSession
@@ -150,6 +155,102 @@ class ValidationCounts(BaseModel):
     normalized_items: int = 0
 
 
+def claim_identity(text: str, evidence_ids: Iterable[str] = ()) -> str:
+    """The identity two claim rows must share to be the same claim.
+
+    Evidence first, because that is what a claim actually spends: the ledger
+    row licensing "Pro is $29/month" is the same fact whether the profile
+    worded it as a customer claim or the contested-territory check worded it
+    as one to hold back, and set arithmetic over *text* would never notice.
+    Text is the fallback for claims that carry no ledger reference at all -
+    a scope boundary, or a capability we have not verified.
+    """
+    ids = sorted({item for item in evidence_ids if item})
+    if ids:
+        return "evidence:" + "|".join(ids)
+    return "text:" + " ".join(text.lower().split())
+
+
+class ContractClaim(BaseModel):
+    """One claim, under an identity stable enough to do set arithmetic on."""
+
+    id: str
+    text: str
+    evidence_ids: list[str] = Field(default_factory=list)
+    #: Why this claim landed in the set it landed in. Rendered to the operator,
+    #: never to the writer.
+    reason: str = ""
+
+
+class ClaimContract(BaseModel):
+    """What a campaign may say, must not say, and is choosing not to say.
+
+    Four sets, of which exactly three are mutually exclusive and one is not.
+    `verified_product_claims` is the broad internal inventory and deliberately
+    overlaps everything - it is the record of what is true, not a licence to
+    print it. The other three partition that inventory for one dossier, and
+    `campaign_allowed_claims` is the only one the writer is ever handed.
+
+    The separation that matters is forbidden against withheld. Forbidden is
+    "this is not true of us": a scope boundary, or a capability nobody
+    verified. Withheld is "this may well be true and we are not spending it
+    here": contested territory, a WITHHOLD ranking, evidence with no
+    customer-copy licence, evidence irrelevant to any problem this audience
+    has. Collapsing the two - which is what shipping both through one
+    `forbidden_claims` list did - loses the distinction between a lie and a
+    choice, and makes the operator read a pricing fact as a prohibition.
+    """
+
+    contract_version: int = 1
+    verified_product_claims: list[ContractClaim] = Field(default_factory=list)
+    campaign_allowed_claims: list[ContractClaim] = Field(default_factory=list)
+    forbidden_claims: list[ContractClaim] = Field(default_factory=list)
+    withheld_claims: list[ContractClaim] = Field(default_factory=list)
+    #: Conflicts resolved and data-quality problems found while building. A
+    #: non-empty list is not a failure; it is the audit trail of one.
+    warnings: list[str] = Field(default_factory=list)
+
+    @property
+    def allowed_ids(self) -> set[str]:
+        return {item.id for item in self.campaign_allowed_claims}
+
+    @property
+    def forbidden_ids(self) -> set[str]:
+        return {item.id for item in self.forbidden_claims}
+
+    @property
+    def withheld_ids(self) -> set[str]:
+        return {item.id for item in self.withheld_claims}
+
+    @property
+    def allowed_evidence_ids(self) -> list[str]:
+        """Every ledger id the allowed set is licensed by, in a stable order."""
+        ids: list[str] = []
+        for claim in self.campaign_allowed_claims:
+            ids.extend(claim.evidence_ids)
+        return list(dict.fromkeys(ids))
+
+    def conflicts(self) -> list[str]:
+        """Any breach of the three-way disjointness invariant.
+
+        Empty for anything `build_claim_contract` produced - it resolves
+        conflicts rather than reporting them. This exists so a contract that
+        arrived from anywhere else can be checked before it is trusted.
+        """
+        found: list[str] = []
+        for left, right in (
+            ("allowed", "forbidden"),
+            ("allowed", "withheld"),
+            ("forbidden", "withheld"),
+        ):
+            shared = getattr(self, f"{left}_ids") & getattr(self, f"{right}_ids")
+            found.extend(
+                f"Claim {item!r} is in both {left} and {right} claims."
+                for item in sorted(shared)
+            )
+        return found
+
+
 class RecommendationState(StrEnum):
     RECOMMENDED = "RECOMMENDED"
     RECOMMENDED_NARROW = "RECOMMENDED_NARROW"
@@ -197,6 +298,10 @@ class CampaignRecommendation(BaseModel):
     unresolved_objections: list[str] = Field(default_factory=list)
     recommended_next_action: str = ""
     override_risk: str = ""
+    #: The structured contract the four flat lists above are projections of.
+    #: Optional so a V2 dossier persisted before the contract existed still
+    #: loads; `None` means legacy, and readers tighten it themselves.
+    claim_contract: ClaimContract | None = None
 
 
 class RelevanceDossier(BaseModel):
@@ -409,6 +514,16 @@ def normalize_dossier(
         counts.dropped_items += overflow
         warnings.append(f"Dropped {overflow} ranking(s) above the deterministic limit.")
 
+    # Contested and withheld evidence cannot license an answer to an objection.
+    # This has to be settled here, while the objections are still being built:
+    # `recommend_campaign` runs afterwards and would only ever find an answer
+    # that already reads as licensed.
+    unlicensed_for_copy = withheld_evidence_ids(ranked)
+    if capability_profile is not None:
+        unlicensed_for_copy |= _unverified_capability_evidence(capability_profile) & set(
+            evidence_by_id
+        )
+
     fits: list[ProblemFit] = []
     fitted_problems: set[str] = set()
     for proposed in proposal.problem_fits:
@@ -510,6 +625,15 @@ def normalize_dossier(
         evidence_ids, evidence_changed = _resolved_ids(
             proposed.evidence_ids, set(evidence_by_id)
         )
+        licensed = [item for item in evidence_ids if item not in unlicensed_for_copy]
+        if licensed != evidence_ids:
+            warnings.append(
+                f"Stripped withheld or contested evidence from the answer to {objection!r}: "
+                + ", ".join(sorted(set(evidence_ids) - set(licensed)))
+                + "."
+            )
+            evidence_ids = licensed
+            evidence_changed = True
         answer, answer_changed = _short_sentence(proposed.answer)
         if answer and not evidence_ids:
             answer = ""
@@ -602,6 +726,242 @@ def normalize_dossier(
     return dossier
 
 
+def withheld_evidence_ids(ranked: Iterable[RankedRelevanceItem]) -> set[str]:
+    """Evidence this dossier ranked as not worth spending, or contested.
+
+    A free function because `normalize_dossier` needs it while it is still
+    building objections, long before any recommendation exists - and an
+    objection answered out of contested evidence is exactly the kind of
+    licensed-looking claim this contract is here to stop.
+    """
+    return {
+        item.evidence_id
+        for item in ranked
+        if item.band is RelevanceBand.WITHHOLD or item.territory is Territory.CONTESTED
+    }
+
+
+def _unverified_capability_evidence(profile: ProductCapabilityProfile) -> set[str]:
+    """Ledger ids whose only job was to establish a capability nobody verified."""
+    return {
+        entry.evidence_id
+        for item in profile.capabilities
+        if item.state is not CapabilityState.VERIFIED
+        for entry in item.evidence
+    }
+
+
+def relevant_evidence_ids(
+    ranked: Iterable[RankedRelevanceItem], fits: Iterable[ProblemFit]
+) -> set[str]:
+    """Evidence this dossier actually connected to this audience.
+
+    Two ways in, because the verdicts that carry a real fit reference evidence
+    differently: SOLVED and PARTIAL name ledger ids directly, while ADDRESSED
+    is licensed by a capability and may name none at all. A LEAD or SUPPORT
+    ranking is the dossier's own judgment that a fact belongs in this
+    conversation, so it counts on its own.
+
+    Everything else in the ledger is true and irrelevant. Shipping all of it
+    as usable copy material was the whole defect.
+    """
+    relevant = {
+        item.evidence_id
+        for item in ranked
+        if item.band in {RelevanceBand.LEAD, RelevanceBand.SUPPORT}
+    }
+    for fit in fits:
+        if fit.verdict in {FitVerdict.SOLVED, FitVerdict.ADDRESSED, FitVerdict.PARTIAL}:
+            relevant.update(fit.evidence_ids)
+    return relevant
+
+
+def _dedupe_claims(claims: Iterable[ContractClaim]) -> list[ContractClaim]:
+    """First row of each identity wins; input order is preserved."""
+    seen: dict[str, ContractClaim] = {}
+    for claim in claims:
+        seen.setdefault(claim.id, claim)
+    return list(seen.values())
+
+
+def _withhold_reason(evidence_id: str, ranked: Iterable[RankedRelevanceItem]) -> str:
+    item = next((row for row in ranked if row.evidence_id == evidence_id), None)
+    if item is None:
+        return "Withheld from this campaign."
+    if item.territory is Territory.CONTESTED:
+        return "Contested territory: every rival makes this claim too."
+    return "Ranked WITHHOLD for this audience."
+
+
+def _unusable_reason(
+    evidence_id: str,
+    ranked: Iterable[RankedRelevanceItem],
+    forbidden_evidence: set[str],
+) -> str:
+    """Why one referenced id cannot be spent. Names the cause, not the symptom.
+
+    "Contested territory" tells an operator something they can act on;
+    "rests on unusable evidence E-price" only tells them to go and look.
+    """
+    if evidence_id in forbidden_evidence:
+        return "Establishes a capability nobody verified."
+    return _withhold_reason(evidence_id, ranked)
+
+
+def build_claim_contract(
+    *,
+    profile: ProductCapabilityProfile,
+    ledger: EvidenceLedger,
+    ranked: list[RankedRelevanceItem],
+    fits: list[ProblemFit],
+) -> ClaimContract:
+    """Partition product truth into what this one campaign may spend.
+
+    Safe by construction rather than by afterthought: a claim has to earn its
+    way into the allowed set past four separate tests, and anything that fails
+    any of them lands in a set the writer never sees. Where a claim qualifies
+    for more than one set the precedence is fixed - forbidden beats withheld
+    beats allowed - so the same inputs always yield the same contract and an
+    operator can re-derive any row by hand.
+    """
+    warnings: list[str] = []
+    valid_ids = ledger.ids
+    withheld_evidence = withheld_evidence_ids(ranked)
+    forbidden_evidence = _unverified_capability_evidence(profile) & valid_ids
+    unusable = withheld_evidence | forbidden_evidence
+    relevant = relevant_evidence_ids(ranked, fits)
+
+    verified: list[ContractClaim] = []
+    allowed: list[ContractClaim] = []
+    withheld: list[ContractClaim] = []
+    forbidden: list[ContractClaim] = []
+
+    for claim in profile.claims:
+        ids = [item for item in dict.fromkeys(claim.evidence_ids) if item in valid_ids]
+        identity = claim_identity(claim.text, ids)
+        verified.append(
+            ContractClaim(
+                id=identity,
+                text=claim.text,
+                evidence_ids=ids,
+                reason=claim.reason or f"Product truth ({claim.visibility}).",
+            )
+        )
+
+        held = ""
+        if claim.visibility is not ClaimVisibility.CUSTOMER:
+            held = "Not licensed for customer-facing copy."
+        elif not ids:
+            warnings.append(
+                f"Customer claim {claim.text!r} names no ledger evidence that still exists."
+            )
+            held = "No surviving ledger evidence licenses this claim."
+        elif blocked := sorted(set(ids) & unusable):
+            # Any blocked reference disqualifies the whole claim. Keeping a
+            # claim because *some other* id survived is how a contested price
+            # ended up campaign-safe.
+            warnings.append(
+                f"Claim {claim.text!r} rests on withheld or forbidden evidence "
+                f"({', '.join(blocked)}) and is not campaign-safe."
+            )
+            held = " ".join(
+                dict.fromkeys(
+                    _unusable_reason(item, ranked, forbidden_evidence) for item in blocked
+                )
+            )
+        elif not set(ids) & relevant:
+            held = "No addressed or partial problem for this audience uses it."
+
+        target = withheld if held else allowed
+        target.append(
+            ContractClaim(
+                id=identity,
+                text=claim.text,
+                evidence_ids=ids,
+                reason=held or claim.reason or "Licensed, relevant, and customer-safe.",
+            )
+        )
+
+    for boundary in profile.constraints:
+        forbidden.append(
+            ContractClaim(
+                id=claim_identity(boundary.statement),
+                text=boundary.statement,
+                reason=f"Scope boundary {boundary.id}.",
+            )
+        )
+    for capability in profile.capabilities:
+        if capability.state is CapabilityState.VERIFIED:
+            continue
+        ids = [item.evidence_id for item in capability.evidence if item.evidence_id]
+        forbidden.append(
+            ContractClaim(
+                id=claim_identity(capability.label, ids),
+                text=f"Do not claim {capability.label}; its capability state is {capability.state}.",
+                evidence_ids=[item for item in ids if item in valid_ids],
+                reason=f"Capability {capability.id} is {capability.state}.",
+            )
+        )
+
+    for evidence_id in sorted(withheld_evidence):
+        entry = ledger.get(evidence_id)
+        if entry is None:
+            warnings.append(
+                f"Ranked evidence {evidence_id!r} is no longer in the ledger."
+            )
+            continue
+        withheld.append(
+            ContractClaim(
+                id=claim_identity(entry.claim, [evidence_id]),
+                text=entry.claim,
+                evidence_ids=[evidence_id],
+                reason=_withhold_reason(evidence_id, ranked),
+            )
+        )
+
+    # Precedence: forbidden beats withheld beats allowed. Matched on identity
+    # *and* on wording, because the two arrive keyed differently - a scope
+    # boundary carries no evidence id, so a prohibition worded exactly like a
+    # licensed claim would otherwise slip past an id-only comparison.
+    forbidden_rows = _dedupe_claims(forbidden)
+    forbidden_keys = {item.id for item in forbidden_rows} | {
+        claim_identity(item.text) for item in forbidden_rows
+    }
+    withheld_rows: list[ContractClaim] = []
+    for claim in _dedupe_claims(withheld):
+        if {claim.id, claim_identity(claim.text)} & forbidden_keys:
+            warnings.append(
+                f"Claim {claim.text!r} was both forbidden and withheld; forbidden won."
+            )
+            continue
+        withheld_rows.append(claim)
+    withheld_keys = {item.id for item in withheld_rows} | {
+        claim_identity(item.text) for item in withheld_rows
+    }
+    allowed_rows: list[ContractClaim] = []
+    for claim in _dedupe_claims(allowed):
+        keys = {claim.id, claim_identity(claim.text)}
+        if keys & forbidden_keys:
+            warnings.append(
+                f"Claim {claim.text!r} was both allowed and forbidden; forbidden won."
+            )
+            continue
+        if keys & withheld_keys:
+            warnings.append(
+                f"Claim {claim.text!r} was both allowed and withheld; withheld won."
+            )
+            continue
+        allowed_rows.append(claim)
+
+    return ClaimContract(
+        verified_product_claims=_dedupe_claims(verified),
+        campaign_allowed_claims=allowed_rows,
+        forbidden_claims=forbidden_rows,
+        withheld_claims=withheld_rows,
+        warnings=list(dict.fromkeys(warnings)),
+    )
+
+
 def recommend_campaign(
     dossier: RelevanceDossier,
     *,
@@ -687,41 +1047,23 @@ def recommend_campaign(
         RecommendationState.NOT_RECOMMENDED: CampaignReadiness.NO_GO,
     }[state]
 
-    forbidden_evidence = {
-        item.evidence_id
-        for item in dossier.ranked_relevance
-        if item.band is RelevanceBand.WITHHOLD or item.territory is Territory.CONTESTED
-    }
-    allowed_ids: list[str] = []
-    allowed_claims: list[str] = []
-    for claim in profile.allowed_claims:
-        ids = [
-            evidence_id
-            for evidence_id in claim.evidence_ids
-            if evidence_id in ledger.ids and evidence_id not in forbidden_evidence
-        ]
-        if not ids:
-            continue
-        allowed_claims.append(claim.text)
-        allowed_ids.extend(ids)
-
-    forbidden_claims = [
-        item.statement for item in profile.constraints
-    ]
-    forbidden_claims.extend(
-        f"Do not claim {item.label}; its capability state is {item.state}."
-        for item in profile.capabilities
-        if item.state is not CapabilityState.VERIFIED
+    contract = build_claim_contract(
+        profile=profile,
+        ledger=ledger,
+        ranked=dossier.ranked_relevance,
+        fits=dossier.problem_fits,
     )
     forbidden_capability_ids = [
         item.id
         for item in profile.capabilities
         if item.state is not CapabilityState.VERIFIED
     ]
-    forbidden_claims.extend(
-        evidence_entry.claim
-        for evidence_id in forbidden_evidence
-        if (evidence_entry := ledger.get(evidence_id)) is not None
+    # Every ledger id the campaign may not reference at all: the contested and
+    # withheld rankings, plus whatever was only ever there to establish a
+    # capability nobody verified. `intelligence.py` subtracts this from the
+    # usable set, so it has to be the union, not just the rankings.
+    unusable_evidence = withheld_evidence_ids(dossier.ranked_relevance) | (
+        _unverified_capability_evidence(profile) & ledger.ids
     )
     unresolved = [
         item.objection for item in dossier.segment_objections if not item.answer.strip()
@@ -768,14 +1110,17 @@ def recommend_campaign(
         adjacent_companies=grouped[QualificationClass.ADJACENT],
         excluded_companies=grouped[QualificationClass.EXCLUDED],
         unverified_companies=grouped[QualificationClass.UNVERIFIED],
-        allowed_claims=list(dict.fromkeys(allowed_claims)),
-        allowed_evidence_ids=list(dict.fromkeys(allowed_ids)),
-        forbidden_claims=list(dict.fromkeys(forbidden_claims)),
+        # The four flat lists stay, as projections of the contract, so every
+        # existing reader keeps working. They are now the narrow sets.
+        allowed_claims=[item.text for item in contract.campaign_allowed_claims],
+        allowed_evidence_ids=contract.allowed_evidence_ids,
+        forbidden_claims=[item.text for item in contract.forbidden_claims],
         forbidden_capability_ids=list(dict.fromkeys(forbidden_capability_ids)),
-        forbidden_evidence_ids=sorted(forbidden_evidence),
+        forbidden_evidence_ids=sorted(unusable_evidence),
         unresolved_objections=list(dict.fromkeys(unresolved)),
         recommended_next_action=next_action,
         override_risk=risk,
+        claim_contract=contract,
     )
 
 

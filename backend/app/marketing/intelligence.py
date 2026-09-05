@@ -33,6 +33,7 @@ from app.market.audience_research import (
 from app.market.qualification import CompanyQualification, SignalGrounding
 from app.market.relevance import (
     CampaignReadiness,
+    ClaimContract,
     DossierState,
     FitVerdict,
     RecommendationState,
@@ -182,6 +183,11 @@ class CampaignIntelligence(BaseModel):
     forbidden_claims: list[str] = Field(default_factory=list)
     forbidden_capability_ids: list[str] = Field(default_factory=list)
     forbidden_evidence_ids: list[str] = Field(default_factory=list)
+    #: True, and deliberately unspent here. Carried so the operator can audit
+    #: the choice; never rendered to the writer as usable material.
+    withheld_claims: list[str] = Field(default_factory=list)
+    #: `None` for a legacy dossier that predates the contract.
+    claim_contract: ClaimContract | None = None
     selected_company_name: str = ""
     selected_company_url: str = ""
     selected_company_qualification: CompanyQualification | None = None
@@ -267,16 +273,29 @@ class CampaignIntelligence(BaseModel):
             return "\n".join(lines)
         lines.append(f"Dossier: {self.trace.dossier_id} v{self.trace.dossier_version}")
         if self.recommendation_state is not None:
-            lines.append(
-                f"Campaign recommendation: {self.recommendation_state} ({self.readiness})"
-            )
+            # One label. `readiness` is the same fact under a second name, and
+            # printing both taught the reader there were two verdicts to weigh.
+            lines.append(f"Campaign recommendation: {self.recommendation_state}")
             lines.extend(f"- {item}" for item in self.recommendation_reasons)
+            lines.append(
+                "The claims below are the complete set of product facts this campaign may "
+                "assert. Anything not listed is unavailable to you, however true it is "
+                "elsewhere in the product's knowledge."
+            )
             if self.allowed_claims:
-                lines.append("Customer-facing product claims allowed by V2:")
+                lines.append("Campaign-safe product claims:")
                 lines.extend(f"- {item}" for item in self.allowed_claims)
+            else:
+                lines.append(
+                    "Campaign-safe product claims: none. Do not assert a product fact."
+                )
             if self.forbidden_claims:
-                lines.append("Product claims forbidden in this campaign:")
+                lines.append("Never claim any of these:")
                 lines.extend(f"- {item}" for item in self.forbidden_claims)
+            # `withheld_claims` is deliberately NOT rendered here. Those are
+            # true, attractive facts we chose not to spend, and a list of them
+            # under "do not use" is an invitation to use them. They stay on the
+            # context object for the operator's audit view and go no further.
 
         if self.selected_company_name:
             lines.append(
@@ -321,8 +340,14 @@ class CampaignIntelligence(BaseModel):
         if self.ranked_evidence:
             lines.append(
                 "Ranked ledger references: prefer LEAD, strengthen with SUPPORT, use CONTEXT "
-                "only to explain, and normally avoid WITHHOLD. WITHHOLD remains licensed by "
-                "the complete ledger and is advisory, not deletion."
+                + (
+                    "only to explain. Withheld and contested references are already gone "
+                    "from this list and from the claims above; there is nothing here you "
+                    "have to hold back by judgment."
+                    if self.v2_claim_boundary
+                    else "only to explain, and normally avoid WITHHOLD. WITHHOLD remains "
+                    "licensed by the complete ledger and is advisory, not deletion."
+                )
             )
             lines.extend(
                 f"- [{item.evidence_id}] {item.band}: {item.why}"
@@ -395,6 +420,27 @@ class CampaignIntelligence(BaseModel):
             if self.v2_claim_boundary
             else valid_evidence
         )
+        if self.claim_contract is not None:
+            # A campaign-safe claim needs *every* id it rests on to still be
+            # usable. Partial survival is what let a claim outlive the evidence
+            # that licensed it.
+            safe = [
+                item
+                for item in self.claim_contract.campaign_allowed_claims
+                if item.evidence_ids and set(item.evidence_ids) <= usable_evidence
+            ]
+            dropped = len(self.claim_contract.campaign_allowed_claims) - len(safe)
+            if dropped:
+                self.trace.warn(
+                    f"Dropped {dropped} campaign-safe claim(s) whose evidence no longer "
+                    "licenses them."
+                )
+            self.claim_contract = self.claim_contract.model_copy(
+                update={"campaign_allowed_claims": safe}
+            )
+            self.allowed_claims = [item.text for item in safe]
+            self.allowed_evidence_ids = self.claim_contract.allowed_evidence_ids
+
         valid_problems = {item.id for item in self.problems}
         rankings: list[IntelligenceRanking] = []
         for item in self.ranked_evidence:
@@ -675,6 +721,22 @@ def _add_dossier(
             recommendation.forbidden_capability_ids
         )
         context.forbidden_evidence_ids = list(recommendation.forbidden_evidence_ids)
+        context.claim_contract = recommendation.claim_contract
+        if recommendation.claim_contract is None:
+            # A V2 dossier persisted before the contract existed. Its two lists
+            # were built independently and can overlap, so tighten them here
+            # rather than hand a writer a claim its own dossier forbids.
+            forbidden = set(context.forbidden_claims)
+            kept = [item for item in context.allowed_claims if item not in forbidden]
+            if len(kept) != len(context.allowed_claims):
+                context.trace.warn(
+                    "Legacy dossier allowed a claim it also forbids; forbidden won."
+                )
+            context.allowed_claims = kept
+        else:
+            context.withheld_claims = [
+                item.text for item in recommendation.claim_contract.withheld_claims
+            ]
 
     for item in dossier.ranked_relevance[:MAX_DOSSIER_RANKINGS]:
         if item.evidence_id not in valid_evidence:
