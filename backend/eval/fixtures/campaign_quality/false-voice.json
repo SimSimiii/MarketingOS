@@ -1,0 +1,46 @@
+{
+  "id": "false-voice",
+  "name": "Unsupported voice and telephony promise",
+  "context": {
+    "product_name": "RelayDesk",
+    "target_audience": "Customer support operations leaders",
+    "evidence": [
+      {
+        "id": "E-CHAT-1",
+        "text": "RelayDesk drafts text replies for web chat and email from approved knowledge articles.",
+        "scope": "product"
+      }
+    ],
+    "claim_contract": [
+      {
+        "id": "SAFE-TEXT-CHANNELS",
+        "text": "RelayDesk drafts text replies for web chat and email from approved knowledge articles.",
+        "scope": "campaign"
+      }
+    ],
+    "forbidden_claims": [
+      {
+        "id": "F-NO-VOICE",
+        "description": "RelayDesk does not support voice or telephony",
+        "patterns": ["\\b(?:handle|answer|make|take)s?\\s+(?:inbound\\s+|outbound\\s+)?(?:voice\\s+|phone\\s+)?calls?\\b"]
+      }
+    ],
+    "buyer_personas": [
+      "A support operations lead responsible for chat and email quality"
+    ]
+  },
+  "drafts": [
+    {
+      "id": "voice-promise-a",
+      "email": {
+        "position": 1,
+        "subject": "One agent for every support channel",
+        "preview_text": "Chat, email, and phone conversations handled together",
+        "greeting": "Hi there,",
+        "body": "Support leaders rarely get to choose one clean channel. Customers move between an inbox, a chat window, and a phone call while the team tries to keep context intact.\n\nRelayDesk drafts text replies for web chat and email from approved knowledge articles. It also handles inbound voice calls and answers customers on the phone without an agent joining.\n\nThat means one queue, one policy, and one place to review every conversation. Supervisors can spend their time on exceptions instead of watching work bounce between channel-specific tools.\n\nPut a recent support question through the workflow and compare the answer with what an experienced agent would send.",
+        "call_to_action": "Review a sample reply",
+        "sign_off": "- the RelayDesk team"
+      }
+    }
+  ]
+}
