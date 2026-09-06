@@ -2,20 +2,32 @@ from uuid import UUID
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
 
-from app.api.deps import KnowledgeServiceDep
+from app.api.deps import KnowledgeServiceDep, SessionDep
 from app.ingestion.exceptions import IngestionError
+from app.repositories.brand_repository import BrandRepository
 from app.schemas.knowledge import (
     KnowledgeBaseRead,
     KnowledgeDocumentRead,
     KnowledgeDocumentSummary,
     KnowledgeSourceCreate,
 )
+from app.services.knowledge_compilation import CompilationJob, jobs
 from app.services.knowledge_service import UnsupportedSourceError
 
 router = APIRouter(prefix="/knowledge", tags=["knowledge"])
 
 #: Refuse oversized uploads before reading them into memory.
 MAX_UPLOAD_BYTES = 20 * 1024 * 1024
+
+
+@router.get("/jobs", response_model=list[CompilationJob])
+def list_compilation_jobs(session: SessionDep) -> list[CompilationJob]:
+    brand_ids = {brand.id for brand in BrandRepository(session).list_all()}
+    return sorted(
+        (job for job in jobs.values() if job.brand_id in brand_ids),
+        key=lambda job: (job.state == "running", job.started_at),
+        reverse=True,
+    )
 
 
 @router.post("", response_model=list[KnowledgeDocumentRead], status_code=status.HTTP_201_CREATED)

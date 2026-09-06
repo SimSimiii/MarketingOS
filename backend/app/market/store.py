@@ -272,7 +272,15 @@ class MarketStore:
 
     def latest_map(self, brand_id: UUID) -> DemandMap | None:
         row = self._latest_map_row(brand_id)
-        return DemandMap.model_validate(row.payload) if row and row.payload else None
+        if not row or not row.payload:
+            return None
+        demand = DemandMap.model_validate(row.payload)
+        if not demand.product_fingerprint:
+            return demand
+        from app.market.audience_discovery import current_map
+
+        profile = self.latest_capability_profile(brand_id)
+        return current_map(demand, profile[1] if profile else None)
 
     def latest_map_row(self, brand_id: UUID) -> AudienceMapRow | None:
         """The current map row when a derived artifact needs its exact version."""

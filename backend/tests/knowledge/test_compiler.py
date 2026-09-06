@@ -5,6 +5,7 @@ afterwards, invisibly, because nothing further down ever sees the original
 page. So the quotes are verified in code before an entry is kept.
 """
 
+import asyncio
 import json
 
 import pytest
@@ -76,6 +77,56 @@ AUDIENCE_ANSWER = json.dumps(
         }
     }
 )
+
+
+@pytest.mark.asyncio
+async def test_source_normalization_is_reused_for_all_evidence(monkeypatch):
+    import app.knowledge.compiler as module
+
+    original = module.fold
+    source_reads = []
+
+    def counted(text):
+        if text == PAGE:
+            source_reads.append(text)
+        return original(text)
+
+    monkeypatch.setattr(module, "fold", counted)
+    provider = compiler_provider(
+        evidence=evidence_answer(*[
+            {"claim": f"Fact {i}", "verbatim": "Team is $29/month.", "document_id": "d1"}
+            for i in range(20)
+        ]),
+        voice=voice_answer(),
+    )
+    ledger, _ = await KnowledgeCompiler(make_session(provider))._evidence(corpus())
+    assert len(ledger.entries) == 20
+    assert len(source_reads) == 1
+
+
+@pytest.mark.asyncio
+async def test_fatal_pass_cancels_and_drains_sibling_readings(monkeypatch):
+    compiler = KnowledgeCompiler(make_session(RoleScriptedProvider()))
+    started = asyncio.Event()
+    drained = []
+
+    async def fail(_corpus):
+        await started.wait()
+        raise ValueError("Profile failed")
+
+    async def pending(_corpus):
+        started.set()
+        try:
+            await asyncio.Event().wait()
+        finally:
+            drained.append(True)
+
+    monkeypatch.setattr(compiler, "_profile", fail)
+    monkeypatch.setattr(compiler, "_evidence", pending)
+    monkeypatch.setattr(compiler, "_voice", pending)
+    with pytest.raises(ValueError, match="Profile failed"):
+        await compiler.compile(corpus())
+    assert drained == [True, True]
 
 
 def compiler_provider(*, evidence: str, voice: str) -> RoleScriptedProvider:

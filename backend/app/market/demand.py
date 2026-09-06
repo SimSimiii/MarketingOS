@@ -20,14 +20,11 @@ So this reads the *market for the product* rather than the company's account of
 it, and it does so in two passes with two very different trust models - the
 same split as `rivals`, for the same reason.
 
-**The map is general and it is judgment.** `AudienceCartographer` searches for
-where this kind of product gets bought, argued about and complained about, and
-returns segments: a description of a buyer, what would make them care, and a
-`fit` rate. That rate is an estimate and this module is careful, everywhere,
-never to let it read as a measurement. Nobody has sent these emails yet. What
-makes the number worth carrying is not its precision, it is that it is written
-down next to the reasoning that produced it, so a user who knows their market
-can see immediately which segments the machine has misjudged.
+**The map separates observations from judgment.** `AudienceCartographer`
+discovers candidate buyers and exact URLs. A bounded fetch and a closed-corpus
+assessment verify quotations and compare needs against the product profile.
+Research priority is not a predicted response rate. Weak evidence stays visible
+as a hypothesis; unknown capabilities never become supported by omission.
 
 **The list is exact and it is verified.** `ProspectFinder` takes one segment and
 finds named organisations that match it - then reads each one's own site with
@@ -53,9 +50,10 @@ import asyncio
 import json
 import logging
 import re
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from datetime import UTC, datetime
 from enum import StrEnum
+from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -109,10 +107,7 @@ MAX_PROSPECT_CHARS = 16_000
 #: number of concurrent strangers' servers.
 _READ_CONCURRENCY = 3
 
-#: A `fit` below this is not offered as a segment to write to. Not a truth
-#: threshold - a low rate can be perfectly accurate - but a campaign is a
-#: choice of one audience, and a list that ranks a 5% segment beside a 40% one
-#: invites the user to treat the ranking as noise.
+#: Legacy compatibility constant. Discovery no longer filters on guessed rates.
 MIN_USEFUL_FIT = 0.10
 
 #: Places that name a channel but not a venue. A qualifier makes them useful:
@@ -213,6 +208,33 @@ class AudienceAdmission(BaseModel):
     reasons: list[str] = Field(default_factory=list)
 
 
+class MapOptions(BaseModel):
+    geography: str = Field(default="", max_length=200)
+    language: str = Field(default="", max_length=100)
+    exclusions: str = Field(default="", max_length=1000)
+    objective: Literal["customers", "partners", "both"] = "customers"
+    mode: Literal["refresh", "explore"] = "refresh"
+
+
+class MapEvidence(BaseModel):
+    """A source-bound quotation; its interpretation remains a hypothesis."""
+
+    claim: str
+    quote: str
+    url: str
+    kind: Literal["need", "alternative", "access", "counterevidence", "example"] = "need"
+    fetched_at: datetime | None = None
+
+
+class MapAssessment(BaseModel):
+    compatibility: Literal["supported", "unknown", "incompatible"] = "unknown"
+    evidence_strength: Literal["supported", "limited", "absent"] = "absent"
+    priority: Literal["explore_first", "hypothesis", "incompatible"] = "hypothesis"
+    reasons: list[str] = Field(default_factory=list)
+    unknowns: list[str] = Field(default_factory=list)
+    evidence: list[MapEvidence] = Field(default_factory=list)
+
+
 def _normalised(text: str) -> str:
     return " ".join(re.findall(r"[a-z0-9]+", text.lower()))
 
@@ -275,6 +297,12 @@ def _matching_words(text: str) -> set[str]:
 
 
 def _same_segment(candidate: "AudienceSegment", existing: "AudienceSegment") -> bool:
+    candidate_identity = (candidate.organization, candidate.workflow, candidate.need)
+    existing_identity = (existing.organization, existing.workflow, existing.need)
+    if all(value.strip() for value in (*candidate_identity, *existing_identity)):
+        return tuple(fold(value) for value in candidate_identity) == tuple(
+            fold(value) for value in existing_identity
+        )
     wanted = _normalised(candidate.name)
     known = _normalised(existing.name)
     if wanted and known and (wanted == known or wanted in known or known in wanted):
@@ -363,6 +391,13 @@ class AudienceSegment(BaseModel):
     them - and to go and find them by name afterwards."""
 
     name: str
+    organization: str = ""
+    workflow: str = ""
+    need: str = ""
+    buyer_role: str = ""
+    user_role: str = ""
+    current_alternative: str = ""
+    assessment: MapAssessment = Field(default_factory=MapAssessment)
     kind: SegmentKind = SegmentKind.CORE
     #: One person in a situation, not a category. "A three-person Shopify
     #: store selling refurbished laptops, answering warranty questions by
@@ -387,10 +422,8 @@ class AudienceSegment(BaseModel):
     #: chosen segment becomes one - see `as_segment`.
     sophistication: Sophistication = Sophistication.PROBLEM_AWARE
 
-    #: Roughly what share of the people matching `who` would be interested
-    #: enough to reply. **An estimate, never a measurement**: nobody has sent
-    #: these emails, and the field is named and rendered so it cannot be read
-    #: as a result. What makes it usable is `basis` sitting next to it.
+    #: Legacy payload compatibility only. New maps set zero; no audience
+    #: ranking, filtering or strategy rendering uses this guessed rate.
     fit: float = Field(default=0.0, ge=0.0, le=1.0)
     #: Why that number - the observable facts it was reasoned from. A rate
     #: with no basis is a number the user cannot argue with, and a number the
@@ -436,6 +469,11 @@ class AudienceSegment(BaseModel):
         useful_signals = [signal for signal in self.signals if _useful_signal(signal)]
         specific_venues = [venue for venue in self.where if _specific_venue(venue)]
         situation = _situation_specificity(self)
+        # New maps describe a workflow structurally. English suffixes must not
+        # decide whether a French (or any other language) audience is researchable.
+        if all(value.strip() for value in (self.organization, self.workflow, self.need)):
+            situation = 2
+            useful_signals = [signal for signal in self.signals if len(signal.strip()) >= 8]
         failures: list[str] = []
         if not useful_signals:
             failures.append("No useful observable signal identifies this audience.")
@@ -503,7 +541,8 @@ class AudienceSegment(BaseModel):
 
     def render(self) -> str:
         lines = [
-            f"- **{self.name}** [{self.kind}] - {round(self.fit * 100)}% likely to bite",
+            f"- **{self.name}** [{self.kind}] - {self.assessment.priority}",
+            f"    compatibility: {self.assessment.compatibility}; evidence: {self.assessment.evidence_strength}",
             f"    who: {self.who or 'not described'}",
             f"    why this product matters to them: {self.why_them or 'not established'}",
         ]
@@ -518,7 +557,9 @@ class AudienceSegment(BaseModel):
         if self.population:
             lines.append(f"    how many: {self.population}")
         if self.basis:
-            lines.append(f"    that rate is an estimate, reasoned from: {self.basis}")
+            lines.append(f"    commercial hypothesis: {self.basis}")
+        if self.assessment.unknowns:
+            lines.append(f"    unresolved: {'; '.join(self.assessment.unknowns)}")
         if self.where:
             lines.append(f"    findable at: {'; '.join(self.where[:4])}")
         return "\n".join(lines)
@@ -571,6 +612,10 @@ class DemandMap(BaseModel):
     """Every buyer worth considering for one product, at one moment."""
 
     segments: list[AudienceSegment] = Field(default_factory=list)
+    options: MapOptions = Field(default_factory=MapOptions)
+    validation_note: str = "Legacy map: refresh to verify sources and product compatibility."
+    source_cache: list[dict] = Field(default_factory=list)
+    product_fingerprint: str = ""
     #: What the cartographer searched. Reported for the same reason the rival
     #: scout reports it: a thin map is either a thin market or a thin search,
     #: and only the queries tell the user which one they are looking at.
@@ -583,7 +628,13 @@ class DemandMap(BaseModel):
 
     @property
     def ranked(self) -> list["AudienceSegment"]:
-        return sorted(self.segments, key=lambda segment: segment.fit, reverse=True)
+        order = {"explore_first": 0, "hypothesis": 1, "incompatible": 2}
+        research = {Researchability.HIGH: 0, Researchability.MEDIUM: 1,
+                    Researchability.LOW: 2, Researchability.UNRESEARCHABLE: 3}
+        return sorted(self.segments, key=lambda segment: (
+            order[segment.assessment.priority],
+            research[self.admission_for(segment).researchability],
+        ))
 
     def admission_for(self, segment: AudienceSegment) -> AudienceAdmission:
         """Admission in map order, so only later duplicates are rejected."""
@@ -600,7 +651,7 @@ class DemandMap(BaseModel):
 
     @property
     def researchability_ranked(self) -> list["AudienceSegment"]:
-        """High, medium, low, then failed; fit only breaks ties for compatibility."""
+        """Researchability first, then evidence-based priority; never guessed fit."""
         order = {
             Researchability.HIGH: 0,
             Researchability.MEDIUM: 1,
@@ -611,7 +662,7 @@ class DemandMap(BaseModel):
             self.segments,
             key=lambda segment: (
                 order[self.admission_for(segment).researchability],
-                -segment.fit,
+                {"explore_first": 0, "hypothesis": 1, "incompatible": 2}[segment.assessment.priority],
             ),
         )
 
@@ -643,22 +694,17 @@ class DemandMap(BaseModel):
     def summary(self) -> str:
         if not self.segments:
             return "No audience has been mapped for this brand yet."
-        best = self.ranked[0]
-        unobvious = sum(1 for segment in self.segments if segment.unobvious)
+        supported = sum(s.assessment.priority == "explore_first" for s in self.segments)
         return (
-            f"{len(self.segments)} audience(s) mapped, {unobvious} of them nobody would "
-            f"have found on your own website. Best fit: {best.name} "
-            f"({round(best.fit * 100)}%)."
+            f"{len(self.segments)} audience(s) mapped; {supported} worth exploring first. "
+            "Commercial priority is a hypothesis, not a response-rate forecast."
         )
 
     def render_for_strategy(self, chosen: str = "") -> str:
         """The map, for the one role that decides who the campaign is written to.
 
-        The chosen segment is marked rather than sent alone, because the
-        contrast is the information: a strategist told "write to resellers"
-        knows less than one told "write to resellers, who are a 35% fit,
-        rather than to the founders on the homepage, who are 12%". The second
-        one knows what it is trading away.
+        The chosen segment is marked rather than sent alone so the strategist
+        can compare situations, compatibility and unresolved questions.
         """
         if not self.segments:
             return (
@@ -669,9 +715,9 @@ class DemandMap(BaseModel):
             )
         lines = [
             (
-                "Every rate below is an estimate reasoned from public evidence, not a "
-                "measured result - no campaign has been sent to any of these people yet. "
-                "Treat them as one informed opinion about where the demand is."
+                "Commercial relevance below is an estimate, not a measured result. "
+                "Verified quotations establish observations, never purchase intent. "
+                "Do not use unknown or incompatible capabilities as product claims."
             ),
             "",
         ]
@@ -756,6 +802,7 @@ class _MapAnswer(BaseModel):
     searched: list[str] = Field(default_factory=list)
     reading: str = ""
     note: str = ""
+    source_urls: list[str] = Field(default_factory=list, max_length=20)
 
 
 class _LeadList(BaseModel):
@@ -790,15 +837,18 @@ class AudienceCartographer:
         *,
         positioning: PositioningMap | None = None,
         limit: int = 7,
+        capability_profile: ProductCapabilityProfile | None = None,
+        options: MapOptions | None = None,
+        previous: DemandMap | None = None,
+        progress: Callable[[str], None] = lambda _: None,
     ) -> DemandMap:
-        """One pass over the demand side. One search call, and nothing else.
+        """Discover, fetch and validate in at most two logical model calls.
 
-        `positioning` is passed when a scan exists because who to sell to and
-        who else is selling are the same question asked twice: a segment every
-        competitor already saturates is a worse bet at the same fit rate than
-        one none of them address, and the cartographer cannot know that from
-        the company's own material.
+        Competitive context helps form hypotheses; fetched audience pages and
+        the product capability profile are checked separately before ranking.
         """
+        options = options or MapOptions()
+        progress("Discovering candidates and exact source URLs (stage 1 of 2)")
         answer = await self._session.structured(
             role=CARTOGRAPHER_ROLE_ID,
             tier=ModelTier.DEEP,
@@ -820,26 +870,29 @@ class AudienceCartographer:
                     else "Nobody has read this market's competitors yet."
                 ),
                 "limit": limit,
+                "capabilities": capability_profile.model_dump_json() if capability_profile else "Unknown; do not assume support.",
+                "scope": options.model_dump_json(),
+                "previous": (
+                    json.dumps([
+                        item.model_dump(include={
+                            "name", "organization", "workflow", "need", "who", "kind",
+                        }) for item in previous.segments
+                    ], ensure_ascii=False) if previous else "No previous map."
+                ),
             },
             task=(
-                "Search the web now and work out who would actually buy this. Give every "
-                "segment a rate and the reasoning behind it."
+                "Search for observable demand and counterevidence. Return distinct candidate "
+                "audiences and exact source URLs to verify. Do not predict response rates."
             ),
             schema=_MapAnswer,
             tools=[ResearchTool.WEB_SEARCH, ResearchTool.WEB_FETCH],
         )
-        kept = [
-            segment
-            for segment in answer.segments
-            if segment.name.strip() and segment.fit >= MIN_USEFUL_FIT
-        ]
-        if dropped := len(answer.segments) - len(kept):
-            logger.info("demand: dropped %d segment(s) below the useful fit floor", dropped)
-        return DemandMap(
-            segments=kept[:limit],
-            searched=answer.searched,
-            reading=answer.reading,
-            note=answer.note,
+        # Local import keeps the existing audience researcher free to use the
+        # segment model while discovery reuses its bounded, safe URL fetcher.
+        from app.market.audience_discovery import validate_map
+
+        return await validate_map(
+            self._session, answer, capability_profile, options, previous, limit, progress
         )
 
 

@@ -14,7 +14,14 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.market.audience_research import AudienceResearch
 from app.market.capabilities import CapabilityProfileDraft, ProductCapabilityProfile
 from app.market.claims import Claim
-from app.market.demand import AudienceAdmission, AudienceSegment, DemandMap, Researchability
+from app.market.demand import (
+    AudienceAdmission,
+    AudienceSegment,
+    DemandMap,
+    MapAssessment,
+    MapOptions,
+    Researchability,
+)
 from app.market.positioning import PositioningMap
 from app.market.qualification import CompanyQualification
 from app.market.radar import MarketSnapshot
@@ -286,6 +293,13 @@ class AudienceSegmentRead(BaseModel):
     """One mapped buyer, as the audience page shows it."""
 
     name: str
+    organization: str = ""
+    workflow: str = ""
+    need: str = ""
+    buyer_role: str = ""
+    user_role: str = ""
+    current_alternative: str = ""
+    assessment: MapAssessment = Field(default_factory=MapAssessment)
     kind: str
     who: str
     why_them: str
@@ -294,10 +308,7 @@ class AudienceSegmentRead(BaseModel):
     objection: str
     angle: str
     sophistication: str
-    #: An estimate, and rendered as one everywhere. See
-    #: `app.market.demand.AudienceSegment.fit`: nobody has sent these emails,
-    #: so a rate shipped without `basis` beside it is a number the user can
-    #: only over-trust or ignore.
+    #: Legacy payload field, no longer displayed or used in ranking.
     fit: float
     basis: str
     population: str
@@ -322,6 +333,13 @@ class AudienceSegmentRead(BaseModel):
         admission = admission or segment.admission()
         return cls(
             name=segment.name,
+            organization=segment.organization,
+            workflow=segment.workflow,
+            need=segment.need,
+            buyer_role=segment.buyer_role,
+            user_role=segment.user_role,
+            current_alternative=segment.current_alternative,
+            assessment=segment.assessment,
             kind=str(segment.kind),
             who=segment.who,
             why_them=segment.why_them,
@@ -345,6 +363,8 @@ class AudienceSegmentRead(BaseModel):
 
 class DemandMapRead(BaseModel):
     summary: str
+    options: MapOptions = Field(default_factory=MapOptions)
+    validation_note: str = ""
     reading: str = ""
     note: str = ""
     searched: list[str] = Field(default_factory=list)
@@ -355,15 +375,16 @@ class DemandMapRead(BaseModel):
     def of(cls, demand: DemandMap) -> "DemandMapRead":
         return cls(
             summary=demand.summary(),
+            options=demand.options,
+            validation_note=demand.validation_note,
             reading=demand.reading,
             note=demand.note,
             searched=demand.searched[:12],
             mapped_at=demand.mapped_at,
-            # Research-worthy audiences first; fit remains the tie-break and
-            # remains available to every existing consumer.
+            # Validated priorities first, then researchability; stable ties.
             segments=[
                 AudienceSegmentRead.of(item, demand.admission_for(item))
-                for item in demand.researchability_ranked
+                for item in demand.ranked
             ],
         )
 
@@ -510,10 +531,8 @@ class AudienceRead(BaseModel):
     note: str = ""
 
 
-class MapAudienceRequest(BaseModel):
-    """Nothing to configure yet, and the shape exists so there is somewhere to
-    put the first thing that is - a body added later does not change the
-    method or the client call."""
+class MapAudienceRequest(MapOptions):
+    """Optional search scope; an empty body keeps the one-click workflow."""
 
 
 class ResearchAudienceRequest(BaseModel):

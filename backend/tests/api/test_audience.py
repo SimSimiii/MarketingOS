@@ -7,6 +7,7 @@ reviewed rows only, verified contacts only - is a product promise rather than
 an implementation detail.
 """
 
+import asyncio
 from uuid import UUID
 
 import pytest
@@ -18,13 +19,13 @@ from app.ai.factory import get_ai_provider
 from app.core.database import get_session
 from app.main import app
 from app.market.audience_research import AudienceResearch
-from app.market.demand import AudienceSegment, DemandMap, Prospect, SegmentKind
+from app.market.demand import AudienceSegment, DemandMap, MapOptions, Prospect, SegmentKind
 from app.market.qualification import CompanyQualification
 from app.market.store import MarketStore
 from app.models.campaign import Campaign
 from app.models.market import ProspectRow
 from app.orchestration.campaign_orchestrator import _DbKnowledgeGateway
-from app.services.market_service import job_for
+from app.services.market_service import JobStatus, MarketService, _run_audience_map, job_for
 from tests.api.test_knowledge_base import compile_for_brand
 from tests.marketing.conftest import default_answers
 
@@ -125,7 +126,7 @@ def test_unreadable_v2_company_has_qualification_but_no_match_percentage(
     assert prospect["fit"] is None
 
 
-def test_researchability_ties_keep_the_existing_best_fit_order(client: TestClient, engine):
+def test_researchability_ties_preserve_order_without_guessed_fit(client: TestClient, engine):
     brand = make_brand(client, "Helpdesk")
     store_map(
         engine,
@@ -144,14 +145,14 @@ def test_researchability_ties_keep_the_existing_best_fit_order(client: TestClien
     body = client.get(f"/api/market/{brand['id']}/audience").json()
 
     assert [item["name"] for item in body["map"]["segments"]] == [
-        "Independent repair shops",
         "Core buyers",
+        "Independent repair shops",
     ]
     # The flag the page sorts and filters by, and the reason to have run this
     # at all - it is a property on the domain model, so it has to be carried
     # explicitly or it silently ships as absent.
-    assert body["map"]["segments"][0]["unobvious"] is True
-    assert body["map"]["segments"][1]["unobvious"] is False
+    assert body["map"]["segments"][0]["unobvious"] is False
+    assert body["map"]["segments"][1]["unobvious"] is True
     assert body["map"]["segments"][0]["researchable"] is True
     assert body["map"]["segments"][0]["researchability"] == "low"
     assert body["map"]["segments"][0]["researchability_reasons"]
@@ -616,6 +617,55 @@ def test_mapping_the_audience_actually_starts_a_job(web_client: TestClient, engi
 
     assert response.status_code == 202, response.text
     assert job_for(UUID(brand["id"])) is not None
+
+
+def test_map_route_passes_scope_without_spending_quota(client, monkeypatch):
+    brand = make_brand(client, "Scoped discovery")
+    captured = []
+
+    def launch(self, brand, provider, engine, options=None):
+        captured.append(options)
+        return JobStatus(kind="audience", brand_id=brand.id)
+
+    monkeypatch.setattr(MarketService, "launch_audience_map", launch)
+    response = client.post(f"/api/market/{brand['id']}/audience/map", json={
+        "geography": "France", "language": "Français", "objective": "partners",
+        "exclusions": "Healthcare", "mode": "explore",
+    })
+    assert response.status_code == 202
+    assert captured[0].geography == "France"
+    assert captured[0].objective == "partners"
+    assert captured[0].mode == "explore"
+    bad = client.post(f"/api/market/{brand['id']}/audience/map", json={"objective": "invent"})
+    assert bad.status_code == 422
+    assert len(captured) == 1
+
+
+def test_map_job_supplies_current_product_truth_and_persists_scope(
+    client, engine, provider, monkeypatch
+):
+    from app.market.demand import AudienceCartographer
+
+    brand = make_brand(client, "Validated discovery")
+    compile_for_brand(engine, brand["id"])
+    store_map(engine, brand["id"], segment())
+    options = MapOptions(geography="France")
+    captured = []
+
+    async def mapped(self, artifacts, **kwargs):
+        captured.append(kwargs)
+        kwargs["progress"]("Checked the test corpus")
+        return DemandMap(segments=[segment()], options=kwargs["options"], validation_note="Checked")
+
+    monkeypatch.setattr(AudienceCartographer, "map", mapped)
+    status = JobStatus(kind="audience", brand_id=UUID(brand["id"]))
+    asyncio.run(_run_audience_map(UUID(brand["id"]), provider, engine, status, options))
+    assert status.state == "done", status.error
+    assert captured[0]["capability_profile"].knowledge_id
+    assert captured[0]["previous"].segments[0].name == segment().name
+    body = client.get(f"/api/market/{brand['id']}/audience").json()
+    assert body["map"]["options"]["geography"] == "France"
+    assert body["map"]["validation_note"] == "Checked"
 
 
 def test_an_admitted_audience_research_actually_starts_a_job(

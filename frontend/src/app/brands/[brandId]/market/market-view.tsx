@@ -19,6 +19,7 @@ import type {
   AudienceRead,
   Brand,
   MarketJob,
+  MapOptions,
   MarketRead,
   ProofCandidate,
   RadarEvent,
@@ -102,14 +103,14 @@ export function MarketView({
   }, [brand.id, running, router]);
 
   const start = useCallback(
-    async (kind: "scan" | "rescan" | "proof" | "audience") => {
+    async (kind: "scan" | "rescan" | "proof" | "audience", options?: MapOptions) => {
       setStarting(true);
       try {
         const started =
           kind === "proof"
             ? await api.startProofHunt(brand.id)
             : kind === "audience"
-              ? await api.startAudienceMap(brand.id)
+              ? await api.startAudienceMap(brand.id, options)
               : await api.startMarketScan(brand.id, kind === "scan");
         setJob(started);
       } catch (error) {
@@ -295,7 +296,7 @@ export function MarketView({
             key={`${initialAudience.map?.mapped_at ?? "none"}:${initialAudience.prospects.length}:${initialAudience.research.map((item) => item.version).join("-")}:${initialAudience.relevance.map((item) => `${item.status}-${item.generation_version ?? 0}`).join("-")}`}
             brandId={brand.id}
             audience={initialAudience}
-            onMap={() => start("audience")}
+            onMap={(options) => start("audience", options)}
             onProspect={findProspects}
             onResearch={researchAudience}
             onDossier={buildDossier}

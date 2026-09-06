@@ -19,7 +19,7 @@ class CampaignCreateRequest(BaseModel):
         description="What you want, in your own words - e.g. 'write me 3 emails "
         "that convince people to buy my product'",
     )
-    product_description: str
+    product_description: str = ""
     product_url: str | None = None
     target_market: str | None = None
     goals: str | None = None

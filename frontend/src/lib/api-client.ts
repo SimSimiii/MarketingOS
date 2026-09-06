@@ -1,5 +1,7 @@
 import { API_URL } from "@/lib/config";
 import type {
+  CompilationStatus,
+  CompilationJob,
   AudienceRead,
   AudienceResearch,
   RelevanceStatus,
@@ -22,6 +24,7 @@ import type {
   KnowledgeDocumentDetail,
   KnowledgeSourceCreate,
   MarketJob,
+  MapOptions,
   MarketRead,
   ModelCatalog,
   ProofCandidate,
@@ -92,6 +95,11 @@ async function upload<T>(path: string, body: FormData): Promise<T> {
 }
 
 export const api = {
+  listKnowledgeJobs: () => request<CompilationJob[]>("/knowledge/jobs"),
+  compileKnowledge: (brandId: string) =>
+    request<CompilationStatus>(`/brands/${brandId}/knowledge/compile`, { method: "POST" }),
+  getKnowledgeCompilation: (brandId: string) =>
+    request<CompilationStatus>(`/brands/${brandId}/knowledge/compile`),
   listCampaigns: (includeArchived = false) =>
     request<Campaign[]>(`/campaigns${includeArchived ? "?include_archived=true" : ""}`),
   getCampaign: (id: string) => request<Campaign>(`/campaigns/${id}`),
@@ -285,10 +293,10 @@ export const api = {
     ),
   /** Work out who would actually buy this, including the buyers the company's
    * own website would never have named. */
-  startAudienceMap: (brandId: string) =>
+  startAudienceMap: (brandId: string, options?: MapOptions) =>
     request<MarketJob>(`/market/${brandId}/audience/map`, {
       method: "POST",
-      body: JSON.stringify({}),
+      body: JSON.stringify(options ?? {}),
     }),
   /** Locate, process-fetch, synthesize and verify independent research for
    * one admitted mapped audience. Refreshes append a new persisted version. */

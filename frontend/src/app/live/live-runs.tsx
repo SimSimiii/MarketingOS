@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { MarketJobCard } from "@/components/market-job-card";
+import { CompilationJobCard } from "./compilation-job-card";
 import { StatusBadge } from "@/components/status-badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { api } from "@/lib/api-client";
 import { startVisiblePolling } from "@/lib/visible-polling";
 import { formatDuration } from "@/lib/format";
-import type { MarketJob, RunningExecution } from "@/lib/types";
+import type { CompilationJob, MarketJob, RunningExecution } from "@/lib/types";
 
 //: Campaigns start and finish over minutes, not seconds - this is a "what is
 //: happening" board, not a metrics feed, so a slow poll is enough. Each run's
@@ -19,27 +20,31 @@ const REFRESH_MS = 4000;
 export function LiveRuns({
   initialRuns,
   initialJobs,
+  initialCompilations,
   initiallyUnavailable = false,
 }: {
   initialRuns: RunningExecution[];
   initialJobs: MarketJob[];
+  initialCompilations: CompilationJob[];
   initiallyUnavailable?: boolean;
 }) {
   const [runs, setRuns] = useState(initialRuns);
   const [jobs, setJobs] = useState(initialJobs);
+  const [compilations, setCompilations] = useState(initialCompilations);
   const [unavailable, setUnavailable] = useState(initiallyUnavailable);
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
     let cancelled = false;
     const stop = startVisiblePolling(async () => {
-      const [runResult, jobResult] = await Promise.allSettled([
-        api.listRunningExecutions(), api.listMarketJobs(),
+      const [runResult, jobResult, compilationResult] = await Promise.allSettled([
+        api.listRunningExecutions(), api.listMarketJobs(), api.listKnowledgeJobs(),
       ]);
       if (cancelled) return;
       if (runResult.status === "fulfilled") setRuns(runResult.value);
       if (jobResult.status === "fulfilled") setJobs(jobResult.value);
-      setUnavailable(runResult.status === "rejected" || jobResult.status === "rejected");
+      if (compilationResult.status === "fulfilled") setCompilations(compilationResult.value);
+      setUnavailable(runResult.status === "rejected" || jobResult.status === "rejected" || compilationResult.status === "rejected");
     }, REFRESH_MS);
     return () => {
       cancelled = true;
@@ -54,7 +59,9 @@ export function LiveRuns({
   // history page - that is what each brand's own market tab is for.
   const recent = jobs.filter((job) => job.state !== "running").slice(0, 2);
 
-  const hasActiveWork = runs.length > 0 || running.length > 0;
+  const compiling = compilations.filter((job) => job.state === "running");
+  const recentlyCompiled = compilations.filter((job) => job.state !== "running").slice(0, 2);
+  const hasActiveWork = runs.length > 0 || running.length > 0 || compiling.length > 0;
   useEffect(() => {
     if (!hasActiveWork) return;
     const stop = startVisiblePolling(async () => { setNow(Date.now()); }, 1000);
@@ -68,12 +75,12 @@ export function LiveRuns({
           Live updates are temporarily unavailable. Any cards below show the last known state. Retrying automatically.
         </p>
       )}
-      {runs.length === 0 && jobs.length === 0 && !unavailable && (
+      {runs.length === 0 && jobs.length === 0 && compilations.length === 0 && !unavailable && (
         <Card>
           <CardContent className="py-10 text-center">
             <h2 className="font-medium">All quiet in the studio</h2>
             <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
-              Your campaigns and market research will appear here as they run.
+              Your campaigns, knowledge compilation and market research will appear here as they run.
             </p>
             <Link href="/campaigns" className="mt-5 inline-block text-sm font-medium text-violet-300 hover:underline">Open campaigns →</Link>
           </CardContent>
@@ -81,6 +88,9 @@ export function LiveRuns({
       )}
       {[...running, ...recent].map((job) => (
         <MarketJobCard key={`${job.brand_id}-${job.started_at}`} job={job} now={now} />
+      ))}
+      {[...compiling, ...recentlyCompiled].map((job) => (
+        <CompilationJobCard key={`${job.brand_id}-${job.started_at}`} job={job} now={now} />
       ))}
       {runs.map((run) => (
         <Link

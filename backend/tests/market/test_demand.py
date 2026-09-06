@@ -148,14 +148,10 @@ async def test_the_cartographer_reads_the_web(provider: ScriptedProvider, sessio
 
 
 @pytest.mark.asyncio
-async def test_a_segment_below_the_fit_floor_is_not_offered(
+async def test_a_guessed_fit_rate_does_not_discard_a_candidate(
     provider: ScriptedProvider, session
 ):
-    """A rate can be accurate and still not be a campaign.
-
-    The floor is about what a user is asked to choose between, not about what
-    is true - see MIN_USEFUL_FIT.
-    """
+    """Legacy rates cannot decide what gets researched."""
     provider.push(
         "audience_map",
         map_payload(
@@ -170,15 +166,16 @@ async def test_a_segment_below_the_fit_floor_is_not_offered(
 
     demand = await AudienceCartographer(session).map(artifacts())
 
-    assert [item.name for item in demand.segments] == [segment().name]
+    assert [item.name for item in demand.segments] == [segment().name, "Anybody with a laptop"]
+    assert all(item.assessment.priority == "hypothesis" for item in demand.segments)
+    assert all(item.fit == 0 for item in demand.segments)
 
 
-def test_the_summary_counts_what_the_company_could_not_have_found():
-    """The whole product of the pass. A map of segments the user already knew
-    is a map that cost them a search to restate their own homepage."""
+def test_the_summary_counts_supported_priorities_without_response_forecasts():
     demand = DemandMap(segments=[segment(), segment(name="Theirs", kind=SegmentKind.CORE)])
 
-    assert "1 of them nobody would have found" in demand.summary()
+    assert "2 audience(s) mapped; 0 worth exploring first" in demand.summary()
+    assert "%" not in demand.summary()
 
 
 def test_a_chosen_segment_is_matched_forgivingly():

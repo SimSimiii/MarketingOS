@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { KnowledgeBaseExplorer } from "./knowledge-base-explorer";
+import { CompileButton } from "./compile-button";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -28,9 +29,8 @@ export default async function BrandKnowledgeBasePage({
         <CardContent className="space-y-2 p-6 text-sm text-muted-foreground">
           <p className="font-medium text-foreground">Nothing compiled for this brand yet.</p>
           <p>
-            Knowledge is compiled on the first campaign run for this business — reading the
-            material costs a model call, so it is not paid for until something needs it. Add its
-            website and start a campaign, and this page fills in.
+            Add this business&apos;s sources, then compile them here to prepare the knowledge
+            used by every campaign.
           </p>
           <div className="pt-2">
             <Link
@@ -40,6 +40,7 @@ export default async function BrandKnowledgeBasePage({
               Add sources
             </Link>
           </div>
+          <CompileButton brandId={brandId} compiled={false} />
         </CardContent>
       </Card>
     );
@@ -47,6 +48,7 @@ export default async function BrandKnowledgeBasePage({
 
   return (
     <div className="space-y-4">
+      <CompileButton brandId={brandId} compiled />
       <p className="max-w-2xl text-sm text-muted-foreground">
         Everything we established about this business, on the shelf that matches the question a
         buyer is asking. This is the same index its copywriters work from — no other brand&rsquo;s

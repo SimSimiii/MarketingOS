@@ -23,7 +23,7 @@ class Campaign(SQLModel, table=True):
     brand_id: UUID | None = Field(default=None, foreign_key="brand.id", index=True)
     name: str
     request: str
-    product_description: str
+    product_description: str = ""
     product_url: str | None = None
     target_market: str | None = None
     goals: str | None = None

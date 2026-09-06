@@ -62,7 +62,7 @@ export interface Campaign {
 export interface CampaignCreateRequest {
   name: string;
   request: string;
-  product_description: string;
+  product_description?: string;
   product_url?: string | null;
   target_market?: string | null;
   goals?: string | null;
@@ -1012,6 +1012,26 @@ export interface CompanyQualification {
  * signals that make it findable - none of which a company's own site contains. */
 export interface MappedSegment {
   name: string;
+  organization: string;
+  workflow: string;
+  need: string;
+  buyer_role: string;
+  user_role: string;
+  current_alternative: string;
+  assessment: {
+    compatibility: "supported" | "unknown" | "incompatible";
+    evidence_strength: "supported" | "limited" | "absent";
+    priority: "explore_first" | "hypothesis" | "incompatible";
+    reasons: string[];
+    unknowns: string[];
+    evidence: {
+      claim: string;
+      quote: string;
+      url: string;
+      kind: "need" | "alternative" | "access" | "counterevidence" | "example";
+      fetched_at: string | null;
+    }[];
+  };
   kind: SegmentKind;
   /** One person in a situation, not a category. */
   who: string;
@@ -1025,9 +1045,7 @@ export interface MappedSegment {
   /** Where an email to them is allowed to start. Same vocabulary the
    * compiled audience model uses, because a chosen segment becomes one. */
   sophistication: string;
-  /** Roughly what share of the people matching `who` would be interested.
-   * **An estimate, never a measurement** - nobody has sent these emails yet,
-   * so it is only worth what `basis` beside it is worth. */
+  /** Legacy payload field; never display as a rate or use to rank audiences. */
   fit: number;
   basis: string;
   population: string;
@@ -1048,14 +1066,24 @@ export interface MappedSegment {
   definition: AudienceDefinition;
 }
 
+export interface MapOptions {
+  geography: string;
+  language: string;
+  exclusions: string;
+  objective: "customers" | "partners" | "both";
+  mode: "refresh" | "explore";
+}
+
 export interface DemandMap {
   summary: string;
+  options: MapOptions;
+  validation_note: string;
   /** One paragraph on where the demand in this market really is. */
   reading: string;
   note: string;
   searched: string[];
   mapped_at: string;
-  /** Researchability first, with fit used only to break ties. */
+  /** Validated priority first, then researchability; stable ties. */
   segments: MappedSegment[];
 }
 
@@ -1433,4 +1461,19 @@ export interface MarketJob {
   output_tokens: number;
   cache_read_tokens: number;
   cost_usd: number;
+}
+export interface CompilationStatus {
+  state: "idle" | "running" | "completed" | "failed";
+  message: string;
+}
+
+export interface CompilationJob extends CompilationStatus {
+  brand_id: string;
+  brand_name: string;
+  started_at: string;
+  finished_at: string | null;
+  log: string[];
+  calls: number;
+  input_tokens: number;
+  output_tokens: number;
 }

@@ -130,6 +130,12 @@ def build_corpus(documents: list[KnowledgeDocument]) -> SourceCorpus:
     single model call, and doing it at read time means changing the chunking
     strategy does not require a migration or a re-ingest.
     """
+    # Legacy imports can contain duplicates even though ingestion now deduplicates.
+    # Match the fingerprint's content identity and preserve the first citation source.
+    unique: dict[str, KnowledgeDocument] = {}
+    for document in documents:
+        if document.content.strip():
+            unique.setdefault(document.content, document)
     return SourceCorpus.from_documents(
         [
             Document(
@@ -139,7 +145,6 @@ def build_corpus(documents: list[KnowledgeDocument]) -> SourceCorpus:
                 source=document.source_url or document.title,
                 source_type=str(document.source_type),
             )
-            for document in documents
-            if document.content.strip()
+            for document in unique.values()
         ]
     )

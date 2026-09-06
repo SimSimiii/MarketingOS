@@ -275,13 +275,7 @@ def _demand() -> DemandMap:
 async def test_the_strategist_sees_the_buyers_it_was_not_pointed_at(
     provider: RoleScriptedProvider, request_fixture: CampaignRequest
 ):
-    """The contrast is the information.
-
-    A strategist told "write to agencies" knows less than one told "write to
-    agencies, a 35% fit, rather than to the developers on the homepage, an
-    estimated 12%" - the second one knows what it is trading away, and how
-    hard the copy has to work.
-    """
+    """The strategist sees alternative buyers without invented response rates."""
     provider.set_default("strategist", campaign_brief(1))
     pipeline = build_with_gateway(
         provider,
@@ -296,9 +290,10 @@ async def test_the_strategist_sees_the_buyers_it_was_not_pointed_at(
 
     prompt = provider.requests_for("strategist")[0].system_prompt
     assert "<- THIS CAMPAIGN" in prompt
-    assert "35% likely to bite" in prompt
-    assert "12% likely to bite" in prompt
-    # And it is told, in the same breath, that neither number was measured.
+    assert "Agencies that ship on behalf of five clients" in prompt
+    assert "who the site already talks to" in prompt
+    assert "likely to bite" not in prompt
+    assert "compatibility: unknown" in prompt
     assert "not a measured result" in prompt
 
 

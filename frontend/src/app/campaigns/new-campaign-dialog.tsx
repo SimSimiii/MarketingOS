@@ -335,7 +335,6 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
 
   function validate(): string | null {
     if (!name.trim()) return "Give the campaign a name.";
-    if (!productDescription.trim()) return "Describe the product first.";
     if (brandChoice === NEW_BRAND && !newBrandName.trim()) return "Name the new brand.";
     return null;
   }
@@ -362,7 +361,7 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
       const campaign = await api.createCampaign({
         name,
         request: buildRequest(type, tone),
-        product_description: productDescription,
+        product_description: productDescription.trim(),
         product_url: productUrl || null,
         // One question, one answer: whichever half of the control was used
         // is sent and the other is null, so nothing downstream has to decide
@@ -593,7 +592,7 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
                 <SelectItem value={NO_SEGMENT}>Whoever your own material describes</SelectItem>
                 {segments.map((segment) => (
                   <SelectItem key={segment.name} value={segment.name}>
-                    {segment.name} — {Math.round(segment.fit * 100)}%
+                    {segment.name} — {segment.assessment.priority === "explore_first" ? "Explore first" : segment.assessment.priority === "incompatible" ? "Incompatible" : "Hypothesis"}
                     {segment.unobvious ? " · not on your site" : ""}
                   </SelectItem>
                 ))}
@@ -714,13 +713,20 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="product_description">What is your product?</Label>
+            <Label htmlFor="product_description">Additional context (optional)</Label>
             <Textarea
               id="product_description"
+              aria-describedby="product_description_hint"
+              placeholder="Anything specific to this campaign that isn't in your sources…"
               rows={3}
               value={productDescription}
               onChange={(e) => setProductDescription(e.target.value)}
             />
+            <p id="product_description_hint" className="text-xs text-muted-foreground">
+              {usingExistingBrand
+                ? "We'll use this brand's knowledge base and saved sources. Add only any extra details for this campaign."
+                : "We'll use the sources you add. You can include extra details here if needed."}
+            </p>
           </div>
 
           <div className="space-y-2">

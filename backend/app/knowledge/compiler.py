@@ -148,9 +148,18 @@ class KnowledgeCompiler:
             f"Reading {len(corpus.documents)} document(s): what the business is, every fact "
             "the copy may claim, and how the company sounds",
         )
-        profile, evidence, voice = await asyncio.gather(
+        readings = [asyncio.create_task(reading) for reading in (
             self._profile(corpus), self._evidence(corpus), self._voice(corpus)
-        )
+        )]
+        try:
+            profile, evidence, voice = await asyncio.gather(*readings)
+        except BaseException:
+            # gather alone leaves siblings spending quota after a fatal pass fails.
+            # Drain them before reporting failure or allowing another compilation.
+            for reading in readings:
+                reading.cancel()
+            await asyncio.gather(*readings, return_exceptions=True)
+            raise
         ledger, intake = evidence
         progress(
             "evidence",
@@ -240,6 +249,7 @@ class KnowledgeCompiler:
         results = await asyncio.gather(*(extract(batch) for batch in plan.batches))
 
         entries: list[Evidence] = []
+        normalized: dict[str | None, str] = {}
         intake = _Intake(readings=len(plan.batches), unread=plan.unread)
         for batch, drafts in zip(plan.batches, results, strict=True):
             if isinstance(drafts, BaseException):
@@ -251,9 +261,12 @@ class KnowledgeCompiler:
                     batch[0].document if len({reading.document.id for reading in batch}) == 1
                     else None
                 )
-                haystack = document.content if document else corpus.text
+                source_key = document.id if document else None
+                if source_key not in normalized:
+                    normalized[source_key] = fold(document.content if document else corpus.text)
+                haystack = normalized[source_key]
                 intake.proposed += 1
-                if not _quote_is_real(draft.verbatim, haystack):
+                if not _quote_in_normalized(draft.verbatim, haystack):
                     intake.unverifiable += 1
                     logger.info(
                         "knowledge compiler: dropped unverifiable evidence %r", draft.claim[:80]
@@ -292,10 +305,11 @@ class KnowledgeCompiler:
             schema=_VoicePass,
         )
         voice = result.voice
+        normalized_corpus = fold(corpus.text)
         voice.exemplars = [
             collapse(passage, 600)
             for passage in voice.exemplars
-            if _quote_is_real(passage, corpus.text)
+            if _quote_in_normalized(passage, normalized_corpus)
         ][:5]
         if not voice.exemplars:
             default = VoiceProfile.house_default()
@@ -599,7 +613,12 @@ def _quote_is_real(quote: str, haystack: str) -> bool:
     entries it hit hardest were testimonials, which is the one kind of
     evidence the preflight will stop a whole run for the lack of.
     """
+    return _quote_in_normalized(quote, fold(haystack))
+
+
+def _quote_in_normalized(quote: str, haystack: str) -> bool:
+    """Reuse a normalized source across all its candidate facts."""
     needle = fold(quote)
     if len(needle) < _MIN_QUOTE_CHARS:
         return False
-    return needle in fold(haystack)
+    return needle in haystack

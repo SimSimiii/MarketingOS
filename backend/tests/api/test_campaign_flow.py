@@ -1,6 +1,7 @@
 """End-to-end HTTP test of the one flow that matters: a user asks for three
 emails and gets three emails they can paste into their email tool."""
 
+import pytest
 from fastapi.testclient import TestClient
 
 from tests.api.conftest import await_terminal_status, create_campaign
@@ -61,6 +62,35 @@ def test_campaign_requires_a_real_request(client: TestClient):
         json={"name": "Launch", "request": "hi", "product_description": "An app"},
     )
     assert response.status_code == 422
+
+
+@pytest.mark.parametrize("context", [{}, {"product_description": ""}])
+def test_campaign_can_be_created_without_extra_product_context(client: TestClient, context):
+    brand = client.post("/api/brands", json={"name": "Notewright"}).json()
+    source = client.post(
+        "/api/knowledge",
+        json={
+            "brand_id": brand["id"],
+            "title": "Product",
+            "content": "Notewright drafts release notes from merged commits.",
+        },
+    )
+    assert source.status_code == 201, source.text
+    response = client.post(
+        "/api/campaigns",
+        json={
+            "name": "Launch",
+            "request": "Write me 3 emails introducing Notewright.",
+            "brand_id": brand["id"],
+            **context,
+        },
+    )
+    assert response.status_code == 201, response.text
+    campaign = response.json()
+    assert campaign["product_description"] == ""
+    saved = client.get(f"/api/campaigns/{campaign['id']}").json()
+    assert saved["product_description"] == ""
+    assert saved["brand_id"] == brand["id"]
 
 
 def test_pasted_knowledge_is_scoped_to_the_campaign(client: TestClient):

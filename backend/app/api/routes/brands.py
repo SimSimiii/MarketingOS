@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, status
 from sqlalchemy import func
 from sqlmodel import Session, col, select
 
-from app.api.deps import SessionDep
+from app.api.deps import AIProviderDep, SessionDep
 from app.knowledge.store import ArtifactScope, ArtifactStore
 from app.models.brand import Brand
 from app.models.campaign import Campaign
@@ -20,8 +20,29 @@ from app.schemas.brand import (
     BrandStyleUpdate,
     KnowledgeArtifactsRead,
 )
+from app.services.knowledge_compilation import CompilationStatus, jobs, start_compilation
 
 router = APIRouter(prefix="/brands", tags=["brands"])
+
+
+@router.get("/{brand_id}/knowledge/compile", response_model=CompilationStatus)
+def compilation_status(brand_id: UUID, session: SessionDep) -> CompilationStatus:
+    if BrandRepository(session).get(brand_id) is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Brand not found")
+    return jobs.get(brand_id, CompilationStatus())
+
+
+@router.post("/{brand_id}/knowledge/compile", response_model=CompilationStatus, status_code=202)
+async def compile_knowledge(
+    brand_id: UUID, session: SessionDep, provider: AIProviderDep,
+) -> CompilationStatus:
+    brand = BrandRepository(session).get(brand_id)
+    if brand is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Brand not found")
+    documents = ArtifactStore(session).source_documents(ArtifactScope(brand_id=brand_id))
+    if not any(document.content.strip() for document in documents):
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Add sources before compiling.")
+    return start_compilation(brand_id, session.get_bind(), provider, brand.name)
 
 
 @router.post("", response_model=BrandRead, status_code=status.HTTP_201_CREATED)

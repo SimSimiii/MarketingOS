@@ -350,7 +350,7 @@ async def start_audience_map(
     """
     brand = _brand(session, brand_id)
     try:
-        job = MarketService(session).launch_audience_map(brand, provider, engine)
+        job = MarketService(session).launch_audience_map(brand, provider, engine, data)
     except MarketError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
     return JobStatusRead(**vars(job))

@@ -55,6 +55,7 @@ from app.market.capabilities import (
 from app.market.demand import (
     AudienceCartographer,
     DemandMap,
+    MapOptions,
     ProspectFinder,
     ProspectLead,
     ProspectStatus,
@@ -513,7 +514,7 @@ class MarketService:
         return status
 
     def launch_audience_map(
-        self, brand: Brand, provider: AIProvider, engine: Engine
+        self, brand: Brand, provider: AIProvider, engine: Engine, options: MapOptions | None = None
     ) -> JobStatus:
         self._require_idle(brand.id)
         self._require_knowledge(brand.id)
@@ -521,7 +522,7 @@ class MarketService:
         status = JobStatus(kind="audience", brand_id=brand.id, brand_name=brand.name)
         status.say("Working out who would actually buy this")
         _jobs[brand.id] = status
-        _spawn(_run_audience_map(brand.id, provider, engine, status))
+        _spawn(_run_audience_map(brand.id, provider, engine, status, options))
         return status
 
     def launch_prospect_search(
@@ -910,7 +911,8 @@ async def _run_hunt(
 
 
 async def _run_audience_map(
-    brand_id: UUID, provider: AIProvider, engine: Engine, status: JobStatus
+    brand_id: UUID, provider: AIProvider, engine: Engine, status: JobStatus,
+    options: MapOptions | None = None,
 ) -> None:
     with Session(engine) as session:
         service = MarketService(session)
@@ -924,9 +926,14 @@ async def _run_audience_map(
             # asked twice: a segment every competitor already saturates is a
             # worse bet at the same rate than one none of them address.
             snapshot = service.store.latest_scan(brand_id)
+            _, profile = service.ensure_capability_profile(brand_id)
             demand = await AudienceCartographer(_session_for(provider, brand_id, status)).map(
                 artifacts,
                 positioning=snapshot.positioning if snapshot is not None else None,
+                capability_profile=profile,
+                options=options,
+                previous=service.store.latest_map(brand_id),
+                progress=status.say,
             )
             service.store.save_map(brand_id, demand)
 
