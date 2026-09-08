@@ -1,0 +1,12 @@
+# The back-office is linted by the same rules as the product it manages.
+#
+# It needs its own file because it is not under backend/, so ruff would
+# otherwise walk past MarketingOS/ and pick up whatever user-level config
+# happens to be on the machine - which is how a build passes locally and
+# fails in CodeBuild.
+line-length = 100
+target-version = "py312"
+
+[lint.flake8-bugbear]
+# FastAPI's dependency markers are meant to be called in argument defaults.
+extend-immutable-calls = ["fastapi.Depends", "fastapi.File", "fastapi.Form", "fastapi.Query"]

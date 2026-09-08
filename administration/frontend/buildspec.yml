@@ -1,0 +1,73 @@
+version: 0.2
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  MarketingOS - back-office console, CodeBuild spec.
+#
+#  A Next.js static export onto the bucket the admin SAM stack created. Deploy
+#  that stack first, then set these from its outputs:
+#
+#    FRONTEND_S3_BUCKET          AdminFrontendBucketName
+#    CLOUDFRONT_DISTRIBUTION_ID  AdminDistributionId
+#    NEXT_PUBLIC_ADMIN_API_URL   AdminApiEndpoint
+#
+#  Uploads to the console's own bucket, never the product's. The edge rewrite
+#  that makes deep links and /users/{uuid} resolve is a CloudFront Function
+#  declared in the SAM template, so nothing here has to create it.
+# ─────────────────────────────────────────────────────────────────────────────
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: "22"
+    commands:
+      - node --version && npm --version
+
+  pre_build:
+    commands:
+      - |
+        for VAR in FRONTEND_S3_BUCKET CLOUDFRONT_DISTRIBUTION_ID NEXT_PUBLIC_ADMIN_API_URL; do
+          if [ -z "$(eval echo \$$VAR)" ]; then
+            echo "ERROR: $VAR is not set on this CodeBuild project." && exit 1
+          fi
+        done
+      - cd $CODEBUILD_SRC_DIR/administration/frontend
+      # Both removed rather than trusted: a restored .next from the cache can
+      # bake a stale NEXT_PUBLIC_ADMIN_API_URL into the bundle, and a console
+      # pointing at the previous environment's API is the kind of bug that
+      # looks like an auth problem for an afternoon.
+      - rm -rf .next out
+      - npm ci
+      - npx tsc --noEmit
+      - npm run lint
+
+  build:
+    commands:
+      - cd $CODEBUILD_SRC_DIR/administration/frontend
+      # NEXT_PUBLIC_* is inlined at build time, so it has to be present here
+      # rather than at deploy time. There is no server to read it later.
+      - NEXT_PUBLIC_ADMIN_API_URL="${NEXT_PUBLIC_ADMIN_API_URL}" npm run build
+      - test -f out/index.html || (echo "ERROR: export produced no index.html" && exit 1)
+
+  post_build:
+    commands:
+      # Hashed assets first, cached for a year.
+      - |
+        aws s3 sync out/ "s3://${FRONTEND_S3_BUCKET}/" \
+          --delete \
+          --cache-control "public,max-age=31536000,immutable" \
+          --exclude "*.html" --exclude "*.json" --exclude "*.txt" --exclude "*.xml"
+      # Then the HTML, always revalidated, so a deploy is live immediately.
+      - |
+        aws s3 sync out/ "s3://${FRONTEND_S3_BUCKET}/" \
+          --cache-control "public,no-cache,must-revalidate" \
+          --exclude "*" \
+          --include "*.html" --include "*.json" --include "*.txt" --include "*.xml"
+      - |
+        aws cloudfront create-invalidation \
+          --distribution-id "${CLOUDFRONT_DISTRIBUTION_ID}" \
+          --paths "/*" >/dev/null
+      - echo "Console deployed."
+
+cache:
+  paths:
+    - administration/frontend/node_modules/**/*

@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+/*
+ * The console borrows the product's dark violet palette so an operator moving
+ * between the two does not feel like they changed companies - but it is a
+ * deliberately smaller system. No shadcn, no theme toggle, no component
+ * library: this is tables and forms for a handful of people, and every
+ * dependency here is one more thing to patch on a surface that can suspend
+ * a customer.
+ */
+@theme {
+  --color-bg: oklch(0.145 0.009 285);
+  --color-surface: oklch(0.195 0.012 285);
+  --color-surface-2: oklch(0.17 0.012 285);
+  --color-fg: oklch(0.965 0.005 292);
+  --color-muted: oklch(0.72 0.015 292);
+  --color-violet: oklch(0.606 0.25 292.717);
+  --color-violet-soft: oklch(0.702 0.183 293.541);
+  --color-line: oklch(1 0 0 / 10%);
+  --color-danger: oklch(0.704 0.191 22.216);
+  --color-warn: oklch(0.79 0.16 78);
+  --color-ok: oklch(0.75 0.16 155);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* One focus ring for the whole app rather than per component, so a control
+   added later cannot be the one that forgot it. */
+:focus-visible {
+  outline: 2px solid var(--color-violet-soft);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

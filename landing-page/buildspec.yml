@@ -1,0 +1,75 @@
+version: 0.2
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  MarketingOS - landing page, CodeBuild spec.
+#
+#  Pure HTML and CSS: nothing to compile, so this is a substitution and two
+#  uploads. Deploy the stack in template.yaml first, then set these on the
+#  CodeBuild project from its outputs:
+#
+#    LANDING_S3_BUCKET           LandingBucketName
+#    CLOUDFRONT_DISTRIBUTION_ID  LandingDistributionId
+#    CONSOLE_APP_URL             where the app lives, e.g. https://app.example.com
+#                                (no trailing slash - the page appends /login)
+#
+#  The bucket is private and served through CloudFront with an OAC. Static
+#  website hosting must stay OFF: that endpoint is public HTTP with no way to
+#  put a certificate in front of it.
+# ─────────────────────────────────────────────────────────────────────────────
+
+phases:
+  install:
+    commands:
+      - echo "Static site - nothing to install."
+
+  pre_build:
+    commands:
+      - |
+        for VAR in LANDING_S3_BUCKET CLOUDFRONT_DISTRIBUTION_ID CONSOLE_APP_URL; do
+          if [ -z "$(eval echo \$$VAR)" ]; then
+            echo "ERROR: $VAR is not set on this CodeBuild project." && exit 1
+          fi
+        done
+      # A trailing slash here produces https://app.example.com//login, which
+      # some proxies redirect and others 404.
+      - |
+        case "$CONSOLE_APP_URL" in
+          */) echo "ERROR: CONSOLE_APP_URL must not end with a slash." && exit 1 ;;
+        esac
+      - cd $CODEBUILD_SRC_DIR/landing-page
+      - sed -i "s|CONSOLE_APP_URL|${CONSOLE_APP_URL}|g" index.html
+      # Fail loudly rather than shipping a page whose only call to action is a
+      # dead literal string.
+      - |
+        if grep -q "CONSOLE_APP_URL" index.html; then
+          echo "ERROR: CONSOLE_APP_URL placeholders remain after substitution." && exit 1
+        fi
+
+  build:
+    commands:
+      - echo "Nothing to build."
+
+  post_build:
+    commands:
+      # HTML first, with revalidation on every request, so a copy fix is live
+      # the moment the invalidation lands rather than whenever a browser
+      # happens to expire it.
+      - |
+        aws s3 cp index.html "s3://${LANDING_S3_BUCKET}/index.html" \
+          --cache-control "public,no-cache,must-revalidate" \
+          --content-type "text/html; charset=utf-8"
+      # Everything else - images, fonts, icons - is content-addressed by name
+      # and can be cached for a year.
+      - |
+        aws s3 sync . "s3://${LANDING_S3_BUCKET}/" \
+          --delete \
+          --exclude "index.html" \
+          --exclude "buildspec.yml" \
+          --exclude "template.yaml" \
+          --exclude ".git/*" \
+          --cache-control "public,max-age=31536000,immutable"
+      - |
+        aws cloudfront create-invalidation \
+          --distribution-id "${CLOUDFRONT_DISTRIBUTION_ID}" \
+          --paths "/*" >/dev/null
+      - echo "Landing page deployed."

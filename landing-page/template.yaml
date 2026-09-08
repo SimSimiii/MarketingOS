@@ -1,0 +1,138 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: MarketingOS - landing page hosting (private S3 + CloudFront)
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Plain CloudFormation rather than SAM: there is no Lambda here, and the SAM
+#  transform would only add a step.
+#
+#  Deploy once by hand, then wire buildspec.yml to the outputs:
+#
+#    aws cloudformation deploy \
+#      --template-file landing-page/template.yaml \
+#      --stack-name marketingos-landing-prod \
+#      --parameter-overrides Environment=prod
+#
+#  A custom domain needs an ACM certificate in us-east-1 (CloudFront only reads
+#  certificates from there, whatever region the rest of the stack is in). Pass
+#  its ARN and the domain, or leave both blank to use the CloudFront domain.
+# ─────────────────────────────────────────────────────────────────────────────
+
+Parameters:
+  Environment:
+    Type: String
+    Default: prod
+    AllowedValues: [dev, staging, prod]
+  DomainName:
+    Type: String
+    Default: ""
+    Description: e.g. marketingos.app. Leave blank to use the CloudFront domain.
+  CertificateArn:
+    Type: String
+    Default: ""
+    Description: ACM certificate ARN, which MUST be in us-east-1.
+
+Conditions:
+  HasDomain: !And
+    - !Not [!Equals [!Ref DomainName, ""]]
+    - !Not [!Equals [!Ref CertificateArn, ""]]
+
+Resources:
+  LandingBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'marketingos-landing-${AWS::AccountId}-${Environment}'
+      # Static website hosting stays off: that endpoint is plain HTTP and
+      # cannot take a certificate. CloudFront reads the REST endpoint instead,
+      # authenticated by the OAC below, so the bucket never has to be public.
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  LandingOriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub 'marketingos-landing-oac-${Environment}'
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  LandingDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: !Sub 'MarketingOS landing page (${Environment})'
+        DefaultRootObject: index.html
+        HttpVersion: http2and3
+        IPV6Enabled: true
+        PriceClass: PriceClass_100
+        Aliases: !If [HasDomain, [!Ref DomainName], !Ref 'AWS::NoValue']
+        ViewerCertificate: !If
+          - HasDomain
+          - AcmCertificateArn: !Ref CertificateArn
+            SslSupportMethod: sni-only
+            MinimumProtocolVersion: TLSv1.2_2021
+          - CloudFrontDefaultCertificate: true
+        Origins:
+          - Id: LandingS3Origin
+            DomainName: !GetAtt LandingBucket.RegionalDomainName
+            OriginAccessControlId: !Ref LandingOriginAccessControl
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+        DefaultCacheBehavior:
+          TargetOriginId: LandingS3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD, OPTIONS]
+          Compress: true
+          # CachingOptimized (AWS managed). The page itself is uploaded with
+          # no-cache, so the long TTL here only applies to the assets beside it.
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          # SecurityHeadersPolicy (AWS managed): HSTS, nosniff, frame-deny.
+          ResponseHeadersPolicyId: 67f7725c-6f97-4210-82d7-5512b31e9d03
+        CustomErrorResponses:
+          # A private bucket answers 403 for a key that does not exist, so
+          # without this an unknown path reads as "forbidden" rather than
+          # "there is no such page".
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+
+  LandingBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref LandingBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowCloudFrontServicePrincipalRead
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub '${LandingBucket.Arn}/*'
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${LandingDistribution}'
+
+Outputs:
+  LandingBucketName:
+    Description: LANDING_S3_BUCKET for the buildspec.
+    Value: !Ref LandingBucket
+  LandingDistributionId:
+    Description: CLOUDFRONT_DISTRIBUTION_ID for the buildspec.
+    Value: !Ref LandingDistribution
+  LandingUrl:
+    Value: !If
+      - HasDomain
+      - !Sub 'https://${DomainName}'
+      - !Sub 'https://${LandingDistribution.DomainName}'

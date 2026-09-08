@@ -1,0 +1,49 @@
+version: 0.1
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Deploy configuration for the console.
+#
+#  Placeholders resolved by envsubst from the CodeBuild environment; see
+#  buildspec.yml. Set on the CodeBuild project:
+#
+#    CONSOLE_STACK_NAME    marketingos-console-dev
+#    AWS_DEFAULT_REGION    eu-west-3
+#    S3_PREFIX             marketingos-console
+#    ENVIRONMENT           dev | staging | prod
+#    NEXT_PUBLIC_API_URL   the ApiEndpoint output of the backend stack, + /api
+#    IMAGE_REPOSITORY      an ECR repository URI for the console image
+#    CONSOLE_DOMAIN        (optional) app.example.com
+#    CONSOLE_CERT_ARN      (optional) an ACM ARN in us-east-1
+#
+#  The image repository has to exist before the first deploy. `sam deploy
+#  --resolve-image-repos` will create one automatically, which is fine for dev
+#  and worth pinning by hand for anything that has to survive a stack delete.
+# ─────────────────────────────────────────────────────────────────────────────
+
+ci:
+  global:
+    parameters:
+      stack_name: ${CONSOLE_STACK_NAME}
+      region: ${AWS_DEFAULT_REGION}
+      s3_prefix: ${S3_PREFIX}
+
+  build:
+    parameters:
+      cached: false
+      parallel: false
+
+  deploy:
+    parameters:
+      capabilities: CAPABILITY_IAM
+      confirm_changeset: false
+      fail_on_empty_changeset: false
+      resolve_s3: true
+      image_repositories:
+        - 'ConsoleFunction=${IMAGE_REPOSITORY}'
+      parameter_overrides:
+        - 'Environment=${ENVIRONMENT}'
+        - 'ApiUrl=${NEXT_PUBLIC_API_URL}'
+        - 'LogRetentionDays=${LOG_RETENTION_DAYS}'
+        - 'MemorySize=${CONSOLE_MEMORY_SIZE}'
+        - 'DomainName=${CONSOLE_DOMAIN}'
+        - 'CertificateArn=${CONSOLE_CERT_ARN}'

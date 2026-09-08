@@ -1,0 +1,89 @@
+version: 0.2
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  MarketingOS - back-office API, CodeBuild spec.
+#
+#  Wire a dedicated CodeBuild project (e.g. build-marketingos-admin-api) to
+#  this file. It vendors the platform's `app` package into the admin bundle so
+#  the two share one definition of every model and cannot drift, then builds
+#  and deploys the isolated `marketingos-admin-*` stack.
+#
+#  Environment variables are listed at the top of samconfig.yaml.
+# ─────────────────────────────────────────────────────────────────────────────
+
+env:
+  variables:
+    APP_ENV: production
+    LOG_LEVEL: INFO
+    LOG_RETENTION_DAYS: "30"
+    ADMIN_JWT_TTL_HOURS: "12"
+    ADMIN_PLAN_PRICES: '{"free": 0, "pro": 49, "business": 149}'
+    S3_PREFIX: marketingos-admin
+
+phases:
+  install:
+    runtime-versions:
+      python: "3.12"
+    commands:
+      - pip install --upgrade pip
+      - pip install "aws-sam-cli>=1.130.0"
+
+  pre_build:
+    commands:
+      - echo "SAM $(sam --version) | $(python --version)"
+      - |
+        for VAR in ADMIN_STACK_NAME DATABASE_URL ADMIN_JWT_SECRET ADMIN_PWD_PEPPER; do
+          if [ -z "$(eval echo \$$VAR)" ]; then
+            echo "ERROR: $VAR is not set on this CodeBuild project." && exit 1
+          fi
+        done
+      # The one cross-check worth failing a build over. If the console signed
+      # tokens with the platform's secret, a customer token would open the
+      # console - which is the exact failure the separate table exists to
+      # prevent.
+      - |
+        if [ -n "$JWT_SECRET" ] && [ "$ADMIN_JWT_SECRET" = "$JWT_SECRET" ]; then
+          echo "ERROR: ADMIN_JWT_SECRET must not equal the platform JWT_SECRET." && exit 1
+        fi
+
+      # Vendor the platform package. A fresh copy every build, never a
+      # long-lived one in git: a checked-in copy is a second definition of
+      # every model, and the day it drifts is the day the console reports
+      # numbers the product disagrees with.
+      - rm -rf $CODEBUILD_SRC_DIR/administration/backend/app
+      - cp -r $CODEBUILD_SRC_DIR/backend/app $CODEBUILD_SRC_DIR/administration/backend/app
+
+      - cd $CODEBUILD_SRC_DIR/administration/backend
+      - pip install -r requirements.txt "pytest>=8.3.0" "ruff>=0.7.0" httpx
+      - python -m ruff check admin scripts tests
+      - python -m pytest tests -q
+
+      - rm -rf .aws-sam
+      - envsubst < samconfig.yaml > /tmp/admin-samconfig.resolved.yaml
+      - echo "Deploying ${ADMIN_STACK_NAME} to ${AWS_DEFAULT_REGION} (env=${ENVIRONMENT})"
+
+  build:
+    commands:
+      - cd $CODEBUILD_SRC_DIR/administration/backend
+      - sam build --config-file /tmp/admin-samconfig.resolved.yaml --config-env ci
+      - |
+        sam deploy \
+          --config-file /tmp/admin-samconfig.resolved.yaml \
+          --config-env ci \
+          --no-confirm-changeset \
+          --no-fail-on-empty-changeset
+
+  post_build:
+    commands:
+      # No migration step here on purpose: the back-office shares the
+      # platform's schema and the platform's stack owns it. Two stacks running
+      # `alembic upgrade head` against one database is a race with a corrupted
+      # alembic_version row at the end of it.
+      - |
+        aws cloudformation describe-stacks --stack-name "${ADMIN_STACK_NAME}" \
+          --query "Stacks[0].Outputs" --output table
+      - echo "Remember: set ADMIN_CORS_ORIGINS to the AdminConsoleUrl output and redeploy."
+
+cache:
+  paths:
+    - /root/.cache/pip/**/*

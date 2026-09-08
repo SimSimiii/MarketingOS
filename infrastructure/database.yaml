@@ -1,0 +1,182 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: MarketingOS - Postgres, and the network the Lambdas reach it through
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Deployed once, by hand, before anything else. Everything after it consumes
+#  its outputs.
+#
+#      aws cloudformation deploy \
+#        --template-file infrastructure/database.yaml \
+#        --stack-name marketingos-data-prod \
+#        --parameter-overrides Environment=prod DBPassword=<generated> \
+#        --capabilities CAPABILITY_IAM
+#
+#  The shape is deliberately the smallest thing that is not wrong:
+#
+#  - The database is **not** publicly reachable. Reaching it from a laptop
+#    means a bastion or SSM port forwarding; the migration Lambda in the
+#    backend stack exists so that routine schema changes do not need either.
+#  - The Lambdas sit in private subnets with **no NAT Gateway**. A NAT is about
+#    $32/month before a byte moves, and nothing in the API calls the open
+#    internet - `app/market` does, and market work runs on the worker, not on
+#    Lambda. Add one here if that changes.
+#  - Two AZs because RDS demands a subnet group spanning two, not because this
+#    is highly available. It is a single instance; see MultiAZ below.
+# ─────────────────────────────────────────────────────────────────────────────
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+  DBName:
+    Type: String
+    Default: marketingos
+  DBUsername:
+    Type: String
+    Default: marketingos
+  DBPassword:
+    Type: String
+    NoEcho: true
+    MinLength: 16
+    Description: >-
+      Generate it, store it, never type it twice. RDS rejects '/', '@', '"'
+      and spaces, and a URL-encoding surprise in DATABASE_URL is a bad way to
+      learn that.
+  DBInstanceClass:
+    Type: String
+    Default: db.t4g.micro
+    Description: >-
+      Enough for the first customers. The workload is small transactional
+      reads; the expensive thing in this product is model calls, not SQL.
+  DBAllocatedStorage:
+    Type: Number
+    Default: 20
+    MinValue: 20
+  MultiAZ:
+    Type: String
+    Default: "false"
+    AllowedValues: ["true", "false"]
+    Description: >-
+      Doubles the bill for a standby. Worth it once losing an afternoon of
+      availability costs more than that; not before.
+  BackupRetentionDays:
+    Type: Number
+    Default: 7
+    MinValue: 1
+    Description: Automated backups. 0 disables them, which is never the answer.
+
+Conditions:
+  IsMultiAZ: !Equals [!Ref MultiAZ, "true"]
+
+Resources:
+  Vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.42.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Sub 'marketingos-${Environment}'
+
+  PrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: 10.42.1.0/24
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      Tags:
+        - Key: Name
+          Value: !Sub 'marketingos-private-a-${Environment}'
+
+  PrivateSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: 10.42.2.0/24
+      AvailabilityZone: !Select [1, !GetAZs ""]
+      Tags:
+        - Key: Name
+          Value: !Sub 'marketingos-private-b-${Environment}'
+
+  # Lambdas live here. It has no inbound rules at all - nothing dials into a
+  # function - and its only purpose is to be the thing the database's rule
+  # names, so "who may reach the database" is a group membership rather than a
+  # CIDR somebody has to keep accurate.
+  LambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: MarketingOS Lambda functions
+      VpcId: !Ref Vpc
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+          Description: Outbound to the database (there is no NAT, so this goes nowhere else)
+
+  DatabaseSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: MarketingOS Postgres
+      VpcId: !Ref Vpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !Ref LambdaSecurityGroup
+          Description: Postgres from the Lambdas, and from nothing else
+
+  DatabaseSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: MarketingOS private subnets
+      SubnetIds: [!Ref PrivateSubnetA, !Ref PrivateSubnetB]
+
+  Database:
+    Type: AWS::RDS::DBInstance
+    # Snapshot rather than Delete: `cloudformation delete-stack` on the wrong
+    # environment should cost an afternoon, not the customers.
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    Properties:
+      DBInstanceIdentifier: !Sub 'marketingos-${Environment}'
+      Engine: postgres
+      EngineVersion: "16.4"
+      DBInstanceClass: !Ref DBInstanceClass
+      AllocatedStorage: !Ref DBAllocatedStorage
+      MaxAllocatedStorage: 100
+      StorageType: gp3
+      StorageEncrypted: true
+      DBName: !Ref DBName
+      MasterUsername: !Ref DBUsername
+      MasterUserPassword: !Ref DBPassword
+      DBSubnetGroupName: !Ref DatabaseSubnetGroup
+      VPCSecurityGroups: [!Ref DatabaseSecurityGroup]
+      PubliclyAccessible: false
+      MultiAZ: !If [IsMultiAZ, true, false]
+      BackupRetentionPeriod: !Ref BackupRetentionDays
+      # Sunday 03:00-04:00 UTC, and maintenance an hour later, so both land
+      # when nobody is writing copy.
+      PreferredBackupWindow: "03:00-04:00"
+      PreferredMaintenanceWindow: "sun:04:00-sun:05:00"
+      AutoMinorVersionUpgrade: true
+      EnableCloudwatchLogsExports: [postgresql]
+      DeletionProtection: !If [IsMultiAZ, true, false]
+
+Outputs:
+  DatabaseUrl:
+    Description: >-
+      DATABASE_URL for every stack that talks to Postgres. Store it in Secrets
+      Manager and reference it from CodeBuild - do not paste it into a file.
+    Value: !Sub
+      - 'postgresql+psycopg://${DBUsername}:PASSWORD@${Endpoint}:${Port}/${DBName}'
+      - Endpoint: !GetAtt Database.Endpoint.Address
+        Port: !GetAtt Database.Endpoint.Port
+  DatabaseEndpoint:
+    Value: !GetAtt Database.Endpoint.Address
+  VpcSubnetIds:
+    Description: VPC_SUBNET_IDS for the backend and back-office buildspecs.
+    Value: !Sub '${PrivateSubnetA},${PrivateSubnetB}'
+  VpcSecurityGroups:
+    Description: VPC_SECURITY_GROUPS for the backend and back-office buildspecs.
+    Value: !Ref LambdaSecurityGroup

@@ -1,0 +1,291 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: MarketingOS - platform API (Lambda + HTTP API Gateway)
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  What this stack is, and what it is not.
+#
+#  It serves the API: sign-in, brands, campaigns, knowledge, market reads,
+#  results, settings. That is the whole product except one thing.
+#
+#  It does NOT run campaigns. A run drives the `claude` / `codex` CLIs as
+#  subprocesses for minutes at a time, streams progress over SSE, and keeps its
+#  cancellation registry in this process's memory. A function that is capped at
+#  15 minutes, has no CLI on its image, and scales to twenty copies fails all
+#  three ways at once. `POST /campaigns/{id}/start` therefore needs the
+#  long-running worker described in docs/deployment.md - deploy this for
+#  everything else, and point the frontend's stream URL at the worker.
+#
+#  Secrets are CloudFormation parameters with NoEcho, fed from CodeBuild
+#  environment variables through envsubst (see samconfig.yaml). Nothing secret
+#  is committed to this repository.
+# ─────────────────────────────────────────────────────────────────────────────
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+
+  LogRetentionDays:
+    Type: Number
+    Default: 14
+    AllowedValues: [1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365]
+    Description: >-
+      CloudWatch retention for every log group in this stack. Logs are a
+      running cost with no ceiling unless one is set.
+
+  # ── Database ───────────────────────────────────────────────────────────────
+  DatabaseUrl:
+    Type: String
+    NoEcho: true
+    Description: >-
+      SQLAlchemy URL, e.g. postgresql+psycopg://user:pass@host:5432/marketingos.
+      Not SQLite: a Lambda filesystem is neither shared between containers nor
+      durable across them.
+
+  # ── Auth ───────────────────────────────────────────────────────────────────
+  JwtSecret:
+    Type: String
+    NoEcho: true
+    Description: Signs platform access tokens. 32+ random bytes, hex encoded.
+  PasswordPepper:
+    Type: String
+    NoEcho: true
+    Description: >-
+      Folded into every password hash. Changing it invalidates every existing
+      password in the database - treat it as permanent once there are users.
+  AuthRequired:
+    Type: String
+    Default: "true"
+    AllowedValues: ["true", "false"]
+    Description: >-
+      Ignored when ENVIRONMENT is production - the application forces it on
+      there. Here so a staging stack can be opened up deliberately.
+  AllowPublicSignup:
+    Type: String
+    Default: "false"
+    AllowedValues: ["true", "false"]
+    Description: >-
+      Off by default. Every run spends model quota, so an open signup form is
+      a bill rather than a funnel until there is metering behind it.
+  AccessTokenTtlMinutes:
+    Type: Number
+    Default: 60
+  RefreshTokenTtlDays:
+    Type: Number
+    Default: 30
+
+  # ── Application ────────────────────────────────────────────────────────────
+  CorsOrigins:
+    Type: String
+    Default: "http://localhost:3000"
+    Description: Comma-separated origins allowed to call this API.
+  AppEnv:
+    Type: String
+    Default: production
+    AllowedValues: [development, production, test]
+    Description: >-
+      Drives app.core.config. "production" forces AUTH_REQUIRED on and refuses
+      to start while the signing secrets are still the development values.
+  LogLevel:
+    Type: String
+    Default: INFO
+    AllowedValues: [DEBUG, INFO, WARNING, ERROR]
+
+  # ── Networking ─────────────────────────────────────────────────────────────
+  VpcSubnetIds:
+    Type: CommaDelimitedList
+    Default: ""
+    Description: >-
+      Private subnets that can reach RDS. Leave blank only if the database is
+      publicly reachable, which it should not be.
+  VpcSecurityGroupIds:
+    Type: CommaDelimitedList
+    Default: ""
+    Description: Security groups for the function; must be allowed into the RDS group.
+
+  # ── Sizing ─────────────────────────────────────────────────────────────────
+  ApiMemorySize:
+    Type: Number
+    Default: 1024
+    MinValue: 512
+    MaxValue: 3008
+    Description: >-
+      Lambda gives CPU in proportion to memory, and this function imports a
+      large dependency tree at cold start. Below 512 MB the import itself is
+      what users experience as latency.
+  ApiTimeout:
+    Type: Number
+    Default: 30
+    Description: >-
+      API Gateway's own hard limit is 30s, so a longer function timeout only
+      buys an invocation nobody is still waiting for.
+
+Conditions:
+  HasVpcConfig: !Not [!Equals [!Join ["", !Ref VpcSubnetIds], ""]]
+
+Globals:
+  Function:
+    Runtime: python3.12
+    Architectures: [arm64]  # Cheaper per GB-second than x86_64, same code.
+    Tracing: Active
+    Environment:
+      Variables:
+        APP_ENV: !Ref AppEnv
+        LOG_LEVEL: !Ref LogLevel
+        DATABASE_URL: !Ref DatabaseUrl
+        JWT_SECRET: !Ref JwtSecret
+        PASSWORD_PEPPER: !Ref PasswordPepper
+        AUTH_REQUIRED: !Ref AuthRequired
+        ALLOW_PUBLIC_SIGNUP: !Ref AllowPublicSignup
+        ACCESS_TOKEN_TTL_MINUTES: !Ref AccessTokenTtlMinutes
+        REFRESH_TOKEN_TTL_DAYS: !Ref RefreshTokenTtlDays
+        CORS_ORIGINS: !Ref CorsOrigins
+        # No ANTHROPIC_API_KEY, and that is load-bearing rather than an
+        # oversight: both providers bill a subscription through their CLI, and
+        # a visible API key makes the CLI switch to API-key billing and charge
+        # a card. See app.ai.claude_provider._clean_env.
+
+Resources:
+
+  # ── HTTP API ────────────────────────────────────────────────────────────────
+  # HTTP API rather than REST API: cheaper per request, lower latency, and this
+  # stack needs none of what REST adds (request validation, usage plans) -
+  # authorisation is a bearer token the application verifies itself.
+  Api:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: !Ref Environment
+      CorsConfiguration:
+        # Permissive at the edge, enforced in the app from CORS_ORIGINS. Doing
+        # it in one place means the allowlist changes without a stack update.
+        AllowOrigins: ["*"]
+        AllowHeaders: ["Content-Type", "Authorization", "Accept", "Origin"]
+        AllowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+      DefaultRouteSettings:
+        ThrottlingBurstLimit: 100
+        ThrottlingRateLimit: 50
+
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'marketingos-api-${Environment}'
+      Description: MarketingOS platform API
+      CodeUri: ./
+      Handler: lambda_handler.handler
+      MemorySize: !Ref ApiMemorySize
+      Timeout: !Ref ApiTimeout
+      VpcConfig: !If
+        - HasVpcConfig
+        - SubnetIds: !Ref VpcSubnetIds
+          SecurityGroupIds: !Ref VpcSecurityGroupIds
+        - !Ref AWS::NoValue
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+      Events:
+        Proxy:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref Api
+            Path: /{proxy+}
+            Method: ANY
+        Root:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref Api
+            Path: /
+            Method: ANY
+
+  # Declared rather than left to Lambda's implicit creation, which makes an
+  # unbounded group that keeps every line forever.
+  ApiLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/marketingos-api-${Environment}'
+      RetentionInDays: !Ref LogRetentionDays
+
+  # ── Migrations ──────────────────────────────────────────────────────────────
+  # `alembic upgrade head` as its own function, invoked by hand after a deploy.
+  # Deliberately not run on the API's cold start: concurrent containers would
+  # race each other through the same migrations, and a schema change would land
+  # whenever traffic happened to arrive rather than when somebody decided.
+  MigrateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'marketingos-migrate-${Environment}'
+      Description: Runs `alembic upgrade head`. Invoke manually after deploying.
+      CodeUri: ./
+      Handler: migrate.handler
+      MemorySize: 512
+      Timeout: 300
+      VpcConfig: !If
+        - HasVpcConfig
+        - SubnetIds: !Ref VpcSubnetIds
+          SecurityGroupIds: !Ref VpcSecurityGroupIds
+        - !Ref AWS::NoValue
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+
+  MigrateLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/marketingos-migrate-${Environment}'
+      RetentionInDays: !Ref LogRetentionDays
+
+  # ── Alarms ──────────────────────────────────────────────────────────────────
+  # Two alarms, no dashboard. With no users yet the question worth answering is
+  # "is it broken", not "how is it trending", and an alarm nobody has wired to
+  # a notification is still visible in the console.
+  ApiErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub 'marketingos-api-errors-${Environment}'
+      AlarmDescription: The API function is throwing.
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref ApiFunction
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 5
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+
+  ApiThrottleAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub 'marketingos-api-throttles-${Environment}'
+      AlarmDescription: Requests are being throttled - concurrency is too low.
+      Namespace: AWS/Lambda
+      MetricName: Throttles
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref ApiFunction
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+
+Outputs:
+  ApiEndpoint:
+    Description: >-
+      Base URL of the API. The frontend's NEXT_PUBLIC_API_URL is this plus /api.
+    Value: !Sub 'https://${Api}.execute-api.${AWS::Region}.amazonaws.com/${Environment}'
+    Export:
+      Name: !Sub 'marketingos-api-endpoint-${Environment}'
+  ApiFunctionArn:
+    Value: !GetAtt ApiFunction.Arn
+  MigrateFunctionName:
+    Description: Invoke this after every deploy that carries a migration.
+    Value: !Ref MigrateFunction

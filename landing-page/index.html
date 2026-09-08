@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MarketingOS — cold email that can prove what it says</title>
+<meta name="description" content="MarketingOS reads your own material into a set of facts it is allowed to claim, writes your campaign against it, and has every draft read cold by a model that has never seen the brief." />
+<meta name="theme-color" content="#111013" />
+<link rel="canonical" href="https://marketingos.app/" />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="MarketingOS — cold email that can prove what it says" />
+<meta property="og:description" content="Every number, price and quotation in your campaign is licensed against your own material before it ships. Nothing else is allowed on the page." />
+<meta property="og:url" content="https://marketingos.app/" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<!--
+  Deliberately one file, no framework, no build step. It is a page of text with
+  a link on it; a toolchain would add a deploy failure mode and nothing else.
+  The palette is lifted from the product's own dark theme (frontend
+  globals.css) so the console does not feel like a different company.
+
+  CONSOLE_APP_URL is substituted at deploy time by buildspec.yml.
+-->
+<style>
+  :root {
+    --bg: oklch(0.145 0.009 285);
+    --surface: oklch(0.195 0.012 285);
+    --surface-2: oklch(0.17 0.012 285);
+    --text: oklch(0.965 0.005 292);
+    --muted: oklch(0.72 0.015 292);
+    --violet: oklch(0.606 0.25 292.717);
+    --violet-soft: oklch(0.702 0.183 293.541);
+    --line: oklch(1 0 0 / 10%);
+    --radius: 0.75rem;
+    --measure: 68ch;
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 400 clamp(1rem, 0.96rem + 0.2vw, 1.0625rem)/1.65 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* A single violet wash behind the fold. Cheap, and it stops the page from
+     reading as a text file on a dark background. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: 70vh;
+    background:
+      radial-gradient(60rem 32rem at 18% -12%, oklch(0.606 0.25 292.717 / 0.20), transparent 62%),
+      radial-gradient(48rem 28rem at 88% -18%, oklch(0.702 0.183 293.541 / 0.13), transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; width: min(70rem, 100% - 2.5rem); margin-inline: auto; }
+
+  a { color: var(--violet-soft); text-underline-offset: 0.2em; }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--violet-soft);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  .skip {
+    position: absolute; left: -9999px;
+    background: var(--violet); color: #fff; padding: 0.75rem 1rem; border-radius: 8px; z-index: 10;
+  }
+  .skip:focus { left: 1rem; top: 1rem; }
+
+  /* ── Header ─────────────────────────────────────────────────────────── */
+  header { padding-block: 1.5rem; }
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .brand { display: inline-flex; align-items: center; gap: 0.65rem; font-weight: 650; letter-spacing: -0.02em; font-size: 1.0625rem; color: var(--text); text-decoration: none; }
+  .mark {
+    display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 0.6rem;
+    background: oklch(0.606 0.25 292.717 / 0.16);
+    border: 1px solid oklch(0.606 0.25 292.717 / 0.35);
+  }
+  .wordmark span { color: var(--violet-soft); }
+  .bar nav { display: flex; align-items: center; gap: 1.5rem; }
+  .bar nav a { color: var(--muted); text-decoration: none; font-size: 0.9375rem; }
+  .bar nav a:hover { color: var(--text); }
+  @media (max-width: 44rem) { .bar nav .hide-sm { display: none; } }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.7rem 1.15rem; border-radius: 0.65rem;
+    font-weight: 560; font-size: 0.9375rem; text-decoration: none;
+    border: 1px solid transparent; transition: background-color 120ms ease, border-color 120ms ease;
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--violet); color: #fff; }
+  .btn-primary:hover { background: oklch(0.66 0.24 292.717); }
+  .btn-ghost { border-color: var(--line); color: var(--text); background: oklch(1 0 0 / 3%); }
+  .btn-ghost:hover { border-color: oklch(0.606 0.25 292.717 / 0.45); }
+
+  /* ── Hero ───────────────────────────────────────────────────────────── */
+  .hero { padding-block: clamp(3.5rem, 2rem + 7vw, 7rem) clamp(3rem, 2rem + 4vw, 5rem); }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.8125rem; letter-spacing: 0.02em; color: var(--violet-soft);
+    background: oklch(0.606 0.25 292.717 / 0.12);
+    border: 1px solid oklch(0.606 0.25 292.717 / 0.28);
+    padding: 0.35rem 0.75rem; border-radius: 999px;
+  }
+  h1 {
+    margin: 1.5rem 0 0;
+    font-size: clamp(2.25rem, 1.4rem + 3.6vw, 4rem);
+    line-height: 1.06; letter-spacing: -0.035em; font-weight: 660;
+    max-width: 20ch;
+  }
+  h1 em { font-style: normal; color: var(--violet-soft); }
+  .lede { margin: 1.5rem 0 0; max-width: var(--measure); color: var(--muted); font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.1875rem); }
+  .cta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2.25rem; }
+  .cta-note { margin: 1rem 0 0; font-size: 0.875rem; color: var(--muted); }
+
+  /* ── Sections ───────────────────────────────────────────────────────── */
+  section { padding-block: clamp(3rem, 2rem + 4vw, 5.5rem); }
+  .section-head { max-width: var(--measure); }
+  h2 {
+    margin: 0; font-size: clamp(1.65rem, 1.3rem + 1.5vw, 2.25rem);
+    line-height: 1.15; letter-spacing: -0.025em; font-weight: 640;
+  }
+  h2 + p { margin: 1rem 0 0; color: var(--muted); }
+  h3 { margin: 0 0 0.5rem; font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.01em; }
+  h3 + p { margin: 0; color: var(--muted); font-size: 0.9375rem; }
+
+  .rule { border: 0; border-top: 1px solid var(--line); margin: 0; }
+
+  .grid { display: grid; gap: 1rem; margin-top: 2.5rem; }
+  @media (min-width: 52rem) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 44rem) { .grid-2 { grid-template-columns: repeat(2, 1fr); } }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+  }
+
+  /* ── Pipeline ───────────────────────────────────────────────────────── */
+  ol.steps { list-style: none; counter-reset: step; margin: 2.5rem 0 0; padding: 0; display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  ol.steps li { counter-increment: step; background: var(--surface-2); padding: 1.5rem; display: grid; gap: 0.35rem; grid-template-columns: 2.25rem 1fr; align-items: start; }
+  ol.steps li::before {
+    content: counter(step);
+    grid-row: 1 / span 2;
+    display: grid; place-items: center;
+    width: 1.75rem; height: 1.75rem; border-radius: 999px;
+    font-size: 0.8125rem; font-weight: 600; color: var(--violet-soft);
+    background: oklch(0.606 0.25 292.717 / 0.14);
+    border: 1px solid oklch(0.606 0.25 292.717 / 0.3);
+  }
+  ol.steps h3, ol.steps p { grid-column: 2; }
+
+  /* ── Proof strip ────────────────────────────────────────────────────── */
+  .strip { display: grid; gap: 1px; background: var(--line); border-block: 1px solid var(--line); }
+  @media (min-width: 44rem) { .strip { grid-template-columns: repeat(3, 1fr); } }
+  .strip div { background: var(--bg); padding: 1.75rem 1.5rem; }
+  .strip dt { font-size: 0.8125rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+  .strip dd { margin: 0.4rem 0 0; font-size: 1.0625rem; }
+
+  /* ── Honest limits ──────────────────────────────────────────────────── */
+  ul.plain { list-style: none; margin: 1.5rem 0 0; padding: 0; display: grid; gap: 0.85rem; max-width: var(--measure); }
+  ul.plain li { padding-left: 1.6rem; position: relative; color: var(--muted); }
+  ul.plain li::before {
+    content: ""; position: absolute; left: 0; top: 0.6em;
+    width: 0.5rem; height: 0.5rem; border-radius: 999px; background: var(--violet);
+  }
+  ul.plain strong { color: var(--text); font-weight: 560; }
+
+  /* ── Closing CTA ────────────────────────────────────────────────────── */
+  .final {
+    background: linear-gradient(160deg, oklch(0.606 0.25 292.717 / 0.16), oklch(0.195 0.012 285)) ;
+    border: 1px solid oklch(0.606 0.25 292.717 / 0.3);
+    border-radius: 1rem;
+    padding: clamp(2rem, 1.4rem + 3vw, 3.5rem);
+    text-align: center;
+  }
+  .final h2 { max-width: 24ch; margin-inline: auto; }
+  .final p { margin: 1rem auto 0; max-width: 52ch; color: var(--muted); }
+  .final .cta { justify-content: center; }
+
+  footer { padding-block: 2.5rem 3.5rem; color: var(--muted); font-size: 0.875rem; }
+  .foot { display: flex; flex-wrap: wrap; gap: 1rem 1.75rem; align-items: center; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 2rem; }
+  .foot nav { display: flex; flex-wrap: wrap; gap: 1.25rem; }
+  .foot a { color: var(--muted); text-decoration: none; }
+  .foot a:hover { color: var(--text); }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header>
+    <div class="bar">
+      <a class="brand" href="/">
+        <span class="mark" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(0.702 0.183 293.541)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
+        </span>
+        <span class="wordmark">Marketing<span>OS</span></span>
+      </a>
+      <nav aria-label="Primary">
+        <a class="hide-sm" href="#how">How it works</a>
+        <a class="hide-sm" href="#checks">The checks</a>
+        <a class="hide-sm" href="#limits">What it is not</a>
+        <a class="btn btn-primary" href="CONSOLE_APP_URL/login">Sign in</a>
+      </nav>
+    </div>
+  </header>
+</div>
+
+<main id="main">
+  <div class="wrap">
+    <div class="hero">
+      <p class="eyebrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+        Every claim licensed against your own material
+      </p>
+      <h1>Cold email that can <em>prove</em> what it says.</h1>
+      <p class="lede">
+        MarketingOS reads your site, your docs and your decks into a set of facts it is
+        allowed to claim. Then it plans the campaign, writes each email against that
+        set, and blocks anything it cannot source. The number in your subject line
+        came from your material or it does not ship.
+      </p>
+      <div class="cta">
+        <a class="btn btn-primary" href="CONSOLE_APP_URL/login">Open the console</a>
+        <a class="btn btn-ghost" href="#how">See how a run works</a>
+      </div>
+      <p class="cta-note">Invite-only while we are in testing. Sign in with the account you were given.</p>
+    </div>
+  </div>
+
+  <dl class="strip">
+  <div>
+    <dt>Evidence ledger</dt>
+    <dd>Numbers, prices, quotations and URLs are checked back against your sources before a draft can ship.</dd>
+  </div>
+  <div>
+    <dt>Cold reads</dt>
+    <dd>Every draft is read by a model that never saw the brief. If it cannot say what you sell, the draft loses.</dd>
+  </div>
+    <div>
+      <dt>Priced before you buy</dt>
+      <dd>A run tells you what it will cost in model calls before it spends anything.</dd>
+    </div>
+  </dl>
+
+  <div class="wrap">
+
+  <section id="how">
+    <div class="section-head">
+      <h2>A run is a fixed sequence, not an improvisation.</h2>
+      <p>
+        No model decides what happens next. The order is written in code, which is why
+        two runs of the same campaign are comparable and why a failure has a place to
+        be rather than a mood.
+      </p>
+    </div>
+
+    <ol class="steps">
+      <li>
+        <h3>It learns your business once</h3>
+        <p>
+          Your site, PDFs, decks and screenshots are compiled into six artifacts — your
+          evidence, your voice, your audience, what you sell, and what you cannot yet
+          prove. Keyed to a fingerprint of the material, so an unchanged corpus is
+          never paid for twice.
+        </p>
+      </li>
+      <li>
+        <h3>It maps the market you are actually in</h3>
+        <p>
+          Who this buyer is really deciding between, which of your claims are yours
+          alone, and which arguments every competitor is already making — so the
+          campaign does not open with a sentence three other emails also opened with.
+        </p>
+      </li>
+      <li>
+        <h3>It plans the sequence</h3>
+        <p>
+          One strategy pass turns your request into a brief per email: what each one
+          is for, which evidence it spends, and what the reader is meant to do next.
+        </p>
+      </li>
+      <li>
+        <h3>It writes, checks, and rewrites</h3>
+        <p>
+          Each draft goes through deterministic gates, then a cold reader who has never
+          seen the brief, then a critique, then a rewrite of what did not land. Taste
+          sends a draft back; only code stops it shipping.
+        </p>
+      </li>
+    </ol>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="checks">
+    <div class="section-head">
+      <h2>What actually blocks a draft</h2>
+      <p>
+        The difference between a tool that writes marketing copy and a tool you can put
+        your name on is what it refuses to send.
+      </p>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="card">
+        <h3>Unsourced facts</h3>
+        <p>
+          Every figure, price, quotation and link is matched back to your own material.
+          Comparisons ignore typography on purpose — a CMS makes apostrophes curly and
+          a model quotes back in ASCII, and an exact match would drop correct proof.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Emails that never say what you sell</h3>
+        <p>
+          A draft has to name the offering somewhere the reader is actually looking.
+          The sign-off does not count: it answers who sent this, not what this is.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Proof that was never spent</h3>
+        <p>
+          The same check runs in reverse. An email built on a piece of evidence that
+          never made it into the copy is an email that argued from nothing.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Arguments everybody makes</h3>
+        <p>
+          A short, closed list of framings your competitors are already using. If the
+          campaign leans on one of them, it is sent back.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Drafts nobody could decode</h3>
+        <p>
+          The cold reader's one veto. A predicted click-through on an email the panel
+          could not parse is an answer to a different question.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Runs that would waste your money</h3>
+        <p>
+          A campaign with nothing a stranger could check is stopped before the first
+          model call, with the gap named, rather than after it has been paid for.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="limits">
+    <div class="section-head">
+      <h2>What it is not</h2>
+      <p>
+        Worth reading before you sign in, so the first run matches what you expected.
+      </p>
+    </div>
+    <ul class="plain">
+      <li><strong>Not a sending platform.</strong> It writes and checks the campaign; you send it from wherever you already send.</li>
+      <li><strong>Not a list builder.</strong> It qualifies companies against a segment you defined; it does not scrape addresses.</li>
+      <li><strong>Not a one-click button.</strong> It needs your material. Given nothing to work from, it refuses the run rather than inventing something.</li>
+      <li><strong>Not free to run.</strong> Every run spends real model quota, which is why the cost is shown before you spend it and why accounts are invite-only for now.</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="final">
+      <h2>Bring your material. Get a campaign that can defend itself.</h2>
+      <p>
+        Sign in with the account you were given, add a business, and point it at your
+        site. The first campaign starts from everything it learned.
+      </p>
+      <div class="cta">
+        <a class="btn btn-primary" href="CONSOLE_APP_URL/login">Open the console</a>
+      </div>
+    </div>
+  </section>
+  </div>
+</main>
+
+<div class="wrap">
+  <footer>
+    <div class="foot">
+      <p style="margin:0">© <span id="year">2026</span> MarketingOS</p>
+      <nav aria-label="Footer">
+        <a href="CONSOLE_APP_URL/login">Sign in</a>
+        <a href="#how">How it works</a>
+        <a href="#limits">What it is not</a>
+        <a href="mailto:hello@marketingos.app">Contact</a>
+      </nav>
+    </div>
+  </footer>
+</div>
+
+<script>
+  // The only script on the page, and it is one line of politeness: a footer
+  // that says last year is the cheapest possible signal that nobody is home.
+  document.getElementById("year").textContent = String(new Date().getFullYear());
+</script>
+</body>
+</html>

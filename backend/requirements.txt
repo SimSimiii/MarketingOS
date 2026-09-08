@@ -1,0 +1,50 @@
+# Lambda bundle for the platform API.
+#
+# `pyproject.toml` is the source of truth for a developer's environment; this
+# file is what `sam build` installs into the function. It exists separately for
+# two reasons: SAM's Python builder reads requirements.txt and nothing else,
+# and the deployed function needs one dependency a laptop does not (psycopg)
+# while having no use for the dev tooling.
+#
+# Versions are floors rather than pins, matching pyproject. If the built
+# bundle ever approaches Lambda's 250 MB unzipped limit, the document-reading
+# group at the bottom is the block to move into a Lambda Layer - it is the
+# heaviest and the least often changed.
+
+fastapi>=0.115.0
+mangum>=0.19.0
+sqlmodel>=0.0.22
+alembic>=1.14.0
+pydantic[email]>=2.9.0
+pydantic-settings>=2.6.0
+httpx>=0.27.0
+python-multipart>=0.0.12
+jinja2>=3.1.0
+
+# Accounts.
+bcrypt>=4.2.0
+pyjwt>=2.9.0
+
+# Postgres. SQLite is a file, and a Lambda's filesystem is neither shared nor
+# durable - the deployed database is RDS. See docs/deployment.md.
+psycopg[binary]>=3.2.0
+
+# Model access. Needed by every route that takes AIProviderDep, which includes
+# knowledge compilation and the market jobs.
+claude-agent-sdk>=0.2.128
+
+# Reading the user's own material.
+beautifulsoup4>=4.12.0
+markdownify>=0.13.0
+pypdf>=4.0.0
+python-docx>=1.1.0
+langdetect>=1.0.9
+Pillow>=10.0.0
+# Present even though the `tesseract` binary it wraps is not on the Lambda
+# runtime image: `app.services.knowledge_service` imports it at module load,
+# so leaving it out would stop the whole API from starting rather than stop
+# OCR from working. Without the binary, TesseractOCRProvider already raises a
+# readable AnalysisError at the point somebody uploads a screenshot - which is
+# where an unavailable feature should surface. Add a Tesseract layer, or move
+# ingestion to the worker, if screenshots need to be readable in production.
+pytesseract>=0.3.10

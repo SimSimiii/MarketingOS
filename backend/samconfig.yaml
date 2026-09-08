@@ -1,0 +1,68 @@
+version: 0.1
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Deploy configuration for the platform API.
+#
+#  Every value is a ${PLACEHOLDER} resolved at build time by envsubst from the
+#  CodeBuild project's environment - see buildspec.yml. Nothing secret is in
+#  this file, and that is the point: a samconfig with a live database password
+#  in it is a database password in every clone of the repository, in every
+#  fork, and in the history forever.
+#
+#  Set these on the CodeBuild project (the secret ones as Secrets Manager or
+#  Parameter Store references, not as plaintext env vars):
+#
+#    SAM_STACK_NAME        marketingos-api-dev
+#    AWS_DEFAULT_REGION    eu-west-3
+#    S3_PREFIX             marketingos
+#    ENVIRONMENT           dev | staging | prod
+#    APP_ENV               development | production
+#    DATABASE_URL          postgresql+psycopg://user:pass@host:5432/marketingos
+#    JWT_SECRET            python -c "import secrets; print(secrets.token_hex(32))"
+#    PASSWORD_PEPPER       ditto, and permanent once there are users
+#    AUTH_REQUIRED         true
+#    ALLOW_PUBLIC_SIGNUP   false
+#    CORS_ORIGINS          https://app.example.com,https://www.example.com
+#    VPC_SUBNET_IDS        subnet-aaa,subnet-bbb
+#    VPC_SECURITY_GROUPS   sg-aaa
+#    LOG_RETENTION_DAYS    14
+# ─────────────────────────────────────────────────────────────────────────────
+
+ci:
+  global:
+    parameters:
+      stack_name: ${SAM_STACK_NAME}
+      region: ${AWS_DEFAULT_REGION}
+      s3_prefix: ${S3_PREFIX}
+
+  build:
+    parameters:
+      # Never cached. A restored .aws-sam bypasses requirements.txt entirely,
+      # so a dependency change silently ships the previous bundle - which looks
+      # exactly like "my fix did not deploy".
+      cached: false
+      parallel: true
+      use_container: true
+
+  deploy:
+    parameters:
+      capabilities: CAPABILITY_IAM CAPABILITY_NAMED_IAM
+      confirm_changeset: false
+      fail_on_empty_changeset: false
+      resolve_s3: true
+      parameter_overrides:
+        - 'Environment=${ENVIRONMENT}'
+        - 'AppEnv=${APP_ENV}'
+        - 'LogLevel=${LOG_LEVEL}'
+        - 'LogRetentionDays=${LOG_RETENTION_DAYS}'
+        - 'DatabaseUrl=${DATABASE_URL}'
+        - 'JwtSecret=${JWT_SECRET}'
+        - 'PasswordPepper=${PASSWORD_PEPPER}'
+        - 'AuthRequired=${AUTH_REQUIRED}'
+        - 'AllowPublicSignup=${ALLOW_PUBLIC_SIGNUP}'
+        - 'AccessTokenTtlMinutes=${ACCESS_TOKEN_TTL_MINUTES}'
+        - 'RefreshTokenTtlDays=${REFRESH_TOKEN_TTL_DAYS}'
+        - 'CorsOrigins=${CORS_ORIGINS}'
+        - 'VpcSubnetIds=${VPC_SUBNET_IDS}'
+        - 'VpcSecurityGroupIds=${VPC_SECURITY_GROUPS}'
+        - 'ApiMemorySize=${API_MEMORY_SIZE}'

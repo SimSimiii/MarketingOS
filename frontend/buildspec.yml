@@ -1,0 +1,89 @@
+version: 0.2
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  MarketingOS - console, CodeBuild spec.
+#
+#  Builds the Next.js app into a Lambda container image and deploys it behind
+#  CloudFront. Needs privileged mode on the CodeBuild project (it runs Docker)
+#  and the environment variables listed at the top of samconfig.yaml.
+#
+#  Deploy the backend stack first: NEXT_PUBLIC_API_URL is inlined into the
+#  client bundle at image build time, so the API has to have a URL before the
+#  console can be built against it.
+# ─────────────────────────────────────────────────────────────────────────────
+
+env:
+  variables:
+    LOG_RETENTION_DAYS: "14"
+    CONSOLE_MEMORY_SIZE: "1536"
+    CONSOLE_DOMAIN: ""
+    CONSOLE_CERT_ARN: ""
+    S3_PREFIX: marketingos-console
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: "22"
+      python: "3.12"
+    commands:
+      - pip install --upgrade pip
+      - pip install "aws-sam-cli>=1.130.0"
+      - node --version && docker --version
+
+  pre_build:
+    commands:
+      - |
+        for VAR in CONSOLE_STACK_NAME NEXT_PUBLIC_API_URL IMAGE_REPOSITORY; do
+          if [ -z "$(eval echo \$$VAR)" ]; then
+            echo "ERROR: $VAR is not set on this CodeBuild project." && exit 1
+          fi
+        done
+      # The client calls `${NEXT_PUBLIC_API_URL}/brands`, so a URL that does
+      # not end in /api produces a bundle whose every request 404s - and it
+      # would only show up after the image was built and deployed.
+      - |
+        case "$NEXT_PUBLIC_API_URL" in
+          */api) : ;;
+          *) echo "ERROR: NEXT_PUBLIC_API_URL must end with /api." && exit 1 ;;
+        esac
+
+      - cd $CODEBUILD_SRC_DIR/frontend
+      - npm ci
+      # Typecheck and lint here rather than inside the image: a type error
+      # should fail in thirty seconds, not after a multi-stage Docker build.
+      - npx tsc --noEmit
+      - npm run lint
+
+      - rm -rf .aws-sam
+      - envsubst < samconfig.yaml > /tmp/console-samconfig.resolved.yaml
+      - aws ecr get-login-password | docker login --username AWS --password-stdin "${IMAGE_REPOSITORY%%/*}"
+
+  build:
+    commands:
+      - cd $CODEBUILD_SRC_DIR/frontend
+      - sam build --config-file /tmp/console-samconfig.resolved.yaml --config-env ci
+      - |
+        sam deploy \
+          --config-file /tmp/console-samconfig.resolved.yaml \
+          --config-env ci \
+          --no-confirm-changeset \
+          --no-fail-on-empty-changeset
+
+  post_build:
+    commands:
+      - |
+        aws cloudformation describe-stacks --stack-name "${CONSOLE_STACK_NAME}" \
+          --query "Stacks[0].Outputs" --output table
+      # A CloudFront distribution keeps serving the previous render until it is
+      # told otherwise; the pages themselves are uncacheable but the static
+      # chunk manifest is not.
+      - |
+        DIST=$(aws cloudformation describe-stacks --stack-name "${CONSOLE_STACK_NAME}" \
+          --query "Stacks[0].Outputs[?OutputKey=='ConsoleDistributionId'].OutputValue" --output text)
+        aws cloudfront create-invalidation --distribution-id "$DIST" --paths "/*" >/dev/null
+      - echo "Console deployed. Add its URL to the API's CORS_ORIGINS if it changed."
+
+cache:
+  paths:
+    - frontend/node_modules/**/*
+    - /root/.cache/pip/**/*

@@ -1,0 +1,58 @@
+version: 0.1
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Deploy configuration for the back-office.
+#
+#  Placeholders resolved by envsubst from the CodeBuild environment; see
+#  buildspec.yml. Nothing secret is committed.
+#
+#  Set on the CodeBuild project (secrets via Secrets Manager / Parameter Store):
+#
+#    ADMIN_STACK_NAME      marketingos-admin-dev
+#    AWS_DEFAULT_REGION    eu-west-3
+#    S3_PREFIX             marketingos-admin
+#    ENVIRONMENT           dev | staging | prod
+#    DATABASE_URL          the SAME database as the platform stack
+#    ADMIN_JWT_SECRET      must differ from the platform's JWT_SECRET
+#    ADMIN_PWD_PEPPER      must match what bootstrap_admin.py used
+#    ADMIN_CORS_ORIGINS    the AdminConsoleUrl output, after the first deploy
+#    VPC_SUBNET_IDS        subnet-aaa,subnet-bbb
+#    VPC_SECURITY_GROUPS   sg-aaa
+#
+#  First deploy is a two-step: the console URL does not exist until CloudFront
+#  is created, so deploy once with the default ADMIN_CORS_ORIGINS, read
+#  AdminConsoleUrl from the outputs, set it, and deploy again.
+# ─────────────────────────────────────────────────────────────────────────────
+
+ci:
+  global:
+    parameters:
+      stack_name: ${ADMIN_STACK_NAME}
+      region: ${AWS_DEFAULT_REGION}
+      s3_prefix: ${S3_PREFIX}
+
+  build:
+    parameters:
+      cached: false
+      parallel: true
+      use_container: true
+
+  deploy:
+    parameters:
+      capabilities: CAPABILITY_IAM CAPABILITY_NAMED_IAM
+      confirm_changeset: false
+      fail_on_empty_changeset: false
+      resolve_s3: true
+      parameter_overrides:
+        - 'Environment=${ENVIRONMENT}'
+        - 'AppEnv=${APP_ENV}'
+        - 'LogLevel=${LOG_LEVEL}'
+        - 'LogRetentionDays=${LOG_RETENTION_DAYS}'
+        - 'DatabaseUrl=${DATABASE_URL}'
+        - 'AdminJwtSecret=${ADMIN_JWT_SECRET}'
+        - 'AdminPwdPepper=${ADMIN_PWD_PEPPER}'
+        - 'AdminJwtTtlHours=${ADMIN_JWT_TTL_HOURS}'
+        - 'AdminCorsOrigins=${ADMIN_CORS_ORIGINS}'
+        - 'AdminPlanPrices=${ADMIN_PLAN_PRICES}'
+        - 'VpcSubnetIds=${VPC_SUBNET_IDS}'
+        - 'VpcSecurityGroupIds=${VPC_SECURITY_GROUPS}'

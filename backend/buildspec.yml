@@ -1,0 +1,106 @@
+version: 0.2
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  MarketingOS - platform API, CodeBuild spec.
+#
+#  Wire a CodeBuild project to this file with the environment variables listed
+#  at the top of samconfig.yaml. Secrets belong in Secrets Manager or Parameter
+#  Store and reach the build through CodeBuild's `secrets-manager` /
+#  `parameter-store` env types, never as plaintext build variables and never in
+#  a committed file.
+#
+#  The build runs the test suite before it deploys. It costs about ninety
+#  seconds and no model quota - the whole suite is scripted-provider based - and
+#  it is the only thing standing between a bad merge and production.
+# ─────────────────────────────────────────────────────────────────────────────
+
+env:
+  variables:
+    # Defaults for anything the project does not override. The security-
+    # relevant ones (AUTH_REQUIRED, ALLOW_PUBLIC_SIGNUP) default to the safe
+    # side so a half-configured project deploys something closed rather than
+    # something open.
+    APP_ENV: production
+    LOG_LEVEL: INFO
+    LOG_RETENTION_DAYS: "14"
+    AUTH_REQUIRED: "true"
+    ALLOW_PUBLIC_SIGNUP: "false"
+    ACCESS_TOKEN_TTL_MINUTES: "60"
+    REFRESH_TOKEN_TTL_DAYS: "30"
+    API_MEMORY_SIZE: "1024"
+    S3_PREFIX: marketingos
+
+phases:
+  install:
+    runtime-versions:
+      python: "3.12"
+    commands:
+      - pip install --upgrade pip
+      - pip install "aws-sam-cli>=1.130.0"
+
+  pre_build:
+    commands:
+      - echo "SAM $(sam --version) | $(python --version)"
+      # Refuse to deploy a stack that would come up with development secrets.
+      # The application makes the same check at startup, but failing here costs
+      # a build instead of a rollback.
+      - |
+        for VAR in SAM_STACK_NAME DATABASE_URL JWT_SECRET PASSWORD_PEPPER CORS_ORIGINS; do
+          if [ -z "$(eval echo \$$VAR)" ]; then
+            echo "ERROR: $VAR is not set on this CodeBuild project." && exit 1
+          fi
+        done
+      - |
+        case "$DATABASE_URL" in
+          sqlite*) echo "ERROR: DATABASE_URL is SQLite. A Lambda filesystem is not shared or durable." && exit 1 ;;
+        esac
+
+      # The suite runs against the source tree, not the bundle, so it needs the
+      # dev extras rather than requirements.txt.
+      - cd $CODEBUILD_SRC_DIR/backend
+      - pip install -e ".[dev]"
+      - python -m ruff check app tests scripts
+      - python -m pytest tests -q
+
+      # A restored .aws-sam is the classic way to ship a stale bundle: the
+      # builder sees an artifact directory and never reinstalls requirements.
+      - rm -rf .aws-sam
+      - envsubst < samconfig.yaml > /tmp/samconfig.resolved.yaml
+      - echo "Deploying ${SAM_STACK_NAME} to ${AWS_DEFAULT_REGION} (env=${ENVIRONMENT})"
+
+  build:
+    commands:
+      - cd $CODEBUILD_SRC_DIR/backend
+      # --use-container builds the dependencies against the Lambda image, which
+      # matters for anything with a compiled wheel (psycopg, Pillow, bcrypt):
+      # a wheel built on the CodeBuild host is the wrong ABI for the arm64
+      # runtime and fails at import, not at build.
+      - sam build --config-file /tmp/samconfig.resolved.yaml --config-env ci
+      - |
+        sam deploy \
+          --config-file /tmp/samconfig.resolved.yaml \
+          --config-env ci \
+          --no-confirm-changeset \
+          --no-fail-on-empty-changeset
+
+  post_build:
+    commands:
+      # Migrations run as their own function, inside the VPC, after the deploy.
+      # Failing the build when they fail is deliberate: a deployed API against
+      # an un-migrated database is worse than a build that went red.
+      - |
+        MIGRATOR=$(aws cloudformation describe-stacks \
+          --stack-name "${SAM_STACK_NAME}" \
+          --query "Stacks[0].Outputs[?OutputKey=='MigrateFunctionName'].OutputValue" \
+          --output text)
+        echo "Running migrations via ${MIGRATOR}"
+        aws lambda invoke --function-name "${MIGRATOR}" --payload '{}' /tmp/migrate.json >/dev/null
+        cat /tmp/migrate.json
+        python -c "import json,sys; sys.exit(0 if json.load(open('/tmp/migrate.json')).get('ok') else 1)"
+      - |
+        aws cloudformation describe-stacks --stack-name "${SAM_STACK_NAME}" \
+          --query "Stacks[0].Outputs" --output table
+
+cache:
+  paths:
+    - /root/.cache/pip/**/*

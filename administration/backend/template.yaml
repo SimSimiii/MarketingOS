@@ -1,0 +1,279 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: MarketingOS - administration back-office (isolated stack)
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Fully isolated from the platform stack. Its own API, its own function, its
+#  own bucket, its own distribution, its own signing secret. It shares exactly
+#  one thing with the product: the database, which is where the truth about a
+#  customer lives.
+#
+#  That isolation is the security model. A bug in the product's routing cannot
+#  expose this surface, a stolen customer token cannot be replayed against it,
+#  and the console can be taken offline without touching the thing customers
+#  are using.
+# ─────────────────────────────────────────────────────────────────────────────
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+
+  LogRetentionDays:
+    Type: Number
+    Default: 30
+    AllowedValues: [1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365]
+    Description: >-
+      Longer than the platform's by default. These logs are the record of who
+      operated on which customer account.
+
+  DatabaseUrl:
+    Type: String
+    NoEcho: true
+    Description: The SAME database as the platform stack.
+
+  AdminJwtSecret:
+    Type: String
+    NoEcho: true
+    Description: >-
+      Signs operator tokens. MUST differ from the platform's JWT_SECRET - two
+      systems that accept each other's tokens are one system.
+  AdminPwdPepper:
+    Type: String
+    NoEcho: true
+    Description: >-
+      Folded into operator password hashes. Must match the value used when
+      bootstrap_admin.py wrote them, or no operator can sign in.
+  AdminJwtTtlHours:
+    Type: Number
+    Default: 12
+
+  AdminCorsOrigins:
+    Type: String
+    Default: "http://localhost:3001"
+    Description: >-
+      The console's own origin, and nothing else. Set it to the CloudFront
+      domain this stack outputs, after the first deploy.
+  AdminPlanPrices:
+    Type: String
+    Default: '{"free": 0, "pro": 49, "business": 149}'
+    Description: >-
+      Monthly price per plan, used only for the revenue estimate on the
+      overview. Here rather than in the product database so a price change is
+      a parameter update rather than a migration.
+
+  AppEnv:
+    Type: String
+    Default: production
+    AllowedValues: [development, production, test]
+  LogLevel:
+    Type: String
+    Default: INFO
+    AllowedValues: [DEBUG, INFO, WARNING, ERROR]
+
+  VpcSubnetIds:
+    Type: CommaDelimitedList
+    Default: ""
+    Description: Private subnets that can reach RDS.
+  VpcSecurityGroupIds:
+    Type: CommaDelimitedList
+    Default: ""
+
+Conditions:
+  HasVpcConfig: !Not [!Equals [!Join ["", !Ref VpcSubnetIds], ""]]
+
+Globals:
+  Function:
+    Runtime: python3.12
+    Architectures: [arm64]
+    Tracing: Active
+    Environment:
+      Variables:
+        APP_ENV: !Ref AppEnv
+        ENVIRONMENT: !Ref Environment
+        LOG_LEVEL: !Ref LogLevel
+        DATABASE_URL: !Ref DatabaseUrl
+        ADMIN_JWT_SECRET: !Ref AdminJwtSecret
+        ADMIN_PWD_PEPPER: !Ref AdminPwdPepper
+        ADMIN_JWT_TTL_HOURS: !Ref AdminJwtTtlHours
+        ADMIN_CORS_ORIGINS: !Ref AdminCorsOrigins
+        ADMIN_PLAN_PRICES: !Ref AdminPlanPrices
+
+Resources:
+
+  AdminApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: !Ref Environment
+      CorsConfiguration:
+        # Real enforcement is in the app, from ADMIN_CORS_ORIGINS.
+        AllowOrigins: ["*"]
+        AllowHeaders: ["Content-Type", "Authorization", "Accept", "Origin"]
+        AllowMethods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"]
+      DefaultRouteSettings:
+        # An order of magnitude below the platform's. This console is used by a
+        # handful of people; anything approaching these numbers is not them.
+        ThrottlingBurstLimit: 20
+        ThrottlingRateLimit: 10
+
+  AdminFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'marketingos-admin-api-${Environment}'
+      Description: MarketingOS back-office API
+      CodeUri: ./
+      Handler: admin.main.lambda_handler
+      MemorySize: 512
+      Timeout: 30
+      VpcConfig: !If
+        - HasVpcConfig
+        - SubnetIds: !Ref VpcSubnetIds
+          SecurityGroupIds: !Ref VpcSecurityGroupIds
+        - !Ref AWS::NoValue
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+      Events:
+        Proxy:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref AdminApi
+            Path: /{proxy+}
+            Method: ANY
+        Root:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref AdminApi
+            Path: /
+            Method: ANY
+
+  AdminLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/marketingos-admin-api-${Environment}'
+      RetentionInDays: !Ref LogRetentionDays
+
+  # ── Console hosting: private bucket, CloudFront with OAC ────────────────────
+  AdminFrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'marketingos-admin-console-${AWS::AccountId}-${Environment}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  AdminOriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub 'marketingos-admin-oac-${Environment}'
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  # Next.js exports a static site whose deep links are directories. S3's REST
+  # endpoint serves keys, not directories, so /users resolves to nothing unless
+  # something appends index.html - and a dynamic route like /users/{uuid} has
+  # to collapse onto the one page that was actually exported.
+  AdminUrlRewriteFunction:
+    Type: AWS::CloudFront::Function
+    Properties:
+      Name: !Sub 'marketingos-admin-url-rewrite-${Environment}'
+      AutoPublish: true
+      FunctionConfig:
+        Comment: Deep-link rewrite for the admin static export
+        Runtime: cloudfront-js-2.0
+      FunctionCode: |
+        function handler(event) {
+          var request = event.request;
+          var uri = request.uri;
+          var uuid = /^(\/users\/)[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(\/|$)/;
+          uri = uri.replace(uuid, '$1_$2');
+          if (!uri.match(/\.[a-zA-Z0-9]+$/)) {
+            uri = uri.replace(/\/$/, '') + '/index.html';
+          }
+          request.uri = uri;
+          return request;
+        }
+
+  AdminDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: !Sub 'MarketingOS back-office (${Environment})'
+        DefaultRootObject: index.html
+        # PriceClass_100 is North America and Europe. A console used by a
+        # handful of operators does not need edge locations in Asia.
+        PriceClass: PriceClass_100
+        HttpVersion: http2
+        Origins:
+          - Id: AdminS3Origin
+            DomainName: !GetAtt AdminFrontendBucket.RegionalDomainName
+            OriginAccessControlId: !Ref AdminOriginAccessControl
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+        DefaultCacheBehavior:
+          TargetOriginId: AdminS3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD, OPTIONS]
+          # CachingDisabled (AWS managed). The console is low-traffic and
+          # always-fresh matters more than a cache hit here.
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+          # SecurityHeadersPolicy (AWS managed): HSTS, nosniff, frame-deny.
+          ResponseHeadersPolicyId: 67f7725c-6f97-4210-82d7-5512b31e9d03
+          FunctionAssociations:
+            - EventType: viewer-request
+              FunctionARN: !GetAtt AdminUrlRewriteFunction.FunctionMetadata.FunctionARN
+        CustomErrorResponses:
+          # S3 returns 403 for a missing key when the bucket is private, so an
+          # unknown path would otherwise read as "forbidden" rather than "not
+          # a page".
+          - ErrorCode: 403
+            ResponseCode: 404
+            ResponsePagePath: /404.html
+          - ErrorCode: 404
+            ResponseCode: 404
+            ResponsePagePath: /404.html
+
+  AdminFrontendBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref AdminFrontendBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowCloudFrontServicePrincipalRead
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub '${AdminFrontendBucket.Arn}/*'
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${AdminDistribution}'
+
+Outputs:
+  AdminApiEndpoint:
+    Description: Set the console's NEXT_PUBLIC_ADMIN_API_URL to this.
+    Value: !Sub 'https://${AdminApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}'
+  AdminConsoleUrl:
+    Description: >-
+      The back-office. Put this in ADMIN_CORS_ORIGINS and redeploy, or the
+      browser will refuse every call it makes.
+    Value: !Sub 'https://${AdminDistribution.DomainName}'
+  AdminFrontendBucketName:
+    Description: FRONTEND_S3_BUCKET for the console buildspec.
+    Value: !Ref AdminFrontendBucket
+  AdminDistributionId:
+    Description: CLOUDFRONT_DISTRIBUTION_ID for the console buildspec.
+    Value: !Ref AdminDistribution

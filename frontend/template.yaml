@@ -1,0 +1,184 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: MarketingOS - console (Next.js SSR on Lambda, behind CloudFront)
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Why this is a container image and not a bucket.
+#
+#  The console renders on the server: its pages are server components that call
+#  the API with the signed-in caller's cookie. A static export would render
+#  them at build time, before anyone had signed in - which is why the
+#  back-office (administration/frontend) can be a static export and this cannot.
+#
+#  So Next runs unmodified inside a Lambda container, fronted by the AWS Lambda
+#  Web Adapter, which turns an invocation into an ordinary HTTP request. See
+#  the Dockerfile.
+#
+#  CloudFront sits in front for two reasons: a Function URL has no CDN, and
+#  `/_next/static/*` should be cached at the edge rather than waking a function.
+# ─────────────────────────────────────────────────────────────────────────────
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+  LogRetentionDays:
+    Type: Number
+    Default: 14
+    AllowedValues: [1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365]
+  ApiUrl:
+    Type: String
+    Description: >-
+      Public base URL of the platform API, ending in /api. Baked into the
+      client bundle at image build time, so changing it needs a rebuild rather
+      than a stack update.
+  MemorySize:
+    Type: Number
+    Default: 1536
+    MinValue: 512
+    MaxValue: 3008
+    Description: >-
+      Lambda scales CPU with memory, and a server-rendered page is CPU work.
+      Below about 1 GB the render, not the API call, is what the reader waits
+      for.
+  DomainName:
+    Type: String
+    Default: ""
+    Description: e.g. app.example.com. Blank uses the CloudFront domain.
+  CertificateArn:
+    Type: String
+    Default: ""
+    Description: ACM certificate ARN, which MUST be in us-east-1.
+
+Conditions:
+  HasDomain: !And
+    - !Not [!Equals [!Ref DomainName, ""]]
+    - !Not [!Equals [!Ref CertificateArn, ""]]
+
+Resources:
+
+  ConsoleFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'marketingos-console-${Environment}'
+      Description: MarketingOS console (Next.js SSR)
+      PackageType: Image
+      MemorySize: !Ref MemorySize
+      Timeout: 30
+      Architectures: [x86_64]
+      Environment:
+        Variables:
+          # Read by the Next server at runtime. The client half of the app got
+          # its copy inlined at build time - see the Dockerfile's ARGs.
+          NEXT_PUBLIC_API_URL: !Ref ApiUrl
+          NEXT_PUBLIC_AUTH_REQUIRED: "true"
+          NODE_ENV: production
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      FunctionUrlConfig:
+        # No IAM auth: CloudFront is the only thing that should call this, and
+        # the OAC below signs its requests. AuthType NONE with an unsigned
+        # Function URL would leave the origin publicly reachable, bypassing the
+        # CDN and every header policy on it.
+        AuthType: AWS_IAM
+        InvokeMode: BUFFERED
+    Metadata:
+      DockerContext: ./
+      Dockerfile: Dockerfile
+      DockerTag: !Sub 'console-${Environment}'
+      DockerBuildArgs:
+        NEXT_PUBLIC_API_URL: !Ref ApiUrl
+        NEXT_PUBLIC_AUTH_REQUIRED: "true"
+
+  ConsoleLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/marketingos-console-${Environment}'
+      RetentionInDays: !Ref LogRetentionDays
+
+  # CloudFront signs its calls to the Function URL with SigV4, which is what
+  # lets the URL itself stay closed to everyone else.
+  ConsoleOriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub 'marketingos-console-oac-${Environment}'
+        OriginAccessControlOriginType: lambda
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  ConsoleFunctionUrlPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ConsoleFunction
+      Action: lambda:InvokeFunctionUrl
+      Principal: cloudfront.amazonaws.com
+      FunctionUrlAuthType: AWS_IAM
+      SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${ConsoleDistribution}'
+
+  ConsoleDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: !Sub 'MarketingOS console (${Environment})'
+        HttpVersion: http2and3
+        IPV6Enabled: true
+        PriceClass: PriceClass_100
+        Aliases: !If [HasDomain, [!Ref DomainName], !Ref 'AWS::NoValue']
+        ViewerCertificate: !If
+          - HasDomain
+          - AcmCertificateArn: !Ref CertificateArn
+            SslSupportMethod: sni-only
+            MinimumProtocolVersion: TLSv1.2_2021
+          - CloudFrontDefaultCertificate: true
+        Origins:
+          - Id: ConsoleLambdaOrigin
+            # !GetAtt on a Function URL returns https://<id>.lambda-url...,
+            # and an origin wants the host on its own.
+            DomainName: !Select [2, !Split ["/", !GetAtt ConsoleFunctionUrl.FunctionUrl]]
+            OriginAccessControlId: !Ref ConsoleOriginAccessControl
+            CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+              OriginSSLProtocols: [TLSv1.2]
+        DefaultCacheBehavior:
+          TargetOriginId: ConsoleLambdaOrigin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD, OPTIONS, PUT, POST, PATCH, DELETE]
+          Compress: true
+          # CachingDisabled: every page here is per-account. Caching a rendered
+          # page at the edge would serve one customer's workspace to the next
+          # visitor, which is the worst bug this stack could have.
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+          # AllViewerExceptHostHeader: forwards cookies and the Authorization
+          # header to the origin, without the Host header that would break
+          # SigV4 against the Function URL.
+          OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac
+        CacheBehaviors:
+          # Build output is content-hashed, so it can be cached hard and never
+          # needs to reach the function twice.
+          - PathPattern: /_next/static/*
+            TargetOriginId: ConsoleLambdaOrigin
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods: [GET, HEAD]
+            Compress: true
+            # CachingOptimized
+            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+            OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac
+
+Outputs:
+  ConsoleUrl:
+    Description: >-
+      Where the product lives. Put this in the API's CORS_ORIGINS and in the
+      landing page's CONSOLE_APP_URL.
+    Value: !If
+      - HasDomain
+      - !Sub 'https://${DomainName}'
+      - !Sub 'https://${ConsoleDistribution.DomainName}'
+  ConsoleFunctionArn:
+    Value: !GetAtt ConsoleFunction.Arn
+  ConsoleDistributionId:
+    Value: !Ref ConsoleDistribution
