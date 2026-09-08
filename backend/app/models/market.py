@@ -28,6 +28,14 @@ the same reason a scan is: the useful question a month from now is which
 segments the market added and which the map dropped, and only a store that
 keeps both can answer it.
 
+A **user audience** is a buyer the user described themselves, and it is rows
+for exactly the reason a rival is: it is a decision, and a decision must
+survive the next remap. A refresh replaces the compiled map wholesale, so an
+audience written into that payload would be gone the first time somebody
+pressed rescan - along with the research, the prospects and the campaigns
+pointing at its name. These are merged onto the map on read instead, in front
+of it, because on the subject of their own buyer the user is the authority.
+
 A **prospect** is a named organisation, and it is rows rather than part of the
 map because the user works on it. They dismiss the one that is obviously too
 big and keep the eleven they will write to on Monday, and those decisions must
@@ -146,6 +154,26 @@ class AudienceMapRow(SQLModel, table=True):
     segments: int = 0
     unobvious_segments: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class UserAudienceRow(SQLModel, table=True):
+    """One buyer the user described by hand, rather than one that was found."""
+
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
+    brand_id: UUID = Field(foreign_key="brand.id", index=True)
+    #: Case- and whitespace-folded name, and the address for every edit. A
+    #: rename is a delete plus an add on purpose: research versions, prospect
+    #: rows and campaigns all point at an audience by the name the user
+    #: recognises, and renaming in place would orphan all three at once.
+    audience_key: str = Field(index=True)
+    name: str
+    #: Serialized app.market.demand.AudienceSegment. A payload rather than a
+    #: column per field because nothing queries across these values - they are
+    #: read whole, merged whole, and shaped by the same Pydantic model that
+    #: versions every other market payload.
+    payload: dict = Field(default_factory=dict, sa_column=Column(JSON))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class AudienceResearchRow(SQLModel, table=True):

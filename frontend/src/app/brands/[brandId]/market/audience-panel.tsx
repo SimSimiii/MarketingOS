@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +27,7 @@ import type {
   RelevanceEvidence,
   RelevanceStatus as RelevanceDossierStatus,
   SegmentKind,
+  UserAudienceInput,
 } from "@/lib/types";
 
 /** What each kind of segment is, in one phrase.
@@ -976,6 +978,466 @@ function DossierResult({
   );
 }
 
+/** The audience form.
+ *
+ * Four required lines, and they are four rather than one free-text paragraph
+ * because they are exactly what the backend's admission check reads as a
+ * situation rather than a category. `signals` and `where` sit beside them
+ * marked for what they unlock: they are what a research pass actually spends
+ * its search on, and an audience without them saves fine and comes back with a
+ * receipt saying so. That receipt is the same code path a mapped audience goes
+ * through, which is why nothing here re-implements the rule. */
+const KIND_OPTIONS: SegmentKind[] = [
+  "core",
+  "adjacent",
+  "influencer",
+  "channel",
+  "triggered",
+  "unintended",
+];
+
+const SOPHISTICATION_OPTIONS: { value: string; label: string }[] = [
+  { value: "unaware", label: "Does not know they have the problem" },
+  { value: "problem_aware", label: "Knows the problem, not the solutions" },
+  { value: "solution_aware", label: "Knows solutions like this exist" },
+  { value: "product_aware", label: "Knows this product" },
+  { value: "most_aware", label: "Ready to decide" },
+];
+
+type AudienceDraft = Record<string, string>;
+
+const EMPTY_DRAFT: AudienceDraft = {
+  name: "",
+  organization: "",
+  workflow: "",
+  need: "",
+  signals: "",
+  where: "",
+  kind: "core",
+  sophistication: "problem_aware",
+  who: "",
+  why_them: "",
+  trigger: "",
+  pains: "",
+  objection: "",
+  angle: "",
+  population: "",
+  buyer_role: "",
+  user_role: "",
+  current_alternative: "",
+};
+
+/** One line per entry, blanks dropped. Blank entries are typing rather than
+ * content, and admission counts signals — a blank one would count. */
+function listOf(value: string): string[] {
+  return value
+    .split("\n")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function draftOf(segment: MappedSegment): AudienceDraft {
+  return {
+    ...EMPTY_DRAFT,
+    name: segment.name,
+    organization: segment.organization,
+    workflow: segment.workflow,
+    need: segment.need,
+    signals: segment.signals.join("\n"),
+    where: segment.where.join("\n"),
+    kind: segment.kind,
+    sophistication: segment.sophistication,
+    who: segment.who,
+    why_them: segment.why_them,
+    trigger: segment.trigger,
+    pains: segment.pains.join("\n"),
+    objection: segment.objection,
+    angle: segment.angle,
+    population: segment.population,
+    buyer_role: segment.buyer_role,
+    user_role: segment.user_role,
+    current_alternative: segment.current_alternative,
+  };
+}
+
+function requestOf(draft: AudienceDraft): Partial<UserAudienceInput> {
+  return {
+    ...draft,
+    kind: draft.kind as SegmentKind,
+    signals: listOf(draft.signals),
+    where: listOf(draft.where),
+    pains: listOf(draft.pains),
+  } as Partial<UserAudienceInput>;
+}
+
+const FIELD_CLASS = "w-full rounded-md border bg-background p-2 text-sm";
+
+function AudienceField({
+  label,
+  hint,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="block space-y-1">
+      <span className="text-sm font-medium">{label}</span>
+      {children}
+      {hint && <span className="block text-xs text-muted-foreground">{hint}</span>}
+    </label>
+  );
+}
+
+function AudienceForm({
+  brandId,
+  initial,
+  onSaved,
+  onCancel,
+}: {
+  brandId: string;
+  initial?: MappedSegment;
+  onSaved: () => void;
+  onCancel: () => void;
+}) {
+  const [draft, setDraft] = useState<AudienceDraft>(
+    initial ? draftOf(initial) : EMPTY_DRAFT,
+  );
+  const [saving, setSaving] = useState(false);
+  const editing = Boolean(initial);
+  const ready = ["name", "organization", "workflow", "need"].every((key) =>
+    draft[key].trim(),
+  );
+
+  function set(key: string) {
+    return (
+      event: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >,
+    ) => setDraft((current) => ({ ...current, [key]: event.target.value }));
+  }
+
+  async function submit(event: React.FormEvent) {
+    event.preventDefault();
+    if (!ready || saving) return;
+    setSaving(true);
+    try {
+      const body = requestOf(draft);
+      const saved = editing
+        ? await api.updateAudience(brandId, body)
+        : await api.addAudience(brandId, body);
+      // The receipt, not a cheerful confirmation: the useful thing to know on
+      // save is whether this can be researched yet, and if not, exactly what
+      // is missing. The words are the backend's own.
+      if (saved.researchable) {
+        toast.success(`${saved.name} is ready to research.`);
+      } else {
+        toast(`${saved.name} saved.`, {
+          description: saved.researchability_reasons.join(" "),
+        });
+      }
+      onSaved();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Could not save that audience",
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <form onSubmit={submit} className="space-y-4">
+      <div className="space-y-3">
+        <AudienceField
+          label="Call them"
+          hint="The name research, prospect lists and campaigns will know them by."
+        >
+          <input
+            className={FIELD_CLASS}
+            value={draft.name}
+            maxLength={120}
+            disabled={saving || editing}
+            placeholder="Shopify warranty desks"
+            onChange={set("name")}
+          />
+        </AudienceField>
+        {editing && (
+          <p className="text-xs text-muted-foreground">
+            The name stays as it is. Research versions, prospects and campaigns all
+            point at this audience by name, and renaming it would orphan them.
+          </p>
+        )}
+        <AudienceField
+          label="Who they are"
+          hint="A situation, not a category. Not “e-commerce”."
+        >
+          <input
+            className={FIELD_CLASS}
+            value={draft.organization}
+            maxLength={400}
+            disabled={saving}
+            placeholder="three-person Shopify stores selling refurbished laptops"
+            onChange={set("organization")}
+          />
+        </AudienceField>
+        <AudienceField
+          label="What they are doing when this matters"
+          hint="The work the problem happens inside."
+        >
+          <input
+            className={FIELD_CLASS}
+            value={draft.workflow}
+            maxLength={400}
+            disabled={saving}
+            placeholder="answering warranty questions by hand out of a shared inbox"
+            onChange={set("workflow")}
+          />
+        </AudienceField>
+        <AudienceField label="What they need to change about it">
+          <input
+            className={FIELD_CLASS}
+            value={draft.need}
+            maxLength={400}
+            disabled={saving}
+            placeholder="cut the time each warranty ticket takes"
+            onChange={set("need")}
+          />
+        </AudienceField>
+      </div>
+
+      <div className="space-y-3 rounded-lg border border-dashed p-3">
+        <p className="text-xs text-muted-foreground">
+          These two are what a research pass spends its search on. Leave them empty
+          and this saves anyway — it just cannot be researched or prospected until
+          somebody fills them in.
+        </p>
+        <AudienceField
+          label="How you recognise one from the outside"
+          hint="One per line. Something you could look at without asking them."
+        >
+          <textarea
+            className={FIELD_CLASS}
+            rows={2}
+            value={draft.signals}
+            disabled={saving}
+            placeholder="their storefront has a published warranty page with an email address"
+            onChange={set("signals")}
+          />
+        </AudienceField>
+        <AudienceField
+          label="Where they are findable in bulk"
+          hint={
+            "One per line. A named directory, register or exhibitor list — " +
+            "“LinkedIn” on its own is refused."
+          }
+        >
+          <textarea
+            className={FIELD_CLASS}
+            rows={2}
+            value={draft.where}
+            disabled={saving}
+            placeholder="Shopify app store reviews for warranty apps"
+            onChange={set("where")}
+          />
+        </AudienceField>
+      </div>
+
+      <details className="rounded-lg border p-3">
+        <summary className="cursor-pointer text-sm font-medium">
+          More detail (optional)
+        </summary>
+        <p className="mt-2 text-xs text-muted-foreground">
+          None of this is needed to save or to research. It is what makes a campaign
+          to this buyer read differently from a campaign to any other, and it can be
+          added later.
+        </p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <AudienceField label="How you arrived at them">
+            <select
+              className={FIELD_CLASS}
+              value={draft.kind}
+              disabled={saving}
+              onChange={set("kind")}
+            >
+              {KIND_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {KIND_LABELS[option]}
+                </option>
+              ))}
+            </select>
+          </AudienceField>
+          <AudienceField label="How much they already know">
+            <select
+              className={FIELD_CLASS}
+              value={draft.sophistication}
+              disabled={saving}
+              onChange={set("sophistication")}
+            >
+              {SOPHISTICATION_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </AudienceField>
+          <AudienceField label="One of them, in a sentence">
+            <input
+              className={FIELD_CLASS}
+              value={draft.who}
+              maxLength={600}
+              disabled={saving}
+              onChange={set("who")}
+            />
+          </AudienceField>
+          <AudienceField label="Why this product matters to them">
+            <input
+              className={FIELD_CLASS}
+              value={draft.why_them}
+              maxLength={600}
+              disabled={saving}
+              onChange={set("why_them")}
+            />
+          </AudienceField>
+          <AudienceField label="What starts them looking">
+            <input
+              className={FIELD_CLASS}
+              value={draft.trigger}
+              maxLength={400}
+              disabled={saving}
+              onChange={set("trigger")}
+            />
+          </AudienceField>
+          <AudienceField label="The line to open on">
+            <input
+              className={FIELD_CLASS}
+              value={draft.angle}
+              maxLength={600}
+              disabled={saving}
+              onChange={set("angle")}
+            />
+          </AudienceField>
+          <AudienceField label="What it costs them today" hint="One per line.">
+            <textarea
+              className={FIELD_CLASS}
+              rows={2}
+              value={draft.pains}
+              disabled={saving}
+              onChange={set("pains")}
+            />
+          </AudienceField>
+          <AudienceField label="Why they would say no">
+            <input
+              className={FIELD_CLASS}
+              value={draft.objection}
+              maxLength={600}
+              disabled={saving}
+              onChange={set("objection")}
+            />
+          </AudienceField>
+          <AudienceField label="Who signs" hint="The decision maker.">
+            <input
+              className={FIELD_CLASS}
+              value={draft.buyer_role}
+              maxLength={200}
+              disabled={saving}
+              onChange={set("buyer_role")}
+            />
+          </AudienceField>
+          <AudienceField label="Who uses it day to day">
+            <input
+              className={FIELD_CLASS}
+              value={draft.user_role}
+              maxLength={200}
+              disabled={saving}
+              onChange={set("user_role")}
+            />
+          </AudienceField>
+          <AudienceField label="What they do instead today">
+            <input
+              className={FIELD_CLASS}
+              value={draft.current_alternative}
+              maxLength={400}
+              disabled={saving}
+              onChange={set("current_alternative")}
+            />
+          </AudienceField>
+          <AudienceField label="How many of them" hint="Vague is fine; invented precision is not.">
+            <input
+              className={FIELD_CLASS}
+              value={draft.population}
+              maxLength={200}
+              disabled={saving}
+              placeholder="roughly 12,000 UK stores"
+              onChange={set("population")}
+            />
+          </AudienceField>
+        </div>
+      </details>
+
+      <div className="flex items-center gap-2">
+        <Button type="submit" size="sm" disabled={!ready || saving}>
+          {saving ? "Saving…" : editing ? "Save changes" : "Add audience"}
+        </Button>
+        <Button type="button" size="sm" variant="ghost" disabled={saving} onClick={onCancel}>
+          Cancel
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+/** The way in for somebody who already knows who they sell to.
+ *
+ * Open by default when nothing has been mapped, because that is the state
+ * where describing the buyer beats buying a search to be told what the user
+ * already knew. */
+function AudienceAdder({
+  brandId,
+  defaultOpen,
+  onSaved,
+}: {
+  brandId: string;
+  defaultOpen: boolean;
+  onSaved: () => void;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-start justify-between gap-4">
+        <div>
+          <CardTitle className="text-base">Add an audience yourself</CardTitle>
+          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+            Four lines, no model call, no search. What you add stays on this map
+            through every rescan, and it is researched, prospected and written to
+            exactly like an audience the search found.
+          </p>
+        </div>
+        {!open && (
+          <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
+            Add an audience
+          </Button>
+        )}
+      </CardHeader>
+      {open && (
+        <CardContent>
+          <AudienceForm
+            brandId={brandId}
+            onSaved={() => {
+              setOpen(false);
+              onSaved();
+            }}
+            onCancel={() => setOpen(false)}
+          />
+        </CardContent>
+      )}
+    </Card>
+  );
+}
+
+
 /** One mapped buyer.
  *
  * `basis` is given as much room as the rate, deliberately. The number on its
@@ -983,6 +1445,7 @@ function DossierResult({
  * the reasoning that produced it is one they can correct in ten seconds — and
  * they are the person in the room who actually knows this market. */
 function SegmentCard({
+  brandId,
   segment,
   selected,
   prospects,
@@ -992,8 +1455,10 @@ function SegmentCard({
   onProspect,
   onResearch,
   onDossier,
+  onChanged,
   busy,
 }: {
+  brandId: string;
   segment: MappedSegment;
   selected: boolean;
   prospects: number;
@@ -1003,9 +1468,50 @@ function SegmentCard({
   onProspect: () => void;
   onResearch: () => void;
   onDossier: (rebuild: boolean) => void;
+  onChanged: () => void;
   busy: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const [removing, setRemoving] = useState(false);
+  const mine = segment.added_by === "user";
+
+  async function remove() {
+    setRemoving(true);
+    try {
+      await api.deleteAudience(brandId, segment.name);
+      toast.success(`${segment.name} removed. Its research is still on file.`);
+      onChanged();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Could not remove that audience",
+      );
+      setRemoving(false);
+      setConfirming(false);
+    }
+  }
+
+  if (editing) {
+    return (
+      <Card className="ring-1 ring-primary/50">
+        <CardHeader>
+          <CardTitle className="text-base">Editing {segment.name}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <AudienceForm
+            brandId={brandId}
+            initial={segment}
+            onSaved={() => {
+              setEditing(false);
+              onChanged();
+            }}
+            onCancel={() => setEditing(false)}
+          />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className={cn(selected && "ring-1 ring-primary/50")}>
@@ -1018,6 +1524,7 @@ function SegmentCard({
           </p>
         </button>
         <div className="flex shrink-0 flex-col items-end gap-1">
+          {mine && <Badge variant="outline">You added this</Badge>}
           <Badge
             variant={segment.researchable ? "secondary" : "destructive"}
             className="capitalize"
@@ -1031,7 +1538,9 @@ function SegmentCard({
       </CardHeader>
 
       <CardContent className="space-y-3 text-sm">
-        {segment.who && <p className="text-foreground/90">{segment.who}</p>}
+        {(segment.who || segment.organization) && (
+          <p className="text-foreground/90">{segment.who || segment.organization}</p>
+        )}
         <p className="text-xs text-muted-foreground">
           Product compatibility: {segment.assessment.compatibility} · Need evidence: {segment.assessment.evidence_strength}
         </p>
@@ -1046,6 +1555,13 @@ function SegmentCard({
         </Button>
         {expanded && (
           <div className="space-y-3">
+            {segment.organization && (
+              <p className="text-xs">Who they are: {segment.organization}</p>
+            )}
+            {segment.workflow && (
+              <p className="text-xs">What they are doing: {segment.workflow}</p>
+            )}
+            {segment.need && <p className="text-xs">What they need: {segment.need}</p>}
             {segment.user_role && <p className="text-xs">User: {segment.user_role}</p>}
             {segment.buyer_role && <p className="text-xs">Decision maker: {segment.buyer_role}</p>}
             {segment.current_alternative && <p className="text-xs">Current workaround: {segment.current_alternative}</p>}
@@ -1161,6 +1677,41 @@ function SegmentCard({
               : "nobody named yet"}
           </span>
           <div className="flex flex-wrap gap-2">
+            {mine && !confirming && (
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={removing}
+                onClick={() => setConfirming(true)}
+              >
+                Remove
+              </Button>
+            )}
+            {mine && confirming && (
+              <>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  disabled={removing}
+                  onClick={remove}
+                >
+                  {removing ? "Removing…" : "Really remove"}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  disabled={removing}
+                  onClick={() => setConfirming(false)}
+                >
+                  Keep
+                </Button>
+              </>
+            )}
+            {mine && (
+              <Button size="sm" variant="outline" onClick={() => setEditing(true)}>
+                Edit
+              </Button>
+            )}
             {research && (
               <Button
                 size="sm"
@@ -1362,6 +1913,7 @@ export function AudiencePanel({
   busy: boolean;
   runningKind: string | null;
 }) {
+  const router = useRouter();
   const [rows, setRows] = useState(audience.prospects);
   const [selected, setSelected] = useState<string | null>(null);
   const [options, setOptions] = useState<MapOptions>(audience.map?.options ?? {
@@ -1425,6 +1977,11 @@ export function AudiencePanel({
       <div className="space-y-4">
         {scopeControls}
         <CapabilityProfileCard brandId={brandId} initialProfile={audience.capability_profile} />
+        <AudienceAdder
+          brandId={brandId}
+          defaultOpen
+          onSaved={() => router.refresh()}
+        />
         <Card>
           <CardHeader className="flex flex-row items-start justify-between gap-4">
             <div>
@@ -1481,10 +2038,17 @@ export function AudiencePanel({
         </CardContent>
       </Card>
 
+      <AudienceAdder
+        brandId={brandId}
+        defaultOpen={false}
+        onSaved={() => router.refresh()}
+      />
+
       <div className="grid items-start gap-3 lg:grid-cols-2">
         {demand.segments.map((segment) => (
           <SegmentCard
             key={segment.name}
+            brandId={brandId}
             segment={segment}
             selected={selected === segment.name}
             prospects={bySegment.get(segment.name) ?? 0}
@@ -1496,6 +2060,7 @@ export function AudiencePanel({
             onProspect={() => onProspect(segment.name)}
             onResearch={() => onResearch(segment.name)}
             onDossier={(rebuild) => onDossier(segment.name, rebuild)}
+            onChanged={() => router.refresh()}
             busy={busy}
           />
         ))}

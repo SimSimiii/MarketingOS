@@ -10,9 +10,9 @@ import csv
 import io
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 
-from app.api.deps import AIProviderDep, SessionDep
+from app.api.deps import AIProviderDep, PrincipalDep, SessionDep
 from app.core.database import engine
 from app.market.demand import ContactKind, ProspectStatus, contacts_of
 from app.market.proof import ProofStatus
@@ -24,6 +24,7 @@ from app.repositories.brand_repository import BrandRepository
 from app.schemas.market import (
     AudienceRead,
     AudienceResearchRead,
+    AudienceSegmentRead,
     CapabilityProfileRead,
     CapabilityProfileRequest,
     DemandMapRead,
@@ -43,13 +44,35 @@ from app.schemas.market import (
     RivalMuteUpdate,
     RivalRead,
     ScanRequest,
+    UserAudienceRequest,
     proof_reads,
     prospect_reads,
     radar_reads,
 )
 from app.services.market_service import MarketError, MarketService, all_jobs, job_for
 
-router = APIRouter(prefix="/market", tags=["market"])
+
+def _guard_brand(
+    session: SessionDep,
+    principal: PrincipalDep,
+    brand_id: UUID | None = None,
+) -> None:
+    """Refuse the whole router for a brand the caller cannot see.
+
+    Declared on the router rather than repeated in each of the thirty-odd
+    handlers below, and that is the point: everything here reads or writes one
+    business's competitors, proof, audiences and prospects, so a new route
+    added later is covered by construction instead of by remembering. FastAPI
+    fills `brand_id` from the path for the routes that have one; the handful
+    that do not (see `read_jobs`) get None and are waved through.
+    """
+    if brand_id is None:
+        return
+    if BrandRepository(session, principal).get(brand_id) is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Brand not found")
+
+
+router = APIRouter(prefix="/market", tags=["market"], dependencies=[Depends(_guard_brand)])
 
 
 #: Every route below that launches a job is `async def`, and it has to be.
@@ -66,6 +89,12 @@ router = APIRouter(prefix="/market", tags=["market"])
 
 
 def _brand(session: SessionDep, brand_id: UUID) -> Brand:
+    """Load the brand a handler is working on.
+
+    Unscoped on purpose: `_guard_brand` above already refused the request if
+    this brand is not the caller's, and repeating the check here would say
+    the rule lives in two places when it lives in one.
+    """
     brand = BrandRepository(session).get(brand_id)
     if brand is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Brand not found")
@@ -263,7 +292,9 @@ def read_audience(
         note = (
             "Nobody has mapped this brand's demand yet. Until somebody does, every campaign "
             "is written to the audience this company describes on its own website - which is "
-            "the audience it set out to have, not necessarily the one most likely to answer."
+            "the audience it set out to have, not necessarily the one most likely to answer. "
+            "Search for the buyers that material could not contain, or describe one yourself "
+            "if you already know who they are."
         )
     profile = service.capability_profile(brand_id)
     return AudienceRead(
@@ -327,6 +358,64 @@ def save_product_capability_profile(
     except MarketError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
     return CapabilityProfileRead.of(row)
+
+
+@router.post(
+    "/{brand_id}/audience/segments",
+    response_model=AudienceSegmentRead,
+    status_code=status.HTTP_201_CREATED,
+)
+def add_user_audience(
+    brand_id: UUID, data: UserAudienceRequest, session: SessionDep
+) -> AudienceSegmentRead:
+    """Describe a buyer yourself, without searching for one.
+
+    Spends nothing and needs no compiled knowledge: the person who already
+    knows who they sell to should be able to say so and go straight to
+    researching them. What comes back is the audience as the map now reads it,
+    including the deterministic admission receipt - which is the honest answer
+    to "can I analyse this yet", and usually asks for one observable signal and
+    one named venue.
+    """
+    _brand(session, brand_id)
+    service = MarketService(session)
+    try:
+        segment, admission = service.add_user_audience(brand_id, data.as_segment())
+    except MarketError as exc:
+        raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
+    return AudienceSegmentRead.of(segment, admission)
+
+
+@router.patch(
+    "/{brand_id}/audience/segments",
+    response_model=AudienceSegmentRead,
+)
+def update_user_audience(
+    brand_id: UUID, data: UserAudienceRequest, session: SessionDep
+) -> AudienceSegmentRead:
+    """Rewrite one audience you added. The name it is known by does not change."""
+    _brand(session, brand_id)
+    service = MarketService(session)
+    try:
+        segment, admission = service.update_user_audience(
+            brand_id, data.name, data.as_segment()
+        )
+    except MarketError as exc:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, str(exc)) from exc
+    return AudienceSegmentRead.of(segment, admission)
+
+
+@router.delete(
+    "/{brand_id}/audience/segments",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_user_audience(brand_id: UUID, name: str, session: SessionDep) -> None:
+    """Take one audience you added off the map, leaving its research behind."""
+    _brand(session, brand_id)
+    try:
+        MarketService(session).delete_user_audience(brand_id, name)
+    except MarketError as exc:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, str(exc)) from exc
 
 
 @router.post(

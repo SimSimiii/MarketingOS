@@ -1,6 +1,6 @@
 import { LiveRuns } from "@/app/live/live-runs";
 import { PageHeader } from "@/components/page-header";
-import { api } from "@/lib/api-client";
+import { api } from "@/lib/api-server";
 
 export default async function LivePage() {
   const [runs, jobs, compilations] = await Promise.allSettled([

@@ -191,4 +191,9 @@ async def restart_campaign(
 def list_campaign_executions(
     campaign_id: UUID, service: CampaignServiceDep
 ) -> list[CampaignExecutionRead]:
+    # The only route here that reached past the campaign without loading it -
+    # the run list would have answered for any id, which is a readable handle
+    # on somebody else's campaign history.
+    if service.get_campaign(campaign_id) is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Campaign not found")
     return [CampaignExecutionRead.model_validate(e) for e in service.list_executions(campaign_id)]

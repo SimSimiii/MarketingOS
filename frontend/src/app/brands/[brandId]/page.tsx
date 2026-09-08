@@ -6,7 +6,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { api } from "@/lib/api-client";
+import { api } from "@/lib/api-server";
 import { timeAgo } from "@/lib/format";
 
 /** What this business can prove, who it is up against, and what it has shipped.

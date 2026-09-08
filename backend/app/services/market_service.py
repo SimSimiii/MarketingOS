@@ -53,7 +53,9 @@ from app.market.capabilities import (
     normalize_capability_profile,
 )
 from app.market.demand import (
+    AudienceAdmission,
     AudienceCartographer,
+    AudienceSegment,
     DemandMap,
     MapOptions,
     ProspectFinder,
@@ -456,6 +458,79 @@ class MarketService:
         ]
 
     # --------------------------------------------------------------- edits
+
+    # ------------------------------------------------ audiences you added
+
+    def audience_receipt(
+        self, brand_id: UUID, name: str
+    ) -> tuple[AudienceSegment, AudienceAdmission]:
+        """One audience off the merged map, with its deterministic admission.
+
+        Read back through the map rather than returned from the write, because
+        admission is a judgment about a segment *in the company of the others*:
+        an audience that duplicates one already there is not researchable, and
+        only the merged list can say so.
+        """
+        demand = self._store.latest_map(brand_id)
+        found = demand.named(name) if demand is not None else None
+        if demand is None or found is None:
+            raise MarketError(f"No audience called '{name}' is on this brand's map.")
+        return found, demand.admission_for(found)
+
+    def add_user_audience(
+        self, brand_id: UUID, draft: AudienceSegment
+    ) -> tuple[AudienceSegment, AudienceAdmission]:
+        """Put one audience the user described themselves onto the map.
+
+        Costs nothing and requires no compiled knowledge, deliberately. Somebody
+        who already knows who they sell to should be able to say so and get
+        straight to researching them, rather than paying for a search of the
+        whole market to be told what they already knew.
+        """
+        if self._store.user_audience(brand_id, draft.name) is not None:
+            raise MarketError(
+                f"You have already added an audience called '{draft.name}'. Edit that "
+                "one, or give this one a different name."
+            )
+        row = self._store.save_user_audience(brand_id, draft)
+        return self.audience_receipt(brand_id, row.name)
+
+    def update_user_audience(
+        self, brand_id: UUID, name: str, draft: AudienceSegment
+    ) -> tuple[AudienceSegment, AudienceAdmission]:
+        """Rewrite one hand-added audience, keeping the name it is known by.
+
+        The name is deliberately not editable here. Research versions, prospect
+        rows and campaigns all point at an audience by name, so a rename in
+        place would orphan every one of them at once - and the reason to edit
+        is almost always the admission receipt asking for a signal or a venue,
+        not the name.
+        """
+        row = self._store.user_audience(brand_id, name)
+        if row is None:
+            raise MarketError(
+                f"You have not added an audience called '{name}'. Only audiences you "
+                "added yourself can be edited; a mapped one changes when you remap."
+            )
+        self._store.save_user_audience(
+            brand_id, draft.model_copy(update={"name": row.name})
+        )
+        return self.audience_receipt(brand_id, row.name)
+
+    def delete_user_audience(self, brand_id: UUID, name: str) -> None:
+        """Take one hand-added audience off the map.
+
+        Its research versions and prospects are left alone. They cost real
+        calls, they remain readable on their own, and a delete that quietly
+        took them with it would be a decision the user did not make.
+        """
+        row = self._store.user_audience(brand_id, name)
+        if row is None:
+            raise MarketError(
+                f"You have not added an audience called '{name}'. Only audiences you "
+                "added yourself can be removed."
+            )
+        self._store.delete_user_audience(row)
 
     def add_rival(
         self, brand_id: UUID, name: str, url: str = "", kind: str = "alternative", why: str = ""
@@ -932,7 +1007,7 @@ async def _run_audience_map(
                 positioning=snapshot.positioning if snapshot is not None else None,
                 capability_profile=profile,
                 options=options,
-                previous=service.store.latest_map(brand_id),
+                previous=service.store.compiled_map(brand_id),
                 progress=status.say,
             )
             service.store.save_map(brand_id, demand)

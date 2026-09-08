@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { ExecutionLiveView } from "@/app/campaigns/[id]/executions/[executionId]/execution-live-view";
-import { api } from "@/lib/api-client";
+import { api } from "@/lib/api-server";
 
 export default async function ExecutionResultPage({
   params,

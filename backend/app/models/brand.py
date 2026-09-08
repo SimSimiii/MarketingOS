@@ -19,6 +19,11 @@ class Brand(SQLModel, table=True):
     """
 
     id: UUID = Field(default_factory=uuid4, primary_key=True)
+    #: The account this business belongs to. Nullable, and that is not laziness:
+    #: rows made before there were accounts have no owner, and single-user mode
+    #: (see app.core.config.Settings.auth_required) still has to see them. With
+    #: auth on, an unowned row is invisible - see app.auth.scope.owned.
+    owner_id: UUID | None = Field(default=None, foreign_key="user.id", index=True)
     name: str
     website_url: str | None = None
     #: How this brand's email looks when it is rendered as HTML. Kept to the

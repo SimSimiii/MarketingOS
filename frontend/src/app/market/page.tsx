@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { api } from "@/lib/api-client";
+import { api } from "@/lib/api-server";
 
 /** The market used to live here, account-wide, quietly showing whichever brand
  * happened to be first. It belongs to a business, so it moved inside one.

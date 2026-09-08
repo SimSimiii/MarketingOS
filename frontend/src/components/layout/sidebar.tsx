@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Activity, ArrowUpRight, AudioLines, BookOpen, Building2, LayoutDashboard, Mail, Settings2, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AccountMenu } from "@/components/layout/account-menu";
 
 // Knowledge and market remain inside each brand's workspace.
 const NAV_ITEMS = [
@@ -45,6 +46,7 @@ export function Sidebar() {
         </Link>
         <p className="px-2 pt-4 text-[10px] tracking-widest text-muted-foreground">YOUR EMAIL STUDIO</p>
       </div>
+      <AccountMenu />
     </aside>
   );
 }

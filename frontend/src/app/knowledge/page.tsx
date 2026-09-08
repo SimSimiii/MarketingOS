@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { api } from "@/lib/api-client";
+import { api } from "@/lib/api-server";
 
 /** Sources that belong to a single campaign rather than to a business.
  *

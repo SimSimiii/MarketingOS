@@ -4,7 +4,7 @@ import { NewCampaignDialog } from "@/app/campaigns/new-campaign-dialog";
 import { PageHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { api } from "@/lib/api-client";
+import { api } from "@/lib/api-server";
 import { formatAbsolute, timeAgo } from "@/lib/format";
 
 const STEPS = [

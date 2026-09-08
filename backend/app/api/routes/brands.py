@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, status
 from sqlalchemy import func
 from sqlmodel import Session, col, select
 
-from app.api.deps import AIProviderDep, SessionDep
+from app.api.deps import AIProviderDep, PrincipalDep, SessionDep
 from app.knowledge.store import ArtifactScope, ArtifactStore
 from app.models.brand import Brand
 from app.models.campaign import Campaign
@@ -26,17 +26,19 @@ router = APIRouter(prefix="/brands", tags=["brands"])
 
 
 @router.get("/{brand_id}/knowledge/compile", response_model=CompilationStatus)
-def compilation_status(brand_id: UUID, session: SessionDep) -> CompilationStatus:
-    if BrandRepository(session).get(brand_id) is None:
+def compilation_status(
+    brand_id: UUID, session: SessionDep, principal: PrincipalDep
+) -> CompilationStatus:
+    if BrandRepository(session, principal).get(brand_id) is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Brand not found")
     return jobs.get(brand_id, CompilationStatus())
 
 
 @router.post("/{brand_id}/knowledge/compile", response_model=CompilationStatus, status_code=202)
 async def compile_knowledge(
-    brand_id: UUID, session: SessionDep, provider: AIProviderDep,
+    brand_id: UUID, session: SessionDep, provider: AIProviderDep, principal: PrincipalDep,
 ) -> CompilationStatus:
-    brand = BrandRepository(session).get(brand_id)
+    brand = BrandRepository(session, principal).get(brand_id)
     if brand is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Brand not found")
     documents = ArtifactStore(session).source_documents(ArtifactScope(brand_id=brand_id))
@@ -46,22 +48,25 @@ async def compile_knowledge(
 
 
 @router.post("", response_model=BrandRead, status_code=status.HTTP_201_CREATED)
-def create_brand(data: BrandCreateRequest, session: SessionDep) -> BrandRead:
+def create_brand(
+    data: BrandCreateRequest, session: SessionDep, principal: PrincipalDep
+) -> BrandRead:
     """Register a business, so its knowledge is compiled once and reused by
     every campaign for it instead of recompiled per campaign."""
-    brand = BrandRepository(session).create(
-        Brand(name=data.name, website_url=data.website_url)
+    brand = BrandRepository(session, principal).create(
+        Brand(name=data.name, website_url=data.website_url, owner_id=principal.owner_id)
     )
     return BrandRead.model_validate(brand)
 
 
 @router.get("", response_model=list[BrandRead])
-def list_brands(session: SessionDep) -> list[BrandRead]:
-    return [BrandRead.model_validate(brand) for brand in BrandRepository(session).list_all()]
+def list_brands(session: SessionDep, principal: PrincipalDep) -> list[BrandRead]:
+    brands = BrandRepository(session, principal).list_all()
+    return [BrandRead.model_validate(brand) for brand in brands]
 
 
 @router.get("/overview", response_model=list[BrandOverviewRead])
-def list_overview(session: SessionDep) -> list[BrandOverviewRead]:
+def list_overview(session: SessionDep, principal: PrincipalDep) -> list[BrandOverviewRead]:
     """Every brand with the state of its own workspace.
 
     Declared above `/{brand_id}` deliberately: FastAPI matches in declaration
@@ -73,7 +78,7 @@ def list_overview(session: SessionDep) -> list[BrandOverviewRead]:
     brand in turn - is what makes a list of five businesses feel like five
     pages.
     """
-    brands = BrandRepository(session).list_all()
+    brands = BrandRepository(session, principal).list_all()
     if not brands:
         return []
 
@@ -139,22 +144,24 @@ def _as_datetime(value: object) -> datetime | None:
 
 
 @router.get("/{brand_id}", response_model=BrandRead)
-def get_brand(brand_id: UUID, session: SessionDep) -> BrandRead:
+def get_brand(brand_id: UUID, session: SessionDep, principal: PrincipalDep) -> BrandRead:
     """One business, for the pages that are scoped to it."""
-    brand = BrandRepository(session).get(brand_id)
+    brand = BrandRepository(session, principal).get(brand_id)
     if brand is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Brand not found")
     return BrandRead.model_validate(brand)
 
 
 @router.patch("/{brand_id}/style", response_model=BrandRead)
-def update_style(brand_id: UUID, data: BrandStyleUpdate, session: SessionDep) -> BrandRead:
+def update_style(
+    brand_id: UUID, data: BrandStyleUpdate, session: SessionDep, principal: PrincipalDep
+) -> BrandRead:
     """Set how this brand's emails look when rendered as HTML.
 
     Only the fields present in the request are touched, so a client changing
     the colour does not have to resend the footer it never had.
     """
-    repository = BrandRepository(session)
+    repository = BrandRepository(session, principal)
     brand = repository.get(brand_id)
     if brand is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Brand not found")
@@ -165,9 +172,11 @@ def update_style(brand_id: UUID, data: BrandStyleUpdate, session: SessionDep) ->
 
 
 @router.get("/{brand_id}/knowledge", response_model=KnowledgeArtifactsRead)
-def get_knowledge(brand_id: UUID, session: SessionDep) -> KnowledgeArtifactsRead:
+def get_knowledge(
+    brand_id: UUID, session: SessionDep, principal: PrincipalDep
+) -> KnowledgeArtifactsRead:
     """The compiled knowledge campaigns for this brand are written from."""
-    if BrandRepository(session).get(brand_id) is None:
+    if BrandRepository(session, principal).get(brand_id) is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Brand not found")
 
     stored = ArtifactStore(session).load(ArtifactScope(brand_id=brand_id))
@@ -189,8 +198,8 @@ def get_knowledge(brand_id: UUID, session: SessionDep) -> KnowledgeArtifactsRead
 
 
 @router.delete("/{brand_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_brand(brand_id: UUID, session: SessionDep) -> None:
-    brand = BrandRepository(session).get(brand_id)
+def delete_brand(brand_id: UUID, session: SessionDep, principal: PrincipalDep) -> None:
+    brand = BrandRepository(session, principal).get(brand_id)
     if brand is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Brand not found")
-    BrandRepository(session).delete(brand)
+    BrandRepository(session, principal).delete(brand)

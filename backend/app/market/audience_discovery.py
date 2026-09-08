@@ -54,6 +54,73 @@ def current_map(demand: DemandMap, profile: ProductCapabilityProfile | None) -> 
     return current
 
 
+#: Why a hand-added audience carries no evidence. Stated on the assessment
+#: rather than left to be inferred from an empty list, because "nobody checked"
+#: and "somebody checked and found nothing" are opposite readings of the same
+#: blank space.
+USER_AUDIENCE_REASON = (
+    "You described this audience; nothing on the open web has been checked "
+    "against it yet. Research it to gather verified sources."
+)
+
+
+def assess_user_audience(
+    segment: AudienceSegment, profile: ProductCapabilityProfile | None
+) -> AudienceSegment:
+    """One hand-written audience, read by exactly the checks a mapped one gets.
+
+    Rebuilt from a clean assessment on every read rather than stored with one,
+    so it is idempotent and so an edited product profile shows up the moment it
+    is saved rather than at the next remap. A user audience never carries
+    fetched evidence, which is why `rank_assessment` can only land it on
+    `hypothesis`: naming your buyer is a claim about your intent, not a reading
+    of the market. The one thing it can land on is `incompatible` - the product
+    check is about what the product does, and the user does not get to overrule
+    that by typing.
+    """
+    assessed = segment.model_copy(
+        deep=True,
+        update={"added_by": "user", "assessment": MapAssessment(), "fit": 0.0},
+    )
+    assessed.assessment.reasons.append(USER_AUDIENCE_REASON)
+    product_check(assessed, profile)
+    rank_assessment(assessed)
+    if assessed.assessment.compatibility == "incompatible":
+        assessed.assessment.priority = "incompatible"
+    assessed.assessment.reasons = list(dict.fromkeys(assessed.assessment.reasons))
+    assessed.assessment.unknowns = list(dict.fromkeys(assessed.assessment.unknowns))
+    return assessed
+
+
+def merge_user_audiences(
+    demand: DemandMap,
+    audiences: list[AudienceSegment],
+    profile: ProductCapabilityProfile | None,
+) -> DemandMap:
+    """The compiled map with the user's own audiences in front of it.
+
+    In front, and that is the whole of it: `unique_audiences` and
+    `admission_for` both resolve a collision in favour of whichever segment
+    came first, so putting the user's ahead of the cartographer's makes a
+    discovered near-duplicate the one that gets flagged. On the subject of
+    their own buyer the user is the authority - the same rule the rival list
+    follows when a scan re-proposes something the user already muted.
+
+    Merged on read rather than written into the map payload because the two
+    have different lifetimes: a map is a compiled reading of one moment and a
+    refresh replaces it wholesale, while these must survive every remap.
+    """
+    if not audiences:
+        return demand
+    assessed = [assess_user_audience(item, profile) for item in audiences]
+    mine = {fold(item.name) for item in assessed}
+    merged = demand.model_copy(deep=True)
+    merged.segments = unique_audiences(
+        assessed + [item for item in merged.segments if fold(item.name) not in mine]
+    )
+    return merged
+
+
 class CandidateAssessment(BaseModel):
     candidate_id: int = Field(ge=0)
     assessment: MapAssessment

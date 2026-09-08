@@ -7,6 +7,7 @@ from sqlmodel import Session, col
 
 from app.ai.base import AIProvider
 from app.ai.roles import validate_overrides
+from app.auth.principal import Principal
 from app.knowledge.store import ArtifactScope, ArtifactStore, fingerprint_documents
 from app.marketing.contract import parse_contract
 from app.marketing.forecast import forecast
@@ -23,6 +24,7 @@ from app.models.market import ProspectRow
 from app.orchestration import execution_manager
 from app.orchestration.execution_registry import registry
 from app.repositories.agent_execution_repository import AgentExecutionRepository
+from app.repositories.brand_repository import BrandRepository
 from app.repositories.campaign_execution_repository import CampaignExecutionRepository
 from app.repositories.campaign_repository import CampaignRepository
 from app.repositories.execution_log_repository import ExecutionLogRepository
@@ -73,13 +75,18 @@ class CampaignTargetError(ValueError):
 class CampaignService:
     """Business logic for campaigns: CRUD, lifecycle, and kicking off / reading runs."""
 
-    def __init__(self, session: Session, ai_provider: AIProvider) -> None:
+    def __init__(
+        self, session: Session, ai_provider: AIProvider, principal: Principal | None = None
+    ) -> None:
         self._session = session
         #: The engine backing THIS request's session - not a hardcoded
         #: global - so a background run (see execution_manager.launch) opens
         #: its own session against the same database, real or test.
         self._engine = session.get_bind()
-        self._campaigns = CampaignRepository(session)
+        #: Who is asking. None where there is no caller - the background runner
+        #: constructs this service with no principal and reads by id.
+        self._principal = principal
+        self._campaigns = CampaignRepository(session, principal)
         self._executions = CampaignExecutionRepository(session)
         self._agent_executions = AgentExecutionRepository(session)
         self._generated_assets = GeneratedAssetRepository(session)
@@ -116,9 +123,18 @@ class CampaignService:
                     "The selected company was qualified for a different audience segment."
                 )
             fields["audience_segment"] = prospect.segment
+        # A campaign inherits its brand's knowledge, market and proof, so
+        # attaching one to a brand the caller cannot see would hand them
+        # everything under it. Same message as a missing brand: whether the id
+        # exists is not something to confirm.
+        if data.brand_id is not None and (
+            BrandRepository(self._session, self._principal).get(data.brand_id) is None
+        ):
+            raise CampaignTargetError("That brand does not exist.")
         return self._campaigns.create(
             Campaign(
                 **fields,
+                owner_id=self._principal.owner_id if self._principal else None,
                 policy=policy,
                 # Checked before the row exists. An override that names an
                 # agent nothing answers to, or a model that cannot do what the
@@ -496,7 +512,20 @@ class CampaignService:
         return self._executions.list_by_campaign(campaign_id)
 
     def get_execution(self, execution_id: UUID) -> CampaignExecution | None:
-        return self._executions.get(execution_id)
+        """A run, if it belongs to a campaign the caller can see.
+
+        Every route under /executions resolves the run through here - status,
+        result, assets, logs, timeline, cancel and the SSE stream. Scoping it
+        once is what keeps a run id from being a readable handle on somebody
+        else's campaign, and returning None rather than raising keeps the
+        route's existing 404 as the answer.
+        """
+        execution = self._executions.get(execution_id)
+        if execution is None:
+            return None
+        if self._principal is None:
+            return execution
+        return execution if self._campaigns.get(execution.campaign_id) is not None else None
 
     def get_agent_executions(self, execution_id: UUID) -> list[AgentExecution]:
         return self._agent_executions.list_by_execution(execution_id)

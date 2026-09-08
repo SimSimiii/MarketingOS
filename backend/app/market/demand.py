@@ -399,6 +399,13 @@ class AudienceSegment(BaseModel):
     current_alternative: str = ""
     assessment: MapAssessment = Field(default_factory=MapAssessment)
     kind: SegmentKind = SegmentKind.CORE
+    #: Who put this buyer on the map. The same distinction the rival list
+    #: draws, for the same reason: "we found this on the open web" and "you
+    #: told us this" are different claims, and the reader of a map should
+    #: never have to guess which one they are looking at. A hand-added
+    #: audience carries no fetched evidence, so it stays a hypothesis until
+    #: research is actually run on it.
+    added_by: Literal["cartographer", "user"] = "cartographer"
     #: One person in a situation, not a category. "A three-person Shopify
     #: store selling refurbished laptops, answering warranty questions by
     #: hand" - not "e-commerce".

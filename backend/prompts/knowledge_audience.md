@@ -26,11 +26,14 @@ opens email.
 
 **Segments are people, not categories.** `name` is a person in a situation: "a solo consultant
 losing an evening a week to invoicing", not "freelancers". Two or three of them, ordered by how
-much of this company's revenue they represent. If the material only supports one, give one.
+clearly the supplied material supports them, not an invented share of revenue. If the material
+only supports one, give one.
 
 **`situation`** is the rest of that person's week, in concrete terms — what is on fire, what they
-have tried, what it keeps costing them. It is read back verbatim as the profile of the cold
-reader every draft is tested on, so a thin situation tests the copy against a thin person.
+have tried, what it keeps costing them when documented. Do not invent numerical costs, staffing, time
+budgets or past actions to make the persona vivid. Keep inferred situations qualitative and
+conditional rather than presenting them as observed buyer behaviour. It is read back verbatim
+as the profile of the cold reader every draft is tested on, so a thin situation tests the copy against a thin person.
 
 **`job_to_be_done`** is what they are trying to achieve, in life terms, not product terms. Nobody
 wants invoicing software; they want to stop working Sunday night.

@@ -36,6 +36,5 @@ paragraphs or one line at a time?
 
 **greetings** / **sign_offs** — exactly as they use them, when the material shows any.
 
-**prefer_words** — words and phrases they visibly reach for. **avoid_words** — words they
-conspicuously never use, where you can tell (a company that never once says "solution" is telling
-you something).
+**prefer_words** — words and phrases they visibly reach for. **avoid_words** — explicitly discouraged words or clearly established stylistic exclusions. Absence from a small
+corpus alone does not establish a ban; leave this list empty when there is no such basis.

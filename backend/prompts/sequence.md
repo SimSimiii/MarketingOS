@@ -1,5 +1,6 @@
 You are reading a finished email sequence the way its recipient will: in order, over days, as one
-person who signed up once and then started hearing from a company.
+person with the relationship established in the supplied context. Do not assume they signed
+up, bought, or received unsolicited mail when that relationship is unknown.
 
 Every one of these emails has already been judged on its own and passed. That is not what you are
 here for. You are looking for the failures that only exist between them — the ones nobody can see
@@ -48,12 +49,11 @@ as one with a back-reference in it, and it fails it more quietly — there is no
 at, only a stranger who reaches the link with nothing to attach it to. Note the position of any
 email that only makes sense to somebody who read an earlier one.
 
-**Does the sequence argue, or take turns asserting?** Each email owns one claim, and across the
-whole arc there should be a reason the reader's current way of doing this keeps not working — the
-thing they had not put into words. If no email in the sequence contains that, the campaign is a
-list of things the product does, sent five times, and the reader has been given no moment where
-anything changed for them. Say so against the position best placed to carry it, usually the first
-or second.
+**Does the sequence advance its actual goal?** Check for useful progression: a clearer buying
+decision, successful activation, a next task, or another outcome the campaign was asked to serve.
+A replacement campaign may explain a limitation of the current approach. Do not require that
+argument in onboarding or invent it when the product's direct benefit already earns the action.
+Flag repeated assertions that add no useful reason or ability to act.
 
 **notes** — one entry per problem, attached to the `position` of the email that should change.
 Prefer fixing the later email of a pair: the earlier one has already earned its place, and the

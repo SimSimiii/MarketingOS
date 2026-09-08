@@ -17,6 +17,10 @@ class Campaign(SQLModel, table=True):
     """
 
     id: UUID = Field(default_factory=uuid4, primary_key=True)
+    #: The account this campaign belongs to. A campaign is a root of its own
+    #: because it may run without a brand - scoping it through `brand_id` alone
+    #: would leave every one-off campaign ownerless. See app.auth.scope.
+    owner_id: UUID | None = Field(default=None, foreign_key="user.id", index=True)
     #: The business this campaign is for. Optional: without it the campaign
     #: compiles its own knowledge and keeps it to itself, which is right for a
     #: one-off and wasteful for the fifth campaign of the same product.

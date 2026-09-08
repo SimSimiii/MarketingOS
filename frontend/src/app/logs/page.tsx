@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { api } from "@/lib/api-client";
+import { api } from "@/lib/api-server";
 import type { ExecutionLog } from "@/lib/types";
 
 /** Optionally scoped to one run (`?execution=<id>`, how the live view links

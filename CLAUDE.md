@@ -18,6 +18,13 @@ SQLModel + SQLite; frontend is Next.js App Router. `README.md` explains *why* th
 architecture is shaped this way and is worth reading before changing the pipeline — almost
 every design decision in it was made against a measured failure.
 
+Four directories, not two. `backend/` and `frontend/` are the product;
+`administration/` is an isolated back-office (its own stack, its own signing secret,
+sharing only the database) and `landing-page/` is a single static HTML file.
+[docs/deployment.md](docs/deployment.md) covers all of them — read it before touching a
+`template.yaml` or a `buildspec.yml`, and especially before assuming a campaign run can
+happen on Lambda. It cannot; the doc says why.
+
 ## Commands
 
 All backend commands run from `backend/`. On Windows call `.venv/Scripts/python.exe`
@@ -55,6 +62,14 @@ spent. Run it. `pytest-asyncio` is in strict mode, so an async test needs an exp
 
 ```bash
 .venv/Scripts/python.exe -m pytest tests/marketing/test_gates.py::test_name -q
+```
+
+The back-office has its own small suite, run from `administration/backend/`. It imports
+the product's `app` package, which the buildspec vendors in at deploy time and which
+`PYTHONPATH` supplies locally:
+
+```bash
+PYTHONPATH=../../backend ../../backend/.venv/Scripts/python.exe -m pytest tests -q
 ```
 
 Frontend, from `frontend/`:
@@ -169,6 +184,28 @@ draft the panel could not decode loses to one they could at any click estimate, 
 estimate on an email nobody parsed is an answer to a different question. See
 `EmailVersion.measured`, where it sits above `pull` and below the gates.
 
+### Accounts are two columns
+
+`app/auth/` holds the whole of it: `passwords` and `tokens` are cryptography with no
+opinion about the product, `service` is the account lifecycle, and `scope` is the tenancy
+rule — one function, so there is one place to read when the question is "can this account
+see that row".
+
+Multi-tenancy is `owner_id` on `Brand` and `Campaign` and nothing else. Every other table
+hangs off one of those two, so scoping the two roots is the whole mechanism: repositories
+filter, `market.py` gates its thirty-odd routes with one router-level dependency, and
+`CampaignService.get_execution` is the single choke point every `/executions` route
+resolves through.
+
+`Settings.auth_required` is **false by default and forced true in production**. False is
+single-user mode — no token, no login page, every row visible — which is the shape the
+product had before accounts existed and the shape a laptop keeps. That is why the 1000-odd
+existing tests never had to learn about auth.
+
+The back-office is deliberately separate all the way down: `AdminUser` is its own table,
+`administration/backend/admin/auth.py` its own implementation, and its signing secret must
+differ from the platform's (the buildspec fails the build if they match).
+
 ### Only `app/market/` may touch the open web
 
 `ResearchTool` (web search, web fetch) is passed by market-intelligence roles and by nothing
@@ -182,7 +219,12 @@ Pages are server components calling the API directly; mutations are small coloca
 `src/app/brands/[brandId]/` (knowledge, market, proof) — `/market` and
 `/knowledge/base?brand=` redirect there for old bookmarks, and what remains at `/knowledge` is
 sources attached to a one-off campaign. `src/lib/types.ts` mirrors the backend's Pydantic
-schemas by hand, so a schema change means changing both. The execution page splits into a
+schemas by hand, so a schema change means changing both. The API surface lives in
+`src/lib/api-core.ts` as a factory; `api-client.ts` (browser, reads the cookie via
+`document.cookie`) and `api-server.ts` (server components, reads it via `next/headers`)
+are thin modules over it and differ only in where the bearer token comes from. **A server
+component must import `@/lib/api-server`** — importing the browser one silently makes
+unauthenticated calls, which still work in single-user mode. The execution page splits into a
 stream hook, a pure fold (`lib/run-timeline.ts`) and a dumb component, so replayed history and
 live events go through the same function. Theme is dark-only, violet accent, no toggle.
 
@@ -205,9 +247,13 @@ live events go through the same function. Theme is dark-only, violet accent, no 
   into, thresholds sit next to the gate that enforces them on purpose, and a literal `{{...}}`
   (a merge field, say) has to sit inside `{% raw %}`.
 - **The dev database is not Alembic-managed.** `init_db()` runs `SQLModel.metadata.create_all`
-  on every startup, so a local `marketingos.db` created that way has no `alembic_version` row.
-  Run `alembic stamp head` before `alembic upgrade head`, or the first migration fails on
-  tables that already exist.
+  on every startup, and that creates missing *tables* but never missing *columns*. So a local
+  `marketingos.db` drifts into a shape no migration describes: new tables present, new columns
+  absent, and the first page load failing on `no such column: campaign.owner_id`. Fix it by
+  stamping at **the revision that describes the schema you actually have** - check with
+  `alembic current`, and never `stamp head`, which claims everything is applied and skips the
+  migrations you needed. Then `alembic upgrade head` and confirm with `alembic check`. See
+  "Upgrading a development database" in [docs/deployment.md](docs/deployment.md).
 - **`tests/conftest.py` must stay the first thing imported.** It sets `APP_ENV` and
   `DATABASE_URL` before any app module resolves settings; without it `TestClient(app)` runs the
   real lifespan against `marketingos.db`, and `reap_orphaned_executions()` kills whatever
@@ -221,6 +267,22 @@ live events go through the same function. Theme is dark-only, violet accent, no 
   preset, counts the calls it made and asserts the forecast contained them.
 - **The SSE broker and `ExecutionRegistry` are in-memory and process-local.** Correct for a
   single worker, and the first thing a multi-worker deployment would have to move to Redis.
+- **`PASSWORD_PEPPER` is permanent.** It is folded into every bcrypt hash, so rotating it
+  invalidates every password in the database. `JWT_SECRET` is not: rotating that only signs
+  everybody out.
+- **The Alembic chain was incomplete and now is not.** `campaign.status`, `campaign.policy`,
+  the token counters and several indexes lived only in the models, so a database built the
+  supported way (`alembic upgrade head`) was missing them — invisible locally, because
+  `init_db()` runs `create_all` on startup. `c4f19d2a8e60` closes that, and
+  `alembic check` now reports no drift. Keep it that way: it is the only thing standing
+  between the models and a production schema nobody has ever built from scratch.
+- **`administration/backend/app/` is vendored, never committed.** The buildspec copies
+  `backend/app` in at build time so both stacks share one definition of every model. A
+  checked-in copy is a second definition, and the day it drifts is the day the console
+  reports numbers the product disagrees with. It is in that directory's `.gitignore`.
+- **A run cannot happen on Lambda.** Subprocess CLIs, minutes of wall clock, SSE, and an
+  in-memory registry. The API stack serves everything else; see
+  [docs/deployment.md](docs/deployment.md).
 - **Degrade, never deadlock.** Budgets, deadlines and cancellation are checked *between* steps,
   never mid-call. A failure that arrives with finished emails behind it is `degraded`, never
   `failed`.

@@ -2,9 +2,10 @@ from uuid import UUID
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
 
-from app.api.deps import KnowledgeServiceDep, SessionDep
+from app.api.deps import KnowledgeServiceDep, PrincipalDep, SessionDep
 from app.ingestion.exceptions import IngestionError
 from app.repositories.brand_repository import BrandRepository
+from app.repositories.campaign_repository import CampaignRepository
 from app.schemas.knowledge import (
     KnowledgeBaseRead,
     KnowledgeDocumentRead,
@@ -20,9 +21,27 @@ router = APIRouter(prefix="/knowledge", tags=["knowledge"])
 MAX_UPLOAD_BYTES = 20 * 1024 * 1024
 
 
+def _guard_scope(
+    session: SessionDep,
+    principal: PrincipalDep,
+    brand_id: UUID | None,
+    campaign_id: UUID | None,
+) -> None:
+    """A source is filed against a brand or a campaign; both are owned roots.
+
+    Unlike the market router this cannot be a router-level dependency: the
+    scope arrives in a JSON body on one route and as multipart form fields on
+    another, and a dependency only sees the path and the query string.
+    """
+    if brand_id is not None and BrandRepository(session, principal).get(brand_id) is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Brand not found")
+    if campaign_id is not None and CampaignRepository(session, principal).get(campaign_id) is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Campaign not found")
+
+
 @router.get("/jobs", response_model=list[CompilationJob])
-def list_compilation_jobs(session: SessionDep) -> list[CompilationJob]:
-    brand_ids = {brand.id for brand in BrandRepository(session).list_all()}
+def list_compilation_jobs(session: SessionDep, principal: PrincipalDep) -> list[CompilationJob]:
+    brand_ids = {brand.id for brand in BrandRepository(session, principal).list_all()}
     return sorted(
         (job for job in jobs.values() if job.brand_id in brand_ids),
         key=lambda job: (job.state == "running", job.started_at),
@@ -32,9 +51,13 @@ def list_compilation_jobs(session: SessionDep) -> list[CompilationJob]:
 
 @router.post("", response_model=list[KnowledgeDocumentRead], status_code=status.HTTP_201_CREATED)
 async def add_source(
-    data: KnowledgeSourceCreate, service: KnowledgeServiceDep
+    data: KnowledgeSourceCreate,
+    service: KnowledgeServiceDep,
+    session: SessionDep,
+    principal: PrincipalDep,
 ) -> list[KnowledgeDocumentRead]:
     """Add product knowledge from a web page or pasted text."""
+    _guard_scope(session, principal, data.brand_id, data.campaign_id)
     try:
         documents = await service.ingest_source(
             source=data.url or data.content or "",
@@ -56,6 +79,8 @@ async def add_source(
 )
 async def upload_file(
     service: KnowledgeServiceDep,
+    session: SessionDep,
+    principal: PrincipalDep,
     file: UploadFile = File(...),
     campaign_id: UUID | None = Form(default=None),
     brand_id: UUID | None = Form(default=None),
@@ -66,6 +91,7 @@ async def upload_file(
     Images are read by the vision + OCR pipeline; only the extracted
     knowledge is kept, never the binary.
     """
+    _guard_scope(session, principal, brand_id, campaign_id)
     data = await file.read()
     if len(data) > MAX_UPLOAD_BYTES:
         raise HTTPException(
@@ -90,10 +116,13 @@ async def upload_file(
 @router.get("", response_model=list[KnowledgeDocumentSummary])
 def list_documents(
     service: KnowledgeServiceDep,
+    session: SessionDep,
+    principal: PrincipalDep,
     campaign_id: UUID | None = None,
     brand_id: UUID | None = None,
 ) -> list[KnowledgeDocumentSummary]:
     """Metadata only - see KnowledgeDocumentSummary. Fetch one by id for text."""
+    _guard_scope(session, principal, brand_id, campaign_id)
     return [
         KnowledgeDocumentSummary.model_validate(document)
         for document in service.list_documents(campaign_id, brand_id)
@@ -103,6 +132,8 @@ def list_documents(
 @router.get("/base", response_model=KnowledgeBaseRead)
 def get_knowledge_base(
     service: KnowledgeServiceDep,
+    session: SessionDep,
+    principal: PrincipalDep,
     brand_id: UUID | None = None,
     campaign_id: UUID | None = None,
 ) -> KnowledgeBaseRead:
@@ -117,6 +148,7 @@ def get_knowledge_base(
             status.HTTP_400_BAD_REQUEST,
             "Pass either `brand_id` or `campaign_id` - knowledge belongs to one business.",
         )
+    _guard_scope(session, principal, brand_id, campaign_id)
     base = service.knowledge_base(brand_id=brand_id, campaign_id=campaign_id)
     if base is None:
         raise HTTPException(
@@ -127,16 +159,28 @@ def get_knowledge_base(
 
 
 @router.get("/{document_id}", response_model=KnowledgeDocumentRead)
-def get_document(document_id: UUID, service: KnowledgeServiceDep) -> KnowledgeDocumentRead:
+def get_document(
+    document_id: UUID,
+    service: KnowledgeServiceDep,
+    session: SessionDep,
+    principal: PrincipalDep,
+) -> KnowledgeDocumentRead:
     document = service.get_document(document_id)
     if document is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Knowledge document not found")
+    _guard_scope(session, principal, document.brand_id, document.campaign_id)
     return KnowledgeDocumentRead.model_validate(document)
 
 
 @router.delete("/{document_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_document(document_id: UUID, service: KnowledgeServiceDep) -> None:
+def delete_document(
+    document_id: UUID,
+    service: KnowledgeServiceDep,
+    session: SessionDep,
+    principal: PrincipalDep,
+) -> None:
     document = service.get_document(document_id)
     if document is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Knowledge document not found")
+    _guard_scope(session, principal, document.brand_id, document.campaign_id)
     service.delete_document(document)

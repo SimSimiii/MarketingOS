@@ -18,6 +18,42 @@
         "npm --prefix frontend run dev"
       ],
       "port": 3000
+    },
+    {
+      "name": "backend-auth",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": [
+        "/c",
+        "cd backend && set AUTH_REQUIRED=true&& set ALLOW_PUBLIC_SIGNUP=true&& set DATABASE_URL=sqlite:///./marketingos-auth-demo.db&& set CORS_ORIGINS=http://localhost:3010&& .venv\\Scripts\\python.exe -m uvicorn app.main:app --port 8010"
+      ],
+      "port": 8010
+    },
+    {
+      "name": "frontend-auth",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": [
+        "/c",
+        "set NEXT_PUBLIC_AUTH_REQUIRED=true&& set NEXT_PUBLIC_API_URL=http://localhost:8010/api&& npm --prefix frontend run dev -- --port 3010"
+      ],
+      "port": 3010
+    },
+    {
+      "name": "admin-api",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": [
+        "/c",
+        "cd administration\\backend && set PYTHONPATH=..\\..\\backend&& set DATABASE_URL=sqlite:///../../backend/marketingos-auth-demo.db&& set ADMIN_CORS_ORIGINS=http://localhost:3011&& ..\\..\\backend\\.venv\\Scripts\\python.exe -m uvicorn admin.main:app --port 8011"
+      ],
+      "port": 8011
+    },
+    {
+      "name": "admin-console",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": [
+        "/c",
+        "set NEXT_PUBLIC_ADMIN_API_URL=http://localhost:8011&& npm --prefix administration/frontend run dev -- --port 3011"
+      ],
+      "port": 3011
     }
   ]
 }

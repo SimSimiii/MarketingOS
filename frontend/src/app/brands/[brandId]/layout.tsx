@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { BrandNav } from "./brand-nav";
 import { BrandSwitcher } from "./brand-switcher";
 import { buttonVariants } from "@/components/ui/button";
-import { api } from "@/lib/api-client";
+import { api } from "@/lib/api-server";
 
 /** One business, and everything the system knows about it.
  *

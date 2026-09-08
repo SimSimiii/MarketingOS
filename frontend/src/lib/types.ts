@@ -1033,6 +1033,9 @@ export interface MappedSegment {
     }[];
   };
   kind: SegmentKind;
+  /** Who put this buyer on the map. "we found this on the open web" and "you
+   * told us this" are different claims, and only the second is editable. */
+  added_by: "cartographer" | "user";
   /** One person in a situation, not a category. */
   who: string;
   why_them: string;
@@ -1064,6 +1067,33 @@ export interface MappedSegment {
   /** The deterministic receipt behind the admission result. */
   researchability_reasons: string[];
   definition: AudienceDefinition;
+}
+
+/** One audience the user is describing themselves.
+ *
+ * The four required lines are what the backend's deterministic admission check
+ * reads as a situation rather than a category. `signals` and `where` are what
+ * a research pass would actually spend its search on: optional here, and the
+ * receipt on the saved segment says in plain words that they are missing. */
+export interface UserAudienceInput {
+  name: string;
+  organization: string;
+  workflow: string;
+  need: string;
+  signals: string[];
+  where: string[];
+  kind: SegmentKind;
+  sophistication: string;
+  who: string;
+  why_them: string;
+  trigger: string;
+  pains: string[];
+  objection: string;
+  angle: string;
+  population: string;
+  buyer_role: string;
+  user_role: string;
+  current_alternative: string;
 }
 
 export interface MapOptions {
@@ -1476,4 +1506,60 @@ export interface CompilationJob extends CompilationStatus {
   calls: number;
   input_tokens: number;
   output_tokens: number;
+}
+
+/* ── Accounts ─────────────────────────────────────────────────────────────
+ *
+ * Mirrors app/schemas/auth.py by hand, the same way the rest of this file
+ * mirrors the other Pydantic schemas. A change there is a change here.
+ */
+
+export type UserRole = "owner" | "member";
+export type UserStatus = "active" | "pending" | "suspended";
+export type UserPlan = "free" | "pro" | "business";
+
+export interface Account {
+  id: string;
+  email: string;
+  full_name: string | null;
+  company_name: string | null;
+  role: UserRole;
+  status: UserStatus;
+  plan: UserPlan;
+  /** 0 means unlimited - see app.models.user.User. */
+  monthly_run_quota: number;
+  runs_used: number;
+  created_at: string;
+  last_login_at: string | null;
+}
+
+/** What the sign-in page needs before anybody has a token: whether this
+ *  deployment has accounts at all, and whether it takes new ones. */
+export interface AuthConfig {
+  auth_required: boolean;
+  allow_public_signup: boolean;
+}
+
+export interface AuthSession {
+  id: string;
+  user_agent: string | null;
+  ip_address: string | null;
+  created_at: string;
+  last_used_at: string | null;
+  expires_at: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface RegisterRequest extends LoginRequest {
+  full_name?: string;
+  company_name?: string;
+}
+
+export interface ChangePasswordRequest {
+  current_password: string;
+  password: string;
 }

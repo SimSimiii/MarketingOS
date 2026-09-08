@@ -65,17 +65,14 @@ where most of the persuasion in a campaign actually lives. Everything above tell
 competitor also claims — the table stakes, the crowd words, the axes where nobody carries a
 figure. Read that as a description of *how this category solves the problem*, and then ask the
 question the material makes answerable: what does that shared approach structurally fail at?
-"Everyone in this field sells on integration count" is not just a warning about vocabulary; it
-says the category competes on breadth, which means nothing in it is built for the reader who
-needs one thing to work properly. That sentence is `why_it_fails`, and it is the strongest thing
-a campaign can own, because it is true, checkable against the reader's own experience, and no
-competitor will ever write it about themselves.
+Competing on integration count suggests an angle about breadth versus the reader's specific
+workflow; it does not prove that those integrations work poorly or that every platform has the
+same limitation. Put a failure in `why_it_fails` only when the material establishes that limit.
+Otherwise, argue from the product's documented mechanism or invite the reader to test it.
 
-**Never name a competitor.** A campaign that names one is a campaign arguing on their ground, and
-it hands the reader a second brand to go and look up. The distinction is not subtle and it is not
-a matter of tact: `why_it_fails` is about an *approach* that a whole category shares, and the
-reader recognises it from what they already do. The moment it becomes about a company, you have
-written an email about somebody else's product.
+**Name alternatives only when useful.** A specific migration or comparison requested by the
+user may need the other product's name to orient the reader. Otherwise focus on the approach.
+Never invent a competitive limitation or generalize a few observed claims to every platform.
 
 # Who would actually buy this
 
@@ -107,9 +104,9 @@ put one in the copy, and do not treat the ranking as more precise than it is.
 
 This section outranks discovery hypotheses and the company's compiled audience description on
 buyer reality. It does not outrank the complete Evidence Ledger on what the product may claim.
-The ledger remains complete: a fact absent from the dossier is still licensed when its ledger id
-exists, and a WITHHOLD id remains available even though selecting it will be recorded as an
-advisory warning.
+For legacy intelligence without a V2 claim boundary, the ledger remains complete: a fact absent
+from the dossier is still licensed when its ledger id exists, and WITHHOLD is advisory. When a
+V2 claim boundary is supplied, use only its campaign-safe claims; that boundary takes precedence.
 
 When research is loaded, take `felt_need` from a verified problem and `status_quo` from observed
 incumbent behaviour. Let verified triggers and sophistication decide where the sequence may open.
@@ -166,6 +163,28 @@ problem-aware reader does not have loses them in one.
 **One promise for the campaign.** `promise` is the single thing the whole sequence is arguing.
 Every email advances it; none of them restates it.
 
+**Keep the promise within the scope of its support.** Interpret features into useful benefits
+and build a persuasive argument; you do not need a measured outcome for every benefit. But do
+not turn a plausible benefit into a guaranteed result. Apply this to every brief field, including
+`alternative_ideas`, `belief_shift`, and `subject_strategy`, and to claims inherited from research
+or a dossier as well as claims you derive yourself:
+
+- A testimony establishes a situation worth addressing, not its prevalence. Use "if your app
+  creates assistants dynamically" rather than "most teams do this" unless prevalence is supported.
+- A setup or first-call time does not establish a full migration time. Keep any duration attached
+  to the operation and conditions actually documented; do not invent the reader's current time
+  cost either. When the wider outcome is unproven, propose a concrete first test instead.
+- HTTP access or model switching does not establish drop-in compatibility, unchanged behaviour,
+  or an easy exit from the platform itself. Describe the supported operation, not a broader
+  guarantee that the rest of the integration stays unchanged.
+- Missing documentation is not proof that a feature is absent. Do not promise an undocumented
+  importer, but do not assert "there is no importer" either. Describe the documented manual path.
+
+Check that `mechanism` actually addresses the failure named in `why_it_fails`. If the product
+shares that limitation, narrow the argument to the part it improves. Put the specific unsupported
+extension in `must_not_say`, and choose a supported promise rather than surrounding an unsupported
+one with hedges. These are scope checks, not a reason to flatten the copy into a feature list.
+
 **Spend the evidence deliberately.** Evidence is finite. The strongest facts should carry the
 emails that need them most, and an id spent by one email is gone: assign it again to a later
 email and the repeat is dropped, because a sequence that argues from one fact five times reads
@@ -187,16 +206,17 @@ archived, and the second one is what you get by default.
 fields say why anybody should care, and they are the ones that decide whether the copy converts
 or merely reads well. A writer handed a claim, evidence for the claim and an objection to answer
 writes an assertion with a citation attached — true, checkable, and no reason for a stranger to
-act. Fill these for every email:
+act. Use these fields when supported and useful for the email's job. A replacement pitch may need all
+four; onboarding, reminders and announcements can instead lead with a useful step or a concrete
+change. Leave irrelevant fields empty rather than manufacturing a failing alternative:
 
 - **`felt_need`** — the problem in the reader's own words. What they would say if somebody asked
   what their week was like, not what the product's landing page calls it. Comes from the audience
   model's situation and pains, not from the offer.
 - **`status_quo`** — what they do about it *today*. Every reader is already solving this
   somehow: a spreadsheet, an in-house script, an agency, a junior's Thursday, or deliberately
-  nothing. The material usually says, and where it does not, the awareness stage does: a
-  `solution_aware` reader is doing something manual, an `unaware` one is absorbing the cost
-  without having named it. Copy that does not know what it is competing with is competing with
+  nothing. Use observed behaviour when available. Awareness alone does not establish a manual
+  workflow, an existing tool, or a time cost. Copy that does not know what it is competing with is competing with
   nothing.
 - **`why_it_fails`** — the structural reason that approach keeps falling short. About the
   approach, never about the person taking it, and never about a named company. "A script can list
@@ -207,11 +227,10 @@ act. Fill these for every email:
   the constraint, the thing it does differently that means it is not subject to the failure you
   just named. Not the benefit: "so you save time" is a mechanism thrown away and replaced by the
   adjective it had just earned. Where the evidence carries the mechanism, the two reinforce; where
-  it does not, the mechanism is still the more persuasive half.
+  it does not, use a supported mechanism or leave the field empty.
 
-These four are the same argument every time and different in every email, because each email
-argues its own `single_idea`: the need, the status quo and the failure are all read *through*
-that claim. If two emails' `why_it_fails` are the same sentence, one of them is not needed.
+When using these four beats, read the need, status quo and failure through this email's own
+`single_idea`. Do not repeat an argument across emails just to fill the same fields.
 
 Leave a field empty rather than filling it with something the material does not support. An
 invented status quo is worse than none — the reader knows what they actually do, and being told
@@ -249,8 +268,9 @@ not landing. A brief that names one claim and no alternatives gives the run noth
 and one thing to defend.
 
 **Name the belief this email moves.** `belief_shift` is what the reader thinks before it and what
-they think after — "before: assumes switching means a migration week; after: suspects it is an
-afternoon". This is what actually decides whether something belongs in email 1 or email 3, and it
+they think after — "before: assumes evaluating the product requires moving the whole workflow;
+after: sees how to test one documented task first", when that test is supported by the offer.
+This is what actually decides whether something belongs in email 1 or email 3, and it
 is the field that makes the order checkable rather than a matter of taste. If two emails have the
 same `belief_shift`, one of them is not needed.
 

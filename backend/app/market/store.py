@@ -63,6 +63,7 @@ from app.models.market import (
     RadarEventRow,
     RelevanceDossierRow,
     Rival,
+    UserAudienceRow,
 )
 
 logger = logging.getLogger("marketingos.market")
@@ -271,6 +272,42 @@ class MarketStore:
     # ------------------------------------------------------------- audience
 
     def latest_map(self, brand_id: UUID) -> DemandMap | None:
+        """The map everything downstream reads: compiled, plus what the user added.
+
+        The merge happens here rather than at each call site so that a
+        hand-added audience is indistinguishable, to research, prospecting,
+        relevance and the campaign pipeline, from one the cartographer found.
+        That is the whole point of letting somebody add one. `compiled_map` is
+        the escape hatch for the single caller that must not see them - the
+        mapping job, whose `previous` is the machine's own last reading and
+        would otherwise write the user's audiences into its next payload.
+        """
+        from app.market.audience_discovery import merge_user_audiences, product_fingerprint
+
+        compiled = self.compiled_map(brand_id)
+        rows = self.user_audience_rows(brand_id)
+        if compiled is None and not rows:
+            return None
+        profile = self._capability_profile(brand_id)
+        if compiled is None:
+            # A brand can have audiences without ever having run a search, and
+            # that is a supported way to work rather than a degraded one: the
+            # user who already knows their buyer should not have to buy a
+            # discovery run before they can research them.
+            compiled = DemandMap(
+                validation_note=(
+                    "Nothing has been searched for this brand. Every audience below is "
+                    "one you described yourself."
+                ),
+                product_fingerprint=product_fingerprint(profile),
+                mapped_at=max(row.updated_at for row in rows),
+            )
+        return merge_user_audiences(
+            compiled, [user_segment(row) for row in rows], profile
+        )
+
+    def compiled_map(self, brand_id: UUID) -> DemandMap | None:
+        """The stored map exactly as the cartographer left it, nothing merged in."""
         row = self._latest_map_row(brand_id)
         if not row or not row.payload:
             return None
@@ -279,8 +316,11 @@ class MarketStore:
             return demand
         from app.market.audience_discovery import current_map
 
-        profile = self.latest_capability_profile(brand_id)
-        return current_map(demand, profile[1] if profile else None)
+        return current_map(demand, self._capability_profile(brand_id))
+
+    def _capability_profile(self, brand_id: UUID) -> ProductCapabilityProfile | None:
+        found = self.latest_capability_profile(brand_id)
+        return found[1] if found else None
 
     def latest_map_row(self, brand_id: UUID) -> AudienceMapRow | None:
         """The current map row when a derived artifact needs its exact version."""
@@ -314,6 +354,53 @@ class MarketStore:
             return None
         demand = self.latest_map(brand_id)
         return demand.named(name) if demand is not None else None
+
+    # ------------------------------------------------ audiences you added
+
+    def user_audience_rows(self, brand_id: UUID) -> list[UserAudienceRow]:
+        """In the order they were added, which is the order they were decided."""
+        statement = (
+            select(UserAudienceRow)
+            .where(col(UserAudienceRow.brand_id) == brand_id)
+            .order_by(col(UserAudienceRow.created_at))
+        )
+        return list(self._session.exec(statement))
+
+    def user_audience(self, brand_id: UUID, name: str) -> UserAudienceRow | None:
+        statement = select(UserAudienceRow).where(
+            col(UserAudienceRow.brand_id) == brand_id,
+            col(UserAudienceRow.audience_key) == _audience_key(name),
+        )
+        return self._session.exec(statement).first()
+
+    def save_user_audience(
+        self, brand_id: UUID, segment: AudienceSegment
+    ) -> UserAudienceRow:
+        """Write one hand-added audience, replacing any earlier draft of it.
+
+        Keyed on the folded name rather than versioned, unlike everything else
+        in this store. A map version answers "what did the market look like in
+        March"; an audience the user is still writing has no such question
+        behind it, and keeping every keystroke would only make the merge pick
+        one.
+        """
+        row = self.user_audience(brand_id, segment.name) or UserAudienceRow(
+            brand_id=brand_id,
+            audience_key=_audience_key(segment.name),
+            name=" ".join(segment.name.split()),
+        )
+        row.payload = segment.model_copy(
+            update={"added_by": "user", "name": row.name}
+        ).model_dump(mode="json")
+        row.updated_at = datetime.now(UTC)
+        self._session.add(row)
+        self._session.commit()
+        self._session.refresh(row)
+        return row
+
+    def delete_user_audience(self, row: UserAudienceRow) -> None:
+        self._session.delete(row)
+        self._session.commit()
 
     # ----------------------------------------------------- audience research
 
@@ -793,6 +880,23 @@ def merge_audience(
         merged.audience.objections.insert(0, objection)
     logger.info("market: campaign aimed at mapped segment %r", segment.name)
     return merged
+
+
+def user_segment(row: UserAudienceRow) -> AudienceSegment:
+    """One hand-added audience back as a segment.
+
+    An unreadable payload degrades to the name the user typed rather than
+    emptying the map: the row is the only record that this buyer matters to
+    them, and dropping it silently would be the one failure they could not
+    diagnose.
+    """
+    try:
+        return AudienceSegment.model_validate(
+            {**row.payload, "name": row.name, "added_by": "user"}
+        )
+    except ValidationError:
+        logger.info("market: unreadable user audience payload on row %s", row.id)
+        return AudienceSegment(name=row.name, added_by="user")
 
 
 def prospect_contacts(row: ProspectRow) -> list[Contact]:

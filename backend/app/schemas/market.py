@@ -9,8 +9,9 @@ make the page's shape depend on how claims happen to be stored.
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from app.knowledge.artifacts import Sophistication
 from app.market.audience_research import AudienceResearch
 from app.market.capabilities import CapabilityProfileDraft, ProductCapabilityProfile
 from app.market.claims import Claim
@@ -21,6 +22,7 @@ from app.market.demand import (
     MapAssessment,
     MapOptions,
     Researchability,
+    SegmentKind,
 )
 from app.market.positioning import PositioningMap
 from app.market.qualification import CompanyQualification
@@ -301,6 +303,10 @@ class AudienceSegmentRead(BaseModel):
     current_alternative: str = ""
     assessment: MapAssessment = Field(default_factory=MapAssessment)
     kind: str
+    #: `cartographer` or `user`. The page badges the second, because an
+    #: audience somebody typed and an audience the open web produced are
+    #: different claims - and only one of them is editable here.
+    added_by: str = "cartographer"
     who: str
     why_them: str
     trigger: str
@@ -341,6 +347,7 @@ class AudienceSegmentRead(BaseModel):
             current_alternative=segment.current_alternative,
             assessment=segment.assessment,
             kind=str(segment.kind),
+            added_by=segment.added_by,
             who=segment.who,
             why_them=segment.why_them,
             trigger=segment.trigger,
@@ -533,6 +540,88 @@ class AudienceRead(BaseModel):
 
 class MapAudienceRequest(MapOptions):
     """Optional search scope; an empty body keeps the one-click workflow."""
+
+
+class UserAudienceRequest(BaseModel):
+    """One audience the user is describing themselves.
+
+    Four required lines, and they are four rather than one because they are
+    exactly what `AudienceSegment.admission` reads as a situation: who they
+    are, what they are doing when the problem bites, and what they need to
+    change. A free-text paragraph would be kinder to type and would leave the
+    admission check nothing to hold on to.
+
+    `signals` and `where` are what research actually spends its search on, and
+    they are optional here on purpose. An audience saved without them is not
+    researchable, the deterministic receipt says so in the same words it uses
+    for a mapped one, and the user can come back and finish it - which beats a
+    form that refuses to save half an idea.
+
+    Nothing else is required. Everything below `where` is the detail that makes
+    a campaign to this buyer read differently from a campaign to any other, and
+    all of it can be added later.
+    """
+
+    name: str = Field(min_length=1, max_length=120)
+    #: The kind of organisation or person. "Three-person Shopify stores
+    #: selling refurbished laptops", not "e-commerce".
+    organization: str = Field(min_length=1, max_length=400)
+    #: What they are doing when this matters. "Answering warranty questions by
+    #: hand out of a shared inbox".
+    workflow: str = Field(min_length=1, max_length=400)
+    #: What they need to change about it.
+    need: str = Field(min_length=1, max_length=400)
+    #: How you would recognise one from the outside, without asking them.
+    signals: list[str] = Field(default_factory=list, max_length=10)
+    #: Named places they are findable in bulk. A directory, a register, an
+    #: exhibitor list - "LinkedIn" on its own is refused by admission.
+    where: list[str] = Field(default_factory=list, max_length=10)
+
+    kind: SegmentKind = SegmentKind.CORE
+    sophistication: Sophistication = Sophistication.PROBLEM_AWARE
+    who: str = Field(default="", max_length=600)
+    why_them: str = Field(default="", max_length=600)
+    trigger: str = Field(default="", max_length=400)
+    pains: list[str] = Field(default_factory=list, max_length=10)
+    objection: str = Field(default="", max_length=600)
+    angle: str = Field(default="", max_length=600)
+    population: str = Field(default="", max_length=200)
+    buyer_role: str = Field(default="", max_length=200)
+    user_role: str = Field(default="", max_length=200)
+    current_alternative: str = Field(default="", max_length=400)
+
+    @field_validator("*", mode="before")
+    @classmethod
+    def _tidy(cls, value: object) -> object:
+        """Tidy before the length rules, not after.
+
+        `mode="after"` would let a name of three spaces satisfy `min_length`
+        and then be stripped to nothing on the way out - stored, unfindable,
+        and reported as a conflict rather than as the empty field it is.
+        Blank list entries are typing rather than content for the same reason:
+        admission counts signals, and a blank one would count.
+        """
+        if isinstance(value, str):
+            return " ".join(value.split())
+        if isinstance(value, list):
+            return [" ".join(str(item).split()) for item in value if str(item).strip()]
+        return value
+
+    def as_segment(self) -> AudienceSegment:
+        """The draft as the one segment shape the whole pipeline already reads.
+
+        `definition` is left empty and that is honest rather than lazy: it is
+        the machine-readable qualification contract, an empty one is
+        deliberately insufficient to call a company QUALIFIED, and inventing
+        requirement codes out of prose would make a hand-written audience look
+        more checkable than it is.
+        """
+        return AudienceSegment(
+            **self.model_dump(exclude={"sophistication", "kind"}),
+            kind=self.kind,
+            sophistication=self.sophistication,
+            added_by="user",
+        )
 
 
 class ResearchAudienceRequest(BaseModel):

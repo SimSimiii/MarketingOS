@@ -2,6 +2,10 @@ from uuid import UUID
 
 from sqlmodel import col, select
 
+from app.auth.principal import Principal
+from app.auth.scope import owned
+from app.models.campaign import Campaign
+from app.models.campaign_execution import CampaignExecution
 from app.models.enums import LogLevel
 from app.models.execution_log import ExecutionLog
 from app.repositories.base import BaseRepository
@@ -39,6 +43,10 @@ class ExecutionLogRepository(BaseRepository[ExecutionLog]):
         per-agent log panel asks for), `levels` drops the DEBUG progress
         chatter when the caller only wants the story, and `after_sequence`
         fetches just what is new since the client's last known position.
+
+        Not scoped: every caller reaches it through
+        `CampaignService.get_execution`, which has already refused a run the
+        caller does not own.
         """
         statement = select(ExecutionLog).where(
             ExecutionLog.campaign_execution_id == campaign_execution_id
@@ -54,6 +62,24 @@ class ExecutionLogRepository(BaseRepository[ExecutionLog]):
             statement = statement.limit(limit)
         return list(self.session.exec(statement))
 
-    def list_recent(self, limit: int = 200) -> list[ExecutionLog]:
-        statement = select(ExecutionLog).order_by(col(ExecutionLog.created_at).desc()).limit(limit)
+    def list_recent(
+        self, limit: int = 200, principal: Principal | None = None
+    ) -> list[ExecutionLog]:
+        """The newest lines across every run - the activity page.
+
+        A log line has no owner of its own: it hangs off a run, which hangs
+        off a campaign, and the campaign is where ownership lives. So the
+        filter is two hops as a subquery rather than a column on this table -
+        denormalising the owner onto every one of the ~170 rows a run writes
+        would put the tenancy rule in a second place and make it something a
+        backfill could get wrong.
+        """
+        statement = select(ExecutionLog)
+        if principal is not None and principal.user is not None:
+            visible_campaigns = owned(select(Campaign.id), Campaign, principal)
+            visible_runs = select(CampaignExecution.id).where(
+                col(CampaignExecution.campaign_id).in_(visible_campaigns)
+            )
+            statement = statement.where(col(ExecutionLog.campaign_execution_id).in_(visible_runs))
+        statement = statement.order_by(col(ExecutionLog.created_at).desc()).limit(limit)
         return list(self.session.exec(statement))

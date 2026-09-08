@@ -1,6 +1,6 @@
 """Every path the frontend calls must be one the backend actually serves.
 
-`frontend/src/lib/api-client.ts` hardcodes all 48 of them and
+`frontend/src/lib/api-core.ts` hardcodes all of them and
 `frontend/src/lib/types.ts` mirrors the Pydantic schemas by hand, so renaming a
 route breaks the UI with a 404 that no backend test can see and no frontend
 check looks for - there is no CI and no frontend test runner. This reads the
@@ -18,8 +18,11 @@ import pytest
 
 from app.main import app
 
+#: The call surface lives in the factory, not in either of the two thin
+#: modules built from it: `api-client.ts` (browser) and `api-server.ts`
+#: (server components) differ only in where the bearer token comes from.
 API_CLIENT = (
-    Path(__file__).resolve().parents[3] / "frontend" / "src" / "lib" / "api-client.ts"
+    Path(__file__).resolve().parents[3] / "frontend" / "src" / "lib" / "api-core.ts"
 )
 
 # Every request goes through `${API_URL}${path}`, and API_URL carries the mount.

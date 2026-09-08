@@ -27,3 +27,14 @@ Thumbs.db
 # Claude Code
 .claude/settings.local.json
 .scratch/
+
+# Back-office console
+administration/frontend/node_modules/
+administration/frontend/.next/
+administration/frontend/out/
+
+# Vendored into the admin Lambda bundle by its buildspec, never committed.
+administration/backend/app/
+
+# SAM build artifacts
+**/.aws-sam/

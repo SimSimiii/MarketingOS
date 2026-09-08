@@ -23,6 +23,12 @@ corpus below.
 - A Tier 3-only observation must be explicitly `inferred`, must include `inference_basis`,
   and must not be presented as buyer language or a grounded problem.
 
+Preserve each observation's scope: who reported it, which product or version it concerns,
+and when, when those details are present. A complaint establishes a reported experience, not
+its prevalence or a universal technical limitation. "I could not find an export" does not
+establish that no export exists. Multiple quotes must support the same interpretation, not
+merely mention the same topic. Keep uncertain or historical conclusions qualified.
+
 # How to cite
 
 Every evidence reference must contain a source id from a `<source>` element and a verbatim

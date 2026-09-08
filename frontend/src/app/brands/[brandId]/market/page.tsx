@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { MarketView } from "./market-view";
-import { api } from "@/lib/api-client";
+import { api } from "@/lib/api-server";
 
 /** One brand's market.
  *

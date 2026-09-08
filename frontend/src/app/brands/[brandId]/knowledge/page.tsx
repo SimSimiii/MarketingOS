@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { api } from "@/lib/api-client";
+import { api } from "@/lib/api-server";
 import { formatAbsolute, timeAgo } from "@/lib/format";
 
 /** The raw material one business is written from.

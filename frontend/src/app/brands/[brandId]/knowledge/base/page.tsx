@@ -5,7 +5,7 @@ import { CompileButton } from "./compile-button";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { api } from "@/lib/api-client";
+import { api } from "@/lib/api-server";
 import { formatAbsolute } from "@/lib/format";
 
 /** The knowledge base for one business: every fact the compiler established,

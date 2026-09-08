@@ -571,6 +571,276 @@ def test_a_campaign_that_named_nobody_reads_the_compiled_audience(
     assert stored.artifacts.audience.primary() is None
 
 
+# ------------------------------------------------- audiences you add yourself
+
+
+#: The whole required form. Four lines, and they are four rather than one
+#: because they are exactly what `AudienceSegment.admission` reads as a
+#: situation rather than a category.
+MINIMUM = {
+    "name": "Shopify warranty desks",
+    "organization": "three-person Shopify stores selling refurbished laptops",
+    "workflow": "answering warranty questions by hand out of a shared inbox",
+    "need": "cut the time each warranty ticket takes",
+}
+
+#: The same audience with the two things a search can actually be spent on.
+RESEARCHABLE = {
+    **MINIMUM,
+    "signals": ["their storefront has a published warranty page with an email address"],
+    "where": ["Shopify app store reviews for warranty apps"],
+}
+
+
+def add_audience(client: TestClient, brand_id: str, payload: dict | None = None) -> dict:
+    response = client.post(
+        f"/api/market/{brand_id}/audience/segments", json=payload or MINIMUM
+    )
+    assert response.status_code == 201, response.text
+    return response.json()
+
+
+def mapped_names(client: TestClient, brand_id: str) -> list[str]:
+    body = client.get(f"/api/market/{brand_id}/audience").json()
+    return [item["name"] for item in (body["map"] or {"segments": []})["segments"]]
+
+
+def test_an_audience_can_be_added_without_a_map_or_a_search(client: TestClient):
+    """The point of the feature: knowing your buyer already is a valid state.
+
+    Nothing here compiles knowledge, scans a market or maps demand, so a user
+    who can describe their audience reaches research without buying a
+    discovery run to be told what they already knew."""
+    brand = make_brand(client, "Warranty desk")
+    assert client.get(f"/api/market/{brand['id']}/audience").json()["map"] is None
+
+    added = add_audience(client, brand["id"])
+
+    body = client.get(f"/api/market/{brand['id']}/audience").json()
+    assert added["name"] == MINIMUM["name"]
+    assert added["added_by"] == "user"
+    assert [item["name"] for item in body["map"]["segments"]] == [MINIMUM["name"]]
+    assert "you described yourself" in body["map"]["validation_note"]
+
+
+def test_the_minimum_form_saves_and_says_what_research_still_needs(client: TestClient):
+    """A half-written audience is savable, and the receipt is the teacher.
+
+    The alternative - refusing to store anything until the form is complete -
+    duplicates `admission` in a validator and loses the idea the user was in
+    the middle of having."""
+    brand = make_brand(client, "Warranty desk")
+
+    added = add_audience(client, brand["id"])
+
+    assert added["researchable"] is False
+    assert added["researchability"] == "unresearchable"
+    assert added["researchability_reasons"] == [
+        "No useful observable signal identifies this audience.",
+        "No specific venue or source says where this audience can be found.",
+    ]
+
+
+def test_one_signal_and_one_venue_make_it_researchable(client: TestClient):
+    brand = make_brand(client, "Warranty desk")
+
+    added = add_audience(client, brand["id"], RESEARCHABLE)
+
+    assert added["researchable"] is True
+    assert added["researchability"] == "low"
+
+
+def test_a_hand_written_audience_never_claims_verified_evidence(client: TestClient):
+    """Saying who your buyer is is a claim about your intent, not a reading of
+    the market. It may never outrank an audience somebody actually checked."""
+    brand = make_brand(client, "Warranty desk")
+
+    added = add_audience(client, brand["id"], RESEARCHABLE)
+
+    assert added["assessment"]["evidence"] == []
+    assert added["assessment"]["evidence_strength"] == "absent"
+    assert added["assessment"]["priority"] == "hypothesis"
+    assert any(
+        "nothing on the open web has been checked" in reason
+        for reason in added["assessment"]["reasons"]
+    )
+
+
+def test_research_actually_starts_on_an_audience_the_user_added(web_client: TestClient):
+    """The other half of the feature: the analysis has to run on it."""
+    brand = make_brand(web_client, "Warranty desk")
+    add_audience(web_client, brand["id"], RESEARCHABLE)
+
+    response = web_client.post(
+        f"/api/market/{brand['id']}/audience/research",
+        json={"segment": RESEARCHABLE["name"]},
+    )
+
+    assert response.status_code == 202, response.text
+    assert response.json()["kind"] == "audience_research"
+    assert job_for(UUID(brand["id"])) is not None
+
+
+def test_prospecting_starts_on_an_audience_the_user_added(
+    web_client: TestClient, engine
+):
+    brand = make_brand(web_client, "Warranty desk")
+    compile_for_brand(engine, brand["id"])
+    add_audience(web_client, brand["id"], RESEARCHABLE)
+
+    response = web_client.post(
+        f"/api/market/{brand['id']}/audience/prospects",
+        json={"segment": RESEARCHABLE["name"]},
+    )
+
+    assert response.status_code == 202, response.text
+    assert job_for(UUID(brand["id"])) is not None
+
+
+def test_an_added_audience_survives_a_remap_that_replaces_the_list(
+    client: TestClient, engine
+):
+    """The reason these are rows rather than part of the map payload.
+
+    A refresh replaces the compiled map wholesale. An audience written into
+    that payload would be gone the first time somebody pressed rescan, taking
+    the research and the prospects pointing at its name with it."""
+    brand = make_brand(client, "Warranty desk")
+    add_audience(client, brand["id"], RESEARCHABLE)
+    store_map(engine, brand["id"], segment("Independent repair shops"))
+    store_map(engine, brand["id"], segment("Refurbishers"))
+
+    assert mapped_names(client, brand["id"]) == [RESEARCHABLE["name"], "Refurbishers"]
+
+
+def test_a_remap_reads_the_cartographer_s_own_last_map_not_the_merged_one(
+    client: TestClient, engine
+):
+    """`previous` is what an explore run retains into its next payload. Merged
+    audiences reaching it would be copied into the compiled map, where the
+    following refresh would silently drop them again."""
+    brand = make_brand(client, "Warranty desk")
+    add_audience(client, brand["id"], RESEARCHABLE)
+    store_map(engine, brand["id"], segment("Independent repair shops"))
+
+    with Session(engine) as session:
+        store = MarketStore(session)
+        compiled = store.compiled_map(UUID(brand["id"]))
+        merged = store.latest_map(UUID(brand["id"]))
+
+    assert [item.name for item in compiled.segments] == ["Independent repair shops"]
+    assert [item.name for item in merged.segments] == [
+        RESEARCHABLE["name"],
+        "Independent repair shops",
+    ]
+
+
+def test_your_own_audience_wins_a_name_collision_with_a_mapped_one(
+    client: TestClient, engine
+):
+    """On the subject of their own buyer the user is the authority - the same
+    rule the rival list follows when a scan re-proposes a muted competitor."""
+    brand = make_brand(client, "Warranty desk")
+    add_audience(client, brand["id"], RESEARCHABLE)
+    store_map(engine, brand["id"], segment(RESEARCHABLE["name"], who="found by the map"))
+
+    body = client.get(f"/api/market/{brand['id']}/audience").json()
+
+    assert len(body["map"]["segments"]) == 1
+    assert body["map"]["segments"][0]["added_by"] == "user"
+    assert body["map"]["segments"][0]["organization"] == RESEARCHABLE["organization"]
+
+
+def test_a_second_audience_with_the_same_name_is_refused(client: TestClient):
+    brand = make_brand(client, "Warranty desk")
+    add_audience(client, brand["id"])
+
+    again = client.post(
+        f"/api/market/{brand['id']}/audience/segments",
+        json={**MINIMUM, "name": "  shopify WARRANTY desks "},
+    )
+
+    assert again.status_code == 409
+    assert "already added" in again.json()["detail"]
+
+
+def test_an_edit_fills_in_what_the_receipt_asked_for(client: TestClient):
+    brand = make_brand(client, "Warranty desk")
+    add_audience(client, brand["id"])
+
+    edited = client.patch(
+        f"/api/market/{brand['id']}/audience/segments", json=RESEARCHABLE
+    )
+
+    assert edited.status_code == 200, edited.text
+    assert edited.json()["researchable"] is True
+    assert mapped_names(client, brand["id"]) == [MINIMUM["name"]]
+
+
+def test_deleting_an_audience_leaves_the_research_it_already_paid_for(
+    client: TestClient, engine
+):
+    """Those calls cost real quota and remain readable on their own. Taking
+    them along would be a decision the user did not make."""
+    brand = make_brand(client, "Warranty desk")
+    add_audience(client, brand["id"], RESEARCHABLE)
+    with Session(engine) as session:
+        MarketStore(session).save_research(
+            UUID(brand["id"]),
+            AudienceResearch(audience_name=RESEARCHABLE["name"], candidate_kind="core"),
+            None,
+        )
+
+    removed = client.delete(
+        f"/api/market/{brand['id']}/audience/segments",
+        params={"name": RESEARCHABLE["name"]},
+    )
+
+    body = client.get(f"/api/market/{brand['id']}/audience").json()
+    assert removed.status_code == 204
+    assert body["map"] is None
+    assert [item["audience_name"] for item in body["research"]] == [RESEARCHABLE["name"]]
+
+
+def test_only_an_audience_you_added_can_be_edited_or_removed(client: TestClient, engine):
+    brand = make_brand(client, "Warranty desk")
+    store_map(engine, brand["id"], segment())
+
+    edited = client.patch(
+        f"/api/market/{brand['id']}/audience/segments",
+        json={**MINIMUM, "name": segment().name},
+    )
+    removed = client.delete(
+        f"/api/market/{brand['id']}/audience/segments",
+        params={"name": segment().name},
+    )
+
+    assert edited.status_code == 404
+    assert removed.status_code == 404
+    assert mapped_names(client, brand["id"]) == [segment().name]
+
+
+def test_a_blank_required_line_is_refused_rather_than_stored(client: TestClient):
+    brand = make_brand(client, "Warranty desk")
+
+    for field in ("name", "organization", "workflow", "need"):
+        response = client.post(
+            f"/api/market/{brand['id']}/audience/segments",
+            json={**MINIMUM, field: "   "},
+        )
+        assert response.status_code == 422, field
+
+    assert client.get(f"/api/market/{brand['id']}/audience").json()["map"] is None
+
+
+def test_one_brand_never_sees_another_s_added_audiences(client: TestClient):
+    mine = make_brand(client, "Warranty desk")
+    theirs = make_brand(client, "Somebody else")
+    add_audience(client, mine["id"])
+
+    assert client.get(f"/api/market/{theirs['id']}/audience").json()["map"] is None
+
+
 # --------------------------------------------------------- launching the job
 
 

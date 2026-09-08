@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { KnowledgeBaseExplorer } from "@/app/brands/[brandId]/knowledge/base/knowledge-base-explorer";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { api } from "@/lib/api-client";
+import { api } from "@/lib/api-server";
 import { formatAbsolute } from "@/lib/format";
 
 /** A one-off campaign's knowledge base.

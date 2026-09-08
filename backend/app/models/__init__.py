@@ -4,14 +4,19 @@ Importing every model module here ensures they are registered on
 SQLModel.metadata before `init_db()` / Alembic autogenerate run.
 """
 
+from app.models.admin import AdminAuditLog, AdminUser
 from app.models.agent_execution import AgentExecution
 from app.models.brand import Brand
 from app.models.campaign import Campaign
 from app.models.campaign_execution import CampaignExecution
 from app.models.enums import (
+    AdminRole,
     AssetType,
     ExecutionStatus,
     LogLevel,
+    UserPlan,
+    UserRole,
+    UserStatus,
 )
 from app.models.execution_log import ExecutionLog
 from app.models.generated_asset import GeneratedAsset
@@ -27,10 +32,15 @@ from app.models.market import (
     RadarEventRow,
     RelevanceDossierRow,
     Rival,
+    UserAudienceRow,
 )
+from app.models.user import User, UserSession
 from app.models.user_settings import UserSettings
 
 __all__ = [
+    "AdminAuditLog",
+    "AdminRole",
+    "AdminUser",
     "AgentExecution",
     "AssetType",
     "AudienceMapRow",
@@ -51,5 +61,11 @@ __all__ = [
     "RadarEventRow",
     "RelevanceDossierRow",
     "Rival",
+    "User",
+    "UserAudienceRow",
+    "UserPlan",
+    "UserRole",
+    "UserSession",
     "UserSettings",
+    "UserStatus",
 ]

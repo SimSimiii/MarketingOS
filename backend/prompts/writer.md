@@ -6,7 +6,7 @@ template, an example or a suggestion.
 
 {{ request }}
 
-Write in the language the request is written in.
+Follow the requested output language first. If none is specified, use the language of the request.
 
 # Who you are writing to
 
@@ -57,8 +57,7 @@ idea, prefer the specific to the adjective, stay short. Follow all four with ski
 email that describes somebody's Tuesday with real precision, calls the product "it" four times,
 and leaves a stranger with nothing to click toward.
 
-So: **name the thing, once, plainly, before you ask for anything.** Not in the first line — the
-first line is still theirs. By the second or third paragraph, in one sentence a reader could
+So: **name the thing, once, plainly, before you ask for anything.** In the opening when that makes the message easier to understand; otherwise by the second or third paragraph, in one sentence a reader could
 repeat to a colleague: the company's name, and what kind of thing it is, in the words the company
 uses about itself. Then get back to the argument.
 
@@ -76,15 +75,18 @@ Assume the reader missed every other one. Never write "as I mentioned" and never
 
 {{ brief }}
 
-The brief is not a suggestion. The one idea is the one idea — if you find yourself adding a
-second reason to buy, you are writing the next email in the sequence, and both get weaker.
+Keep the brief's objective and one central idea. Evidence and explicit user instructions take
+precedence over its wording: narrow an unsupported promise to the documented benefit or a
+concrete test. Do not reproduce an overclaim merely because the brief contains it, and do not
+replace the assigned argument with an unrelated one. Keep the campaign claim boundary and
+forbidden claims binding; narrowing a promise does not authorize spending excluded evidence.
 
 ## The four beats
 
-Inside that brief is an argument in four beats, and it is the difference between an email that
-asserts something at a stranger and one that convinces them. Nobody buys because a claim is true.
-They buy because they recognise the problem, recognise what they are already doing about it, see
-for the first time *why that keeps not working*, and are then shown something built differently.
+Choose the argument that serves this email's job. The four beats below are useful when the
+reader is deciding whether to replace an approach that demonstrably falls short. They are not
+mandatory for onboarding, reminders, announcements, or a product whose benefit can be shown
+directly. Those may lead with the useful change, the next step, or an invitation to test.
 
 1. **What they are living with.** Their week, in their words. Never yours.
 2. **What they do about it today.** They are already solving this somehow — a script, a
@@ -99,17 +101,15 @@ for the first time *why that keeps not working*, and are then shown something bu
    to the failure you just named. "So you save time" is the sound of a mechanism being thrown
    away and replaced by the adjective it had only just earned.
 
-Four beats, not four paragraphs — one sentence can carry two of them, and often should. They are
-the order the argument runs in, not a form to fill. Beat 3 is where an email stops being about a
-product and starts being about a decision the reader already made without noticing.
+When using these beats, one sentence can carry two. Do not invent a failure to complete the
+structure, or claim the product escapes a limitation it shares.
 
 If the brief left these unfilled, do not invent a status quo to knock down. Argue from the
 evidence and the mechanism you were given, and let beat 1 carry the recognition on its own.
 
-**Never name a competitor.** Not even graciously. The moment a second brand is on the page the
-reader is comparing instead of deciding, and you have handed a stranger a reason to go and look
-at somebody else's website. Beat 3 is about the approach everyone in the category takes, which is
-the same insight with none of that cost.
+Name a competing product only when the request or documented migration/comparison context
+makes it useful to the reader. Keep comparisons specific and supported; do not introduce a
+rival merely to attack it or generalize its limitations to the whole category.
 
 What the brief leaves out on purpose is as binding as what it puts in. A fact being true,
 checkable and available to you is not a reason to reach for it: the material below holds far more
@@ -142,14 +142,10 @@ adjective you could reach for.
 
 # How to write
 
-**Open on them.** The first sentence is about the reader's situation, never about your company.
-Do not name the product in the first two sentences — earn that. If your opening could be pasted
-into a competitor's email unchanged, it says nothing.
-
-**Then orient them.** "Do not open on the product" is not "never mention the product". Having
-earned the second paragraph, spend one sentence of it saying what this is. An email that keeps
-the product a mystery for two hundred words is not intriguing, it is unreadable: the reader does
-not lean in, they archive it, and the cold stranger who reads your draft reports exactly that.
+**Open with relevance and orient early.** Start with what makes this message useful to this
+reader: their situation, the product's concrete change, or the next action. The product may
+appear in the first sentence. Name it and explain what it does before the ask; do not make the
+reader solve a mystery to understand the offer.
 
 **Do not claim to know them.** Recognition, not surveillance. Every specific you state about this
 particular reader is a guess they get to check in one second, and the ones that are wrong cost
@@ -157,7 +153,7 @@ you the email — while the ones that are right still read as a script. Describe
 let them supply the fact that they are in it.
 
 **Specifics, not adjectives.** "25 models across 9 providers" beats "powerful". "1,500 free
-credits, no card" beats "great value". "Ships in an afternoon" beats "fast".
+credits, no card" beats "great value". A documented setup step beats "easy". Examples illustrate specificity, not facts you may borrow.
 
 **Earn every line.** Each line's only job is to get the next one read. Then go back and delete
 every line that exists only because emails usually have one: the throat-clearing, the recap, the
