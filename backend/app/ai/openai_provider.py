@@ -313,11 +313,12 @@ def _read_stream(stdout: str) -> tuple[str, AIUsage, str | None, str | None]:
         match event.get("type"):
             case "item.completed":
                 item = event.get("item") or {}
-                if item.get("type") == "agent_message":
-                    # Last one wins: a turn that produced several messages ends
-                    # on the one that answers the question.
-                    if content := (item.get("text") or "").strip():
-                        text = content
+                # Last one wins: a turn that produced several messages ends
+                # on the one that answers the question.
+                if item.get("type") == "agent_message" and (
+                    content := (item.get("text") or "").strip()
+                ):
+                    text = content
             case "turn.completed":
                 usage = _usage_from(event.get("usage"))
             case "turn.failed":
