@@ -9,6 +9,12 @@ venv/
 
 # Backend runtime
 backend/*.db
+# ...and the hand-made snapshots beside it. `*.db` does not match them:
+# the name has to *end* in .db, and `marketingos.db.pre-accounts.bak` does
+# not, which is how four SQLite files became tracked source.
+backend/*.db.*
+backend/*.db-shm
+backend/*.db-wal
 backend/.env
 
 # Node / Next.js
