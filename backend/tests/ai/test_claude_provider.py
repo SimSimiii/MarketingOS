@@ -14,7 +14,7 @@ import sys
 import pytest
 
 from app.ai import claude_provider
-from app.ai.base import AIMessage, AIRequest, ProviderCallError
+from app.ai.base import AIMessage, AIRequest, ProviderCallError, ResearchTool
 from app.ai.claude_provider import ClaudeProvider, _needs_proactor_thread
 
 
@@ -234,3 +234,68 @@ def test_selector_loop_is_detected_as_needing_a_proactor_thread():
 
 def test_no_running_loop_needs_no_thread():
     assert _needs_proactor_thread() is False
+
+
+def _cli_command_for(options) -> list[str]:
+    """The argv the SDK would actually hand CreateProcess for these options.
+
+    Asserting on the options object alone would not have caught the bug these
+    tests exist for: `allowed_tools` was set and looked like a restriction,
+    and only the command line shows that nothing was ever restricting the
+    toolset. `cli_path` is stubbed because the builder only needs argv[0] and
+    a test machine need not have the CLI installed.
+    """
+    from dataclasses import replace
+
+    from claude_agent_sdk._internal.transport.subprocess_cli import (
+        SubprocessCLITransport,
+    )
+
+    transport = SubprocessCLITransport(
+        prompt="x", options=replace(options, cli_path="/stub/claude")
+    )
+    return transport._build_command()
+
+
+@pytest.mark.asyncio
+async def test_a_campaign_call_has_every_built_in_tool_disabled(monkeypatch):
+    """A call that writes or judges copy needs no tool, so it must be handed
+    none. `--tools ""` is what disables the CLI's built-ins; `--allowedTools`
+    only pre-approves tools that are already available, so on its own it left
+    Bash, Read and Edit reachable from this process."""
+    seen = _captured_call(monkeypatch)
+
+    await ClaudeProvider(default_model="test-model").generate(_request())
+
+    assert seen["options"].tools == []
+    command = _cli_command_for(seen["options"])
+    assert "--tools" in command
+    assert command[command.index("--tools") + 1] == ""
+    assert "--allowedTools" not in command
+    assert "bypassPermissions" not in command
+
+
+@pytest.mark.asyncio
+async def test_a_research_call_is_restricted_to_the_two_web_tools(monkeypatch):
+    """Research is the one path that both bypasses the permission prompt and
+    reads attacker-controlled text, so the bypass has to be narrow: exactly
+    WebSearch and WebFetch exist, and no file or shell tool does."""
+    seen = _captured_call(monkeypatch)
+
+    await ClaudeProvider(default_model="test-model").generate(
+        AIRequest(
+            system_prompt="You research.",
+            messages=[AIMessage(role="user", content="Find something")],
+            model="test-model",
+            tools=[ResearchTool.WEB_SEARCH, ResearchTool.WEB_FETCH],
+        )
+    )
+
+    assert seen["options"].tools == ["WebSearch", "WebFetch"]
+    command = _cli_command_for(seen["options"])
+    granted = command[command.index("--tools") + 1].split(",")
+    assert granted == ["WebSearch", "WebFetch"]
+    for dangerous in ("Bash", "Read", "Edit", "Write", "NotebookEdit"):
+        assert dangerous not in granted
+    # The prompt is bypassed, which is why the list above must stay short.
+    assert "bypassPermissions" in command

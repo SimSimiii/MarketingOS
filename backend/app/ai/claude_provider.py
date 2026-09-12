@@ -181,15 +181,24 @@ class ClaudeProvider(AIProvider):
             system_prompt=system_prompt,
             max_turns=request.max_turns
             or (_MAX_RESEARCH_TURNS if tools else _MAX_TURNS),
+            # `tools` is what decides which built-in tools exist at all;
+            # `allowed_tools` only pre-approves ones that already do. Setting
+            # the second without the first leaves the CLI's whole default
+            # toolset - Bash, Read, Edit - reachable, and a research call
+            # pairs that with `bypassPermissions`, which auto-approves every
+            # one of them. The attacker there is not another user: it is any
+            # page WebFetch reads, since prompt injection in fetched content
+            # is the expected case for a role that browses the open web.
+            # Passing `tools` closes it - `[]` disables the built-ins outright
+            # on every campaign call, and a research call gets exactly
+            # WebSearch and WebFetch and nothing else.
+            tools=tools,
             allowed_tools=tools,
             # A tool the CLI must ask a human about is a tool that never runs:
             # nothing is attached to this process's stdin, so the prompt has
             # no one to answer it and the call hangs until the deadline takes
-            # it. `bypassPermissions` is scoped by `allowed_tools` in the same
-            # breath - with the list empty, which is every campaign call, it
-            # grants nothing because there is nothing to grant, and on a
-            # research call it grants exactly WebSearch and WebFetch. No
-            # file, shell or edit tool is ever reachable from this process.
+            # it. Bypassing the prompt is therefore what makes research work
+            # at all; `tools` above is what keeps the bypass narrow.
             permission_mode="bypassPermissions" if tools else "default",
             cli_path=_cli_path(),
             env=_clean_env(),

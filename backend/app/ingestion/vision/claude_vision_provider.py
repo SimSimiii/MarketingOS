@@ -79,6 +79,11 @@ class ClaudeVisionProvider(VisionProvider):
         options = ClaudeAgentOptions(
             model=self._model,
             max_turns=1,
+            # `tools` is the restriction; `allowed_tools` only pre-approves.
+            # Describing an image needs no tool at all, so take the built-ins
+            # away rather than relying on the permission prompt to refuse them
+            # - see the same pairing in `ai/claude_provider.py`.
+            tools=[],
             allowed_tools=[],
             permission_mode="default",
             cli_path=_cli_path(),
