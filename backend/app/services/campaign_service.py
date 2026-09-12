@@ -9,7 +9,7 @@ from app.ai.base import AIProvider
 from app.ai.roles import validate_overrides
 from app.auth.principal import Principal
 from app.knowledge.store import ArtifactScope, ArtifactStore, fingerprint_documents
-from app.marketing.contract import parse_contract
+from app.marketing.contract import linkedin_contract, parse_contract
 from app.marketing.forecast import forecast
 from app.marketing.policy import resolve_policy
 from app.models.agent_execution import AgentExecution
@@ -211,6 +211,13 @@ class CampaignService:
             Campaign(
                 name=f"{campaign.name} (copy)",
                 brand_id=campaign.brand_id,
+                # Every other field here is the brief; this one is tenancy, and
+                # leaving it out did not fail loudly - it created an ownerless
+                # row. The POST returned 201 and the very next GET of the clone
+                # returned 404, because scoping filters on exactly this column.
+                # Taken from the source row rather than the principal: reaching
+                # this campaign at all already proved the caller owns it.
+                owner_id=campaign.owner_id,
                 request=campaign.request,
                 product_description=campaign.product_description,
                 product_url=campaign.product_url,
@@ -303,7 +310,9 @@ class CampaignService:
             (campaign.policy or {}).get("preset"),
             {k: v for k, v in (campaign.policy or {}).items() if k != "preset"} or None,
         )
-        contract = parse_contract(campaign.request)
+        # Same rule as the pipeline's: the channel decides the deliverable,
+        # and only an email campaign has a number to read out of a sentence.
+        contract = linkedin_contract() if campaign.channel else parse_contract(campaign.request)
 
         store = ArtifactStore(self._session)
         scope = ArtifactScope.for_campaign(campaign)
@@ -326,6 +335,7 @@ class CampaignService:
         return RunForecast(
             preset=(campaign.policy or {}).get("preset") or "balanced",
             emails=contract.count,
+            deliverable=contract.noun,
             count_is_explicit=contract.count_is_explicit,
             low=estimate.low,
             high=estimate.high,

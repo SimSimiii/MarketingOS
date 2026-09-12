@@ -265,6 +265,7 @@ def test_the_market_router_is_closed_for_another_accounts_brand(locked_client: T
         f"/api/market/{brand_id}/audience",
         f"/api/market/{brand_id}/proof",
         f"/api/market/{brand_id}/radar",
+        f"/api/market/{brand_id}/linkedin/runs",
     ):
         assert locked_client.get(path, headers=bob).status_code == 404, path
     assert locked_client.post(
@@ -300,6 +301,35 @@ def test_one_account_cannot_see_another_accounts_campaign_or_its_runs(locked_cli
     assert locked_client.get(f"/api/campaigns/{campaign_id}/executions", headers=bob).status_code == 404
 
 
+def test_a_duplicated_campaign_still_belongs_to_the_account_that_made_it(
+    locked_client: TestClient,
+):
+    """The clone used to be created with no owner at all, which every scoping
+    query reads as "nobody's": the POST said 201 and the very next GET of the
+    id it had just returned said 404. Nothing surfaced it, because the copy
+    was in the database - just unreachable, by its author and by everyone."""
+    alice = as_account(locked_client, "alice@example.com")
+    created = locked_client.post(
+        "/api/campaigns", json={"name": "Launch", "request": "Write 3 emails"}, headers=alice
+    )
+    assert created.status_code == 201
+    campaign_id = created.json()["id"]
+
+    duplicated = locked_client.post(f"/api/campaigns/{campaign_id}/duplicate", headers=alice)
+    assert duplicated.status_code == 201, duplicated.text
+    clone_id = duplicated.json()["id"]
+
+    assert locked_client.get(f"/api/campaigns/{clone_id}", headers=alice).status_code == 200
+    assert {row["id"] for row in locked_client.get("/api/campaigns", headers=alice).json()} == {
+        campaign_id,
+        clone_id,
+    }
+
+    # ...and it is still nobody else's.
+    bob = as_account(locked_client, "bob@example.com")
+    assert locked_client.get(f"/api/campaigns/{clone_id}", headers=bob).status_code == 404
+
+
 def test_knowledge_cannot_be_filed_against_another_accounts_brand(locked_client: TestClient):
     alice = as_account(locked_client, "alice@example.com")
     brand_id = locked_client.post("/api/brands", json={"name": "Alice Co"}, headers=alice).json()["id"]
@@ -330,3 +360,25 @@ def test_the_activity_log_only_shows_your_own_runs(locked_client: TestClient):
     )
     bob = as_account(locked_client, "bob@example.com")
     assert locked_client.get("/api/logs", headers=bob).json() == []
+
+
+def test_linkedin_mutations_are_closed_to_other_accounts(locked_client, engine):
+    from uuid import UUID
+
+    from sqlmodel import Session
+
+    from app.models.linkedin import LinkedInRun
+    alice = as_account(locked_client, "alice@example.com")
+    brand_id = locked_client.post("/api/brands", json={"name": "Alice Co"}, headers=alice).json()["id"]
+    with Session(engine) as db:
+        db.add(LinkedInRun(brand_id=UUID(brand_id), kind="search", state="completed"))
+        db.commit()
+    assert len(locked_client.get("/api/linkedin/runs", headers=alice).json()) == 1
+    bob = as_account(locked_client, "bob@example.com")
+    assert locked_client.get("/api/linkedin/runs", headers=bob).json() == []
+    for path, data in [
+        ("search", {"query": "Founders"}),
+        ("messages", {"recipient_name": "Alice", "recipient_url": "https://linkedin.com/in/alice", "objective": "Talk"}),
+    ]:
+        response = locked_client.post(f"/api/market/{brand_id}/linkedin/{path}", json=data, headers=bob)
+        assert response.status_code == 404
