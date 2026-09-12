@@ -20,6 +20,41 @@ router = APIRouter(prefix="/knowledge", tags=["knowledge"])
 #: Refuse oversized uploads before reading them into memory.
 MAX_UPLOAD_BYTES = 20 * 1024 * 1024
 
+#: How much of an upload is pulled in at a time while checking it fits.
+_UPLOAD_CHUNK_BYTES = 1024 * 1024
+
+
+async def _read_within_limit(file: UploadFile) -> bytes:
+    """Read an upload without letting the uploader choose how much memory it
+    takes.
+
+    The check used to sit after a bare `await file.read()`, which is not a
+    limit: by the time the size is known the whole body has already been
+    allocated, so a 2 GB part is a 2 GB allocation and the 413 arrives too
+    late to have prevented anything. Starlette has spooled the part to disk
+    by now, so what is bounded here is resident memory rather than the
+    transfer itself - but resident memory is the half that takes the process
+    down.
+    """
+    if file.size is not None and file.size > MAX_UPLOAD_BYTES:
+        raise _too_large()
+
+    chunks: list[bytes] = []
+    total = 0
+    while chunk := await file.read(_UPLOAD_CHUNK_BYTES):
+        total += len(chunk)
+        if total > MAX_UPLOAD_BYTES:
+            raise _too_large()
+        chunks.append(chunk)
+    return b"".join(chunks)
+
+
+def _too_large() -> HTTPException:
+    return HTTPException(
+        status.HTTP_413_CONTENT_TOO_LARGE,
+        f"File exceeds the {MAX_UPLOAD_BYTES // (1024 * 1024)} MB limit",
+    )
+
 
 def _guard_scope(
     session: SessionDep,
@@ -92,12 +127,7 @@ async def upload_file(
     knowledge is kept, never the binary.
     """
     _guard_scope(session, principal, brand_id, campaign_id)
-    data = await file.read()
-    if len(data) > MAX_UPLOAD_BYTES:
-        raise HTTPException(
-            status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-            f"File exceeds the {MAX_UPLOAD_BYTES // (1024 * 1024)} MB limit",
-        )
+    data = await _read_within_limit(file)
     try:
         documents = await service.ingest_upload(
             filename=file.filename or "upload.txt",
