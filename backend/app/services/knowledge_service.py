@@ -158,7 +158,9 @@ class KnowledgeService:
             if resolved == SourceType.IMAGE:
                 ingested = await self._multimodal.ingest_image(temp_path)
             else:
-                ingested = [await self._pipeline.ingest(temp_path, resolved)]
+                # The one caller allowed to hand a loader a path: this one is
+                # ours, written just above from the uploaded bytes.
+                ingested = [await self._pipeline.ingest(temp_path, resolved, is_path=True)]
         finally:
             Path(temp_path).unlink(missing_ok=True)
 

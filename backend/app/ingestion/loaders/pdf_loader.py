@@ -10,12 +10,20 @@ from app.ingestion.loaders.base import Loader
 
 
 class PdfLoader(Loader):
-    """`source` is a path to a .pdf file. Extracts page text only - no OCR,
+    """`source` is a server-created path to a .pdf file (`is_path`). Extracts page text only - no OCR,
     no layout reconstruction, no LLM."""
 
     source_type = SourceType.PDF
 
-    async def load(self, source: str) -> RawDocument:
+    async def load(self, source: str, *, is_path: bool = False) -> RawDocument:
+        # A PDF only ever reaches us as an uploaded file, written to a
+        # temporary path by the server. Reading a path the caller did not
+        # vouch for would make any pasted string ending in ".pdf" a request
+        # to read that file off this machine.
+        if not is_path:
+            raise LoaderError(
+                "A PDF must be uploaded as a file, not submitted as text."
+            )
         path = Path(source)
         if not path.is_file():
             raise LoaderError(f"PDF source not found: '{source}'")

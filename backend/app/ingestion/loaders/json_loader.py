@@ -8,15 +8,19 @@ from app.ingestion.loaders.base import Loader
 
 
 class JsonLoader(Loader):
-    """`source` is either a path to an existing .json file, or a raw JSON
-    string. Content becomes a pretty-printed text representation - JSON has
+    """`source` is a raw JSON string, or a server-created .json path when
+    `is_path`. Content becomes a pretty-printed text representation - JSON has
     no natural prose form, so this is the most faithful lossless rendering."""
 
     source_type = SourceType.JSON
 
-    async def load(self, source: str) -> RawDocument:
-        path = Path(source)
-        raw_text = path.read_text(encoding="utf-8") if path.is_file() else source
+    async def load(self, source: str, *, is_path: bool = False) -> RawDocument:
+        raw_text = source
+        if is_path:
+            try:
+                raw_text = Path(source).read_text(encoding="utf-8")
+            except OSError as exc:
+                raise LoaderError(f"Failed to read JSON source '{source}': {exc}") from exc
 
         try:
             data = json.loads(raw_text)

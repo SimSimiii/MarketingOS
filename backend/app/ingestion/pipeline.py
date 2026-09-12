@@ -46,10 +46,19 @@ class IngestionPipeline:
         self._chunker = chunker
         self._store = store
 
-    async def ingest(self, source: str, source_type: SourceType | None = None) -> KnowledgeDocument:
+    async def ingest(
+        self,
+        source: str,
+        source_type: SourceType | None = None,
+        *,
+        is_path: bool = False,
+    ) -> KnowledgeDocument:
+        """`is_path` says `source` is a local path this server created, which
+        is true only of the temporary file an upload is written to. Anything
+        that arrived from a user is content - see `Loader.load`."""
         resolved_type = source_type or detect_source_type(source)
         loader = self._loaders.get(resolved_type)
-        return await self.ingest_raw(await loader.load(source))
+        return await self.ingest_raw(await loader.load(source, is_path=is_path))
 
     async def ingest_raw(self, raw: RawDocument) -> KnowledgeDocument:
         """Everything after loading: normalize, clean, chunk, store.

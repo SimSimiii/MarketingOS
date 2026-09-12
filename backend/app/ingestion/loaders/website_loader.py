@@ -22,7 +22,7 @@ class WebsiteLoader(Loader):
         # network; defaults to a real client for actual use.
         self._client = client
 
-    async def load(self, source: str) -> RawDocument:
+    async def load(self, source: str, *, is_path: bool = False) -> RawDocument:
         html = await self.fetch(source)
         title, description, markdown = extract_content(html)
 

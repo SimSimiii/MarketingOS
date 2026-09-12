@@ -10,13 +10,21 @@ from app.ingestion.loaders.base import Loader
 
 
 class DocxLoader(Loader):
-    """`source` is a path to a .docx file. Paragraphs styled as headings are
+    """`source` is a server-created path to a .docx file (`is_path`). Paragraphs styled as headings are
     rendered as Markdown headings so downstream heading-based chunking works;
     everything else is plain paragraph text."""
 
     source_type = SourceType.DOCX
 
-    async def load(self, source: str) -> RawDocument:
+    async def load(self, source: str, *, is_path: bool = False) -> RawDocument:
+        # A DOCX only ever reaches us as an uploaded file, written to a
+        # temporary path by the server. Reading a path the caller did not
+        # vouch for would make any pasted string ending in ".docx" a request
+        # to read that file off this machine.
+        if not is_path:
+            raise LoaderError(
+                "A DOCX must be uploaded as a file, not submitted as text."
+            )
         path = Path(source)
         if not path.is_file():
             raise LoaderError(f"DOCX source not found: '{source}'")
