@@ -12,14 +12,21 @@ from urllib.parse import urlsplit
 from pydantic import BaseModel, Field, ValidationError
 
 from app.ai.model_router import ModelTier
+from app.knowledge.artifacts import Grounding
 from app.knowledge.corpus import fold
-from app.market.audience_research import FetchedSource, FixedURLFetcher, LocatedSource
+from app.market.audience_research import (
+    AudienceResearch,
+    FetchedSource,
+    FixedURLFetcher,
+    LocatedSource,
+)
 from app.market.capabilities import CapabilityState, ProductCapabilityProfile
 from app.market.demand import (
     CARTOGRAPHER_ROLE_ID,
     AudienceSegment,
     DemandMap,
     MapAssessment,
+    MapEvidence,
     MapOptions,
     _MapAnswer,
 )
@@ -118,6 +125,119 @@ def merge_user_audiences(
     merged.segments = unique_audiences(
         assessed + [item for item in merged.segments if fold(item.name) not in mine]
     )
+    return merged
+
+
+#: Which map evidence kind each half of a research artifact answers. Research
+#: asks its questions in the audience's own terms and the map asks them in
+#: commercial ones, but the underlying claim is the same: a verified problem is
+#: a need, the tool they use instead is an alternative, and a venue populated
+#: with them is access.
+_RESEARCH_EVIDENCE_KINDS = {
+    "problems": "need",
+    "buyer_phrases": "need",
+    "incumbent_behaviour": "alternative",
+    "where": "access",
+}
+
+
+def evidence_from_research(research: AudienceResearch) -> list[MapEvidence]:
+    """Verified research findings, in the shape the map already ranks.
+
+    Research quotations are checked against the fetched page before the row is
+    written, so they arrive here at least as well established as anything
+    `validate_map` produced - they were simply written into a different table
+    and never read back.
+
+    Only grounded findings cross over. An inferred one is the researcher's
+    reasoning about the corpus, which is worth reading and is not a source.
+    """
+    by_id = {source.id: source for source in research.sources}
+    found: list[MapEvidence] = []
+    seen: set[tuple[str, str, str]] = set()
+
+    def collect(claim: str, kind: str, references: list) -> None:
+        for reference in references:
+            source = by_id.get(reference.source_id)
+            if source is None or not reference.quote.strip() or not claim.strip():
+                continue
+            key = (source.final_url, fold(reference.quote), kind)
+            if key in seen:
+                continue
+            seen.add(key)
+            found.append(
+                MapEvidence(
+                    claim=claim,
+                    quote=reference.quote,
+                    url=source.final_url,
+                    kind=kind,
+                    fetched_at=source.fetched_at,
+                )
+            )
+
+    for problem in research.problems:
+        if problem.grounding is Grounding.GROUNDED:
+            collect(problem.statement, _RESEARCH_EVIDENCE_KINDS["problems"], problem.evidence)
+    # A buyer phrase carries no grounding of its own because it cannot be
+    # inferred: it is the buyer's words or it is not recorded.
+    for phrase in research.buyer_phrases:
+        collect(phrase.text, _RESEARCH_EVIDENCE_KINDS["buyer_phrases"], [phrase.evidence])
+    for behaviour in research.incumbent_behaviour:
+        if behaviour.grounding is Grounding.GROUNDED:
+            collect(
+                behaviour.text,
+                _RESEARCH_EVIDENCE_KINDS["incumbent_behaviour"],
+                behaviour.evidence,
+            )
+    for venue in research.where:
+        if venue.grounding is Grounding.GROUNDED:
+            collect(venue.text, _RESEARCH_EVIDENCE_KINDS["where"], venue.evidence)
+    return found
+
+
+def merge_research_evidence(
+    demand: DemandMap,
+    researches: dict[str, AudienceResearch],
+    profile: ProductCapabilityProfile | None,
+) -> DemandMap:
+    """The map, re-ranked on what researching its audiences actually found.
+
+    Merged on read for the same reason `merge_user_audiences` is: a map is one
+    moment's reading and a refresh replaces it wholesale, while research
+    outlives every remap. Without this the most expensive artifact in the
+    product is invisible from the only screen where somebody picks an audience
+    - an audience with ten verified sources behind it still reported evidence
+    `absent` and priority `hypothesis`, which is the reading for one nobody
+    has looked at.
+
+    Nothing here calls a model: every quotation was verified when the research
+    row was written.
+    """
+    if not researches:
+        return demand
+    merged = demand.model_copy(deep=True)
+    for segment in merged.segments:
+        research = researches.get(fold(segment.name))
+        if research is None:
+            continue
+        assessment = segment.assessment
+        present = {
+            (item.url, fold(item.quote), item.kind) for item in assessment.evidence
+        }
+        assessment.evidence.extend(
+            item
+            for item in evidence_from_research(research)
+            if (item.url, fold(item.quote), item.kind) not in present
+        )
+        assessment.reasons.append(
+            f"Re-ranked on researched sources ({len(research.sources)} fetched)."
+        )
+        product_check(segment, profile)
+        rank_assessment(segment)
+        if assessment.compatibility == "incompatible":
+            assessment.priority = "incompatible"
+        assessment.reasons = list(dict.fromkeys(assessment.reasons))
+        assessment.unknowns = list(dict.fromkeys(assessment.unknowns))
     return merged
 
 

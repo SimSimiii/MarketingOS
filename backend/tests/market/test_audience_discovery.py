@@ -5,8 +5,23 @@ from uuid import uuid4
 
 import pytest
 
-from app.market.audience_discovery import current_map, validate_map
-from app.market.audience_research import FetchedSource, FetchResult, SourceTier
+from app.knowledge.artifacts import Grounding
+from app.market.audience_discovery import (
+    current_map,
+    merge_research_evidence,
+    validate_map,
+)
+from app.market.audience_research import (
+    AudienceProblem,
+    AudienceResearch,
+    BuyerPhrase,
+    EvidenceReference,
+    FetchedSource,
+    FetchResult,
+    SourcedObservation,
+    SourceReference,
+    SourceTier,
+)
 from app.market.capabilities import (
     CapabilityState,
     ProductCapability,
@@ -70,6 +85,55 @@ class Fetcher:
     async def fetch(self, located):
         self.requested.extend(item.url for item in located)
         return FetchResult(sources=[p for p in self.pages if p.final_url in self.requested])
+
+
+def reference(identifier, url):
+    return SourceReference(
+        id=identifier, requested_url=url, final_url=url, tier=SourceTier.BUYER_VOICE,
+        fetched_at=datetime.now(UTC), content_hash="fixture",
+    )
+
+
+def research(**changes):
+    values = {
+        "audience_name": "Ateliers avec un stock reconditionné",
+        "candidate_kind": "core",
+        "sources": [
+            reference("S1", "https://forum.example/thread"),
+            reference("S2", "https://community.example/post"),
+        ],
+        "problems": [
+            AudienceProblem(
+                id="P1", statement="Les mêmes questions de garantie reviennent chaque matin.",
+                grounding=Grounding.GROUNDED,
+                evidence=[EvidenceReference(
+                    source_id="S1", quote="On répond douze fois par semaine à la même question.")],
+            ),
+            AudienceProblem(
+                id="P2", statement="Personne ne retrouve les réponses déjà écrites.",
+                grounding=Grounding.GROUNDED,
+                evidence=[EvidenceReference(
+                    source_id="S2", quote="Nos réponses sont éparpillées dans quatre boîtes.")],
+            ),
+        ],
+        "where": [SourcedObservation(
+            text="L'annuaire des réparateurs indépendants",
+            grounding=Grounding.GROUNDED,
+            evidence=[EvidenceReference(
+                source_id="S2", quote="Tous les ateliers du secteur y sont listés.")],
+        )],
+    }
+    values.update(changes)
+    return AudienceResearch(**values)
+
+
+def researched(segment, found=None, product=None):
+    demand = DemandMap(segments=[segment])
+    return merge_research_evidence(
+        demand,
+        {"ateliers avec un stock reconditionné": found or research()},
+        product if product is not None else profile(),
+    ).segments[0]
 
 
 def assessment(**changes):
@@ -310,3 +374,74 @@ def test_saved_duplicate_names_are_collapsed_without_changing_history():
     assert len(result.segments) == 1
     assert result.segments[0].name == first.name
     assert len(previous.segments) == 2
+
+
+def test_researched_sources_are_read_back_into_the_map_that_ranks_them() -> None:
+    """The map ranked an audience `absent` while its research row held ten
+    verified sources: the artifact existed, nothing read it. Compatibility is
+    already supported here because only the validation pass can establish it -
+    research answers whether the demand is real, not what the product does."""
+    segment = candidate(assessment=MapAssessment(compatibility="supported"))
+
+    result = researched(segment)
+
+    assert result.assessment.evidence_strength == "supported"
+    assert result.assessment.priority == "explore_first"
+    assert {item.kind for item in result.assessment.evidence} == {"need", "access"}
+    assert all(item.fetched_at is not None for item in result.assessment.evidence)
+    assert not any(
+        "findability" in unknown for unknown in result.assessment.unknowns
+    )
+
+
+def test_research_lifts_evidence_without_inventing_product_compatibility() -> None:
+    segment = candidate()
+
+    result = researched(segment)
+
+    assert result.assessment.evidence_strength == "supported"
+    assert result.assessment.compatibility == "unknown"
+    assert result.assessment.priority == "hypothesis"
+
+
+def test_inferred_research_findings_are_not_counted_as_sources() -> None:
+    """An inferred finding is the researcher reasoning over the corpus. Useful
+    to read, and not a second page that says the same thing."""
+    inferred = research(problems=[
+        AudienceProblem(
+            id="P1", statement="Ils paieraient sans doute pour une réponse automatique.",
+            grounding=Grounding.INFERRED,
+            evidence=[EvidenceReference(source_id="S1", quote="On répond douze fois par semaine.")],
+        )
+    ])
+
+    result = researched(candidate(assessment=MapAssessment(compatibility="supported")), inferred)
+
+    assert result.assessment.evidence_strength == "absent"
+    assert result.assessment.priority == "hypothesis"
+    assert [item.kind for item in result.assessment.evidence] == ["access"]
+
+
+def test_a_buyer_phrase_counts_and_is_not_merged_twice() -> None:
+    quoted = research(buyer_phrases=[BuyerPhrase(
+        text="J'ai renoncé à chercher dans les anciens mails",
+        evidence=EvidenceReference(
+            source_id="S1", quote="On répond douze fois par semaine à la même question."),
+    )])
+    segment = candidate(assessment=MapAssessment(compatibility="supported"))
+
+    once = researched(segment, quoted)
+    twice = merge_research_evidence(
+        DemandMap(segments=[once]),
+        {"ateliers avec un stock reconditionné": quoted},
+        profile(),
+    ).segments[0]
+
+    assert len(twice.assessment.evidence) == len(once.assessment.evidence)
+    assert twice.assessment.reasons == once.assessment.reasons
+
+
+def test_a_map_with_no_research_is_returned_untouched() -> None:
+    demand = DemandMap(segments=[candidate()])
+
+    assert merge_research_evidence(demand, {}, profile()) is demand

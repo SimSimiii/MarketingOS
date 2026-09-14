@@ -38,6 +38,7 @@ from sqlmodel import Session, col, select
 
 from app.knowledge.artifacts import KnowledgeArtifacts
 from app.knowledge.compiler import find_gaps
+from app.knowledge.corpus import fold
 from app.knowledge.ledger import Evidence
 from app.market.audience_research import AudienceResearch
 from app.market.capabilities import ProductCapabilityProfile
@@ -281,8 +282,17 @@ class MarketStore:
         the escape hatch for the single caller that must not see them - the
         mapping job, whose `previous` is the machine's own last reading and
         would otherwise write the user's audiences into its next payload.
+
+        Researched sources are merged here for the same reason and in the same
+        way. They are merged last so a hand-added audience the user then
+        researched is ranked on what the research found, rather than staying on
+        the hypothesis floor its own origin puts it on.
         """
-        from app.market.audience_discovery import merge_user_audiences, product_fingerprint
+        from app.market.audience_discovery import (
+            merge_research_evidence,
+            merge_user_audiences,
+            product_fingerprint,
+        )
 
         compiled = self.compiled_map(brand_id)
         rows = self.user_audience_rows(brand_id)
@@ -302,9 +312,21 @@ class MarketStore:
                 product_fingerprint=product_fingerprint(profile),
                 mapped_at=max(row.updated_at for row in rows),
             )
-        return merge_user_audiences(
-            compiled, [user_segment(row) for row in rows], profile
+        return merge_research_evidence(
+            merge_user_audiences(compiled, [user_segment(row) for row in rows], profile),
+            self.researched_audiences(brand_id),
+            profile,
         )
+
+    def researched_audiences(self, brand_id: UUID) -> dict[str, AudienceResearch]:
+        """The newest research for each audience, keyed the way a map is read."""
+        found: dict[str, AudienceResearch] = {}
+        for row in self.latest_researches(brand_id):
+            try:
+                found[fold(row.audience_name)] = AudienceResearch.model_validate(row.payload)
+            except ValidationError:
+                logger.info("market: unreadable audience research payload on row %s", row.id)
+        return found
 
     def compiled_map(self, brand_id: UUID) -> DemandMap | None:
         """The stored map exactly as the cartographer left it, nothing merged in."""
