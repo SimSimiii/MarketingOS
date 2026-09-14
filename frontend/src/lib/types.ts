@@ -1030,6 +1030,13 @@ export interface MappedSegment {
   assessment: {
     compatibility: "supported" | "unknown" | "incompatible";
     evidence_strength: "supported" | "limited" | "absent";
+    /** Whether any source names a place these buyers can actually be found.
+     * Its own axis: an audience nobody can reach is a different problem from
+     * one nobody wants, and `priority` alone said the same word about both. */
+    findability: "verified" | "unknown";
+    /** Sources arguing against this audience. Counted and shown, never a veto -
+     * a segment that found some is better understood than one that found none. */
+    counterevidence: number;
     priority: "explore_first" | "hypothesis" | "incompatible";
     reasons: string[];
     unknowns: string[];

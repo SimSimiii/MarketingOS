@@ -227,8 +227,26 @@ class MapEvidence(BaseModel):
 
 
 class MapAssessment(BaseModel):
+    """Four separate readings of one audience, and a sort key over them.
+
+    Separate because they fail for unrelated reasons and a reader has to be
+    able to see which one did. Collapsing them into `priority` alone taught the
+    map to report `hypothesis` for an audience with two sourced needs, a
+    verified venue and one honest contrary source - the same word it reports
+    for an audience nobody has looked at.
+    """
+
     compatibility: Literal["supported", "unknown", "incompatible"] = "unknown"
     evidence_strength: Literal["supported", "limited", "absent"] = "absent"
+    #: Whether any source establishes a place these buyers can actually be
+    #: found. Its own axis rather than a sentence in `unknowns`, because an
+    #: audience nobody can reach is a different problem from one nobody wants.
+    findability: Literal["verified", "unknown"] = "unknown"
+    #: Sources that argue against this audience. A count rather than a veto:
+    #: the discovery prompt asks for reasons the product would not work, and
+    #: ranking the segments that found some below the ones that did not pays
+    #: for honest searching with a worse position.
+    counterevidence: int = 0
     priority: Literal["explore_first", "hypothesis", "incompatible"] = "hypothesis"
     reasons: list[str] = Field(default_factory=list)
     unknowns: list[str] = Field(default_factory=list)

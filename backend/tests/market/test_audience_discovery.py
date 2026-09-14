@@ -178,14 +178,34 @@ async def test_source_bound_priority_and_closed_world_tools(provider, session):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("state,expected", [
-    (CapabilityState.UNKNOWN, "unknown"),
-    (CapabilityState.UNSUPPORTED, "incompatible"),
+@pytest.mark.parametrize("state,compatibility,priority", [
+    # An unestablished product fit is a reason to go and look at this audience,
+    # not a reason to rank it below one nobody has evidence for either way.
+    (CapabilityState.UNKNOWN, "unknown", "explore_first"),
+    (CapabilityState.UNSUPPORTED, "incompatible", "incompatible"),
+    (CapabilityState.VERIFIED, "supported", "explore_first"),
 ])
-async def test_model_cannot_override_product_truth(provider, session, state, expected):
+async def test_model_cannot_override_product_truth(
+    provider, session, state, compatibility, priority
+):
+    # The scripted verdict claims "supported" in every one of these.
     result = await run_map(provider, session, product=profile(state))
-    assert result.segments[0].assessment.compatibility == expected
-    assert result.segments[0].assessment.priority != "explore_first"
+    assert result.segments[0].assessment.compatibility == compatibility
+    assert result.segments[0].assessment.priority == priority
+
+
+@pytest.mark.asyncio
+async def test_compatibility_is_settled_by_the_profile_not_by_the_validation_call(
+    provider, session
+):
+    """Positive support is a fact about the product, which Python holds. Left
+    to the model it was never reachable: the check only ever downgraded, so an
+    audience whose every requirement was verified still read `unknown`."""
+    verdict = assessment(compatibility="unknown")
+
+    result = await run_map(provider, session, verdict=verdict, product=profile())
+
+    assert result.segments[0].assessment.compatibility == "supported"
 
 
 @pytest.mark.asyncio
@@ -212,12 +232,38 @@ async def test_copied_pages_do_not_count_as_independent_need_evidence(provider, 
 
 
 @pytest.mark.asyncio
-async def test_counterevidence_remains_visible_and_prevents_top_priority(provider, session):
+async def test_counterevidence_is_counted_and_said_out_loud_rather_than_vetoing(
+    provider, session
+):
+    """The discovery prompt asks for reasons the product would NOT work. Paying
+    for that with a worse rank taught it not to look: a segment that came back
+    with a contrary source is better understood than one that came back with
+    none, so the sources are counted and named instead of suppressing the rank."""
     verdict = assessment()
     verdict["evidence"].append({**verdict["evidence"][0], "kind": "counterevidence"})
+
     result = await run_map(provider, session, verdict=verdict)
-    assert result.segments[0].assessment.priority == "hypothesis"
-    assert any(e.kind == "counterevidence" for e in result.segments[0].assessment.evidence)
+
+    segment = result.segments[0]
+    assert segment.assessment.priority == "explore_first"
+    assert segment.assessment.counterevidence == 1
+    assert any(e.kind == "counterevidence" for e in segment.assessment.evidence)
+    assert any("counterevidence" in note for note in segment.assessment.unknowns)
+
+
+@pytest.mark.asyncio
+async def test_findability_is_its_own_axis(provider, session):
+    """An audience nobody can reach and an audience nobody wants fail for
+    unrelated reasons, and `priority` alone said the same word about both."""
+    verdict = assessment()
+    verdict["evidence"] = [item for item in verdict["evidence"] if item["kind"] != "access"]
+
+    result = await run_map(provider, session, verdict=verdict)
+
+    segment = result.segments[0]
+    assert segment.assessment.findability == "unknown"
+    assert segment.assessment.evidence_strength == "supported"
+    assert segment.assessment.priority == "hypothesis"
 
 
 @pytest.mark.asyncio
@@ -378,9 +424,7 @@ def test_saved_duplicate_names_are_collapsed_without_changing_history():
 
 def test_researched_sources_are_read_back_into_the_map_that_ranks_them() -> None:
     """The map ranked an audience `absent` while its research row held ten
-    verified sources: the artifact existed, nothing read it. Compatibility is
-    already supported here because only the validation pass can establish it -
-    research answers whether the demand is real, not what the product does."""
+    verified sources: the artifact existed, nothing read it."""
     segment = candidate(assessment=MapAssessment(compatibility="supported"))
 
     result = researched(segment)
@@ -395,13 +439,13 @@ def test_researched_sources_are_read_back_into_the_map_that_ranks_them() -> None
 
 
 def test_research_lifts_evidence_without_inventing_product_compatibility() -> None:
-    segment = candidate()
-
-    result = researched(segment)
+    """Research answers whether the demand is real. What the product can serve
+    is read off the capability profile and nowhere else."""
+    result = researched(candidate(), product=profile(CapabilityState.UNKNOWN))
 
     assert result.assessment.evidence_strength == "supported"
+    assert result.assessment.findability == "verified"
     assert result.assessment.compatibility == "unknown"
-    assert result.assessment.priority == "hypothesis"
 
 
 def test_inferred_research_findings_are_not_counted_as_sources() -> None:

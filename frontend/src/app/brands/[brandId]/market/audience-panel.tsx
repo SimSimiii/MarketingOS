@@ -1542,7 +1542,10 @@ function SegmentCard({
           <p className="text-foreground/90">{segment.who || segment.organization}</p>
         )}
         <p className="text-xs text-muted-foreground">
-          Product compatibility: {segment.assessment.compatibility} · Need evidence: {segment.assessment.evidence_strength}
+          Product compatibility: {segment.assessment.compatibility} · Need evidence:{" "}
+          {segment.assessment.evidence_strength} · Findable: {segment.assessment.findability}
+          {segment.assessment.counterevidence > 0 &&
+            ` · ${segment.assessment.counterevidence} source${segment.assessment.counterevidence === 1 ? "" : "s"} against`}
         </p>
         <Button
           type="button"

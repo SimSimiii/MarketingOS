@@ -272,9 +272,27 @@ def unique_audiences(segments: list[AudienceSegment]) -> list[AudienceSegment]:
     return result
 
 
+#: Said when the candidate named no product requirement at all, or when there
+#: is no profile to check one against. Distinct from the message below because
+#: they are opposite situations wearing the same word: here nobody has stated
+#: what the audience would need, there somebody did and the product has not
+#: established it.
+NO_REQUIREMENT_MAPPED = (
+    "No product requirement is mapped for this audience, so compatibility is unchecked "
+    "rather than doubtful."
+)
+
+
 def product_check(
     segment: AudienceSegment, profile: ProductCapabilityProfile | None
 ) -> None:
+    """Deterministic product fit, from the capability profile alone.
+
+    Positive support is settled here rather than left to the validation model,
+    which is the only reason `supported` can ever be reached: the discovery
+    pass is reading the market, and whether this product does the thing is a
+    fact about the product that Python already holds.
+    """
     assessment = segment.assessment
     required = segment.definition.required_product_capabilities
     unsupported = [
@@ -288,15 +306,35 @@ def product_check(
     if unsupported:
         assessment.compatibility = "incompatible"
         assessment.reasons.append("Required capabilities are unsupported: " + ", ".join(unsupported))
-    elif unknown or not required or profile is None:
-        if assessment.compatibility != "incompatible":
-            assessment.compatibility = "unknown"
-        assessment.unknowns.append(
-            "Product support needs verification: " + (", ".join(unknown) or "no verified requirement mapping")
-        )
+        return
+    if assessment.compatibility == "incompatible":
+        return
+    if profile is None or not required:
+        assessment.compatibility = "unknown"
+        assessment.unknowns.append(NO_REQUIREMENT_MAPPED)
+        return
+    if unknown:
+        assessment.compatibility = "unknown"
+        assessment.unknowns.append("Product support needs verification: " + ", ".join(unknown))
+        return
+    assessment.compatibility = "supported"
 
 
 def rank_assessment(segment: AudienceSegment) -> None:
+    """Each axis on its own, then one sort key over them.
+
+    `explore_first` means: the demand is evidenced on more than one site, these
+    people can be found somewhere named, the product is not known to be unable
+    to serve them, and another research pass has something concrete to spend a
+    search on. Deliberately not "and nothing argues against it" - the discovery
+    prompt asks for reasons the product would NOT work, and a segment that came
+    back with some is better understood than one that came back with none, not
+    worse. The contrary sources are counted and said out loud instead.
+
+    Compatibility only has to stop short of `incompatible`. Exploring an
+    audience buys knowledge about the market; an unestablished product fit is a
+    reason to go and look rather than a reason not to.
+    """
     assessment = segment.assessment
     needs = [item for item in assessment.evidence if item.kind == "need"]
     domains = {(urlsplit(item.url).hostname or "").removeprefix("www.") for item in needs}
@@ -304,14 +342,15 @@ def rank_assessment(segment: AudienceSegment) -> None:
         "supported" if len(domains) >= 2 else "limited" if needs else "absent"
     )
     reachable = any(item.kind in {"access", "example"} for item in assessment.evidence)
-    counterevidence = any(item.kind == "counterevidence" for item in assessment.evidence)
+    assessment.findability = "verified" if reachable else "unknown"
+    assessment.counterevidence = sum(
+        1 for item in assessment.evidence if item.kind == "counterevidence"
+    )
     if assessment.compatibility == "incompatible":
         assessment.priority = "incompatible"
     elif (
-        assessment.compatibility == "supported"
-        and assessment.evidence_strength == "supported"
+        assessment.evidence_strength == "supported"
         and reachable
-        and not counterevidence
         and segment.admission().researchable
     ):
         assessment.priority = "explore_first"
@@ -319,7 +358,7 @@ def rank_assessment(segment: AudienceSegment) -> None:
         assessment.priority = "hypothesis"
     if not reachable:
         assessment.unknowns.append("No verified venue or example establishes findability yet.")
-    if counterevidence:
+    if assessment.counterevidence:
         assessment.unknowns.append("Review the counterevidence before prioritising this audience.")
 
 
