@@ -8,6 +8,8 @@ import app.market.qualification as qualification_module
 from app.knowledge.ledger import Evidence, EvidenceKind, EvidenceLedger
 from app.market.audience_research import AudienceProblem, AudienceResearch
 from app.market.capabilities import (
+    UNLICENSED_NOTE,
+    CapabilityEvidence,
     CapabilityProfileDraft,
     CapabilityState,
     ClaimVisibility,
@@ -317,6 +319,136 @@ def test_profile_editor_cannot_create_verified_capability_or_customer_claim_with
 
     assert profile.state_of("voice_telephony") is CapabilityState.UNKNOWN
     assert profile.allowed_claims == []
+
+
+def test_evidence_that_does_not_mention_the_capability_cannot_license_it() -> None:
+    """The defect this check exists for, taken from a real stored profile.
+
+    `guardrails` was verified there on thirteen ledger facts, none of which
+    mentioned guardrails - the first two were about GDPR residency and uptime.
+    Nothing asked more than whether the evidence ids existed, and that state is
+    what decides whether a prospect is excluded.
+    """
+    ledger = EvidenceLedger(
+        entries=[
+            Evidence(
+                id="E-uptime",
+                kind=EvidenceKind.FEATURE,
+                claim="orqAgent offers 99.9% uptime with auto-scaling infrastructure.",
+                verbatim="99.9% uptime, serverless and auto-scaling.",
+                source="home.md",
+            ),
+            Evidence(
+                id="E-guardrails",
+                kind=EvidenceKind.FEATURE,
+                claim="Guardrails block prompt injection on every run.",
+                verbatim="Guardrails run on every call.",
+                source="docs.md",
+            ),
+        ]
+    )
+    draft = CapabilityProfileDraft(
+        capabilities=[
+            ProductCapability(
+                id="guardrails",
+                label="Agent guardrails",
+                state=CapabilityState.VERIFIED,
+                evidence=[CapabilityEvidence(evidence_id="E-uptime", claim="", quote="")],
+            )
+        ]
+    )
+
+    profile = normalize_capability_profile(
+        draft, ledger=ledger, knowledge_id=uuid4(), knowledge_version=1
+    )
+
+    capability = profile.capability("guardrails")
+    assert profile.state_of("guardrails") is CapabilityState.UNKNOWN
+    assert capability.evidence == []
+    assert capability.unlicensed_evidence_ids == ["E-uptime"]
+    assert UNLICENSED_NOTE in capability.note
+
+
+def test_evidence_that_mentions_the_capability_still_licenses_it() -> None:
+    ledger = EvidenceLedger(
+        entries=[
+            Evidence(
+                id="E-guardrails",
+                kind=EvidenceKind.FEATURE,
+                claim="Guardrails block prompt injection on every run.",
+                verbatim="Guardrails run on every call.",
+                source="docs.md",
+            )
+        ]
+    )
+    draft = CapabilityProfileDraft(
+        capabilities=[
+            ProductCapability(
+                id="guardrails",
+                label="Agent guardrails",
+                state=CapabilityState.VERIFIED,
+                evidence=[CapabilityEvidence(evidence_id="E-guardrails", claim="", quote="")],
+            )
+        ]
+    )
+
+    profile = normalize_capability_profile(
+        draft, ledger=ledger, knowledge_id=uuid4(), knowledge_version=1
+    )
+
+    capability = profile.capability("guardrails")
+    assert profile.state_of("guardrails") is CapabilityState.VERIFIED
+    assert capability.evidence[0].quote == "Guardrails run on every call."
+    assert capability.unlicensed_evidence_ids == []
+    assert UNLICENSED_NOTE not in capability.note
+
+
+def test_a_product_specific_capability_licenses_evidence_from_its_own_vocabulary() -> None:
+    """No curated pattern exists for a catalogue this product invented, so the
+    label and aliases the user wrote are what the evidence has to mention.
+    The generic half of the label ("runtime", "platform") licenses nothing, or
+    every catalogue entry would be verified by any fact about the product."""
+    ledger = EvidenceLedger(
+        entries=[
+            Evidence(
+                id="E-robot",
+                kind=EvidenceKind.FEATURE,
+                claim="Every picking robot reports its own pick rate.",
+                verbatim="Each picking robot reports a pick rate.",
+                source="product.md",
+            ),
+            Evidence(
+                id="E-slack",
+                kind=EvidenceKind.FEATURE,
+                claim="The platform posts alerts to Slack.",
+                verbatim="Alerts are posted to Slack.",
+                source="product.md",
+            ),
+        ]
+    )
+    draft = CapabilityProfileDraft(
+        capabilities=[
+            ProductCapability(
+                id="warehouse_robotics",
+                label="Warehouse robotics runtime",
+                state=CapabilityState.VERIFIED,
+                aliases=["picking robot"],
+                evidence=[
+                    CapabilityEvidence(evidence_id="E-robot", claim="", quote=""),
+                    CapabilityEvidence(evidence_id="E-slack", claim="", quote=""),
+                ],
+            )
+        ]
+    )
+
+    profile = normalize_capability_profile(
+        draft, ledger=ledger, knowledge_id=uuid4(), knowledge_version=1
+    )
+
+    capability = profile.capability("warehouse_robotics")
+    assert profile.state_of("warehouse_robotics") is CapabilityState.VERIFIED
+    assert [item.evidence_id for item in capability.evidence] == ["E-robot"]
+    assert capability.unlicensed_evidence_ids == ["E-slack"]
 
 
 def test_a_user_maintained_catalogue_is_not_filled_with_unrelated_default_ids() -> None:

@@ -52,6 +52,12 @@ class ProductCapability(BaseModel):
     aliases: list[str] = Field(default_factory=list)
     customer_copy_visibility: ClaimVisibility = ClaimVisibility.INTERNAL
     note: str = ""
+    #: Ledger entries that were attached to this capability and do not mention
+    #: it. Recorded rather than dropped in silence, because "nobody attached
+    #: evidence" and "the evidence attached was about something else" are the
+    #: two readings of an empty list, and only the second is a mistake somebody
+    #: needs to go and fix. Recomputed on every normalisation; never input.
+    unlicensed_evidence_ids: list[str] = Field(default_factory=list)
 
 
 class ProductClaim(BaseModel):
@@ -188,6 +194,69 @@ _EVIDENCE_DERIVATION_HINTS: dict[str, tuple[str, tuple[str, ...]]] = {
 }
 
 
+#: Words that describe every capability in a catalogue and therefore identify
+#: none of them. They are dropped when a capability outside the derivation
+#: hints has to license evidence from its own vocabulary: on this product's own
+#: ledger, "agent" alone appears in most entries, so allowing it would license
+#: the whole ledger for any capability whose label contains the word.
+_GENERIC_TERMS = frozenset(
+    {
+        "agent", "agents", "api", "apis", "app", "apps", "automatic", "based",
+        "built", "custom", "data", "deep", "feature", "features", "full",
+        "hosted", "layer", "level", "managed", "native", "platform", "product",
+        "products", "provider", "runtime", "saas", "service", "services",
+        "support", "supported", "system", "tool", "tools", "user", "users",
+        "your",
+    }
+)
+
+#: Appended to a capability's note when filtering emptied its evidence. Fixed
+#: text so re-normalising an already-demoted capability cannot stack copies.
+UNLICENSED_NOTE = (
+    "Demoted to unknown: the evidence attached to it does not mention this capability."
+)
+
+
+def capability_patterns(capability: ProductCapability) -> tuple[str, ...]:
+    """What a ledger entry has to say for it to license this capability.
+
+    Curated patterns win where the catalogue has them, because they carry the
+    vocabulary a reader would actually use - `rag` and `retrieval augmented`
+    for a knowledge base, which share no words with the label. A catalogue
+    entry this product invented has no curated pattern, so it licenses from its
+    own words instead: the label and aliases the user wrote are the only
+    statement of what the capability means, and `aliases` exists precisely to
+    carry the customer's vocabulary for it.
+    """
+    hint = _EVIDENCE_DERIVATION_HINTS.get(normalize_code(capability.id))
+    if hint is not None:
+        return hint[1]
+    terms: list[str] = []
+    for phrase in (capability.label, capability.id.replace("_", " "), *capability.aliases):
+        cleaned = re.sub(r"[^a-z0-9]+", " ", phrase.casefold()).strip()
+        if not cleaned:
+            continue
+        if " " in cleaned:
+            terms.append(cleaned)
+        terms.extend(
+            word for word in cleaned.split()
+            if len(word) > 3 and word not in _GENERIC_TERMS
+        )
+    return tuple(rf"\b{re.escape(term)}\b" for term in dict.fromkeys(terms))
+
+
+def licenses(entry: Evidence, capability: ProductCapability) -> bool:
+    """Whether this ledger fact is about this capability at all.
+
+    The check the editor never had. A capability's state decides whether a
+    prospect is qualified or excluded and whether an audience is compatible,
+    and until this existed the only thing standing behind `verified` was that
+    the attached evidence id existed somewhere in the ledger - so a fact about
+    uptime could license guardrails, and did.
+    """
+    return _matches(entry, capability_patterns(capability))
+
+
 def normalize_code(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "_", value.casefold()).strip("_")
 
@@ -293,10 +362,22 @@ def normalize_capability_profile(
             for item in proposed.evidence
             if item.evidence_id in by_id
         ]
-        evidence = [_capability_evidence(by_id[item]) for item in dict.fromkeys(evidence_ids)]
+        # Two separate questions, and only the first was ever asked here: does
+        # this evidence id exist, and does that fact say anything about this
+        # capability. An entry that fails the second is kept visible rather
+        # than dropped, so an editor can see what was rejected and why.
+        licensed: list[str] = []
+        unlicensed: list[str] = []
+        for item in dict.fromkeys(evidence_ids):
+            target = licensed if licenses(by_id[item], proposed) else unlicensed
+            target.append(item)
+        evidence = [_capability_evidence(by_id[item]) for item in licensed]
         state = proposed.state
+        note = proposed.note.strip()
         if state is CapabilityState.VERIFIED and not evidence:
             state = CapabilityState.UNKNOWN
+            if unlicensed and UNLICENSED_NOTE not in note:
+                note = f"{note} {UNLICENSED_NOTE}".strip()
         capabilities.append(
             ProductCapability(
                 id=capability_id,
@@ -304,13 +385,14 @@ def normalize_capability_profile(
                 description=proposed.description.strip(),
                 state=state,
                 evidence=evidence,
+                unlicensed_evidence_ids=unlicensed,
                 aliases=list(
                     dict.fromkeys(
                         alias.strip() for alias in proposed.aliases if alias.strip()
                     )
                 ),
                 customer_copy_visibility=proposed.customer_copy_visibility,
-                note=proposed.note.strip(),
+                note=note,
             )
         )
 

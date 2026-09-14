@@ -1396,6 +1396,8 @@ export interface ProductCapability {
   aliases: string[];
   customer_copy_visibility: ClaimVisibility;
   note: string;
+  /** Evidence attached to this capability that does not mention it. */
+  unlicensed_evidence_ids: string[];
 }
 
 export interface ProductClaim {
