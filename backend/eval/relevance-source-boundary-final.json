@@ -1,0 +1,105 @@
+[
+  {
+    "case": "observed-first-feature",
+    "panel": {
+      "reads": [
+        {
+          "opened": true,
+          "stopped_at": "Every call through that endpoint is recorded with its tokens, latency and model, tracked without extra config.",
+          "what_it_sells": "orqAgent is a hosted platform that wraps your LLM calls in an 'agent' object with its own endpoint/API key, giving you a built-in spend cap and per-call usage/cost logging so you don't have to build that tracking yourself.",
+          "understood": true,
+          "situation_matches": null,
+          "relevance_feedback": "The email presupposes the reader already has a live AI feature with multiple agents/keys, no per-agent cost attribution, and has already been burned by an incident that forced someone to build a retry loop or spend sheet. The profile only says 'shipping their first AI feature' \u2014 it doesn't establish that cost attribution is a felt problem yet, that multiple agents share a provider key, or that any incident has happened. This is email-only, not profile-supported. It's plausible for a small team building their first feature, but the email assumes a specific painful history that a first-time shipper may not have lived through yet.",
+          "assumed_experiences": [
+            "Having to write a manual reporting job to answer 'what did this cost' - email-only",
+            "Having multiple agents behind one provider key so spend can't be attributed - email-only",
+            "Having already had an incident that forced building a retry loop/session table/spend sheet - email-only, contradicted in spirit by 'first AI feature' (less likely to have this history)",
+            "Currently juggling multiple provider dashboard tabs for cost reporting - email-only"
+          ],
+          "problem_now": "Unknown/unconfirmed as a current pain for this team \u2014 cost attribution across agents is a plausible future problem for any team shipping an AI feature, but the profile gives no evidence they've hit the reporting/incident scenario the email describes as already happened.",
+          "biggest_doubt": "We're pre-launch on our first AI feature with probably one model call path and no multi-agent sprawl yet \u2014 the whole pitch assumes a mess (multiple dashboards, an incident that already happened) we haven't lived yet, so it's not clear this solves a problem we have today.",
+          "would_act": false,
+          "opens_in_100": 22,
+          "clicks_in_100": 4,
+          "to_click_it_would_have_to": "told me what 'agent' actually means here concretely (is it just wrapping one API call, or does it orchestrate multi-step logic?) and given a specific number \u2014 like actual latency overhead or a pricing tier \u2014 instead of just 'the free plan needs no card'",
+          "pull": 6,
+          "fixes": [
+            "The retry loop, the session table, the spend sheet \u2014 each got built after the incident that proved it was missing.",
+            "And usage keyed to whoever holds the provider key can tell you who spent, not which agent spent."
+          ],
+          "persona": "Two-to-five engineer product team shipping their first AI feature",
+          "reported": true
+        }
+      ]
+    }
+  },
+  {
+    "case": "adapted-first-feature",
+    "panel": {
+      "reads": [
+        {
+          "opened": true,
+          "stopped_at": "",
+          "what_it_sells": "A hosted platform (orqAgent) where you configure an AI agent and call it via a REST API with an API key; it logs token usage, latency and model for each call and lets you set a spending cap on the key \u2014 meant to let you inspect and control a call before you build launch it into your product.",
+          "understood": true,
+          "situation_matches": true,
+          "relevance_feedback": "Profile explicitly is a 2-5 person team shipping their first AI feature. The email's premise ('As you prepare your first AI feature') matches that stage directly \u2014 this is email-only framing but it lines up with the profile's stated milestone rather than contradicting it. The email additionally presupposes I want a hosted/managed layer rather than calling a model provider directly, and that I care about per-call token/latency/spend visibility before launch \u2014 those are plausible but unverified needs, not established facts about my team.",
+          "assumed_experiences": [
+            "email-only: assumes I have not yet decided how to 'operate' my agent in production",
+            "email-only: assumes API-key REST endpoint access fits our stack (vs. calling a model provider SDK directly)",
+            "email-only: assumes spend-runaway or lack of call visibility is a concern for us",
+            "profile-supported: we are pre-launch on our first AI feature"
+          ],
+          "problem_now": "Plausible near-term relevance given we're pre-launch on an AI feature, but the email doesn't establish urgency, a deadline, or that we've hit a specific pain point (e.g., a cost overrun or a debugging incident) \u2014 it's framed as a general good practice, not a documented current problem.",
+          "biggest_doubt": "Unknown vendor with no proof, pricing, or detail on which model providers it wraps \u2014 'hosted layer' and 'inspect a run' are vague enough that I can't tell what I'd actually be signing up for or what it costs.",
+          "would_act": false,
+          "opens_in_100": 19,
+          "clicks_in_100": 5,
+          "to_click_it_would_have_to": "told me which model providers/frameworks it supports, whether there's a free tier, and roughly how long setup takes before I hand over an API key to a hosted layer I've never heard of.",
+          "pull": 6,
+          "fixes": [
+            "orqAgent is a hosted layer for configuring an agent and calling its REST endpoint with API key authentication.",
+            "If that fits what you are preparing, create one agent, call its endpoint and inspect the recorded run."
+          ],
+          "persona": "Two-to-five engineer product team shipping their first AI feature",
+          "reported": true
+        }
+      ]
+    }
+  },
+  {
+    "case": "observed-production",
+    "panel": {
+      "reads": [
+        {
+          "opened": true,
+          "stopped_at": "Create one agent, call its endpoint once, then read the run.",
+          "what_it_sells": "A hosted layer where each AI agent (prompt, model, guardrails) gets its own API endpoint with a built-in spend cap and automatic per-call logging of tokens/latency/model, so you don't have to hand-build the attribution and cost-reporting layer yourself.",
+          "understood": true,
+          "situation_matches": true,
+          "relevance_feedback": "Email-only premise: 'the line that says which agent caused it does not [exist in CSV]' and 'usage keyed to whoever holds the provider key can tell you who spent, not which agent' \u2014 this names almost exactly what our profile already does by hand (weekly per-agent cost reporting stitched from provider dashboards). Profile-supported: 'past incidents' lines up with the email's claim that 'the retry loop, the session table, the spend sheet \u2014 each got built after the incident that proved it was missing.' The premise isn't contradicted, but it's also not proven this product actually replaces our specific pipeline rather than adding a parallel one.",
+          "assumed_experiences": [
+            "Manually exporting/reconciling provider dashboards to produce a cost report \u2014 profile-supported (we already run weekly per-agent cost reporting)",
+            "Having built retry logic, a session table, and a spend sheet reactively after an incident \u2014 profile-supported (past incidents)",
+            "Currently having no spend ceiling enforced at the API-key level \u2014 email-only, unknown for us",
+            "Routing production multi-provider agent traffic through a single hosted endpoint layer \u2014 email-only, not established whether this fits our architecture"
+          ],
+          "problem_now": "Documented as a current, recurring problem for us (weekly per-agent cost reporting already exists as a manual task, and past incidents are cited), not a hypothetical risk \u2014 but the email doesn't establish that our existing process is broken enough to switch tools over.",
+          "biggest_doubt": "Routing our multi-provider production agent traffic through a new third-party hosted layer is a real architectural and trust commitment, especially given we've had past incidents \u2014 the email gives no detail on reliability, data handling, or migration effort for agents already in production versus a single toy test agent.",
+          "would_act": false,
+          "opens_in_100": 24,
+          "clicks_in_100": 5,
+          "to_click_it_would_have_to": "told me how an existing production agent (not a fresh toy one) gets migrated onto this without re-plumbing our current provider calls, and what happens to reliability/latency when the call goes through their endpoint instead of directly to the provider.",
+          "pull": 6,
+          "fixes": [
+            "The ceiling is a field on the key, not middleware you write.",
+            "Create your first agent \u2192",
+            "Create one agent, call its endpoint once, then read the run."
+          ],
+          "persona": "Product engineering team operating multiple AI agents across providers in production, with past incidents and weekly per-agent cost reporting",
+          "reported": true
+        }
+      ]
+    }
+  }
+]

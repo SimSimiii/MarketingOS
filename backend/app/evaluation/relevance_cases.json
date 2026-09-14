@@ -1,0 +1,11 @@
+{
+  "audience": "Two-to-five engineer product team shipping their first AI feature",
+  "production_audience": "Product engineering team operating multiple AI agents across providers in production, with past incidents and weekly per-agent cost reporting",
+  "observed_email": "You already call the model. That was never the hard part\n\nPreview: The endpoint, the spend ceiling and the run record are what took the incidents to build.\n\nThe line your CSV export does not have\n\nHi there,\n\nSomeone asks what the AI feature cost last week, and on which model. Answering means writing a reporting job first.\n\nSo it becomes the provider dashboards, one tab each, and an export lined up by hand. The total comes out. The line that says which agent caused it does not.\n\nThe retry loop, the session table, the spend sheet — each got built after the incident that proved it was missing. And usage keyed to whoever holds the provider key can tell you who spent, not which agent spent.\n\norqAgent is a hosted layer where an agent is a configuration object — system prompt, model, knowledge base, guardrails — with its own REST endpoint and API key auth. The ceiling is a field on the key, not middleware you write.\n\nEvery call through that endpoint is recorded with its tokens, latency and model, tracked without extra config. Calling the provider SDK directly still gets you the model. It does not get you the cap or the run record.\n\nCreate one agent, call its endpoint once, then read the run.\n\nCreate your first agent →\n\n* the orqAgent team\n\nP.S. The free plan needs no card. One agent is enough to test this.",
+  "authorized_for_fixture_only": [
+    "Hosted agent with REST endpoint and API key authentication",
+    "Configurable spending ceiling on the key",
+    "Endpoint calls record tokens, latency and model"
+  ],
+  "adapted_body": "Hi there,\n\nAs you prepare your first AI feature, you may want a way to inspect a call before deciding how to operate it.\n\norqAgent is a hosted layer for configuring an agent and calling its REST endpoint with API key authentication. Calls through that endpoint record tokens, latency and model; a spending ceiling can be set on the key.\n\nIf that fits what you are preparing, create one agent, call its endpoint and inspect the recorded run.\n\nThe orqAgent team"
+}

@@ -1,0 +1,104 @@
+[
+  {
+    "case": "observed-first-feature",
+    "panel": {
+      "reads": [
+        {
+          "opened": true,
+          "stopped_at": "The retry loop, the session table, the spend sheet \u2014 each got built after the incident that proved it was missing.",
+          "what_it_sells": "A hosted platform where you define an 'agent' (system prompt + model + knowledge base + guardrails) that gets its own API endpoint with a built-in spend cap and automatic call/run logging, so you don't have to hand-build cost tracking and attribution yourself.",
+          "understood": true,
+          "situation_matches": false,
+          "relevance_feedback": "The email's core pitch leans on 'the retry loop, the session table, the spend sheet \u2014 each got built after the incident that proved it was missing' \u2014 that presupposes a team that already has an AI feature in production with a history of cost/reporting incidents. My profile is a 2-5 person team shipping their *first* AI feature; we haven't had that incident yet, so the urgency the email is selling isn't something we've felt. The underlying problem (per-agent cost attribution) is plausible as a future risk, but it's not lived pain for us right now.",
+          "assumed_experiences": [
+            "Having already built ad-hoc retry loops, session tables, and spend sheets after something broke in production",
+            "Juggling multiple provider dashboards by hand to answer a cost question",
+            "Someone in the org already asking 'what did the AI feature cost last week and on which model'"
+          ],
+          "problem_now": "Anticipated/future risk rather than a current felt problem \u2014 we're pre-incident, still shipping our first AI feature, so per-agent cost attribution isn't something we've been burned by yet.",
+          "biggest_doubt": "It assumes a level of production pain (incidents, multiple agents, cost disputes) we haven't reached yet, and it's vague on what adopting a 'hosted layer' actually costs us in migration effort versus just calling the provider SDK directly.",
+          "would_act": false,
+          "opens_in_100": 16,
+          "clicks_in_100": 2,
+          "to_click_it_would_have_to": "told me concretely how much work it is to point our single existing model call at their endpoint instead of the provider SDK \u2014 e.g. 'one line change, drop-in replacement for the OpenAI/Anthropic client' \u2014 plus what the free plan's spend cap and rate limits actually are.",
+          "pull": 4,
+          "fixes": [
+            "The retry loop, the session table, the spend sheet \u2014 each got built after the incident that proved it was missing.",
+            "Preview: The endpoint, the spend ceiling and the run record are what took the incidents to build.",
+            "Create your first agent \u2192"
+          ],
+          "persona": "Two-to-five engineer product team shipping their first AI feature",
+          "reported": true
+        }
+      ]
+    }
+  },
+  {
+    "case": "adapted-first-feature",
+    "panel": {
+      "reads": [
+        {
+          "opened": false,
+          "stopped_at": "orqAgent is a hosted layer for configuring an agent and calling its REST endpoint with API key authentication.",
+          "what_it_sells": "A hosted platform where you configure an AI agent and call it via a REST API endpoint, which logs token usage, latency, and model per call, and lets you cap spend on the API key \u2014 meant to let you inspect/test a call before launching an AI feature.",
+          "understood": true,
+          "situation_matches": true,
+          "relevance_feedback": "The premise 'as you prepare your first AI feature, you may want a way to inspect a call before deciding how to operate it' matches the profile's stated situation (first AI feature, small team, presumably pre-launch), so it's plausible and appropriately conditional ('may want') rather than presumptuous.",
+          "assumed_experiences": [
+            "Team is actively building or about to ship an AI feature",
+            "Team hasn't yet chosen how calls will be operated/monitored (model, logging, spend controls)",
+            "Team is comfortable wiring in a third-party hosted REST endpoint with API key auth pre-launch"
+          ],
+          "problem_now": "Plausibly current if the team hasn't yet built observability/spend-guardrails for their AI feature, but the email gives no evidence it knows this team specifically \u2014 it's a reasonable guess based on the 'first AI feature' framing, not a demonstrated fact.",
+          "biggest_doubt": "Cold email from an unknown sender with no prior relationship, no pricing, no security/compliance info, and no indication of how it compares to just logging calls ourselves or using an existing observability tool \u2014 not enough to justify signing up and wiring in a new API key days before a launch.",
+          "would_act": false,
+          "opens_in_100": 22,
+          "clicks_in_100": 4,
+          "to_click_it_would_have_to": "told me what this costs (free tier / pricing) and how long it takes to get from signup to a working test call",
+          "pull": 6,
+          "fixes": [
+            "orqAgent is a hosted layer for configuring an agent and calling its REST endpoint with API key authentication. \u2014 cut the abstraction, name the concrete thing: what does 'configuring an agent' actually involve, one sentence, one example",
+            "If that fits what you are preparing, create one agent, call its endpoint and inspect the recorded run. \u2014 replace with a real first step: is this free, how long does signup take, is there a sample call I can run in under 2 minutes"
+          ],
+          "persona": "Two-to-five engineer product team shipping their first AI feature",
+          "reported": true
+        }
+      ]
+    }
+  },
+  {
+    "case": "observed-production",
+    "panel": {
+      "reads": [
+        {
+          "opened": true,
+          "stopped_at": "orqAgent is a hosted layer where an agent is a configuration object \u2014 system prompt, model, knowledge base, guardrails \u2014 with its own REST endpoint and API key auth.",
+          "what_it_sells": "A hosted platform where you define an AI agent (prompt, model, guardrails) as a config object that gets its own API endpoint, a spend cap set on the key itself, and automatic logging of every call's tokens/latency/model \u2014 replacing the manual cost-tracking and per-provider dashboard aggregation we currently do by hand.",
+          "understood": true,
+          "situation_matches": true,
+          "relevance_feedback": "The email's central claim \u2014 that usage keyed to the API key holder tells you who spent but not which agent spent, and that retry loops/session tables/spend sheets get built reactively after an incident \u2014 matches the profile almost exactly: we run multiple agents across providers in production, have had past incidents, and already do weekly per-agent cost reporting by hand. This isn't a generic pain point guess; it's the specific gap our current reporting job has.",
+          "assumed_experiences": [
+            "Has had an incident traced back to missing per-agent cost or usage visibility",
+            "Currently aggregates spend by pulling CSVs from multiple provider dashboards into a hand-built spend sheet",
+            "Tracks usage keyed to whoever holds the provider API key rather than to the calling agent",
+            "Has built retry logic and session/run tracking reactively, after something broke"
+          ],
+          "problem_now": "Live, current problem per the profile: weekly per-agent cost reporting already exists as a recurring task, and past incidents are named explicitly \u2014 this isn't a hypothetical future risk, it's the thing the team does every week and has already been burned by.",
+          "biggest_doubt": "This asks us to route production agent traffic through a new third-party hosted endpoint. For a team with past incidents and existing multi-provider infrastructure, that's a migration and trust decision (added latency, another vendor in the call path, provider/model coverage unstated), not something to greenlight from a cold email three minutes before a meeting.",
+          "would_act": false,
+          "opens_in_100": 27,
+          "clicks_in_100": 8,
+          "to_click_it_would_have_to": "I would have clicked if this email had told me which model providers it actually supports today and whether it's a drop-in proxy in front of our existing calls or a full migration off our current setup.",
+          "pull": 7,
+          "fixes": [
+            "\"The ceiling is a field on the key, not middleware you write.\" \u2014 reads as a slogan; give a concrete example of what the field looks like or what it prevents.",
+            "\"orqAgent is a hosted layer where an agent is a configuration object\" \u2014 doesn't say which providers/models are behind it, which is the first thing an existing multi-provider shop needs to know.",
+            "Subject: \"You already call the model. That was never the hard part\" \u2014 too cryptic to signal relevance in a 400-unread skim; a line naming per-agent cost attribution directly would stop the scroll faster."
+          ],
+          "persona": "Product engineering team operating multiple AI agents across providers in production, with past incidents and weekly per-agent cost reporting",
+          "reported": true
+        }
+      ]
+    }
+  }
+]

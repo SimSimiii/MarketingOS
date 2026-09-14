@@ -1,0 +1,104 @@
+[
+  {
+    "case": "observed-first-feature",
+    "panel": {
+      "reads": [
+        {
+          "opened": true,
+          "stopped_at": "The retry loop, the session table, the spend sheet \u2014 each got built after the incident that proved it was missing.",
+          "what_it_sells": "A hosted platform where you define an AI agent (prompt, model, guardrails) that gets its own API endpoint with built-in cost/usage tracking and spend caps, so you don't have to build that logging and limiting yourself.",
+          "understood": true,
+          "situation_matches": false,
+          "relevance_feedback": "Profile establishes this is a 2-5 person team shipping their FIRST AI feature \u2014 no history of incidents, no established multi-provider cost-tracking pain. The email's central argument leans on 'each got built after the incident that proved it was missing,' presupposing a team that already shipped, already got burned by a cost surprise, and already has ad hoc dashboards/spreadsheets. That's an email-only premise, not something the profile supports. It's a plausible future risk for a first-time team, not a documented current problem.",
+          "assumed_experiences": [
+            "Already has an AI feature live long enough for someone to ask 'what did it cost last week' (email-only)",
+            "Already juggles multiple provider dashboards and manual CSV exports (email-only)",
+            "Already had an incident that forced building a retry loop/session table/spend sheet (email-only)",
+            "Usage is currently tracked only by whoever holds the provider API key (email-only, not established by profile)"
+          ],
+          "problem_now": "Presented as a past-tense, already-happened problem (incidents that 'proved' the gap), but for this profile it's at best an anticipated risk of shipping a first AI feature, not a documented current pain \u2014 no incident or cost surprise is established in the profile.",
+          "biggest_doubt": "We haven't hit this problem yet \u2014 we're just shipping our first AI feature, so there's no incident history or spend-tracking mess to fix, and adopting a whole hosted agent layer feels like solving a problem we don't have.",
+          "would_act": false,
+          "opens_in_100": 19,
+          "clicks_in_100": 3,
+          "to_click_it_would_have_to": "told me what it costs to actually use past the free single-agent tier, and shown a concrete example of the run record / dashboard so I could see if it's worth wiring into our one feature before we have a cost incident to justify it",
+          "pull": 5,
+          "fixes": [
+            "The retry loop, the session table, the spend sheet \u2014 each got built after the incident that proved it was missing.",
+            "orqAgent is a hosted layer where an agent is a configuration object \u2014 system prompt, model, knowledge base, guardrails \u2014 with its own REST endpoint and API key auth."
+          ],
+          "persona": "Two-to-five engineer product team shipping their first AI feature",
+          "reported": true
+        }
+      ]
+    }
+  },
+  {
+    "case": "adapted-first-feature",
+    "panel": {
+      "reads": [
+        {
+          "opened": true,
+          "stopped_at": "If that fits what you are preparing, create one agent, call its endpoint and inspect the recorded run.",
+          "what_it_sells": "A hosted platform (orqAgent) where you configure an AI agent and call it through a REST API with key-based auth; each call logs tokens, latency and model used, and you can set a spending cap on the key \u2014 so I could inspect and control cost/behavior of AI calls before launching my own feature.",
+          "understood": true,
+          "situation_matches": true,
+          "relevance_feedback": "The profile explicitly establishes 'shipping their first AI feature,' and the email's premise ('As you prepare your first AI feature, you may want a way to inspect a call before deciding how to operate it') maps directly onto that, so the situation is genuinely on-topic rather than a generic cold-email stretch. What's unsupported is the implicit assumption that we lack any way to inspect calls today (token/latency/cost logging) \u2014 plenty of teams get that from their model provider's dashboard already, and the email doesn't acknowledge or rule that out.",
+          "assumed_experiences": [
+            "email-only: assumes we have no existing visibility into token/latency/cost for our AI calls",
+            "email-only: assumes 'inspecting a call before deciding how to operate it' is a step we haven't already figured out",
+            "profile-supported: assumes we are actively preparing a first AI feature launch"
+          ],
+          "problem_now": "Plausible near-term relevance given the profile's stated milestone (first AI feature), but the email doesn't establish urgency or a deadline \u2014 it reads as an anticipated risk ('before you decide how to operate it') rather than a documented current pain.",
+          "biggest_doubt": "Unknown vendor with zero trust signals (no customer names, no pricing, no security/compliance mention), and the ask \u2014 create an agent, hit an endpoint, inspect a run \u2014 implies signing up for a new service, which isn't a 3-minutes-before-a-meeting task.",
+          "would_act": false,
+          "opens_in_100": 19,
+          "clicks_in_100": 5,
+          "to_click_it_would_have_to": "told me it's free to try (or gave a concrete price/tier) and put an actual link/button with real anchor text instead of a bare '\u2192', so I know exactly what I'm about to sign up for before committing time",
+          "pull": 6,
+          "fixes": [
+            "Hi there, \u2014 generic, no sign of who this is going to or why",
+            "The orqAgent team \u2014 this is the only place the company is named at all; it should be established earlier, not just in the sign-off",
+            "\u2192 \u2014 a bare arrow is not a call to action; say what happens when I click (e.g. 'Start free' or 'See a sample run')"
+          ],
+          "persona": "Two-to-five engineer product team shipping their first AI feature",
+          "reported": true
+        }
+      ]
+    }
+  },
+  {
+    "case": "observed-production",
+    "panel": {
+      "reads": [
+        {
+          "opened": true,
+          "stopped_at": "And usage keyed to whoever holds the provider key can tell you who spent, not which agent spent.",
+          "what_it_sells": "A hosted platform (orqAgent) where you define an AI agent as a config object with its own REST endpoint and API key, giving you a built-in spend cap per key and automatic per-call logging of tokens/latency/model \u2014 instead of building that retry/logging/cost-tracking infrastructure yourself.",
+          "understood": true,
+          "situation_matches": false,
+          "relevance_feedback": "Email-only premise: it assumes the reader has no way to tell 'which agent spent' and that usage is only keyed to whoever holds the provider key \u2014 'usage keyed to whoever holds the provider key can tell you who spent, not which agent spent.' The profile explicitly contradicts this: this team already has 'weekly per-agent cost reporting,' meaning the per-agent attribution problem the email is built around is already solved on our side, however it was built. The 'past incidents' mention in the profile is real but unspecified \u2014 the email assumes those incidents were about missing retry loops/session tables/spend sheets, which the profile doesn't establish either way.",
+          "assumed_experiences": [
+            "Built a retry loop, session table, and spend sheet reactively after an incident (email-only assumption, not confirmed by profile)",
+            "Currently cannot attribute spend to a specific agent, only to whoever holds the provider key (contradicted by profile: weekly per-agent cost reporting already exists)",
+            "Currently calls provider SDKs directly with no wrapping layer (email-only assumption; profile doesn't specify the current architecture)"
+          ],
+          "problem_now": "The profile confirms past incidents happened and that per-agent cost reporting already exists as a working process \u2014 so the specific gap the email opens with (no line in the CSV for which agent spent) reads as already closed, not a live pain point. Whether the existing reporting is manual/painful enough to want to replace is unknown.",
+          "biggest_doubt": "We already built per-agent cost reporting after our own incidents \u2014 the email doesn't say what changes if we adopt this instead, what migrating multiple providers into their endpoint model costs us, or what happens past the free single-agent tier.",
+          "would_act": false,
+          "opens_in_100": 21,
+          "clicks_in_100": 3,
+          "to_click_it_would_have_to": "told me how it plugs into an existing multi-provider setup we already run in production (does it replace our provider calls entirely or sit alongside them), and what it costs once we're past one agent on the free plan.",
+          "pull": 5,
+          "fixes": [
+            "And usage keyed to whoever holds the provider key can tell you who spent, not which agent spent. \u2014 reads as an assumption about our setup, not a stated fact about it, and we already have per-agent attribution.",
+            "Create one agent, call its endpoint once, then read the run. \u2014 doesn't say what happens to our existing multi-provider calls or whether this replaces or wraps them.",
+            "The free plan needs no card. One agent is enough to test this. \u2014 good instinct but arrives after the pricing question was never raised, so it lands as an afterthought instead of an answer."
+          ],
+          "persona": "Product engineering team operating multiple AI agents across providers in production, with past incidents and weekly per-agent cost reporting",
+          "reported": true
+        }
+      ]
+    }
+  }
+]
