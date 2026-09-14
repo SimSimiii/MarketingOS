@@ -53,6 +53,13 @@ the problem to a product-aware reader is how an email loses them in two lines.
 `inferred`. Where the material gives you the buyer's own words, use the buyer's own words — they
 are worth more than anything you could write, because the copy can hand them straight back.
 
+Every source here is this company writing about itself, so the application records these as
+the company's claim about the buyer rather than as an observation of one, whatever you mark.
+Marking accurately still matters: it is the difference between a pain a quote supports and one
+you supplied. What it buys you is permission to be blunt - do not invert a feature line into a
+pain and call it evidence. "No vector DB to manage" says what the product does, not that anyone
+resented running one.
+
 **Objections are the point of this document.** These are the real reasons someone reads the whole
 email and still does not act: price, switching cost, trust, effort, timing, "we already have
 something", "I could build this myself", "this is not for a team our size". Be unflattering — an

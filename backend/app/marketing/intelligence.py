@@ -881,7 +881,10 @@ def _provenance(
 def _best_observation(items: list[SourcedObservation]) -> SourcedObservation | None:
     if not items:
         return None
-    order = {Grounding.GROUNDED: 2, Grounding.USER_STATED: 1, Grounding.INFERRED: 0}
+    order = {
+        Grounding.GROUNDED: 3, Grounding.USER_STATED: 2,
+        Grounding.VENDOR_CLAIM: 1, Grounding.INFERRED: 0,
+    }
     return max(items, key=lambda item: (order[item.grounding], len(item.evidence)))
 
 

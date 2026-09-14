@@ -20,7 +20,7 @@ import re
 from datetime import UTC, datetime
 from enum import StrEnum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from app.knowledge.ledger import EvidenceLedger
 
@@ -33,6 +33,11 @@ class Grounding(StrEnum):
     GROUNDED = "grounded"
     INFERRED = "inferred"
     USER_STATED = "user_stated"
+    #: Quoted from the company's own material, and about somebody else.
+    #: A pricing page quoted for what this product costs is grounded; the same
+    #: page quoted for what the buyer finds painful is the company asserting a
+    #: pain, which is a claim and not an observation. See `AudienceModel`.
+    VENDOR_CLAIM = "vendor_claim"
 
 
 class Provenance(BaseModel):
@@ -48,7 +53,10 @@ class Fact(BaseModel):
 
     def render(self) -> str:
         mark = {Grounding.GROUNDED: "", Grounding.INFERRED: " (inferred)",
-                Grounding.USER_STATED: " (the user told us)"}[self.grounding]
+                Grounding.USER_STATED: " (the user told us)",
+                Grounding.VENDOR_CLAIM: " (our own material claims this; nobody observed it)"}[
+            self.grounding
+        ]
         return f"{self.statement}{mark}"
 
 
@@ -336,8 +344,40 @@ class Objection(BaseModel):
 
 
 class AudienceModel(BaseModel):
+    """Who this company sells to, as its own material describes them.
+
+    Its own material and nothing else: this artifact is compiled from the
+    corpus the business supplied about itself, so there is no input here that
+    could carry a buyer's own voice. That makes `grounded` a claim this model
+    cannot honestly hold. A quote does support a statement about the product -
+    the company can stand behind what it published - but the same quote
+    supporting a statement about what the buyer suffers only establishes that
+    the company says so, which is how "no vector DB to manage" on a homepage
+    became a buyer's pain that nobody had ever reported.
+
+    So grounded is folded to `vendor_claim` on read, for the pains, the
+    objections and the situation alike. Not downgraded to inferred: the quote
+    is real and worth showing, and losing it would make this weaker than it
+    is. Observed demand is a different artifact - `app.market.audience_research`
+    reads sources outside this company and tiers them by how directly they
+    watch the buyer.
+    """
+
     segments: list[Segment] = Field(default_factory=list)
     objections: list[Objection] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _own_material_cannot_ground_a_buyer(self) -> "AudienceModel":
+        for segment in self.segments:
+            if segment.situation_grounding is Grounding.GROUNDED:
+                segment.situation_grounding = Grounding.VENDOR_CLAIM
+            for pain in segment.pains:
+                if pain.grounding is Grounding.GROUNDED:
+                    pain.grounding = Grounding.VENDOR_CLAIM
+        for objection in self.objections:
+            if objection.grounding is Grounding.GROUNDED:
+                objection.grounding = Grounding.VENDOR_CLAIM
+        return self
 
     def render(self) -> str:
         segments = "\n".join(segment.render() for segment in self.segments) or "- not established"

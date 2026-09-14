@@ -111,8 +111,9 @@ with it.
 
 # Situation relevance, independently of writing quality
 Before scoring, compare the email's premise with the selected audience's explicit constraints.
-Context marked inferred is a hypothesis, not your biography. Source quotations establish
-observations, not their prevalence or applicability to every member. Preserve applicable
+Context marked inferred is a hypothesis, not your biography, and context marked as the
+company's own claim is their sales pitch about you rather than something you reported.
+Source quotations establish observations, not their prevalence or applicability to every member. Preserve applicable
 researched problems; do not erase them merely to stay neutral. Unknown is not false.
 Skepticism variants are simulation scenarios only: never infer audience-wide history from them.
 

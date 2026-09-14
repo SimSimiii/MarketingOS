@@ -19,6 +19,7 @@ const GROUNDING_LABEL: Record<string, string> = {
   grounded: "from the material",
   inferred: "inferred",
   user_stated: "the user told us",
+  vendor_claim: "your material claims this",
 };
 
 function Empty({ children }: { children: React.ReactNode }) {

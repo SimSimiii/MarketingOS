@@ -28,6 +28,7 @@ const GROUNDING_LABEL: Record<string, string> = {
   grounded: "from your material",
   inferred: "inferred",
   user_stated: "you told us",
+  vendor_claim: "your material claims this",
 };
 
 const BANDS: ValueBand[] = ["headline", "supporting", "background"];

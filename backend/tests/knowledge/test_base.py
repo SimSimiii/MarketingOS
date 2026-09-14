@@ -223,3 +223,61 @@ def test_unanswered_gaps_travel_with_the_base():
 def test_every_entry_explains_its_own_score():
     base = build_knowledge_base(artifacts())
     assert all(entry.why for entry in base.entries)
+
+
+def test_the_company_own_material_cannot_ground_a_statement_about_its_buyer():
+    """A quote does support a statement about the product - the company can
+    stand behind what it published. The same quote supporting a statement about
+    what the buyer suffers only establishes that the company says so, which is
+    how "no vector DB to manage" on a homepage became a buyer's pain that
+    nobody had ever reported."""
+    audience = AudienceModel(
+        segments=[
+            Segment(
+                name="A solo founder three weekends into a homemade chatbot",
+                situation="They wired the provider SDK straight into the app.",
+                situation_grounding=Grounding.GROUNDED,
+                pains=[
+                    Fact(
+                        statement="They maintain a vector database they never wanted to run.",
+                        grounding=Grounding.GROUNDED,
+                        provenance=Provenance(
+                            source="homepage",
+                            quote="The agent retrieves the most relevant context - "
+                                  "no vector DB to manage.",
+                        ),
+                    ),
+                    Fact(
+                        statement="They cannot say what last week cost.",
+                        grounding=Grounding.INFERRED,
+                    ),
+                ],
+            )
+        ],
+        objections=[
+            Objection(objection="I could build this in a weekend.", grounding=Grounding.GROUNDED)
+        ],
+    )
+
+    segment = audience.segments[0]
+    assert segment.situation_grounding is Grounding.VENDOR_CLAIM
+    assert segment.pains[0].grounding is Grounding.VENDOR_CLAIM
+    assert segment.pains[1].grounding is Grounding.INFERRED
+    assert audience.objections[0].grounding is Grounding.VENDOR_CLAIM
+    # The quote is real and stays: this is weaker than grounded, not than inferred.
+    assert segment.pains[0].provenance.quote
+    assert "claims this" in segment.pains[0].render()
+
+
+def test_a_user_stated_audience_fact_is_left_alone():
+    audience = AudienceModel(
+        segments=[
+            Segment(
+                name="A buyer the user described",
+                pains=[Fact(statement="Onboarding takes a fortnight",
+                            grounding=Grounding.USER_STATED)],
+            )
+        ]
+    )
+
+    assert audience.segments[0].pains[0].grounding is Grounding.USER_STATED

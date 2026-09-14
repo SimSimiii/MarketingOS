@@ -139,7 +139,7 @@ export interface BrandStyleUpdate {
   unsubscribe_url?: string | null;
 }
 
-export type Grounding = "grounded" | "inferred" | "user_stated";
+export type Grounding = "grounded" | "inferred" | "user_stated" | "vendor_claim";
 export type EvidenceStrength = "strong" | "moderate" | "weak";
 
 /** One thing established about the business, with where it came from. */
