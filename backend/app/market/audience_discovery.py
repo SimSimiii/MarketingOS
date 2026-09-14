@@ -247,6 +247,56 @@ class CandidateAssessment(BaseModel):
     duplicate_of: int | None = Field(default=None, ge=0)
 
 
+class _RecalledSources(BaseModel):
+    source_urls: list[str] = Field(default_factory=list, max_length=20)
+
+
+async def recall_sources(
+    session: ModelSession, answer: _MapAnswer, candidates: list[AudienceSegment]
+) -> list[str]:
+    """Ask a discovery pass for the URLs it read but did not report.
+
+    The whole second stage hangs off `source_urls`, and the field is optional
+    because a model that found nothing has nothing to list. So a pass that
+    searched twelve times and wrote a page about an Indie Hackers thread, a
+    migration notice and a deprecation announcement - and then returned an
+    empty list - skipped validation in complete silence, having spent a deep
+    tier call with web access on half the work. Silence was the bug: the
+    searching happened, only the reporting did not.
+
+    Cheap and closed: the fast tier, no tools, and nothing of the pass except
+    what it already wrote down. A URL recalled rather than re-found could be
+    wrong, and that costs nothing beyond the fetch - the fetcher opens the
+    exact URL and the assessment accepts a quotation only when it appears in
+    the page that came back, so a page this pass never read yields no evidence
+    rather than false evidence.
+    """
+    if not (answer.reading.strip() or answer.searched):
+        return []
+    try:
+        recalled = await session.structured(
+            role=CARTOGRAPHER_ROLE_ID,
+            tier=ModelTier.FAST,
+            template="audience_map_sources",
+            variables={
+                "searched": "\n".join(f"- {query}" for query in answer.searched)
+                or "No queries were reported.",
+                "reading": answer.reading or "No reading was reported.",
+                "note": answer.note or "No coverage gaps were reported.",
+                "candidates": "\n".join(
+                    f"- {item.name}: {item.organization} | {item.workflow} | {item.need}"
+                    for item in candidates
+                ),
+            },
+            task="Return the exact URLs that pass rested on. Fewer is better than guessed.",
+            schema=_RecalledSources,
+            tools=[],
+        )
+    except ModelRuntimeError:
+        return []
+    return [url for url in dict.fromkeys(recalled.source_urls) if url.strip()]
+
+
 class AssessedMap(BaseModel):
     candidates: list[CandidateAssessment] = Field(default_factory=list)
 
@@ -397,7 +447,16 @@ async def validate_map(
             break
 
     note = "No sources were verified; candidates remain hypotheses."
-    located = [LocatedSource(url=url) for url in answer.source_urls]
+    urls = answer.source_urls
+    if candidates and not urls:
+        progress("The discovery pass reported no source URLs; asking it for them")
+        urls = await recall_sources(session, answer, candidates)
+        if not urls:
+            note = (
+                "The discovery pass reported no source URLs and could not recall them, "
+                "so nothing was verified; candidates remain hypotheses."
+            )
+    located = [LocatedSource(url=url) for url in urls]
     cache: list[dict] = []
     if candidates and located:
         progress("Fetching up to 10 exact URLs; validating against at most 48,000 characters")

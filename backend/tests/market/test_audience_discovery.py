@@ -150,15 +150,32 @@ def assessment(**changes):
     return data
 
 
-async def run_map(provider, session, *, verdict=None, product=None, pages=None, previous=None, options=None):
+async def run_map(provider, session, *, verdict=None, product=None, pages=None,
+                  previous=None, options=None, answer=None):
     provider.push("audience_map_validate", {"candidates": [
         {"candidate_id": 0, "assessment": verdict or assessment()},
     ]})
     return await validate_map(
-        session, _MapAnswer(segments=[candidate()], source_urls=[p.final_url for p in PAGES]),
+        session,
+        answer or _MapAnswer(
+            segments=[candidate()], source_urls=[p.final_url for p in PAGES]
+        ),
         product or profile(), options or MapOptions(), previous, 7, lambda _: None,
         fetcher=Fetcher(pages),
     )
+
+
+def unreported(**changes):
+    """A discovery pass that searched and read, and listed no URLs."""
+    values = {
+        "segments": [candidate()],
+        "source_urls": [],
+        "searched": ["ateliers reconditionnés garantie questions répétées"],
+        "reading": "The strongest voice found was a workshop describing the same "
+                   "warranty question arriving a dozen times a week.",
+    }
+    values.update(changes)
+    return _MapAnswer(**values)
 
 
 @pytest.mark.asyncio
@@ -489,3 +506,47 @@ def test_a_map_with_no_research_is_returned_untouched() -> None:
     demand = DemandMap(segments=[candidate()])
 
     assert merge_research_evidence(demand, {}, profile()) is demand
+
+
+@pytest.mark.asyncio
+async def test_a_pass_that_reported_no_source_urls_is_asked_for_them(provider, session):
+    """Validation hangs off `source_urls`, and the field is optional. A pass
+    that searched twelve times and wrote a page about what it read, then
+    returned an empty list, skipped stage two in silence with a deep tier web
+    call already paid for."""
+    provider.push("audience_map_sources", {"source_urls": [p.final_url for p in PAGES]})
+
+    result = await run_map(provider, session, answer=unreported())
+
+    segment = result.segments[0]
+    assert provider.calls["audience_map_sources"] == 1
+    assert provider.tools_used_by("audience_map_sources") == []
+    assert provider.calls["audience_map_validate"] == 1
+    assert len(segment.assessment.evidence) == 3
+    assert segment.assessment.priority == "explore_first"
+    assert "Checked 3 pages" in result.validation_note
+
+
+@pytest.mark.asyncio
+async def test_a_pass_with_nothing_to_recall_from_is_not_asked(provider, session):
+    result = await run_map(
+        provider, session, answer=unreported(searched=[], reading="")
+    )
+
+    assert provider.calls["audience_map_sources"] == 0
+    assert provider.calls["audience_map_validate"] == 0
+    assert "could not recall them" in result.validation_note
+    assert result.segments[0].assessment.priority == "hypothesis"
+
+
+@pytest.mark.asyncio
+async def test_a_recall_that_finds_nothing_says_so_rather_than_going_quiet(
+    provider, session
+):
+    provider.push("audience_map_sources", {"source_urls": []})
+
+    result = await run_map(provider, session, answer=unreported())
+
+    assert provider.calls["audience_map_sources"] == 1
+    assert provider.calls["audience_map_validate"] == 0
+    assert "could not recall them" in result.validation_note
