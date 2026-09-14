@@ -32,16 +32,24 @@ class CampaignRepository(BaseRepository[Campaign]):
             return campaign
         return campaign if may_read(campaign, self.principal) else None
 
-    def list_active(self) -> list[Campaign]:
+    def list_active(self, limit: int | None = None, offset: int = 0,
+                    brand_id: UUID | None = None) -> list[Campaign]:
         statement = (
             select(Campaign)
             .where(Campaign.status == CampaignStatus.ACTIVE)
-            .order_by(Campaign.created_at.desc())
+            .order_by(Campaign.created_at.desc(), Campaign.id)
         )
+        if brand_id is not None:
+            statement = statement.where(Campaign.brand_id == brand_id)
+        statement = statement.offset(offset).limit(limit)
         return list(self.session.exec(self._scoped(statement)))
 
-    def list_all(self) -> list[Campaign]:
-        statement = select(Campaign).order_by(Campaign.created_at.desc())
+    def list_all(self, limit: int | None = None, offset: int = 0,
+                 brand_id: UUID | None = None) -> list[Campaign]:
+        statement = select(Campaign).order_by(Campaign.created_at.desc(), Campaign.id)
+        if brand_id is not None:
+            statement = statement.where(Campaign.brand_id == brand_id)
+        statement = statement.offset(offset).limit(limit)
         return list(self.session.exec(self._scoped(statement)))
 
     def list_by_brand(self, brand_id: UUID) -> list[Campaign]:

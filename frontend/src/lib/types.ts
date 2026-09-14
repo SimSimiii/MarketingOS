@@ -18,7 +18,7 @@ export type SourceType =
   | "image"
   | "video"
   | "audio";
-export type AssetType = "email" | "social_post" | "ad" | "blog" | "landing_page";
+export type AssetType = "email" | "linkedin_message" | "social_post" | "ad" | "blog" | "landing_page";
 export type LogLevel = "debug" | "info" | "warning" | "error";
 
 export interface Campaign {
@@ -51,6 +51,9 @@ export interface Campaign {
   archived_at: string | null;
   /** {"preset": "fast" | "balanced" | "maximum", ...field overrides} or null. */
   policy: Record<string, unknown> | null;
+  /** What this campaign delivers when it is not email. Null for every email
+   * campaign, which is most of them. */
+  channel: LinkedInChannel | null;
   model_overrides: Record<string, string> | null;
   created_at: string;
   updated_at: string;
@@ -80,6 +83,10 @@ export interface CampaignCreateRequest {
    * since the last compile. Omitted/null defers to the pipeline's default
    * (reuse what's already compiled). */
   force_recompile?: boolean | null;
+  /** Set to deliver one LinkedIn message instead of emails. Everything else
+   * on this form still applies: the run plans with the same Strategist
+   * against the same audience before a word is written. */
+  channel?: import("./api-schema").ApiSchemas["LinkedInChannel"] | null;
 }
 
 /** A business whose knowledge is compiled once and reused by every campaign
@@ -457,6 +464,8 @@ export interface KnowledgeSourceCreate {
 export interface RunForecast {
   preset: string;
   emails: number;
+  /** Singular name of what is being counted: "email" or "LinkedIn message". */
+  deliverable: string;
   /** False when the user named no number, so `emails` is the working
    * assumption rather than a promise. */
   count_is_explicit: boolean;
@@ -1562,4 +1571,52 @@ export interface RegisterRequest extends LoginRequest {
 export interface ChangePasswordRequest {
   current_password: string;
   password: string;
+}
+
+export interface LinkedInCandidate {
+  name: string; url: string; headline: string; reason: string; source_url: string; excerpt: string;
+}
+/** Who is worth looking for, proposed from the brand's own knowledge and its
+ * audience map before any search is paid for. Every field is editable: this
+ * comes back to the form as a proposal, not as a decision. */
+export interface LinkedInCriteria {
+  roles: string[]; industries: string[]; company_sizes: string[]; geographies: string[];
+  /** What a profile or its company page actually says - the bar a candidate is
+   * held to. */
+  profile_signals: string[];
+  /** Evidence that lives off LinkedIn and would strengthen a lead. Optional by
+   * construction: its absence never drops a candidate. */
+  corroboration: string[];
+  exclusions: string[]; rationale: string; basis: string;
+  /** Written by proposals saved before profile_signals/corroboration existed. */
+  signals?: string[];
+}
+export interface LinkedInCriteriaRequest {
+  segment_name: string; hint: string; target: "people" | "companies";
+}
+export interface LinkedInSearchRequest {
+  /** Optional: a search runs on the criteria, on a typed query, or on both. */
+  query: string; criteria: LinkedInCriteria | null;
+  target: "people" | "companies"; limit: number;
+}
+export interface LinkedInMessageRequest {
+  recipient_name: string; recipient_url: string; confirmed_context: string;
+  objective: string; language: string; kind: "connection" | "message";
+}
+/** What a campaign delivers when it is not email - see the backend's
+ * LinkedInChannel. Set on creation and never changed afterwards. */
+export interface LinkedInChannel {
+  recipient_name: string; recipient_url: string; confirmed_context: string;
+  language: string; kind: "connection" | "message";
+}
+export interface LinkedInRun {
+  id: string; brand_id: string; kind: "search" | "message" | "criteria";
+  state: "running" | "completed" | "failed";
+  request: Partial<LinkedInSearchRequest & LinkedInMessageRequest & LinkedInCriteriaRequest>;
+  result: Partial<LinkedInCriteria> & {
+    candidates?: LinkedInCandidate[]; note?: string; body?: string;
+    characters?: number; limit?: number; criteria?: LinkedInCriteria | null;
+  };
+  error: string; calls: number; input_tokens: number; output_tokens: number;
+  created_at: string; completed_at: string | null;
 }

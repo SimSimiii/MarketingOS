@@ -26,7 +26,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Literal
 
-from app.knowledge.artifacts import KnowledgeArtifacts
+from app.knowledge.artifacts import KnowledgeArtifacts, Segment
 from app.knowledge.compiler import ROLE_ID as COMPILER_ROLE
 from app.knowledge.compiler import KnowledgeCompiler
 from app.knowledge.corpus import SourceCorpus
@@ -36,11 +36,17 @@ from app.market.demand import DemandMap
 from app.market.positioning import PositioningMap
 from app.marketing.briefs import CampaignBrief
 from app.marketing.cancellation import CancellationToken
-from app.marketing.contract import DeliverableContract, check_contract, parse_contract
+from app.marketing.contract import (
+    DeliverableContract,
+    DeliverableKind,
+    check_contract,
+    linkedin_contract,
+    parse_contract,
+)
 from app.marketing.craft import CraftLoop, EmailOutcome
 from app.marketing.critic import ConversionCritic
 from app.marketing.email_copy import Email
-from app.marketing.exceptions import CampaignError
+from app.marketing.exceptions import CampaignError, CraftError
 from app.marketing.intelligence import (
     AudienceResolution,
     CampaignIntelligence,
@@ -49,6 +55,8 @@ from app.marketing.intelligence import (
     DossierPosture,
     attach_selected_dossier_objection,
 )
+from app.marketing.linkedin import ROLE_ID as LINKEDIN_WRITER_ROLE
+from app.marketing.linkedin import write_message
 from app.marketing.observer import RunObserver
 from app.marketing.policy import ExecutionPolicy
 from app.marketing.preflight import ProofPosture, assess
@@ -60,9 +68,10 @@ from app.marketing.sequence import SequenceReport, SequenceReviewer
 from app.marketing.strategist import ROLE_ID as STRATEGIST_ROLE
 from app.marketing.strategist import Strategist
 from app.marketing.subject_lines import SubjectBakeOff
+from app.marketing.substantiation import assess_text
 from app.marketing.tournament import PreferenceJudge
 from app.marketing.writer import EmailWriter
-from app.runtime.exceptions import ModelRuntimeError
+from app.runtime.exceptions import ModelRuntimeError, OutputValidationError
 from app.runtime.model_session import ModelSession, Usage
 
 logger = logging.getLogger("marketingos.marketing")
@@ -190,6 +199,12 @@ class CampaignRunResult:
     usage: Usage = field(default_factory=Usage)
     abort_reason: str | None = None
     intelligence: CampaignIntelligenceTrace | None = None
+    #: The finished LinkedIn message, on a run whose channel asked for one -
+    #: body, character count and the limit it was written to. Its own field
+    #: rather than an `EmailOutcome` with the subject left blank: it was never
+    #: read cold and never duelled, and borrowing a shape that carries both
+    #: would report scores nobody measured.
+    message: dict | None = None
 
     @property
     def emails(self) -> list[Email]:
@@ -197,7 +212,12 @@ class CampaignRunResult:
 
     @property
     def delivered(self) -> bool:
-        return bool(self.outcomes)
+        return bool(self.outcomes) or self.message is not None
+
+    @property
+    def deliverables(self) -> int:
+        """How many finished pieces this run hands over, whatever channel."""
+        return len(self.outcomes) + (1 if self.message is not None else 0)
 
 
 class EmailCampaignPipeline:
@@ -220,12 +240,15 @@ class EmailCampaignPipeline:
 
     async def run(self, request: CampaignRequest) -> CampaignRunResult:
         result = CampaignRunResult(usage=self._session.usage)
-        contract = parse_contract(request.request)
+        # The channel decides the deliverable; only an email campaign has a
+        # number to read out of the user's sentence.
+        contract = linkedin_contract() if request.channel else parse_contract(request.request)
         self._observer.on_phase(
             "contract",
-            f"Read the request as {contract.count} email(s)"
+            f"Read the request as {contract.count} {contract.noun}(s)"
             + (" - the user said so" if contract.count_is_explicit else " - not specified"),
-            {"count": contract.count, "explicit": contract.count_is_explicit},
+            {"count": contract.count, "explicit": contract.count_is_explicit,
+             "kind": contract.kind.value},
         )
 
         try:
@@ -283,6 +306,10 @@ class EmailCampaignPipeline:
                 # by, and a run whose audience was quietly swapped by a form
                 # field is a run whose report nobody can read afterwards.
                 mapped = demand.named(chosen) if demand is not None else None
+                if not any(segment.name == chosen for segment in artifacts.audience.segments):
+                    selected = mapped.as_segment() if mapped is not None else Segment(name=chosen)
+                    selected.name = chosen
+                    artifacts.audience.segments.insert(0, selected)
                 self._observer.on_phase(
                     "audience",
                     f"Written to {chosen}"
@@ -308,13 +335,16 @@ class EmailCampaignPipeline:
             if (guard := self._guard()) is not None:
                 return self._stopped(request, contract, result, guard)
 
-            guard = await self._phase_craft(
-                request, brief, artifacts, corpus, result, positioning
-            )
-            if guard is not None:
-                return self._stopped(request, contract, result, guard)
+            if contract.kind is DeliverableKind.LINKEDIN_MESSAGE:
+                await self._phase_message(request, brief, artifacts, result)
+            else:
+                guard = await self._phase_craft(
+                    request, brief, artifacts, corpus, result, positioning
+                )
+                if guard is not None:
+                    return self._stopped(request, contract, result, guard)
 
-            await self._phase_sequence(request, brief, artifacts, corpus, result)
+                await self._phase_sequence(request, brief, artifacts, corpus, result)
         except ModelRuntimeError as exc:
             # The provider stopped answering, after `ModelSession` had already
             # resent the call. Treated exactly like running out of time: stop
@@ -349,6 +379,17 @@ class EmailCampaignPipeline:
         result.status = "completed" if result.report.healthy else "degraded"
         self._observer.on_report(result.report)
         below = result.report.below_floor
+        if contract.kind is DeliverableKind.LINKEDIN_MESSAGE:
+            message = result.message or {}
+            self._observer.on_phase(
+                "finished",
+                f"LinkedIn {message.get('kind', 'message')} ready - "
+                f"{message.get('characters', 0)} of {message.get('limit', 0)} characters. "
+                "Every claim in it passed the evidence gate; no cold reader grades this "
+                "channel, so there is no pull score to report.",
+                {"status": result.status, "characters": message.get("characters", 0)},
+            )
+            return result
         self._observer.on_phase(
             "finished",
             f"{result.report.delivered} email(s) ready - average cold-reader pull "
@@ -527,6 +568,59 @@ class EmailCampaignPipeline:
             accepted.append(outcome.email)
         return None
 
+    async def _phase_message(
+        self,
+        request: CampaignRequest,
+        brief: CampaignBrief,
+        artifacts: KnowledgeArtifacts,
+        result: CampaignRunResult,
+    ) -> None:
+        """The craft phase for a LinkedIn campaign: one draft, the same
+        evidence gate every email passes, and one rewrite against its own
+        failures.
+
+        Deliberately not the email loop. That loop's value is the cold reader,
+        the duel and the critic, all of which grade a piece of copy a stranger
+        reads in an inbox - a panel that has never seen a LinkedIn message
+        would be scoring the wrong artefact, and a pull number from it would
+        be a measurement of nothing. What survives the change of channel is
+        what is deterministic: no unlicensed number, price, quotation or URL.
+        """
+        channel = request.channel
+        assert channel is not None  # the contract is only LinkedIn when it is set
+        message_brief = brief.emails[0] if brief.emails else None
+        self._observer.on_phase(
+            "craft",
+            f"Writing one LinkedIn {channel.kind} to {channel.recipient_name}: "
+            + (message_brief.single_idea if message_brief else "no brief came back"),
+            {"recipient": channel.recipient_name, "kind": channel.kind},
+        )
+        self._observer.on_role_started(
+            LINKEDIN_WRITER_ROLE, f"Writing to {channel.recipient_name}"
+        )
+        # The objective is the campaign's goal when the user set one - it is
+        # the sentence that says what a reply is for - and the request itself
+        # otherwise, which is the only other thing they wrote.
+        objective = (request.goals or "").strip() or request.request
+        try:
+            result.message = await write_message(
+                self._session,
+                channel.message_request(objective),
+                artifacts,
+                brief=message_brief,
+                campaign=brief,
+            )
+        except OutputValidationError as exc:
+            # A draft that still fails its own checks after being handed them
+            # is a craft failure, not a provider one: the model answered, and
+            # what it answered cannot ship.
+            raise CraftError(str(exc), role=LINKEDIN_WRITER_ROLE) from exc
+        self._observer.on_role_finished(
+            LINKEDIN_WRITER_ROLE,
+            f"{result.message['characters']} of {result.message['limit']} characters",
+            {"characters": result.message["characters"], "limit": result.message["limit"]},
+        )
+
     # ---------------------------------------------------------- phase three
 
     async def _phase_sequence(
@@ -690,12 +784,71 @@ class EmailCampaignPipeline:
         )
         return result
 
+    def _message_report(
+        self,
+        request: CampaignRequest,
+        contract: DeliverableContract,
+        result: CampaignRunResult,
+    ) -> CampaignReport:
+        """One line, and no scores that were never measured.
+
+        `read_reported=False` is the same flag an email carries when its cold
+        read never came back, and it means the same thing here: the pull
+        column is a placeholder, not a zero. `reads_expected=False` is what
+        stops the run being marked degraded for a panel this channel does not
+        have.
+        """
+        lines: list[EmailReportLine] = []
+        brief = result.brief.emails[0] if result.brief and result.brief.emails else None
+        if result.message is not None and result.artifacts is not None:
+            assigned = [
+                entry
+                for id_ in (brief.evidence_ids if brief else [])
+                if (entry := result.artifacts.evidence.get(id_)) is not None
+            ]
+            spent = assess_text(
+                result.message["body"], assigned, result.artifacts.evidence.entries
+            )
+            lines.append(
+                EmailReportLine(
+                    position=1,
+                    subject=f"LinkedIn {result.message['kind']} to "
+                    f"{result.message['recipient_name']}",
+                    single_idea=brief.single_idea if brief else "",
+                    # It shipped, so every gate passed: an unlicensed number or
+                    # quotation sends the draft back and a second failure means
+                    # there is no message to report on at all.
+                    clean=True,
+                    read_reported=False,
+                    evidence_assigned=brief.evidence_ids if brief else [],
+                    evidence_spent=list(spent.carried),
+                    attributions=spent.attributions,
+                )
+            )
+        violations = check_contract(contract, len(lines))
+        gaps = result.artifacts.gaps.unanswered if result.artifacts else []
+        posture = assess(result.artifacts) if result.artifacts else None
+        return CampaignReport(
+            request=request.request,
+            delivered=len(lines),
+            promised=contract.count,
+            reads_expected=False,
+            contract_violations=[violation.detail for violation in violations],
+            emails=lines,
+            limiting_gaps=[f"{gap.missing} - {gap.impact}" for gap in gaps],
+            what_would_help_most=posture.asks[0] if posture and posture.asks else "",
+            knowledge_version=result.artifacts.version if result.artifacts else 0,
+            notes=[result.abort_reason] if result.abort_reason else [],
+        )
+
     def _build_report(
         self,
         request: CampaignRequest,
         contract: DeliverableContract,
         result: CampaignRunResult,
     ) -> CampaignReport:
+        if contract.kind is DeliverableKind.LINKEDIN_MESSAGE:
+            return self._message_report(request, contract, result)
         lines = [
             EmailReportLine(
                 position=outcome.brief.position,
@@ -708,10 +861,12 @@ class EmailCampaignPipeline:
                 rewrites_stopped_helping=outcome.stopped_early,
                 read_reported=outcome.best.read.has_verdict,
                 understood=outcome.best.read.understood,
+                relevant=outcome.best.read.relevant,
                 evidence_assigned=outcome.brief.evidence_ids,
                 evidence_spent=list(outcome.best.substantiation.carried),
                 attributions=outcome.best.substantiation.attributions,
-                unresolved=[issue.detail for issue in outcome.best.gates.blocking],
+                unresolved=[issue.detail for issue in outcome.best.gates.blocking]
+                + (["Unresolved audience mismatch: " + "; ".join(r.relevance_feedback for r in outcome.best.read.reported if r.situation_matches is False)] if not outcome.best.read.relevant else []),
                 reader_verdicts=ReaderVerdict.from_panel(outcome.best.read),
                 sameness=[
                     issue.detail
@@ -731,7 +886,7 @@ class EmailCampaignPipeline:
             contract_violations=[violation.detail for violation in violations],
             emails=lines,
             limiting_gaps=[f"{gap.missing} - {gap.impact}" for gap in gaps],
-            what_would_help_most=posture.asks[0] if posture and posture.asks else "",
+            what_would_help_most=_reader_recommendation(lines) or (posture.asks[0] if posture and posture.asks else ""),
             sequence_summary=result.sequence.verdict.summary if result.sequence else "",
             knowledge_version=result.artifacts.version if result.artifacts else 0,
             notes=(
@@ -779,3 +934,17 @@ class EmailCampaignPipeline:
             "and kept it. Before concluding the copy cannot be better, try the same "
             "request on a preset that buys them."
         ]
+
+
+def _reader_recommendation(lines: list[EmailReportLine]) -> str:
+    """Prioritize observed CTA friction; never promote a reader wish to a fact."""
+    verdicts = [v for line in lines for v in line.reader_verdicts]
+    mismatches = [v for v in verdicts if v.situation_matches is False]
+    if mismatches:
+        return "Recheck the selected audience situation: " + mismatches[0].relevance_feedback
+    blockers = [v.to_click_it_would_have_to or v.biggest_doubt for v in verdicts if v.biggest_doubt or v.to_click_it_would_have_to]
+    if not blockers:
+        return ""
+    priority = max(dict.fromkeys(blockers), key=blockers.count)
+    return ("Resolve this simulated next-step obstacle: " + priority
+            + " Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.")

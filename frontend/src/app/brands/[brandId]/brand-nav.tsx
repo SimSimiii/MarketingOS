@@ -26,6 +26,7 @@ export function BrandNav({
     { href: base, label: "Overview", badge: null as number | null, exact: true },
     { href: `${base}/knowledge`, label: "Sources", badge: counts.sources || null },
     { href: `${base}/knowledge/base`, label: "Knowledge base", badge: counts.facts },
+    { href: `${base}/linkedin`, label: "LinkedIn", badge: null },
     { href: `${base}/market`, label: "Market", badge: counts.rivals || null },
   ];
 

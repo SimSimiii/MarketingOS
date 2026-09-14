@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { api, type AuditEntry } from "@/lib/api";
 import { formatDateTime } from "@/lib/format";
@@ -35,21 +35,14 @@ function AuditBody() {
   const [error, setError] = useState("");
   const [loaded, setLoaded] = useState(false);
 
-  const load = useCallback(async () => {
-    setLoaded(false);
-    try {
-      setRows(await api.audit({ action, limit: 200 }));
-      setError("");
-    } catch (exception) {
-      setError(exception instanceof Error ? exception.message : "Could not load the trail.");
-    } finally {
-      setLoaded(true);
-    }
-  }, [action]);
-
   useEffect(() => {
-    void load();
-  }, [load]);
+    let active = true;
+    void api.audit({ action, limit: 200 }).then(value => {
+      if (active) { setRows(value); setError(""); }
+    }).catch(exception => { if (active) setError(String(exception)); })
+      .finally(() => { if (active) setLoaded(true); });
+    return () => { active = false; };
+  }, [action]);
 
   return (
     <>
@@ -59,7 +52,7 @@ function AuditBody() {
       />
 
       <div className="mb-4 max-w-xs">
-        <Select label="Action" value={action} onChange={setAction}>
+        <Select label="Action" value={action} onChange={value => { setLoaded(false); setAction(value); }}>
           <option value="">Everything</option>
           {ACTIONS.map((name) => (
             <option key={name} value={name}>

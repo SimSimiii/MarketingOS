@@ -61,6 +61,15 @@ _SEARCH = frozenset({ResearchTool.WEB_SEARCH})
 ROLE_CATALOG: dict[str, RoleSpec] = {
     spec.id: spec
     for spec in (
+        RoleSpec(id="linkedin_targeting", label="LinkedIn targeting",
+                 blurb="Decide which professional profiles are worth looking for, before searching.",
+                 phase=RolePhase.MARKET, tier=ModelTier.BALANCED),
+        RoleSpec(id="linkedin_research", label="LinkedIn research",
+                 blurb="Find public professional profiles and company pages for review.",
+                 phase=RolePhase.MARKET, tier=ModelTier.BALANCED, tools=_SEARCH),
+        RoleSpec(id="linkedin_writer", label="LinkedIn message writer",
+                 blurb="Draft a short message from confirmed context and brand knowledge.",
+                 phase=RolePhase.MARKET, tier=ModelTier.BALANCED),
         RoleSpec(
             id="knowledge_compiler",
             label="Knowledge compiler",

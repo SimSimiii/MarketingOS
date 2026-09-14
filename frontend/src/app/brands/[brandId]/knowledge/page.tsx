@@ -24,16 +24,21 @@ import { formatAbsolute, timeAgo } from "@/lib/format";
  * account holds hides exactly the thing that decides what the copy may say. */
 export default async function BrandSourcesPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ brandId: string }>;
+  searchParams: Promise<{ page?: string }>;
 }) {
   const { brandId } = await params;
+  const query = await searchParams;
+  const page = Math.max(1, Math.min(100000, Number.parseInt(query.page ?? "1", 10) || 1));
 
-  const [documents, brand, base] = await Promise.all([
-    api.listKnowledgeDocuments({ brandId }),
+  const [rows, brand, base] = await Promise.all([
+    api.listKnowledgeDocuments({ brandId }, { limit: 51, offset: (page - 1) * 50 }),
     api.getBrand(brandId),
     api.getKnowledgeBase({ brandId }).catch(() => null),
   ]);
+  const documents = rows.slice(0, 50);
 
   return (
     <div className="space-y-4">
@@ -106,6 +111,11 @@ export default async function BrandSourcesPage({
           )}
         </CardContent>
       </Card>
+      <nav aria-label="Source pages" className="flex justify-between text-sm">
+        {page > 1 ? <Link href={`?page=${page - 1}`}>Previous</Link> : <span />}
+        <span>Page {page}</span>
+        {rows.length > 50 ? <Link href={`?page=${page + 1}`}>Next</Link> : <span />}
+      </nav>
     </div>
   );
 }

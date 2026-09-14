@@ -213,7 +213,8 @@ def test_a_panel_that_estimated_a_frequency_is_reported_in_that_frequency():
     )
 
     assert panel.clicks_in_100 == 3
-    assert panel.verdict_line() == "about 3 in 100 would click"
+    assert "uncalibrated" in panel.verdict_line()
+    assert "would click" not in panel.verdict_line()
 
 
 # ----------------------------------------------------------------- who reads it
@@ -221,7 +222,10 @@ def test_a_panel_that_estimated_a_frequency_is_reported_in_that_frequency():
 
 def test_without_a_panel_the_draft_is_read_by_the_chosen_segment():
     personas = personas_for(AudienceModel(segments=[SEGMENT]), SEGMENT, panel=False)
-    assert personas == [f"{SEGMENT.name}. {SEGMENT.situation}"]
+    assert len(personas) == 1
+    assert SEGMENT.name in personas[0]
+    assert SEGMENT.situation in personas[0]
+    assert "inferred" in personas[0]
 
 
 def test_a_panel_is_the_same_person_in_three_moods():

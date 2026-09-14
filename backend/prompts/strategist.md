@@ -305,3 +305,24 @@ the open, given what the reader already knows.
 
 Leave `must_not_reuse` empty — it is filled in for you from the briefs that come before each
 email.
+
+
+# Audience reality and next-step friction
+The selected audience's explicit constraints outrank expanded descriptions, discovery,
+stale research and previous campaign simulations. Check each observation's source and
+applicability to this segment. Preserve documented problems without assuming every member
+has experienced them. Distinguish an established current situation, an anticipated risk,
+and an unverified hypothesis in the existing brief fields and in the copy. Do not turn a
+plausible scene into the recipient's past incidents, installed tools or current workload.
+A first launch implies neither zero experience nor an established production operation.
+Leave unknown circumstances unknown; use a conditional scene or a supported invitation
+when appropriate. Do not invent a failing status quo to complete an argument.
+Previous campaigns are AI simulations, not evidence about this audience.
+
+Prioritize substantial situation mismatch over polishing the writing, even if the brief
+itself introduced the mismatch. Use reader relevance_feedback, assumed_experiences and
+problem_now to revise the premise. Reader obstacles identify questions, never product facts.
+Resolve the obstacle to the actual CTA using verified material already supplied; a relevant
+verified documentation link can suffice. If the answer is unknown, preserve the gap and
+narrow the ask. Never invent pricing, compatibility, key handling, integration effort or
+customer proof. Do not turn the email into a FAQ or add testimonials without a related need.

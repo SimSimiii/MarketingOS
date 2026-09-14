@@ -20,19 +20,54 @@ import { formatAbsolute, timeAgo } from "@/lib/format";
 export default async function CampaignsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ archived?: string; brand?: string }>;
+  searchParams: Promise<{
+    archived?: string;
+    page?: string;
+    brand?: string;
+    linkedin_name?: string;
+    linkedin_url?: string;
+    linkedin_headline?: string;
+  }>;
 }) {
-  const { archived, brand: brandId } = await searchParams;
+  const {
+    archived,
+    page: requestedPage,
+    brand: brandId,
+    linkedin_name: linkedinName,
+    linkedin_url: linkedinUrl,
+    linkedin_headline: linkedinHeadline,
+  } = await searchParams;
   const includeArchived = archived === "1";
+  const page = Math.max(1, Math.min(100000, Number.parseInt(requestedPage ?? "1", 10) || 1));
+  const pageSize = 50;
   const [all, brands] = await Promise.all([
-    api.listCampaigns(includeArchived),
+    api.listCampaigns(includeArchived, { limit: pageSize + 1, offset: (page - 1) * pageSize, brandId }),
     api.listBrands().catch(() => []),
   ]);
   // A campaign belongs to a business, so this list can be read as one
   // business's work rather than as everything the account has ever run.
   const brand = brands.find((item) => item.id === brandId) ?? null;
-  const campaigns = brand ? all.filter((item) => item.brand_id === brand.id) : all;
+  const campaigns = all.slice(0, pageSize);
+  const pageHref = (target: number) => {
+    const query = new URLSearchParams({ page: String(target) });
+    if (includeArchived) query.set("archived", "1");
+    if (brandId) query.set("brand", brandId);
+    return `/campaigns?${query}`;
+  };
   const brandNames = new Map(brands.map((item) => [item.id, item.name]));
+  //: Arriving from a LinkedIn search result: the campaign form opens on the
+  //: profile they just read, so the one thing they would have retyped is
+  //: already in it. A recipient without a brand is not a campaign this
+  //: product can plan, so the brand has to come along too.
+  const linkedinPrefill =
+    brandId && linkedinUrl
+      ? {
+          brandId,
+          linkedinName: linkedinName ?? "",
+          linkedinUrl,
+          linkedinHeadline: linkedinHeadline ?? "",
+        }
+      : undefined;
 
   return (
     <div className="space-y-6">
@@ -59,7 +94,7 @@ export default async function CampaignsPage({
           >
             {includeArchived ? "Hide archived" : "Show archived"}
           </Link>
-          <NewCampaignDialog />
+          <NewCampaignDialog prefill={linkedinPrefill} autoOpen={Boolean(linkedinPrefill)} />
         </>}
       />
 
@@ -159,6 +194,11 @@ export default async function CampaignsPage({
           )}
         </CardContent>
       </Card>
+      <nav aria-label="Campaign pages" className="flex items-center justify-between text-sm">
+        {page > 1 ? <Link href={pageHref(page - 1)}>Previous</Link> : <span />}
+        <span>Page {page}</span>
+        {all.length > pageSize ? <Link href={pageHref(page + 1)}>Next</Link> : <span />}
+      </nav>
     </div>
   );
 }

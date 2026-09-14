@@ -1,18 +1,9 @@
-"""FastAPI dependencies that turn a request into a Principal.
-
-The bearer token is the only credential the API accepts. A cookie is *read*
-as a fallback because the web client stores it there and server-rendered pages
-forward it, but nothing authorises on the cookie alone - it carries the same
-signed token, and it is never treated as proof of intent the way a session
-cookie would be. That is what keeps CSRF off the table: a cross-site form post
-carries the cookie but cannot set the header, and the API only trusts what it
-can read from either as a *token*, never the browser's willingness to send it.
-"""
+"""Resolve bearer credentials; cookie fallback is restricted to safe reads."""
 
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import Cookie, Depends, Header, HTTPException, Query, status
+from fastapi import Cookie, Depends, Header, HTTPException, Request, status
 from sqlmodel import Session
 
 from app.auth.principal import Principal
@@ -41,29 +32,26 @@ def _bearer(authorization: str | None) -> str | None:
 
 
 def get_principal(
+    request: Request,
     session: Annotated[Session, Depends(get_session)],
     authorization: Annotated[str | None, Header()] = None,
     mos_access_token: Annotated[str | None, Cookie()] = None,
-    access_token: Annotated[str | None, Query()] = None,
 ) -> Principal:
     """Resolve the caller, or refuse.
 
-    Three places the token can arrive, in order of preference:
-
-    1. `Authorization: Bearer`, which is what everything sends.
-    2. A cookie, for a browser that is not running our code - the download
-       links the CSV export hands out, for instance.
-    3. `?access_token=`, which exists for exactly one caller: `EventSource`,
-       which cannot set a header and cannot send a cross-origin cookie either.
-       Tokens in query strings reach access logs, so this is the reason access
-       tokens are short-lived rather than a reason to make them longer.
+    Mutations require an explicit Authorization header. Safe reads may use
+    the signed cookie. Query-string tokens are never accepted or logged here.
 
     An anonymous request is only an error where auth is required. Where it is
     not - a laptop install - it resolves to the unscoped principal, which is
     the single workspace the product had before accounts existed.
     """
     settings = get_settings()
-    token = _bearer(authorization) or mos_access_token or access_token
+    token = _bearer(authorization)
+    if token is None and mos_access_token:
+        if request.method not in {"GET", "HEAD", "OPTIONS"}:
+            raise HTTPException(status.HTTP_403_FORBIDDEN, "Use a bearer header for mutations.")
+        token = mos_access_token
 
     if token is None:
         if settings.auth_required:
@@ -83,7 +71,7 @@ def get_principal(
     # One lookup per request, and it earns its keep: it is what makes a
     # suspension take effect now rather than whenever the token expires.
     user = session.get(User, user_id)
-    if user is None:
+    if user is None or payload.get("ver", 0) != user.token_version:
         raise _UNAUTHENTICATED
     if user.status == UserStatus.SUSPENDED:
         raise HTTPException(

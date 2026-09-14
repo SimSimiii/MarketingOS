@@ -42,9 +42,9 @@ def test_every_launcher_goes_through_the_one_place_that_holds_the_task():
     to be the only door rather than a line in each of them."""
     source = inspect.getsource(market_service)
 
-    assert source.count("asyncio.create_task(") == 1, (
+    assert source.count("create_job_task(") == 1, (
         "create_task belongs in _spawn and nowhere else - a task nothing holds "
         "can be collected mid-run"
     )
-    assert "asyncio.create_task(" in inspect.getsource(market_service._spawn)
+    assert "create_job_task(" in inspect.getsource(market_service._spawn)
     assert source.count("_spawn(") == 7, "one definition and six launchers"

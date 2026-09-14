@@ -46,6 +46,10 @@ class ReaderVerdict(BaseModel):
     #: ambiguous without this: a fluent sentence reads as comprehension
     #: whether the reader assembled it from the copy or from thin air.
     understood: bool = True
+    situation_matches: bool | None = None
+    relevance_feedback: str = ""
+    assumed_experiences: list[str] = Field(default_factory=list)
+    problem_now: str = ""
     #: The first line where they lost interest, quoted from the email.
     stopped_at: str = ""
     #: The real reason they would not click.
@@ -70,6 +74,10 @@ class ReaderVerdict(BaseModel):
             cls(
                 what_it_sells=read.what_it_sells,
                 understood=read.understood,
+                situation_matches=read.situation_matches,
+                relevance_feedback=read.relevance_feedback,
+                assumed_experiences=read.assumed_experiences,
+                problem_now=read.problem_now,
                 stopped_at=read.stopped_at,
                 biggest_doubt=read.biggest_doubt,
                 to_click_it_would_have_to=read.to_click_it_would_have_to,
@@ -112,6 +120,7 @@ class EmailReportLine(BaseModel):
     #: into it because the two answer different questions, and averaging them
     #: would hide the one that has to be fixed first.
     understood: bool = True
+    relevant: bool | None = None
     #: Ledger ids the Strategist said this email is built on.
     evidence_assigned: list[str] = Field(default_factory=list)
     #: Of those, the ones whose figure, name or quotation actually reached the
@@ -177,6 +186,8 @@ class EmailReportLine(BaseModel):
             if self.argues_from_nothing
             else ""
         )
+        if self.relevant is False:
+            score = "unresolved audience mismatch (AI simulation)"
         if self.read_reported and not self.understood:
             # Said instead of the score, not beside it. A line reading
             # "pull 3/10, and they could not say what it was" invites the
@@ -210,6 +221,12 @@ class CampaignReport(BaseModel):
     sequence_summary: str = ""
     knowledge_version: int = 0
     notes: list[str] = Field(default_factory=list)
+    #: Whether this deliverable is one a cold reader grades. True for email,
+    #: which is every run that existed before channels did. False for a
+    #: LinkedIn message: no panel has ever read one here, so a missing verdict
+    #: is the honest state of the world rather than a step that failed, and
+    #: `healthy` must not mark the run degraded for it.
+    reads_expected: bool = True
 
     @property
     def average_pull(self) -> float:
@@ -274,7 +291,10 @@ class CampaignReport(BaseModel):
             and self.clear
             and not self.below_floor
             and bool(self.emails)
-            and all(line.read_reported for line in self.emails)
+            and (
+                not self.reads_expected
+                or all(line.read_reported for line in self.emails)
+            )
         )
 
     def render(self) -> str:
@@ -282,7 +302,7 @@ class CampaignReport(BaseModel):
             f"Request: {self.request}",
             (
                 f"Delivered {self.delivered} of {self.promised} email(s). "
-                f"Average cold-reader pull {self.average_pull:.1f}/10."
+                f"Average AI simulation assessment (uncalibrated) {self.average_pull:.1f}/10."
             ),
             *[line.render() for line in self.emails],
         ]
@@ -297,7 +317,7 @@ class CampaignReport(BaseModel):
         if self.below_floor:
             positions = ", ".join(str(line.position) for line in self.below_floor)
             lines.append(
-                f"Email(s) {positions} never reached the {PULL_THRESHOLD}/10 floor. The loop "
+                f"Email(s) {positions} did not satisfy the simulated assessment criteria. The loop "
                 "stopped rewriting them; it did not decide these were ready to send."
             )
         if self.sequence_summary:
@@ -339,9 +359,9 @@ class CampaignReport(BaseModel):
         """
         if not self.emails:
             return ""
-        worked = [line for line in self.emails if line.pull >= 7 and line.revisions == 0]
+        worked = [line for line in self.emails if line.landed and line.pull >= 7 and line.revisions == 0]
         struggled = [line for line in self.emails if line.revisions >= 2 or line.pull < 6]
-        parts = [f'Previous campaign: "{self.request}"']
+        parts = [f'Previous campaign AI simulation, not audience facts or real send evidence: "{self.request}"']
         if worked:
             parts.append(
                 "Landed immediately: "

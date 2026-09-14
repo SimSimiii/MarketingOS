@@ -53,6 +53,7 @@ phases:
       # should fail in thirty seconds, not after a multi-stage Docker build.
       - npx tsc --noEmit
       - npm run lint
+      - npm test
 
       - rm -rf .aws-sam
       - envsubst < samconfig.yaml > /tmp/console-samconfig.resolved.yaml

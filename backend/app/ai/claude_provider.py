@@ -294,6 +294,8 @@ class ClaudeProvider(AIProvider):
     async def _generate(self, request: AIRequest) -> AIResponse:
         model = request.model or self._default_model
         options, prompt = self._payload(request)
+        if request.image is not None:
+            prompt = self._image_prompt(prompt, request.image)
 
         final_text = ""
         usage = AIUsage()
@@ -319,6 +321,16 @@ class ClaudeProvider(AIProvider):
                     raise _result_failure(message)
 
         return AIResponse(content=final_text, model=model, usage=usage)
+
+    @staticmethod
+    async def _image_prompt(prompt, image):
+        import base64
+
+        yield {"type": "user", "message": {"role": "user", "content": [
+            {"type": "text", "text": prompt},
+            {"type": "image", "source": {"type": "base64", "media_type": image.mime_type,
+             "data": base64.b64encode(image.data).decode("ascii")}},
+        ]}, "parent_tool_use_id": None}
 
     async def _stream(self, request: AIRequest) -> AsyncIterator[str]:
         options, prompt = self._payload(request)

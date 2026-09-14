@@ -126,6 +126,7 @@ def reset_admin_password(
 ) -> None:
     target = _get_or_404(session, admin_id)
     target.password_hash = hash_password(data.password)
+    target.token_version += 1
     target.updated_at = datetime.now(UTC)
     session.add(target)
     service.log_action(

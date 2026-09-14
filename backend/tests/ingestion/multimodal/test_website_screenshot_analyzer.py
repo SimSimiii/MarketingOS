@@ -45,9 +45,13 @@ async def test_no_hero_or_cta_when_regions_absent(png_path, fake_ocr):
         ImageDescription,
         LayoutDescription,
         VisionProvider,
+        VisualExtraction,
     )
 
     class BareVisionProvider(VisionProvider):
+        async def read_image(self, image, mime_type):
+            return VisualExtraction(description="plain image", regions=["body"])
+
         async def analyze_image(self, image, mime_type):
             return ImageDescription(description="plain image")
 

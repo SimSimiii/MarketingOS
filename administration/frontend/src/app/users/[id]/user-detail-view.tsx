@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
 import { api, atLeast, type UserDetail, type Workspace } from "@/lib/api";
@@ -20,11 +21,13 @@ const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
  * the real one.
  */
 function useAccountId(): string | null {
-  const [id, setId] = useState<string | null>(null);
-  useEffect(() => {
-    setId(window.location.pathname.match(UUID)?.[0] ?? null);
-  }, []);
-  return id;
+  return useSyncExternalStore(subscribeLocation, accountId, () => null);
+}
+
+function accountId() { return window.location.pathname.match(UUID)?.[0] ?? null; }
+function subscribeLocation(changed: () => void) {
+  window.addEventListener("popstate", changed);
+  return () => window.removeEventListener("popstate", changed);
 }
 
 export function UserDetailView() {
@@ -55,8 +58,13 @@ function Body() {
   }, [id]);
 
   useEffect(() => {
-    void load();
-  }, [load]);
+    if (!id) return;
+    let active = true;
+    void Promise.all([api.getUser(id), api.getWorkspace(id)]).then(([detail, space]) => {
+      if (active) { setUser(detail); setWorkspace(space); }
+    }).catch(exception => { if (active) setError(String(exception)); });
+    return () => { active = false; };
+  }, [id]);
 
   async function run(action: () => Promise<unknown>, message: string) {
     setError("");
@@ -288,6 +296,7 @@ function AccessActions({
   canDelete: boolean;
   onSubmit: (action: () => Promise<unknown>, message: string) => Promise<void>;
 }) {
+  const router = useRouter();
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
   const suspended = user.status === "suspended";
@@ -361,7 +370,7 @@ function AccessActions({
               }
               void guard(async () => {
                 await api.deleteUser(user.id);
-                window.location.href = "/users/";
+                router.push("/users/");
               }, "Account deleted.");
             }}
           >

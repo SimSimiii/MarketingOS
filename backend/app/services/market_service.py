@@ -108,6 +108,7 @@ from app.runtime.events import EventBus
 from app.runtime.exceptions import CapabilityUnavailableError, ModelRuntimeError
 from app.runtime.model_session import ModelSession, RoleCall
 from app.runtime.prompt_engine import get_prompt_engine
+from app.runtime.work_limits import admitted_job
 
 logger = logging.getLogger("marketingos.market")
 
@@ -225,7 +226,9 @@ def _spawn(coro: Coroutine[Any, Any, None]) -> None:
     The only place in this module allowed to call `create_task`, so that no
     future launcher can reintroduce the unheld task by copying its neighbour.
     """
-    task = asyncio.create_task(coro)
+    from app.runtime.work_limits import create_job_task
+
+    task = create_job_task(coro)
     _running.add(task)
     task.add_done_callback(_running.discard)
 
@@ -281,8 +284,9 @@ class MarketService:
         brand_id: UUID,
         segment: str | None = None,
         status: ProspectStatus | None = None,
+        *, limit: int | None = None, offset: int = 0,
     ) -> list[ProspectRow]:
-        return self._store.prospects(brand_id, segment, status)
+        return self._store.prospects(brand_id, segment, status, limit=limit, offset=offset)
 
     def artifacts_for(self, brand_id: UUID) -> KnowledgeArtifacts | None:
         """The brand's compiled knowledge, with approved proof folded in.
@@ -303,7 +307,7 @@ class MarketService:
         return self._store.latest_capability_profile(brand_id)
 
     def current_company_qualification(
-        self, brand_id: UUID, audience: str, row: ProspectRow
+        self, brand_id: UUID, audience: str, row: ProspectRow, *, context=None
     ) -> CompanyQualification:
         """Re-evaluate stored company evidence against current V2 inputs.
 
@@ -317,13 +321,13 @@ class MarketService:
             return _unverified_company_qualification(
                 "legacy_prospect_has_no_qualification"
             )
-        profile = self.capability_profile(brand_id)
+        profile = context[0] if context is not None else self.capability_profile(brand_id)
         if profile is None:
             return _unverified_company_qualification("capability_profile_missing")
         if stored.stale_reasons(profile[1]):
             return stale_company_qualification(stored, profile[1])
-        research = self._store.latest_research(brand_id, audience)
-        mapped_segment = self._store.segment_named(brand_id, audience)
+        research = context[1] if context is not None else self._store.latest_research(brand_id, audience)
+        mapped_segment = context[2] if context is not None else self._store.segment_named(brand_id, audience)
         definition = (
             research[1].definition
             if research is not None
@@ -343,6 +347,19 @@ class MarketService:
             pages_read=row.pages_read,
             reachable=bool(prospect_contacts(row)),
         )
+
+    def current_company_qualifications(self, brand_id: UUID, rows: list[ProspectRow]) -> dict:
+        if not rows:
+            return {}
+        profile = self.capability_profile(brand_id)
+        contexts = {
+            audience: (profile, self._store.latest_research(brand_id, audience),
+                       self._store.segment_named(brand_id, audience))
+            for audience in {row.segment for row in rows}
+        }
+        return {row.id: self.current_company_qualification(
+            brand_id, row.segment, row, context=contexts[row.segment]
+        ) for row in rows}
 
     def save_capability_profile(
         self, brand_id: UUID, draft: CapabilityProfileDraft
@@ -559,6 +576,7 @@ class MarketService:
 
     # ------------------------------------------------------------ launching
 
+    @admitted_job
     def launch_scan(
         self,
         brand: Brand,
@@ -576,6 +594,7 @@ class MarketService:
         _spawn(_run_scan(brand.id, provider, engine, discover, status))
         return status
 
+    @admitted_job
     def launch_proof_hunt(
         self, brand: Brand, provider: AIProvider, engine: Engine
     ) -> JobStatus:
@@ -588,6 +607,7 @@ class MarketService:
         _spawn(_run_hunt(brand.id, provider, engine, status))
         return status
 
+    @admitted_job
     def launch_audience_map(
         self, brand: Brand, provider: AIProvider, engine: Engine, options: MapOptions | None = None
     ) -> JobStatus:
@@ -600,6 +620,7 @@ class MarketService:
         _spawn(_run_audience_map(brand.id, provider, engine, status, options))
         return status
 
+    @admitted_job
     def launch_prospect_search(
         self,
         brand: Brand,
@@ -655,6 +676,7 @@ class MarketService:
         )
         return status
 
+    @admitted_job
     def launch_audience_research(
         self,
         brand: Brand,
@@ -695,6 +717,7 @@ class MarketService:
         )
         return status
 
+    @admitted_job
     def launch_relevance_dossier(
         self,
         brand: Brand,

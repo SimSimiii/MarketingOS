@@ -9,6 +9,10 @@ import { cn } from "@/lib/utils";
 /** What one cold reader said about the version that shipped. Mirrors
  * app.marketing.report.ReaderVerdict. */
 export interface ReaderVerdict {
+  situation_matches?: boolean | null;
+  relevance_feedback?: string;
+  assumed_experiences?: string[];
+  problem_now?: string;
   what_it_sells: string;
   stopped_at: string;
   biggest_doubt: string;
@@ -36,7 +40,7 @@ export interface ScoredEmail {
  *
  * This exists because the system's most expensive judgment used to reach the
  * user as a single digit. A run that scored 4/10 persisted exactly `{"pull":
- * 4}` — and the same model call had already said what it thought the email
+ * 4}` â€” and the same model call had already said what it thought the email
  * was selling, where it stopped reading, what was really stopping it
  * clicking, and the one thing the email would have had to say for it to
  * click. All of it was thrown away.
@@ -61,10 +65,17 @@ function VerdictBlock({ verdict }: { verdict: ReaderVerdict }) {
         </div>
       )}
 
+      {verdict.relevance_feedback && (
+        <div className={verdict.situation_matches === false ? "text-amber-400" : "text-muted-foreground"}>
+          <p>{verdict.situation_matches === false ? "Audience mismatch" : "Situation recognition"}: {verdict.relevance_feedback}</p>
+          {verdict.problem_now && <p>Importance now: {verdict.problem_now}</p>}
+          {!!verdict.assumed_experiences?.length && <p>Assumed: {verdict.assumed_experiences.join("; ")}</p>}
+        </div>
+      )}
       {verdict.to_click_it_would_have_to && (
         <div className="rounded-md bg-emerald-500/10 p-2.5">
           <p className="text-xs text-emerald-300/80">
-            &ldquo;I would have clicked if this email had told me…&rdquo;
+            &ldquo;I would have clicked if this email had told meâ€¦&rdquo;
           </p>
           <p className="mt-0.5 text-emerald-100">{verdict.to_click_it_would_have_to}</p>
         </div>
@@ -91,7 +102,7 @@ function VerdictBlock({ verdict }: { verdict: ReaderVerdict }) {
           <ul className="mt-0.5 space-y-0.5">
             {verdict.fixes.map((fix) => (
               <li key={fix} className="text-foreground/80">
-                — {fix}
+                â€” {fix}
               </li>
             ))}
           </ul>
@@ -104,7 +115,7 @@ function VerdictBlock({ verdict }: { verdict: ReaderVerdict }) {
 function EmailVerdicts({ email }: { email: ScoredEmail }) {
   const [open, setOpen] = useState(email.landed === false);
   const verdicts = email.reader_verdicts ?? [];
-  const opens = verdicts.find((verdict) => verdict.opens_in_100 !== null);
+
 
   return (
     <div className="rounded-lg border border-border">
@@ -117,12 +128,7 @@ function EmailVerdicts({ email }: { email: ScoredEmail }) {
           <p className="text-sm font-medium">
             #{email.position} &ldquo;{email.subject}&rdquo;
           </p>
-          {opens && (
-            <p className="text-xs text-muted-foreground tabular-nums">
-              of a hundred people like them, {opens.opens_in_100} open it and{" "}
-              {opens.clicks_in_100 ?? 0} click
-            </p>
-          )}
+          <p className="text-xs text-muted-foreground">AI assessment, not a performance forecast</p>
         </div>
         <Badge
           variant={email.landed === false ? "outline" : "default"}
@@ -155,7 +161,7 @@ function EmailVerdicts({ email }: { email: ScoredEmail }) {
               </p>
               <ul className="mt-1 space-y-1 text-amber-100/90">
                 {email.sameness?.map((issue) => (
-                  <li key={issue}>— {issue}</li>
+                  <li key={issue}>â€” {issue}</li>
                 ))}
               </ul>
             </div>
@@ -178,7 +184,7 @@ export function ReaderVerdictCard({ emails }: { emails: ScoredEmail[] }) {
         <CardTitle className="text-base">Why it scored what it scored</CardTitle>
         <p className="mt-1 text-sm text-muted-foreground">
           A stranger who had never heard of you read each of these and reported what happened.
-          They were never shown your brief, your website or what the email was trying to do —
+          They were never shown your brief, your website or what the email was trying to do â€”
           only the email.
         </p>
       </CardHeader>

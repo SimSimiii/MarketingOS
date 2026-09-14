@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.marketing.gates import DEFAULT_MERGE_FIELDS
 
@@ -24,6 +24,8 @@ class ExecutionPolicy(BaseModel):
 
     #: Rewrites per email after the first draft. Two is the point where a
     #: rewrite stops fixing the draft and starts sanding it.
+    model_config = ConfigDict(extra="forbid")
+
     max_revisions: int = Field(default=2, ge=0, le=4)
     #: How many openings are written for each email before one is chosen. The
     #: cheapest quality in the system: a second candidate buys a different
@@ -58,7 +60,7 @@ class ExecutionPolicy(BaseModel):
     #: touches emails that already passed on their own.
     max_sequence_reworks: int = Field(default=2, ge=0, le=6)
 
-    max_duration_seconds: int | None = Field(default=1_200, ge=30)
+    max_duration_seconds: int = Field(default=1_200, ge=30, le=3600)
     #: Raised with `draft_candidates`: the budget guard degrades a run by
     #: dropping emails it never got to, so a budget set for one draft per
     #: email turns a quality change into a shorter campaign, silently.
@@ -70,7 +72,7 @@ class ExecutionPolicy(BaseModel):
     #: included, which for a measured single-email maximum run was ~235,000.
     #: Set to roughly three times a full campaign of that shape, so the guard
     #: catches a runaway without ending a legitimately large campaign.
-    max_total_tokens: int | None = Field(default=1_500_000, ge=1_000)
+    max_total_tokens: int = Field(default=1_500_000, ge=1_000, le=4_000_000)
 
     #: Merge fields this campaign's email tool can fill. Everything else in
     #: braces or brackets is an unfinished placeholder - see gates.
@@ -169,5 +171,7 @@ def resolve_policy(preset: PolicyPreset | None, custom: dict | None = None) -> E
     base = PRESETS[preset or "balanced"]
     if not custom:
         return base.model_copy(deep=True)
+    # Historical campaign rows can still contain retired knobs. They have no
+    # effect, but every currently supported knob must pass validation again.
     known = {key: value for key, value in custom.items() if key in ExecutionPolicy.model_fields}
-    return base.model_copy(update=known, deep=True)
+    return ExecutionPolicy.model_validate({**base.model_dump(), **known})

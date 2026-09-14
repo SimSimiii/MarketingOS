@@ -58,9 +58,12 @@ phases:
       # The suite runs against the source tree, not the bundle, so it needs the
       # dev extras rather than requirements.txt.
       - cd $CODEBUILD_SRC_DIR/backend
-      - pip install -e ".[dev]"
+      - pip install --require-hashes -r requirements.lock
+      - pip install --no-deps -e .
       - python -m ruff check app tests scripts
       - python -m pytest tests -q
+      - python scripts/export_api_types.py --check
+      - python scripts/check_migrations.py
 
       # A restored .aws-sam is the classic way to ship a stale bundle: the
       # builder sees an artifact directory and never reinstalls requirements.

@@ -40,12 +40,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
-    if (!readToken()) {
-      setLoading(false);
-      return;
-    }
-    api
-      .me()
+    const lookup = readToken() ? api.me() : Promise.resolve(null);
+    lookup
       .then((me) => {
         if (!cancelled) setAdmin(me);
       })

@@ -1,4 +1,3 @@
-import asyncio
 import logging
 from uuid import UUID
 
@@ -12,10 +11,12 @@ from app.models.campaign_execution import CampaignExecution
 from app.models.enums import ExecutionStatus
 from app.orchestration.campaign_orchestrator import CampaignOrchestrator
 from app.orchestration.execution_registry import registry
+from app.runtime.work_limits import admitted_job, create_job_task
 
 logger = logging.getLogger("marketingos.orchestration")
 
 
+@admitted_job
 def launch(
     campaign: Campaign,
     ai_provider: AIProvider,
@@ -46,7 +47,7 @@ def launch(
         )
 
     cancel_token = CancellationToken()
-    task = asyncio.create_task(_run(execution.id, campaign.id, ai_provider, engine, cancel_token))
+    task = create_job_task(_run(execution.id, campaign.id, ai_provider, engine, cancel_token))
     registry.register(execution.id, campaign.id, task, cancel_token)
     return execution
 

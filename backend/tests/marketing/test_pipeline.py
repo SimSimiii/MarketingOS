@@ -963,7 +963,7 @@ async def test_copy_a_stranger_would_not_click_is_not_reported_as_completed(
     assert result.report.below_floor
     assert not result.report.healthy
     rendered = result.report.render()
-    assert "never reached the 7/10 floor" in rendered
+    assert "did not satisfy the simulated assessment criteria" in rendered
     assert "did not decide these were ready" in rendered
 
 

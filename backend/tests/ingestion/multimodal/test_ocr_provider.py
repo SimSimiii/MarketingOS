@@ -21,7 +21,7 @@ async def test_fake_ocr_provider_returns_text(fake_ocr, png_bytes):
 async def test_tesseract_provider_extracts_text(monkeypatch, png_bytes):
     monkeypatch.setattr(
         "app.ingestion.ocr.tesseract_provider.pytesseract.image_to_string",
-        lambda image: "Hello from OCR",
+        lambda image, timeout: "Hello from OCR",
     )
 
     result = await TesseractOCRProvider().extract_text(png_bytes)
@@ -38,7 +38,7 @@ async def test_tesseract_provider_rejects_non_image_bytes():
 async def test_tesseract_provider_wraps_missing_binary(monkeypatch, png_bytes):
     import pytesseract
 
-    def raise_not_found(image):
+    def raise_not_found(image, timeout):
         raise pytesseract.TesseractNotFoundError()
 
     monkeypatch.setattr(
@@ -52,7 +52,7 @@ async def test_tesseract_provider_wraps_missing_binary(monkeypatch, png_bytes):
 @pytest.mark.asyncio
 async def test_tesseract_provider_short_text_has_no_detected_language(monkeypatch, png_bytes):
     monkeypatch.setattr(
-        "app.ingestion.ocr.tesseract_provider.pytesseract.image_to_string", lambda image: "hi"
+        "app.ingestion.ocr.tesseract_provider.pytesseract.image_to_string", lambda image, timeout: "hi"
     )
     result = await TesseractOCRProvider().extract_text(png_bytes)
     assert result.detected_language is None

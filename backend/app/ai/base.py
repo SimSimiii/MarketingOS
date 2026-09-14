@@ -42,10 +42,16 @@ class ResearchTool(StrEnum):
     WEB_FETCH = "web_fetch"
 
 
+class ImageInput(BaseModel):
+    data: bytes = Field(repr=False, exclude=True)
+    mime_type: str
+
+
 class AIRequest(BaseModel):
     """Vendor-agnostic request. Providers translate this into their own SDK call."""
 
     system_prompt: str | None = None
+    image: ImageInput | None = Field(default=None, repr=False, exclude=True)
     messages: list[AIMessage] = Field(default_factory=list)
     model: str | None = None
     max_tokens: int = 4096

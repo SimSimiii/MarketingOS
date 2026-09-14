@@ -54,7 +54,7 @@ rewritten), so it buries a real change in an unrelated diff.
 alembic revision --autogenerate -m "what changed"
 ```
 
-The whole test suite is scripted-provider based — 785 tests, green, ~50 seconds, no quota
+The whole test suite is scripted-provider based — over 1,170 tests, no quota
 spent. Run it. `pytest-asyncio` is in strict mode, so an async test needs an explicit
 `@pytest.mark.asyncio`.
 
@@ -86,7 +86,7 @@ npm run lint && npx tsc --noEmit
 
 Both are clean as of writing, so anything either one reports is yours.
 
-There is no CI and no frontend typecheck script. Run the checks yourself before calling a
+CodeBuild specs run checks; the frontend has `npm run typecheck` and `npm test`. Run the checks yourself before calling a
 change done. `.claude/launch.json` defines `backend` and `frontend` for the preview tools —
 use those rather than starting servers by hand.
 

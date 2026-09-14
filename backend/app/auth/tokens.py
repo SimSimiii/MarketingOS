@@ -34,7 +34,8 @@ class TokenError(Exception):
 
 
 def create_access_token(
-    user_id: UUID, email: str, role: str, plan: str, *, ttl_minutes: int | None = None
+    user_id: UUID, email: str, role: str, plan: str, *, ttl_minutes: int | None = None,
+    token_version: int = 0,
 ) -> tuple[str, int]:
     """Return (token, seconds_until_expiry).
 
@@ -51,6 +52,7 @@ def create_access_token(
         "role": role,
         "plan": plan,
         "type": ACCESS_TOKEN_TYPE,
+        "ver": token_version,
         "iat": now,
         "exp": now + ttl,
         "jti": uuid4().hex,

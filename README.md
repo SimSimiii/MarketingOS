@@ -31,9 +31,13 @@ organisation's own pages for a published way in — and keeping only the contact
 were actually on a page it fetched, because a fluent guess at an email address is
 indistinguishable from a real one until the mail bounces.
 
-The mission is narrow on purpose: email copy that beats what an experienced professional
-would write. Other channels come later, and the parts that generalize — knowing the
-business, knowing the market, deciding the strategy — are already channel-agnostic.
+Email campaigns remain the full strategy-and-review pipeline. A brand's LinkedIn
+workspace proposes who is worth writing to - read out of the compiled knowledge and
+the audience map rather than typed - and then searches the public web for profiles
+matching those criteria. Writing to one of them is a campaign like any other: the
+same knowledge, the same audience, one Strategist call, and then a message instead
+of a sequence. These are drafts for review and copying; the application does not
+send messages. See [LinkedIn and manual run refresh](docs/linkedin-and-run-refresh.md).
 
 ## Stack
 
@@ -430,10 +434,10 @@ the limit is still sent back — shortening it means changing words, and that is
 job.
 
 **A run narrates itself.** A campaign takes minutes, most of them inside single model
-calls, so every notable moment goes through one funnel that both persists an
-`ExecutionLog` row and publishes the identical payload to the live SSE stream. Persisting
-and broadcasting together is what makes the watching page and the replayed history agree
-by construction. The unit shown is one role turn — writing email 2 a second time is its
+calls, so every notable moment goes through one funnel that persists an
+`ExecutionLog` row and publishes the identical payload to the optional legacy SSE stream.
+The console reads the persisted timeline on entry and on manual refresh; it opens no
+stream. The unit shown is one role turn — writing email 2 a second time is its
 own row, because the rework loop is what the user is paying for.
 
 **Degrade, never deadlock.** Budgets, deadlines and cancellation are checked between

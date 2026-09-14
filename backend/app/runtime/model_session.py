@@ -285,6 +285,17 @@ class ModelSession:
 
     # ------------------------------------------------------------- internals
 
+    async def structured_image(self, *, role, image, mime_type, schema, instruction):
+        from app.ai.base import ImageInput
+
+        tier = ModelTier.BALANCED
+        response = await self._generate(
+            role, tier, self._router.resolve(role, tier), instruction,
+            f"Read this image. Return only JSON matching: {_schema_text(schema)}",
+            "image_extraction", image=ImageInput(data=image, mime_type=mime_type),
+        )
+        return parse_model_json(response, schema)
+
     async def _send(self, request: AIRequest, role: str, model: str) -> AIResponse:
         """Hand one request to the provider, resending it if it never landed.
 
@@ -306,12 +317,20 @@ class ModelSession:
         for attempt in range(1, _PROVIDER_ATTEMPTS + 1):
             attempts = attempt
             try:
-                return await self._provider.generate(request)
+                from app.runtime.work_limits import WorkLimitError, current_work
+
+                permit = current_work.get()
+                if permit is not None:
+                    permit.attempt()
+                response = await self._provider.generate(request)
+                if permit is not None:
+                    permit.tokens += response.usage.total_tokens
+                return response
             except Exception as exc:  # noqa: BLE001 - re-raised as ProviderError below
                 last = exc
                 if attempt == _PROVIDER_ATTEMPTS or (
                     isinstance(exc, ProviderCallError) and not exc.retryable
-                ):
+                ) or isinstance(exc, WorkLimitError):
                     break
                 detail = str(exc) or type(exc).__name__
                 logger.info(
@@ -354,6 +373,7 @@ class ModelSession:
         task: str,
         template: str = "",
         tools: list[ResearchTool] | None = None,
+        image=None,
     ) -> str:
         wanted = list(dict.fromkeys(tools or []))
         if wanted:
@@ -380,6 +400,7 @@ class ModelSession:
             role=role,
             template=template,
             tools=wanted,
+            image=image,
         )
         self._events.publish(
             ModelCallStarted(

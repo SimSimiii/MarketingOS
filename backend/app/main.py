@@ -3,11 +3,14 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from app.api.routes import api_router
 from app.core.config import get_settings
-from app.core.database import init_db
+from app.core.database import engine, init_db
 from app.orchestration.execution_manager import reap_orphaned_executions
+from app.runtime.work_limits import WorkLimitError
+from app.services.linkedin_service import reap_linkedin_runs
 
 settings = get_settings()
 logger = logging.getLogger("marketingos.main")
@@ -16,6 +19,7 @@ logger = logging.getLogger("marketingos.main")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
+    reap_linkedin_runs(engine)
     # A run left RUNNING can only mean the previous process died mid-campaign
     # (crash, restart) - there is no in-memory registry entry for it in this
     # process, so it can never finish or be cancelled. Fail it explicitly
@@ -27,6 +31,11 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="MarketingOS API", version="0.1.0", lifespan=lifespan)
+
+
+@app.exception_handler(WorkLimitError)
+async def work_limit_error(request, exc: WorkLimitError):
+    return JSONResponse({"detail": str(exc)}, status_code=exc.status_code)
 
 app.add_middleware(
     CORSMiddleware,

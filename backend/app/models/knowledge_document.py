@@ -17,6 +17,7 @@ class KnowledgeDocument(SQLModel, table=True):
     """
 
     id: UUID = Field(default_factory=uuid4, primary_key=True)
+    owner_id: UUID | None = Field(default=None, foreign_key="user.id", index=True)
     #: Material about the business itself - its site, its prices, its past
     #: emails. Every campaign of that brand reads it, which is the point:
     #: a company's own pricing page is not campaign-specific.

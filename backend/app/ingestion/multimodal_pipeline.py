@@ -1,3 +1,5 @@
+import asyncio
+
 from app.ingestion.analyzers.base import BaseAnalyzer
 from app.ingestion.assets.loader import AssetLoader
 from app.ingestion.assets.store import AssetStore
@@ -31,7 +33,7 @@ class MultimodalIngestionPipeline:
                 source_type=SourceType.IMAGE,
             )
 
-        asset, content = self._asset_loader.load_image(path)
+        asset, content = await asyncio.to_thread(self._asset_loader.load_image, path)
         await self._asset_store.add_asset(asset)
 
         documents = await analyzer.analyze(asset, content)

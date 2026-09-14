@@ -27,6 +27,8 @@ def _implemented_role_ids() -> set[str]:
     """
     from app.knowledge import compiler
     from app.market import audience_research, demand, proof, relevance, rivals
+    from app.market.linkedin import ROLE_ID as LINKEDIN_RESEARCH
+    from app.market.linkedin import TARGETING_ROLE_ID as LINKEDIN_TARGETING
     from app.marketing import (
         critic,
         reader,
@@ -36,9 +38,13 @@ def _implemented_role_ids() -> set[str]:
         tournament,
         writer,
     )
+    from app.marketing.linkedin import ROLE_ID as LINKEDIN_WRITER
 
     return {
         compiler.ROLE_ID,
+        LINKEDIN_RESEARCH,
+        LINKEDIN_TARGETING,
+        LINKEDIN_WRITER,
         proof.ROLE_ID,
         rivals.SCOUT_ROLE_ID,
         rivals.PROFILER_ROLE_ID,

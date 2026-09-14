@@ -278,6 +278,8 @@ class Segment(BaseModel):
 
     name: str
     situation: str = ""
+    situation_grounding: Grounding = Grounding.INFERRED
+    situation_provenance: list[Provenance] = Field(default_factory=list)
     job_to_be_done: str = ""
     trigger: str = ""
     sophistication: Sophistication = Sophistication.PROBLEM_AWARE
@@ -286,7 +288,7 @@ class Segment(BaseModel):
     def render(self) -> str:
         return (
             f"- {self.name}\n"
-            f"    situation: {self.situation or 'unspecified'}\n"
+            f"    situation ({self.situation_grounding}): {self.situation or 'unspecified'}\n"
             f"    what they are trying to get done: {self.job_to_be_done or 'unspecified'}\n"
             f"    what makes them start looking: {self.trigger or 'unspecified'}\n"
             f"    how much they already know: {self.sophistication}\n"
@@ -306,12 +308,13 @@ class Segment(BaseModel):
         pains = "\n".join(f"    - {pain.render()}" for pain in self.pains)
         return (
             f"{self.name}\n\n"
-            f"Their situation right now: {self.situation or 'not established'}\n"
-            f"What they are actually trying to get done: "
+            f"Situation context ({self.situation_grounding}; not necessarily lived today): {self.situation or 'not established'}\n"
+            + ''.join(f'Source: {p.source}; quote: {p.quote}\n' for p in self.situation_provenance)
+            + f"What they are actually trying to get done: "
             f"{self.job_to_be_done or 'not established'}\n"
             f"What makes someone like this start looking: "
             f"{self.trigger or 'not established'}\n"
-            + (f"What it costs them today:\n{pains}\n" if pains else "")
+            + (f"Documented or inferred problems (check applicability):\n{pains}\n" if pains else "")
             + f"\nWhere you can start: {_WHERE_TO_START.get(str(self.sophistication), '')}"
         )
 

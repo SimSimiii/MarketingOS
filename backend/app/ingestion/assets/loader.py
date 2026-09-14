@@ -21,10 +21,14 @@ class AssetLoader:
         if not file_path.is_file():
             raise LoaderError(f"Image asset not found: '{path}'")
 
+        if file_path.stat().st_size > 20 * 1024 * 1024:
+            raise LoaderError("Image exceeds 20 MB")
         raw = file_path.read_bytes()
         try:
             with Image.open(io.BytesIO(raw)) as image:
                 width, height = image.size
+                if width * height > 20_000_000:
+                    raise LoaderError("Image exceeds the 20 megapixel limit")
                 image_format = image.format
         except UnidentifiedImageError as exc:
             raise LoaderError(f"'{path}' is not a readable image: {exc}") from exc

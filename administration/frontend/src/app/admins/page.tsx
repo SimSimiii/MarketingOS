@@ -34,8 +34,12 @@ function AdminsBody() {
   }, []);
 
   useEffect(() => {
-    void load();
-  }, [load]);
+    let active = true;
+    void api.listAdmins().then(value => { if (active) setRows(value); })
+      .catch(exception => { if (active) setError(String(exception)); })
+      .finally(() => { if (active) setLoaded(true); });
+    return () => { active = false; };
+  }, []);
 
   const canManage = atLeast(me?.role, "superadmin");
 

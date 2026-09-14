@@ -5,16 +5,14 @@ Description: MarketingOS - platform API (Lambda + HTTP API Gateway)
 # ─────────────────────────────────────────────────────────────────────────────
 #  What this stack is, and what it is not.
 #
-#  It serves the API: sign-in, brands, campaigns, knowledge, market reads,
-#  results, settings. That is the whole product except one thing.
+#  It serves authenticated reads and CRUD. The console now reads snapshots
+#  over HTTP on manual refresh; it does not open SSE connections.
 #
-#  It does NOT run campaigns. A run drives the `claude` / `codex` CLIs as
-#  subprocesses for minutes at a time, streams progress over SSE, and keeps its
-#  cancellation registry in this process's memory. A function that is capped at
-#  15 minutes, has no CLI on its image, and scales to twenty copies fails all
-#  three ways at once. `POST /campaigns/{id}/start` therefore needs the
-#  long-running worker described in docs/deployment.md - deploy this for
-#  everything else, and point the frontend's stream URL at the worker.
+#  Campaigns, market research, knowledge compilation and LinkedIn generation
+#  still launch in-process background tasks and authenticated CLI subprocesses.
+#  This Lambda stack cannot execute those jobs reliably after returning HTTP
+#  202. See docs/deployment.md for the single-worker requirement and the
+#  remaining durable queue / on-demand worker work. No stream worker is needed.
 #
 #  Secrets are CloudFormation parameters with NoEcho, fed from CodeBuild
 #  environment variables through envsubst (see samconfig.yaml). Nothing secret

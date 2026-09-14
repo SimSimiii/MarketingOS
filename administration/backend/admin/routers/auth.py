@@ -69,8 +69,8 @@ def logout(
     admin: CurrentAdminDep,
     session: Annotated[Session, Depends(get_session)],
 ) -> None:
-    """The token is stateless, so signing out is the client dropping it. The
-    row is written anyway - the audit trail is about who was here and when,
-    and a session with a start and no end reads as one that never finished."""
+    """Revoke this operator's tokens and record the logout atomically."""
+    admin.token_version += 1
+    session.add(admin)
     service.log_action(session, admin, "auth.logout", ip=service.client_ip(request))
     session.commit()

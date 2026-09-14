@@ -10,7 +10,7 @@ import { AccountMenu } from "@/components/layout/account-menu";
 const NAV_ITEMS = [
   { href: "/", label: "Overview", icon: LayoutDashboard },
   { href: "/campaigns", label: "Campaigns", icon: Mail },
-  { href: "/live", label: "Live runs", icon: AudioLines },
+  { href: "/live", label: "Runs", icon: AudioLines },
   { href: "/brands", label: "Brands", icon: Building2 },
   { href: "/knowledge", label: "Campaign sources", icon: BookOpen },
   { href: "/logs", label: "Activity", icon: Activity },

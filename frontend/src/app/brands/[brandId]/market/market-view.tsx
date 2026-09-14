@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -24,14 +24,6 @@ import type {
   ProofCandidate,
   RadarEvent,
 } from "@/lib/types";
-
-/** How often the page asks where a running scan got to.
- *
- * A scan is one search call plus one extraction per competitor - a couple of
- * minutes, not the fifteen a campaign takes - so it is polled rather than
- * streamed. Two seconds is fast enough that the progress line feels live and
- * slow enough that it is not a load-bearing request. */
-const POLL_MS = 2_000;
 
 /** The same card the live board uses.
  *
@@ -65,42 +57,16 @@ export function MarketView({
 
   const running = job?.state === "running";
 
-  // Only while something is in flight: a ticking clock on a finished job is a
-  // re-render a second for a number that has stopped moving.
-  useEffect(() => {
-    if (!running) return;
-    const clock = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(clock);
-  }, [running]);
-
-  // Poll only while something is in flight, and refresh the server components
-  // once when it lands - the scan wrote new rows, and everything on this page
-  // is read from them.
-  useEffect(() => {
-    if (!running) return;
-    let cancelled = false;
-    const timer = setInterval(async () => {
-      try {
-        const next = await api.getMarketJob(brand.id);
-        if (cancelled || !next) return;
-        setJob(next);
-        if (next.state !== "running") {
-          clearInterval(timer);
-          if (next.state === "done") {
-            toast.success(next.summary || "Scan finished");
-            router.refresh();
-          }
-        }
-      } catch {
-        // A dropped poll is not worth surfacing: the next one will land, and
-        // the job is running in the background regardless of this page.
-      }
-    }, POLL_MS);
-    return () => {
-      cancelled = true;
-      clearInterval(timer);
-    };
-  }, [brand.id, running, router]);
+  const [refreshing, setRefreshing] = useState(false);
+  async function refreshStatus() {
+    setRefreshing(true);
+    try {
+      setJob(await api.getMarketJob(brand.id));
+      setNow(Date.now());
+      router.refresh();
+    } catch (error) { toast.error(error instanceof Error ? error.message : "Could not refresh status"); }
+    finally { setRefreshing(false); }
+  }
 
   const start = useCallback(
     async (kind: "scan" | "rescan" | "proof" | "audience", options?: MapOptions) => {
@@ -182,6 +148,7 @@ export function MarketView({
 
   return (
     <div className="space-y-6">
+      <Button variant="outline" size="sm" disabled={refreshing} onClick={refreshStatus}>{refreshing ? "Refreshing..." : "Refresh status and results"}</Button>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <p className="max-w-xl text-sm text-muted-foreground">
           The half of the argument that is not about {brand.name}: what everybody else promises,

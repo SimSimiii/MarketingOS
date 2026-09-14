@@ -53,11 +53,7 @@ async def test_uses_both_ocr_and_vision_independently(png_path, fake_ocr, fake_v
     await ImageAnalyzer(ocr=fake_ocr, vision=fake_vision).analyze(asset, content)
 
     assert len(fake_ocr.calls) == 1  # OCR called exactly once, independently of vision
-    assert "analyze_image" in fake_vision.calls
-    assert "describe_layout" in fake_vision.calls
-    assert "identify_objects" in fake_vision.calls
-    assert "identify_branding" in fake_vision.calls
-    assert "identify_colors" in fake_vision.calls
+    assert fake_vision.calls == ["read_image"]
 
 
 @pytest.mark.asyncio
@@ -66,4 +62,6 @@ async def test_content_is_factual_ocr_text_not_a_summary(png_path, fake_ocr, fak
     [document] = await ImageAnalyzer(ocr=fake_ocr, vision=fake_vision).analyze(asset, content)
 
     # The document's content is the raw OCR text - never a generated summary.
-    assert document.content == fake_ocr.text
+    assert fake_ocr.text in document.content
+    assert "A blue bottle" in document.content
+    assert document.metadata["transcription_source"] == "ocr"

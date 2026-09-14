@@ -249,7 +249,7 @@ class EmailVersion:
         return self.critique is not None
 
     @property
-    def measured(self) -> tuple[int, int, float, int, int]:
+    def measured(self) -> tuple[int, int, int, float, int, int]:
         """What the free checks and the cold reader made of this version.
 
         Separate from `score` because it is the half of the judgment that does
@@ -279,13 +279,14 @@ class EmailVersion:
         return (
             0 if self.gates.blocking else 1,
             1 if self.read.understood else 0,
+            1 if self.read.relevant else 0,
             self.read.pull,
             len(self.substantiation.carried),
             self.substantiation.attributions,
         )
 
     @property
-    def score(self) -> tuple[int, int, int, float]:
+    def score(self) -> tuple[int, int, int, int, float]:
         """How to choose between two versions of the same email.
 
         Ordered by what a user would actually care about: an email with an
@@ -300,6 +301,7 @@ class EmailVersion:
         return (
             0 if self.gates.blocking else 1,
             1 if self.read.understood else 0,
+            1 if self.read.relevant else 0,
             1 if self.approved else 0,
             self.read.pull,
         )
@@ -344,6 +346,8 @@ def better_of(left: EmailVersion, right: EmailVersion) -> EmailVersion:
     # a plainer draft that does, on a click estimate neither number is about.
     if left.read.understood is not right.read.understood:
         return left if left.read.understood else right
+    if left.read.relevant is not right.read.relevant:
+        return left if left.read.relevant else right
     if left.critic_judged and right.critic_judged and left.approved is not right.approved:
         return left if left.approved else right
     if left.read.pull != right.read.pull:
@@ -845,7 +849,7 @@ class CraftLoop:
         if self._judge is None or not losers:
             return winner
         runner_up = max(losers, key=lambda item: item.measured)
-        if winner.measured[0] != runner_up.measured[0]:
+        if winner.measured[:3] != runner_up.measured[:3]:
             return winner
         self._observer.on_role_started(
             "preference_judge",
@@ -889,6 +893,8 @@ class CraftLoop:
         """
         if bool(challenger.gates.blocking) is not bool(champion.gates.blocking):
             return not challenger.gates.blocking
+        if challenger.read.understood != champion.read.understood:
+            return challenger.read.understood
         if _unchanged(challenger.email, champion.email):
             # The rewrite came back as the email it was rewriting. There is
             # nothing here to prefer, and a ballot cast on two copies of one
@@ -916,6 +922,8 @@ class CraftLoop:
                 },
             )
             return False
+        if challenger.read.relevant != champion.read.relevant:
+            return challenger.read.relevant
         if self._judge is not None and challenger.read.has_verdict and champion.read.has_verdict:
             self._observer.on_role_started(
                 "preference_judge",

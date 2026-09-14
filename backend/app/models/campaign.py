@@ -60,6 +60,13 @@ class Campaign(SQLModel, table=True):
     #: the preset name it was built from - {"preset": "fast", ...fields}.
     #: None means "use the balanced preset with no overrides".
     policy: dict | None = Field(default=None, sa_column=Column(JSON))
+    #: What this campaign produces, when it is not the default email work:
+    #: the serialized app.schemas.linkedin.LinkedInChannel. None means email,
+    #: which is every campaign that existed before channels did. Its own
+    #: column rather than a key in `policy` because the policy decides how a
+    #: run executes and this decides what it delivers - and because the
+    #: pipeline reads it to fix the contract before the first model call.
+    channel: dict | None = Field(default=None, sa_column=Column(JSON))
     #: Per-role model overrides keyed by role id, or "*" for all of them - see
     #: app.ai.model_router.ModelRouter. Distinct from `policy` so a user can
     #: pick a model for one role without adopting a whole preset.

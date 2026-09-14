@@ -19,6 +19,7 @@ from datetime import UTC, datetime
 
 import httpx
 
+from app.core.public_http import fetch_page, public_client
 from app.ingestion.documents import RawDocument, SourceType
 from app.ingestion.exceptions import LoaderError
 from app.ingestion.loaders.html_extract import extract_content, extract_links, priority_of
@@ -56,12 +57,12 @@ class SiteCrawler:
         """
         if self._client is not None:
             return await self._crawl_with(self._client, start_url)
-        async with httpx.AsyncClient(follow_redirects=True, timeout=_REQUEST_TIMEOUT) as client:
+        async with public_client() as client:
             return await self._crawl_with(client, start_url)
 
     async def _crawl_with(self, client: httpx.AsyncClient, start_url: str) -> list[RawDocument]:
         try:
-            response = await client.get(start_url)
+            response = await fetch_page(client, start_url)
             response.raise_for_status()
         except httpx.HTTPError as exc:
             raise LoaderError(f"Failed to fetch '{start_url}': {exc}", url=start_url) from exc
@@ -81,9 +82,9 @@ class SiteCrawler:
         async def fetch(url: str) -> RawDocument | None:
             async with semaphore:
                 try:
-                    page = await client.get(url)
+                    page = await fetch_page(client, url)
                     page.raise_for_status()
-                except httpx.HTTPError as exc:
+                except (httpx.HTTPError, LoaderError) as exc:
                     logger.info("crawler: skipping %s (%s)", url, exc)
                     return None
                 return _to_document(url, page.text)

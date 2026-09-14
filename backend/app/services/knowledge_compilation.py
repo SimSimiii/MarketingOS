@@ -19,6 +19,7 @@ from app.models.brand import Brand
 from app.runtime.events import EventBus
 from app.runtime.model_session import ModelSession, RoleCall
 from app.runtime.prompt_engine import get_prompt_engine
+from app.runtime.work_limits import admitted_job, create_job_task
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +58,7 @@ jobs: dict[UUID, CompilationJob] = {}
 tasks: set[asyncio.Task] = set()
 
 
+@admitted_job
 def start_compilation(
     brand_id: UUID, engine: Engine, provider: AIProvider, brand_name: str,
 ) -> CompilationJob:
@@ -66,7 +68,7 @@ def start_compilation(
     job = CompilationJob(state="running", brand_id=brand_id, brand_name=brand_name)
     job.say("Reading knowledge sources…")
     jobs[brand_id] = job
-    task = asyncio.create_task(_compile(brand_id, engine, provider, job))
+    task = create_job_task(_compile(brand_id, engine, provider, job))
     tasks.add(task)
     task.add_done_callback(tasks.discard)
     return job

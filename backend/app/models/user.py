@@ -24,6 +24,7 @@ class User(SQLModel, table=True):
     #: cannot use the unique index and this is the one query every request makes.
     email: str = Field(unique=True, index=True)
     password_hash: str
+    token_version: int = Field(default=0)
     full_name: str | None = None
     company_name: str | None = None
 

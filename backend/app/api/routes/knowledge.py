@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, File, Form, HTTPException, Query, UploadFile, status
 
 from app.api.deps import KnowledgeServiceDep, PrincipalDep, SessionDep
 from app.ingestion.exceptions import IngestionError
@@ -70,8 +70,13 @@ def _guard_scope(
     """
     if brand_id is not None and BrandRepository(session, principal).get(brand_id) is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Brand not found")
-    if campaign_id is not None and CampaignRepository(session, principal).get(campaign_id) is None:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Campaign not found")
+    if campaign_id is not None:
+        campaign = CampaignRepository(session, principal).get(campaign_id)
+        if campaign is None:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "Campaign not found")
+        if brand_id is not None and campaign.brand_id != brand_id:
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY,
+                                "Campaign does not belong to this brand")
 
 
 @router.get("/jobs", response_model=list[CompilationJob])
@@ -150,12 +155,13 @@ def list_documents(
     principal: PrincipalDep,
     campaign_id: UUID | None = None,
     brand_id: UUID | None = None,
+    limit: int = Query(100, ge=1, le=250), offset: int = Query(0, ge=0),
 ) -> list[KnowledgeDocumentSummary]:
     """Metadata only - see KnowledgeDocumentSummary. Fetch one by id for text."""
     _guard_scope(session, principal, brand_id, campaign_id)
     return [
         KnowledgeDocumentSummary.model_validate(document)
-        for document in service.list_documents(campaign_id, brand_id)
+        for document in service.list_documents(campaign_id, brand_id, limit=limit, offset=offset)
     ]
 
 

@@ -41,10 +41,26 @@ class DominantColors(BaseModel):
     colors: list[str] = Field(default_factory=list)  # hex codes, most dominant first
 
 
+class VisualExtraction(BaseModel):
+    text: str = ""
+    description: str = ""
+    confidence: float = Field(default=0, ge=0, le=1)
+    objects: list[str] = Field(default_factory=list)
+    logos: list[str] = Field(default_factory=list)
+    colors: list[str] = Field(default_factory=list)
+    regions: list[str] = Field(default_factory=list)
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
 class VisionProvider(ABC):
     """Contract every vision backend (Claude, GPT, Gemini, local models)
     implements. Every operation is factual/structural extraction only - never
     summarization or marketing judgment."""
+
+    @abstractmethod
+    async def read_image(self, image: bytes, mime_type: str) -> VisualExtraction:
+        """One extraction of text and factual visual structure."""
+        raise NotImplementedError
 
     @abstractmethod
     async def analyze_image(self, image: bytes, mime_type: str) -> ImageDescription:

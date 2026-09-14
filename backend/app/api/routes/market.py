@@ -10,7 +10,7 @@ import csv
 import io
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 
 from app.api.deps import AIProviderDep, PrincipalDep, SessionDep
 from app.core.database import engine
@@ -125,15 +125,12 @@ def _prospect(session: SessionDep, brand_id: UUID, prospect_id: UUID) -> Prospec
 def _current_prospect_reads(
     service: MarketService, brand_id: UUID, rows: list[ProspectRow]
 ) -> list[ProspectRead]:
-    qualifications = {
-        row.id: service.current_company_qualification(brand_id, row.segment, row)
-        for row in rows
-    }
+    qualifications = service.current_company_qualifications(brand_id, rows)
     return prospect_reads(rows, qualifications)
 
 
 @router.get("/jobs", response_model=list[JobStatusRead])
-def read_jobs() -> list[JobStatusRead]:
+def read_jobs(session: SessionDep, principal: PrincipalDep) -> list[JobStatusRead]:
     """Every market job this process knows about, running ones first.
 
     Declared before `/{brand_id}/...` because "jobs" would otherwise be read
@@ -141,7 +138,8 @@ def read_jobs() -> list[JobStatusRead]:
     this is what the live board asks, and the question there is "what is
     happening anywhere", not "what is happening to this business".
     """
-    return [JobStatusRead(**vars(job)) for job in all_jobs()]
+    visible = {brand.id for brand in BrandRepository(session, principal).list_all()}
+    return [JobStatusRead(**vars(job)) for job in all_jobs() if job.brand_id in visible]
 
 
 @router.get("/{brand_id}", response_model=MarketRead)
@@ -593,13 +591,14 @@ def list_prospects(
     brand_id: UUID,
     session: SessionDep,
     segment: str | None = None,
-    status_filter: str | None = None,
+    status_filter: ProspectStatus | None = None,
+    limit: int = Query(100, ge=1, le=250), offset: int = Query(0, ge=0),
 ) -> list[ProspectRead]:
     _brand(session, brand_id)
     wanted = ProspectStatus(status_filter) if status_filter else None
     service = MarketService(session)
     return _current_prospect_reads(
-        service, brand_id, service.prospects(brand_id, segment, wanted)
+        service, brand_id, service.prospects(brand_id, segment, wanted, limit=limit, offset=offset)
     )
 
 
@@ -656,6 +655,7 @@ def export_prospects(
     _brand(session, brand_id)
     service = MarketService(session)
     rows = service.prospects(brand_id, segment, ProspectStatus.KEPT)
+    qualifications = service.current_company_qualifications(brand_id, rows)
 
     buffer = io.StringIO()
     writer = csv.writer(buffer)
@@ -684,9 +684,7 @@ def export_prospects(
     )
     for row in rows:
         contacts = prospect_contacts(row)
-        qualification = service.current_company_qualification(
-            brand_id, row.segment, row
-        )
+        qualification = qualifications[row.id]
         writer.writerow(
             [
                 row.name,

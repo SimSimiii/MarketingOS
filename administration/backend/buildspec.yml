@@ -54,7 +54,8 @@ phases:
       - cp -r $CODEBUILD_SRC_DIR/backend/app $CODEBUILD_SRC_DIR/administration/backend/app
 
       - cd $CODEBUILD_SRC_DIR/administration/backend
-      - pip install -r requirements.txt "pytest>=8.3.0" "ruff>=0.7.0" httpx
+      - pip install --require-hashes -r $CODEBUILD_SRC_DIR/backend/requirements.lock
+      - pip install --require-hashes -r requirements.txt
       - python -m ruff check admin scripts tests
       - python -m pytest tests -q
 

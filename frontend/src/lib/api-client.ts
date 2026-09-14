@@ -14,6 +14,7 @@
 
 import { createApi, type AuthSource } from "@/lib/api-core";
 import { ACCESS_TOKEN_COOKIE } from "@/lib/auth-cookies";
+import { renewSession } from "@/lib/renew-session";
 
 export { UnauthorizedError } from "@/lib/api-core";
 
@@ -26,11 +27,11 @@ export function readAccessToken(): string | undefined {
 }
 
 const browserAuth: AuthSource = {
+  refresh: renewSession,
   async header(): Promise<Record<string, string>> {
     const token = readAccessToken();
     return token ? { Authorization: `Bearer ${token}` } : {};
   },
-  tokenSync: readAccessToken,
 };
 
 export const api = createApi(browserAuth);

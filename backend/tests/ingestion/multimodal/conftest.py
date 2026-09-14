@@ -12,6 +12,7 @@ from app.ingestion.vision.base import (
     ImageDescription,
     LayoutDescription,
     VisionProvider,
+    VisualExtraction,
 )
 
 
@@ -48,6 +49,14 @@ class FakeOCRProvider(OCRProvider):
 class FakeVisionProvider(VisionProvider):
     def __init__(self) -> None:
         self.calls: list[str] = []
+
+    async def read_image(self, image: bytes, mime_type: str) -> VisualExtraction:
+        self.calls.append("read_image")
+        return VisualExtraction(text="Buy Now", description="A blue bottle", confidence=0.9,
+                                objects=["bottle", "label"], logos=["Acme"],
+                                colors=["#ffffff", "#ff0000"],
+                                regions=["header", "hero", "navigation", "cta button", "footer"],
+                                details={"typography": ["sans-serif"]})
 
     async def analyze_image(self, image: bytes, mime_type: str) -> ImageDescription:
         self.calls.append("analyze_image")

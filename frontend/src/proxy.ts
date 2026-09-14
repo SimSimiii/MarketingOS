@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE } from "@/lib/auth-cookies";
+import { ACCESS_TOKEN_COOKIE } from "@/lib/auth-cookies";
 import { AUTH_REQUIRED } from "@/lib/config";
 
 /**
@@ -25,14 +25,14 @@ export function proxy(request: NextRequest) {
   // the shape a laptop install keeps, and putting a login wall in front of it
   // would break the one deployment that never asked for one.
   if (!AUTH_REQUIRED) return NextResponse.next();
+  if (pathname === "/session/renew") return NextResponse.next();
 
-  const signedIn =
-    request.cookies.has(ACCESS_TOKEN_COOKIE) || request.cookies.has(REFRESH_TOKEN_COOKIE);
+  const signedIn = request.cookies.has(ACCESS_TOKEN_COOKIE);
   const onAuthPage = pathname === "/login" || pathname === "/register";
 
   if (!signedIn && !onAuthPage) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
+    url.pathname = "/session/renew";
     url.search = "";
     // Where they were going, so signing in lands them there instead of on the
     // dashboard. Only ever a path from this origin - `next` is read back

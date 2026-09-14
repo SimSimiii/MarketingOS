@@ -1,6 +1,6 @@
 import pytest
 
-import app.ingestion.vision.claude_vision_provider as claude_vision_module
+import app.ai.claude_provider as claude_vision_module
 from app.ingestion.exceptions import AnalysisError
 from app.ingestion.vision.base import ImageDescription, VisionProvider
 from app.ingestion.vision.claude_vision_provider import ClaudeVisionProvider

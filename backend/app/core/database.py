@@ -1,13 +1,31 @@
 from collections.abc import Generator
 
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from sqlalchemy import event
 from sqlmodel import Session, SQLModel, create_engine
 
-from app.core.config import get_settings
 
-settings = get_settings()
+class DatabaseSettings(BaseSettings):
+    """Shared database configuration; importing it needs no platform auth secrets."""
 
-_connect_args = {"check_same_thread": False} if settings.database_url.startswith("sqlite") else {}
-engine = create_engine(settings.database_url, echo=False, connect_args=_connect_args)
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    database_url: str = "sqlite:///./marketingos.db"
+
+
+def create_app_engine(url: str):
+    args = {"check_same_thread": False, "timeout": 30} if url.startswith("sqlite") else {}
+    result = create_engine(url, echo=False, connect_args=args)
+    if url.startswith("sqlite"):
+        @event.listens_for(result, "connect")
+        def configure(connection, _record):
+            cursor = connection.cursor()
+            cursor.execute("PRAGMA foreign_keys=ON")
+            cursor.execute("PRAGMA busy_timeout=30000")
+            cursor.close()
+    return result
+
+
+engine = create_app_engine(DatabaseSettings().database_url)
 
 
 def init_db() -> None:

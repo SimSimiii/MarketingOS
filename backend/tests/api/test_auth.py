@@ -197,7 +197,7 @@ def test_sessions_lists_where_the_account_is_signed_in(client: TestClient, open_
     assert len(sessions.json()) == 2
 
     assert client.post("/api/auth/logout-all", headers=headers).status_code == 204
-    assert client.get("/api/auth/sessions", headers=headers).json() == []
+    assert client.get("/api/auth/sessions", headers=headers).status_code == 401
 
 
 # ── Single-user mode ─────────────────────────────────────────────────────────

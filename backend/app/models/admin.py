@@ -21,6 +21,7 @@ class AdminUser(SQLModel, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     email: str = Field(unique=True, index=True)
     password_hash: str
+    token_version: int = Field(default=0)
     full_name: str | None = None
     role: AdminRole = Field(default=AdminRole.SUPPORT)
     is_active: bool = Field(default=True)

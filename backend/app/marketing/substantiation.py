@@ -263,7 +263,15 @@ def assess(email: Email, assigned: list[Evidence], ledger: list[Evidence]) -> Su
     `attributions` are counted against - a writer that reached past its
     assignment for a stronger fact has not failed, it has edited.
     """
-    text = render_email(email)
+    return assess_text(render_email(email), assigned, ledger)
+
+
+def assess_text(text: str, assigned: list[Evidence], ledger: list[Evidence]) -> Substantiation:
+    """The same reading, of any finished draft rather than an email.
+
+    A LinkedIn message has no subject and no position, and none of the work
+    below ever looked at either: this reads the words that shipped.
+    """
     values = _values(text)
     names = names_in(text)
     flat = _flat(text)

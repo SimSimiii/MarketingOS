@@ -104,6 +104,10 @@ class BlindRead(BaseModel):
     #: is not silently counted as a confused one. Only a reader who was asked
     #: can say no.
     understood: bool = True
+    situation_matches: bool | None = None
+    relevance_feedback: str = ""
+    assumed_experiences: list[str] = Field(default_factory=list)
+    problem_now: str = ""
     biggest_doubt: str = ""
     would_act: bool = False
     #: Out of a hundred people in exactly this situation, how many open it on
@@ -153,7 +157,7 @@ class BlindRead(BaseModel):
         it is a number about a different question, and letting it clear the
         floor ships copy whose own reader could not say what it was for.
         """
-        return self.reported and self.understood and self.pull >= PULL_THRESHOLD
+        return self.reported and self.understood and self.situation_matches is not False and self.pull >= PULL_THRESHOLD
 
     def render(self) -> str:
         lines = [
@@ -167,13 +171,15 @@ class BlindRead(BaseModel):
             f"- Where they stopped reading: {self.stopped_at or 'they read to the end'}",
             f"- What would stop them clicking: {self.biggest_doubt or 'nothing they named'}",
         ]
-        if self.opens_in_100 is not None:
-            lines.append(
-                f"- Of a hundred people like them: {self.opens_in_100} open it, "
-                f"{self.clicks_in_100 or 0} click ({self.pull}/10)"
-            )
-        else:
-            lines.append(f"- How much they wanted it: {self.pull}/10")
+        lines.append(f"- AI simulation assessment (uncalibrated): {self.pull}/10")
+        if self.situation_matches is False:
+            lines.append("- SUBSTANTIAL AUDIENCE MISMATCH: " + self.relevance_feedback)
+        elif self.relevance_feedback:
+            lines.append("- Situation recognition: " + self.relevance_feedback)
+        if self.assumed_experiences:
+            lines.append("- Assumed experiences/installations: " + "; ".join(self.assumed_experiences))
+        if self.problem_now:
+            lines.append("- Importance now: " + self.problem_now)
         if self.to_click_it_would_have_to:
             lines.append(
                 f"- What it would have had to say for them to click: "
@@ -247,6 +253,11 @@ class PanelRead(BaseModel):
         return not self.reported or got * 2 > len(self.reported)
 
     @property
+    def relevant(self) -> bool:
+        """A substantive mismatch from any reported scenario requires attention."""
+        return not any(read.situation_matches is False for read in self.reported)
+
+    @property
     def confused(self) -> list[BlindRead]:
         """The readers who could not say what it was, and what they guessed
         instead. What the rewrite is actually handed - "one of them thought it
@@ -266,7 +277,7 @@ class PanelRead(BaseModel):
         works looks like; two is a draft with a real problem.
         """
         landed = sum(1 for read in self.reported if read.landed)
-        return bool(self.reported) and landed * 2 > len(self.reported)
+        return bool(self.reported) and self.relevant and landed * 2 > len(self.reported)
 
     @property
     def worst(self) -> BlindRead:
@@ -288,6 +299,8 @@ class PanelRead(BaseModel):
         reported = self.reported
         if not reported:
             return "nobody could read it"
+        if not self.relevant:
+            return "AI simulation detected an audience mismatch"
         if (lost := len(self.confused)) :
             # Said first and instead of the frequency, because the frequency
             # is an estimate of what people do with an email they understood.
@@ -297,7 +310,7 @@ class PanelRead(BaseModel):
                 else "they could not say what it was"
             )
         if any(read.clicks_in_100 is not None for read in reported):
-            return f"about {self.clicks_in_100:.0f} in 100 would click"
+            return f"AI simulation assessment {self.pull:.0f}/10 (uncalibrated)"
         clicked = sum(1 for read in reported if read.would_act)
         if len(reported) == 1:
             return "they would click today" if clicked else "they would not click"
@@ -399,7 +412,15 @@ def personas_for(audience: AudienceModel, chosen: Segment | None, panel: bool) -
     """
     segment = chosen or audience.primary()
     person = (
-        f"{segment.name}. {segment.situation}".strip(". ")
+        f"Selected audience (explicit constraints): {segment.name}.\n"
+        f"Context ({segment.situation_grounding}; applicability must be checked): {segment.situation}\n"
+        + "\n".join(f"Source: {p.source}; quote: {p.quote}" for p in segment.situation_provenance)
+        + "\n"
+        + "\n".join(
+            f"Problem context: {p.render()}; "
+            f"source: {p.provenance.source if p.provenance else 'unknown'}"
+            for p in segment.pains
+        )
         if segment is not None and segment.name
         else _FALLBACK_PERSONA
     )
@@ -411,9 +432,9 @@ def personas_for(audience: AudienceModel, chosen: Segment | None, panel: bool) -
     # copy has to survive.
     return [
         person,
-        f"{person} - and they already use something that mostly works",
+        f"{person} - Simulation scenario only, not an audience fact: they already use something that mostly works",
         (
-            f"{person} - and they have been promised exactly this before by a product "
+            f"{person} - Simulation scenario only, not an audience fact: they have been promised exactly this before by a product "
             "that did not deliver"
         ),
     ]

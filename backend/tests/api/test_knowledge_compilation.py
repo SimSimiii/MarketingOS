@@ -117,9 +117,9 @@ def test_duplicate_start_and_sources_changed_during_compile(client, monkeypatch)
     assert client.get(f"/api/brands/{brand}/knowledge").status_code == 404
 
 
-def test_live_compilations_exclude_deleted_brands(client):
+def test_a_compiled_brand_cannot_be_deleted_with_its_data_still_attached(client):
     brand = brand_with_sources(client)
     client.post(f"/api/brands/{brand}/knowledge/compile")
     assert wait_for_job(client, brand)["state"] == "completed"
-    assert client.delete(f"/api/brands/{brand}").status_code == 204
-    assert client.get("/api/knowledge/jobs").json() == []
+    assert client.delete(f"/api/brands/{brand}").status_code == 409
+    assert client.get(f"/api/brands/{brand}/knowledge").status_code == 200

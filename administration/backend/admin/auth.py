@@ -88,6 +88,7 @@ def create_admin_token(admin: AdminUser) -> tuple[str, int]:
         "email": admin.email,
         "role": str(admin.role),
         "type": _TOKEN_TYPE,
+        "ver": admin.token_version,
         "iat": now,
         "exp": now + ttl,
     }
@@ -128,7 +129,7 @@ def get_current_admin(
     # who has just been deactivated should stop being one now, not in twelve
     # hours, and the role in the claim is a snapshot of when they signed in.
     admin = session.exec(select(AdminUser).where(col(AdminUser.id) == admin_id)).first()
-    if admin is None or not admin.is_active:
+    if admin is None or not admin.is_active or payload.get("ver", 0) != admin.token_version:
         raise _UNAUTHENTICATED
     return admin
 

@@ -2,6 +2,7 @@ from datetime import UTC, datetime
 
 import httpx
 
+from app.core.public_http import fetch_page, public_client
 from app.ingestion.documents import RawDocument, SourceType
 from app.ingestion.exceptions import LoaderError
 from app.ingestion.loaders.base import Loader
@@ -37,10 +38,10 @@ class WebsiteLoader(Loader):
     async def fetch(self, url: str) -> str:
         try:
             if self._client is not None:
-                response = await self._client.get(url)
+                response = await fetch_page(self._client, url)
             else:
-                async with httpx.AsyncClient(follow_redirects=True, timeout=10.0) as client:
-                    response = await client.get(url)
+                async with public_client() as client:
+                    response = await fetch_page(client, url)
             response.raise_for_status()
         except httpx.HTTPError as exc:
             raise LoaderError(f"Failed to fetch '{url}': {exc}", url=url) from exc

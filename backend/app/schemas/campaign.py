@@ -7,6 +7,7 @@ from app.market.relevance import CampaignReadiness, CampaignRecommendation
 from app.marketing.policy import PolicyPreset
 from app.marketing.render_html import EmailTier
 from app.models.enums import AssetType, CampaignStatus, ExecutionStatus
+from app.schemas.linkedin import LinkedInChannel
 from app.schemas.types import UtcDatetime
 
 
@@ -61,6 +62,10 @@ class CampaignCreateRequest(BaseModel):
     #: changed since the last compile. None defers to the pipeline's own
     #: default (reuse) - see ExecutionPolicy.force_recompile.
     force_recompile: bool | None = None
+    #: Set to deliver one LinkedIn message instead of email. Everything above
+    #: still applies - the brand, the audience, the sender, the preset - and
+    #: the run plans with the same Strategist before writing. None is email.
+    channel: LinkedInChannel | None = None
 
 
 class CampaignRead(BaseModel):
@@ -82,6 +87,8 @@ class CampaignRead(BaseModel):
     audience_segment: str | None = None
     prospect_id: UUID | None = None
     cta_url: str | None = None
+    #: The LinkedIn channel this campaign delivers for, or None for email.
+    channel: LinkedInChannel | None = None
     status: CampaignStatus
     archived_at: UtcDatetime | None
     policy: dict | None
@@ -183,6 +190,10 @@ class RunForecast(BaseModel):
 
     preset: str
     emails: int
+    #: What is being counted, singular: "email" or "LinkedIn message". The
+    #: forecast used to be able to assume, and a channel is exactly the sort
+    #: of thing that quietly makes a number mean something else.
+    deliverable: str = "email"
     #: False when the user did not name a number, so `emails` is the working
     #: assumption rather than a promise and the estimate moves with it.
     count_is_explicit: bool

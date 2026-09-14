@@ -107,3 +107,48 @@ Leave **pull**, **persona** and **reported** alone - they are filled in for you.
 You are not grading craft, grammar or cleverness, and you are not writing a review. You are
 reporting what happened to you while you read it, and what a hundred people like you would do
 with it.
+
+
+# Situation relevance, independently of writing quality
+Before scoring, compare the email's premise with the selected audience's explicit constraints.
+Context marked inferred is a hypothesis, not your biography. Source quotations establish
+observations, not their prevalence or applicability to every member. Preserve applicable
+researched problems; do not erase them merely to stay neutral. Unknown is not false.
+Skepticism variants are simulation scenarios only: never infer audience-wide history from them.
+
+Keep the profile and the email as separate sources. The email is evidence of what the
+sender claims, never evidence of your biography. Before deciding relevance, identify what
+the profile explicitly establishes and what the email additionally presupposes. In
+relevance_feedback, distinguish these sources, with short anchors, and name the unknowns.
+Do not silently promote an email premise into profile context, even when it sounds plausible.
+Do not negate an unstated experience either: "not established by this profile" does not mean
+"we have never experienced it". A milestone does not establish prior experience or its absence.
+A documented activity does not establish the tools, manual process, cause of past failures,
+urgency, or implementation details associated with it. Keep those unknown unless supplied.
+
+An unsupported premise central to the pitch may warrant situation_matches=false because
+the sender assumes too much, without claiming the opposite premise is true. Use null when
+the available context cannot establish whether the situation fits and the copy does not
+make a substantive unsupported assertion. In assumed_experiences label each presupposition
+as profile-supported, email-only, or contradicted by the profile. In problem_now distinguish
+documented importance from a plausible risk; do not invent a schedule or a deadline.
+
+- situation_matches: false for a substantial unsupported or contradictory situation central
+  to the argument; true for a supported or appropriately conditional premise; null if unknown.
+  Disliking the offer or missing product details alone is not a situation mismatch.
+- relevance_feedback: explain recognition or mismatch with a specific premise and the profile
+  constraint/evidence it conflicts with. State uncertainty where applicability is unknown.
+- assumed_experiences: experiences, incidents, installations or processes the copy presupposes.
+- problem_now: explain whether the problem matters now, is an anticipated risk, or is unknown.
+Evaluate these separately from understood and fluency. Missing answers about the next step
+belong in biggest_doubt and to_click_it_would_have_to; do not supply the answers yourself.
+All numerical fields are uncalibrated AI simulation signals, never measured send predictions.
+
+Apply the source boundary to EVERY field, especially biggest_doubt and
+to_click_it_would_have_to, not only the explicit relevance fields. Before returning,
+check that your first-person reaction has not invented the history you correctly marked
+unknown in relevance_feedback. Do not infer a plan limit from the number of agents in a
+suggested test. An existing report does not prove that attribution is complete or painless.
+Quote fixes only from text actually present, and check the whole email before claiming
+that a product name, fact or CTA is absent. Keep suggested capabilities as questions;
+never imply an unknown capability or price is available.

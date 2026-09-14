@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 
 import { MarketJobCard } from "@/components/market-job-card";
@@ -8,49 +8,44 @@ import { CompilationJobCard } from "./compilation-job-card";
 import { StatusBadge } from "@/components/status-badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { api } from "@/lib/api-client";
-import { startVisiblePolling } from "@/lib/visible-polling";
+import { Button } from "@/components/ui/button";
 import { formatDuration } from "@/lib/format";
-import type { CompilationJob, MarketJob, RunningExecution } from "@/lib/types";
-
-//: Campaigns start and finish over minutes, not seconds - this is a "what is
-//: happening" board, not a metrics feed, so a slow poll is enough. Each run's
-//: own page is where the second-by-second detail lives.
-const REFRESH_MS = 4000;
+import type { CompilationJob, LinkedInRun, MarketJob, RunningExecution } from "@/lib/types";
 
 export function LiveRuns({
   initialRuns,
+  initialLinkedIn,
   initialJobs,
   initialCompilations,
   initiallyUnavailable = false,
 }: {
   initialRuns: RunningExecution[];
+  initialLinkedIn: LinkedInRun[];
   initialJobs: MarketJob[];
   initialCompilations: CompilationJob[];
   initiallyUnavailable?: boolean;
 }) {
+  const [linkedin, setLinkedIn] = useState(initialLinkedIn);
   const [runs, setRuns] = useState(initialRuns);
   const [jobs, setJobs] = useState(initialJobs);
   const [compilations, setCompilations] = useState(initialCompilations);
   const [unavailable, setUnavailable] = useState(initiallyUnavailable);
   const [now, setNow] = useState(() => Date.now());
 
-  useEffect(() => {
-    let cancelled = false;
-    const stop = startVisiblePolling(async () => {
-      const [runResult, jobResult, compilationResult] = await Promise.allSettled([
-        api.listRunningExecutions(), api.listMarketJobs(), api.listKnowledgeJobs(),
-      ]);
-      if (cancelled) return;
-      if (runResult.status === "fulfilled") setRuns(runResult.value);
-      if (jobResult.status === "fulfilled") setJobs(jobResult.value);
-      if (compilationResult.status === "fulfilled") setCompilations(compilationResult.value);
-      setUnavailable(runResult.status === "rejected" || jobResult.status === "rejected" || compilationResult.status === "rejected");
-    }, REFRESH_MS);
-    return () => {
-      cancelled = true;
-      stop();
-    };
-  }, []);
+  const [refreshing, setRefreshing] = useState(false);
+  async function refresh() {
+    setRefreshing(true);
+    const [runResult, jobResult, compilationResult, linkedinResult] = await Promise.allSettled([
+      api.listRunningExecutions(), api.listMarketJobs(), api.listKnowledgeJobs(), api.listRecentLinkedInRuns(),
+    ]);
+    if (runResult.status === "fulfilled") setRuns(runResult.value);
+    if (jobResult.status === "fulfilled") setJobs(jobResult.value);
+    if (compilationResult.status === "fulfilled") setCompilations(compilationResult.value);
+    setUnavailable([runResult, jobResult, compilationResult, linkedinResult].some((result) => result.status === "rejected"));
+    if (linkedinResult.status === "fulfilled") setLinkedIn(linkedinResult.value);
+    setNow(Date.now());
+    setRefreshing(false);
+  }
 
   const running = jobs.filter((job) => job.state === "running");
   // A finished job is kept on the board rather than dropped: five minutes
@@ -61,21 +56,17 @@ export function LiveRuns({
 
   const compiling = compilations.filter((job) => job.state === "running");
   const recentlyCompiled = compilations.filter((job) => job.state !== "running").slice(0, 2);
-  const hasActiveWork = runs.length > 0 || running.length > 0 || compiling.length > 0;
-  useEffect(() => {
-    if (!hasActiveWork) return;
-    const stop = startVisiblePolling(async () => { setNow(Date.now()); }, 1000);
-    return stop;
-  }, [hasActiveWork]);
 
   return (
     <div className="space-y-4">
+      <Button variant="outline" disabled={refreshing} onClick={refresh}>{refreshing ? "Refreshing…" : "Refresh runs"}</Button>
+      <p className="text-xs text-muted-foreground">Snapshot from {new Date(now).toLocaleTimeString()}. Refresh to see progress.</p>
       {unavailable && (
         <p role="status" className="rounded-xl border border-amber-400/20 bg-amber-400/5 p-4 text-sm text-amber-200">
-          Live updates are temporarily unavailable. Any cards below show the last known state. Retrying automatically.
+          Refresh failed. Cards show the last known state. Use Refresh runs to retry.
         </p>
       )}
-      {runs.length === 0 && jobs.length === 0 && compilations.length === 0 && !unavailable && (
+      {runs.length === 0 && jobs.length === 0 && compilations.length === 0 && linkedin.length === 0 && !unavailable && (
         <Card>
           <CardContent className="py-10 text-center">
             <h2 className="font-medium">All quiet in the studio</h2>
@@ -91,6 +82,14 @@ export function LiveRuns({
       ))}
       {[...compiling, ...recentlyCompiled].map((job) => (
         <CompilationJobCard key={`${job.brand_id}-${job.started_at}`} job={job} now={now} />
+      ))}
+      {linkedin.map((run) => (
+        <Link key={run.id} href={`/brands/${run.brand_id}/linkedin`} className="block">
+          <Card><CardContent className="space-y-1">
+            <p className="font-medium">LinkedIn · {run.kind === "search" ? run.request.query : `Message to ${run.request.recipient_name}`}</p>
+            <p className="text-sm text-muted-foreground">{run.state} · {run.calls} model calls</p>
+          </CardContent></Card>
+        </Link>
       ))}
       {runs.map((run) => (
         <Link

@@ -33,6 +33,7 @@ from app.marketing.intelligence import (
     build_campaign_intelligence,
     resolve_audience_research,
 )
+from app.marketing.linkedin import ROLE_ID as LINKEDIN_WRITER_ROLE
 from app.marketing.observer import RunObserver
 from app.marketing.pipeline import (
     CampaignRunResult,
@@ -67,6 +68,7 @@ from app.runtime.events import (
 )
 from app.runtime.model_session import ModelSession, RoleCall
 from app.runtime.prompt_engine import get_prompt_engine
+from app.schemas.linkedin import LinkedInChannel
 from app.services.market_service import MarketService
 
 logger = logging.getLogger("marketingos.orchestration")
@@ -337,8 +339,11 @@ class _PersistenceObserver(RunObserver):
         row = self._persist_row(
             open_step, ExecutionStatus.COMPLETED, output_data=output, error=None
         )
-        if role_id == "email_writer":
-            position = open_step["data"].get("position")
+        if role_id in {"email_writer", LINKEDIN_WRITER_ROLE}:
+            # The LinkedIn writer produces the run's only deliverable, so its
+            # row is position 1 - the same slot the first email would take, and
+            # the one `_persist_assets` falls back to.
+            position = open_step["data"].get("position", 1)
             if position is not None:
                 self.writer_rows[int(position)] = row.id
         self._emitter.emit(
@@ -784,6 +789,10 @@ class CampaignOrchestrator:
             goals=campaign.goals,
             sender_name=campaign.sender_name or "",
             sender_role=campaign.sender_role or "",
+            # Validated here rather than trusted: the column is JSON, and a
+            # channel the pipeline cannot read would fix the contract to a
+            # deliverable nothing knows how to write.
+            channel=LinkedInChannel.model_validate(campaign.channel) if campaign.channel else None,
         )
 
         try:
@@ -814,7 +823,7 @@ class CampaignOrchestrator:
                 "status": execution.status.value,
                 "run_status": result.status,
                 "estimated_cost_usd": execution.estimated_cost_usd,
-                "delivered": len(result.outcomes),
+                "delivered": result.deliverables,
             },
         )
         broker.close(execution.id)
@@ -838,6 +847,9 @@ class CampaignOrchestrator:
         clipboard gets the one that won.
         """
         fallback = next(iter(observer.writer_rows.values()), None)
+        if result.message is not None:
+            self._persist_message(execution, result, fallback)
+            return
         tier, brand = self._presentation(campaign)
         for outcome in result.outcomes:
             email: Email = outcome.email
@@ -864,6 +876,36 @@ class CampaignOrchestrator:
                     },
                 )
             )
+
+    def _persist_message(
+        self,
+        execution: CampaignExecution,
+        result: CampaignRunResult,
+        agent_execution_id: UUID | None,
+    ) -> None:
+        """The LinkedIn deliverable: the text, and what it cost the writer to
+        stay inside the limit. No HTML - this is pasted into a message box."""
+        message = result.message or {}
+        if agent_execution_id is None:
+            logger.warning("no agent execution row to attach the LinkedIn message to")
+            return
+        brief = result.brief.emails[0] if result.brief and result.brief.emails else None
+        self._generated_assets.create(
+            GeneratedAsset(
+                campaign_execution_id=execution.id,
+                agent_execution_id=agent_execution_id,
+                asset_type=AssetType.LINKEDIN_MESSAGE,
+                title=f"LinkedIn {message.get('kind', 'message')} to "
+                f"{message.get('recipient_name', 'them')}",
+                content=message.get("body", ""),
+                position=1,
+                asset_metadata={
+                    **message,
+                    "single_idea": brief.single_idea if brief else "",
+                    "evidence_ids": brief.evidence_ids if brief else [],
+                },
+            )
+        )
 
     def _presentation(self, campaign: Campaign) -> tuple[EmailTier, BrandStyle]:
         """How this campaign's emails should look.

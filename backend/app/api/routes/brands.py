@@ -202,4 +202,25 @@ def delete_brand(brand_id: UUID, session: SessionDep, principal: PrincipalDep) -
     brand = BrandRepository(session, principal).get(brand_id)
     if brand is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Brand not found")
-    BrandRepository(session, principal).delete(brand)
+    from sqlalchemy import select
+    from sqlalchemy.exc import IntegrityError
+    from sqlmodel import SQLModel
+
+    from app.services.knowledge_compilation import jobs
+    from app.services.market_service import all_jobs
+
+    if (brand_id in jobs and jobs[brand_id].state == "running") or any(
+        job.brand_id == brand_id and job.state == "running" for job in all_jobs()
+    ):
+        raise HTTPException(409, "Wait for this brand's jobs to finish before deleting it.")
+    for table in SQLModel.metadata.tables.values():
+        for foreign_key in table.foreign_keys:
+            if foreign_key.target_fullname == "brand.id" and session.execute(select(foreign_key.parent).where(
+                    foreign_key.parent == brand_id
+                ).limit(1)).first() is not None:
+                raise HTTPException(409, "This brand still has data. Remove its dependencies first.")
+    try:
+        BrandRepository(session, principal).delete(brand)
+    except IntegrityError as exc:
+        session.rollback()
+        raise HTTPException(409, "This brand is still in use.") from exc

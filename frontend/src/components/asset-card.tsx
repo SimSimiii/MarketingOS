@@ -10,6 +10,7 @@ import type { AssetType, GeneratedAsset } from "@/lib/types";
 
 const ASSET_LABELS: Record<AssetType, string> = {
   email: "Email",
+  linkedin_message: "LinkedIn message",
   social_post: "Social post",
   ad: "Ad",
   blog: "Article",
@@ -56,6 +57,13 @@ export function AssetCard({ asset }: { asset: GeneratedAsset }) {
               <span className="text-xs text-muted-foreground">#{asset.position}</span>
             )}
             {role && <span className="text-xs text-muted-foreground">{role}</span>}
+            {/* A channel with a hard length is worth showing the length of. */}
+            {typeof asset.asset_metadata?.limit === "number" && (
+              <span className="text-xs text-muted-foreground tabular-nums">
+                {String(asset.asset_metadata.characters ?? asset.content.length)} /{" "}
+                {String(asset.asset_metadata.limit)} characters
+              </span>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-2">

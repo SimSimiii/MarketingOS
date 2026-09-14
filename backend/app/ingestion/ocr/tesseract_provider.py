@@ -1,3 +1,4 @@
+import asyncio
 import io
 
 import pytesseract
@@ -27,9 +28,14 @@ class TesseractOCRProvider(OCRProvider):
     """
 
     async def extract_text(self, image: bytes) -> OCRResult:
+        return await asyncio.to_thread(self._extract, image)
+
+    def _extract(self, image: bytes) -> OCRResult:
         try:
             with Image.open(io.BytesIO(image)) as pil_image:
-                text = pytesseract.image_to_string(pil_image)
+                if pil_image.width * pil_image.height > 20_000_000:
+                    raise AnalysisError("Image exceeds the 20 megapixel limit")
+                text = pytesseract.image_to_string(pil_image, timeout=20)
         except UnidentifiedImageError as exc:
             raise AnalysisError(f"Not a readable image for OCR: {exc}") from exc
         except pytesseract.TesseractNotFoundError as exc:

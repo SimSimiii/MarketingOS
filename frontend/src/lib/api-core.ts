@@ -1,5 +1,9 @@
 import { API_URL } from "@/lib/config";
 import type {
+  LinkedInCriteriaRequest,
+  LinkedInRun,
+  LinkedInSearchRequest,
+  LinkedInMessageRequest,
   Account,
   AuthConfig,
   AuthSession,
@@ -66,9 +70,7 @@ import type {
 export interface AuthSource {
   /** Authorization header for a normal call, or {} when signed out. */
   header(): Promise<Record<string, string>>;
-  /** The raw token, synchronously, for the one place a header cannot be set:
-   * an `EventSource` URL. Undefined off the browser. */
-  tokenSync(): string | undefined;
+  refresh?(): Promise<boolean>;
 }
 
 /** The readable half of a FastAPI error.
@@ -110,7 +112,7 @@ export class UnauthorizedError extends Error {
 }
 
 export function createApi(auth: AuthSource) {
-  async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  async function request<T>(path: string, init?: RequestInit, retry = true): Promise<T> {
     const response = await fetch(`${API_URL}${path}`, {
       cache: "no-store",
       ...init,
@@ -122,6 +124,7 @@ export function createApi(auth: AuthSource) {
     });
 
     if (response.status === 401) {
+      if (retry && await auth.refresh?.()) return request<T>(path, init, false);
       throw new UnauthorizedError(await errorMessage(response));
     }
     if (!response.ok) {
@@ -136,7 +139,7 @@ export function createApi(auth: AuthSource) {
 
   /** Multipart upload - the browser sets its own Content-Type boundary, so
    * this one does not spread the JSON headers over it. */
-  async function upload<T>(path: string, body: FormData): Promise<T> {
+  async function upload<T>(path: string, body: FormData, retry = true): Promise<T> {
     const response = await fetch(`${API_URL}${path}`, {
       method: "POST",
       body,
@@ -144,6 +147,7 @@ export function createApi(auth: AuthSource) {
       headers: await auth.header(),
     });
     if (response.status === 401) {
+      if (retry && await auth.refresh?.()) return upload<T>(path, body, false);
       throw new UnauthorizedError(await errorMessage(response));
     }
     if (!response.ok) {
@@ -152,15 +156,34 @@ export function createApi(auth: AuthSource) {
     return (await response.json()) as T;
   }
 
+  async function pages<T>(path: string): Promise<T[]> {
+    const rows: T[] = [];
+    const separator = path.includes("?") ? "&" : "?";
+    for (let offset = 0; ; offset += 250) {
+      const page = await request<T[]>(`${path}${separator}limit=250&offset=${offset}`);
+      rows.push(...page);
+      if (page.length < 250) return rows;
+    }
+  }
+
   return {
+    listRecentLinkedInRuns: () => request<LinkedInRun[]>("/linkedin/runs"),
+    listLinkedInRuns: (brandId: string) => request<LinkedInRun[]>(`/market/${brandId}/linkedin/runs`),
+    proposeLinkedInCriteria: (brandId: string, data: LinkedInCriteriaRequest) => request<LinkedInRun>(`/market/${brandId}/linkedin/criteria`, { method: "POST", body: JSON.stringify(data) }),
+    searchLinkedIn: (brandId: string, data: LinkedInSearchRequest) => request<LinkedInRun>(`/market/${brandId}/linkedin/search`, { method: "POST", body: JSON.stringify(data) }),
+    writeLinkedInMessage: (brandId: string, data: LinkedInMessageRequest) => request<LinkedInRun>(`/market/${brandId}/linkedin/messages`, { method: "POST", body: JSON.stringify(data) }),
 
     listKnowledgeJobs: () => request<CompilationJob[]>("/knowledge/jobs"),
     compileKnowledge: (brandId: string) =>
       request<CompilationStatus>(`/brands/${brandId}/knowledge/compile`, { method: "POST" }),
     getKnowledgeCompilation: (brandId: string) =>
       request<CompilationStatus>(`/brands/${brandId}/knowledge/compile`),
-    listCampaigns: (includeArchived = false) =>
-      request<Campaign[]>(`/campaigns${includeArchived ? "?include_archived=true" : ""}`),
+    listCampaigns: (includeArchived = false, page?: { limit?: number; offset?: number; brandId?: string }) => {
+      if (!page) return pages<Campaign>(`/campaigns?include_archived=${includeArchived}`);
+      const query = new URLSearchParams({ include_archived: String(includeArchived), limit: String(page.limit ?? 100), offset: String(page.offset ?? 0) });
+      if (page.brandId) query.set("brand_id", page.brandId);
+      return request<Campaign[]>(`/campaigns?${query}`);
+    },
     getCampaign: (id: string) => request<Campaign>(`/campaigns/${id}`),
     createCampaign: (data: CampaignCreateRequest) =>
       request<Campaign>("/campaigns", { method: "POST", body: JSON.stringify(data) }),
@@ -230,18 +253,20 @@ export function createApi(auth: AuthSource) {
       // in the right place.
       const query = new URLSearchParams();
       if (afterEventId) query.set("after_event_id", String(afterEventId));
-      const token = auth.tokenSync();
-      if (token) query.set("access_token", token);
       const suffix = query.toString() ? `?${query}` : "";
-      return `${API_URL}/executions/${executionId}/stream${suffix}`;
+      return `/api/download/executions/${executionId}/stream${suffix}`;
     },
 
-    listKnowledgeDocuments: (scope: { campaignId?: string; brandId?: string } = {}) => {
+    listKnowledgeDocuments: (scope: { campaignId?: string; brandId?: string } = {}, page?: { limit: number; offset: number }) => {
       const query = new URLSearchParams();
       if (scope.campaignId) query.set("campaign_id", scope.campaignId);
       if (scope.brandId) query.set("brand_id", scope.brandId);
+      if (page) {
+        query.set("limit", String(page.limit));
+        query.set("offset", String(page.offset));
+      }
       const suffix = query.size > 0 ? `?${query}` : "";
-      return request<KnowledgeDocument[]>(`/knowledge${suffix}`);
+      return page ? request<KnowledgeDocument[]>(`/knowledge${suffix}`) : pages<KnowledgeDocument>(`/knowledge${suffix}`);
     },
     /** Everything compiled about one business, classified onto shelves and
      * ranked by what each fact is worth to a sale. 404s until the first
@@ -463,10 +488,8 @@ export function createApi(auth: AuthSource) {
       // A plain link, so no header - same reasoning as the stream URL above.
       const query = new URLSearchParams();
       if (segment) query.set("segment", segment);
-      const token = auth.tokenSync();
-      if (token) query.set("access_token", token);
       const suffix = query.toString() ? `?${query}` : "";
-      return `${API_URL}/market/${brandId}/prospects.csv${suffix}`;
+      return `/api/download/market/${brandId}/prospects.csv${suffix}`;
     },
 
     listRadar: (brandId: string, limit = 50) =>

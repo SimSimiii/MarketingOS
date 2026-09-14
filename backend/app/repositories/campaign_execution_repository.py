@@ -48,7 +48,7 @@ class CampaignExecutionRepository(BaseRepository[CampaignExecution]):
         )
         return list(self.session.exec(statement))
 
-    def latest_by_campaign(self) -> dict[UUID, tuple[ExecutionStatus, object]]:
+    def latest_by_campaign(self, campaign_ids=None) -> dict[UUID, tuple[ExecutionStatus, object]]:
         """Most recent run per campaign, as {campaign_id: (status, created_at)}.
 
         One grouped query for the whole list - the campaigns index needs a
@@ -68,6 +68,8 @@ class CampaignExecutionRepository(BaseRepository[CampaignExecution]):
             (col(CampaignExecution.campaign_id) == newest.c.campaign_id)
             & (col(CampaignExecution.created_at) == newest.c.created_at),
         )
+        if campaign_ids is not None:
+            statement = statement.where(col(CampaignExecution.campaign_id).in_(campaign_ids))
         return {
             execution.campaign_id: (execution.status, execution.created_at)
             for execution in self.session.exec(statement)

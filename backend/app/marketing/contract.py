@@ -88,6 +88,12 @@ class DeliverableKind(StrEnum):
 
     EMAIL_SEQUENCE = "email_sequence"
     SINGLE_EMAIL = "single_email"
+    #: One LinkedIn message, planned by the same Strategist against the same
+    #: audience as an email and then written to a length LinkedIn readers
+    #: tolerate. Never parsed out of the request sentence - "write 3 emails
+    #: about our LinkedIn integration" is three emails - it is set by the
+    #: campaign's channel, which is structured data the form filled in.
+    LINKEDIN_MESSAGE = "linkedin_message"
 
 
 class DeliverableContract(BaseModel):
@@ -101,7 +107,21 @@ class DeliverableContract(BaseModel):
     #: The words the count was read out of, for the run's own explanation.
     evidence: str = ""
 
+    @property
+    def noun(self) -> str:
+        """What this run produces, for the sentences that have to name it."""
+        if self.kind is DeliverableKind.LINKEDIN_MESSAGE:
+            return "LinkedIn message"
+        return "email"
+
     def render(self) -> str:
+        if self.kind is DeliverableKind.LINKEDIN_MESSAGE:
+            return (
+                "Exactly one LinkedIn message, not an email. It has no subject line and no "
+                "sequence around it: plan the single idea it makes, the evidence it may "
+                "spend and the objection it has to answer, for one message that has to earn "
+                "a reply on its own."
+            )
         if self.count_is_explicit:
             return (
                 f"Exactly {self.count} email(s). The user asked for this in so many words "
@@ -117,6 +137,18 @@ class ContractViolation(BaseModel):
     """A way the produced work does not match what was promised."""
 
     detail: str
+
+
+def linkedin_contract() -> DeliverableContract:
+    """One message, fixed by the channel the user picked rather than read out
+    of their sentence - which is why it is explicit: there is no length for
+    the Strategist to choose."""
+    return DeliverableContract(
+        kind=DeliverableKind.LINKEDIN_MESSAGE,
+        count=1,
+        count_is_explicit=True,
+        evidence="the LinkedIn message deliverable",
+    )
 
 
 def parse_contract(request: str) -> DeliverableContract:
@@ -152,7 +184,7 @@ def check_contract(contract: DeliverableContract, delivered: int) -> list[Contra
     return [
         ContractViolation(
             detail=(
-                f"the user asked for {contract.count} email(s) and the run produced "
+                f"the user asked for {contract.count} {contract.noun}(s) and the run produced "
                 f"{delivered}"
             )
         )

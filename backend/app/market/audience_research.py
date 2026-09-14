@@ -23,6 +23,7 @@ from pydantic import BaseModel, Field, field_validator
 
 from app.ai.base import ResearchTool
 from app.ai.model_router import ModelTier
+from app.core.public_http import PublicTransport
 from app.ingestion.loaders.html_extract import extract_content
 from app.knowledge.artifacts import Grounding, Sophistication
 from app.knowledge.corpus import fold
@@ -295,9 +296,11 @@ class FixedURLFetcher:
         if self._client is not None:
             return await self._fetch_with(self._client, sources)
         async with httpx.AsyncClient(
+            transport=PublicTransport(), trust_env=False,
             follow_redirects=False,
             timeout=_REQUEST_TIMEOUT,
-            headers={"User-Agent": _USER_AGENT, "Accept": "text/html,text/plain;q=0.9"},
+            headers={"User-Agent": _USER_AGENT, "Accept": "text/html,text/plain;q=0.9",
+                     "Accept-Encoding": "identity"},
         ) as client:
             return await self._fetch_with(client, sources)
 
@@ -309,7 +312,8 @@ class FixedURLFetcher:
         async def one(source: LocatedSource) -> FetchedSource | FetchFailure:
             async with gate:
                 try:
-                    return await self._one(client, source)
+                    async with asyncio.timeout(30):
+                        return await self._one(client, source)
                 # A broken encoding, malformed content-length, or parser edge
                 # on one stranger's page must not cost the other fetched sources.
                 except Exception as exc:  # noqa: BLE001 - deliberately isolated per URL
@@ -343,6 +347,8 @@ class FixedURLFetcher:
                     current = urljoin(current, location)
                     continue
                 response.raise_for_status()
+                if response.headers.get("content-encoding", "identity").lower() != "identity":
+                    raise ValueError("Compressed responses are not supported")
                 content_type = response.headers.get("content-type", "").lower()
                 if content_type and not any(kind in content_type for kind in _TEXT_TYPES):
                     raise ValueError(f"Unsupported content type: {content_type}")
@@ -351,7 +357,7 @@ class FixedURLFetcher:
                     raise ValueError("Response is larger than the per-source limit")
                 chunks: list[bytes] = []
                 size = 0
-                async for chunk in response.aiter_bytes():
+                async for chunk in response.aiter_bytes(chunk_size=65536):
                     size += len(chunk)
                     if size > MAX_SOURCE_BYTES:
                         raise ValueError("Response exceeded the per-source limit")

@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Query, status
 
 from app.ai.roles import InvalidOverrideError
 from app.api.deps import CampaignServiceDep
@@ -36,11 +36,14 @@ def create_campaign(data: CampaignCreateRequest, service: CampaignServiceDep) ->
 
 @router.get("", response_model=list[CampaignRead])
 def list_campaigns(
-    service: CampaignServiceDep, include_archived: bool = False
+    service: CampaignServiceDep, include_archived: bool = False,
+    limit: int = Query(100, ge=1, le=250), offset: int = Query(0, ge=0),
+    brand_id: UUID | None = None,
 ) -> list[CampaignRead]:
-    latest = service.latest_run_by_campaign()
+    rows = service.list_campaigns(include_archived, limit=limit, offset=offset, brand_id=brand_id)
+    latest = service.latest_run_by_campaign([row.id for row in rows])
     campaigns = []
-    for campaign in service.list_campaigns(include_archived):
+    for campaign in rows:
         read = CampaignRead.model_validate(campaign)
         run = latest.get(campaign.id)
         if run is not None:
@@ -101,7 +104,7 @@ def update_campaign_policy(
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Campaign not found")
     try:
         updated = service.update_policy(campaign, data)
-    except InvalidOverrideError as exc:
+    except (InvalidOverrideError, ValueError) as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from exc
     return CampaignRead.model_validate(updated)
 

@@ -50,6 +50,7 @@ def engine(tmp_path):
         cursor = connection.cursor()
         cursor.execute("PRAGMA journal_mode=WAL")
         cursor.execute("PRAGMA busy_timeout=30000")
+        cursor.execute("PRAGMA foreign_keys=ON")
         cursor.close()
 
     SQLModel.metadata.create_all(engine)

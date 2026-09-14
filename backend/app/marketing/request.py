@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from app.schemas.linkedin import LinkedInChannel
+
 
 @dataclass(frozen=True)
 class CampaignRequest:
@@ -32,6 +34,11 @@ class CampaignRequest:
     #: be replied to, rather than a broadcast.
     sender_name: str = ""
     sender_role: str = ""
+    #: Set when this campaign's deliverable is a LinkedIn message instead of
+    #: email. Structured rather than inferred: which channel a campaign writes
+    #: for decides the contract, and a contract read out of prose is a
+    #: contract a sentence about LinkedIn can change by accident.
+    channel: LinkedInChannel | None = None
 
     @property
     def sender(self) -> str:
@@ -49,4 +56,14 @@ class CampaignRequest:
             lines.append(f"What the user wants out of it: {self.goals}")
         if self.sender:
             lines.append(f"Who it comes from: {self.sender}")
+        if self.channel is not None:
+            lines.append(
+                f"Channel: one LinkedIn {self.channel.kind} to {self.channel.recipient_name} "
+                f"({self.channel.recipient_url}), written in {self.channel.language}."
+            )
+            if self.channel.confirmed_context:
+                lines.append(
+                    "What the user has checked about this recipient: "
+                    f"{self.channel.confirmed_context}"
+                )
         return "\n".join(lines)

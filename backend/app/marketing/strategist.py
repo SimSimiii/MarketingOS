@@ -165,6 +165,9 @@ class Strategist:
                 "The strategist produced no email briefs - there is nothing to write.",
                 request=request.request,
             )
+        if chosen_segment:
+            brief.reader_segment = chosen_segment
+            brief.reader = f"Selected audience: {chosen_segment}. " + brief.reader
         brief.contract = contract
         return brief
 

@@ -11,6 +11,7 @@
  */
 
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 import { createApi, type AuthSource } from "@/lib/api-core";
 import { ACCESS_TOKEN_COOKIE } from "@/lib/auth-cookies";
@@ -18,13 +19,11 @@ import { ACCESS_TOKEN_COOKIE } from "@/lib/auth-cookies";
 export { UnauthorizedError } from "@/lib/api-core";
 
 const serverAuth: AuthSource = {
+  async refresh() { redirect("/session/renew"); },
   async header(): Promise<Record<string, string>> {
     const token = (await cookies()).get(ACCESS_TOKEN_COOKIE)?.value;
     return token ? { Authorization: `Bearer ${token}` } : {};
   },
-  // Server-side rendering never opens an EventSource or hands out a download
-  // link it signed itself - both are things the browser does.
-  tokenSync: () => undefined,
 };
 
 export const api = createApi(serverAuth);

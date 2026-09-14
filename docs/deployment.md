@@ -15,32 +15,48 @@ links to.
 
 ---
 
-## Read this first: what does not run on Lambda
+## Run monitoring and background execution
 
-The API stack serves everything **except starting a campaign run.**
+The September security corrections, quota semantics, dependency locks and database upgrade
+procedure are documented in [review-implementation.md](review-implementation.md). Apply the
+new migrations before restarting an existing installation. Model job admission now returns
+HTTP 503 on Lambda instead of accepting work that this host cannot finish.
 
-A run drives the `claude` and `codex` CLIs as subprocesses for minutes at a
-time, streams its progress over SSE, and keeps its cancellation registry in the
-process's memory. A Lambda function is capped at fifteen minutes, has no CLI on
-its image, scales to twenty copies that cannot see each other's registry, and
-its SSE response is buffered by API Gateway. All four fail at once.
+The console uses short authenticated HTTP requests to read saved progress. The
+Runs board, execution details, market research and knowledge compilation load
+on entry and refresh only when the user presses Refresh. No browser opens an
+SSE connection or polls periodically. The legacy `/executions/{id}/stream`
+endpoint remains for compatibility; the console does not need it.
 
-So `POST /campaigns/{id}/start` and `GET /executions/{id}/stream` need a
-**long-running worker**: one container or one small EC2 instance running the
-same `uvicorn app.main:app`, with the CLIs installed and authenticated, pointed
-at the same database. Route those two paths there and everything else at the
-Lambda. Nothing in the code needs to change - it is the same application - which
-is why this is a routing decision rather than a rewrite.
+This removes streaming from the hosting requirements, but **does not turn the
+current model runner into a Lambda job**. Campaigns, compilation, market
+research and LinkedIn work still launch tasks in the API process and invoke
+subscription-authenticated CLIs. Returning HTTP 202 does not transfer that work
+to a durable worker. Standard Lambda invocations have a maximum duration of
+900 seconds, and unfinished background work cannot be relied on after the
+handler returns. See [AWS timeout documentation](https://docs.aws.amazon.com/lambda/latest/dg/configuration-timeout.html)
+and [execution lifecycle](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtime-environment.html).
 
-If that split is not worth the trouble yet, run the whole API on that one
-container and use the Lambda stack for the back-office only, which is pure CRUD
-and fits Lambda exactly.
+For the current implementation, run the API as a single persistent process
+with the CLIs installed and authenticated. A container can provide this; an EC2
+machine dedicated to streaming is unnecessary. Do not split only campaign
+start and stream routes onto a worker: restart, cancellation, market job status
+and compilation also depend on process-local state. Startup recovery assumes
+one worker and must not run independently on multiple replicas sharing a DB.
 
-This is also why `AI_PROVIDER` credentials do not appear anywhere in these
-templates. Both providers bill a *subscription* through their CLI, and
-`_clean_env()` in each provider strips the vendor API key from the subprocess
-environment specifically so a stray key cannot silently move billing onto a
-card. A Lambda that never runs a campaign never needs either.
+A future deployment with no continuously running worker needs an explicit job
+handoff (for example a durable queue plus on-demand container tasks), shared
+Postgres storage, durable cancellation/status for every job type, CLI credential
+provisioning, and worker-aware recovery. None of that infrastructure is deployed
+by this feature. The Lambda stack remains suitable for reads/CRUD with lifespan
+startup recovery disabled, not for the existing in-process job launchers.
+
+LinkedIn search/message status, results, usage and errors are persisted in
+`linkedinrun`; an interrupted job is marked failed at single-worker startup so
+it can be retried explicitly. This preserves history, not resumable execution.
+
+Both providers continue to bill through their CLIs. `_clean_env()` still strips
+vendor API keys to prevent an accidental switch to API-key billing.
 
 ---
 

@@ -22,6 +22,10 @@ class AssetType(StrEnum):
     """What a run produces. Only marketing deliverables belong here."""
 
     EMAIL = "email"
+    #: One LinkedIn message, ready to paste. Its own type rather than
+    #: SOCIAL_POST: a post is published to everybody and this is sent to one
+    #: named person, and the UI has to say which of those it is holding.
+    LINKEDIN_MESSAGE = "linkedin_message"
     SOCIAL_POST = "social_post"
     AD = "ad"
     BLOG = "blog"

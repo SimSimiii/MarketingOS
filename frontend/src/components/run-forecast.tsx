@@ -51,10 +51,11 @@ export function RunForecast({ campaignId, refreshKey }: { campaignId: string; re
             ? `${forecast.low} model calls`
             : `${forecast.low}–${forecast.high} model calls`}
         </span>{" "}
-        for {forecast.emails} email{forecast.emails === 1 ? "" : "s"}
+        for {forecast.emails} {forecast.deliverable ?? "email"}
+        {forecast.emails === 1 ? "" : "s"}
         {forecast.count_is_explicit ? "" : " (you did not name a number, so this is the working assumption)"}
         {" — "}
-        {forecast.low} if every email lands first time, {forecast.high} if every rewrite is bought.
+        {forecast.low} if it lands first time, {forecast.high} if every rewrite is bought.
       </p>
       {forecast.knowledge_reused ? (
         <p>
@@ -76,8 +77,9 @@ export function RunForecast({ campaignId, refreshKey }: { campaignId: string; re
               two real measurements with an assumption and present the result
               as though the whole thing had been measured. */}
           Across your {forecast.observed_runs} finished run
-          {forecast.observed_runs === 1 ? "" : "s"} on this preset, a delivered email has
-          typically cost {formatCost(forecast.observed_cost_per_email)}.
+          {forecast.observed_runs === 1 ? "" : "s"} on this preset, a delivered{" "}
+          {forecast.deliverable ?? "email"} has typically cost{" "}
+          {formatCost(forecast.observed_cost_per_email)}.
         </p>
       )}
     </div>

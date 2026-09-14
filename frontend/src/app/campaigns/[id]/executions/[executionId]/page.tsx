@@ -24,7 +24,7 @@ export default async function ExecutionResultPage({
   }
 
   return (
-    <ExecutionLiveView
+    <ExecutionLiveView key={executionId}
       executionId={executionId}
       campaignId={id}
       brandId={campaign?.brand_id ?? null}

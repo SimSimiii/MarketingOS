@@ -2,6 +2,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 #: backend/prompts - every prompt template lives here, loaded via
@@ -22,6 +23,8 @@ class Settings(BaseSettings):
 
     app_env: Literal["development", "production", "test"] = "development"
     log_level: str = "INFO"
+    max_concurrent_jobs: int = Field(default=4, ge=1, le=32)
+    max_jobs_per_account: int = Field(default=2, ge=1, le=8)
 
     database_url: str = "sqlite:///./marketingos.db"
 
@@ -45,8 +48,7 @@ class Settings(BaseSettings):
     #: of the database on purpose - the point is that a stolen dump alone is
     #: not enough to mount an offline attack.
     password_pepper: str = DEV_PASSWORD_PEPPER
-    #: Short by design. A revoked account keeps working for at most this long,
-    #: because access tokens are verified by signature and never looked up.
+    #: Short by design; account status and token version are checked on every request.
     access_token_ttl_minutes: int = 60
     #: Long, and revocable: refresh tokens are rows (app.models.user.UserSession),
     #: so signing out - or an admin forcing it - takes effect immediately.

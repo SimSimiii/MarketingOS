@@ -84,7 +84,8 @@ class Evidence(BaseModel):
 
     @property
     def licensing_text(self) -> str:
-        return f"{self.claim}\n{self.verbatim}"
+        # The compiler's paraphrase is not a second source of facts.
+        return self.verbatim
 
 
 def category_of(entry: Evidence) -> FactCategory:
@@ -428,6 +429,10 @@ class EvidenceIndex:
         # unquoted in the source page it came from. Folded on both sides so
         # the match survives the typography a CMS applied to the page.
         self._corpus = fold(f"{licensing}\n{source_text}")
+        self.numeric_support = numeric_support(f"{licensing}\n{source_text}")
+        self._support_by_value: dict[tuple[ClaimKind, str], list[NumericSupport]] = {}
+        for support in self.numeric_support:
+            self._support_by_value.setdefault((support.kind, support.value), []).append(support)
 
     @property
     def licensed_values(self) -> set[str]:
@@ -436,6 +441,7 @@ class EvidenceIndex:
     def unsupported(self, text: str) -> list[UnsupportedClaim]:
         """Every claim in `text` with nothing behind it, phrased as the fix."""
         found: list[UnsupportedClaim] = []
+        requested_support = numeric_support(text)
         for claim in extract_claims(text):
             if claim.kind is ClaimKind.QUOTE:
                 if claim.normalized not in self._corpus:
@@ -451,6 +457,22 @@ class EvidenceIndex:
                     )
                 continue
             if claim.normalized in self._licensed:
+                requested = [support for support in requested_support
+                             if support.value == claim.normalized and support.kind == claim.kind]
+                available = self._support_by_value.get((claim.kind, claim.normalized), [])
+                if any(item.metric and available and not any(
+                    item.metric == source.metric or not source.metric for source in available
+                ) for item in requested):
+                    found.append(UnsupportedClaim(claim=claim, reason=(
+                        "this figure is supported for a different metric; preserve its meaning "
+                        "and attribution from the source citation"
+                    )))
+                elif any(item.subject and available and not any(
+                    not source.subject or item.subject == source.subject for source in available
+                ) for item in requested):
+                    found.append(UnsupportedClaim(claim=claim, reason=(
+                        "this figure belongs to a different named subject in the source citation"
+                    )))
                 continue
             if claim.kind is ClaimKind.URL:
                 found.append(
@@ -470,3 +492,49 @@ class EvidenceIndex:
                 )
             )
         return found
+
+
+class NumericSupport(BaseModel):
+    value: str
+    kind: ClaimKind
+    metric: str
+    citation: str
+    subject: str = ""
+
+
+# Deliberately conservative: only identifiable metric switches block. These
+# categories do not claim to solve semantic entailment or arbitrary paraphrases.
+_METRICS = {
+    "discount": r"\b(discount|remise|reduction|off)\b",
+    "revenue": r"\b(revenue|revenus|chiffre d'affaires|sales|ventes)\b",
+    "conversion": r"\b(conversion|conversions)\b",
+    "retention": r"\b(retention|retaining|churn|attrition)\b",
+    "time": r"\b(minutes?|hours?|heures?|days?|jours?|time|temps)\b",
+    "customers": r"\b(customers?|clients?|users?|utilisateurs?|teams?|equipes?)\b",
+}
+
+
+def numeric_support(text: str) -> list[NumericSupport]:
+    result = []
+    for sentence in re.split(r"(?<=[.!?])\s+|\n+", text):
+        # Only explicit possessives around known metrics identify a subject.
+        # Pronouns and unspecified attribution remain the existing critic's job.
+        named = re.search(r"\b([A-Z][\w.-]*(?: [A-Z][\w.-]*){0,2})[’']s\s+"
+                          r"(?:revenue|sales|conversion|retention|discount)", sentence)
+        subject = fold(named.group(1)) if named else ""
+        metrics = [name for name, pattern in _METRICS.items() if re.search(pattern, fold(sentence))]
+        # Revenue per customer remains revenue, not a customer count.
+        specific = [name for name in metrics if name != "customers"]
+        metrics = specific or metrics
+        metric = metrics[0] if len(metrics) == 1 else ""
+        for claim in extract_claims(sentence):
+            if claim.kind not in (ClaimKind.QUOTE, ClaimKind.URL):
+                # A duration elsewhere in a sentence does not turn its price
+                # into a time-saving claim. Typed measures retain their unit.
+                claim_metric = "time" if claim.kind == ClaimKind.DURATION else metric
+                if claim.kind == ClaimKind.MONEY and claim_metric == "time":
+                    claim_metric = ""
+                result.append(NumericSupport(value=claim.normalized, kind=claim.kind,
+                                             metric=claim_metric, citation=sentence.strip(),
+                                             subject=subject))
+    return result

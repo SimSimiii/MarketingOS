@@ -22,6 +22,7 @@ from app.models.brand import Brand
 from app.models.campaign import Campaign
 from app.models.campaign_execution import CampaignExecution
 from app.models.enums import ExecutionStatus, UserPlan, UserStatus
+from app.models.knowledge_document import KnowledgeDocument
 from app.models.user import User, UserSession
 from app.models.user_settings import UserSettings
 from fastapi import HTTPException, Request, status
@@ -308,6 +309,7 @@ def set_suspended(
 
     revoked = 0
     if suspended:
+        user.token_version += 1
         now = datetime.now(UTC)
         for record in session.exec(
             select(UserSession).where(
@@ -335,6 +337,8 @@ def set_suspended(
 def sign_out_everywhere(
     session: Session, admin: AdminUser, user: User, ip: str | None
 ) -> dict[str, int]:
+    user.token_version += 1
+    session.add(user)
     now = datetime.now(UTC)
     revoked = 0
     for record in session.exec(
@@ -369,7 +373,7 @@ def delete_user(session: Session, admin: AdminUser, user: User, ip: str | None) 
     still alive.
     """
     email = user.email
-    for model in (Brand, Campaign):
+    for model in (Brand, Campaign, KnowledgeDocument):
         for row in session.exec(select(model).where(col(model.owner_id) == user.id)):
             row.owner_id = None
             session.add(row)

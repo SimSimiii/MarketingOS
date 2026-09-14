@@ -127,7 +127,7 @@ def issue_tokens(
     ip_address: str | None = None,
 ) -> IssuedTokens:
     access_token, expires_in = create_access_token(
-        user.id, user.email, str(user.role), str(user.plan)
+        user.id, user.email, str(user.role), str(user.plan), token_version=user.token_version
     )
     raw_refresh, token_hash = new_refresh_token()
     session.add(
@@ -178,9 +178,16 @@ def refresh(
         )
 
     now = datetime.now(UTC)
-    record.revoked_at = now
-    record.last_used_at = now
-    session.add(record)
+    from sqlalchemy import update
+
+    consumed = session.execute(update(UserSession).where(
+        UserSession.id == record.id,
+        col(UserSession.revoked_at).is_(None),
+        UserSession.expires_at > now,
+    ).values(revoked_at=now, last_used_at=now).execution_options(synchronize_session=False))
+    if consumed.rowcount != 1:
+        session.rollback()
+        raise AuthError("Session already renewed. Sign in again.")
     return issue_tokens(session, user, user_agent=user_agent, ip_address=ip_address)
 
 
@@ -203,6 +210,11 @@ def revoke_all(session: Session, user_id, *, reason: str | None = None) -> int:
     an operator suspends somebody.
     """
     del reason  # Recorded by the caller's audit entry, not on the session row.
+    from sqlalchemy import update
+
+    session.execute(update(User).where(User.id == user_id).values(
+        token_version=User.token_version + 1
+    ))
     now = datetime.now(UTC)
     records = list(
         session.exec(
@@ -225,5 +237,5 @@ def change_password(session: Session, user: User, *, current: str, new: str) -> 
     user.password_hash = hash_password(new)
     user.updated_at = datetime.now(UTC)
     session.add(user)
-    session.commit()
+    session.flush()
     revoke_all(session, user.id)

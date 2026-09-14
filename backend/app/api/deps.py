@@ -36,8 +36,8 @@ def get_campaign_service(
     return CampaignService(session, ai_provider, principal)
 
 
-def get_knowledge_service(session: SessionDep) -> KnowledgeService:
-    return KnowledgeService(session)
+def get_knowledge_service(session: SessionDep, principal: PrincipalDep) -> KnowledgeService:
+    return KnowledgeService(session, principal)
 
 
 def get_settings_service(session: SessionDep, principal: PrincipalDep) -> SettingsService:

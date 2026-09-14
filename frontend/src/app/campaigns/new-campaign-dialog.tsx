@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -76,7 +77,7 @@ const TONE_INSTRUCTIONS: Record<Tone, string> = {
   urgent: "Urgent and aggressive - direct, high-stakes, creates real pressure to act now.",
 };
 
-type ContentType = "cart_recovery" | "launch_email";
+type ContentType = "cart_recovery" | "launch_email" | "linkedin_message";
 
 const TIER_LABELS: Record<EmailTier, string> = {
   plain: "Plain - typography only, looks like a person wrote it",
@@ -95,6 +96,9 @@ const TIER_LABELS: Record<EmailTier, string> = {
 const TIER_FOR_TYPE: Record<ContentType, EmailTier> = {
   cart_recovery: "branded",
   launch_email: "branded",
+  //: Never rendered - a LinkedIn message is pasted into a message box, where
+  //: there is no HTML to tier. Present because the map is exhaustive.
+  linkedin_message: "plain",
 };
 
 //: Each template is a sentence the backend's contract parser can read an
@@ -110,6 +114,18 @@ const CONTENT_TEMPLATES: Record<ContentType, string> = {
   launch_email:
     "Write exactly 1 email announcing the launch of this product to people who have not " +
     "bought it yet - make the case for why it matters now and what to do next.",
+  //: Read by nothing: a LinkedIn campaign's contract comes from its channel,
+  //: not from this sentence (see app.marketing.contract.linkedin_contract).
+  //: It is still what the Strategist is briefed from and what the run is
+  //: titled by, so it says what the run is for.
+  linkedin_message:
+    "Write one LinkedIn message that opens a conversation with this person - honest, " +
+    "specific to what they do, and short enough to be read in the notification.",
+};
+
+const MESSAGE_KIND_LABELS: Record<"connection" | "message", string> = {
+  connection: "Connection note - 200 characters",
+  message: "Direct message - 1,200 characters",
 };
 
 //: Whether two URLs point at the same page as far as knowledge goes. The
@@ -137,6 +153,16 @@ function audienceKey(value: string): string {
 
 export interface NewCampaignDialogPrefill {
   brandId: string;
+  /** A LinkedIn recipient the user picked from a search result. Set, the
+   * dialog opens with its LinkedIn half filled in and expanded - the one
+   * thing they would otherwise retype from the profile they just read. */
+  linkedinName?: string | null;
+  linkedinUrl?: string | null;
+  /** Their LinkedIn headline, as the search result reported it. It lands in
+   * the checked-facts box rather than in a hidden field, because that is the
+   * only place the writer may argue from and the user has to be able to
+   * correct it before it gets there. */
+  linkedinHeadline?: string | null;
   productDescription?: string | null;
   productUrl?: string | null;
   targetMarket?: string | null;
@@ -146,6 +172,9 @@ export interface NewCampaignDialogPrefill {
 }
 
 interface NewCampaignDialogProps {
+  /** Open on mount, for arriving from somewhere that already decided what
+   * this campaign is for - a LinkedIn search result, say. */
+  autoOpen?: boolean;
   /** Custom trigger element - lets the campaign detail page reuse this same
    * dialog as "generate another type for this brand" instead of the default
    * "New campaign" button. */
@@ -155,7 +184,7 @@ interface NewCampaignDialogProps {
   prefill?: NewCampaignDialogPrefill;
 }
 
-export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps = {}) {
+export function NewCampaignDialog({ trigger, prefill, autoOpen }: NewCampaignDialogProps = {}) {
   const router = useRouter();
   const fileInput = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
@@ -175,6 +204,20 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
   //: nothing rather than an empty object.
   const [modelOverrides, setModelOverrides] = useState<Record<string, string>>({});
   const [customModelsOpen, setCustomModelsOpen] = useState(false);
+  //: Who this campaign writes to on LinkedIn. Empty until the user opens the
+  //: LinkedIn half of the form or arrives from a search result - an email
+  //: campaign never fills any of it in.
+  const [recipientName, setRecipientName] = useState("");
+  const [recipientUrl, setRecipientUrl] = useState("");
+  const [recipientContext, setRecipientContext] = useState("");
+  //: Whether what is in that box arrived from a search result rather than
+  //: from the user. It decides which warning sits under it: a suggestion and
+  //: a checked fact are not the same thing, and the whole field's rule is
+  //: that only the second may be argued from.
+  const [contextFromSearch, setContextFromSearch] = useState(false);
+  const [messageKind, setMessageKind] = useState<"connection" | "message">("message");
+  const [messageLanguage, setMessageLanguage] = useState("English");
+  const [linkedInOpen, setLinkedInOpen] = useState(false);
   const modelCatalog = useModelCatalog(open);
 
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -215,6 +258,16 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
   const [forceRecompile, setForceRecompile] = useState(true);
   const knowledgeRequestId = useRef(0);
 
+  const opened = useRef(false);
+  useEffect(() => {
+    if (!autoOpen || opened.current) return;
+    opened.current = true;
+    handleOpenChange(true);
+    // handleOpenChange is stable enough for a once-only open, and listing it
+    // would re-run this on every render of a dialog that is already open.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoOpen]);
+
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
@@ -238,6 +291,18 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
       setGoals(prefill.goals ?? "");
       setSenderName(prefill.senderName ?? "");
       setSenderRole(prefill.senderRole ?? "");
+      if (prefill.linkedinUrl) {
+        setRecipientName(prefill.linkedinName ?? "");
+        setRecipientUrl(prefill.linkedinUrl);
+        //: The one recipient-specific fact this product has, handed over
+        //: rather than dropped. A writer given a name and a URL and nothing
+        //: else has only the product to write about, and writes about it.
+        if (prefill.linkedinHeadline) {
+          setRecipientContext(`Their LinkedIn headline: ${prefill.linkedinHeadline}`);
+          setContextFromSearch(true);
+        }
+        setLinkedInOpen(true);
+      }
     }
   }
 
@@ -318,6 +383,13 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
     setTone("professional");
     setModelOverrides({});
     setCustomModelsOpen(false);
+    setRecipientName("");
+    setRecipientUrl("");
+    setRecipientContext("");
+    setContextFromSearch(false);
+    setMessageKind("message");
+    setMessageLanguage("English");
+    setLinkedInOpen(false);
     setBrandChoice(NO_BRAND);
     setNewBrandName("");
     setExistingKnowledgeCount(null);
@@ -333,15 +405,24 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
     if (fileInput.current) fileInput.current.value = "";
   }
 
-  function validate(): string | null {
+  function validate(type: ContentType): string | null {
     if (!name.trim()) return "Give the campaign a name.";
     if (brandChoice === NEW_BRAND && !newBrandName.trim()) return "Name the new brand.";
+    if (type === "linkedin_message") {
+      // Checked here as well as by the API: a message is written to one named
+      // person, and the writer is never allowed to invent who that is.
+      if (!recipientName.trim()) return "Name the person this message is for.";
+      if (!/^https:\/\/([a-z0-9-]+\.)?linkedin\.com\/(in|company)\/[^/]+\/?$/i.test(recipientUrl.trim()))
+        return "Paste their LinkedIn profile or company URL (https://www.linkedin.com/in/...).";
+    }
     return null;
   }
 
   async function handleGenerate(type: ContentType) {
-    const error = validate();
+    const error = validate(type);
     if (error) {
+      // A form that rejects a field it is hiding is a form nobody can fix.
+      if (type === "linkedin_message") setLinkedInOpen(true);
       toast.error(error);
       return;
     }
@@ -383,6 +464,19 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
           brandId && prospectChoice !== NO_PROSPECT ? prospectChoice : null,
         cta_url: ctaUrl.trim() || null,
         email_tier: emailTier ?? TIER_FOR_TYPE[type],
+        //: What makes this a LinkedIn run rather than an email one. Null for
+        //: every other deliverable, which is what the pipeline reads as
+        //: "this is email work".
+        channel:
+          type === "linkedin_message"
+            ? {
+                recipient_name: recipientName.trim(),
+                recipient_url: recipientUrl.trim(),
+                confirmed_context: recipientContext.trim(),
+                language: messageLanguage.trim() || "English",
+                kind: messageKind,
+              }
+            : null,
         policy_preset: policyPreset,
         model_overrides: Object.keys(modelOverrides).length > 0 ? modelOverrides : null,
         force_recompile: brandId ? forceRecompile : null,
@@ -468,485 +562,646 @@ export function NewCampaignDialog({ trigger, prefill }: NewCampaignDialogProps =
     productUrl.trim() !== "" &&
     existingSources.some((source) => sameSource(source, productUrl));
 
+  const showProspectPicker = mappedAudienceSelected && selectedProspects.length > 0;
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger render={trigger ?? <Button>New campaign</Button>} />
-      <DialogContent className="max-h-[85vh] overflow-y-auto">
-        <DialogHeader>
+      {/* A form this long needs three bands, not one scroll: the title stays
+          put, the fields scroll, and the things you can actually launch stay
+          on screen the whole way down. */}
+      <DialogContent className="flex max-h-[90vh] w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-3xl">
+        <DialogHeader className="gap-1 border-b border-border px-5 py-4 pr-12">
           <DialogTitle>New campaign</DialogTitle>
+          <DialogDescription>
+            Name it, point it at what it should read, and say who it is for. Everything else
+            already has a default.
+          </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Campaign name</Label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
-          </div>
+        <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-5 py-5">
+          <FormSection title="Campaign">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="name">Campaign name</Label>
+                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+              </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="brand">Brand</Label>
-            <Select value={brandChoice} onValueChange={(value) => value && handleBrandChange(value)}>
-              <SelectTrigger id="brand" className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={NO_BRAND}>One-off - don&apos;t save this knowledge</SelectItem>
-                {brands.map((brand) => (
-                  <SelectItem key={brand.id} value={brand.id}>
-                    {brand.name}
-                  </SelectItem>
-                ))}
-                <SelectItem value={NEW_BRAND}>+ New brand</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground">
-              {usingExistingBrand
-                ? existingKnowledgeCount === null
-                  ? "Checking what's already saved..."
-                  : existingKnowledgeCount > 0
-                    ? `${existingKnowledgeCount} knowledge source${existingKnowledgeCount === 1 ? "" : "s"} already saved for this brand.`
-                    : "Nothing saved for this brand yet - add a source below."
-                : brandChoice === NEW_BRAND
-                  ? "Knowledge you add below is saved to this brand and reused by every future campaign for it."
-                  : "Knowledge you add below is used for this campaign only, then discarded."}
-            </p>
-            {brandChoice === NEW_BRAND && (
-              <Input
-                placeholder="Brand name"
-                value={newBrandName}
-                onChange={(e) => setNewBrandName(e.target.value)}
-              />
-            )}
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="tier">How it looks</Label>
-              <Select
-                value={emailTier ?? ""}
-                onValueChange={(value) => value && setEmailTier(value as EmailTier)}
-              >
-                <SelectTrigger id="tier" className="w-full">
-                  <SelectValue placeholder="Follow the deliverable">
-                    {(value: string) =>
-                      value ? TIER_LABELS[value as EmailTier] : "Follow the deliverable"
-                    }
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="plain">{TIER_LABELS.plain}</SelectItem>
-                  <SelectItem value="branded">{TIER_LABELS.branded}</SelectItem>
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-muted-foreground">
-                {emailTier === "branded"
-                  ? usingExistingBrand
-                    ? "Set the logo, colour and footer on the brand page, or it renders as plain."
-                    : "Nothing to brand it with until this campaign is attached to a brand."
-                  : emailTier === "plain"
-                    ? "One person writing to another. The right answer for cold outreach."
-                    : "Cart recovery and launches come out branded; anything cold stays plain."}
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="cta-url">Where the button goes (optional)</Label>
-              <Input
-                id="cta-url"
-                type="url"
-                placeholder="https://yourproduct.com/cart"
-                value={ctaUrl}
-                onChange={(e) => setCtaUrl(e.target.value)}
-              />
-              <p className="text-xs text-muted-foreground">
-                The writer never invents a link. Without one here the brand&rsquo;s website is
-                used, and with neither the call to action stays a marked slot for you to fill.
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="audience">Who this is for</Label>
-            <Select
-              value={audienceSegment}
-              onValueChange={(value) => {
-                if (!value) return;
-                setAudienceSegment(value);
-                setProspectChoice(NO_PROSPECT);
-              }}
-            >
-              <SelectTrigger id="audience" className="w-full">
-                {/* The trigger renders the raw value, so a sentinel would read
-                    as "__default__" to a user. Every other select in this form
-                    gets away with it because its values are already words. */}
-                <SelectValue>
-                  {(value: string) =>
-                    value === NO_SEGMENT
-                      ? "Whoever your own material describes"
-                      : value === CUSTOM_AUDIENCE
-                        ? "Let me describe them"
-                        : value
-                  }
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={NO_SEGMENT}>Whoever your own material describes</SelectItem>
-                {segments.map((segment) => (
-                  <SelectItem key={segment.name} value={segment.name}>
-                    {segment.name} — {segment.assessment.priority === "explore_first" ? "Explore first" : segment.assessment.priority === "incompatible" ? "Incompatible" : "Hypothesis"}
-                    {segment.unobvious ? " · not on your site" : ""}
-                  </SelectItem>
-                ))}
-                <SelectItem value={CUSTOM_AUDIENCE}>Let me describe them</SelectItem>
-              </SelectContent>
-            </Select>
-
-            {audienceSegment === CUSTOM_AUDIENCE && (
-              <Input
-                id="target_market"
-                autoFocus
-                placeholder="Independent repair shops that resell refurbished laptops"
-                value={targetMarket}
-                onChange={(e) => setTargetMarket(e.target.value)}
-              />
-            )}
-
-            <p className="text-xs text-muted-foreground">
-              {audienceSegment === CUSTOM_AUDIENCE
-                ? "What you write here outranks what the compiler inferred — you know something about this campaign that no crawl of your site could."
-                : audienceSegment !== NO_SEGMENT
-                  ? selectedSegment?.angle
-                    ? `The copy will open on: ${selectedSegment.angle}`
-                    : "The whole sequence will be planned against this buyer."
-                  : usingExistingBrand && segments.length === 0
-                    ? "Nobody has mapped this brand's audience yet. Market → Audience finds the buyers your own site does not name, and they show up in this list."
-                    : "Every email will be planned against the buyer your website names — the opening line, the objection it answers, and the reader who grades every draft."}
-            </p>
-
-            {mappedAudienceSelected && selectedProspects.length > 0 && (
-              <div className="space-y-2 pt-1">
-                <Label htmlFor="prospect">Specific company (optional)</Label>
+              <div className="space-y-2">
+                <Label htmlFor="brand">Brand</Label>
                 <Select
-                  value={prospectChoice}
-                  onValueChange={(value) => value && setProspectChoice(value)}
+                  value={brandChoice}
+                  onValueChange={(value) => value && handleBrandChange(value)}
                 >
-                  <SelectTrigger id="prospect" className="w-full">
+                  <SelectTrigger id="brand" className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={NO_PROSPECT}>Audience-level campaign</SelectItem>
-                    {selectedProspects.map((prospect) => (
-                      <SelectItem key={prospect.id} value={prospect.id}>
-                        {prospect.name} — {prospect.qualification?.classification ?? "UNVERIFIED"}
+                    <SelectItem value={NO_BRAND}>One-off - don&apos;t save this knowledge</SelectItem>
+                    {brands.map((brand) => (
+                      <SelectItem key={brand.id} value={brand.id}>
+                        {brand.name}
+                      </SelectItem>
+                    ))}
+                    <SelectItem value={NEW_BRAND}>+ New brand</SelectItem>
+                  </SelectContent>
+                </Select>
+                {brandChoice === NEW_BRAND && (
+                  <Input
+                    placeholder="Brand name"
+                    value={newBrandName}
+                    onChange={(e) => setNewBrandName(e.target.value)}
+                  />
+                )}
+                <p className="text-xs text-muted-foreground">
+                  {usingExistingBrand
+                    ? existingKnowledgeCount === null
+                      ? "Checking what's already saved..."
+                      : existingKnowledgeCount > 0
+                        ? `${existingKnowledgeCount} knowledge source${existingKnowledgeCount === 1 ? "" : "s"} already saved for this brand.`
+                        : "Nothing saved for this brand yet - add a source below."
+                    : brandChoice === NEW_BRAND
+                      ? "Knowledge you add below is saved to this brand and reused by every future campaign for it."
+                      : "Knowledge you add below is used for this campaign only, then discarded."}
+                </p>
+              </div>
+            </div>
+          </FormSection>
+
+          <FormSection title="Who it is for">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className={showProspectPicker ? "space-y-2" : "space-y-2 sm:col-span-2"}>
+                <Label htmlFor="audience">Who this is for</Label>
+                <Select
+                  value={audienceSegment}
+                  onValueChange={(value) => {
+                    if (!value) return;
+                    setAudienceSegment(value);
+                    setProspectChoice(NO_PROSPECT);
+                  }}
+                >
+                  <SelectTrigger id="audience" className="w-full">
+                    {/* The trigger renders the raw value, so a sentinel would read
+                        as "__default__" to a user. Every other select in this form
+                        gets away with it because its values are already words. */}
+                    <SelectValue>
+                      {(value: string) =>
+                        value === NO_SEGMENT
+                          ? "Whoever your own material describes"
+                          : value === CUSTOM_AUDIENCE
+                            ? "Let me describe them"
+                            : value
+                      }
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={NO_SEGMENT}>Whoever your own material describes</SelectItem>
+                    {segments.map((segment) => (
+                      <SelectItem key={segment.name} value={segment.name}>
+                        {segment.name} — {segment.assessment.priority === "explore_first" ? "Explore first" : segment.assessment.priority === "incompatible" ? "Incompatible" : "Hypothesis"}
+                        {segment.unobvious ? " · not on your site" : ""}
+                      </SelectItem>
+                    ))}
+                    <SelectItem value={CUSTOM_AUDIENCE}>Let me describe them</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {audienceSegment === CUSTOM_AUDIENCE && (
+                  <Input
+                    id="target_market"
+                    autoFocus
+                    placeholder="Independent repair shops that resell refurbished laptops"
+                    value={targetMarket}
+                    onChange={(e) => setTargetMarket(e.target.value)}
+                  />
+                )}
+
+                <p className="text-xs text-muted-foreground">
+                  {audienceSegment === CUSTOM_AUDIENCE
+                    ? "What you write here outranks what the compiler inferred — you know something about this campaign that no crawl of your site could."
+                    : audienceSegment !== NO_SEGMENT
+                      ? selectedSegment?.angle
+                        ? `The copy will open on: ${selectedSegment.angle}`
+                        : "The whole sequence will be planned against this buyer."
+                      : usingExistingBrand && segments.length === 0
+                        ? "Nobody has mapped this brand's audience yet. Market → Audience finds the buyers your own site does not name, and they show up in this list."
+                        : "Every email will be planned against the buyer your website names — the opening line, the objection it answers, and the reader who grades every draft."}
+                </p>
+              </div>
+
+              {showProspectPicker && (
+                <div className="space-y-2">
+                  <Label htmlFor="prospect">Specific company (optional)</Label>
+                  <Select
+                    value={prospectChoice}
+                    onValueChange={(value) => value && setProspectChoice(value)}
+                  >
+                    <SelectTrigger id="prospect" className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={NO_PROSPECT}>Audience-level campaign</SelectItem>
+                      {selectedProspects.map((prospect) => (
+                        <SelectItem key={prospect.id} value={prospect.id}>
+                          {prospect.name} — {prospect.qualification?.classification ?? "UNVERIFIED"}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    Choosing a company makes its evidence-backed qualification part of the
+                    generation preflight. Leaving this at audience level never treats every found
+                    company as eligible.
+                  </p>
+                </div>
+              )}
+
+              {mappedAudienceSelected && (
+                <div
+                  className={`rounded-md p-3 text-xs sm:col-span-2 ${
+                    requiresOverride
+                      ? "bg-amber-500/10 text-amber-200"
+                      : "bg-primary/10 text-foreground/80"
+                  }`}
+                >
+                  <p className="font-medium">
+                    {recommendation
+                      ? selectedRelevance?.status === "current"
+                        ? `${recommendation.state.replaceAll("_", " ")} · ${recommendation.readiness.replaceAll("_", " ")}`
+                        : "DISCOVERY ONLY · dossier is stale"
+                      : "DISCOVERY ONLY · no current V2 dossier"}
+                  </p>
+                  <p className="mt-1">
+                    {selectedProspect
+                      ? `${selectedProspect.name}: ${selectedProspect.qualification?.classification ?? "UNVERIFIED"}.`
+                      : selectedRelevance?.status === "current"
+                        ? recommendation?.recommended_next_action ||
+                          "Build the audience's V2 relevance dossier before treating it as qualified."
+                        : "Rebuild the audience's V2 relevance dossier before treating it as qualified."}
+                  </p>
+                  {requiresOverride && (
+                    <p className="mt-1">
+                      Generation remains available, but the action below changes to “Generate
+                      anyway” and the override is recorded with the run.
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          </FormSection>
+
+          {/* Its own band, and collapsed until it is wanted: an email
+              campaign never answers any of this, and a LinkedIn one cannot
+              run without the first two fields. */}
+          <FormSection title="LinkedIn message">
+            <div className="rounded-lg border border-border">
+              <button
+                type="button"
+                onClick={() => setLinkedInOpen((open) => !open)}
+                aria-expanded={linkedInOpen}
+                className="flex w-full items-center justify-between gap-2 p-3 text-left"
+              >
+                <span className="min-w-0">
+                  <span className="block text-sm font-medium">Write to one person on LinkedIn</span>
+                  <span className="block text-xs text-muted-foreground">
+                    {recipientName
+                      ? `To ${recipientName} - ${MESSAGE_KIND_LABELS[messageKind].toLowerCase()}`
+                      : "Only for the LinkedIn deliverable below. Everything above still applies - same knowledge, same audience, same Strategist."}
+                  </span>
+                </span>
+                <span className="shrink-0 text-xs text-muted-foreground">
+                  {linkedInOpen ? "Hide" : "Show"}
+                </span>
+              </button>
+              {linkedInOpen && (
+                <div className="grid gap-4 border-t border-border p-3 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="recipient_name">Who is it to?</Label>
+                    <Input
+                      id="recipient_name"
+                      placeholder="Alice Martin"
+                      value={recipientName}
+                      onChange={(e) => setRecipientName(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="recipient_url">Their LinkedIn URL</Label>
+                    <Input
+                      id="recipient_url"
+                      type="url"
+                      placeholder="https://www.linkedin.com/in/..."
+                      value={recipientUrl}
+                      onChange={(e) => setRecipientUrl(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label htmlFor="recipient_context">Facts you have checked about them (optional)</Label>
+                    <Textarea
+                      id="recipient_context"
+                      rows={2}
+                      placeholder="Only what you can confirm - a search suggestion is not evidence."
+                      value={recipientContext}
+                      onChange={(e) => {
+                        setRecipientContext(e.target.value);
+                        setContextFromSearch(false);
+                      }}
+                    />
+                    {contextFromSearch ? (
+                      /* It came off a search result, so it is a lead and not a
+                         fact yet. Said in the same words the search result
+                         itself used, and in the same colour, because it is the
+                         same warning: open their profile, correct the line,
+                         cut anything you cannot see there. */
+                      <p className="text-xs text-amber-300">
+                        Prefilled from the search result and not checked by anyone. Open their
+                        profile, fix what is wrong and cut what you cannot see - the writer argues
+                        from this line as though you had confirmed it.
+                      </p>
+                    ) : (
+                      <p className="text-xs text-muted-foreground">
+                        The only recipient-specific thing the writer may argue from, and what
+                        separates a message from a broadcast. Left empty, it introduces itself
+                        honestly instead of guessing what they need.
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="message_kind">Format</Label>
+                    <Select
+                      value={messageKind}
+                      onValueChange={(value) => value && setMessageKind(value as "connection" | "message")}
+                    >
+                      <SelectTrigger id="message_kind" className="w-full">
+                        <SelectValue>
+                          {(value: string) => MESSAGE_KIND_LABELS[value as "connection" | "message"]}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="connection">{MESSAGE_KIND_LABELS.connection}</SelectItem>
+                        <SelectItem value="message">{MESSAGE_KIND_LABELS.message}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">
+                      Our editorial limits, not a claim about what LinkedIn accepts.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="message_language">Language</Label>
+                    <Input
+                      id="message_language"
+                      value={messageLanguage}
+                      onChange={(e) => setMessageLanguage(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </FormSection>
+
+          <FormSection title="What it reads">
+            <div className="grid gap-4 sm:grid-cols-2">
+              {usingExistingBrand && (
+                <div className="space-y-2 sm:col-span-2">
+                  <Label htmlFor="recompile">Knowledge base</Label>
+                  <Select
+                    value={forceRecompile ? "regenerate" : "reuse"}
+                    onValueChange={(value) => value && setForceRecompile(value === "regenerate")}
+                    disabled={brandKnowledge === undefined}
+                  >
+                    <SelectTrigger id="recompile" className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="reuse" disabled={!brandKnowledge}>
+                        Reuse what&apos;s already compiled
+                      </SelectItem>
+                      <SelectItem value="regenerate">Regenerate from scratch</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    {brandKnowledge === undefined
+                      ? "Checking whether this brand has a compiled knowledge base..."
+                      : brandKnowledge
+                        ? forceRecompile
+                          ? `Every source will be re-read, replacing the v${brandKnowledge.version} knowledge base compiled ${new Date(brandKnowledge.compiled_at).toLocaleDateString()}.`
+                          : `Reusing the v${brandKnowledge.version} knowledge base compiled ${new Date(brandKnowledge.compiled_at).toLocaleDateString()} - the cheaper, default path.`
+                        : "This brand has never been compiled - it will be generated fresh on this run."}
+                  </p>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="product_url">
+                  {usingExistingBrand ? "Add another page (optional)" : "Product URL (optional)"}
+                </Label>
+                <Input
+                  id="product_url"
+                  type="url"
+                  placeholder="https://yourproduct.com"
+                  value={productUrl}
+                  onChange={(e) => setProductUrl(e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  {alreadyKnownSource
+                    ? "This brand has already read this page - it won't be crawled again, so the compiled knowledge stays reusable."
+                    : "We read the page and use your own words in the copy."}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="assets">
+                  {usingExistingBrand
+                    ? "Additional screenshots or documents (optional)"
+                    : "Screenshots or documents (optional)"}
+                </Label>
+                <Input
+                  id="assets"
+                  type="file"
+                  multiple
+                  ref={fileInput}
+                  accept=".png,.jpg,.jpeg,.webp,.gif,.pdf,.docx,.md,.txt"
+                  onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
+                />
+                {files.length > 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    {files.map((file) => file.name).join(", ")}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="product_description">Additional context (optional)</Label>
+                <Textarea
+                  id="product_description"
+                  aria-describedby="product_description_hint"
+                  placeholder="Anything specific to this campaign that isn't in your sources…"
+                  rows={3}
+                  value={productDescription}
+                  onChange={(e) => setProductDescription(e.target.value)}
+                />
+                <p id="product_description_hint" className="text-xs text-muted-foreground">
+                  {usingExistingBrand
+                    ? "We'll use this brand's knowledge base and saved sources. Add only any extra details for this campaign."
+                    : "We'll use the sources you add. You can include extra details here if needed."}
+                </p>
+              </div>
+            </div>
+          </FormSection>
+
+          <FormSection title="How it reads">
+            <div className="grid gap-4 sm:grid-cols-2">
+              {/* The last line of render_context() that no form filled. The
+                  strategist is told the product, the audience and the sender; what
+                  the campaign is *for* was the one input it had to infer, and a
+                  sequence planned toward "trial signups" escalates differently
+                  from one planned toward a reply. Optional, and omitted when
+                  blank, so a run that says nothing here plans exactly as before. */}
+              <div className="space-y-2">
+                <Label htmlFor="goals">What do you want out of it? (optional)</Label>
+                <Input
+                  id="goals"
+                  placeholder="Trial signups"
+                  value={goals}
+                  onChange={(e) => setGoals(e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  The outcome the sequence is planned toward, not the copy&apos;s subject. It
+                  decides what each email escalates to and what the last one asks for.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="tone">Brand tone</Label>
+                <Select value={tone} onValueChange={(value) => value && setTone(value as Tone)}>
+                  <SelectTrigger id="tone" className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(Object.keys(TONE_LABELS) as Tone[]).map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {TONE_LABELS[option]}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+
+              {/* Two fields, and the cheapest conversion in the form. Left empty,
+                  every email in the campaign is signed by the company - a
+                  signature readers have learned to skim past because it is a
+                  broadcast. The writer is never allowed to invent a name to fill
+                  this, so this is the only way one gets there. */}
+              <div className="space-y-2">
+                <Label htmlFor="sender_name">Who is it from? (optional)</Label>
+                <Input
+                  id="sender_name"
+                  placeholder="Marco"
+                  value={senderName}
+                  onChange={(e) => setSenderName(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="sender_role">Their role (optional)</Label>
+                <Input
+                  id="sender_role"
+                  placeholder="founder"
+                  value={senderRole}
+                  onChange={(e) => setSenderRole(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="tier">How it looks</Label>
+                <Select
+                  value={emailTier ?? ""}
+                  onValueChange={(value) => value && setEmailTier(value as EmailTier)}
+                >
+                  <SelectTrigger id="tier" className="w-full">
+                    <SelectValue placeholder="Follow the deliverable">
+                      {(value: string) =>
+                        value ? TIER_LABELS[value as EmailTier] : "Follow the deliverable"
+                      }
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="plain">{TIER_LABELS.plain}</SelectItem>
+                    <SelectItem value="branded">{TIER_LABELS.branded}</SelectItem>
+                  </SelectContent>
+                </Select>
                 <p className="text-xs text-muted-foreground">
-                  Choosing a company makes its evidence-backed qualification part of the
-                  generation preflight. Leaving this at audience level never treats every found
-                  company as eligible.
+                  {emailTier === "branded"
+                    ? usingExistingBrand
+                      ? "Set the logo, colour and footer on the brand page, or it renders as plain."
+                      : "Nothing to brand it with until this campaign is attached to a brand."
+                    : emailTier === "plain"
+                      ? "One person writing to another. The right answer for cold outreach."
+                      : "Cart recovery and launches come out branded; anything cold stays plain."}
                 </p>
               </div>
-            )}
 
-            {mappedAudienceSelected && (
-              <div
-                className={`rounded-md p-3 text-xs ${
-                  requiresOverride
-                    ? "bg-amber-500/10 text-amber-200"
-                    : "bg-primary/10 text-foreground/80"
-                }`}
-              >
-                <p className="font-medium">
-                  {recommendation
-                    ? selectedRelevance?.status === "current"
-                      ? `${recommendation.state.replaceAll("_", " ")} · ${recommendation.readiness.replaceAll("_", " ")}`
-                      : "DISCOVERY ONLY · dossier is stale"
-                    : "DISCOVERY ONLY · no current V2 dossier"}
+              <div className="space-y-2">
+                <Label htmlFor="cta-url">Where the button goes (optional)</Label>
+                <Input
+                  id="cta-url"
+                  type="url"
+                  placeholder="https://yourproduct.com/cart"
+                  value={ctaUrl}
+                  onChange={(e) => setCtaUrl(e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  The writer never invents a link. Without one here the brand&rsquo;s website is
+                  used, and with neither the call to action stays a marked slot for you to fill.
                 </p>
-                <p className="mt-1">
-                  {selectedProspect
-                    ? `${selectedProspect.name}: ${selectedProspect.qualification?.classification ?? "UNVERIFIED"}.`
-                    : selectedRelevance?.status === "current"
-                      ? recommendation?.recommended_next_action ||
-                        "Build the audience's V2 relevance dossier before treating it as qualified."
-                      : "Rebuild the audience's V2 relevance dossier before treating it as qualified."}
-                </p>
-                {requiresOverride && (
-                  <p className="mt-1">
-                    Generation remains available, but the action below changes to “Generate
-                    anyway” and the override is recorded with the run.
-                  </p>
-                )}
               </div>
-            )}
-          </div>
-
-          {usingExistingBrand && (
-            <div className="space-y-2">
-              <Label htmlFor="recompile">Knowledge base</Label>
-              <Select
-                value={forceRecompile ? "regenerate" : "reuse"}
-                onValueChange={(value) => value && setForceRecompile(value === "regenerate")}
-                disabled={brandKnowledge === undefined}
-              >
-                <SelectTrigger id="recompile" className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="reuse" disabled={!brandKnowledge}>
-                    Reuse what&apos;s already compiled
-                  </SelectItem>
-                  <SelectItem value="regenerate">Regenerate from scratch</SelectItem>
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-muted-foreground">
-                {brandKnowledge === undefined
-                  ? "Checking whether this brand has a compiled knowledge base..."
-                  : brandKnowledge
-                    ? forceRecompile
-                      ? `Every source will be re-read, replacing the v${brandKnowledge.version} knowledge base compiled ${new Date(brandKnowledge.compiled_at).toLocaleDateString()}.`
-                      : `Reusing the v${brandKnowledge.version} knowledge base compiled ${new Date(brandKnowledge.compiled_at).toLocaleDateString()} - the cheaper, default path.`
-                    : "This brand has never been compiled - it will be generated fresh on this run."}
-              </p>
             </div>
-          )}
+          </FormSection>
 
-          <div className="space-y-2">
-            <Label htmlFor="product_description">Additional context (optional)</Label>
-            <Textarea
-              id="product_description"
-              aria-describedby="product_description_hint"
-              placeholder="Anything specific to this campaign that isn't in your sources…"
-              rows={3}
-              value={productDescription}
-              onChange={(e) => setProductDescription(e.target.value)}
-            />
-            <p id="product_description_hint" className="text-xs text-muted-foreground">
-              {usingExistingBrand
-                ? "We'll use this brand's knowledge base and saved sources. Add only any extra details for this campaign."
-                : "We'll use the sources you add. You can include extra details here if needed."}
-            </p>
-          </div>
+          <FormSection title="How it runs">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="policy_preset">Execution preset</Label>
+                <Select
+                  value={policyPreset}
+                  onValueChange={(value) => value && setPolicyPreset(value as PolicyPreset)}
+                >
+                  <SelectTrigger id="policy_preset" className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(Object.keys(PRESET_LABELS) as PolicyPreset[]).map((preset) => (
+                      <SelectItem key={preset} value={preset}>
+                        {PRESET_LABELS[preset]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="product_url">
-              {usingExistingBrand ? "Add another page (optional)" : "Product URL (optional)"}
-            </Label>
-            <Input
-              id="product_url"
-              type="url"
-              placeholder="https://yourproduct.com"
-              value={productUrl}
-              onChange={(e) => setProductUrl(e.target.value)}
-            />
-            <p className="text-xs text-muted-foreground">
-              {alreadyKnownSource
-                ? "This brand has already read this page - it won't be crawled again, so the compiled knowledge stays reusable."
-                : "We read the page and use your own words in the copy."}
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="assets">
-              {usingExistingBrand
-                ? "Additional screenshots or documents (optional)"
-                : "Screenshots or documents (optional)"}
-            </Label>
-            <Input
-              id="assets"
-              type="file"
-              multiple
-              ref={fileInput}
-              accept=".png,.jpg,.jpeg,.webp,.gif,.pdf,.docx,.md,.txt"
-              onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
-            />
-            {files.length > 0 && (
-              <p className="text-xs text-muted-foreground">
-                {files.map((file) => file.name).join(", ")}
-              </p>
-            )}
-          </div>
-
-          {/* Two fields, and the cheapest conversion in the form. Left empty,
-              every email in the campaign is signed by the company - a
-              signature readers have learned to skim past because it is a
-              broadcast. The writer is never allowed to invent a name to fill
-              this, so this is the only way one gets there. */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label htmlFor="sender_name">Who is it from? (optional)</Label>
-              <Input
-                id="sender_name"
-                placeholder="Marco"
-                value={senderName}
-                onChange={(e) => setSenderName(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="sender_role">Their role (optional)</Label>
-              <Input
-                id="sender_role"
-                placeholder="founder"
-                value={senderRole}
-                onChange={(e) => setSenderRole(e.target.value)}
-              />
-            </div>
-          </div>
-
-          {/* The last line of render_context() that no form filled. The
-              strategist is told the product, the audience and the sender; what
-              the campaign is *for* was the one input it had to infer, and a
-              sequence planned toward "trial signups" escalates differently
-              from one planned toward a reply. Optional, and omitted when
-              blank, so a run that says nothing here plans exactly as before. */}
-          <div className="space-y-2">
-            <Label htmlFor="goals">What do you want out of it? (optional)</Label>
-            <Input
-              id="goals"
-              placeholder="Trial signups"
-              value={goals}
-              onChange={(e) => setGoals(e.target.value)}
-            />
-            <p className="text-xs text-muted-foreground">
-              The outcome the sequence is planned toward, not the copy&apos;s subject. It
-              decides what each email escalates to and what the last one asks for.
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="policy_preset">Execution preset</Label>
-            <Select
-              value={policyPreset}
-              onValueChange={(value) => value && setPolicyPreset(value as PolicyPreset)}
-            >
-              <SelectTrigger id="policy_preset" className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {(Object.keys(PRESET_LABELS) as PolicyPreset[]).map((preset) => (
-                  <SelectItem key={preset} value={preset}>
-                    {PRESET_LABELS[preset]}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Separate from the preset on purpose: the preset decides the shape
-              of a run (how many drafts, which judges, what budget), this
-              decides which model does each job. Folding them together would
-              mean picking a model silently changed how many drafts get
-              written. */}
-          {modelCatalog && (
-            <div className="rounded-lg border border-border">
-              <button
-                type="button"
-                onClick={() => setCustomModelsOpen((open) => !open)}
-                aria-expanded={customModelsOpen}
-                className="flex w-full items-center justify-between gap-2 p-3 text-left"
-              >
-                <span className="min-w-0">
-                  <span className="block text-sm font-medium">Custom models</span>
-                  <span className="block text-xs text-muted-foreground">
-                    {Object.keys(modelOverrides).length > 0
-                      ? `${Object.keys(modelOverrides).length} pinned - Claude and GPT can be mixed in one run`
-                      : "Optional. Choose the model behind each agent, from Claude or GPT."}
-                  </span>
-                </span>
-                <span className="shrink-0 text-xs text-muted-foreground">
-                  {customModelsOpen ? "Hide" : "Show"}
-                </span>
-              </button>
-              {customModelsOpen && (
-                <div className="border-t border-border p-3">
-                  <ModelOverridePanel
-                    catalog={modelCatalog}
-                    value={modelOverrides}
-                    onChange={setModelOverrides}
-                    disabled={submitting}
-                  />
+              {/* Separate from the preset on purpose: the preset decides the shape
+                  of a run (how many drafts, which judges, what budget), this
+                  decides which model does each job. Folding them together would
+                  mean picking a model silently changed how many drafts get
+                  written. */}
+              {modelCatalog && (
+                <div className="rounded-lg border border-border">
+                  <button
+                    type="button"
+                    onClick={() => setCustomModelsOpen((open) => !open)}
+                    aria-expanded={customModelsOpen}
+                    className="flex w-full items-center justify-between gap-2 p-3 text-left"
+                  >
+                    <span className="min-w-0">
+                      <span className="block text-sm font-medium">Custom models</span>
+                      <span className="block text-xs text-muted-foreground">
+                        {Object.keys(modelOverrides).length > 0
+                          ? `${Object.keys(modelOverrides).length} pinned - Claude and GPT can be mixed in one run`
+                          : "Optional. Choose the model behind each agent, from Claude or GPT."}
+                      </span>
+                    </span>
+                    <span className="shrink-0 text-xs text-muted-foreground">
+                      {customModelsOpen ? "Hide" : "Show"}
+                    </span>
+                  </button>
+                  {customModelsOpen && (
+                    <div className="border-t border-border p-3">
+                      <ModelOverridePanel
+                        catalog={modelCatalog}
+                        value={modelOverrides}
+                        onChange={setModelOverrides}
+                        disabled={submitting}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-          )}
-
-          <div className="space-y-2">
-            <Label htmlFor="tone">Brand tone</Label>
-            <Select value={tone} onValueChange={(value) => value && setTone(value as Tone)}>
-              <SelectTrigger id="tone" className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {(Object.keys(TONE_LABELS) as Tone[]).map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {TONE_LABELS[option]}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          </FormSection>
         </div>
 
-        <DialogFooter className="flex-col items-stretch gap-3 sm:flex-col sm:items-stretch">
-          <div className="space-y-2">
+        <DialogFooter className="mx-0 mb-0 flex-col items-stretch gap-3 px-5 py-4 sm:flex-col sm:items-stretch">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-sm font-medium">What do you want to create?</p>
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-              <Button
-                type="button"
-                size="lg"
-                className="h-auto flex-col items-start gap-0.5 py-3 text-left"
-                disabled={submitting}
-                onClick={() => handleGenerate("cart_recovery")}
-              >
-                <span className="font-semibold">
-                  {requiresOverride ? "Generate anyway: Cart Sequence" : "Abandoned Cart Sequence"}
-                </span>
-                <span className="text-xs font-normal opacity-80">3 emails</span>
-              </Button>
-              <Button
-                type="button"
-                size="lg"
-                className="h-auto flex-col items-start gap-0.5 py-3 text-left"
-                disabled={submitting}
-                onClick={() => handleGenerate("launch_email")}
-              >
-                <span className="font-semibold">
-                  {requiresOverride ? "Generate anyway: Launch Email" : "Launch Email"}
-                </span>
-                <span className="text-xs font-normal opacity-80">1 email</span>
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="lg"
-                className="h-auto flex-col items-start gap-0.5 py-3 text-left"
-                disabled
-                title="Not built yet - the pipeline only knows how to write emails today."
-              >
-                <span className="flex items-center gap-2 font-semibold">
-                  3 Facebook Ad Posts
-                  <Badge variant="secondary">Coming soon</Badge>
-                </span>
-                <span className="text-xs font-normal opacity-80">Not available yet</span>
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="lg"
-                className="h-auto flex-col items-start gap-0.5 py-3 text-left"
-                disabled={submitting}
-                onClick={handleManageKnowledge}
-              >
-                <span className="font-semibold">Manage Knowledge Base</span>
-                <span className="text-xs font-normal opacity-80">
-                  Add sources without generating anything
-                </span>
-              </Button>
-            </div>
+            {/* Not a deliverable - it leaves the form - so it does not sit in the
+                same row as the buttons that start a run. */}
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              disabled={submitting}
+              onClick={handleManageKnowledge}
+            >
+              Manage knowledge base
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            <Button
+              type="button"
+              size="lg"
+              className="h-auto flex-col items-start gap-0.5 py-3 text-left"
+              disabled={submitting}
+              onClick={() => handleGenerate("cart_recovery")}
+            >
+              <span className="font-semibold">
+                {requiresOverride ? "Generate anyway: Cart Sequence" : "Abandoned Cart Sequence"}
+              </span>
+              <span className="text-xs font-normal opacity-80">3 emails</span>
+            </Button>
+            <Button
+              type="button"
+              size="lg"
+              className="h-auto flex-col items-start gap-0.5 py-3 text-left"
+              disabled={submitting}
+              onClick={() => handleGenerate("launch_email")}
+            >
+              <span className="font-semibold">
+                {requiresOverride ? "Generate anyway: Launch Email" : "Launch Email"}
+              </span>
+              <span className="text-xs font-normal opacity-80">1 email</span>
+            </Button>
+            <Button
+              type="button"
+              size="lg"
+              className="h-auto flex-col items-start gap-0.5 py-3 text-left"
+              disabled={submitting}
+              onClick={() => handleGenerate("linkedin_message")}
+            >
+              <span className="font-semibold">
+                {requiresOverride ? "Generate anyway: LinkedIn Message" : "LinkedIn Message"}
+              </span>
+              <span className="text-xs font-normal opacity-80">
+                1 message{recipientName ? ` to ${recipientName}` : " - needs a recipient"}
+              </span>
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              className="h-auto flex-col items-start gap-0.5 py-3 text-left"
+              disabled
+              title="Not built yet - the pipeline only knows how to write emails and LinkedIn messages today."
+            >
+              <span className="flex items-center gap-2 font-semibold">
+                3 Facebook Ad Posts
+                <Badge variant="secondary">Coming soon</Badge>
+              </span>
+              <span className="text-xs font-normal opacity-80">Not available yet</span>
+            </Button>
           </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+/** One labelled band of the campaign form. The dialog asks sixteen questions;
+ * grouping them is the difference between a form and a wall. */
+function FormSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="space-y-3">
+      <h3 className="border-b border-border/60 pb-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+        {title}
+      </h3>
+      {children}
+    </section>
   );
 }

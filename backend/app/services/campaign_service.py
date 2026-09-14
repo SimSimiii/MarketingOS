@@ -3,11 +3,12 @@ from datetime import UTC, datetime
 from uuid import UUID
 
 from sqlalchemy import delete
-from sqlmodel import Session, col
+from sqlmodel import Session, col, select
 
 from app.ai.base import AIProvider
 from app.ai.roles import validate_overrides
 from app.auth.principal import Principal
+from app.auth.scope import owned
 from app.knowledge.store import ArtifactScope, ArtifactStore, fingerprint_documents
 from app.marketing.contract import linkedin_contract, parse_contract
 from app.marketing.forecast import forecast
@@ -147,12 +148,14 @@ class CampaignService:
     def get_campaign(self, campaign_id: UUID) -> Campaign | None:
         return self._campaigns.get(campaign_id)
 
-    def list_campaigns(self, include_archived: bool = False) -> list[Campaign]:
-        return self._campaigns.list_all() if include_archived else self._campaigns.list_active()
+    def list_campaigns(self, include_archived: bool = False, *, limit: int | None = None,
+                       offset: int = 0, brand_id: UUID | None = None) -> list[Campaign]:
+        read = self._campaigns.list_all if include_archived else self._campaigns.list_active
+        return read(limit, offset, brand_id)
 
-    def latest_run_by_campaign(self) -> dict[UUID, tuple[ExecutionStatus, datetime]]:
+    def latest_run_by_campaign(self, campaign_ids=None) -> dict[UUID, tuple[ExecutionStatus, datetime]]:
         """Feeds CampaignRead.last_run_status for a whole list in one query."""
-        return self._executions.latest_by_campaign()  # type: ignore[return-value]
+        return self._executions.latest_by_campaign(campaign_ids)  # type: ignore[return-value]
 
     def delete_campaign(self, campaign: Campaign) -> None:
         """Remove the campaign and everything that belongs to it.
@@ -580,13 +583,12 @@ class CampaignService:
     def list_running_executions(self) -> list[tuple[CampaignExecution, Campaign | None]]:
         """In-flight runs paired with the campaign they belong to, so the
         dashboard can name them without a request per row."""
-        executions = self._executions.list_running()
-        campaigns = {
-            campaign.id: campaign
-            for campaign in self._campaigns.list_all()
-            if campaign.id in {execution.campaign_id for execution in executions}
-        }
-        return [(execution, campaigns.get(execution.campaign_id)) for execution in executions]
+        statement = select(CampaignExecution, Campaign).join(
+            Campaign, Campaign.id == CampaignExecution.campaign_id
+        ).where(CampaignExecution.status == ExecutionStatus.RUNNING)
+        if self._principal is not None:
+            statement = owned(statement, Campaign, self._principal)
+        return list(self._session.exec(statement.order_by(CampaignExecution.started_at.desc())))
 
 
 def _observed_cost(runs: list[tuple[float, int]]) -> float:

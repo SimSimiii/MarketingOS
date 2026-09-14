@@ -686,6 +686,7 @@ class MarketStore:
         brand_id: UUID,
         segment: str | None = None,
         status: ProspectStatus | None = None,
+        *, limit: int | None = None, offset: int = 0,
     ) -> list[ProspectRow]:
         statement = select(ProspectRow).where(col(ProspectRow.brand_id) == brand_id)
         if segment is not None:
@@ -694,7 +695,8 @@ class MarketStore:
             statement = statement.where(col(ProspectRow.status) == str(status))
         return list(
             self._session.exec(
-                statement.order_by(col(ProspectRow.fit).desc(), col(ProspectRow.found_at))
+                statement.order_by(col(ProspectRow.fit).desc(), col(ProspectRow.found_at),
+                                   ProspectRow.id).offset(offset).limit(limit)
             )
         )
 

@@ -7,6 +7,7 @@ from uuid import UUID
 
 from sqlmodel import Session
 
+from app.auth.principal import Principal
 from app.core.config import get_settings
 from app.ingestion.analyzers.image_analyzer import ImageAnalyzer
 from app.ingestion.assets.loader import AssetLoader
@@ -24,6 +25,8 @@ from app.ingestion.store.in_memory_store import InMemoryKnowledgeStore
 from app.ingestion.vision.claude_vision_provider import ClaudeVisionProvider
 from app.knowledge.base import KnowledgeBase, build_knowledge_base
 from app.knowledge.store import ArtifactScope, ArtifactStore
+from app.models.brand import Brand
+from app.models.campaign import Campaign
 from app.models.knowledge_document import KnowledgeDocument
 from app.repositories.knowledge_repository import KnowledgeDocumentRepository
 
@@ -48,8 +51,9 @@ class KnowledgeService:
     see app.knowledge.compiler.
     """
 
-    def __init__(self, session: Session) -> None:
-        self._documents = KnowledgeDocumentRepository(session)
+    def __init__(self, session: Session, principal: Principal | None = None) -> None:
+        self._principal = principal
+        self._documents = KnowledgeDocumentRepository(session, principal)
         self._artifacts = ArtifactStore(session)
         #: Content already filed under a scope, keyed by (campaign_id, brand_id)
         #: then by content hash - see _persist.
@@ -156,7 +160,15 @@ class KnowledgeService:
             temp_path = handle.name
         try:
             if resolved == SourceType.IMAGE:
-                ingested = await self._multimodal.ingest_image(temp_path)
+                from app.runtime.work_limits import Reservation, current_work
+
+                permit = Reservation(self._documents.session.get_bind(), self._owner(campaign_id, brand_id))
+                token = current_work.set(permit)
+                try:
+                    ingested = await self._multimodal.ingest_image(temp_path)
+                finally:
+                    current_work.reset(token)
+                    permit.finish()
             else:
                 # The one caller allowed to hand a loader a path: this one is
                 # ours, written just above from the uploaded bytes.
@@ -172,13 +184,14 @@ class KnowledgeService:
         ]
 
     def list_documents(
-        self, campaign_id: UUID | None = None, brand_id: UUID | None = None
+        self, campaign_id: UUID | None = None, brand_id: UUID | None = None,
+        *, limit: int = 100, offset: int = 0,
     ) -> list[KnowledgeDocument]:
         if brand_id is not None:
-            return self._documents.list_for_brand(brand_id)
+            return self._documents.list_for_brand(brand_id, limit, offset)
         if campaign_id is None:
-            return self._documents.list()
-        return self._documents.list_for_campaign(campaign_id)
+            return self._documents.list(limit, offset)
+        return self._documents.list_for_campaign(campaign_id, limit, offset)
 
     def get_document(self, document_id: UUID) -> KnowledgeDocument | None:
         return self._documents.get(document_id)
@@ -252,6 +265,7 @@ class KnowledgeService:
 
         document = self._documents.create(
             KnowledgeDocument(
+                owner_id=self._owner(campaign_id, brand_id),
                 campaign_id=campaign_id,
                 brand_id=brand_id,
                 title=title or ingested.title,
@@ -265,6 +279,13 @@ class KnowledgeService:
         if filed is not None:
             filed[hashlib.sha256(document.content.encode("utf-8")).hexdigest()] = document
         return document
+
+    def _owner(self, campaign_id: UUID | None, brand_id: UUID | None) -> UUID | None:
+        root = (
+            self._documents.session.get(Campaign, campaign_id) if campaign_id
+            else self._documents.session.get(Brand, brand_id) if brand_id else None
+        )
+        return root.owner_id if root else self._principal.owner_id if self._principal else None
 
     def _filed_in_scope(
         self, campaign_id: UUID | None, brand_id: UUID | None

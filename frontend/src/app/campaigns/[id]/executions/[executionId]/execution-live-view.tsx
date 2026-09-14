@@ -42,6 +42,10 @@ interface StoredReport {
    * a low score is a verdict on what the run was allowed to buy rather than
    * on the copy. */
   notes?: string[];
+  /** False on a channel no cold reader grades - a LinkedIn message. The pull
+   * column is then a placeholder everywhere it appears, and showing it as a
+   * score would invent one. */
+  reads_expected?: boolean;
   emails: {
     position: number;
     subject: string;
@@ -62,6 +66,7 @@ interface StoredReport {
     /** False when no cold reader came back, which makes `pull` a placeholder
      * rather than a score. */
     read_reported?: boolean;
+    relevant?: boolean | null;
     /** What the cold readers actually said about the version that shipped -
      * the only output in the system that says what to write instead, rather
      * than passing verdict on what was written. */
@@ -133,21 +138,13 @@ export function ExecutionLiveView({
   const confirmStop = useConfirm();
   const [now, setNow] = useState(() => Date.now());
 
-  const { events, phase } = useExecutionStream(executionId, !TERMINAL.includes(initialStatus));
+  const { events, phase, refresh, updatedAt } = useExecutionStream(executionId);
   const run = useMemo(() => reduceRun(events), [events]);
 
   const status = run.finalStatus ?? initialStatus;
   const isLive = !TERMINAL.includes(status);
   const report = reportFromResult(initialResult);
   const questions = report?.questions ?? [];
-
-  // A campaign can sit on one model call for half a minute; without a moving
-  // clock the page reads as frozen.
-  useEffect(() => {
-    if (!isLive) return;
-    const timer = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(timer);
-  }, [isLive]);
 
   // Deliverables land mid-run: refetch whenever another email is accepted, and
   // once more when the run ends so the final rows are authoritative.
@@ -235,6 +232,17 @@ export function ExecutionLiveView({
           {assets.length} deliverable{assets.length === 1 ? "" : "s"}
         </span>
         <div className="ml-auto flex items-center gap-2">
+          <Button variant="outline" size="sm" disabled={phase === "loading"} onClick={async () => {
+            await refresh();
+            setNow(Date.now());
+            try {
+              const result = await api.getExecutionResult(executionId);
+              setAssets(result.assets);
+              setErrorMessage(result.error_message);
+            } catch (error) { toast.error(error instanceof Error ? error.message : "Could not refresh results"); }
+            router.refresh();
+          }}>{phase === "loading" ? "Refreshing…" : "Refresh"}</Button>
+          <span className="text-xs text-muted-foreground">{updatedAt ? `Snapshot ${updatedAt}` : "Loading snapshot"}</span>
           <CopyAllButton assets={assets} />
           {isLive && (
             <>
@@ -269,7 +277,7 @@ export function ExecutionLiveView({
         <span className="tabular-nums">
           {run.steps.length} step{run.steps.length === 1 ? "" : "s"}
         </span>
-        {isLive && <ConnectionIndicator phase={phase} />}
+        <ConnectionIndicator phase={phase} />
       </div>
 
       {/* A run that stopped to ask is not a failure, and showing it as one -
@@ -353,13 +361,20 @@ export function ExecutionLiveView({
                   : "default"
               }
             >
-              {averagePull(report).toFixed(1)}/10 with a cold reader
+              {/* A channel no cold reader has ever read has no score, and a
+                  0.0/10 in this badge would be read as one. */}
+              {report.reads_expected === false
+                ? "Checked, not scored"
+                : `${averagePull(report).toFixed(1)}/10 · AI simulation, uncalibrated`}
             </Badge>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <p className="text-muted-foreground">
-              Delivered {report.delivered} of {report.promised} email
+              Delivered {report.delivered} of {report.promised}{" "}
+              {report.reads_expected === false ? "LinkedIn message" : "email"}
               {report.promised === 1 ? "" : "s"}.
+              {report.reads_expected === false &&
+                " Every claim passed the evidence gate; no cold-reader panel grades this channel."}
             </p>
             <ul className="space-y-1 text-muted-foreground">
               {report.emails.map((line) => (
@@ -370,13 +385,14 @@ export function ExecutionLiveView({
                     : `${line.pull.toFixed(0)}/10`}{" "}
                   after {line.revisions} rewrite{line.revisions === 1 ? "" : "s"}
                   {line.clean ? "" : " (shipped with unresolved checks)"}
+                  {line.relevant === false && <span className="text-amber-400"> · Unresolved audience mismatch</span>}
                 </li>
               ))}
             </ul>
             {belowFloor(report).length > 0 && (
               <p className="text-amber-400">
                 Email{belowFloor(report).length === 1 ? "" : "s"} {belowFloor(report).join(", ")}{" "}
-                never reached the 7/10 floor. The loop stopped rewriting them; it did not decide
+                did not satisfy the simulated assessment criteria. The loop stopped rewriting them; it did not decide
                 these were ready to send.
                 {/* Only the emails actually below the floor may speak here: one
                     that stopped early and was later rescued by the sequence pass
@@ -460,23 +476,7 @@ export function ExecutionLiveView({
 }
 
 function ConnectionIndicator({ phase }: { phase: ReturnType<typeof useExecutionStream>["phase"] }) {
-  if (phase === "reconnecting") {
-    return (
-      <span className="flex items-center gap-1.5 text-amber-400">
-        <span className="size-1.5 animate-pulse rounded-full bg-amber-400" />
-        reconnecting
-      </span>
-    );
-  }
-  if (phase === "loading") {
-    return <span className="text-muted-foreground">connecting...</span>;
-  }
-  return (
-    <span className="flex items-center gap-1.5">
-      <span className="size-1.5 animate-pulse rounded-full bg-primary" />
-      live
-    </span>
-  );
+  return <span role="status" className="text-muted-foreground">{phase === "error" ? "Refresh failed — showing last snapshot. Retry with Refresh." : phase === "loading" ? "Refreshing…" : "Manual refresh"}</span>;
 }
 
 /** One card per reasoning role, showing how many turns it has taken. Unlike

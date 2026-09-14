@@ -22,6 +22,7 @@ from app.models.execution_log import ExecutionLog
 from app.models.generated_asset import GeneratedAsset
 from app.models.knowledge_artifacts import KnowledgeArtifactSet
 from app.models.knowledge_document import KnowledgeDocument
+from app.models.linkedin import LinkedInRun
 from app.models.market import (
     AudienceMapRow,
     AudienceResearchRow,
@@ -53,6 +54,7 @@ __all__ = [
     "GeneratedAsset",
     "KnowledgeArtifactSet",
     "KnowledgeDocument",
+    "LinkedInRun",
     "LogLevel",
     "MarketScan",
     "ProductCapabilityProfileRow",

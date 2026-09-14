@@ -29,7 +29,7 @@ estimate nobody can trust is worse than no estimate.
 
 from dataclasses import dataclass
 
-from app.marketing.contract import DeliverableContract
+from app.marketing.contract import DeliverableContract, DeliverableKind
 from app.marketing.policy import ExecutionPolicy
 
 #: Calls the knowledge compile makes besides reading for evidence: the
@@ -170,8 +170,22 @@ def forecast(
     it is bought only when the brief comes back with the wrong number of
     emails, which is a failure rather than a step.
     """
-    emails = max(1, contract.count)
     total = compile_forecast(policy, material_chars, knowledge_reused)
+    if contract.kind is DeliverableKind.LINKEDIN_MESSAGE:
+        # Knowledge, one Strategist call, and the writer - which buys a second
+        # turn when its own draft failed a check. No cold read, no duel, no
+        # critic and no sequence pass: that whole apparatus grades email copy,
+        # and this channel does not have it. See
+        # `EmailCampaignPipeline._phase_message`.
+        #
+        # The second turn is bought more often than the word "failed" suggests,
+        # and deliberately so: with no reader in this channel, the free checks
+        # are the only thing that ever sends a message back, and half of what
+        # they catch is copy that could ship and should not. The ceiling is
+        # unchanged - there was never a third turn - so this spends more of the
+        # range the user was already quoted rather than more than it.
+        return total + Forecast(low=2, high=4)
+    emails = max(1, contract.count)
     per_email = email_forecast(policy)
     total += Forecast(low=per_email.low * emails, high=per_email.high * emails)
     total += rework_forecast(policy, emails)

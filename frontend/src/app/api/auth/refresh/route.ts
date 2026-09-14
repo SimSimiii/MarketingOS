@@ -15,7 +15,12 @@ import {
  * what comes back. Dropping the response would leave the browser holding a
  * refresh token that has already been spent.
  */
-export async function POST() {
+export async function POST(request: Request) {
+  const origin = request.headers.get("origin");
+  if ((origin && origin !== new URL(request.url).origin)
+      || request.headers.get("sec-fetch-site") === "cross-site") {
+    return NextResponse.json({ detail: "Invalid origin." }, { status: 403 });
+  }
   const refresh = await readRefreshToken();
   if (!refresh) {
     return NextResponse.json({ detail: "No session to refresh." }, { status: 401 });
@@ -26,7 +31,7 @@ export async function POST() {
     // A refresh that fails is a session that is over: expired, revoked, or
     // suspended. Leaving the dead cookies in place would make every later
     // request fail the same way, silently.
-    await clearSession();
+    if (status === 401 || status === 403) await clearSession();
     return NextResponse.json(data ?? { detail: "Session expired." }, { status });
   }
 

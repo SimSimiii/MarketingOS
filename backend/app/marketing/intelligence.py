@@ -95,12 +95,14 @@ class DossierPosture(StrEnum):
 class IntelligenceObservation(BaseModel):
     text: str
     grounding: str
+    evidence: list[EvidenceReference] = Field(default_factory=list)
 
 
 class IntelligenceProblem(BaseModel):
     id: str
     statement: str
     grounding: str
+    evidence: list[EvidenceReference] = Field(default_factory=list)
     corroboration: int = 0
     cost: str = ""
 
@@ -234,7 +236,7 @@ class CampaignIntelligence(BaseModel):
                     "Audience Research: "
                     f"{self.trace.audience_research_id} v{self.trace.audience_research_version}"
                 ),
-                f"Researched situation: {self.situation.text if self.situation else 'not established'}",
+                f"Researched situation: {self.situation.model_dump_json() if self.situation else 'not established'}",
                 f"Observed sophistication: {self.sophistication or 'not established'}",
             ]
         )
@@ -247,7 +249,7 @@ class CampaignIntelligence(BaseModel):
                 f"- [{item.id}] {item.statement} "
                 f"(grounding={item.grounding}, corroboration={item.corroboration}"
                 + (f", cost={item.cost}" if item.cost else "")
-                + ")"
+                + f"; source references={item.evidence})"
                 for item in self.problems
             )
         if self.buyer_phrases:
@@ -621,7 +623,7 @@ def build_campaign_intelligence(
     trace.audience_research_id = match.row.id
     trace.audience_research_version = match.row.version
     context = CampaignIntelligence(
-        selected_audience=research.audience_name,
+        selected_audience=selected_audience,
         situation=_observation(research.situation),
         problems=[_problem(item) for item in research.problems[:MAX_RESEARCH_PROBLEMS]],
         incumbent_behaviour=_observations(research.incumbent_behaviour),
@@ -663,8 +665,10 @@ def adapt_researched_audience(
     trigger = "; ".join(_distinct([item.text for item in research.triggers])[:3])
     situation = research.situation.text if research.situation else base.situation
     segment = Segment(
-        name=research.audience_name,
+        name=context.trace.selected_audience or research.audience_name,
         situation=situation,
+        situation_grounding=research.situation.grounding if research.situation else base.situation_grounding,
+        situation_provenance=[_provenance(ref, research) for ref in research.situation.evidence] if research.situation else base.situation_provenance,
         job_to_be_done=desired.text if desired is not None else base.job_to_be_done,
         trigger=trigger or base.trigger,
         sophistication=research.sophistication or base.sophistication,
@@ -829,7 +833,7 @@ def _add_dossier(
 def _observation(item: SourcedObservation | None) -> IntelligenceObservation | None:
     if item is None or not item.text.strip():
         return None
-    return IntelligenceObservation(text=_compact(item.text), grounding=str(item.grounding))
+    return IntelligenceObservation(text=_compact(item.text), grounding=str(item.grounding), evidence=item.evidence)
 
 
 def _observations(items: list[SourcedObservation]) -> list[IntelligenceObservation]:
@@ -845,6 +849,7 @@ def _problem(item: AudienceProblem) -> IntelligenceProblem:
         id=item.id,
         statement=_compact(item.statement),
         grounding=str(item.grounding),
+        evidence=item.evidence,
         corroboration=item.corroboration,
         cost=_compact(item.cost),
     )
@@ -934,7 +939,7 @@ def _render_observations(
 ) -> None:
     if observations:
         lines.append(label + ":")
-        lines.extend(f"- {item.text} (grounding={item.grounding})" for item in observations)
+        lines.extend(f"- {item.text} (grounding={item.grounding}; source references={item.evidence})" for item in observations)
 
 
 def _forgiving_audience_match(left: str, right: str) -> bool:
