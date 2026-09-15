@@ -14,6 +14,11 @@ Return one assessment per candidate_id. Keep the candidate identity unchanged.
 For every evidence item provide claim (your interpretation), quote (verbatim), url (the
 exact URL header), and kind: need, alternative, access, counterevidence or example.
 Do not supply fetched_at: the application assigns the real retrieval time.
+For counterevidence, set impact to minor (a manageable objection), material (a
+substantial workflow, buying or access obstacle), or unknown, with impact_reason
+explaining the connection to the quoted passage. Never infer minor from silence.
+These are judgments for review. Only explicit unsupported product requirements
+can deterministically exclude an audience; an adverse article cannot do that alone.
 
 Seek actual pain, existing workarounds, buying roles and constraints, reasons not to buy,
 and specific places or organisation examples that establish findability. A source describing

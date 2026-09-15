@@ -1532,7 +1532,7 @@ function SegmentCard({
             {researchabilityLabel(segment.researchability)}
           </Badge>
           <Badge variant={segment.assessment.priority === "incompatible" ? "destructive" : "secondary"}>
-            {segment.assessment.priority === "explore_first" ? "Explore first" : segment.assessment.priority === "incompatible" ? "Incompatible" : "Hypothesis"}
+            {segment.assessment.priority === "explore_first" ? "Explore first" : segment.assessment.priority === "review_first" ? "Review counterevidence" : segment.assessment.priority === "incompatible" ? "Incompatible" : "Hypothesis"}
           </Badge>
         </div>
       </CardHeader>
@@ -1601,6 +1601,11 @@ function SegmentCard({
                 {segment.assessment.evidence.map((evidence, i) => (
                   <div key={i} className="mt-3 space-y-1 border-t pt-2">
                     <p>{evidence.kind}: {evidence.claim}</p>
+                    {evidence.kind === "counterevidence" && (
+                      <p className="text-muted-foreground">
+                        Impact assessment: {evidence.impact}{evidence.impact_reason ? ` — ${evidence.impact_reason}` : " — not assessed"}
+                      </p>
+                    )}
                     <blockquote className="border-l-2 pl-2 text-muted-foreground">{evidence.quote}</blockquote>
                     <a className="break-all text-primary underline" href={evidence.url} target="_blank" rel="noopener noreferrer">{evidence.url}</a>
                     {evidence.fetched_at && <p className="text-muted-foreground">Fetched {new Date(evidence.fetched_at).toLocaleDateString()}</p>}

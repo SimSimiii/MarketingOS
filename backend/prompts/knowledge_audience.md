@@ -48,17 +48,17 @@ exist. `solution_aware` — they know this category exists, not this product. `p
 know this product, have not bought. `most_aware` — they are deciding on price or timing. Explaining
 the problem to a product-aware reader is how an email loses them in two lines.
 
-**`pains` carry their grounding.** A pain lifted from a testimonial or a support page is
-`grounded` and gets the quote in `provenance.quote`. A pain you reasoned your way to is
-`inferred`. Where the material gives you the buyer's own words, use the buyer's own words — they
-are worth more than anything you could write, because the copy can hand them straight back.
-
-Every source here is this company writing about itself, so the application records these as
-the company's claim about the buyer rather than as an observation of one, whatever you mark.
-Marking accurately still matters: it is the difference between a pain a quote supports and one
-you supplied. What it buys you is permission to be blunt - do not invert a feature line into a
-pain and call it evidence. "No vector DB to manage" says what the product does, not that anyone
-resented running one.
+**`pains` carry their grounding and provenance.** Use `grounded` for an actual customer
+statement in a testimonial, interview, support conversation or documented case study.
+Company hosting does not turn a customer's quotation into vendor copy. Use `vendor_claim`
+for the company's assertions about buyers and `inferred` for your own hypotheses.
+For each sourced pain and situation, include the ledger `evidence_id`, exact quote and
+source in its provenance. Set source_kind to customer_voice, case_study or vendor_copy.
+The application checks the quote and evidence kind before accepting grounded context.
+If no supplied ledger entry supports a buyer observation, leave it inferred.
+Never invert a feature line into observed pain: "no vector DB to manage" describes the
+product, not a customer reporting that they resented running a database.
+One testimonial establishes that customer's experience, not prevalence across a segment.
 
 **Objections are the point of this document.** These are the real reasons someone reads the whole
 email and still does not act: price, switching cost, trust, effort, timing, "we already have
@@ -70,6 +70,8 @@ For each one, `answer` is what in the evidence above actually resolves it, and `
 the ids that carry the answer. When nothing in the evidence answers an objection, say so and
 leave the ids empty. That is a real finding: it tells everyone downstream that this objection
 cannot be beaten with what we currently know, which is far more useful than a comfortable guess.
+Use the objection's separate `provenance` list for evidence that a buyer actually expressed
+the objection. Evidence supporting the answer does not prove anyone raised the objection.
 
 **`severity`** — `blocking` when it stops the sale outright, `strong` when it delays it, `mild`
 when it is a shrug.

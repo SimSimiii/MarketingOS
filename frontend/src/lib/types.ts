@@ -142,11 +142,19 @@ export interface BrandStyleUpdate {
 export type Grounding = "grounded" | "inferred" | "user_stated" | "vendor_claim";
 export type EvidenceStrength = "strong" | "moderate" | "weak";
 
+export interface KnowledgeProvenance {
+  source: string;
+  quote: string;
+  document_id: string | null;
+  evidence_id: string;
+  source_kind: "unknown" | "vendor_copy" | "customer_voice" | "case_study";
+}
+
 /** One thing established about the business, with where it came from. */
 export interface KnowledgeFact {
   statement: string;
   grounding: Grounding;
-  provenance: { source: string; quote: string; document_id: string | null } | null;
+  provenance: KnowledgeProvenance | null;
 }
 
 /** One thing the copy is allowed to assert, and the text that proves it. */
@@ -175,6 +183,7 @@ export interface AudienceObjection {
   answer: string;
   grounding: Grounding;
   evidence_ids: string[];
+  provenance: KnowledgeProvenance[];
 }
 
 export interface KnowledgeGap {
@@ -1034,10 +1043,10 @@ export interface MappedSegment {
      * Its own axis: an audience nobody can reach is a different problem from
      * one nobody wants, and `priority` alone said the same word about both. */
     findability: "verified" | "unknown";
-    /** Sources arguing against this audience. Counted and shown, never a veto -
-     * a segment that found some is better understood than one that found none. */
+    /** Unique source URLs arguing against this audience; material or unassessed
+     * objections route to review rather than exclude the audience. */
     counterevidence: number;
-    priority: "explore_first" | "hypothesis" | "incompatible";
+    priority: "explore_first" | "review_first" | "hypothesis" | "incompatible";
     reasons: string[];
     unknowns: string[];
     evidence: {
@@ -1045,6 +1054,8 @@ export interface MappedSegment {
       quote: string;
       url: string;
       kind: "need" | "alternative" | "access" | "counterevidence" | "example";
+      impact: "unknown" | "minor" | "material";
+      impact_reason: string;
       fetched_at: string | null;
     }[];
   };
@@ -1224,6 +1235,7 @@ export interface AudienceBuyerPhrase {
 }
 
 export interface AudienceResearch {
+  audience_fingerprint: string;
   id: string;
   brand_id: string;
   audience_key: string;

@@ -19,10 +19,12 @@ same product starts from everything the first one learned.
 import re
 from datetime import UTC, datetime
 from enum import StrEnum
+from typing import Literal
 
 from pydantic import BaseModel, Field, model_validator
 
-from app.knowledge.ledger import EvidenceLedger
+from app.knowledge.corpus import fold
+from app.knowledge.ledger import EvidenceKind, EvidenceLedger
 
 
 class Grounding(StrEnum):
@@ -44,6 +46,8 @@ class Provenance(BaseModel):
     source: str = ""
     quote: str = ""
     document_id: str | None = None
+    evidence_id: str = ""
+    source_kind: Literal["unknown", "vendor_copy", "customer_voice", "case_study"] = "unknown"
 
 
 class Fact(BaseModel):
@@ -54,7 +58,7 @@ class Fact(BaseModel):
     def render(self) -> str:
         mark = {Grounding.GROUNDED: "", Grounding.INFERRED: " (inferred)",
                 Grounding.USER_STATED: " (the user told us)",
-                Grounding.VENDOR_CLAIM: " (our own material claims this; nobody observed it)"}[
+                Grounding.VENDOR_CLAIM: " (company claim about the buyer)"}[
             self.grounding
         ]
         return f"{self.statement}{mark}"
@@ -336,48 +340,23 @@ class Objection(BaseModel):
     answer: str = ""
     grounding: Grounding = Grounding.INFERRED
     evidence_ids: list[str] = Field(default_factory=list)
+    provenance: list[Provenance] = Field(default_factory=list)
 
     def render(self) -> str:
         answer = self.answer or "nothing in the material answers this yet"
         ids = f" [{', '.join(self.evidence_ids)}]" if self.evidence_ids else ""
-        return f"- ({self.severity}) {self.objection}\n    answered by: {answer}{ids}"
+        return f"- ({self.severity}; {self.grounding}) {self.objection}\n    answered by: {answer}{ids}"
 
 
 class AudienceModel(BaseModel):
-    """Who this company sells to, as its own material describes them.
+    """Audience context. KnowledgeArtifacts checks provenance against its ledger.
 
-    Its own material and nothing else: this artifact is compiled from the
-    corpus the business supplied about itself, so there is no input here that
-    could carry a buyer's own voice. That makes `grounded` a claim this model
-    cannot honestly hold. A quote does support a statement about the product -
-    the company can stand behind what it published - but the same quote
-    supporting a statement about what the buyer suffers only establishes that
-    the company says so, which is how "no vector DB to manage" on a homepage
-    became a buyer's pain that nobody had ever reported.
-
-    So grounded is folded to `vendor_claim` on read, for the pains, the
-    objections and the situation alike. Not downgraded to inferred: the quote
-    is real and worth showing, and losing it would make this weaker than it
-    is. Observed demand is a different artifact - `app.market.audience_research`
-    reads sources outside this company and tiers them by how directly they
-    watch the buyer.
+    A company-hosted document may contain both sales copy and customer voices.
+    Hosting alone cannot establish who made a statement or whether it is true.
     """
 
     segments: list[Segment] = Field(default_factory=list)
     objections: list[Objection] = Field(default_factory=list)
-
-    @model_validator(mode="after")
-    def _own_material_cannot_ground_a_buyer(self) -> "AudienceModel":
-        for segment in self.segments:
-            if segment.situation_grounding is Grounding.GROUNDED:
-                segment.situation_grounding = Grounding.VENDOR_CLAIM
-            for pain in segment.pains:
-                if pain.grounding is Grounding.GROUNDED:
-                    pain.grounding = Grounding.VENDOR_CLAIM
-        for objection in self.objections:
-            if objection.grounding is Grounding.GROUNDED:
-                objection.grounding = Grounding.VENDOR_CLAIM
-        return self
 
     def render(self) -> str:
         segments = "\n".join(segment.render() for segment in self.segments) or "- not established"
@@ -486,6 +465,59 @@ class KnowledgeArtifacts(BaseModel):
     #: Documents that existed but were not readable, so a thin profile is
     #: explainable rather than mysterious.
     notes: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _verify_audience_provenance(self) -> "KnowledgeArtifacts":
+        # Work on a copy: constructing artifacts must not mutate a caller's
+        # audience or erase grounded research attached elsewhere afterwards.
+        audience = self.audience.model_copy(deep=True)
+
+        def grounding(current: Grounding, references: list[Provenance]) -> Grounding:
+            if current in {Grounding.USER_STATED, Grounding.INFERRED}:
+                return current
+            supported = False
+            buyer_voice = False
+            for ref in references:
+                quote = fold(ref.quote)
+                if len(quote) < 12:
+                    continue
+                for entry in self.evidence.entries:
+                    same_source = (
+                        ref.evidence_id == entry.id if ref.evidence_id else
+                        bool((ref.document_id and ref.document_id == entry.document_id)
+                             or (ref.source and ref.source == entry.source))
+                    )
+                    if ref.source and entry.source and ref.source != entry.source:
+                        same_source = False
+                    if ref.document_id and entry.document_id and ref.document_id != entry.document_id:
+                        same_source = False
+                    if not same_source or quote not in fold(entry.verbatim):
+                        continue
+                    supported = True
+                    if entry.kind is EvidenceKind.TESTIMONIAL:
+                        buyer_voice = True
+                        ref.source_kind = "customer_voice"
+                    elif entry.kind is EvidenceKind.CUSTOMER and ref.source_kind == "case_study":
+                        buyer_voice = True
+                    else:
+                        ref.source_kind = "vendor_copy"
+                    ref.evidence_id = entry.id
+                    break
+            if buyer_voice:
+                return Grounding.GROUNDED
+            return Grounding.VENDOR_CLAIM if supported else Grounding.INFERRED
+
+        for segment in audience.segments:
+            segment.situation_grounding = grounding(
+                segment.situation_grounding, segment.situation_provenance,
+            )
+            for pain in segment.pains:
+                pain.grounding = grounding(pain.grounding, [pain.provenance] if pain.provenance else [])
+        for objection in audience.objections:
+            # evidence_ids license the answer, never the existence of the objection.
+            objection.grounding = grounding(objection.grounding, objection.provenance)
+        self.audience = audience
+        return self
 
     def render_for_strategy(self) -> str:
         """Everything, for the one role that decides what the campaign says."""

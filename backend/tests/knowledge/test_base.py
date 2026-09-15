@@ -259,14 +259,19 @@ def test_the_company_own_material_cannot_ground_a_statement_about_its_buyer():
         ],
     )
 
-    segment = audience.segments[0]
-    assert segment.situation_grounding is Grounding.VENDOR_CLAIM
+    checked = KnowledgeArtifacts(audience=audience, evidence=EvidenceLedger(entries=[Evidence(
+        id="E-product", kind=EvidenceKind.FEATURE, claim="Context retrieval",
+        verbatim="The agent retrieves the most relevant context - no vector DB to manage.",
+        source="homepage",
+    )]))
+    segment = checked.audience.segments[0]
+    assert segment.situation_grounding is Grounding.INFERRED
     assert segment.pains[0].grounding is Grounding.VENDOR_CLAIM
     assert segment.pains[1].grounding is Grounding.INFERRED
-    assert audience.objections[0].grounding is Grounding.VENDOR_CLAIM
+    assert checked.audience.objections[0].grounding is Grounding.INFERRED
     # The quote is real and stays: this is weaker than grounded, not than inferred.
     assert segment.pains[0].provenance.quote
-    assert "claims this" in segment.pains[0].render()
+    assert "company claim" in segment.pains[0].render()
 
 
 def test_a_user_stated_audience_fact_is_left_alone():

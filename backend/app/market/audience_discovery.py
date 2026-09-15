@@ -5,12 +5,14 @@ assessment call for the whole map. Transport retries remain ModelSession's job.
 """
 
 import hashlib
+import re
 from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 from urllib.parse import urlsplit
 
 from pydantic import BaseModel, Field, ValidationError
 
+from app.ai.base import ResearchTool
 from app.ai.model_router import ModelTier
 from app.knowledge.artifacts import Grounding
 from app.knowledge.corpus import fold
@@ -19,6 +21,8 @@ from app.market.audience_research import (
     FetchedSource,
     FixedURLFetcher,
     LocatedSource,
+    SourceTier,
+    bounded_sources,
 )
 from app.market.capabilities import CapabilityState, ProductCapabilityProfile
 from app.market.demand import (
@@ -29,6 +33,7 @@ from app.market.demand import (
     MapEvidence,
     MapOptions,
     _MapAnswer,
+    audience_fingerprint,
 )
 from app.runtime.exceptions import ModelRuntimeError
 from app.runtime.model_session import ModelSession
@@ -48,16 +53,12 @@ def current_map(demand: DemandMap, profile: ProductCapabilityProfile | None) -> 
     """An edited product profile invalidates old commercial judgments on read."""
     current = demand.model_copy(deep=True)
     current.segments = unique_audiences(current.segments)
-    if not demand.product_fingerprint or demand.product_fingerprint == product_fingerprint(profile):
-        return current
+    changed = bool(demand.product_fingerprint and demand.product_fingerprint != product_fingerprint(profile))
     for item in current.segments:
-        item.assessment.compatibility = "unknown"
-        item.assessment.priority = "hypothesis"
-        item.assessment.unknowns.append("Product knowledge changed; refresh this audience's assessment.")
         product_check(item, profile)
-        if item.assessment.compatibility == "incompatible":
-            item.assessment.priority = "incompatible"
-    current.validation_note = "Product profile changed since this map. " + current.validation_note
+        rank_assessment(item)
+    if changed:
+        current.validation_note = "Product profile changed; compatibility rechecked. " + current.validation_note
     return current
 
 
@@ -161,6 +162,8 @@ def evidence_from_research(research: AudienceResearch) -> list[MapEvidence]:
             source = by_id.get(reference.source_id)
             if source is None or not reference.quote.strip() or not claim.strip():
                 continue
+            if kind == "need" and source.tier is not SourceTier.BUYER_VOICE:
+                continue
             key = (source.final_url, fold(reference.quote), kind)
             if key in seen:
                 continue
@@ -200,19 +203,7 @@ def merge_research_evidence(
     researches: dict[str, AudienceResearch],
     profile: ProductCapabilityProfile | None,
 ) -> DemandMap:
-    """The map, re-ranked on what researching its audiences actually found.
-
-    Merged on read for the same reason `merge_user_audiences` is: a map is one
-    moment's reading and a refresh replaces it wholesale, while research
-    outlives every remap. Without this the most expensive artifact in the
-    product is invisible from the only screen where somebody picks an audience
-    - an audience with ten verified sources behind it still reported evidence
-    `absent` and priority `hypothesis`, which is the reading for one nobody
-    has looked at.
-
-    Nothing here calls a model: every quotation was verified when the research
-    row was written.
-    """
+    """Reuse verified findings only while the researched situation still matches."""
     if not researches:
         return demand
     merged = demand.model_copy(deep=True)
@@ -221,6 +212,12 @@ def merge_research_evidence(
         if research is None:
             continue
         assessment = segment.assessment
+        if research.audience_fingerprint != audience_fingerprint(segment):
+            assessment.unknowns.append(
+                "Stored research belongs to a different or unverified audience definition; research again."
+            )
+            assessment.unknowns = list(dict.fromkeys(assessment.unknowns))
+            continue
         present = {
             (item.url, fold(item.quote), item.kind) for item in assessment.evidence
         }
@@ -229,9 +226,13 @@ def merge_research_evidence(
             for item in evidence_from_research(research)
             if (item.url, fold(item.quote), item.kind) not in present
         )
-        assessment.reasons.append(
-            f"Re-ranked on researched sources ({len(research.sources)} fetched)."
-        )
+        assessment.reasons = [item for item in assessment.reasons
+                              if not item.startswith("Re-ranked on ")]
+        if assessment.evidence:
+            assessment.reasons = [item for item in assessment.reasons if item != USER_AUDIENCE_REASON]
+            assessment.reasons.append(
+                f"Re-ranked on matching researched sources ({len(research.sources)} fetched)."
+            )
         product_check(segment, profile)
         rank_assessment(segment)
         if assessment.compatibility == "incompatible":
@@ -247,54 +248,57 @@ class CandidateAssessment(BaseModel):
     duplicate_of: int | None = Field(default=None, ge=0)
 
 
-class _RecalledSources(BaseModel):
+class _LocatedMapSources(BaseModel):
     source_urls: list[str] = Field(default_factory=list, max_length=20)
 
 
-async def recall_sources(
-    session: ModelSession, answer: _MapAnswer, candidates: list[AudienceSegment]
+async def recover_sources(
+    session: ModelSession, answer: _MapAnswer, candidates: list[AudienceSegment],
+    options: MapOptions,
 ) -> list[str]:
-    """Ask a discovery pass for the URLs it read but did not report.
+    """Reuse literal URLs, then make at most one fresh search if reporting failed.
 
-    The whole second stage hangs off `source_urls`, and the field is optional
-    because a model that found nothing has nothing to list. So a pass that
-    searched twelve times and wrote a page about an Indie Hackers thread, a
-    migration notice and a deprecation announcement - and then returned an
-    empty list - skipped validation in complete silence, having spent a deep
-    tier call with web access on half the work. Silence was the bug: the
-    searching happened, only the reporting did not.
-
-    Cheap and closed: the fast tier, no tools, and nothing of the pass except
-    what it already wrote down. A URL recalled rather than re-found could be
-    wrong, and that costs nothing beyond the fetch - the fetcher opens the
-    exact URL and the assessment accepts a quotation only when it appears in
-    the page that came back, so a page this pass never read yields no evidence
-    rather than false evidence.
+    Model calls have no shared browsing memory. The fallback must search, not
+    reconstruct paths from a summary. All returned pages still pass the fetch
+    and quotation checks below.
     """
+    # Parse the text fields directly: JSON escapes must never enter a URL.
+    literal = re.findall(r"https?://[^\s<>\"\[\]]+", "\n".join([
+        answer.reading, answer.note, *answer.searched,
+        *(text for item in candidates for text in [item.basis, *item.where, *item.signals]),
+    ]))
+    located = bounded_sources([
+        LocatedSource(url=url.rstrip(".,;:!?)")) for url in literal
+    ])
+    if located:
+        return [item.url for item in located]
     if not (answer.reading.strip() or answer.searched):
         return []
     try:
-        recalled = await session.structured(
+        located = await session.structured(
             role=CARTOGRAPHER_ROLE_ID,
-            tier=ModelTier.FAST,
+            tier=ModelTier.BALANCED,
             template="audience_map_sources",
             variables={
                 "searched": "\n".join(f"- {query}" for query in answer.searched)
                 or "No queries were reported.",
                 "reading": answer.reading or "No reading was reported.",
                 "note": answer.note or "No coverage gaps were reported.",
+                "scope": options.model_dump_json(),
                 "candidates": "\n".join(
                     f"- {item.name}: {item.organization} | {item.workflow} | {item.need}"
                     for item in candidates
                 ),
             },
-            task="Return the exact URLs that pass rested on. Fewer is better than guessed.",
-            schema=_RecalledSources,
-            tools=[],
+            task="Search now for source pages supporting or challenging these hypotheses; return exact URLs.",
+            schema=_LocatedMapSources,
+            tools=[ResearchTool.WEB_SEARCH],
         )
     except ModelRuntimeError:
         return []
-    return [url for url in dict.fromkeys(recalled.source_urls) if url.strip()]
+    return [item.url for item in bounded_sources([
+        LocatedSource(url=url) for url in located.source_urls
+    ])]
 
 
 class AssessedMap(BaseModel):
@@ -344,6 +348,12 @@ def product_check(
     fact about the product that Python already holds.
     """
     assessment = segment.assessment
+    assessment.reasons = [item for item in assessment.reasons
+                          if not item.startswith("Required capabilities are unsupported:")]
+    assessment.unknowns = [item for item in assessment.unknowns
+                          if not item.startswith("Product support needs verification:")
+                          and item not in {NO_REQUIREMENT_MAPPED,
+                                           "Product knowledge changed; refresh this audience's assessment."}]
     required = segment.definition.required_product_capabilities
     unsupported = [
         key for key in required
@@ -357,8 +367,6 @@ def product_check(
         assessment.compatibility = "incompatible"
         assessment.reasons.append("Required capabilities are unsupported: " + ", ".join(unsupported))
         return
-    if assessment.compatibility == "incompatible":
-        return
     if profile is None or not required:
         assessment.compatibility = "unknown"
         assessment.unknowns.append(NO_REQUIREMENT_MAPPED)
@@ -371,31 +379,28 @@ def product_check(
 
 
 def rank_assessment(segment: AudienceSegment) -> None:
-    """Each axis on its own, then one sort key over them.
+    """Rank research opportunities; material or unassessed objections need review.
 
-    `explore_first` means: the demand is evidenced on more than one site, these
-    people can be found somewhere named, the product is not known to be unable
-    to serve them, and another research pass has something concrete to spend a
-    search on. Deliberately not "and nothing argues against it" - the discovery
-    prompt asks for reasons the product would NOT work, and a segment that came
-    back with some is better understood than one that came back with none, not
-    worse. The contrary sources are counted and said out loud instead.
-
-    Compatibility only has to stop short of `incompatible`. Exploring an
-    audience buys knowledge about the market; an unestablished product fit is a
-    reason to go and look rather than a reason not to.
+    Only explicit unsupported product requirements exclude a segment. Impact
+    labels are judgments, so they route a candidate to review rather than
+    turning a contrary source into a deterministic product limitation.
     """
     assessment = segment.assessment
-    needs = [item for item in assessment.evidence if item.kind == "need"]
-    domains = {(urlsplit(item.url).hostname or "").removeprefix("www.") for item in needs}
+    needs = []
+    quotes: set[str] = set()
+    for item in assessment.evidence:
+        if item.kind == "need" and fold(item.quote) not in quotes:
+            quotes.add(fold(item.quote))
+            needs.append(item)
+    domains = {(urlsplit(item.url).hostname or "").removeprefix("www.") for item in needs} - {""}
     assessment.evidence_strength = (
         "supported" if len(domains) >= 2 else "limited" if needs else "absent"
     )
     reachable = any(item.kind in {"access", "example"} for item in assessment.evidence)
     assessment.findability = "verified" if reachable else "unknown"
-    assessment.counterevidence = sum(
-        1 for item in assessment.evidence if item.kind == "counterevidence"
-    )
+    contrary = [item for item in assessment.evidence if item.kind == "counterevidence"]
+    assessment.counterevidence = len({item.url for item in contrary})
+    review = any(item.impact != "minor" or not item.impact_reason.strip() for item in contrary)
     if assessment.compatibility == "incompatible":
         assessment.priority = "incompatible"
     elif (
@@ -403,13 +408,18 @@ def rank_assessment(segment: AudienceSegment) -> None:
         and reachable
         and segment.admission().researchable
     ):
-        assessment.priority = "explore_first"
+        assessment.priority = "review_first" if review else "explore_first"
     else:
         assessment.priority = "hypothesis"
+    assessment.unknowns = [item for item in assessment.unknowns if item not in {
+        "No verified venue or example establishes findability yet.",
+        "Review the counterevidence before prioritising this audience.",
+    }]
     if not reachable:
         assessment.unknowns.append("No verified venue or example establishes findability yet.")
     if assessment.counterevidence:
         assessment.unknowns.append("Review the counterevidence before prioritising this audience.")
+    assessment.unknowns = list(dict.fromkeys(assessment.unknowns))
 
 
 async def validate_map(
@@ -447,13 +457,15 @@ async def validate_map(
             break
 
     note = "No sources were verified; candidates remain hypotheses."
-    urls = answer.source_urls
+    urls = [item.url for item in bounded_sources([
+        LocatedSource(url=url) for url in answer.source_urls
+    ])]
     if candidates and not urls:
-        progress("The discovery pass reported no source URLs; asking it for them")
-        urls = await recall_sources(session, answer, candidates)
+        progress("Recovering source links; one bounded web search if no literal URLs were reported")
+        urls = await recover_sources(session, answer, candidates, options)
         if not urls:
             note = (
-                "The discovery pass reported no source URLs and could not recall them, "
+                "No usable source URLs were reported or recovered, "
                 "so nothing was verified; candidates remain hypotheses."
             )
     located = [LocatedSource(url=url) for url in urls]

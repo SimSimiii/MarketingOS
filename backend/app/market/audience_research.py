@@ -27,7 +27,7 @@ from app.core.public_http import PublicTransport
 from app.ingestion.loaders.html_extract import extract_content
 from app.knowledge.artifacts import Grounding, Sophistication
 from app.knowledge.corpus import fold
-from app.market.demand import AudienceSegment
+from app.market.demand import AudienceSegment, audience_fingerprint
 from app.market.qualification import AudienceDefinition
 from app.runtime.model_session import ModelSession
 
@@ -165,6 +165,7 @@ class _ResearchDraft(BaseModel):
 
 class AudienceResearch(BaseModel):
     audience_name: str
+    audience_fingerprint: str = ""
     candidate_kind: str
     definition: AudienceDefinition = Field(default_factory=AudienceDefinition)
     situation: SourcedObservation | None = None
@@ -654,6 +655,7 @@ def verify_research(
 
     return AudienceResearch(
         audience_name=segment.name,
+        audience_fingerprint=audience_fingerprint(segment),
         candidate_kind=str(segment.kind),
         definition=segment.definition,
         situation=observation(draft.situation),

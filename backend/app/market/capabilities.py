@@ -17,6 +17,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
+from app.knowledge.corpus import fold
 from app.knowledge.ledger import Evidence, EvidenceLedger
 
 
@@ -213,7 +214,7 @@ _GENERIC_TERMS = frozenset(
 #: Appended to a capability's note when filtering emptied its evidence. Fixed
 #: text so re-normalising an already-demoted capability cannot stack copies.
 UNLICENSED_NOTE = (
-    "Demoted to unknown: the evidence attached to it does not mention this capability."
+    "Demoted to unknown: attached quotations do not establish current capability support."
 )
 
 
@@ -230,18 +231,15 @@ def capability_patterns(capability: ProductCapability) -> tuple[str, ...]:
     """
     hint = _EVIDENCE_DERIVATION_HINTS.get(normalize_code(capability.id))
     if hint is not None:
-        return hint[1]
+        aliases = tuple(rf"\b{re.escape(fold(alias))}\b" for alias in capability.aliases if alias.strip())
+        return (*hint[1], *aliases)
     terms: list[str] = []
     for phrase in (capability.label, capability.id.replace("_", " "), *capability.aliases):
         cleaned = re.sub(r"[^a-z0-9]+", " ", phrase.casefold()).strip()
         if not cleaned:
             continue
-        if " " in cleaned:
+        if " " in cleaned or len(cleaned) > 3 and cleaned not in _GENERIC_TERMS:
             terms.append(cleaned)
-        terms.extend(
-            word for word in cleaned.split()
-            if len(word) > 3 and word not in _GENERIC_TERMS
-        )
     return tuple(rf"\b{re.escape(term)}\b" for term in dict.fromkeys(terms))
 
 
@@ -357,27 +355,24 @@ def normalize_capability_profile(
         if not capability_id or capability_id in seen:
             continue
         seen.add(capability_id)
-        evidence_ids = [
-            item.evidence_id
-            for item in proposed.evidence
-            if item.evidence_id in by_id
-        ]
+        evidence_ids = [item.evidence_id for item in proposed.evidence]
         # Two separate questions, and only the first was ever asked here: does
         # this evidence id exist, and does that fact say anything about this
         # capability. An entry that fails the second is kept visible rather
         # than dropped, so an editor can see what was rejected and why.
         licensed: list[str] = []
-        unlicensed: list[str] = []
+        unlicensed: list[str] = list(proposed.unlicensed_evidence_ids)
         for item in dict.fromkeys(evidence_ids):
-            target = licensed if licenses(by_id[item], proposed) else unlicensed
+            target = licensed if item in by_id and licenses(by_id[item], proposed) else unlicensed
             target.append(item)
+        unlicensed = [item for item in dict.fromkeys(unlicensed) if item not in licensed]
         evidence = [_capability_evidence(by_id[item]) for item in licensed]
         state = proposed.state
-        note = proposed.note.strip()
+        note = proposed.note.replace(UNLICENSED_NOTE, "").strip()
         if state is CapabilityState.VERIFIED and not evidence:
             state = CapabilityState.UNKNOWN
-            if unlicensed and UNLICENSED_NOTE not in note:
-                note = f"{note} {UNLICENSED_NOTE}".strip()
+        if state is CapabilityState.UNKNOWN and not evidence and unlicensed:
+            note = f"{note} {UNLICENSED_NOTE}".strip()
         capabilities.append(
             ProductCapability(
                 id=capability_id,
@@ -432,8 +427,22 @@ def capability_ledger_fingerprint(ledger: EvidenceLedger) -> str:
 
 
 def _matches(entry: Evidence, patterns: tuple[str, ...]) -> bool:
-    text = f"{entry.claim}\n{entry.verbatim}".casefold()
-    return any(re.search(pattern, text) for pattern in patterns)
+    # A paraphrase mentioning a capability cannot license an unrelated quote.
+    text = fold(entry.verbatim)
+    for sentence in re.split(r"[.!?;\n]", text):
+        if not any(re.search(pattern, sentence) for pattern in patterns):
+            continue
+        if re.search(
+            r"\b(?:not supported|unsupported|not available|does not support|do not support|"
+            r"no support for|planned|coming soon|roadmap|"
+            r"ne .{0,35} pas|non disponible|non pris en charge)\b", sentence,
+        ):
+            continue
+        for pattern in patterns:
+            for match in re.finditer(pattern, sentence):
+                if not re.search(r"\b(?:no|without|lacks?)\s+(?:any\s+)?$", sentence[:match.start()]):
+                    return True
+    return False
 
 
 def _capability_evidence(entry: Evidence) -> CapabilityEvidence:

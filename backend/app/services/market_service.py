@@ -406,7 +406,8 @@ class MarketService:
     def relevance_status(self, brand_id: UUID, audience: str) -> RelevanceStatus:
         """Current/stale/missing derived only from persisted version pointers."""
         knowledge = KnowledgeArtifactRepository(self._session).latest_for_brand(brand_id)
-        research = self._store.latest_research_row(brand_id, audience)
+        research_read = self._store.latest_research(brand_id, audience)
+        research = research_read[0] if research_read else None
         scan = self._store.latest_scan_row(brand_id)
         missing = _missing_relevance_prerequisites(knowledge, research, scan)
         latest = self._store.latest_dossier(brand_id, audience)

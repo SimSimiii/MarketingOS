@@ -5,6 +5,7 @@ from uuid import uuid4
 
 import pytest
 
+from app.ai.base import ResearchTool
 from app.knowledge.artifacts import Grounding
 from app.market.audience_discovery import (
     current_map,
@@ -34,6 +35,7 @@ from app.market.demand import (
     MapAssessment,
     MapOptions,
     _MapAnswer,
+    audience_fingerprint,
 )
 from app.market.qualification import AudienceDefinition
 from app.runtime.exceptions import ProviderError
@@ -97,6 +99,7 @@ def reference(identifier, url):
 def research(**changes):
     values = {
         "audience_name": "Ateliers avec un stock reconditionné",
+        "audience_fingerprint": audience_fingerprint(candidate()),
         "candidate_kind": "core",
         "sources": [
             reference("S1", "https://forum.example/thread"),
@@ -262,7 +265,7 @@ async def test_counterevidence_is_counted_and_said_out_loud_rather_than_vetoing(
     result = await run_map(provider, session, verdict=verdict)
 
     segment = result.segments[0]
-    assert segment.assessment.priority == "explore_first"
+    assert segment.assessment.priority == "review_first"
     assert segment.assessment.counterevidence == 1
     assert any(e.kind == "counterevidence" for e in segment.assessment.evidence)
     assert any("counterevidence" in note for note in segment.assessment.unknowns)
@@ -520,7 +523,7 @@ async def test_a_pass_that_reported_no_source_urls_is_asked_for_them(provider, s
 
     segment = result.segments[0]
     assert provider.calls["audience_map_sources"] == 1
-    assert provider.tools_used_by("audience_map_sources") == []
+    assert provider.tools_used_by("audience_map_sources") == [ResearchTool.WEB_SEARCH]
     assert provider.calls["audience_map_validate"] == 1
     assert len(segment.assessment.evidence) == 3
     assert segment.assessment.priority == "explore_first"
@@ -535,7 +538,7 @@ async def test_a_pass_with_nothing_to_recall_from_is_not_asked(provider, session
 
     assert provider.calls["audience_map_sources"] == 0
     assert provider.calls["audience_map_validate"] == 0
-    assert "could not recall them" in result.validation_note
+    assert "No usable source URLs" in result.validation_note
     assert result.segments[0].assessment.priority == "hypothesis"
 
 
@@ -549,4 +552,4 @@ async def test_a_recall_that_finds_nothing_says_so_rather_than_going_quiet(
 
     assert provider.calls["audience_map_sources"] == 1
     assert provider.calls["audience_map_validate"] == 0
-    assert "could not recall them" in result.validation_note
+    assert "No usable source URLs" in result.validation_note

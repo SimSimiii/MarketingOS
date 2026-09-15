@@ -39,15 +39,17 @@ from sqlmodel import Session, col, select
 from app.knowledge.artifacts import KnowledgeArtifacts
 from app.knowledge.compiler import find_gaps
 from app.knowledge.corpus import fold
-from app.knowledge.ledger import Evidence
+from app.knowledge.ledger import Evidence, EvidenceLedger
 from app.market.audience_research import AudienceResearch
-from app.market.capabilities import ProductCapabilityProfile
+from app.market.capabilities import ProductCapabilityProfile, normalize_capability_profile
 from app.market.demand import (
     AudienceSegment,
     Contact,
     DemandMap,
+    MapOptions,
     Prospect,
     ProspectStatus,
+    audience_fingerprint,
 )
 from app.market.proof import ProofCandidate, ProofKind, ProofStatus, next_evidence_id
 from app.market.qualification import CompanyQualification
@@ -66,6 +68,7 @@ from app.models.market import (
     Rival,
     UserAudienceRow,
 )
+from app.repositories.knowledge_artifact_repository import KnowledgeArtifactRepository
 
 logger = logging.getLogger("marketingos.market")
 
@@ -314,16 +317,37 @@ class MarketStore:
             )
         return merge_research_evidence(
             merge_user_audiences(compiled, [user_segment(row) for row in rows], profile),
-            self.researched_audiences(brand_id),
+            self.researched_audiences(brand_id, compiled.options),
             profile,
         )
 
-    def researched_audiences(self, brand_id: UUID) -> dict[str, AudienceResearch]:
-        """The newest research for each audience, keyed the way a map is read."""
+    def researched_audiences(
+        self, brand_id: UUID, options: MapOptions,
+    ) -> dict[str, AudienceResearch]:
+        """Recover legacy identities only from their exact historical source map."""
         found: dict[str, AudienceResearch] = {}
+        maps: dict[UUID, AudienceMapRow | None] = {}
         for row in self.latest_researches(brand_id):
             try:
-                found[fold(row.audience_name)] = AudienceResearch.model_validate(row.payload)
+                research = AudienceResearch.model_validate(row.payload)
+                if row.source_map_id is not None:
+                    if row.source_map_id not in maps:
+                        maps[row.source_map_id] = self._session.get(AudienceMapRow, row.source_map_id)
+                    source = maps[row.source_map_id]
+                    if (source is None or source.brand_id != brand_id
+                        or source.version != row.source_map_version):
+                        research.audience_fingerprint = ""
+                    else:
+                        original = DemandMap.model_validate(source.payload)
+                        if original.options.model_dump(exclude={"mode"}) != options.model_dump(exclude={"mode"}):
+                            research.audience_fingerprint = "scope_changed"
+                        elif not research.audience_fingerprint:
+                            matches = [item for item in original.segments
+                                       if fold(item.name) == fold(row.audience_name)]
+                            if (len(matches) == 1
+                                and matches[0].definition == research.definition):
+                                research.audience_fingerprint = audience_fingerprint(matches[0])
+                found[fold(row.audience_name)] = research
             except ValidationError:
                 logger.info("market: unreadable audience research payload on row %s", row.id)
         return found
@@ -334,8 +358,6 @@ class MarketStore:
         if not row or not row.payload:
             return None
         demand = DemandMap.model_validate(row.payload)
-        if not demand.product_fingerprint:
-            return demand
         from app.market.audience_discovery import current_map
 
         return current_map(demand, self._capability_profile(brand_id))
@@ -447,7 +469,19 @@ class MarketStore:
         if row is None or not row.payload:
             return None
         try:
-            return row, AudienceResearch.model_validate(row.payload)
+            research = AudienceResearch.model_validate(row.payload)
+            map_row = self._latest_map_row(brand_id)
+            demand = DemandMap.model_validate(map_row.payload) if map_row else None
+            user_row = self.user_audience(brand_id, audience)
+            selected = user_segment(user_row) if user_row else (demand.named(audience) if demand else None)
+            if selected is not None:
+                checked = self.researched_audiences(
+                    brand_id, demand.options if demand else MapOptions(),
+                ).get(fold(audience))
+                if checked is None or checked.audience_fingerprint != audience_fingerprint(selected):
+                    return None
+                research = checked
+            return row, research
         except ValidationError:
             logger.info("market: unreadable audience research payload on row %s", row.id)
             return None
@@ -525,7 +559,7 @@ class MarketStore:
         if row is None or not row.payload:
             return None
         try:
-            return row, ProductCapabilityProfile.model_validate(row.payload)
+            return row, self._checked_capability_profile(row)
         except ValidationError:
             logger.info("market: unreadable capability profile payload on row %s", row.id)
             return None
@@ -548,10 +582,27 @@ class MarketStore:
             if not row.payload:
                 continue
             try:
-                return row, ProductCapabilityProfile.model_validate(row.payload)
+                return row, self._checked_capability_profile(row)
             except ValidationError:
                 logger.info("market: unreadable capability profile payload on row %s", row.id)
         return None
+
+    def _checked_capability_profile(self, row: ProductCapabilityProfileRow) -> ProductCapabilityProfile:
+        """Revalidate persisted attachments against current facts without writing history."""
+        profile = ProductCapabilityProfile.model_validate(row.payload)
+        knowledge = KnowledgeArtifactRepository(self._session).latest_for_brand(row.brand_id)
+        ledger = EvidenceLedger()
+        if knowledge is not None:
+            ledger = KnowledgeArtifacts.model_validate(knowledge.payload).evidence
+        ledger = ledger.model_copy(update={
+            "entries": [*ledger.entries, *self.approved_evidence(row.brand_id)],
+        })
+        return normalize_capability_profile(
+            profile, ledger=ledger,
+            knowledge_id=knowledge.id if knowledge else profile.knowledge_id,
+            knowledge_version=knowledge.version if knowledge else profile.knowledge_version,
+            version=profile.version,
+        )
 
     def save_capability_profile(
         self, brand_id: UUID, profile: ProductCapabilityProfile

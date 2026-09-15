@@ -47,6 +47,7 @@ looking for them.
 """
 
 import asyncio
+import hashlib
 import json
 import logging
 import re
@@ -223,6 +224,8 @@ class MapEvidence(BaseModel):
     quote: str
     url: str
     kind: Literal["need", "alternative", "access", "counterevidence", "example"] = "need"
+    impact: Literal["unknown", "minor", "material"] = "unknown"
+    impact_reason: str = ""
     fetched_at: datetime | None = None
 
 
@@ -242,12 +245,10 @@ class MapAssessment(BaseModel):
     #: found. Its own axis rather than a sentence in `unknowns`, because an
     #: audience nobody can reach is a different problem from one nobody wants.
     findability: Literal["verified", "unknown"] = "unknown"
-    #: Sources that argue against this audience. A count rather than a veto:
-    #: the discovery prompt asks for reasons the product would not work, and
-    #: ranking the segments that found some below the ones that did not pays
-    #: for honest searching with a worse position.
+    #: Unique source URLs arguing against this audience. Material or unassessed
+    #: objections route to review; they never manufacture product incompatibility.
     counterevidence: int = 0
-    priority: Literal["explore_first", "hypothesis", "incompatible"] = "hypothesis"
+    priority: Literal["explore_first", "review_first", "hypothesis", "incompatible"] = "hypothesis"
     reasons: list[str] = Field(default_factory=list)
     unknowns: list[str] = Field(default_factory=list)
     evidence: list[MapEvidence] = Field(default_factory=list)
@@ -633,6 +634,23 @@ class AudienceSegment(BaseModel):
         )
 
 
+def audience_fingerprint(segment: AudienceSegment) -> str:
+    """Identity of the situation researched, independent of display name and ranking."""
+    def canonical(value):
+        if isinstance(value, str):
+            return fold(value)
+        if isinstance(value, dict):
+            return {key: canonical(item) for key, item in sorted(value.items())}
+        if isinstance(value, list):
+            return sorted((canonical(item) for item in value), key=lambda item: json.dumps(item, sort_keys=True))
+        return value
+
+    payload = segment.model_dump(include={
+        "organization", "workflow", "need", "who", "trigger", "definition",
+    })
+    return hashlib.sha256(json.dumps(canonical(payload), sort_keys=True).encode()).hexdigest()
+
+
 class DemandMap(BaseModel):
     """Every buyer worth considering for one product, at one moment."""
 
@@ -653,7 +671,7 @@ class DemandMap(BaseModel):
 
     @property
     def ranked(self) -> list["AudienceSegment"]:
-        order = {"explore_first": 0, "hypothesis": 1, "incompatible": 2}
+        order = {"explore_first": 0, "review_first": 1, "hypothesis": 2, "incompatible": 3}
         research = {Researchability.HIGH: 0, Researchability.MEDIUM: 1,
                     Researchability.LOW: 2, Researchability.UNRESEARCHABLE: 3}
         return sorted(self.segments, key=lambda segment: (
@@ -687,7 +705,7 @@ class DemandMap(BaseModel):
             self.segments,
             key=lambda segment: (
                 order[self.admission_for(segment).researchability],
-                {"explore_first": 0, "hypothesis": 1, "incompatible": 2}[segment.assessment.priority],
+                {"explore_first": 0, "review_first": 1, "hypothesis": 2, "incompatible": 3}[segment.assessment.priority],
             ),
         )
 
