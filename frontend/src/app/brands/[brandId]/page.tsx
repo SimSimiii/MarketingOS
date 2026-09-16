@@ -1,8 +1,11 @@
 import Link from "next/link";
+import { BookOpen, Files, Megaphone, Users } from "lucide-react";
 
 import { BrandKnowledgeDialog } from "./brand-knowledge-dialog";
-import { BrandStyleForm } from "./brand-style-form";
+import { BrandSectionHeader } from "../brand-ui";
+import { ExpandableText } from "@/components/expandable-text";
 import { StatusBadge } from "@/components/status-badge";
+import { StatFigure, StatTile } from "@/components/stat-tile";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,8 +24,7 @@ export default async function BrandOverviewPage({
 }) {
   const { brandId } = await params;
 
-  const [brand, documents, base, market, campaigns] = await Promise.all([
-    api.getBrand(brandId),
+  const [documents, base, market, campaigns] = await Promise.all([
     api.listKnowledgeDocuments({ brandId }).catch(() => []),
     api.getKnowledgeBase({ brandId }).catch(() => null),
     api.getMarket(brandId).catch(() => null),
@@ -33,10 +35,19 @@ export default async function BrandOverviewPage({
 
   return (
     <div className="space-y-6">
+      <BrandSectionHeader title="Overview" description="Your brand at a glance. Build your knowledge, understand your buyers and turn it into campaigns." />
+      <div className="rise-stagger grid grid-cols-2 gap-3 xl:grid-cols-4">
+        {[
+          { label: "Sources", value: documents.length, href: `/brands/${brandId}/knowledge`, hint: "Manage your material", icon: Files },
+          { label: "Established facts", value: base?.total ?? "—", href: `/brands/${brandId}/knowledge/base`, hint: "Explore your evidence", icon: BookOpen },
+          { label: "Audiences", value: market?.audience_segments ?? 0, href: `/brands/${brandId}/market?tab=audience`, hint: "Find your next buyers", icon: Users },
+          { label: "Campaigns", value: ours.length, href: `/campaigns?brand=${brandId}`, hint: "See your work", icon: Megaphone },
+        ].map(({ icon, ...item }) => <StatTile key={item.label} {...item} icon={icon} />)}
+      </div>
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
-          <CardHeader className="flex-row items-center justify-between gap-2 pb-3">
-            <CardTitle className="text-base">What this brand can prove</CardTitle>
+          <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 pb-3">
+            <CardTitle className="text-base">Knowledge & evidence</CardTitle>
             <Link
               href={`/brands/${brandId}/knowledge/base`}
               className="text-sm text-primary hover:underline"
@@ -56,10 +67,10 @@ export default async function BrandOverviewPage({
               </p>
             ) : (
               <>
-                <div className="grid grid-cols-3 gap-2">
-                  <Figure label="Facts established" value={base.total} />
-                  <Figure label="Citable in copy" value={base.citable_total} />
-                  <Figure label="Strong enough to lead" value={base.headline_total} />
+                <div className="grid grid-cols-3 gap-3 rounded-xl border border-hairline bg-background/40 p-4">
+                  <StatFigure label="Facts established" value={base.total} />
+                  <StatFigure label="Citable in copy" value={base.citable_total} />
+                  <StatFigure label="Strong enough to lead" value={base.headline_total} />
                 </div>
                 <p className="text-muted-foreground">
                   Compiled v{base.version}
@@ -67,7 +78,7 @@ export default async function BrandOverviewPage({
                   {documents.length} source{documents.length === 1 ? "" : "s"}.
                 </p>
                 {base.open_questions.length > 0 && (
-                  <p className="text-amber-600 dark:text-amber-500">
+                  <p className="text-amber-300">
                     {base.open_questions.length} question
                     {base.open_questions.length === 1 ? "" : "s"}{" "}
                     still unanswered &mdash; each is a sentence this brand&rsquo;s copy currently
@@ -89,8 +100,8 @@ export default async function BrandOverviewPage({
         </Card>
 
         <Card>
-          <CardHeader className="flex-row items-center justify-between gap-2 pb-3">
-            <CardTitle className="text-base">Who this brand is up against</CardTitle>
+          <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 pb-3">
+            <CardTitle className="text-base">Market intelligence</CardTitle>
             <Link
               href={`/brands/${brandId}/market`}
               className="text-sm text-primary hover:underline"
@@ -101,11 +112,11 @@ export default async function BrandOverviewPage({
           <CardContent className="space-y-3 text-sm">
             {market?.positioning ? (
               <>
-                <p>{market.positioning.summary}</p>
-                <div className="grid grid-cols-3 gap-2">
-                  <Figure label="Competitors" value={rivals.length} />
-                  <Figure label="Proof waiting" value={market.pending_proof} />
-                  <Figure label="Changes to act on" value={market.unseen_alerts} />
+                <ExpandableText text={market.positioning.summary} />
+                <div className="grid grid-cols-3 gap-3 rounded-xl border border-hairline bg-background/40 p-4">
+                  <StatFigure label="Competitors" value={rivals.length} />
+                  <StatFigure label="Proof waiting" value={market.pending_proof} />
+                  <StatFigure label="Changes to act on" value={market.unseen_alerts} />
                 </div>
                 <p className="text-muted-foreground">
                   Last read {market.scanned_at ? timeAgo(market.scanned_at) : "—"}.
@@ -136,7 +147,7 @@ export default async function BrandOverviewPage({
       </div>
 
       <Card>
-        <CardHeader className="flex-row items-center justify-between gap-2 pb-3">
+        <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 pb-3">
           <CardTitle className="text-base">Campaigns for this brand</CardTitle>
           <Link
             href={`/campaigns?brand=${brandId}`}
@@ -156,7 +167,7 @@ export default async function BrandOverviewPage({
               <Link
                 key={campaign.id}
                 href={`/campaigns/${campaign.id}`}
-                className="flex items-center justify-between gap-3 rounded-md border border-border px-4 py-3 transition-colors hover:bg-accent/40"
+                className="flex items-center justify-between gap-3 rounded-lg border border-border px-4 py-3 transition-colors hover:border-violet-400/30 hover:bg-accent/30"
               >
                 <div className="min-w-0">
                   <p className="font-medium">{campaign.name}</p>
@@ -172,16 +183,7 @@ export default async function BrandOverviewPage({
         </CardContent>
       </Card>
 
-      <BrandStyleForm brand={brand} />
-    </div>
-  );
-}
 
-function Figure({ label, value }: { label: string; value: number | string }) {
-  return (
-    <div>
-      <p className="text-xl font-semibold tabular-nums">{value}</p>
-      <p className="text-xs text-muted-foreground">{label}</p>
     </div>
   );
 }

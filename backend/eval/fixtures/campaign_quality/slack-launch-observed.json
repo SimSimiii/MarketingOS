@@ -1,0 +1,57 @@
+{
+  "id": "slack-launch-observed",
+  "name": "Observed launch email, 2026-09-15",
+  "context": {
+    "product_name": "orqAgent",
+    "target_audience": "Ops or IT generalist standing up an internal Slack answer-bot over company docs",
+    "evidence": [
+      {
+        "id": "E12",
+        "text": "Analytics automatically track P95 latency, token usage per model, daily spend trends, and guardrail trigger rates without extra config Source: P95 latency, token usage per model, daily spend trends, guardrail trigger rates — all tracked automatically without extra config."
+      },
+      {
+        "id": "E39",
+        "text": "Signing up for orqAgent requires no credit card. Source: Go to [orqAgent](/sign-up/) and sign up for a free account. No credit card required."
+      },
+      {
+        "id": "E53",
+        "text": "Token counts and latency are shown per-run in the Analytics tab once calls have been made. Source: Token counts and latency are shown per-run in the Analytics tab once you've made calls."
+      },
+      {
+        "id": "E73",
+        "text": "The API response includes an estimated USD cost for the run, given to 6 decimal places. Source: Estimated USD cost for this run (6 decimal places)."
+      },
+      {
+        "id": "E90",
+        "text": "Slack integration connects via OAuth install, with the bot replying to mentions and channel messages. Source: OAuth install — the bot replies to mentions and channel messages."
+      },
+      {
+        "id": "E97",
+        "text": "Messages handled through any channel are real agent runs that consume credits and appear in Analytics exactly like API calls. Source: Messages handled through any channel are real agent runs: they consume credits and appear in Analytics exactly like API calls."
+      }
+    ]
+  },
+  "drafts": [
+    {
+      "id": "observed",
+      "email": {
+        "position": 1,
+        "role": "Launch announcement to a cold list — get one ops/IT generalist to sign up and run a single test, one policy in one channel.",
+        "subject": "the handbook question that comes back every week",
+        "preview_text": "a Slack bot can answer it. this one also tells you what answering it cost",
+        "eyebrow": "WHAT'S NEW",
+        "headline": "An answer-bot that keeps an account of itself",
+        "greeting": "Hi there,",
+        "body": "P95 latency, token usage per model, daily spend trends — tracked automatically, no extra configuration.\n\nThat is what a question asked in Slack can look like on the way back.\n\nThe same handbook questions come back to the channel every week, and the answer sits somewhere in a few hundred pages nobody finds by guessing titles.\n\nA responder wired from Slack events, a vector store and a model API will answer them. What it will not tell you is what a week of questions cost, or what that number does when the whole company starts asking.\n\norqAgent is a no-code platform for building AI agents. Slack is a native channel — OAuth install, the bot replies to mentions and channel messages.\n\nEvery message it handles is a **real agent run**: it consumes credits and appears in Analytics exactly like an API call. The accounting is part of the product, not something you add after.\n\n> **Start for free, no card** — one policy, one channel, and a record of what each answer cost.\n\nOne policy, one channel. Read the first day's numbers yourself.",
+        "call_to_action": "Create your first agent",
+        "sign_off": "- the orqAgent team",
+        "postscript": "The free plan needs no card."
+      }
+    }
+  ],
+  "notes": [
+    "Actual persisted asset c09bf05c08c4466ca0d6f93cdc3936b7 from execution 206cf172c82c4ab2843a84815ab30175.",
+    "Evidence is a relevant excerpt of knowledge version 5, not a reconstruction of the full historical campaign contract.",
+    "E73 licenses estimated USD cost in the API response per run. E97 links channel messages to runs. These do not alone establish exact all-in cost beside each Slack answer."
+  ]
+}

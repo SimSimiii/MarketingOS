@@ -57,11 +57,9 @@ export function BrandStyleForm({ brand }: { brand: Brand }) {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-base">How this brand&rsquo;s email looks</CardTitle>
+        <CardTitle className="text-base">Email appearance</CardTitle>
         <p className="text-sm text-muted-foreground">
-          Used when a campaign asks for the branded look. Cold sequences stay plain whatever is
-          set here &mdash; a template is the tell that a message came from a marketing tool, and
-          it converts worse on exactly the mail this system writes most.
+          Your logo, accent colour and footer for campaigns using the branded layout.
         </p>
       </CardHeader>
       <CardContent className="space-y-4">

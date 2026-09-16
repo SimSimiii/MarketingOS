@@ -79,20 +79,23 @@ export function AuthForm({ mode, allowSignup }: { mode: Mode; allowSignup: boole
   }
 
   return (
-    <div className="mx-auto flex min-h-[70vh] w-full max-w-sm flex-col justify-center">
-      <div className="mb-8 flex items-center gap-3">
-        <span className="flex size-9 items-center justify-center rounded-xl border border-violet-400/30 bg-violet-500/15 text-violet-300">
+    <div className="mx-auto flex min-h-[80vh] w-full max-w-md flex-col justify-center">
+      <div className="mb-8 flex items-center justify-center gap-3">
+        <span className="flex size-10 items-center justify-center rounded-xl border border-violet-400/30 bg-violet-500/15 text-violet-300 shadow-[0_0_24px_-6px_oklch(0.62_0.22_292/0.7)]">
           <Sparkles className="size-5" aria-hidden="true" />
         </span>
-        <span className="text-lg font-semibold tracking-tight">
+        <span className="text-xl font-semibold tracking-tight">
           Marketing<span className="text-violet-300">OS</span>
         </span>
       </div>
 
+      {/* The one page a signed-out visitor can reach, so it gets the same
+          surface the workspace uses rather than bare fields on the ground. */}
+      <div className="studio-hero rounded-2xl border border-violet-400/15 p-6 sm:p-8">
       <h1 className="text-2xl font-semibold tracking-tight">
         {signingUp ? "Create your account" : "Sign in"}
       </h1>
-      <p className="mt-2 text-sm text-muted-foreground">
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         {signingUp
           ? "One account holds your businesses, their compiled knowledge, and every campaign written from it."
           : "Your businesses, their knowledge and their campaigns are behind this."}
@@ -112,6 +115,7 @@ export function AuthForm({ mode, allowSignup }: { mode: Mode; allowSignup: boole
           <Input
             id="email"
             type="email"
+            className="h-10"
             autoComplete="username"
             required
             value={email}
@@ -125,6 +129,7 @@ export function AuthForm({ mode, allowSignup }: { mode: Mode; allowSignup: boole
               <Label htmlFor="full-name">Your name</Label>
               <Input
                 id="full-name"
+                className="h-10"
                 autoComplete="name"
                 value={fullName}
                 onChange={(event) => setFullName(event.target.value)}
@@ -134,6 +139,7 @@ export function AuthForm({ mode, allowSignup }: { mode: Mode; allowSignup: boole
               <Label htmlFor="company">Company</Label>
               <Input
                 id="company"
+                className="h-10"
                 autoComplete="organization"
                 value={company}
                 onChange={(event) => setCompany(event.target.value)}
@@ -147,6 +153,7 @@ export function AuthForm({ mode, allowSignup }: { mode: Mode; allowSignup: boole
           <Input
             id="password"
             type="password"
+            className="h-10"
             autoComplete={signingUp ? "new-password" : "current-password"}
             required
             minLength={signingUp ? 10 : undefined}
@@ -180,8 +187,9 @@ export function AuthForm({ mode, allowSignup }: { mode: Mode; allowSignup: boole
               : "Sign in"}
         </Button>
       </form>
+      </div>
 
-      <p className="mt-6 text-sm text-muted-foreground">
+      <p className="mt-6 text-center text-sm text-muted-foreground">
         {signingUp ? (
           <>
             Already have an account?{" "}

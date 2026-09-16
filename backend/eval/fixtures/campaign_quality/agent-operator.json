@@ -1,0 +1,64 @@
+{
+  "id": "agent-operator",
+  "name": "agent-operator",
+  "context": {
+    "product_name": "Relay",
+    "target_audience": "Engineer already operating production agents and accountable for model spend. The campaign offers a reporting evaluation. Familiar with token usage and daily spend; metrics can be an appropriate opening.",
+    "buyer_personas": [
+      "Engineer already operating production agents and accountable for model spend. The campaign offers a reporting evaluation. Familiar with token usage and daily spend; metrics can be an appropriate opening."
+    ],
+    "evidence": [
+      {
+        "id": "F1",
+        "text": "Relay is a platform for building agents that answer questions from uploaded documents in Slack."
+      },
+      {
+        "id": "F2",
+        "text": "Connecting Slack requires an OAuth installation and choosing a channel. Documents must be uploaded."
+      },
+      {
+        "id": "F3",
+        "text": "Analytics tracks daily aggregate spend and token usage per model automatically, with no extra configuration for Analytics."
+      },
+      {
+        "id": "F4",
+        "text": "A free account is available without a card."
+      },
+      {
+        "id": "F5",
+        "text": "The Analytics dashboard displays estimated USD cost per answer. This estimates model usage cost and excludes subscription fees."
+      }
+    ]
+  },
+  "drafts": [
+    {
+      "id": "metrics-first",
+      "email": {
+        "position": 1,
+        "subject": "See where agent spend goes",
+        "preview_text": "A concrete first step for your team",
+        "greeting": "Hi there,",
+        "body": "Daily spend, tokens per model, estimated USD cost per answer: inspect them together in Relay Analytics.\n\nRelay is an agent platform with built-in reporting. The per-answer estimate covers model usage, not subscription fees, so it is a way to investigate usage rather than reconcile your entire bill.\n\nAnalytics tracks the daily totals automatically; that does not remove the setup for an agent or its channels. You can add reporting to an in-house agent too. Here, the reporting is already part of the platform.\n\nReview the dashboard against the questions you need it to answer before deciding whether to move a workflow.",
+        "call_to_action": "Review the reporting dashboard",
+        "sign_off": "The Relay team"
+      }
+    },
+    {
+      "id": "wrong-job",
+      "email": {
+        "position": 1,
+        "subject": "Your handbook could answer back",
+        "preview_text": "A concrete first step for your team",
+        "greeting": "Hi there,",
+        "body": "The same handbook questions keep arriving in Slack, and searching documents takes attention away from your day.\n\nRelay can answer those questions from uploaded documents. Connect Slack and give the agent a policy to read, then ask it something you already know the answer to.\n\nIts Analytics view can also help with reporting. It includes daily totals and an estimated USD cost per answer, which excludes subscription fees.\n\nTry a handbook question before you decide whether this belongs in your workflow. A free account is available without a card.",
+        "call_to_action": "Try a document question",
+        "sign_off": "The Relay team"
+      }
+    }
+  ],
+  "notes": [
+    "Synthetic qualitative fixture; evidence is defined for this case, not a claim about a real product.",
+    "Explicit per-answer evidence is the positive control. Do not penalize a metrics-led opening merely for being technical.",
+    "Variants are editorial contrasts, not pipeline before/after outputs. Model preferences are not measured marketing outcomes."
+  ]
+}

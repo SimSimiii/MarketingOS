@@ -167,7 +167,29 @@ class Strategist:
             )
         if chosen_segment:
             brief.reader_segment = chosen_segment
-            brief.reader = f"Selected audience: {chosen_segment}. " + brief.reader
+        # The strategist chooses an argument, not a new biography. Passing its
+        # expanded persona on as audience context lets invented tools, delays
+        # and team ownership become facts in every subsequent writing call.
+        segment = (
+            next((item for item in artifacts.audience.segments if item.name == chosen_segment), None)
+            if chosen_segment
+            else artifacts.audience.match(brief.reader_segment, brief.reader)
+        )
+        if segment is not None:
+            brief.reader = (
+                f"Selected audience: {segment.name}.\n"
+                f"Situation context ({segment.situation_grounding}; check applicability): "
+                f"{segment.situation or 'not established'}"
+            )
+        else:
+            brief.reader = (
+                f"Selected audience: {brief.reader_segment or 'not established'}. "
+                "No further situation is established beyond the user's request."
+            )
+        if request.target_market:
+            brief.reader += f"\nUser-specified audience: {request.target_market}"
+        if request.channel is not None and request.channel.confirmed_context:
+            brief.reader += f"\nUser-confirmed recipient context: {request.channel.confirmed_context}"
         brief.contract = contract
         return brief
 

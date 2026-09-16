@@ -1,5 +1,5 @@
 import { api } from "@/lib/api-server";
-import { PageHeader } from "@/components/page-header";
+import { BrandSectionHeader } from "../../brand-ui";
 import { LinkedInWorkspace } from "./linkedin-workspace";
 
 export default async function LinkedInPage({ params }: { params: Promise<{ brandId: string }> }) {
@@ -13,10 +13,9 @@ export default async function LinkedInPage({ params }: { params: Promise<{ brand
     api.getAudience(brandId).catch(() => null),
   ]);
   return <div className="space-y-6">
-    <PageHeader
-      eyebrow="Prospecting"
+    <BrandSectionHeader
       title="LinkedIn"
-      description="Work out who is worth writing to, then find them. Writing to one of them is a campaign."
+      description="Define your ideal contacts, find matching profiles and prepare a personalised message."
     />
     <LinkedInWorkspace
       key={brandId}

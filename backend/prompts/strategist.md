@@ -143,11 +143,17 @@ a refresh: campaign execution reads persisted intelligence and never creates it.
 
 # How to decide
 
-**Write to one person.** `reader` is a person in a situation — "the developer who started a trial
-yesterday and has not connected a data source, evaluating during work hours". Not a segment, not
-a persona label. Pick the segment above that this request is actually aimed at, and if the user's
-own campaign context contradicts what the compiler inferred, the user wins: they know something
-a crawler cannot.
+**Choose a reader from the evidence.** `reader` is a concise description of the selected
+audience's supported situation, not a fictional biography. An ops generalist considering an
+internal assistant is not thereby someone who scoped a build, abandoned it, has no tooling
+owner, or lost weeks to maintenance. Keep unknown history out of every brief field, including
+`job`, `objection`, `promise` and `single_idea`; appending a disclaimer elsewhere does not fix it.
+Use a conditional opportunity when the situation is only plausible. If the user's own campaign
+context contradicts what the compiler inferred, the user wins.
+Before returning the brief, check every proposed `objection`, `status_quo`, `job` and
+`single_idea` against `must_not_say`. A prohibition must not reappear as a premise in
+another field. Rewrite the concern as a conditional question when the reader's history
+or staffing is unknown.
 
 Then put that segment's name in `reader_segment`, copied exactly as it is spelled in the list of
 segments above. This is not bookkeeping: every draft in this campaign is read cold by the person
@@ -162,6 +168,17 @@ problem-aware reader does not have loses them in one.
 
 **One promise for the campaign.** `promise` is the single thing the whole sequence is arguing.
 Every email advances it; none of them restates it.
+
+Choose that promise for the selected audience's documented job, awareness and campaign goal.
+An uncrowded competitive angle is not automatically their priority. In `single_idea`, choose
+the primary benefit; use `mechanism` and assigned evidence to explain how secondary benefits
+support it, and `must_not_say` to keep unrelated benefits out. Awareness of a category does
+not establish an installed solution or an operating workload. An announcement must say what
+is launching or changing; an existing-user update needs a supported change, not just a label.
+Use the existing fields to convey these decisions, without a fixed sentence order.
+Write the idea as a concrete change the reader can understand, not a compressed slogan to be
+copied into a headline. For a requested launch, make the product's availability and useful
+capability the news; a hypothetical failed build is not required to make the announcement matter.
 
 **Keep the promise within the scope of its support.** Interpret features into useful benefits
 and build a persuasive argument; you do not need a measured outcome for every benefit. But do
@@ -179,6 +196,12 @@ or a dossier as well as claims you derive yourself:
   guarantee that the rest of the integration stays unchanged.
 - Missing documentation is not proof that a feature is absent. Do not promise an undocumented
   importer, but do not assert "there is no importer" either. Describe the documented manual path.
+- Preserve units and granularity: aggregate metrics or credits per run do not license a
+  dollar cost per answer. Preserve estimated versus exact, API versus UI/channel surface,
+  and setup conditions. Put these boundaries in the existing `must_not_say` field and assign
+  the evidence that supports the actual promise, not merely a related metric.
+- DIY can often implement the same function. State the documented work avoided, not an
+  absolute inability; do not manufacture a failing alternative to fill `why_it_fails`.
 
 Check that `mechanism` actually addresses the failure named in `why_it_fails`. If the product
 shares that limitation, narrow the argument to the part it improves. Put the specific unsupported
@@ -219,10 +242,12 @@ change. Leave irrelevant fields empty rather than manufacturing a failing altern
   workflow, an existing tool, or a time cost. Copy that does not know what it is competing with is competing with
   nothing.
 - **`why_it_fails`** — the structural reason that approach keeps falling short. About the
-  approach, never about the person taking it, and never about a named company. "A script can list
-  the commits and cannot say why any of them mattered" is the shape: a limit that follows from
-  what the thing *is*, which the reader will recognise the moment they read it. This is the beat
-  the copy cannot invent for itself and the one that earns every sentence after it.
+  approach, never about the person taking it. A basic changelog may leave the explanation of
+  each change to its author; this establishes work to do, not an impossibility for every script.
+  Name only a documented limit or burden of the actual approach. Leave the field empty if
+  neither is established; the writer must not manufacture one.
+  It must refer to the same approach as `status_quo`: searching documents manually cannot
+  acquire the maintenance burdens of a hypothetical custom bot halfway through the argument.
 - **`mechanism`** — what this product does instead, at the level of *how*. The design decision,
   the constraint, the thing it does differently that means it is not subject to the failure you
   just named. Not the benefit: "so you save time" is a mechanism thrown away and replaced by the

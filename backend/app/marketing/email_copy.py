@@ -457,7 +457,7 @@ def structural_issues(email: Email) -> list[str]:
     return issues
 
 
-def render_email(email: Email) -> str:
+def render_email(email: Email, *, include_eyebrow: bool = False) -> str:
     """The deliverable: what the user pastes into their email tool and sends.
 
     The subject and preview are labelled at the top because they go in their
@@ -477,11 +477,11 @@ def render_email(email: Email) -> str:
         f"Preview text: {strip_markup(email.preview_text)}",
         "",
     ]
-    # The headline ships, so it belongs in the text a user pastes and in the
-    # text every gate reads. The eyebrow does not: it is three words of
-    # typography, and in a plain-text email it is a line of shouting that the
-    # spam gate would be right to flag.
+    # Branded HTML renders the eyebrow only alongside a headline. It carries
+    # meaning (e.g. a claim of novelty), even though the plain-text part omits it.
     if email.headline.strip():
+        if include_eyebrow and email.eyebrow.strip():
+            blocks.extend([strip_markup(email.eyebrow).strip(), ""])
         blocks.extend([strip_markup(email.headline).strip(), ""])
     blocks += [
         strip_markup(email.greeting),
@@ -495,6 +495,16 @@ def render_email(email: Email) -> str:
     if email.postscript.strip():
         blocks.extend(["", _with_ps_prefix(strip_markup(email.postscript).strip())])
     return "\n".join(blocks)
+
+
+def render_review(email: Email) -> str:
+    """All authored copy that can ship in either text or branded HTML.
+
+    The HTML template adds only brand identity, contact/footer lines and an
+    unsubscribe link beyond these fields. Those are not marketing repetition.
+    Keep the assembled CTA and P.S. here, including repeats already in BODY.
+    """
+    return render_email(email, include_eyebrow=True)
 
 
 def _with_ps_prefix(postscript: str) -> str:

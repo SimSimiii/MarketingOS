@@ -6,6 +6,9 @@ template, an example or a suggestion.
 
 {{ request }}
 
+The strategy's interpretation of this request (the request and evidence take precedence):
+{{ campaign_intent }}
+
 Follow the requested output language first. If none is specified, use the language of the request.
 
 # Who you are writing to
@@ -19,24 +22,27 @@ from that.
 
 {{ segment }}
 
-This is the half of the job the product cannot do for you. Everything further down is true about
-the company; only this is true about the reader, and the reader is the one deciding whether to
-keep reading. Their situation, in their words, is where the first sentence comes from — not from
-what the product does, however impressive that is.
+Use the grounding labels and source quotations here to decide what is established about the
+audience. The campaign brief below is an argument to evaluate, not a second source of audience
+facts. A useful product announcement may lead with what is available and why it helps; do not
+invent a recipient's history to earn permission to introduce the product.
 
 It describes a *kind* of person, though, not the one recipient opening this. So it is ground to
 stand on, never a fact to state back to them. The moment you turn it into something specific you
 claim to know — a count, a date, what they did this quarter, what someone told them — you are
 guessing about a stranger in writing, and they can tell. "Three customers asked you for this
 feature this quarter" reads as presumptuous even to the reader for whom it happens to be true;
-"the feature customers keep asking for is still behind a hire you have not made" is the same
-insight, and it is theirs to recognise rather than yours to assert.
+"if customer requests are waiting on engineering capacity" leaves that circumstance for the
+reader to recognise without asserting their hiring history.
 
 ## The reason they would not act, and what answers it
 
 {{ objection_detail }}
 
 Answer it by name, in their words, before you ask for anything.
+An objection may be phrased as a possible situation, not a fact about this reader.
+If it assumes their team history, installed tools or who owns a project, answer the
+underlying concern conditionally. Do not repeat its premise as a known fact.
 
 # What the whole campaign promises
 
@@ -80,6 +86,10 @@ precedence over its wording: narrow an unsupported promise to the documented ben
 concrete test. Do not reproduce an overclaim merely because the brief contains it, and do not
 replace the assigned argument with an unrelated one. Keep the campaign claim boundary and
 forbidden claims binding; narrowing a promise does not authorize spending excluded evidence.
+Before returning copy, compare every product, pricing and audience detail against `must_not_say`.
+An excluded detail stays excluded even if it appears in the knowledge selection, an objection,
+an example in these instructions or your previous draft. If two brief fields conflict, preserve
+the prohibition and express the useful concern without asserting its premise.
 
 ## The four beats
 
@@ -94,8 +104,8 @@ directly. Those may lead with the useful change, the next step, or an invitation
    what it is competing with is competing with nothing, and it reads that way.
 3. **Why that keeps falling short.** The structural reason: about the *approach*, not about the
    people using it, and never about a named company. "You should have bought something better"
-   insults the reader; "a script can list the commits and cannot say why any of them mattered"
-   tells them something true they had not yet put into words. This is the beat that earns
+   insults the reader; "a basic changelog lists commits; explaining their impact is another step"
+   names work rather than an impossibility for every script. This is the beat that earns
    everything after it, and it is the one most often missing. Without it, beat 4 is a boast.
 4. **What this does instead, and how.** The mechanism, not the benefit. *How* it is not subject
    to the failure you just named. "So you save time" is the sound of a mechanism being thrown
@@ -152,8 +162,9 @@ particular reader is a guess they get to check in one second, and the ones that 
 you the email — while the ones that are right still read as a script. Describe the situation, and
 let them supply the fact that they are in it.
 
-**Specifics, not adjectives.** "25 models across 9 providers" beats "powerful". "1,500 free
-credits, no card" beats "great value". A documented setup step beats "easy". Examples illustrate specificity, not facts you may borrow.
+**Specifics, not adjectives.** A documented setup step or a precisely supported mechanism
+beats "easy" or "powerful". Use only details permitted by this brief's claim boundary;
+examples of specific copy are never facts you may borrow.
 
 **Earn every line.** Each line's only job is to get the next one read. Then go back and delete
 every line that exists only because emails usually have one: the throat-clearing, the recap, the
@@ -164,6 +175,25 @@ in your brief — plainly, in their words, and answer it in a line. An email tha
 not convert. An email that removes the reason to hesitate does.
 
 **One ask.** The one in your brief, low friction, stated once. Never "and also follow us".
+
+Read the ending as the recipient receives it: BODY/callout, then the separate CTA link,
+sign-off and optional P.S. Do not accidentally repeat the same test or offer in all three.
+Repeat an ask only when the reinforcement has a purpose; leave PS empty when it adds nothing.
+Make every supporting benefit explain or substantiate the main promise, not compete with it.
+Check that pronouns and transitions have a clear referent; a clever bridge must still connect
+the two paragraphs on the page.
+Translate the brief's shorthand into natural sentences. A headline should name a useful action
+or outcome a reader can repeat, not equate a product with an abstract noun. State the benefit
+once, then use the mechanism to explain it: several synonyms for "the work is handled" do not
+advance the argument. Keep technical details that help this audience make the next decision.
+
+Preserve claim scope, even when no number appears: daily or model-level spend is not cost
+per answer, credits are not dollars, and estimated run cost is not exact total cost. Keep the
+documented unit, granularity, surface and conditions. An API cost field does not by itself
+establish a price shown beside a channel answer. Per-answer claims are welcome when licensed.
+Attach "no extra configuration" to the feature it describes, not the whole setup. A DIY
+alternative may add its own monitoring: describe the documented work avoided, not an
+unproven impossibility. Feedback and the brief cannot authorize new product claims.
 
 **Make the ask small enough to say yes to on a Tuesday.** The action in your brief is the one you
 are asking for, and you do not get to swap it — but you decide what it costs. "Create an account
@@ -209,7 +239,12 @@ the top, and it decides two fields:
   plan behind on Tuesday", not "About your cart". Under 62 characters, because past that it wraps
   to three lines on a phone and stops being a headline. The eyebrow is two or three words that
   say what kind of message this is — `YOUR CART`, `LAST CALL`, `WHAT'S NEW` — set in small
-  capitals above it.
+  capitals above it. A novelty label such as `WHAT'S NEW` is a promise: explicitly state the
+  supported launch or change in the message. Choose a different label or leave it empty
+  when the evidence and request establish no novelty; do not invent a new feature.
+  When the user explicitly asks for a product launch, plainly announce that product's
+  availability in the body as well. A launch does not imply that each existing capability
+  is itself newly released. Avoid making readers infer the announcement from a label or "now".
 - A **cold email, a follow-up, anything one person would actually type to another** leaves both
   empty. A headline over a message from a person is the tell that it came from a tool, and it
   costs you the one advantage that email has.
@@ -249,7 +284,7 @@ HEADLINE: one line under 62 characters, or leave it empty
 GREETING: the greeting line, ending in a comma
 CTA: the exact words that go on the link, under 8 words
 SIGNOFF: how you sign it, following "Who it is from" above - e.g. "- the Notewright team"
-PS: one line that lands the offer or the deadline again - or leave it empty
+PS: one useful additional note or purposeful reminder - otherwise leave it empty
 BODY:
 The email itself, starting on this line. A blank line between every paragraph. Everything after
 `BODY:` is the email, so write nothing there you would not send.
@@ -267,8 +302,8 @@ PS: The free tier stays free after the trial.
 BODY:
 The work shipped Tuesday. The note about it is what is keeping you here on Friday.
 
-Your script assembles the commits. What it cannot say is why any of them mattered — so that
-paragraph gets written by hand, at 4pm, by whoever merged last.
+Your changelog lists the commits. Turning that list into an explanation is another step — so
+that paragraph gets written by hand, at 4pm, by whoever merged last.
 
 Notewright reads the diff and the issue it closed as one thing, and writes that paragraph. It is
 the part of a release note a commit log does not contain.
@@ -276,7 +311,7 @@ the part of a release note a commit log does not contain.
 Point it at the branch you merged and read what comes back.
 
 Read that body against the four beats: their Friday, the script they already have, the specific
-thing a script structurally cannot do, then the mechanism that can — and the product named once,
+additional work in that example workflow, then the mechanism that handles it — and the product named once,
 in the third paragraph, where a stranger has been given a reason to care what it is called. Four
 short paragraphs. None of them is about the company.
 

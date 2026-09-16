@@ -19,7 +19,7 @@ import logging
 from app.ai.model_router import ModelTier
 from app.knowledge.artifacts import KnowledgeArtifacts
 from app.marketing.briefs import CampaignBrief, EmailBrief
-from app.marketing.email_copy import Email, EmailCopyError, parse_email, render_email
+from app.marketing.email_copy import Email, EmailCopyError, parse_email, render_review
 from app.marketing.exceptions import CraftError
 from app.marketing.gates import GateReport
 from app.marketing.observer import RunObserver
@@ -115,7 +115,7 @@ class EmailWriter:
                 "This draft was read by someone in your audience who knew nothing about the "
                 "product, and checked automatically. Here is what came back."
             ),
-            f"--- what you sent ---\n{render_email(draft)}\n--- end ---",
+            f"--- what you sent ---\n{render_review(draft)}\n--- end ---",
             f"What happened to the reader:\n{read.render()}",
         ]
         if failure := _comprehension_failure(read):
@@ -149,11 +149,14 @@ class EmailWriter:
         if critique_notes:
             sections.append(f"What the conversion critic wants changed:\n{critique_notes}")
         sections.append(
-            "Rewrite it. Not a polish - fix what actually happened. If they could not say what "
-            "it sells, that is the only thing this rewrite is for: one plain sentence naming "
-            "what this is, early enough that they reach it. If they stopped at a line, that "
-            "line goes. If their doubt went unanswered, answer it before the ask. Keep what "
-            f"worked, keep the same idea ({brief.single_idea or 'as briefed'}), and stay off "
+            "Revise the diagnosed problems and preserve what worked. If they could not say what "
+            "it sells, fix that first: one plain sentence naming "
+            "what this is, early enough that they reach it. A stopping point locates a problem; "
+            "it is not an order to delete the line. Use the critic's diagnosis and check it "
+            "against the evidence. Resolve doubts needed for the actual next step without "
+            "adding a procurement checklist. Keep what "
+            f"worked, keep the idea ({brief.single_idea or 'as briefed'}) within its evidence "
+            "boundary, and stay off "
             "the ground already covered.\n\n" + _already_sent(previous)
         )
         return await self._write(
@@ -189,6 +192,7 @@ class EmailWriter:
             "writer",
             {
                 "request": request.request,
+                "campaign_intent": campaign.interpretation,
                 "reader": campaign.reader or "one person who has never heard of this company",
                 "segment": (
                     segment.render_for_writing()
@@ -237,7 +241,11 @@ class EmailWriter:
                 )
                 self._observer.on_repair(brief.position, repair + 1, str(exc))
                 message = (
+                    f"{task}\n\n"
+                    f"--- Your rejected attempt ---\n{response}\n--- end attempt ---\n\n"
                     f"That draft cannot be sent as it stands: {exc}\n\n"
+                    "Keep the original review instructions and evidence boundaries while "
+                    "repairing this attempt. Do not restore claims removed by the revision. "
                     "Send the whole email again, corrected, in the labelled-field format - "
                     "every label on its own line, BODY last, nothing before or after it."
                 )
@@ -311,8 +319,8 @@ def _comprehension_failure(read: PanelRead) -> str:
         "was nothing to decline. Nothing else in this report is worth acting on until a "
         "stranger can finish the email and say, in their own words, what this company sells "
         "and what it would change about their week.\n\n"
-        "The fix is one plain sentence, and it is almost never the first one: keep the "
-        "opening on their situation, then - by the second or third paragraph, before you ask "
+        "The fix is one plain sentence, in the opening if that makes the offer easiest to "
+        "understand, and otherwise by the second or third paragraph, before you ask "
         "for anything - name the thing. What it is, in the words the company uses about "
         "itself, concretely enough that the guesses above become impossible. Not a "
         "description of the problem it solves; the thing itself."
@@ -389,7 +397,7 @@ def _already_sent(previous: list[Email]) -> str:
     if not previous:
         return "Nothing has been sent yet - this is the first email they get from you."
     sent = "\n\n".join(
-        f"--- email {email.position} ---\n{render_email(email)}"
+        f"--- email {email.position} ---\n{render_review(email)}"
         for email in sorted(previous, key=lambda item: item.position)
     )
     return (

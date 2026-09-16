@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import type { AssetType, GeneratedAsset } from "@/lib/types";
 
 const ASSET_LABELS: Record<AssetType, string> = {
@@ -47,14 +48,16 @@ export function AssetCard({ asset }: { asset: GeneratedAsset }) {
   const role = typeof asset.asset_metadata?.role === "string" ? asset.asset_metadata.role : null;
 
   return (
-    <Card>
+    <Card className="transition-colors hover:ring-violet-400/25">
       <CardHeader className="flex flex-row flex-wrap items-start justify-between gap-4">
         <div className="min-w-0 space-y-1">
-          <CardTitle className="text-base">{asset.title}</CardTitle>
+          <CardTitle className="text-base leading-snug">{asset.title}</CardTitle>
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="secondary">{ASSET_LABELS[asset.asset_type] ?? asset.asset_type}</Badge>
             {asset.position > 0 && (
-              <span className="text-xs text-muted-foreground">#{asset.position}</span>
+              <span className="rounded-md border border-hairline bg-background/40 px-1.5 py-0.5 text-xs text-muted-foreground tabular-nums">
+                #{asset.position}
+              </span>
             )}
             {role && <span className="text-xs text-muted-foreground">{role}</span>}
             {/* A channel with a hard length is worth showing the length of. */}
@@ -68,18 +71,23 @@ export function AssetCard({ asset }: { asset: GeneratedAsset }) {
         </div>
         <div className="flex items-center gap-2">
           {html && (
-            <div className="flex rounded-md border p-0.5" role="group" aria-label="Email preview format">
+            <div
+              className="flex h-7 items-center rounded-lg border border-border bg-background/40 p-0.5"
+              role="group"
+              aria-label="Email preview format"
+            >
               {(["text", "html"] as const).map((option) => (
                 <button
                   key={option}
                   type="button"
                   aria-pressed={view === option}
                   onClick={() => setView(option)}
-                  className={`rounded px-3 py-2 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-ring ${
+                  className={cn(
+                    "rounded-[0.4rem] px-2.5 py-1 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring",
                     view === option
-                      ? "bg-secondary text-secondary-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
+                      ? "bg-violet-500/20 text-violet-100"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
                 >
                   {option === "text" ? "Text" : "Design"}
                 </button>
@@ -105,7 +113,10 @@ export function AssetCard({ asset }: { asset: GeneratedAsset }) {
             className="h-[32rem] w-full rounded-md border bg-white"
           />
         ) : (
-          <pre className="max-w-prose whitespace-pre-wrap break-words font-sans text-sm leading-7">
+          /* The one thing on the page the reader is going to send. Set on its
+             own surface at a measure a person reads at, rather than as a run
+             of text flush against the card's own padding. */
+          <pre className="max-w-prose whitespace-pre-wrap break-words rounded-lg border border-hairline bg-background/40 p-5 font-sans text-[0.9375rem] leading-7">
             {asset.content}
           </pre>
         )}

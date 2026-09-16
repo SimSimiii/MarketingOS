@@ -2,13 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { AudioLines, ContactRound, RefreshCw } from "lucide-react";
 
+import { EmptyState } from "@/components/empty-state";
 import { MarketJobCard } from "@/components/market-job-card";
+import { Notice } from "@/components/notice";
 import { CompilationJobCard } from "./compilation-job-card";
 import { StatusBadge } from "@/components/status-badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { api } from "@/lib/api-client";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { formatDuration } from "@/lib/format";
 import type { CompilationJob, LinkedInRun, MarketJob, RunningExecution } from "@/lib/types";
 
@@ -59,23 +63,34 @@ export function LiveRuns({
 
   return (
     <div className="space-y-4">
-      <Button variant="outline" disabled={refreshing} onClick={refresh}>{refreshing ? "Refreshing…" : "Refresh runs"}</Button>
-      <p className="text-xs text-muted-foreground">Snapshot from {new Date(now).toLocaleTimeString()}. Refresh to see progress.</p>
-      {unavailable && (
-        <p role="status" className="rounded-xl border border-amber-400/20 bg-amber-400/5 p-4 text-sm text-amber-200">
-          Refresh failed. Cards show the last known state. Use Refresh runs to retry.
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <Button variant="outline" size="sm" disabled={refreshing} onClick={refresh}>
+          <RefreshCw
+            className={cn("size-3.5", refreshing && "motion-safe:animate-spin")}
+            aria-hidden="true"
+          />
+          {refreshing ? "Refreshing…" : "Refresh runs"}
+        </Button>
+        <p className="text-xs text-muted-foreground tabular-nums">
+          Snapshot from {new Date(now).toLocaleTimeString()}
         </p>
+      </div>
+      {unavailable && (
+        <Notice tone="warning" title="Refresh failed">
+          Cards show the last known state. Use Refresh runs to retry.
+        </Notice>
       )}
       {runs.length === 0 && jobs.length === 0 && compilations.length === 0 && linkedin.length === 0 && !unavailable && (
-        <Card>
-          <CardContent className="py-10 text-center">
-            <h2 className="font-medium">All quiet in the studio</h2>
-            <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
-              Your campaigns, knowledge compilation and market research will appear here as they run.
-            </p>
-            <Link href="/campaigns" className="mt-5 inline-block text-sm font-medium text-violet-300 hover:underline">Open campaigns →</Link>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={AudioLines}
+          title="All quiet in the studio"
+          description="Your campaigns, knowledge compilation and market research will appear here as they run."
+          action={
+            <Link href="/campaigns" className={buttonVariants({ variant: "outline", size: "sm" })}>
+              Open campaigns
+            </Link>
+          }
+        />
       )}
       {[...running, ...recent].map((job) => (
         <MarketJobCard key={`${job.brand_id}-${job.started_at}`} job={job} now={now} />
@@ -85,10 +100,19 @@ export function LiveRuns({
       ))}
       {linkedin.map((run) => (
         <Link key={run.id} href={`/brands/${run.brand_id}/linkedin`} className="block">
-          <Card><CardContent className="space-y-1">
-            <p className="font-medium">LinkedIn · {run.kind === "search" ? run.request.query : `Message to ${run.request.recipient_name}`}</p>
-            <p className="text-sm text-muted-foreground">{run.state} · {run.calls} model calls</p>
-          </CardContent></Card>
+          <Card className="transition-colors hover:ring-violet-400/40">
+            <CardContent className="flex items-start gap-4">
+              <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg border border-hairline bg-background/40 text-violet-300">
+                <ContactRound className="size-4" aria-hidden="true" />
+              </span>
+              <div className="min-w-0 flex-1 space-y-1">
+                <p className="truncate font-medium">{linkedInLabel(run)}</p>
+                <p className="text-sm text-muted-foreground">
+                  LinkedIn · {run.state} · {run.calls} model calls
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </Link>
       ))}
       {runs.map((run) => (
@@ -97,7 +121,7 @@ export function LiveRuns({
           href={`/campaigns/${run.campaign_id}/executions/${run.id}`}
           className="block"
         >
-          <Card className="transition-colors hover:ring-foreground/25">
+          <Card className="transition-colors hover:ring-violet-400/40">
             <CardContent className="flex items-start gap-4">
               <span className="mt-1.5 size-2 shrink-0 motion-safe:animate-pulse rounded-full bg-primary" />
               <div className="min-w-0 flex-1 space-y-1">
@@ -118,4 +142,22 @@ export function LiveRuns({
       ))}
     </div>
   );
+}
+
+/** What a LinkedIn run is called on the board.
+ *
+ * `request` is a `Partial`, and there is a third kind - `criteria` - that the
+ * board used to fold into the message branch, so a run with no recipient read
+ * as "Message to undefined" and a search with no stored query as nothing at
+ * all. Naming the kind is always possible; naming its subject is not. */
+function linkedInLabel(run: LinkedInRun): string {
+  if (run.kind === "search") {
+    return run.request.query ? `Search: ${run.request.query}` : "LinkedIn search";
+  }
+  if (run.kind === "criteria") {
+    return "Working out who to look for";
+  }
+  return run.request.recipient_name
+    ? `Message to ${run.request.recipient_name}`
+    : "LinkedIn message";
 }

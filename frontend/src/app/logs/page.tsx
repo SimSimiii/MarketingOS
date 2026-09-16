@@ -1,5 +1,8 @@
-import Link from "next/link";
+import { ScrollText } from "lucide-react";
 
+import { EmptyState } from "@/components/empty-state";
+import { ExpandableText } from "@/components/expandable-text";
+import { PageHeader } from "@/components/page-header";
 import { LogLevelBadge } from "@/components/status-badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -32,28 +35,30 @@ export default async function LogsPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Activity</h1>
-          <p className="text-sm text-muted-foreground">
-            {execution
-              ? `Every line logged during one run${agent ? ` by ${agent}` : ""}.`
-              : "The most recent lines across all campaign runs."}
-          </p>
-        </div>
-        {execution && (
-          <Link href="/logs" className="text-sm text-primary hover:underline">
-            Show all runs
-          </Link>
-        )}
-      </div>
+      <PageHeader
+        eyebrow={execution ? "One run" : "Across all runs"}
+        title="Activity"
+        description={
+          execution
+            ? `Every line logged during one run${agent ? ` by ${agent}` : ""}.`
+            : "The most recent lines across all campaign runs."
+        }
+        // Scoped here from a run's live view, so the way out is the unscoped
+        // list rather than whichever page happened to link in.
+        backTo={execution ? { href: "/logs", label: "All activity" } : undefined}
+      />
 
-      <Card>
+      <Card className="gap-0 py-0">
         <CardContent className="p-0">
           {logs.length === 0 ? (
-            <p className="p-6 text-sm text-muted-foreground">No logs yet.</p>
+            <EmptyState
+              variant="inline"
+              icon={ScrollText}
+              title="Nothing logged yet"
+              description="Every step a run takes is written here as it happens. Start a campaign and the lines will arrive."
+            />
           ) : (
-            <Table>
+            <Table className="stacked-table">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-24">Level</TableHead>
@@ -69,14 +74,23 @@ export default async function LogsPage({
                     <TableCell>
                       <LogLevelBadge level={log.level} />
                     </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
+                    <TableCell data-label="Agent" className="text-sm text-muted-foreground">
                       {log.agent_id ?? "—"}
                     </TableCell>
-                    <TableCell className="text-sm text-muted-foreground tabular-nums">
+                    <TableCell
+                      data-label="Step"
+                      className="text-sm text-muted-foreground tabular-nums"
+                    >
                       {log.step ?? "—"}
                     </TableCell>
-                    <TableCell>{log.message}</TableCell>
-                    <TableCell className="text-xs text-muted-foreground">
+                    {/* A run writes whole prompts into this column. Wrapping
+                        them is right; letting one line own a screen and a half
+                        is not - the excerpt is what makes the list scannable,
+                        and the full text is one click away. */}
+                    <TableCell data-label="Message" className="max-w-xl whitespace-normal">
+                      <ExpandableText text={log.message} limit={180} />
+                    </TableCell>
+                    <TableCell data-label="Logged" className="text-xs text-muted-foreground">
                       {new Date(log.created_at).toLocaleString()}
                     </TableCell>
                   </TableRow>

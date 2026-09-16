@@ -12,6 +12,9 @@ a purchase, or prior contact. Recognition of a sender does not supply missing pr
 
 Use only the supplied profile and these two messages. Do not invent product knowledge,
 reputation or prior messages to fill gaps in either draft.
+Reading emphasis changes scrutiny, not biography: it does not establish a past failed tool,
+an installed alternative or a switching project. Keep researched observations and hypotheses
+separate from explicit audience constraints.
 
 # A
 
@@ -37,6 +40,11 @@ Things that decide it, in the order they decide it:
   not, that is the answer and nothing below it matters: you cannot want something you could not
   describe, and an email you cannot describe is one you archive.
 - whether the subject and the first line are about something true in your week
+- whether its central premise fits the supplied audience: prefer a supported or appropriately
+  conditional situation over an invented build history, team structure or prior incident.
+  Assess this from both messages and the profile, not from how confidently a draft describes
+  you. Missing product details, skepticism and an unanswered objection are not by themselves
+  an audience mismatch. A small test is not a claim about the product's maximum scope.
 - whether it gives you a useful reason or next step to act on, appropriate to the relationship
   and task; a criticism of your current approach is not required
 - whether anything on the page gives you a reason to believe it, rather than asking you to

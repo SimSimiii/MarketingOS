@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandSectionHeader } from "../../brand-ui";
 
 import { AddKnowledgeDialog } from "@/app/knowledge/add-knowledge-dialog";
 import { DeleteDocumentButton } from "@/app/knowledge/delete-document-button";
@@ -42,12 +43,7 @@ export default async function BrandSourcesPage({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <p className="max-w-xl text-sm text-muted-foreground">
-          Everything the copywriters read before they write for {brand.name}: its pages,
-          documents and screenshots. Compiled once and reused by every campaign for this brand.
-        </p>
-        <div className="flex flex-wrap items-center gap-2">
+      <BrandSectionHeader title="Sources" description={`The pages, documents and screenshots behind ${brand.name}'s campaigns.`} actions={<>
           <Link
             href={`/brands/${brandId}/knowledge/base`}
             className={buttonVariants({ variant: "outline", size: "sm" })}
@@ -55,8 +51,7 @@ export default async function BrandSourcesPage({
             {base ? `Knowledge base — ${base.total} facts` : "Knowledge base"}
           </Link>
           <AddKnowledgeDialog brand={brand} />
-        </div>
-      </div>
+        </>} />
 
       <Card>
         <CardContent className="p-0">
@@ -69,7 +64,7 @@ export default async function BrandSourcesPage({
               </p>
             </div>
           ) : (
-            <Table>
+            <Table className="brand-source-table">
               <TableHeader>
                 <TableRow>
                   <TableHead>Title</TableHead>
@@ -77,25 +72,26 @@ export default async function BrandSourcesPage({
                   <TableHead>Where it came from</TableHead>
                   <TableHead>Words</TableHead>
                   <TableHead>Added</TableHead>
-                  <TableHead />
+                  <TableHead><span className="sr-only">Actions</span></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {documents.map((document) => (
                   <TableRow key={document.id}>
-                    <TableCell className="max-w-xs truncate font-medium">
+                    <TableCell data-label="Title" className="max-w-xs truncate font-medium">
                       {document.title}
                     </TableCell>
-                    <TableCell>
+                    <TableCell data-label="Source">
                       <Badge variant="secondary">{document.source_type}</Badge>
                     </TableCell>
-                    <TableCell className="max-w-xs truncate text-muted-foreground">
+                    <TableCell data-label="Origin" className="max-w-xs truncate text-muted-foreground">
                       {document.source_url ?? "—"}
                     </TableCell>
-                    <TableCell className="text-muted-foreground tabular-nums">
+                    <TableCell data-label="Words" className="text-muted-foreground tabular-nums">
                       {document.word_count}
                     </TableCell>
                     <TableCell
+                      data-label="Added"
                       className="text-muted-foreground"
                       title={formatAbsolute(document.created_at)}
                     >

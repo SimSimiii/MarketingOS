@@ -3,12 +3,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 import { AnswerQuestionsCard } from "@/components/answer-questions-card";
 import { AssetCard } from "@/components/asset-card";
 import { ConfirmDialog, useConfirm } from "@/components/confirm-dialog";
 import { CopyAllButton } from "@/components/copy-all-button";
+import { Notice } from "@/components/notice";
+import { PageHeader } from "@/components/page-header";
 import { RunTimeline } from "@/components/run-timeline";
 import { StatusBadge } from "@/components/status-badge";
 import { ReaderVerdictCard } from "@/components/reader-verdict-card";
@@ -21,6 +24,7 @@ import { api } from "@/lib/api-client";
 import { formatCost, formatDuration, formatTokens } from "@/lib/format";
 import { estimateCost, reduceRun, runsPerRole } from "@/lib/run-timeline";
 import { ROLE_CATALOG } from "@/lib/specialists";
+import { cn } from "@/lib/utils";
 import type { ExecutionStatus, GeneratedAsset } from "@/lib/types";
 
 const TERMINAL: ExecutionStatus[] = ["completed", "failed", "cancelled"];
@@ -214,24 +218,37 @@ export function ExecutionLiveView({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">Your material</h1>
-        {/* A run that stopped to ask a question lands on FAILED because the
-            lifecycle has no status for "asked a question" - see
-            CampaignOrchestrator._finalize. Showing it as a failure is a lie
-            the user pays for twice: once by not answering, and once by
-            distrusting the badge on a run that really did fail. */}
-        {questions.length > 0 ? (
-          <Badge variant="outline" className="border-transparent bg-amber-500/15 text-amber-400">
-            needs your answers
-          </Badge>
-        ) : (
-          <StatusBadge status={status} />
-        )}
-        <span className="text-sm text-muted-foreground">
-          {assets.length} deliverable{assets.length === 1 ? "" : "s"}
-        </span>
-        <div className="ml-auto flex items-center gap-2">
+      <PageHeader
+        eyebrow="Run"
+        title="Your material"
+        backTo={{ href: `/campaigns/${campaignId}`, label: "Back to campaign" }}
+        meta={<>
+          {/* A run that stopped to ask a question lands on FAILED because the
+              lifecycle has no status for "asked a question" - see
+              CampaignOrchestrator._finalize. Showing it as a failure is a lie
+              the user pays for twice: once by not answering, and once by
+              distrusting the badge on a run that really did fail. */}
+          {questions.length > 0 ? (
+            <Badge variant="outline" className="border-transparent bg-amber-500/15 text-amber-400">
+              needs your answers
+            </Badge>
+          ) : (
+            <StatusBadge status={status} />
+          )}
+          <span className="tabular-nums">
+            {isLive ? "Running for" : "Took"} {formatDuration(elapsedMs)}
+          </span>
+          <span className="tabular-nums">{formatTokens(totalTokens)} tokens</span>
+          <span className="tabular-nums">{formatCost(cost)}</span>
+          <span className="tabular-nums">
+            {run.steps.length} step{run.steps.length === 1 ? "" : "s"}
+          </span>
+          <span className="tabular-nums">
+            {assets.length} deliverable{assets.length === 1 ? "" : "s"}
+          </span>
+          <ConnectionIndicator phase={phase} updatedAt={updatedAt} />
+        </>}
+        actions={<>
           <Button variant="outline" size="sm" disabled={phase === "loading"} onClick={async () => {
             await refresh();
             setNow(Date.now());
@@ -241,8 +258,13 @@ export function ExecutionLiveView({
               setErrorMessage(result.error_message);
             } catch (error) { toast.error(error instanceof Error ? error.message : "Could not refresh results"); }
             router.refresh();
-          }}>{phase === "loading" ? "Refreshing…" : "Refresh"}</Button>
-          <span className="text-xs text-muted-foreground">{updatedAt ? `Snapshot ${updatedAt}` : "Loading snapshot"}</span>
+          }}>
+            <RefreshCw
+              className={cn("size-3.5", phase === "loading" && "motion-safe:animate-spin")}
+              aria-hidden="true"
+            />
+            {phase === "loading" ? "Refreshing…" : "Refresh"}
+          </Button>
           <CopyAllButton assets={assets} />
           {isLive && (
             <>
@@ -265,20 +287,8 @@ export function ExecutionLiveView({
               Restart
             </Button>
           )}
-        </div>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-muted-foreground">
-        <span className="tabular-nums">
-          {isLive ? "Running for" : "Took"} {formatDuration(elapsedMs)}
-        </span>
-        <span className="tabular-nums">{formatTokens(totalTokens)} tokens</span>
-        <span className="tabular-nums">{formatCost(cost)}</span>
-        <span className="tabular-nums">
-          {run.steps.length} step{run.steps.length === 1 ? "" : "s"}
-        </span>
-        <ConnectionIndicator phase={phase} />
-      </div>
+        </>}
+      />
 
       {/* A run that stopped to ask is not a failure, and showing it as one -
           a red box with the questions crammed into an error string - is what
@@ -291,9 +301,9 @@ export function ExecutionLiveView({
         />
       ) : (
         errorMessage && (
-          <Card className="border-destructive/40">
-            <CardContent className="pt-6 text-sm text-destructive">{errorMessage}</CardContent>
-          </Card>
+          <Notice tone="danger" title="This run stopped">
+            {errorMessage}
+          </Notice>
         )
       )}
 
@@ -440,7 +450,7 @@ export function ExecutionLiveView({
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-4">
-            <h2 className="text-sm font-medium text-muted-foreground">
+            <h2 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               What your team is doing{isLive ? " right now" : ""}
             </h2>
             <Link
@@ -453,7 +463,9 @@ export function ExecutionLiveView({
           <RunTimeline steps={run.steps} events={events} now={now} />
 
           <div className="space-y-4 pt-4">
-            <h2 className="text-sm font-medium text-muted-foreground">Deliverables</h2>
+            <h2 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Deliverables
+            </h2>
             {assets.length === 0 ? (
               <p className="text-sm text-muted-foreground">
                 {isLive
@@ -466,8 +478,10 @@ export function ExecutionLiveView({
           </div>
         </div>
 
-        <div className="space-y-2">
-          <h2 className="text-sm font-medium text-muted-foreground">The team</h2>
+        <div className="space-y-2 lg:sticky lg:top-6 lg:self-start">
+          <h2 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            The team
+          </h2>
           <Roster steps={run.steps} />
         </div>
       </div>
@@ -475,8 +489,35 @@ export function ExecutionLiveView({
   );
 }
 
-function ConnectionIndicator({ phase }: { phase: ReturnType<typeof useExecutionStream>["phase"] }) {
-  return <span role="status" className="text-muted-foreground">{phase === "error" ? "Refresh failed — showing last snapshot. Retry with Refresh." : phase === "loading" ? "Refreshing…" : "Manual refresh"}</span>;
+function ConnectionIndicator({
+  phase,
+  updatedAt,
+}: {
+  phase: ReturnType<typeof useExecutionStream>["phase"];
+  updatedAt: string | null;
+}) {
+  const failed = phase === "error";
+  return (
+    <span
+      role="status"
+      className={cn("flex items-center gap-1.5", failed ? "text-amber-300" : "text-muted-foreground")}
+    >
+      <span
+        className={cn(
+          "size-1.5 rounded-full",
+          failed ? "bg-amber-400" : phase === "loading" ? "bg-violet-400 motion-safe:animate-pulse" : "bg-muted-foreground/50",
+        )}
+        aria-hidden="true"
+      />
+      {failed
+        ? "Refresh failed — showing last snapshot"
+        : phase === "loading"
+          ? "Refreshing…"
+          : updatedAt
+            ? `Snapshot ${updatedAt}`
+            : "Manual refresh"}
+    </span>
+  );
 }
 
 /** One card per reasoning role, showing how many turns it has taken. Unlike

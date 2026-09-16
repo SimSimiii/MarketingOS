@@ -73,8 +73,9 @@ export function KnowledgeBaseExplorer({ base }: { base: KnowledgeBase }) {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-3">
         <Input
+          aria-label="Search knowledge"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search everything we know — a price, a customer, an integration…"
@@ -85,6 +86,7 @@ export function KnowledgeBaseExplorer({ base }: { base: KnowledgeBase }) {
             key={option}
             size="sm"
             variant={band === option ? "default" : "outline"}
+            aria-pressed={band === option}
             onClick={() => setBand(band === option ? null : option)}
           >
             {BAND_LABEL[option]}
@@ -108,7 +110,8 @@ export function KnowledgeBaseExplorer({ base }: { base: KnowledgeBase }) {
       <div className="flex flex-wrap gap-2">
         <Button
           size="sm"
-          variant={category === null ? "secondary" : "ghost"}
+          variant={category === null ? "default" : "outline"}
+          aria-pressed={category === null}
           onClick={() => setCategory(null)}
         >
           Everything ({base.total})
@@ -117,7 +120,8 @@ export function KnowledgeBaseExplorer({ base }: { base: KnowledgeBase }) {
           <Button
             key={shelf.category}
             size="sm"
-            variant={category === shelf.category ? "secondary" : "ghost"}
+            variant={category === shelf.category ? "default" : "outline"}
+            aria-pressed={category === shelf.category}
             onClick={() => setCategory(category === shelf.category ? null : shelf.category)}
             className={cn(shelf.count === 0 && "text-muted-foreground/60")}
           >

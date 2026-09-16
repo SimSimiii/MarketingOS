@@ -36,13 +36,36 @@ def test_mismatch_is_not_hidden_by_fluency_or_majority():
 
 
 @pytest.mark.asyncio
-async def test_duels_cannot_overrule_relevance():
+async def test_relevance_remains_the_fallback_without_a_comparison():
     loop = object.__new__(CraftLoop)
-    loop._judge = object()  # Any attempt to call it fails.
+    loop._judge = None
     bad, good = version(False, 10, 1), version(True, 7, 2)
     assert await loop._prefers(good, bad, EmailBrief())
     assert not await loop._prefers(bad, good, EmailBrief())
     assert await loop._run_off(good, [bad], EmailBrief()) is good
+
+
+@pytest.mark.asyncio
+async def test_bakeoff_compares_candidates_with_disputed_relevance():
+    from app.marketing.observer import RunObserver
+    from app.marketing.tournament import PreferenceJudge
+    from tests.marketing.conftest import (
+        RoleScriptedProvider,
+        make_session,
+        votes_for_the_challenger,
+    )
+
+    provider = RoleScriptedProvider()
+    provider.push("preference_judge", *votes_for_the_challenger(2))
+    loop = object.__new__(CraftLoop)
+    loop._judge = PreferenceJudge(make_session(provider))
+    loop._observer = RunObserver()
+    loop._personas = ["An ops generalist considering an internal assistant"]
+    questioned, incumbent = version(False, 6, 1), version(True, 6, 1)
+    questioned.email = questioned.email.model_copy(update={"body": "A different concrete offer"})
+    assert await loop._run_off(incumbent, [questioned], EmailBrief()) is questioned
+    assert provider.calls_by_role["preference_judge"] == 2
+    assert not questioned.read.relevant  # Preserve the unresolved finding.
 
 
 def test_profiles_preserve_source_and_uncertainty_without_sales_context():
@@ -52,7 +75,9 @@ def test_profiles_preserve_source_and_uncertainty_without_sales_context():
     profiles = personas_for(AudienceModel(segments=[segment]), segment, True)
     assert all(segment.name in p for p in profiles)
     assert all("https://example.test" in p for p in profiles)
-    assert "Simulation scenario" in profiles[1]
+    assert "Reading emphasis" in profiles[1]
+    assert "Reading emphasis" in profiles[2]
+    assert not any("they already use" in p or "they have been promised" in p for p in profiles)
     assert not any("orientation" in p or "objection answer" in p for p in profiles)
 
 

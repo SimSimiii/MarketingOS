@@ -1,10 +1,13 @@
 import Link from "next/link";
+import { Archive, ChevronLeft, ChevronRight, Mail } from "lucide-react";
 
 import { NewCampaignDialog } from "@/app/campaigns/new-campaign-dialog";
+import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
 import { CampaignActions } from "@/components/campaign-actions";
 import { StatusBadge } from "@/components/status-badge";
 import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
@@ -75,11 +78,12 @@ export default async function CampaignsPage({
         eyebrow="Email studio"
         title={`Campaigns${brand ? ` — ${brand.name}` : ""}`}
         description={brand ? "Everything this business has asked for, written from its own knowledge base." : "From the first brief to the final email. Manage your work here."}
+        backTo={brand ? { href: `/brands/${brand.id}`, label: brand.name } : undefined}
         actions={<>
           {brand && (
             <Link
               href={`/campaigns${includeArchived ? "?archived=1" : ""}`}
-              className="text-sm text-muted-foreground hover:text-foreground hover:underline"
+              className={buttonVariants({ variant: "ghost", size: "sm" })}
             >
               All brands
             </Link>
@@ -90,29 +94,30 @@ export default async function CampaignsPage({
                 ? `/campaigns${brand ? `?brand=${brand.id}` : ""}`
                 : `/campaigns?${brand ? `brand=${brand.id}&` : ""}archived=1`
             }
-            className="text-sm text-muted-foreground hover:text-foreground hover:underline"
+            aria-pressed={includeArchived}
+            className={buttonVariants({ variant: includeArchived ? "secondary" : "outline", size: "sm" })}
           >
+            <Archive className="size-3.5" aria-hidden="true" />
             {includeArchived ? "Hide archived" : "Show archived"}
           </Link>
           <NewCampaignDialog prefill={linkedinPrefill} autoOpen={Boolean(linkedinPrefill)} />
         </>}
       />
 
-      <Card>
+      <Card className="gap-0 py-0">
         <CardContent className="p-0">
           {campaigns.length === 0 ? (
-            <div className="space-y-3 p-10 text-center">
-              <p className="text-sm font-medium">
-                {includeArchived ? "Nothing here yet." : "No campaigns yet."}
-              </p>
-              <p className="mx-auto max-w-md text-sm text-muted-foreground">
-                Describe your product once, then ask in your own words — “write me 3 emails that
-                make people buy”. You get finished copy, reviewed for conversion before you see it.
-              </p>
-              <div className="flex justify-center pt-1">
-                <NewCampaignDialog />
-              </div>
-            </div>
+            <EmptyState
+              variant="inline"
+              icon={Mail}
+              title={includeArchived ? "Nothing here yet" : "No campaigns yet"}
+              description={<>
+                Describe your product once, then ask in your own words — “write me 3 emails
+                that make people buy”. You get finished copy, reviewed for conversion before you
+                see it.
+              </>}
+              action={<NewCampaignDialog />}
+            />
           ) : (
             <Table className="campaign-table">
               <TableHeader>
@@ -132,7 +137,7 @@ export default async function CampaignsPage({
                       <div className="flex items-center gap-2">
                         <Link
                           href={`/campaigns/${campaign.id}`}
-                          className="font-medium text-violet-300 hover:underline"
+                          className="font-medium text-violet-300 underline-offset-4 hover:underline"
                         >
                           {campaign.name}
                         </Link>
@@ -155,7 +160,7 @@ export default async function CampaignsPage({
                         </span>
                       )}
                     </TableCell>
-                    <TableCell data-label="Brief" className="max-w-md truncate text-muted-foreground">
+                    <TableCell data-label="Brief" className="max-w-xs truncate text-muted-foreground lg:max-w-sm">
                       {campaign.request}
                     </TableCell>
                     <TableCell data-label="Last run">
@@ -194,11 +199,30 @@ export default async function CampaignsPage({
           )}
         </CardContent>
       </Card>
-      <nav aria-label="Campaign pages" className="flex items-center justify-between text-sm">
-        {page > 1 ? <Link href={pageHref(page - 1)}>Previous</Link> : <span />}
-        <span>Page {page}</span>
-        {all.length > pageSize ? <Link href={pageHref(page + 1)}>Next</Link> : <span />}
-      </nav>
+      {(page > 1 || all.length > pageSize) && (
+        <nav
+          aria-label="Campaign pages"
+          className="flex items-center justify-between gap-3 text-sm"
+        >
+          {page > 1 ? (
+            <Link href={pageHref(page - 1)} className={buttonVariants({ variant: "outline", size: "sm" })}>
+              <ChevronLeft className="size-3.5" aria-hidden="true" />
+              Previous
+            </Link>
+          ) : (
+            <span />
+          )}
+          <span className="text-xs text-muted-foreground tabular-nums">Page {page}</span>
+          {all.length > pageSize ? (
+            <Link href={pageHref(page + 1)} className={buttonVariants({ variant: "outline", size: "sm" })}>
+              Next
+              <ChevronRight className="size-3.5" aria-hidden="true" />
+            </Link>
+          ) : (
+            <span />
+          )}
+        </nav>
+      )}
     </div>
   );
 }

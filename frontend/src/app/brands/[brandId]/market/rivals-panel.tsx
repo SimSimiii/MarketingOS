@@ -3,9 +3,13 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { Search, ChevronDown } from "lucide-react";
+import { BrandDisclosure, BrandSectionHeader } from "../../brand-ui";
+import { ExpandableText } from "@/components/expandable-text";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -117,15 +121,16 @@ function RivalRow({
   return (
     <div
       className={cn(
-        "rounded-lg border border-border p-3",
+        "rounded-xl border border-border bg-card p-4",
         rival.muted && "opacity-50",
       )}
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <button
           type="button"
           onClick={() => setOpen((value) => !value)}
-          className="min-w-0 flex-1 text-left"
+          aria-expanded={open}
+          className="min-w-40 flex-1 text-left"
         >
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-sm font-medium">{rival.name}</span>
@@ -147,9 +152,11 @@ function RivalRow({
               </Badge>
             )}
           </div>
-          {rival.why && <p className="mt-1 text-xs text-muted-foreground">{rival.why}</p>}
+          <span className="mt-2 inline-flex items-center gap-1.5 text-xs text-violet-300">{open ? "Hide competitor details" : "View competitor details"}<ChevronDown className={cn("size-3.5", open && "rotate-180")} /></span>
         </button>
-        <div className="flex shrink-0 gap-1">
+        {rival.why && <div className="order-3 w-full"><ExpandableText text={rival.why} className="text-xs text-muted-foreground" limit={180} /></div>}
+
+        <div className="order-last flex w-full shrink-0 justify-end gap-1 sm:order-none sm:w-auto">
           <Button size="sm" variant="ghost" disabled={busy} onClick={toggleMute}>
             {rival.muted ? "Include" : "Not a rival"}
           </Button>
@@ -193,6 +200,9 @@ export function RivalsPanel({
   profiles: RivalProfile[];
 }) {
   const [rows, setRows] = useState(rivals);
+  const [query, setQuery] = useState("");
+  const [showMuted, setShowMuted] = useState(false);
+  const visible = rows.filter((row) => (showMuted || !row.muted) && `${row.name} ${row.url} ${row.why}`.toLowerCase().includes(query.trim().toLowerCase()));
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
   const [kind, setKind] = useState<RivalKind>("alternative");
@@ -221,15 +231,8 @@ export function RivalsPanel({
 
   return (
     <div className="space-y-4">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Add a competitor</CardTitle>
-          <p className="mt-1 text-sm text-muted-foreground">
-            A scan proposes; you decide. Your list is the authority, and what you add or mute here
-            survives every rescan.
-          </p>
-        </CardHeader>
-        <CardContent>
+      <BrandSectionHeader title="Competitors" description="Curate the alternatives your buyers compare. Your decisions are kept through every scan." />
+      <BrandDisclosure title="Add a competitor" description="Know an alternative we missed? Add it to your research list.">
           <form onSubmit={add} className="flex flex-wrap items-end gap-3">
             <div className="min-w-40 flex-1 space-y-1.5">
               <Label htmlFor="rival-name">Name</Label>
@@ -269,9 +272,13 @@ export function RivalsPanel({
             </Button>
           </form>
           <p className="mt-2 text-xs text-muted-foreground">{KIND[kind].hint}</p>
-        </CardContent>
-      </Card>
-
+      </BrandDisclosure>
+      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card p-3">
+        <div className="relative min-w-48 flex-1"><Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" /><Input aria-label="Search competitors" placeholder="Search competitors…" value={query} onChange={(event) => setQuery(event.target.value)} className="pl-9" /></div>
+        <Button variant={showMuted ? "secondary" : "outline"} size="sm" aria-pressed={showMuted} onClick={() => setShowMuted(!showMuted)}>Include muted</Button>
+        <span role="status" className="text-xs text-muted-foreground">{visible.length} of {rows.length}</span>
+      </div>
+      {rows.length > 0 && visible.length === 0 && <div className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No matching competitors. Try another search or include muted entries.</div>}
       {rows.length === 0 ? (
         <Card>
           <CardContent className="p-6 text-sm text-muted-foreground">
@@ -281,7 +288,7 @@ export function RivalsPanel({
         </Card>
       ) : (
         <div className="space-y-2">
-          {rows.map((rival) => (
+          {visible.map((rival) => (
             <RivalRow
               key={rival.id}
               brandId={brandId}

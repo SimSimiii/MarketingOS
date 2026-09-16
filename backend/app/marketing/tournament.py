@@ -34,7 +34,7 @@ from dataclasses import dataclass
 from pydantic import BaseModel
 
 from app.ai.model_router import ModelTier
-from app.marketing.email_copy import Email, render_email
+from app.marketing.email_copy import Email, render_review
 from app.runtime.exceptions import ModelRuntimeError
 from app.runtime.model_session import ModelSession
 
@@ -150,8 +150,8 @@ class PreferenceJudge:
             "duel",
             {
                 "reader_profile": persona,
-                "email_a": render_email(first),
-                "email_b": render_email(second),
+                "email_a": render_review(first),
+                "email_b": render_review(second),
             },
         )
         try:

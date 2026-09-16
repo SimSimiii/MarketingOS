@@ -1,0 +1,68 @@
+{
+  "id": "slack-launch-retest",
+  "name": "Observed launch retest, 2026-09-16",
+  "context": {
+    "product_name": "orqAgent",
+    "target_audience": "Ops or IT generalist considering an internal Slack answer-bot over company documents. The evidence does not establish a postponed build, a prior failed product, or who owns internal tooling.",
+    "evidence": [
+      {
+        "id": "E11",
+        "text": "Upload PDFs, docs or plain text. The agent retrieves the most relevant context for every query automatically — no vector DB to manage."
+      },
+      {
+        "id": "E22",
+        "text": "Serverless — scales automatically, zero infra to manage"
+      },
+      {
+        "id": "E39",
+        "text": "Go to [orqAgent](/sign-up/) and sign up for a free account. No credit card required."
+      },
+      {
+        "id": "E90",
+        "text": "OAuth install — the bot replies to mentions and channel messages."
+      },
+      {
+        "id": "E130",
+        "text": "Create your first agent in under 2 minutes, no credit card required."
+      }
+    ]
+  },
+  "drafts": [
+    {
+      "id": "delivered",
+      "email": {
+        "position": 1,
+        "role": "launch announcement — first and only email, asks for one agent over one policy document, tested in Slack",
+        "subject": "Where does the expense policy live",
+        "preview_text": "The question that keeps landing in your Slack. A no-code agent over the handbook answers it instead of you.",
+        "eyebrow": "NOW AVAILABLE",
+        "headline": "The Slack answer-bot is now a configuration",
+        "greeting": "Hi there,",
+        "body": "Someone asks in Slack where the expense policy lives. The answer is in the handbook, four pages deep, and asking you is faster than finding it.\n\nThe fix is easy to scope and hard to start. A bot in the channel over the handbook — then a vector store and a Slack event pipeline that somebody keeps running afterwards, on a team where nobody owns internal tooling.\n\norqAgent is a no-code platform for building AI agents, and that part is now configuration. You upload the policy documents; the agent retrieves the relevant context for every query, with **no vector DB to manage**.\n\nSlack is a native channel, installed by OAuth — the bot replies to mentions and channel messages. The platform is serverless and scales automatically, so there is no infrastructure left over for you to own once it works.\n\nCreate one agent, give it one policy document, and ask it a question in the channel. The plumbing is settled; whether it answers well on your own handbook is the part worth testing. **Free to start, no card required.**",
+        "call_to_action": "Point it at one policy document",
+        "sign_off": "- the orqAgent team",
+        "postscript": "Setup runs from the console — the first agent takes under two minutes."
+      }
+    },
+    {
+      "id": "historical-revision",
+      "email": {
+        "position": 1,
+        "subject": "Handbook answers in Slack, without the build",
+        "preview_text": "Upload one policy document, connect Slack by OAuth install, and judge the answers yourself.",
+        "greeting": "Hi there,",
+        "body": "If a Slack bot over the company handbook has been on your list for a while, this is the part that changed.\n\norqAgent is a no-code platform for building AI agents. You upload PDFs, docs or plain text, and the agent retrieves the relevant context for every query — **no vector DB to manage**.\n\nSlack is a native channel, connected by OAuth install; the bot replies to mentions and channel messages. So the two pieces that usually turn this into a project — the retrieval layer and the event plumbing — are configuration in a console.\n\nWhich answers the question worth asking before you start anything: what is left for you to keep running. No vector store, no event pipeline, nothing of yours sitting in a server somewhere — the platform is serverless, zero infrastructure to manage.\n\nWhat that cannot tell you is whether the answers are good on your documents. Create one agent, give it the policy document you get asked about most, and ask it a question in the channel. Free to start, no card required.",
+        "call_to_action": "Create your first agent",
+        "sign_off": "- the orqAgent team",
+        "postscript": "Setup runs from the console — the first agent takes under two minutes."
+      }
+    }
+  ],
+  "notes": [
+    "Observed execution 726b48031a2847bfb4096d96b956d289, asset ca8fc176cc2945bd89c3c4c914963a38. Delivered with run_status=degraded, pull=6 and landed=false.",
+    "The delivered draft is copied from asset metadata; the historical revision is copied from the draft event. That event did not preserve its headline or eyebrow, so those fields are intentionally absent.",
+    "The historical revision is not a corrected control and still repeats the infrastructure argument. The pair preserves the selection failure, not a claim about which copy converts better.",
+    "E22 explicitly licenses automatic scaling. The historical critic incorrectly said it did not. Evidence is a relevant excerpt, not the complete historical claims contract.",
+    "Source excerpts are saved material from knowledge version 5, not a fresh verification of the public website."
+  ]
+}

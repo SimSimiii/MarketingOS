@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 
+import { BrandSectionHeader } from "../../brand-ui";
+import { ExpandableText } from "@/components/expandable-text";
+
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { api } from "@/lib/api-client";
@@ -50,26 +53,22 @@ export function RadarFeed({
     return (
       <Card>
         <CardContent className="space-y-2 p-6 text-sm text-muted-foreground">
-          <p>Nothing here yet — this fills up from the second scan onwards.</p>
-          <p>
-            Positioning decays quietly. The claim you own today is claimed by four competitors in
-            September, the free tier you beat on gets matched, somebody starts naming customers.
-            Every one of those makes copy you have already written worse, and none of them are
-            visible from inside your own material.
-          </p>
+          <p className="font-medium text-foreground">No market changes yet</p>
+          <p>Changes appear after your second scan. Update your competitors to compare their latest claims, prices and proof.</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
+      <BrandSectionHeader title="Market changes" description="See what changed between scans and what it means for your copy." />
       {rows.map((event) => {
         const severity = SEVERITY[event.severity] ?? SEVERITY.routine;
         return (
           <div
             key={event.id}
-            className={cn("rounded-r-lg border-l-2 py-2 pr-3 pl-3", severity.tone)}
+            className={cn("rounded-xl border border-border border-l-2 bg-card p-4", severity.tone)}
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="text-sm font-medium">{event.headline}</p>
@@ -83,9 +82,7 @@ export function RadarFeed({
               </div>
             </div>
             {event.detail && (
-              <p className="mt-1 text-xs whitespace-pre-line text-muted-foreground">
-                {event.detail}
-              </p>
+              <ExpandableText text={event.detail} className="mt-2 text-muted-foreground" />
             )}
             {event.what_to_do && (
               <p className="mt-1.5 text-xs text-foreground/70">{event.what_to_do}</p>

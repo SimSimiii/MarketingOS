@@ -19,7 +19,7 @@ from pydantic import BaseModel, Field
 
 from app.ai.model_router import ModelTier
 from app.marketing.briefs import CampaignBrief
-from app.marketing.email_copy import Email, render_email
+from app.marketing.email_copy import Email, render_review
 from app.marketing.gates import GateReport, overlap_gate
 from app.runtime.model_session import ModelSession
 
@@ -114,7 +114,7 @@ class SequenceReviewer:
 
     async def _arc_read(self, emails: list[Email], campaign: CampaignBrief) -> SequenceVerdict:
         rendered = "\n\n".join(
-            f"===== EMAIL {email.position} =====\n{render_email(email)}"
+            f"===== EMAIL {email.position} =====\n{render_review(email)}"
             for email in sorted(emails, key=lambda item: item.position)
         )
         return await self._session.structured(

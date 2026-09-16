@@ -1,5 +1,11 @@
 # AGENTS.md
 
+## Autonomous campaign quality optimization
+
+For autonomous optimization from real campaigns, load
+`.agents/skills/campaign-optimization/SKILL.md`, then the relevant
+`docs/optimization/<case>/state.json` and `journal.md`.
+
 This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
 ## Branch policy

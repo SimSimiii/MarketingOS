@@ -107,7 +107,9 @@ async def test_the_writer_is_told_where_it_may_start(
     )
     await pipeline.run(_one_email(request_fixture))
 
-    assert "Explaining what the category is loses them" in _writer_prompt(provider)
+    from app.knowledge.artifacts import _WHERE_TO_START
+
+    assert _WHERE_TO_START["solution_aware"] in _writer_prompt(provider)
 
 
 @pytest.mark.asyncio

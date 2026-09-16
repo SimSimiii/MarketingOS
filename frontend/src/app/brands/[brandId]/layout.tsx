@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowLeft, ArrowUpRight, Building2, Megaphone } from "lucide-react";
 import { notFound } from "next/navigation";
 
 import { BrandNav } from "./brand-nav";
@@ -41,43 +42,24 @@ export default async function BrandLayout({
   const brands = allBrands ?? [brand];
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-semibold tracking-tight">{brand.name}</h1>
-            <Link
-              href="/brands"
-              className="text-xs text-muted-foreground underline-offset-2 hover:underline"
-            >
-              All brands
-            </Link>
-          </div>
-          {brand.website_url ? (
-            <a
-              href={brand.website_url}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="text-sm text-muted-foreground hover:underline"
-            >
-              {brand.website_url}
-            </a>
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              No website on file — add one so a scan knows where to start.
-            </p>
-          )}
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
+    <div className="brand-workspace min-w-0 space-y-6">
+      <header className="studio-hero rounded-2xl border border-border p-5 sm:p-6">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <Link href="/brands" className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground"><ArrowLeft className="size-3.5" /> All brands</Link>
           <BrandSwitcher brand={brand} brands={brands} />
-          <Link
-            href={`/campaigns?brand=${brand.id}`}
-            className={buttonVariants({ variant: "outline", size: "sm" })}
-          >
-            Campaigns
-          </Link>
         </div>
-      </div>
+        <div className="flex flex-wrap items-center justify-between gap-5">
+          <div className="flex min-w-0 items-center gap-4">
+            <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl border border-violet-400/20 bg-violet-500/15 text-violet-300"><Building2 className="size-6" /></div>
+            <div className="min-w-0">
+              <p className="mb-1 text-[10px] font-medium uppercase tracking-[0.18em] text-violet-300">Brand workspace</p>
+              <h1 className="break-words text-2xl font-semibold tracking-tight sm:text-3xl">{brand.name}</h1>
+              {brand.website_url ? <a href={brand.website_url} target="_blank" rel="noreferrer noopener" className="mt-1 inline-flex max-w-full items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"><span className="truncate">{brand.website_url.replace(/^https?:\/\//, "").replace(/\/$/, "")}</span><ArrowUpRight className="size-3 shrink-0" /></a> : <p className="mt-1 text-xs text-muted-foreground">Add your website in Sources to get started.</p>}
+            </div>
+          </div>
+          <Link href={`/campaigns?brand=${brand.id}`} className={buttonVariants({ variant: "outline", size: "sm" })}><Megaphone className="size-4" /> Campaigns</Link>
+        </div>
+      </header>
 
       <BrandNav
         brandId={brand.id}

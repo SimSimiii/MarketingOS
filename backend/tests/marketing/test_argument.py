@@ -37,7 +37,7 @@ def test_the_four_beats_reach_the_writer_in_order():
     fourth means nothing."""
     rendered = EmailBrief(position=1, single_idea="your script costs more than you think", **_SPINE).render()
 
-    assert "The argument it makes, in this order:" in rendered
+    assert "Argument material" in rendered
     for index, key in enumerate(
         ("felt_need", "status_quo", "why_it_fails", "mechanism"), start=1
     ):

@@ -109,11 +109,13 @@ export function ProofInbox({
   candidates,
   onHunt,
   hunting,
+  busy,
 }: {
   brandId: string;
   candidates: ProofCandidate[];
   onHunt: () => void;
   hunting: boolean;
+  busy: boolean;
 }) {
   const [rows, setRows] = useState(candidates);
   const pending = rows.filter((row) => row.status === "pending");
@@ -128,17 +130,14 @@ export function ProofInbox({
   return (
     <div className="space-y-4">
       <Card>
-        <CardHeader className="flex flex-row items-start justify-between gap-4">
+        <CardHeader className="flex flex-row flex-wrap items-start justify-between gap-4">
           <div>
             <CardTitle className="text-base">Proof somebody else wrote</CardTitle>
             <p className="mt-1 text-sm text-muted-foreground">
-              Your own site has no testimonial, so every sentence of your marketing is you
-              asserting something about yourself — which a stranger discounts to roughly nothing.
-              Almost every real company has been vouched for somewhere and forgotten. This goes
-              and looks.
+              Find public testimonials and independent mentions. Review each source before adding it to your evidence ledger.
             </p>
           </div>
-          <Button size="sm" onClick={onHunt} disabled={hunting}>
+          <Button size="sm" onClick={onHunt} disabled={busy}>
             {hunting ? "Searching…" : "Search the web"}
           </Button>
         </CardHeader>

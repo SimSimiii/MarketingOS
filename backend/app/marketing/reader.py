@@ -24,7 +24,7 @@ from pydantic import BaseModel, Field, model_validator
 
 from app.ai.model_router import ModelTier
 from app.knowledge.artifacts import AudienceModel, Segment
-from app.marketing.email_copy import Email, render_email
+from app.marketing.email_copy import Email, render_review
 from app.runtime.exceptions import ModelRuntimeError
 from app.runtime.model_session import ModelSession
 
@@ -349,7 +349,7 @@ class BlindReader:
         # here rather than by the session's template path because the email
         # under review is part of the system prompt, not the task.
         system_prompt = self._session.render(
-            "reader", {"reader_profile": persona, "email": render_email(email)}
+            "reader", {"reader_profile": persona, "email": render_review(email)}
         )
         try:
             read = await self._session.structured(
@@ -403,12 +403,9 @@ def personas_for(audience: AudienceModel, chosen: Segment | None, panel: bool) -
     enough to work on all of them, and the rewrite loop spends its budget
     sanding a specific email into a general one.
 
-    The dispositions have to be about the *claim*, never about the medium. A
-    reader defined as skeptical of cold email is answering a question no
-    rewrite can move - they reject the envelope, and their score is a constant
-    that only ever drags the panel down and vetoes every draft in the run. A
-    reader who has been sold this exact promise before is the same person in a
-    harder mood, and copy can answer them.
+    The dispositions change what the reader scrutinises, not what happened to
+    them. Inventing an installed tool or a failed purchase changes their needs
+    and can turn a suitable launch email into an apparent audience mismatch.
     """
     segment = chosen or audience.primary()
     person = (
@@ -432,9 +429,14 @@ def personas_for(audience: AudienceModel, chosen: Segment | None, panel: bool) -
     # copy has to survive.
     return [
         person,
-        f"{person} - Simulation scenario only, not an audience fact: they already use something that mostly works",
         (
-            f"{person} - Simulation scenario only, not an audience fact: they have been promised exactly this before by a product "
-            "that did not deliver"
+            f"{person}\nReading emphasis: weigh the effort of the next step against its "
+            "usefulness. Do not assume an installed tool, a switching project or an "
+            "existing workflow beyond the profile."
+        ),
+        (
+            f"{person}\nReading emphasis: scrutinise whether the claims earn trust for "
+            "the requested next step. Do not invent a prior purchase, failed tool or "
+            "bad experience; distinguish trying the product from adopting it in production."
         ),
     ]

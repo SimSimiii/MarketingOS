@@ -1,8 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+
+import { Search, ChevronDown, Users, SlidersHorizontal } from "lucide-react";
+import { BrandDisclosure, BrandSectionHeader } from "../../brand-ui";
+import { ExpandableText } from "@/components/expandable-text";
+import { Input } from "@/components/ui/input";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -338,7 +343,8 @@ function CapabilityProfileCard({
 
   const verified = profile.capabilities.filter((item) => item.state === "verified").length;
   return (
-    <Card>
+    <BrandDisclosure title="Product capabilities" description={`${verified} of ${profile.capabilities.length} verified · Profile v${profile.version} · Expand to review evidence and edit states`}>
+    <Card className="bg-transparent ring-0">
       <CardHeader className="flex flex-row items-start justify-between gap-3">
         <div>
           <CardTitle className="text-base">Product Capability Profile v{profile.version}</CardTitle>
@@ -351,7 +357,7 @@ function CapabilityProfileCard({
         <div className="flex gap-2">
           {editing ? (
             <>
-              <Button size="sm" variant="ghost" onClick={() => setEditing(false)} disabled={saving}>
+              <Button size="sm" variant="ghost" onClick={() => { setStates(Object.fromEntries(profile.capabilities.map((item) => [item.id, item.state]))); setEditing(false); }} disabled={saving}>
                 Cancel
               </Button>
               <Button size="sm" onClick={save} disabled={saving}>
@@ -382,6 +388,7 @@ function CapabilityProfileCard({
                     <select
                       aria-label={`${capability.label} state`}
                       value={state}
+                      disabled={saving}
                       onChange={(event) =>
                         setStates((current) => ({
                           ...current,
@@ -399,7 +406,7 @@ function CapabilityProfileCard({
                   )}
                 </div>
                 <p className="mt-1 font-mono text-[10px] text-muted-foreground">{capability.id}</p>
-                {capability.note && <p className="mt-1 text-muted-foreground">{capability.note}</p>}
+                {capability.note && <ExpandableText text={capability.note} limit={160} className="mt-1 text-xs text-muted-foreground" />}
                 {capability.evidence.map((item) => (
                   <details key={item.evidence_id} className="mt-2 text-muted-foreground">
                     <summary className="cursor-pointer">[{item.evidence_id}] {item.claim}</summary>
@@ -438,6 +445,7 @@ function CapabilityProfileCard({
         )}
       </CardContent>
     </Card>
+    </BrandDisclosure>
   );
 }
 
@@ -1404,15 +1412,15 @@ function AudienceAdder({
 }) {
   const [open, setOpen] = useState(defaultOpen);
 
+  if (!open) return <div className="flex flex-wrap items-center justify-between gap-3 px-1 py-1"><p className="text-xs text-muted-foreground">Know another buyer group? Add it to this map.</p><Button size="sm" variant="outline" onClick={() => setOpen(true)}>Add an audience</Button></div>;
+
   return (
     <Card>
-      <CardHeader className="flex flex-row items-start justify-between gap-4">
+      <CardHeader className="flex flex-row flex-wrap items-start justify-between gap-4">
         <div>
           <CardTitle className="text-base">Add an audience yourself</CardTitle>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-            Four lines, no model call, no search. What you add stays on this map
-            through every rescan, and it is researched, prospected and written to
-            exactly like an audience the search found.
+            Add a buyer group you know. It stays on your map through every rescan.
           </p>
         </div>
         {!open && (
@@ -1472,6 +1480,7 @@ function SegmentCard({
   busy: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const detailsId = useId();
   const [editing, setEditing] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [removing, setRemoving] = useState(false);
@@ -1514,9 +1523,9 @@ function SegmentCard({
   }
 
   return (
-    <Card className={cn(selected && "ring-1 ring-primary/50")}>
-      <CardHeader className="flex flex-row items-start justify-between gap-3">
-        <button type="button" onClick={onSelect} className="min-w-0 space-y-1 text-left">
+    <Card className={cn("min-w-0 transition-shadow hover:ring-violet-400/30", expanded && "xl:col-span-2", selected && "ring-2 ring-violet-400/60")}>
+      <CardHeader className="flex flex-row flex-wrap items-start justify-between gap-3">
+        <button type="button" onClick={onSelect} aria-pressed={selected} title="Filter organisations by this audience" className="min-w-0 flex-1 space-y-1 rounded text-left focus-visible:outline-2 focus-visible:outline-ring">
           <CardTitle className="text-base">{segment.name}</CardTitle>
           <p className="text-xs text-muted-foreground">
             {KIND_LABELS[segment.kind] ?? segment.kind}
@@ -1539,25 +1548,24 @@ function SegmentCard({
 
       <CardContent className="space-y-3 text-sm">
         {(segment.who || segment.organization) && (
-          <p className="text-foreground/90">{segment.who || segment.organization}</p>
+          <ExpandableText text={segment.who || segment.organization} className="text-foreground/90" limit={200} />
         )}
-        <p className="text-xs text-muted-foreground">
-          Product compatibility: {segment.assessment.compatibility} · Need evidence:{" "}
-          {segment.assessment.evidence_strength} · Findable: {segment.assessment.findability}
-          {segment.assessment.counterevidence > 0 &&
-            ` · ${segment.assessment.counterevidence} source${segment.assessment.counterevidence === 1 ? "" : "s"} against`}
-        </p>
+        <dl className="grid grid-cols-3 gap-2 rounded-lg border border-border bg-background/40 p-3 text-xs">
+          {[{ label: "Product fit", value: segment.assessment.compatibility }, { label: "Evidence", value: segment.assessment.evidence_strength }, { label: "Findability", value: segment.assessment.findability }].map((item) => <div key={item.label} className="min-w-0"><dt className="text-[10px] text-muted-foreground">{item.label}</dt><dd className="mt-1 break-words font-medium capitalize">{item.value.replaceAll("_", " ")}</dd></div>)}
+        </dl>
+        {segment.assessment.counterevidence > 0 && <p className="text-xs text-amber-300">{segment.assessment.counterevidence} source{segment.assessment.counterevidence === 1 ? "" : "s"} against this fit. Review before proceeding.</p>}
         <Button
           type="button"
-          variant="ghost"
+          variant="outline"
           size="sm"
+          aria-controls={detailsId}
           aria-expanded={expanded}
           onClick={() => setExpanded((current) => !current)}
         >
-          {expanded ? "Show less" : "Show more"}
+          {expanded ? "Hide audience details" : "Audience details & evidence"}<ChevronDown className={cn("size-3.5", expanded && "rotate-180")} />
         </Button>
-        {expanded && (
-          <div className="space-y-3">
+        <div id={detailsId} hidden={!expanded} className="space-y-3 rounded-xl border border-border bg-background/30 p-4">
+          {expanded && <div className="space-y-3">
             {segment.organization && (
               <p className="text-xs">Who they are: {segment.organization}</p>
             )}
@@ -1675,15 +1683,11 @@ function SegmentCard({
               <DossierResult research={research} relevance={relevance} />
             )}
 
-          </div>
-        )}
+          </div>}
+        </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-          <span className="text-xs text-muted-foreground">
-            {prospects > 0
-              ? `${prospects} organisation${prospects === 1 ? "" : "s"} found`
-              : "nobody named yet"}
-          </span>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
+          <Button size="sm" variant="ghost" onClick={onSelect}>View organisations · {prospects}</Button>
           <div className="flex flex-wrap gap-2">
             {mine && !confirming && (
               <Button
@@ -1811,9 +1815,7 @@ function ProspectCard({
               {prospect.name}
             </a>
           </CardTitle>
-          <p className="text-xs text-muted-foreground">
-            {prospect.what_they_do || prospect.segment}
-          </p>
+          <ExpandableText text={prospect.what_they_do || prospect.segment} className="text-xs text-muted-foreground" />
         </div>
         {prospect.qualification ? (
           <Badge variant={QUALIFICATION_VARIANT[prospect.qualification.classification]}>
@@ -1830,9 +1832,9 @@ function ProspectCard({
 
       <CardContent className="space-y-3 text-sm">
         {prospect.qualification && (
-          <QualificationReceipt qualification={prospect.qualification} />
+          <BrandDisclosure title="Qualification & evidence" description={`Product fit: ${prospect.qualification.product_capability_fit} · Expand to review the source checks`}><QualificationReceipt qualification={prospect.qualification} /></BrandDisclosure>
         )}
-        {prospect.why_them && <p>{prospect.why_them}</p>}
+        {prospect.why_them && <ExpandableText text={prospect.why_them} />}
         {prospect.verbatim && (
           <blockquote className="border-l-2 border-border pl-3 text-xs text-foreground/80 italic">
             &ldquo;{prospect.verbatim}&rdquo;
@@ -1842,7 +1844,7 @@ function ProspectCard({
         {prospect.contacts.length > 0 ? (
           <ul className="space-y-1">
             {prospect.contacts.map((contact) => (
-              <li key={`${contact.kind}-${contact.value}`} className="flex items-center gap-2">
+              <li key={`${contact.kind}-${contact.value}`} className="flex flex-wrap items-center gap-2">
                 <span className="text-muted-foreground">{CONTACT_ICONS[contact.kind]}</span>
                 <span className="font-mono text-xs">{contact.value}</span>
                 {contact.label && (
@@ -1868,7 +1870,7 @@ function ProspectCard({
           </p>
         )}
         {prospect.caveat && (
-          <p className="text-xs text-muted-foreground">Check first: {prospect.caveat}</p>
+          <ExpandableText text={`Check first: ${prospect.caveat}`} className="text-xs text-amber-300/90" />
         )}
 
         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -1922,14 +1924,17 @@ export function AudiencePanel({
   runningKind: string | null;
 }) {
   const router = useRouter();
+  const [query, setQuery] = useState("");
+  const [view, setView] = useState<"audiences" | "organisations">("audiences");
+  const [organisationQuery, setOrganisationQuery] = useState("");
+  const [priority, setPriority] = useState("all");
   const [rows, setRows] = useState(audience.prospects);
   const [selected, setSelected] = useState<string | null>(null);
   const [options, setOptions] = useState<MapOptions>(audience.map?.options ?? {
     geography: "", language: "", exclusions: "", objective: "customers", mode: "refresh",
   });
   const scopeControls = (
-    <details className="rounded-lg border p-4 text-sm">
-      <summary className="cursor-pointer font-medium">Search scope and budget</summary>
+    <BrandDisclosure title="Search settings" description="Geography, language, exclusions and research budget">
       <p className="mt-2 text-xs text-muted-foreground">Two model stages and up to ten source pages. Retries can add calls. Empty filters leave the search open. Changing the scope starts a new map.</p>
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         {([['geography', 'Countries or regions', 200], ['language', 'Audience language', 100], ['exclusions', 'Exclude industries or situations', 1000]] as const).map(([key, label, max]) => (
@@ -1945,10 +1950,15 @@ export function AudiencePanel({
           </select>
         </label>
       </div>
-    </details>
+    </BrandDisclosure>
   );
 
   const demand = audience.map;
+  const segments = demand?.segments.filter((segment) => {
+    const matchesText = [segment.name, segment.who, segment.organization, segment.need, segment.kind].join(" ").toLowerCase().includes(query.trim().toLowerCase());
+    return matchesText && (priority === "all" || segment.assessment.priority === priority);
+  }) ?? [];
+  const configuration = <div className="brand-configuration grid items-start gap-3 lg:grid-cols-2">{scopeControls}<CapabilityProfileCard brandId={brandId} initialProfile={audience.capability_profile} /></div>;
   const researchByAudience = useMemo(
     () => new Map(audience.research.map((item) => [item.audience_key, item])),
     [audience.research],
@@ -1969,12 +1979,11 @@ export function AudiencePanel({
     return counts;
   }, [rows]);
 
-  const visible = selected ? rows.filter((row) => row.segment === selected) : rows;
-  // Counted over what is visible, not over everything: the export link is
-  // scoped to the selected segment, and a button that says "3 kept" next to a
-  // file containing one is a button that gets distrusted the first time
-  // somebody opens the file.
-  const kept = visible.filter((row) => row.status === "kept").length;
+  const scoped = selected ? rows.filter((row) => row.segment === selected) : rows;
+  const visible = scoped.filter((row) => `${row.name} ${row.what_they_do} ${row.segment}`.toLowerCase().includes(organisationQuery.trim().toLowerCase()));
+  // The CSV exports the kept list for the selected audience. Text search is
+  // only a browsing aid; it must not change the count on the export link.
+  const kept = scoped.filter((row) => row.status === "kept").length;
 
   function replace(updated: Prospect) {
     setRows((current) => current.map((row) => (row.id === updated.id ? updated : row)));
@@ -1983,15 +1992,15 @@ export function AudiencePanel({
   if (!demand) {
     return (
       <div className="space-y-4">
-        {scopeControls}
-        <CapabilityProfileCard brandId={brandId} initialProfile={audience.capability_profile} />
+        <BrandSectionHeader title="Your audiences" description="Discover who needs your product, or add a buyer group you already know." />
+        {configuration}
         <AudienceAdder
           brandId={brandId}
           defaultOpen
           onSaved={() => router.refresh()}
         />
         <Card>
-          <CardHeader className="flex flex-row items-start justify-between gap-4">
+          <CardHeader className="flex flex-row flex-wrap items-start justify-between gap-4">
             <div>
               <CardTitle className="text-base">Nobody has mapped this yet</CardTitle>
               <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{audience.note}</p>
@@ -2017,34 +2026,25 @@ export function AudiencePanel({
 
   return (
     <div className="space-y-4">
-      {scopeControls}
-      <CapabilityProfileCard brandId={brandId} initialProfile={audience.capability_profile} />
-      <Card>
-        <CardHeader className="flex flex-row items-start justify-between gap-4">
-          <div className="min-w-0">
-            <CardTitle className="text-base">{demand.summary}</CardTitle>
-            {demand.reading && (
-              <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{demand.reading}</p>
-            )}
-          </div>
-          <div className="flex shrink-0 flex-col gap-2">
-            <Button size="sm" variant="outline" onClick={() => onMap({ ...options, mode: "refresh" })} disabled={busy}>
-              {busy && runningKind === "audience" ? "Working…" : "Rescan audiences"}
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => onMap({ ...options, mode: "explore" })} disabled={busy}>Explore other audiences</Button>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-2 text-xs text-muted-foreground">
-          <p>
-            Rescan replaces this list with fresh results. Explore adds new audiences to this list.
-            {" "}{demand.validation_note}
-          </p>
-          {demand.searched.length > 0 && (
-            <details><summary className="cursor-pointer">Queries reported by the researcher</summary><p>{demand.searched.join(" · ")}</p></details>
-          )}
-          {demand.note && <p className="text-amber-300/80">{demand.note}</p>}
-        </CardContent>
-      </Card>
+      <BrandSectionHeader title="Your audiences" description={`${demand.segments.length} audiences mapped. Compare fit, review evidence and find organisations.`} actions={<>
+        <Button size="sm" variant="outline" onClick={() => onMap({ ...options, mode: "refresh" })} disabled={busy}>{busy && runningKind === "audience" ? "Working…" : "Rescan audiences"}</Button>
+        <Button size="sm" onClick={() => onMap({ ...options, mode: "explore" })} disabled={busy}>Explore other audiences</Button>
+      </>} />
+      <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Audience workspace view">
+        <Button variant={view === "audiences" ? "secondary" : "outline"} aria-pressed={view === "audiences"} onClick={() => setView("audiences")}><Users className="size-4" />Audiences · {demand.segments.length}</Button>
+        <Button variant={view === "organisations" ? "secondary" : "outline"} aria-pressed={view === "organisations"} onClick={() => setView("organisations")}>Organisations · {rows.length}</Button>
+      </div>
+      <div hidden={view !== "audiences"} className="space-y-4">
+      {configuration}
+      <BrandDisclosure title="Audience analysis" description="Read the research summary, recommendations and coverage gaps.">
+        <div className="space-y-4">
+          <ExpandableText text={demand.summary} />
+          {demand.reading && <ExpandableText text={demand.reading} className="text-muted-foreground" />}
+          <p className="text-xs text-muted-foreground">Rescan replaces this list. Explore adds new audiences. {demand.validation_note}</p>
+          {demand.searched.length > 0 && <BrandDisclosure title="Research queries"><p className="text-xs leading-relaxed text-muted-foreground">{demand.searched.join(" · ")}</p></BrandDisclosure>}
+          {demand.note && <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3"><p className="mb-2 text-xs font-medium text-amber-300">Coverage gaps</p><ExpandableText text={demand.note} className="text-amber-200/80" /></div>}
+        </div>
+      </BrandDisclosure>
 
       <AudienceAdder
         brandId={brandId}
@@ -2052,8 +2052,17 @@ export function AudiencePanel({
         onSaved={() => router.refresh()}
       />
 
-      <div className="grid items-start gap-3 lg:grid-cols-2">
-        {demand.segments.map((segment) => (
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card p-3">
+          <div className="relative min-w-48 flex-1"><Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" /><Input aria-label="Search audiences" placeholder="Search audiences, needs or industries…" value={query} onChange={(event) => setQuery(event.target.value)} className="pl-9" /></div>
+          <label className="flex items-center gap-2 text-xs text-muted-foreground"><SlidersHorizontal className="size-4" /><span className="sr-only">Audience priority</span><select value={priority} onChange={(event) => setPriority(event.target.value)} className="min-h-9 rounded-lg border border-input bg-background px-3 text-sm text-foreground"><option value="all">All priorities</option><option value="explore_first">Explore first</option><option value="review_first">Review counterevidence</option><option value="hypothesis">Hypothesis</option><option value="incompatible">Incompatible</option></select></label>
+          <span role="status" className="text-xs text-muted-foreground">{segments.length} of {demand.segments.length}</span>
+        </div>
+        {segments.length === 0 && <div className="rounded-xl border border-dashed p-8 text-center"><Users className="mx-auto mb-3 size-6 text-muted-foreground" /><p className="font-medium">No audiences match these filters</p><Button variant="outline" size="sm" className="mt-3" onClick={() => { setQuery(""); setPriority("all"); }}>Clear filters</Button></div>}
+      </div>
+      {selected && <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-violet-400/30 bg-violet-500/10 p-3 text-sm"><span>Organisations filtered by <strong>{selected}</strong></span><Button size="sm" variant="outline" onClick={() => setSelected(null)}>Clear selection</Button></div>}
+      <div className="grid items-start gap-4 xl:grid-cols-2">
+        {segments.map((segment) => (
           <SegmentCard
             key={segment.name}
             brandId={brandId}
@@ -2063,7 +2072,7 @@ export function AudiencePanel({
             research={researchByAudience.get(audienceKey(segment.name))}
             relevance={relevanceByAudience.get(audienceKey(segment.name))}
             onSelect={() =>
-              setSelected((current) => (current === segment.name ? null : segment.name))
+              { setSelected(segment.name); setOrganisationQuery(""); setView("organisations"); }
             }
             onProspect={() => onProspect(segment.name)}
             onResearch={() => onResearch(segment.name)}
@@ -2074,6 +2083,9 @@ export function AudiencePanel({
         ))}
       </div>
 
+      </div>
+      <div hidden={view !== "organisations"} className="space-y-4">
+      <div className="relative"><Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" /><Input aria-label="Search organisations" placeholder="Search organisations…" value={organisationQuery} onChange={(event) => setOrganisationQuery(event.target.value)} className="pl-9" /></div>
       {rows.length > 0 && (
         <Card>
           <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3">
@@ -2095,7 +2107,9 @@ export function AudiencePanel({
               {/* An href rather than a fetch: the export is a file, and the
                   browser already knows how to save one. */}
               <a
-                href={api.prospectsCsvUrl(brandId, selected ?? undefined)}
+                href={kept > 0 ? api.prospectsCsvUrl(brandId, selected ?? undefined) : undefined}
+                aria-disabled={kept === 0}
+                tabIndex={kept === 0 ? -1 : undefined}
                 className={cn(
                   "rounded-md border border-border px-3 py-1.5 text-xs",
                   kept === 0 && "pointer-events-none opacity-40",
@@ -2103,16 +2117,17 @@ export function AudiencePanel({
                 title={
                   kept === 0
                     ? "Keep at least one organisation first — the file only carries the rows you reviewed"
-                    : "Download the rows you kept"
+                    : "Download all kept rows for this audience, including rows hidden by text search"
                 }
               >
-                Export {kept > 0 ? `${kept} kept` : "kept"}
+                Export kept list{kept > 0 ? ` · ${kept}` : ""}
               </a>
             </div>
           </CardHeader>
         </Card>
       )}
 
+      {visible.length === 0 && <div className="rounded-xl border border-dashed p-8 text-center"><p className="font-medium">{rows.length === 0 ? "No organisations found yet" : "No matching organisations"}</p><p className="mt-2 text-sm text-muted-foreground">{rows.length === 0 ? "Choose an audience, then use Find these companies to start a search." : "Try another search or clear your audience selection."}</p><Button className="mt-4" variant="outline" size="sm" onClick={() => { setView("audiences"); setSelected(null); setOrganisationQuery(""); }}>Back to audiences</Button></div>}
       <div className="space-y-3">
         {visible.map((prospect) => (
           <ProspectCard
@@ -2122,6 +2137,7 @@ export function AudiencePanel({
             onDecided={replace}
           />
         ))}
+      </div>
       </div>
     </div>
   );

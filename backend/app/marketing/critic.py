@@ -24,7 +24,7 @@ from pydantic import BaseModel, Field
 from app.ai.model_router import ModelTier
 from app.knowledge.artifacts import KnowledgeArtifacts
 from app.marketing.briefs import CampaignBrief, EmailBrief
-from app.marketing.email_copy import Email, render_email
+from app.marketing.email_copy import Email, render_review
 from app.marketing.gates import GateReport
 from app.marketing.reader import PanelRead
 from app.marketing.substantiation import Substantiation
@@ -127,14 +127,18 @@ class ConversionCritic:
         gates: GateReport,
         substantiation: Substantiation | None = None,
     ) -> Critique:
+        segment = artifacts.audience.match(campaign.reader_segment, campaign.reader)
         return await self._session.structured(
             role=ROLE_ID,
             tier=ModelTier.DEEP,
             template="critic",
             variables={
-                "email": render_email(email),
+                "email": render_review(email),
                 "brief": brief.render(),
                 "reader": campaign.reader,
+                "segment": segment.render_for_writing() if segment else "Not established.",
+                "campaign_intent": campaign.interpretation,
+                "orientation": campaign.orientation,
                 "promise": campaign.promise,
                 # The same slice the writer wrote from. The critic's job here
                 # is to notice evidence this email needed and did not spend -

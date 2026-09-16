@@ -113,18 +113,16 @@ class EmailBrief(BaseModel):
     must_not_reuse: list[str] = Field(default_factory=list)
 
     def render_argument(self) -> str:
-        """The four beats, as the shape of the email rather than as fields.
+        """The proposed argument, kept separate from audience evidence.
 
-        Rendered together and in order, because the order is the point. A
-        writer handed `why_it_fails` inside a flat list of eleven attributes
-        treats it as one more thing that could go on the page; handed it as
-        the third beat of an argument, it is the sentence without which the
-        fourth one means nothing.
+        These are the strategist's interpretations, including when they
+        describe a status quo. Labels must not promote that interpretation
+        into a fact about the recipient or require a fixed paragraph order.
         """
         beats = [
-            ("What they are actually living with", self.felt_need),
-            ("What they do about it today", self.status_quo),
-            ("Why that keeps falling short", self.why_it_fails),
+            ("Need to address (check audience support)", self.felt_need),
+            ("Proposed status quo (not evidence of their history)", self.status_quo),
+            ("Proposed limitation (must apply to that same approach)", self.why_it_fails),
             ("What this does instead, and how", self.mechanism),
         ]
         written = [(label, value.strip()) for label, value in beats if value.strip()]
@@ -148,7 +146,7 @@ class EmailBrief(BaseModel):
             f"Position: {self.position}\n"
             f"Its job: {self.job}\n"
             f"The one idea it owns: {self.single_idea}\n"
-            f"The argument it makes, in this order:\n{self.render_argument()}\n"
+            f"Argument material (use the order that serves its job):\n{self.render_argument()}\n"
             f"What has to change in their head: {self.belief_shift or 'not specified'}\n"
             f"Evidence it spends: {', '.join(self.evidence_ids) or 'none assigned'}\n"
             f"What it leaves out on purpose: {'; '.join(self.must_not_say) or 'nothing named'}\n"
@@ -170,7 +168,8 @@ class CampaignBrief(BaseModel):
     #: a sales request, and getting that wrong silently is how a run produces
     #: five well-written emails aimed at the wrong person.
     interpretation: str = ""
-    #: One person, in a situation. Never a segment.
+    #: Audience context reconstructed from the selected segment and user input.
+    #: The strategist's expanded persona is not evidence about the recipient.
     reader: str = ""
     #: The name of the audience segment `reader` was drawn from, exactly as
     #: the audience model spells it. This is what decides who reads the drafts

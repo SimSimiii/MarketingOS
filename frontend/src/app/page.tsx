@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { ArrowRight, BookOpen, Building2, Mail, Plus, Sparkles } from "lucide-react";
+import { AlertTriangle, ArrowRight, BookOpen, Building2, CloudOff, Mail, Plus, Sparkles } from "lucide-react";
 import { NewCampaignDialog } from "@/app/campaigns/new-campaign-dialog";
+import { EmptyState } from "@/components/empty-state";
+import { Notice } from "@/components/notice";
 import { PageHeader } from "@/components/page-header";
+import { StatTile } from "@/components/stat-tile";
 import { StatusBadge } from "@/components/status-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { api } from "@/lib/api-server";
@@ -44,28 +47,55 @@ export default async function DashboardPage() {
           </Link>
         </div>
       </section>
-      {(campaigns === null || documents === null || brands === null) && <p role="status" className="rounded-lg border border-amber-400/20 bg-amber-400/5 p-4 text-sm text-amber-200">Some workspace data could not be loaded. Refresh to try again. Unavailable counts are shown as a dash.</p>}
-      <div className="grid gap-4 sm:grid-cols-3">
-        {stats.map(({ label, value, hint, href, icon: Icon }) => (
-          <Link key={href} href={href} className="group rounded-xl border border-border bg-card p-5 transition-colors hover:border-violet-400/30 hover:bg-accent/20">
-            <div className="flex items-center justify-between text-muted-foreground"><span className="text-xs font-medium">{label}</span><Icon className="size-4" aria-hidden="true" /></div>
-            <p className="my-3 text-3xl font-medium tracking-tight tabular-nums">{value ?? "—"}</p>
-            <p className="text-xs leading-relaxed text-muted-foreground">{hint}</p>
-          </Link>
+      {(campaigns === null || documents === null || brands === null) && (
+        <Notice tone="warning" title="Some workspace data could not be loaded">
+          Refresh to try again. Unavailable counts are shown as a dash.
+        </Notice>
+      )}
+      <div className="rise-stagger grid gap-4 sm:grid-cols-3">
+        {stats.map(({ label, value, hint, href, icon }) => (
+          <StatTile key={href} label={label} value={value ?? "—"} hint={hint} href={href} icon={icon} />
         ))}
       </div>
-      {waiting !== undefined && waiting > 0 && <Link href="/brands" className="flex items-center justify-between gap-4 rounded-xl border border-amber-400/20 bg-amber-400/5 p-4 text-sm text-amber-200"><span>{waiting} market alert{waiting === 1 ? " or proof item needs" : "s or proof items need"} your review</span><ArrowRight className="size-4 shrink-0" aria-hidden="true" /></Link>}
+      {waiting !== undefined && waiting > 0 && (
+        <Link
+          href="/brands"
+          className="group flex items-center justify-between gap-4 rounded-xl border border-amber-400/25 bg-amber-400/5 p-4 text-sm text-amber-200 transition-colors hover:border-amber-400/50 hover:bg-amber-400/10"
+        >
+          <span className="flex items-center gap-3">
+            <AlertTriangle className="size-4 shrink-0" aria-hidden="true" />
+            {waiting} market alert{waiting === 1 ? " or proof item needs" : "s or proof items need"} your review
+          </span>
+          <ArrowRight
+            className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5"
+            aria-hidden="true"
+          />
+        </Link>
+      )}
       <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
         <Card className="gap-0 py-0">
           <CardHeader className="flex flex-row items-center justify-between border-b p-5"><CardTitle>Recent campaigns</CardTitle><Link href="/campaigns" className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground">View all<ArrowRight className="size-3.5" aria-hidden="true" /></Link></CardHeader>
           <CardContent className="p-0">
-            {campaigns === null ? <p className="p-8 text-sm text-muted-foreground">Campaigns are temporarily unavailable.</p> : campaigns.length === 0 ? (
-              <div className="px-6 py-12 text-center"><Mail className="mx-auto mb-4 size-7 text-violet-300" aria-hidden="true" /><h3 className="font-medium">Your next campaign starts here</h3><p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">Start with a simple brief. A welcome sequence, a product launch, a reason to come back.</p><div className="mt-5"><NewCampaignDialog /></div></div>
+            {campaigns === null ? (
+              <EmptyState
+                variant="inline"
+                icon={CloudOff}
+                title="Campaigns are temporarily unavailable"
+                description="The API did not answer. Nothing has been lost — reload the page to try again."
+              />
+            ) : campaigns.length === 0 ? (
+              <EmptyState
+                variant="inline"
+                icon={Mail}
+                title="Your next campaign starts here"
+                description="Start with a simple brief. A welcome sequence, a product launch, a reason to come back."
+                action={<NewCampaignDialog />}
+              />
             ) : <div className="divide-y divide-border">{campaigns.slice(0, 5).map((campaign) => (
-              <Link key={campaign.id} href={`/campaigns/${campaign.id}`} className="flex items-center gap-4 p-5 transition-colors hover:bg-accent/20">
+              <Link key={campaign.id} href={`/campaigns/${campaign.id}`} className="group/row flex items-center gap-4 p-5 transition-colors hover:bg-accent/20">
                 <span className="hidden size-10 shrink-0 items-center justify-center rounded-lg border border-border bg-background/40 text-violet-300 sm:flex"><Mail className="size-4" aria-hidden="true" /></span>
                 <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{campaign.name}</p><p className="mt-1 truncate text-xs text-muted-foreground">{campaign.request}</p><p className="mt-2 text-[11px] text-muted-foreground" title={formatAbsolute(campaign.created_at)}>{timeAgo(campaign.created_at)}</p></div>
-                {campaign.last_run_status && <StatusBadge status={campaign.last_run_status} />}<ArrowRight className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+                {campaign.last_run_status && <StatusBadge status={campaign.last_run_status} />}<ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover/row:translate-x-0.5 group-hover/row:text-violet-300" aria-hidden="true" />
               </Link>
             ))}</div>}
           </CardContent>

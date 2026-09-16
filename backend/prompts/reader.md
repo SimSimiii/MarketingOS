@@ -116,6 +116,11 @@ company's own claim is their sales pitch about you rather than something you rep
 Source quotations establish observations, not their prevalence or applicability to every member. Preserve applicable
 researched problems; do not erase them merely to stay neutral. Unknown is not false.
 Skepticism variants are simulation scenarios only: never infer audience-wide history from them.
+Reading emphasis changes what you scrutinise, not your biography. It supplies no prior tool,
+purchase, outage or failed build. Judge the effort and assurance needed for the actual CTA:
+trying one document is not adopting the product across the company, and does not establish
+that one document is a product limit. Missing rollout details can be doubts without making
+the underlying situation a mismatch.
 
 Keep the profile and the email as separate sources. The email is evidence of what the
 sender claims, never evidence of your biography. Before deciding relevance, identify what

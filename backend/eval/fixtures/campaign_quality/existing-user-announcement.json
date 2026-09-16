@@ -1,0 +1,68 @@
+{
+  "id": "existing-user-announcement",
+  "name": "existing-user-announcement",
+  "context": {
+    "product_name": "Relay",
+    "target_audience": "Existing Relay users who already have agents configured. Announce the newly released daily spend chart and invite them to inspect it; do not ask them to sign up again.",
+    "buyer_personas": [
+      "Existing Relay users who already have agents configured. Announce the newly released daily spend chart and invite them to inspect it; do not ask them to sign up again."
+    ],
+    "evidence": [
+      {
+        "id": "F1",
+        "text": "Relay is a platform for building agents that answer questions from uploaded documents in Slack."
+      },
+      {
+        "id": "F2",
+        "text": "Connecting Slack requires an OAuth installation and choosing a channel. Documents must be uploaded."
+      },
+      {
+        "id": "F3",
+        "text": "Analytics tracks daily aggregate spend and token usage per model automatically, with no extra configuration for Analytics."
+      },
+      {
+        "id": "F4",
+        "text": "A free account is available without a card."
+      },
+      {
+        "id": "F5",
+        "text": "The daily spend chart is newly released in Analytics and is available to existing accounts."
+      }
+    ]
+  },
+  "drafts": [
+    {
+      "id": "novelty-label-only",
+      "email": {
+        "position": 1,
+        "subject": "A clearer view of your agents",
+        "preview_text": "A concrete first step for your team",
+        "greeting": "Hi there,",
+        "body": "Relay is a platform for building agents that answer questions from your uploaded documents. It works with Slack after an OAuth installation.\n\nAnalytics tracks daily spend and tokens per model, so you can inspect usage while your agents run. The reporting needs no extra configuration for Analytics.\n\nIf the same handbook questions come up, you can upload a policy and ask your agent to answer from it. Start with a question you know how to check.\n\nA free account is available without a card. Create your first agent and see how it responds.",
+        "call_to_action": "Create your first agent",
+        "sign_off": "The Relay team",
+        "eyebrow": "WHAT'S NEW",
+        "headline": "Your agents, accounted for"
+      }
+    },
+    {
+      "id": "explicit-change",
+      "email": {
+        "position": 1,
+        "subject": "Your new daily spend chart",
+        "preview_text": "A concrete first step for your team",
+        "greeting": "Hi there,",
+        "body": "The daily spend chart is now available in Relay Analytics, including in your existing account.\n\nOpen Analytics to see how your agent usage adds up each day. The chart reports daily aggregate spend; it does not turn that total into a price for each answer.\n\nYou can use the chart to inspect a change in usage before deciding whether to investigate a workflow. It records the totals automatically, with no extra configuration for Analytics and no need to create another account.\n\nThe next step is simply to open the chart for the agents you already run.",
+        "call_to_action": "Open the daily spend chart",
+        "sign_off": "The Relay team",
+        "eyebrow": "NEW IN ANALYTICS",
+        "headline": "Inspect your daily spend"
+      }
+    }
+  ],
+  "notes": [
+    "Synthetic qualitative fixture; evidence is defined for this case, not a claim about a real product.",
+    "Novelty and CTA must fit an existing customer, using the explicit release fact.",
+    "Variants are editorial contrasts, not pipeline before/after outputs. Model preferences are not measured marketing outcomes."
+  ]
+}

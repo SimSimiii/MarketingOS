@@ -28,8 +28,14 @@ from app.knowledge.ledger import (
     EvidenceLedger,
     extract_claims,
 )
-from app.marketing.email_copy import Email, render_email
-from app.marketing.gates import placeholder_gate, spam_gate, stock_phrase_gate, structure_gate
+from app.marketing.email_copy import Email, render_review
+from app.marketing.gates import (
+    copy_review_gate,
+    placeholder_gate,
+    spam_gate,
+    stock_phrase_gate,
+    structure_gate,
+)
 from app.runtime.exceptions import ModelRuntimeError
 from app.runtime.model_session import ModelSession
 
@@ -274,7 +280,7 @@ class CommercialReviewer:
         assignments = _blind_assignments(case.drafts, persona_index)
         label_to_id = {label: draft.id for label, draft in assignments}
         listing = "\n\n".join(
-            f"DRAFT {label}\n{render_email(draft.email)}" for label, draft in assignments
+            f"DRAFT {label}\n{render_review(draft.email)}" for label, draft in assignments
         )
         campaign_context = (
             "\n".join(
@@ -290,6 +296,20 @@ class CommercialReviewer:
                         f"Target company: {case.context.target_company}"
                         if case.context.target_company
                         else ""
+                    ),
+                    "Supplied evidence (retain scope and conditions):\n" + "\n".join(
+                        f"- [{ref.id}; {ref.scope}] {ref.text}"
+                        for ref in [*case.context.evidence, *case.context.company_evidence]
+                    ),
+                    (
+                        "Campaign-allowed claims:\n" + "\n".join(
+                            f"- [{ref.id}] {ref.text}" for ref in case.context.claim_contract
+                        )
+                        if case.context.claim_contract or case.context.claim_contract_enforced
+                        else "No explicit campaign claim contract was supplied."
+                    ),
+                    "Forbidden claims:\n" + "\n".join(
+                        f"- {claim.description}" for claim in case.context.forbidden_claims
                     ),
                 )
                 if part
@@ -591,7 +611,34 @@ def _checks_for(draft: CampaignDraft, context: CampaignQualityContext) -> list[D
         _consistency_check(draft.email),
         _claim_density_check(draft.email, context),
         _repeated_fact_check(draft.email, context),
+        *_copy_review_checks(draft.email, context),
         _baseline_check(draft.email),
+    ]
+
+
+def _copy_review_checks(email: Email, context: CampaignQualityContext) -> list[DeterministicCheck]:
+    ledger = [
+        Evidence(id=ref.id, kind=EvidenceKind.FEATURE, claim=ref.text, verbatim=ref.text)
+        for ref in _unique_references([*context.evidence, *context.claim_contract])
+        if ref.scope is not EvidenceScope.COMPANY
+    ]
+    report = copy_review_gate(email, ledger)
+    return [
+        DeterministicCheck(
+            rule_id=rule_id, name=name,
+            findings=[
+                _finding(
+                    rule_id, kind, FindingSeverity.ADVISORY, issue.detail,
+                    issue.detail.partition(" — ")[0], issue.detail.partition(":")[0],
+                    [f"gate:{issue.gate}"],
+                )
+                for issue in report.issues if issue.gate == gate
+            ],
+        )
+        for gate, rule_id, name, kind in (
+            ("claim-scope-review", "CQ-SAF-006", "Claim scope to verify", FindingKind.SAFETY),
+            ("assembly-review", "CQ-COM-006", "Assembled copy repetition", FindingKind.COMMERCIAL),
+        )
     ]
 
 
@@ -734,7 +781,7 @@ def _numerical_claim_check(email: Email, context: CampaignQualityContext) -> Det
     index = EvidenceIndex(ledger)
     findings: list[QualityFinding] = []
     passages = _passages(email)
-    for unsupported in index.unsupported(render_email(email)):
+    for unsupported in index.unsupported(render_review(email)):
         location, _ = _passage_containing(passages, unsupported.claim.text)
         findings.append(
             _finding(
@@ -798,13 +845,15 @@ def _consistency_check(email: Email) -> DeterministicCheck:
     fields = [
         ("subject", email.subject),
         ("preview_text", email.preview_text),
+        ("eyebrow", email.eyebrow if email.headline else ""),
+        ("headline", email.headline),
         ("body", email.body),
     ]
     findings: list[QualityFinding] = []
 
     # A header that promises "no setup" and a body that requires setup is a
     # contradiction even when both statements contain no checkable figure.
-    for source_location, source in fields[:2]:
+    for source_location, source in fields[:-1]:
         for negative in re.finditer(
             r"\b(?:no|without|zero)\s+([a-z][a-z-]*(?:\s+[a-z][a-z-]*){0,2})",
             source,
@@ -836,7 +885,7 @@ def _consistency_check(email: Email) -> DeterministicCheck:
     # Conflicting values with the same unit and a shared topic are also hard,
     # deterministic contradictions (for example 5-minute vs 20-minute setup).
     header_claims = [
-        (location, text, claim) for location, text in fields[:2] for claim in extract_claims(text)
+        (location, text, claim) for location, text in fields[:-1] for claim in extract_claims(text)
     ]
     for location, text, header_claim in header_claims:
         for body_passage in _split_passages(email.body):
@@ -895,11 +944,17 @@ def _claim_density_check(email: Email, context: CampaignQualityContext) -> Deter
 
 
 def _repeated_fact_check(email: Email, context: CampaignQualityContext) -> DeterministicCheck:
-    passages = _split_passages(email.body)
+    passages = [
+        passage for location, passage in _passages(email)
+        if location in {"body", "call_to_action", "postscript"}
+    ]
     references = [*context.claim_contract, *context.evidence]
     findings: list[QualityFinding] = []
     for reference in _unique_references(references):
-        carrying = [passage for passage in passages if _strong_support(passage, reference.text)]
+        carrying = [
+            passage for passage in passages
+            if any(_strong_support(passage, fact) for fact in _split_passages(reference.text))
+        ]
         if len(carrying) < 2:
             continue
         findings.append(
@@ -909,7 +964,7 @@ def _repeated_fact_check(email: Email, context: CampaignQualityContext) -> Deter
                 FindingSeverity.ADVISORY,
                 "The same product fact is repeated instead of advancing the argument.",
                 " | ".join(carrying[:3]),
-                "body",
+                "body/CTA/P.S.",
                 [reference.id],
             )
         )
@@ -933,9 +988,9 @@ def _repeated_fact_check(email: Email, context: CampaignQualityContext) -> Deter
                 "CQ-COM-004",
                 FindingKind.COMMERCIAL,
                 FindingSeverity.ADVISORY,
-                f'The checkable value "{claim}" is repeated in the body.',
+                f'The checkable value "{claim}" is repeated in the assembled message.',
                 " | ".join(carrying[:3]),
-                "body",
+                "body/CTA/P.S.",
                 ids,
             )
         )
@@ -945,7 +1000,7 @@ def _repeated_fact_check(email: Email, context: CampaignQualityContext) -> Deter
 
 
 def _baseline_check(email: Email) -> DeterministicCheck:
-    text = render_email(email)
+    text = render_review(email)
     reports = (
         placeholder_gate(text),
         stock_phrase_gate(text),
@@ -988,11 +1043,13 @@ def _revision_priorities(report: CampaignQualityReport) -> list[str]:
         ("CQ-SAF-003", "Remove invented recipient-company details or attach company evidence."),
         ("CQ-SAF-004", "Bring every product assertion inside the campaign-safe claim contract."),
         ("CQ-SAF-005", "Remove unsupported figures, quotations, and URLs."),
+        ("CQ-SAF-006", "Verify claim granularity, conditions and limits on alternatives."),
         ("CQ-COM-002", "Make the subject, preview, and body tell one consistent story."),
         ("CQ-COM-001", "Replace the CTA with one concrete, low-friction next step."),
         ("CQ-COM-003", "Cut secondary claims and keep one commercial argument."),
         ("CQ-COM-004", "State each product fact once and use the space to advance the argument."),
         ("CQ-COM-005", "Resolve the established sendability and readability findings."),
+        ("CQ-COM-006", "Review repetition across body, CTA and P.S.; keep only useful reinforcement."),
     )
     present = {finding.rule_id for draft in report.drafts for finding in draft.findings}
     priorities = [message for rule, message in ordered_rules if rule in present]
@@ -1018,7 +1075,7 @@ def _blind_assignments(
     ordered = sorted(
         drafts,
         key=lambda draft: (
-            hashlib.sha256(render_email(draft.email).encode("utf-8")).hexdigest(),
+            hashlib.sha256(render_review(draft.email).encode("utf-8")).hexdigest(),
             draft.id,
         ),
     )
@@ -1146,6 +1203,7 @@ def _passages(email: Email) -> list[tuple[str, str]]:
     for location, text in (
         ("subject", email.subject),
         ("preview_text", email.preview_text),
+        ("eyebrow", email.eyebrow if email.headline else ""),
         ("headline", email.headline),
     ):
         if text.strip():

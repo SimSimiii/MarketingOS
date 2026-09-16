@@ -89,6 +89,40 @@ def _findings(case: CampaignQualityCase, rule_id: str):
     ]
 
 
+def test_observed_launch_preserves_its_assembled_fields_and_scope_cues():
+    case = load_case("slack-launch-observed")
+    assert case.drafts[0].email.eyebrow == "WHAT'S NEW"
+    scopes = _findings(case, "CQ-SAF-006")
+    assert len(scopes) == 3
+    assert all(f.severity == "advisory" and f.offending_text and f.location for f in scopes)
+    assert _findings(case, "CQ-COM-006")
+
+
+def test_qualitative_contrasts_preserve_the_intended_audiences_and_licensed_cost():
+    buyer = load_case("assistant-buyer")
+    operator = load_case("agent-operator")
+    announcement = load_case("existing-user-announcement")
+    assert len({case.context.target_audience for case in (buyer, operator, announcement)}) == 3
+    # A metric-first opening is not a deterministic defect. This case has
+    # explicit estimated cost-per-answer evidence; the other has aggregates.
+    assert not _findings(operator, "CQ-SAF-006")
+    assert _findings(buyer, "CQ-SAF-006")
+    assert all(result.evidentially_safe for result in evaluate_deterministic(operator).drafts)
+    assert all(case.context.buyer_personas for case in (buyer, operator, announcement))
+
+
+def test_repeated_evidence_in_body_and_ps_is_visible_without_footer_false_positives():
+    case = load_case("agent-operator")
+    email = case.drafts[0].email
+    fact = "The Analytics dashboard displays estimated USD cost per answer."
+    email.body = fact + "\n\nInspect the record.\n\nKeep your existing workflow."
+    email.postscript = fact
+    assert _findings(case, "CQ-COM-004")
+    email.postscript = ""
+    email.sign_off = fact
+    assert not _findings(case, "CQ-COM-004")
+
+
 def _commercial_answer(winner: str = "A", score: int = 4) -> str:
     def rubric() -> dict:
         return {

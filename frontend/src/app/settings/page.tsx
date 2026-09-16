@@ -1,4 +1,5 @@
 import { SettingsForm } from "@/app/settings/settings-form";
+import { PageHeader } from "@/components/page-header";
 import { AccountPanel } from "@/app/settings/account-panel";
 import { api } from "@/lib/api-server";
 import { AUTH_REQUIRED } from "@/lib/config";
@@ -11,14 +12,15 @@ export default async function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
-        <p className="text-sm text-muted-foreground">
-          {account
+      <PageHeader
+        eyebrow="Workspace"
+        title="Settings"
+        description={
+          account
             ? "Your account, and the defaults every campaign starts from."
-            : "Defaults used across campaigns. This install runs as a single workspace."}
-        </p>
-      </div>
+            : "Defaults used across campaigns. This install runs as a single workspace."
+        }
+      />
       <SettingsForm settings={settings} />
       {account && <AccountPanel account={account} />}
     </div>

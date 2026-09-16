@@ -17,6 +17,16 @@ an email in two voices, and the second one is always worse.
 
 {{ reader }}
 
+## Audience evidence and awareness stage (outranks the strategist's imagined reader)
+
+{{ segment }}
+
+## Campaign intent and product orientation
+
+{{ campaign_intent }}
+
+{{ orientation }}
+
 # What the campaign promises
 
 {{ promise }}
@@ -29,7 +39,8 @@ an email in two voices, and the second one is always worse.
 
 {{ gate_report }}
 
-Those checks are already facts and are already going back to the writer. Do not repeat them.
+Blocking checks are deterministic failures; advisories are questions to evaluate. Both are
+already going back to the writer. Do not repeat them.
 Spend your attention on what a regular expression cannot see.
 
 # What only you can catch
@@ -96,12 +107,46 @@ could not say what it sells" means the promise is not on the page — name the p
 should have been. "They stopped at line four" identifies where attention was lost, not necessarily what to delete.
 Find whether the cause is repetition, confusion, missing context or an unanswered objection.
 A simulated doubt is diagnostic input, not an instruction to add every requested detail. Do not thank them for the feedback; act on it.
+Evaluate the actual next step: a small trial can leave deployment questions for later. A
+one-document test does not claim that the product handles only one document. Do not invent a
+past failed purchase from a skeptical reading disposition. Disliking an offer or wanting more
+product information does not establish that it targets the wrong audience.
 
 **Voice.** {{ voice }}
 
 Does this sound like that company, or like a competent stranger?
 
 **The ask.** One thing, low friction, stated once, and something the reader can actually do.
+
+**Read the assembled message.** The eyebrow and headline, body (including any callout),
+CTA link and P.S. all reach the recipient. Check their combined meaning: a novelty label
+needs an explicit, supported launch or change; secondary benefits must support one primary
+promise relevant to the selected audience's stage and this campaign's job. Check ambiguous
+pronouns and transitions: can a reader tell what the next sentence follows from? Metrics can
+lead for an operator who understands their stakes; do not impose a problem-first opening.
+Treat duplicate offers or competing closing lines as editorial findings, not hard failures.
+Intentional CTA reinforcement and a useful P.S. can work. Brand/contact/footer repetition is
+identity, not a repeated marketing argument.
+
+**Claim scope beyond numbers.** Aggregate spend does not establish cost per answer; credits
+per run are not a dollar price; an estimated model/API cost is not an exact all-in bill.
+Check the subject, unit, granularity, surface and conditions against the cited source.
+An API response field alone does not prove the same field appears beside a channel answer.
+Keep "no configuration" attached to the documented feature, not installation or data setup.
+DIY can often implement a capability: distinguish work the buyer must implement/maintain
+from something the alternative cannot do. Accept per-answer accounting when explicitly
+licensed; never ban a claim because another product lacks its evidence.
+Before calling a claim unsupported, read the full relevant source quotation, not only the
+reader's doubt. Name the evidence id and the exact qualification the draft adds or drops.
+A source that explicitly says "scales automatically" licenses automatic scaling; it does not
+license guaranteed uptime. A supported capability can still be unpersuasive: diagnose that
+as an editorial problem, without falsely claiming the evidence is absent. Preserve the
+supported part and change only the unsupported extension.
+
+For each issue, reuse `edits`: quote the passage in `line`, explain the precise mismatch in
+`problem`, specify the supported scope or correction in `fix`, and rank its `severity`.
+Gate advisories are questions to check against evidence, not proof of falsity. Do not invent
+a capability to answer a reader's doubt. Editorial advice must not become a factual veto.
 
 # The evidence that exists
 

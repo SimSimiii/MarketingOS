@@ -26,7 +26,13 @@ from app.knowledge.artifacts import BusinessProfile, OfferSheet
 from app.knowledge.ledger import Evidence, EvidenceIndex
 from app.market.positioning import PositioningMap
 from app.market.sameness import check as sameness_check
-from app.marketing.email_copy import Email, render_email, strip_markup, structural_issues
+from app.marketing.email_copy import (
+    Email,
+    render_email,
+    render_review,
+    strip_markup,
+    structural_issues,
+)
 from app.marketing.substantiation import Substantiation, unspent_issues
 from app.marketing.substantiation import assess as assess_substantiation
 
@@ -454,6 +460,119 @@ def sameness_gate(email: Email, positioning: PositioningMap | None = None) -> Ga
 # ----------------------------------------------------------------- clarity
 
 
+_PER_COST_RE = re.compile(
+    r"\b(?:cost(?:s)?\s+(?:per|of each|of every|for each|for every)\s+"
+    r"(?P<after>answer|response|run|request|transaction)|"
+    r"(?:per|each|every)[ -](?P<before>answer|response|run|request|transaction)"
+    r"(?:[ -]cost|\s+cost)|"
+    r"what\s+(?:each|every)\s+(?P<what>answer|response|run|request|transaction)\s+cost)",
+    re.IGNORECASE,
+)
+_NO_CONFIG_RE = re.compile(
+    r"\b(?:(?:no|without|zero)\s+(?:extra\s+|additional\s+)?"
+    r"(?:config(?:uration)?|setup)|nothing to configure)\b", re.IGNORECASE,
+)
+_DIY_RE = re.compile(r"\b(?:DIY|homegrown|in.house|assembled|script|wired)\b", re.IGNORECASE)
+_ABSOLUTE_RE = re.compile(
+    r"\b(?:cannot|can't|can’t|will not|won't|won’t|never|nothing in it)\b", re.IGNORECASE,
+)
+
+
+def copy_review_gate(email: Email, ledger: list[Evidence]) -> GateReport:
+    """Narrow review cues, never semantic truth verdicts or generation vetoes.
+
+    These English assertion shapes are easy to miss without a number. A cue
+    asks the existing critic/writer to verify scope; it does not prove a lie.
+    Exact supplied wording suppresses a cue. Other supported paraphrases may
+    still need judgment. No amount of lexical overlap licenses a broader claim.
+    """
+    passages = [
+        (name, passage.strip())
+        for name, value in (
+            ("subject", email.subject), ("preview", email.preview_text),
+            ("eyebrow", email.eyebrow if email.headline else ""),
+            ("headline", email.headline), ("body", strip_markup(email.body)),
+            ("CTA", email.call_to_action), ("P.S.", strip_markup(email.postscript)),
+        )
+        for passage in re.split(r"(?<=[.!?])\s+|\n\s*\n", value)
+        if passage.strip()
+    ]
+    sources = [(entry.id, text) for entry in ledger for text in (entry.claim, entry.verbatim)]
+    issues: list[GateIssue] = []
+    previous_body = ""
+    for location, passage in passages:
+        exact = any(
+            len(_words(passage)) >= 5
+            and " ".join(_words(passage)) in " ".join(_words(text))
+            for _, text in sources
+        )
+        fixes: list[str] = []
+        if not exact and (cost := _PER_COST_RE.search(passage)):
+            unit = next(value for value in cost.groups() if value)
+            # A same-unit statement is only an indication of support, and an
+            # estimate must remain an estimate. API -> channel/UI is not inferred.
+            supported = any(
+                (match := _PER_COST_RE.search(text))
+                and unit.lower() in {v.lower() for v in match.groups() if v}
+                and not re.search(r"\b(?:not|never|no)\b", text[:match.end()], re.IGNORECASE)
+                and ("estimat" not in text.lower() or "estimat" in passage.lower())
+                and ("api" not in text.lower() or "api" in passage.lower())
+                and all(
+                    currency not in passage.lower() or currency in text.lower()
+                    for currency in ("usd", "dollar", "$", "eur", "€")
+                )
+                for _, text in sources
+            )
+            if not supported:
+                fixes.append(
+                    f"Verify cost per {unit} against an explicit same-unit source; aggregate "
+                    "spend and credits per run do not establish it. Preserve estimated/exact, "
+                    "currency and API/UI/channel scope; otherwise narrow to the licensed metric."
+                )
+        if not exact and _NO_CONFIG_RE.search(passage):
+            fixes.append(
+                "Verify what needs no configuration. Name the documented feature and retain "
+                "its conditions; do not extend automatic tracking to installation or data setup."
+            )
+        if not exact and _ABSOLUTE_RE.search(passage) and _DIY_RE.search(
+            passage + (" " + previous_body if location == "body" else "")
+        ):
+            fixes.append(
+                "Verify this absolute limit on the alternative. DIY may implement the same "
+                "function; describe documented work to add/maintain it, or remove the comparison."
+            )
+        for fix in fixes:
+            issues.append(GateIssue(
+                gate="claim-scope-review", severity=GateSeverity.ADVISORY,
+                detail=f'{location}: "{passage}" — {fix}',
+            ))
+        if location == "body":
+            previous_body = passage
+
+    # Compare separately assembled marketing blocks. Identity/sign-off/footer
+    # and inbox previews deliberately do not count as repeated body persuasion.
+    blocks = [
+        *[("body", block) for block in re.split(r"\n\s*\n", strip_markup(email.body))],
+        ("CTA", email.call_to_action), ("P.S.", strip_markup(email.postscript)),
+    ]
+    seen: dict[tuple[str, ...], tuple[str, str]] = {}
+    for location, block in blocks:
+        words = _words(block)
+        grams = [tuple(words[i:i + 4]) for i in range(len(words) - 3)]
+        duplicate = next((seen[g] for g in grams if g in seen), None)
+        if duplicate:
+            before_location, before = duplicate
+            issues.append(GateIssue(
+                gate="assembly-review", severity=GateSeverity.ADVISORY,
+                detail=f'{before_location}: "{before}" / {location}: "{block}" — '
+                "Repeated wording in the assembled ending/body. Keep it only if purposeful; "
+                "otherwise consolidate the offer around the primary action.",
+            ))
+        for gram in grams:
+            seen.setdefault(gram, (location, block))
+    return GateReport(issues=issues)
+
+
 #: Words in a company name that identify nothing. "Acme Labs" and "Acme" are
 #: the same company to a reader; "Labs" on its own in a sentence is not the
 #: company being named. Without this the check passes on any email containing
@@ -606,7 +725,7 @@ def run_all(
     that has already paid to compute them should not have to compute them
     twice.
     """
-    text = render_email(email)
+    text = render_review(email)
     substantiation = assess_substantiation(email, assigned or [], ledger or [])
     report = GateReport()
     for part in (
@@ -621,6 +740,7 @@ def run_all(
         clarity_gate(email, business or BusinessProfile()),
         substantiation_gate(substantiation),
         sameness_gate(email, positioning),
+        copy_review_gate(email, ledger or []),
     ):
         report = report.extend(part)
     return report, substantiation

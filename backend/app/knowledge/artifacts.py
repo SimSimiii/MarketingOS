@@ -269,9 +269,9 @@ _WHERE_TO_START: dict["Sophistication", str] = {
         "problem back to them; show that it is solvable at all."
     ),
     "solution_aware": (
-        "They know fixes like this exist and are probably doing something manual instead. "
-        "Explaining what the category is loses them - go straight at why this one is "
-        "different from what they do today."
+        "They know fixes like this exist. Show how the supported benefit serves their job. "
+        "This stage alone does not establish an existing tool, a manual workflow, or an "
+        "operating workload; use the documented situation to decide where to start."
     ),
     "product_aware": (
         "They already know roughly what this product is. Explaining it again loses them in "

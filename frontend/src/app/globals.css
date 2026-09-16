@@ -39,6 +39,7 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-hairline: var(--hairline);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -81,6 +82,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --hairline: oklch(0 0 0 / 6%);
 }
 
 .dark {
@@ -115,6 +117,10 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.606 0.25 292.717);
+
+  /* Lighter than --border, for a panel nested inside a card: at the same
+     weight, an inner box and the card holding it read as two cards. */
+  --hairline: oklch(1 0 0 / 8%);
 }
 
 @layer base {
@@ -123,10 +129,31 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* One faint wash of the accent behind everything, so the workspace reads
+       as a lit room rather than as a flat sheet of near-black. It is fixed
+       rather than scrolled: a gradient that slides up the page turns into a
+       band you can see moving, which is the opposite of ambient. */
+    background-image: radial-gradient(
+      ellipse 90rem 45rem at 50% -10rem,
+      oklch(0.45 0.16 292 / 14%),
+      transparent 70%
+    );
+    background-attachment: fixed;
+    background-repeat: no-repeat;
   }
   html {
     @apply font-sans;
     color-scheme: dark;
+  }
+  /* Headings wrap on meaning rather than on width, and no paragraph is left
+     with a one-word last line. Both are free; neither reflows anything. */
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
   }
   a:focus-visible {
     outline: 2px solid var(--ring);
@@ -136,20 +163,84 @@
     background: oklch(0.606 0.25 292.717 / 40%);
     color: white;
   }
+  /* The default scrollbar is a light-mode artefact on a dark page: a white
+     trough down the side of every long run log. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(1 0 0 / 18%) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: oklch(1 0 0 / 14%);
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: oklch(1 0 0 / 26%);
+    background-clip: padding-box;
+  }
 }
 
 @layer components {
   .studio-hero {
     background: radial-gradient(ellipse at 95% 0%, oklch(0.45 0.18 292 / 25%), transparent 60%), var(--card);
   }
+
+  /* A page's worth of cards arriving at once is a flicker; arriving in order
+     is a page being built. Purely decorative, so it is opt-in per section and
+     off entirely when the reader has asked for less motion. */
+  .rise {
+    animation: rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+  .rise-stagger > * {
+    animation: rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+  .rise-stagger > *:nth-child(1) { animation-delay: 0ms; }
+  .rise-stagger > *:nth-child(2) { animation-delay: 45ms; }
+  .rise-stagger > *:nth-child(3) { animation-delay: 90ms; }
+  .rise-stagger > *:nth-child(4) { animation-delay: 135ms; }
+  .rise-stagger > *:nth-child(n + 5) { animation-delay: 180ms; }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rise,
+    .rise-stagger > * {
+      animation: none;
+    }
+  }
 }
 
-/* Preserve one set of campaign actions while presenting readable rows on phones. */
+/* A table narrower than its content is a horizontal scrollbar hiding the one
+   column that mattered. Below `md` every table marked `stacked-table` becomes
+   one labelled card per row instead - the header row is what the labels come
+   from, so it is hidden from sight but kept for screen readers.
+   `.campaign-table` is the same treatment plus the one rule that keeps a long
+   brief from turning a row into a paragraph. */
 @media (width < 48rem) {
+  .stacked-table,
+  .stacked-table tbody,
   .campaign-table,
   .campaign-table tbody {
     display: block;
   }
+  .stacked-table thead,
   .campaign-table thead {
     position: absolute;
     width: 1px;
@@ -157,11 +248,13 @@
     overflow: hidden;
     clip-path: inset(50%);
   }
+  .stacked-table tbody tr,
   .campaign-table tbody tr {
     display: grid;
     gap: 0.5rem;
     padding: 1.25rem;
   }
+  .stacked-table td,
   .campaign-table td {
     display: block;
     min-width: 0;
@@ -170,6 +263,7 @@
     white-space: normal;
     overflow-wrap: anywhere;
   }
+  .stacked-table td[data-label]::before,
   .campaign-table td[data-label]::before {
     content: attr(data-label);
     display: block;
@@ -186,7 +280,44 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+  .stacked-table td:last-child,
   .campaign-table td:last-child {
     padding-top: 0.5rem;
   }
 }
+
+/* Brand workspace: readable controls and progressive disclosure on every screen. */
+.brand-workspace {
+  overflow-wrap: anywhere;
+}
+.brand-workspace .market-section-tabs {
+  height: auto;
+}
+.brand-workspace .market-section-trigger {
+  height: auto;
+  color: var(--muted-foreground);
+}
+.brand-workspace .market-section-trigger[data-active] {
+  border-color: oklch(0.7 0.18 292 / 50%);
+  background: oklch(0.38 0.12 292 / 55%);
+  color: oklch(0.95 0.03 292);
+  box-shadow: 0 2px 12px oklch(0.1 0.03 292 / 20%);
+}
+.brand-workspace summary:focus-visible,
+.brand-workspace button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+.brand-workspace summary {
+  min-height: 2.25rem;
+}
+@media (width < 48rem) {
+  .brand-source-table, .brand-source-table tbody { display: block; }
+  .brand-source-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .brand-source-table tbody tr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; padding: 1rem; }
+  .brand-source-table td { display: block; min-width: 0; max-width: 100%; padding: 0; white-space: normal; overflow-wrap: anywhere; }
+  .brand-source-table td:first-child, .brand-source-table td[data-label="Origin"] { grid-column: 1 / -1; }
+  .brand-source-table td[data-label]::before { content: attr(data-label); display: block; margin-bottom: .25rem; font-size: .625rem; color: var(--muted-foreground); }
+}
+
+.brand-configuration > details[open] { grid-column: 1 / -1; }

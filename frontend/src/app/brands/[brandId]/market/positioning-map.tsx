@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { BrandDisclosure } from "../../brand-ui";
+
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -88,7 +90,8 @@ function AxisCard({ reading }: { reading: AxisReading }) {
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="flex w-full items-start justify-between gap-2 text-left"
+        aria-expanded={open}
+        className="flex w-full flex-wrap items-start justify-between gap-2 text-left"
       >
         <div className="min-w-0">
           <p className="text-sm font-medium">{axisLabel(reading.axis)}</p>
@@ -145,7 +148,8 @@ function AxisCard({ reading }: { reading: AxisReading }) {
         <button
           type="button"
           onClick={() => setOpen((value) => !value)}
-          className="mt-2 text-xs text-muted-foreground hover:text-foreground"
+          aria-expanded={open}
+          className="mt-3 min-h-9 rounded-md border border-border px-3 text-xs font-medium text-foreground hover:bg-accent/30"
         >
           {open ? "Show less" : rivals.length > 0 ? "See what they say" : "See all"}
         </button>
@@ -180,7 +184,6 @@ function TerritoryColumn({
 }
 
 export function PositioningMap({ positioning }: { positioning: Positioning }) {
-  const [showBrief, setShowBrief] = useState(false);
   const byTerritory = (territory: Territory) =>
     positioning.readings.filter((reading) => reading.territory === territory);
 
@@ -203,7 +206,7 @@ export function PositioningMap({ positioning }: { positioning: Positioning }) {
         </Card>
       )}
 
-      <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
         <TerritoryColumn territory="open" readings={byTerritory("open")} />
         <TerritoryColumn territory="contested" readings={byTerritory("contested")} />
         <TerritoryColumn territory="table_stakes" readings={byTerritory("table_stakes")} />
@@ -232,28 +235,9 @@ export function PositioningMap({ positioning }: { positioning: Positioning }) {
         </Card>
       )}
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">What the strategist is told</CardTitle>
-          <button
-            type="button"
-            onClick={() => setShowBrief((value) => !value)}
-            className="text-xs text-muted-foreground hover:text-foreground"
-          >
-            {showBrief ? "Hide" : "Show"}
-          </button>
-        </CardHeader>
-        {showBrief && (
-          <CardContent>
-            {/* Shown verbatim rather than paraphrased: the point of this page
-                is that you can read what the machine was actually given, and a
-                second wording of it is a second thing to keep in sync. */}
-            <pre className="max-h-96 overflow-auto rounded-md bg-muted/40 p-3 text-xs whitespace-pre-wrap text-muted-foreground">
-              {positioning.brief_for_strategy}
-            </pre>
-          </CardContent>
-        )}
-      </Card>
+      <BrandDisclosure title="Strategy brief" description="The full positioning instructions available to your campaign strategist.">
+        <pre className="max-h-96 overflow-auto rounded-lg bg-background/40 p-4 text-xs leading-relaxed whitespace-pre-wrap text-muted-foreground">{positioning.brief_for_strategy}</pre>
+      </BrandDisclosure>
     </div>
   );
 }

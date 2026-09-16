@@ -1,0 +1,61 @@
+{
+  "id": "assistant-buyer",
+  "name": "assistant-buyer",
+  "context": {
+    "product_name": "Relay",
+    "target_audience": "Ops generalist evaluating an internal Slack assistant. Repeated handbook questions are the current problem. No running agent estate or current cost-monitoring problem is established. The campaign invites an initial test.",
+    "buyer_personas": [
+      "Ops generalist evaluating an internal Slack assistant. Repeated handbook questions are the current problem. No running agent estate or current cost-monitoring problem is established. The campaign invites an initial test."
+    ],
+    "evidence": [
+      {
+        "id": "F1",
+        "text": "Relay is a platform for building agents that answer questions from uploaded documents in Slack."
+      },
+      {
+        "id": "F2",
+        "text": "Connecting Slack requires an OAuth installation and choosing a channel. Documents must be uploaded."
+      },
+      {
+        "id": "F3",
+        "text": "Analytics tracks daily aggregate spend and token usage per model automatically, with no extra configuration for Analytics."
+      },
+      {
+        "id": "F4",
+        "text": "A free account is available without a card."
+      }
+    ]
+  },
+  "drafts": [
+    {
+      "id": "split-promise",
+      "email": {
+        "position": 1,
+        "subject": "An answer bot with an account",
+        "preview_text": "A concrete first step for your team",
+        "greeting": "Hi there,",
+        "body": "Daily spend and tokens per model, no extra configuration.\n\nThat is what a question looks like on the way back.\n\nA DIY responder answers questions. What it will not do is tell you what each answer cost.\n\nRelay is a platform for agents in Slack. It can answer questions from uploaded documents, while Analytics keeps daily totals.\n\nStart with one policy and one channel.\n\nStart with one policy and one channel.",
+        "call_to_action": "Try a document question",
+        "sign_off": "The Relay team",
+        "postscript": "Start with one policy and one channel."
+      }
+    },
+    {
+      "id": "answers-first",
+      "email": {
+        "position": 1,
+        "subject": "Try your handbook questions in Slack",
+        "preview_text": "A concrete first step for your team",
+        "greeting": "Hi there,",
+        "body": "If colleagues ask the same policy questions in Slack, try answering one from the document itself.\n\nRelay lets you build an agent that answers from uploaded documents in Slack. Upload a policy, connect Slack through OAuth and choose the channel for your test.\n\nAsk a question whose answer you already know, then decide whether the reply is useful. That is a test of your material, not a promise that every question will be answered correctly.\n\nAnalytics also records daily aggregate spend automatically, so you can inspect usage during the test. Start with a free account; no card is required.",
+        "call_to_action": "Try a document question",
+        "sign_off": "The Relay team"
+      }
+    }
+  ],
+  "notes": [
+    "Synthetic qualitative fixture; evidence is defined for this case, not a claim about a real product.",
+    "Access to answers is the primary promise; accounting supports the test. Aggregate spend does not license cost per answer.",
+    "Variants are editorial contrasts, not pipeline before/after outputs. Model preferences are not measured marketing outcomes."
+  ]
+}

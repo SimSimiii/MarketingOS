@@ -55,7 +55,7 @@ from app.market.positioning import PositioningMap
 from app.marketing.briefs import CampaignBrief, EmailBrief
 from app.marketing.cancellation import CancellationToken
 from app.marketing.critic import ConversionCritic, Critique
-from app.marketing.email_copy import Email, normalized, render_email
+from app.marketing.email_copy import Email, normalized, render_review
 from app.marketing.gates import GateReport, run_all
 from app.marketing.observer import RunObserver
 from app.marketing.reader import BlindReader, PanelRead
@@ -88,19 +88,19 @@ logger = logging.getLogger("marketingos.marketing")
 _OPENING_MOVES: tuple[str, ...] = (
     (
         "Open on the reader's own situation, in the words they would use for it themselves - "
-        "the specific Tuesday this lands on. No product, no company, no claim in the first "
-        "two sentences."
+        "the specific situation this lands in. Orient them to the product whenever it helps "
+        "that situation make sense; do not assume an undocumented history."
     ),
     (
         "Open on what this reader already does about the problem, and on the specific thing "
-        "that approach structurally cannot do - the brief's third beat, first. Not that they "
-        "chose badly: that the limit follows from what the thing is. Earn the product by "
-        "naming the limit before you name anything of yours."
+        "that approach demonstrably leaves them to implement or maintain. Use only a "
+        "documented limitation; DIY can add capabilities. If none is established, open on "
+        "the supported mechanism instead."
     ),
     (
         "Open on the single most concrete thing in the evidence you were given - a number, a "
-        "mechanism, a named limit - and let the reader work out what it means for them before "
-        "you explain it."
+        "mechanism, a named limit - and make its relevance to this audience apparent. "
+        "Metrics may lead when they already mean something to this reader."
     ),
     (
         "Open on the objection this email has to beat, stated more plainly and more bluntly "
@@ -849,7 +849,10 @@ class CraftLoop:
         if self._judge is None or not losers:
             return winner
         runner_up = max(losers, key=lambda item: item.measured)
-        if winner.measured[:3] != runner_up.measured[:3]:
+        # Gates and comprehension settle eligibility. Relevance is a model
+        # judgment: compare the drafts instead of treating one isolated
+        # mismatch report as a factual veto on the runner-up.
+        if winner.measured[:2] != runner_up.measured[:2]:
             return winner
         self._observer.on_role_started(
             "preference_judge",
@@ -922,9 +925,14 @@ class CraftLoop:
                 },
             )
             return False
-        if challenger.read.relevant != champion.read.relevant:
-            return challenger.read.relevant
         if self._judge is not None and challenger.read.has_verdict and champion.read.has_verdict:
+            if challenger.read.relevant != champion.read.relevant:
+                self._observer.on_phase(
+                    "craft",
+                    f"Email {brief.position}: relevance assessments differ - comparing both "
+                    "drafts against the same audience before choosing",
+                    {"position": brief.position, "attempt": challenger.attempt},
+                )
             self._observer.on_role_started(
                 "preference_judge",
                 f"Email {brief.position} · rewrite {challenger.attempt - 1} read against the "
@@ -942,6 +950,9 @@ class CraftLoop:
             )
             if duel.decided:
                 return duel.challenger_wins
+        # With no comparison available, keep the conservative fallback. The
+        # original relevance findings also remain on the delivery report;
+        # winning a duel does not turn a disputed draft into an approved one.
         return challenger.measured > champion.measured
 
     def _pivot_idea(self, outcome: EmailOutcome) -> str:
@@ -1126,7 +1137,7 @@ class CraftLoop:
         )
         critique = await self._critic.critique(
             email=version.email,
-            brief=brief,
+            brief=brief.model_copy(update={"single_idea": version.idea}) if version.idea else brief,
             campaign=campaign,
             artifacts=self._artifacts,
             read=version.read,
@@ -1251,7 +1262,7 @@ def _unchanged(draft: Email, previous: Email) -> bool:
     guess whether a change was a real one, and this decides whether a whole
     panel is bought.
     """
-    return render_email(draft).strip() == render_email(previous).strip()
+    return render_review(draft).strip() == render_review(previous).strip()
 
 
 def _distinct(

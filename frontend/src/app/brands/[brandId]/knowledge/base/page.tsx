@@ -1,8 +1,9 @@
 import Link from "next/link";
+import { BrandDisclosure, BrandSectionHeader } from "../../../brand-ui";
+import { StatTile } from "@/components/stat-tile";
 
 import { KnowledgeBaseExplorer } from "./knowledge-base-explorer";
 import { CompileButton } from "./compile-button";
-import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { api } from "@/lib/api-server";
@@ -48,26 +49,21 @@ export default async function BrandKnowledgeBasePage({
 
   return (
     <div className="space-y-4">
-      <CompileButton brandId={brandId} compiled />
-      <p className="max-w-2xl text-sm text-muted-foreground">
-        Everything we established about this business, on the shelf that matches the question a
-        buyer is asking. This is the same index its copywriters work from — no other brand&rsquo;s
-        facts are in it, and none of its facts are in theirs.
-      </p>
+      <BrandSectionHeader title="Knowledge base" description="The facts and evidence your campaigns can draw on, organised by buyer question." actions={<CompileButton brandId={brandId} compiled />} />
 
-      <div className="flex flex-wrap gap-3">
-        <Stat label="Facts established" value={base.total} />
-        <Stat
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <StatTile label="Facts established" value={base.total} />
+        <StatTile
           label="Citable in copy"
           value={base.citable_total}
           hint="Only these carry an id a copywriter may quote — the rest is context."
         />
-        <Stat
+        <StatTile
           label="Strong enough to lead"
           value={base.headline_total}
           hint="Specific, attributed, and checkable by a stranger."
         />
-        <Stat
+        <StatTile
           label="Compiled"
           value={`v${base.version}`}
           hint={base.compiled_at ? formatAbsolute(base.compiled_at) : undefined}
@@ -75,48 +71,12 @@ export default async function BrandKnowledgeBasePage({
       </div>
 
       {base.open_questions.length > 0 && (
-        <Card className="border-amber-500/40">
-          <CardContent className="space-y-2 p-4 text-sm">
-            <p className="font-medium">
-              Still unanswered
-              <Badge variant="outline" className="ml-2">
-                {base.open_questions.length}
-              </Badge>
-            </p>
-            <ul className="list-disc space-y-1 pl-5 text-muted-foreground">
-              {base.open_questions.map((question) => (
-                <li key={question}>{question}</li>
-              ))}
-            </ul>
-            <p className="text-muted-foreground">
-              Each of these is a sentence this brand&rsquo;s copy currently cannot write. Uploading
-              the page that answers one is the cheapest improvement available to it.
-            </p>
-          </CardContent>
-        </Card>
+        <BrandDisclosure title={`${base.open_questions.length} unanswered questions`} description="Add sources that answer these questions to strengthen your copy." className="border-amber-500/30">
+          <ul className="list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">{base.open_questions.map((question) => <li key={question}>{question}</li>)}</ul>
+        </BrandDisclosure>
       )}
 
       <KnowledgeBaseExplorer base={base} />
     </div>
-  );
-}
-
-function Stat({
-  label,
-  value,
-  hint,
-}: {
-  label: string;
-  value: number | string;
-  hint?: string;
-}) {
-  return (
-    <Card className="min-w-40 flex-1">
-      <CardContent className="p-4">
-        <p className="text-2xl font-semibold tabular-nums">{value}</p>
-        <p className="text-sm text-muted-foreground">{label}</p>
-        {hint && <p className="mt-1 text-xs text-muted-foreground/80">{hint}</p>}
-      </CardContent>
-    </Card>
   );
 }

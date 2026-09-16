@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { FolderOpen } from "lucide-react";
 
 import { AddKnowledgeDialog } from "@/app/knowledge/add-knowledge-dialog";
 import { DeleteDocumentButton } from "@/app/knowledge/delete-document-button";
+import { EmptyState } from "@/components/empty-state";
+import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,39 +36,41 @@ export default async function CampaignSourcesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Campaign sources</h1>
-          <p className="max-w-2xl text-sm text-muted-foreground">
-            Material attached to one campaign and read only by it. A business&rsquo;s own pages,
-            documents and screenshots belong to its brand instead, where they are compiled once
-            and reused by every campaign for it.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
+      <PageHeader
+        eyebrow="One-off material"
+        title="Campaign sources"
+        description={<>
+          Material attached to one campaign and read only by it. A business&rsquo;s own pages,
+          documents and screenshots belong to its brand instead, where they are compiled once
+          and reused by every campaign for it.
+        </>}
+        actions={<>
           <Link href="/brands" className={buttonVariants({ variant: "outline", size: "sm" })}>
             Brand knowledge
           </Link>
           <AddKnowledgeDialog campaigns={withoutBrand} />
-        </div>
-      </div>
+        </>}
+      />
 
       <Card>
         <CardContent className="p-0">
           {oneOffs.length === 0 ? (
-            <div className="space-y-2 p-6 text-sm text-muted-foreground">
-              <p className="font-medium text-foreground">Nothing here.</p>
-              <p>
+            <EmptyState
+              variant="inline"
+              icon={FolderOpen}
+              title="Nothing here — and that is the good outcome"
+              description={<>
                 Every source you have added belongs to a brand, which is the arrangement that
-                pays off: the next campaign for that business starts from all of it.{" "}
-                <Link href="/brands" className="underline underline-offset-2">
+                pays off: the next campaign for that business starts from all of it.
+              </>}
+              action={
+                <Link href="/brands" className={buttonVariants({ variant: "outline", size: "sm" })}>
                   Open a brand
-                </Link>{" "}
-                to see or add its material.
-              </p>
-            </div>
+                </Link>
+              }
+            />
           ) : (
-            <Table>
+            <Table className="stacked-table">
               <TableHeader>
                 <TableRow>
                   <TableHead>Title</TableHead>
@@ -81,10 +86,10 @@ export default async function CampaignSourcesPage() {
                     <TableCell className="max-w-xs truncate font-medium">
                       {document.title}
                     </TableCell>
-                    <TableCell>
+                    <TableCell data-label="Source">
                       <Badge variant="secondary">{document.source_type}</Badge>
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
+                    <TableCell data-label="Read by" className="text-muted-foreground">
                       {document.campaign_id ? (
                         <Link
                           href={`/campaigns/${document.campaign_id}`}
@@ -98,7 +103,7 @@ export default async function CampaignSourcesPage() {
                         </span>
                       )}
                     </TableCell>
-                    <TableCell className="text-muted-foreground tabular-nums">
+                    <TableCell data-label="Words" className="text-muted-foreground tabular-nums">
                       {document.word_count}
                     </TableCell>
                     <TableCell className="text-right">
