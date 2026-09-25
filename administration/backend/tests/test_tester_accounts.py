@@ -75,8 +75,11 @@ def test_support_cannot_create_and_an_address_cannot_be_taken_twice(
     assert client.post("/api/users", json=body, headers=admin).status_code == 409
 
 
-def test_without_the_platform_pepper_the_feature_is_off_rather_than_wrong(client, sign_in):
+def test_without_the_platform_pepper_the_feature_is_off_rather_than_wrong(
+    client, sign_in, monkeypatch
+):
     """A hash made with the wrong pepper is an account nobody can sign in to."""
+    monkeypatch.setattr(get_admin_settings(), "platform_password_pepper", "")
     response = client.post(
         "/api/users",
         json={"email": "nopepper@example.com", "password": "a-chosen-password"},

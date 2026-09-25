@@ -70,6 +70,7 @@ phases:
 
       # The function's zip: the standalone server, public/, and a start script.
       # .next/static is left out - CloudFront serves it from S3.
+      - rm -f console-lambda.zip
       - mkdir .lambda
       - cp -r .next/standalone/. .lambda/
       - cp -r public .lambda/public
@@ -78,7 +79,10 @@ phases:
       - rm -rf .lambda/.next/cache && ln -s /tmp/next-cache .lambda/.next/cache
       - printf '#!/bin/bash\nmkdir -p /tmp/next-cache\nexec node server.js\n' > .lambda/run.sh
       - chmod +x .lambda/run.sh
-      - du -sh .lambda
+      # Zipped here with -y rather than left to `sam deploy`, which follows
+      # symlinks and fails on one whose target only exists inside Lambda.
+      - (cd .lambda && zip -qry ../console-lambda.zip .)
+      - du -h console-lambda.zip
 
       # Assets first when the bucket already exists, so the new pages never
       # reference a chunk that is not there yet. Old chunks are kept: a tab

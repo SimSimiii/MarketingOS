@@ -13,7 +13,7 @@ Description: MarketingOS - console (Next.js SSR on Lambda, zip package, behind C
 #  So Next's standalone server runs unmodified in a plain Node.js Lambda - a
 #  zip, no container image - with the AWS Lambda Web Adapter as a layer. The
 #  adapter turns an invocation into an ordinary HTTP request to the server on
-#  localhost. buildspec.yml assembles the zip into .lambda/.
+#  localhost. buildspec.yml assembles the zip, console-lambda.zip.
 #
 #  One domain, three origins, chosen by path:
 #
@@ -100,7 +100,8 @@ Resources:
     Properties:
       FunctionName: !Sub 'marketingos-console-${Environment}'
       Description: MarketingOS console (Next.js SSR)
-      CodeUri: .lambda/
+      # Built by buildspec.yml from .next/standalone; see there.
+      CodeUri: console-lambda.zip
       Runtime: nodejs22.x
       # run.sh starts `node server.js`; the adapter's wrapper runs first and
       # forwards each invocation to it as HTTP.

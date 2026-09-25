@@ -62,7 +62,10 @@ phases:
       - pip install --require-hashes -r $CODEBUILD_SRC_DIR/backend/requirements.lock
       - pip install --require-hashes -r requirements.txt
       - python -m ruff check admin scripts tests
-      - python -m pytest tests -q
+      # With the project's environment stripped, as in backend/buildspec.yml:
+      # this build carries the production database URL and secrets, and the
+      # suite has no business seeing them.
+      - env -i PATH="$PATH" HOME="$HOME" LANG=C.UTF-8 python -m pytest tests -q
 
       - rm -rf .aws-sam
       - envsubst < samconfig.yaml > /tmp/admin-samconfig.resolved.yaml
