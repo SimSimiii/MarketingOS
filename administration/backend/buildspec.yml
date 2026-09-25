@@ -19,6 +19,10 @@ env:
     ADMIN_JWT_TTL_HOURS: "12"
     ADMIN_PLAN_PRICES: '{"free": 0, "pro": 49, "business": 149}'
     S3_PREFIX: marketingos-admin
+    ADMIN_DOMAIN: ""
+    ADMIN_CERT_ARN: ""
+    HOSTED_ZONE_ID: ""
+    ADMIN_WEB_ACL_ARN: ""
 
 phases:
   install:
@@ -32,7 +36,7 @@ phases:
     commands:
       - echo "SAM $(sam --version) | $(python --version)"
       - |
-        for VAR in ADMIN_STACK_NAME DATABASE_URL ADMIN_JWT_SECRET ADMIN_PWD_PEPPER; do
+        for VAR in ADMIN_STACK_NAME SAM_ARTIFACT_BUCKET DATABASE_URL ADMIN_JWT_SECRET ADMIN_PWD_PEPPER; do
           if [ -z "$(eval echo \$$VAR)" ]; then
             echo "ERROR: $VAR is not set on this CodeBuild project." && exit 1
           fi
@@ -83,7 +87,7 @@ phases:
       - |
         aws cloudformation describe-stacks --stack-name "${ADMIN_STACK_NAME}" \
           --query "Stacks[0].Outputs" --output table
-      - echo "Remember: set ADMIN_CORS_ORIGINS to the AdminConsoleUrl output and redeploy."
+      - echo "Remember - ADMIN_CORS_ORIGINS must name the AdminConsoleUrl output."
 
 cache:
   paths:

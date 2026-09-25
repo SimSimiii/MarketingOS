@@ -53,9 +53,9 @@ const CUSTOM_AUDIENCE = "__custom__";
 const NO_PROSPECT = "__audience_level__";
 
 const PRESET_LABELS: Record<PolicyPreset, string> = {
-  fast: "Fast - cheaper models, shorter budget",
+  fast: "Fast - fewer review passes, shorter budget",
   balanced: "Balanced - the default",
-  maximum: "Maximum - best models, most thorough review",
+  maximum: "Maximum - most variants and thorough review",
 };
 
 type Tone = "professional" | "friendly" | "urgent";

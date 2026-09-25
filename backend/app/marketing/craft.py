@@ -22,13 +22,13 @@ brief, and the cheapest way to find out is to write more than one and ask.
 Three things about *how* it narrows were rebuilt after a measured run in which
 every one of them failed silently.
 
-**The candidates are different arguments, not different first sentences.** The
+**The candidates are complete arguments, not different first sentences.** The
 bake-off used to vary only where a draft opened, on a claim the strategist had
 already fixed, so three drafts were three ways into one bet - and in that run
 two of the three came back with the same subject line. Now each candidate
-argues a different claim from `EmailBrief.alternative_ideas` where the brief
-supplies them, and near-identical drafts are dropped before anybody pays to
-read them.
+uses a complete proposition from `EmailBrief.alternative_arguments` where the
+brief supplies one: need, claim, proof, limitation, objection and CTA move
+together. Near-identical drafts are dropped before anybody pays to read them.
 
 **Better is a comparison, not a score.** Which of two versions to keep used to
 be decided by comparing two absolute 0-10 ratings from a cold reader. Those
@@ -56,7 +56,7 @@ from app.marketing.briefs import CampaignBrief, EmailBrief
 from app.marketing.cancellation import CancellationToken
 from app.marketing.critic import ConversionCritic, Critique
 from app.marketing.email_copy import Email, normalized, render_review
-from app.marketing.gates import GateReport, run_all
+from app.marketing.gates import GateReport, planned_call_to_action_gate, run_all
 from app.marketing.observer import RunObserver
 from app.marketing.reader import BlindReader, PanelRead
 from app.marketing.request import CampaignRequest
@@ -74,10 +74,10 @@ logger = logging.getLogger("marketingos.marketing")
 #: matters: a run configured for two candidates gets the first two, which are
 #: the two that least resemble each other.
 #:
-#: Since the brief carries alternative claims, these do the second job rather
-#: than the whole one: candidate n argues alternative claim n and opens on move
-#: n, and where the brief named no alternatives the opening move is all the
-#: variety there is - which is the behaviour this list was written for.
+#: Since the brief carries complete alternative arguments, these do the second
+#: job rather than the whole one: candidate n uses proposition n and opens on
+#: move n. Where a historical brief named no alternatives, the opening move is
+#: all the candidate can vary.
 #:
 #: The second move exists because the brief now carries the argument and not
 #: only the claim. "Open on why what you already do cannot work" is the bet
@@ -87,9 +87,9 @@ logger = logging.getLogger("marketingos.marketing")
 #: bet with the mechanism taken out - fear about a cost rather than a reason.
 _OPENING_MOVES: tuple[str, ...] = (
     (
-        "Open on the reader's own situation, in the words they would use for it themselves - "
-        "the specific situation this lands in. Orient them to the product whenever it helps "
-        "that situation make sense; do not assume an undocumented history."
+        "Open on the useful action this product makes available to this reader. For an "
+        "announcement, name the product and what they can do with it before explaining "
+        "the mechanism. Use their situation to make the relevance clear, without inventing history."
     ),
     (
         "Open on what this reader already does about the problem, and on the specific thing "
@@ -103,9 +103,9 @@ _OPENING_MOVES: tuple[str, ...] = (
         "Metrics may lead when they already mean something to this reader."
     ),
     (
-        "Open on the objection this email has to beat, stated more plainly and more bluntly "
-        "than the reader would put it themselves, then spend the email earning the right to "
-        "answer it."
+        "Open on the assigned concern only if the audience evidence supports its relevance, "
+        "then answer it from product evidence. If none is supported, open on the useful "
+        "product capability instead; do not invent a concern to satisfy this opening move."
     ),
 )
 
@@ -389,6 +389,9 @@ class EmailOutcome:
     #: The claim the loop moved to when the first one stopped working, if it
     #: did. At most one per email.
     pivoted_to: str = ""
+    #: A strategy or evidence gap the writer cannot repair. Kept separately
+    #: from a stalled rewrite: this loop stopped before wasting that rewrite.
+    unresolved_strategy: str = ""
 
     @property
     def best(self) -> EmailVersion:
@@ -403,6 +406,11 @@ class EmailOutcome:
     @property
     def email(self) -> Email:
         return self.best.email
+
+    @property
+    def selected_brief(self) -> EmailBrief:
+        """The complete proposition behind the version that actually ships."""
+        return _brief_for_idea(self.brief, self.best.idea)
 
     @property
     def shipped_clean(self) -> bool:
@@ -470,7 +478,7 @@ class CraftLoop:
         things, or the loop keeps a draft that was never checked the way its
         rivals were.
         """
-        return run_all(
+        report, substantiation = run_all(
             draft,
             evidence=self._evidence,
             offer=self._artifacts.offer,
@@ -486,6 +494,7 @@ class CraftLoop:
             positioning=self._positioning,
             forbidden_capability_ids=brief.forbidden_capability_ids,
         )
+        return report.extend(planned_call_to_action_gate(draft, brief)), substantiation
 
     async def craft(
         self,
@@ -530,7 +539,9 @@ class CraftLoop:
                 # the old loop critiqued first and discovered afterwards that
                 # the rewrite had stalled, which in a measured run bought a
                 # deep-tier call, 49 seconds and 13% of the run for nothing.
-                if stalled and (pivot := self._pivot_idea(outcome)) and not last_attempt:
+                pivot_brief = self._pivot_brief(outcome) if stalled else None
+                if pivot_brief is not None and not last_attempt:
+                    pivot = pivot_brief.single_idea
                     outcome.pivoted_to = pivot
                     self._observer.on_phase(
                         "craft",
@@ -539,7 +550,12 @@ class CraftLoop:
                         {"position": brief.position, "attempt": attempt, "pivot": pivot},
                     )
                     draft, idea = await self._pivot_draft(
-                        outcome, brief, campaign, request, previous, attempt + 1, pivot
+                        outcome,
+                        pivot_brief,
+                        campaign,
+                        request,
+                        previous,
+                        attempt + 1,
                     )
                     continue
                 if stalled:
@@ -556,6 +572,47 @@ class CraftLoop:
 
             version.critique = await self._critique(version, brief, campaign, attempt)
             if version.ships:
+                break
+            if version.critique is not None and version.critique.requires_new_strategy:
+                pivot_brief = self._pivot_brief(outcome)
+                if pivot_brief is not None:
+                    pivot = pivot_brief.single_idea
+                    outcome.pivoted_to = pivot
+                    self._observer.on_phase(
+                        "craft",
+                        f"Email {brief.position}: the critic found a strategy/material problem - "
+                        f"trying a different argument instead ({pivot})",
+                        {
+                            "position": brief.position,
+                            "attempt": attempt,
+                            "pivot": pivot,
+                            "failure_mode": version.critique.failure_mode,
+                        },
+                    )
+                    draft, idea = await self._pivot_draft(
+                        outcome,
+                        pivot_brief,
+                        campaign,
+                        request,
+                        previous,
+                        attempt + 1,
+                    )
+                    continue
+                outcome.unresolved_strategy = (
+                    version.critique.strategy_gap
+                    or version.critique.summary
+                    or "The selected argument needs material the campaign does not contain."
+                )
+                self._observer.on_phase(
+                    "craft",
+                    f"Email {brief.position}: another writing pass cannot resolve "
+                    f"{outcome.unresolved_strategy}",
+                    {
+                        "position": brief.position,
+                        "attempt": attempt,
+                        "failure_mode": version.critique.failure_mode,
+                    },
+                )
                 break
 
             logger.info(
@@ -588,7 +645,8 @@ class CraftLoop:
 
         if not self._cancelled():
             await self._critique_for_the_record(outcome, brief, campaign)
-            await self._polish_subject(outcome, brief, previous)
+            if not outcome.unresolved_strategy:
+                await self._polish_subject(outcome, brief, previous, campaign)
         if self._critic is not None:
             # Which versions the critic was never asked about, recorded rather
             # than inferred. `better_of` needs to know that an uncritiqued
@@ -702,21 +760,20 @@ class CraftLoop:
                 "position": brief.position,
                 "attempt": 1,
                 "candidates": len(bets),
-                "ideas": [idea for idea, _ in bets],
+                "ideas": [candidate.single_idea for candidate, _ in bets],
             },
         )
         written = await asyncio.gather(
             *(
                 self._writer.draft(
-                    brief=brief,
+                    brief=candidate,
                     campaign=campaign,
                     request=request,
                     artifacts=self._artifacts,
                     previous=previous,
                     opening_move=move,
-                    idea_override="" if idea == brief.single_idea else idea,
                 )
-                for idea, move in bets
+                for candidate, move in bets
             ),
             return_exceptions=True,
         )
@@ -733,11 +790,11 @@ class CraftLoop:
             logger.info("craft: one candidate for email %d failed - %s", brief.position, failure)
 
         kept, duplicates = _distinct(drafted)
-        for idea, _ in duplicates:
+        for candidate, _ in duplicates:
             logger.info(
                 "craft: email %d candidate %r came back as one already drafted - dropped",
                 brief.position,
-                idea,
+                candidate.single_idea,
             )
         for _, draft in kept:
             self._observer.on_draft(brief.position, 1, draft)
@@ -753,7 +810,7 @@ class CraftLoop:
             {"subjects": [draft.subject for _, draft in kept], "dropped": len(duplicates)},
         )
 
-        checked = [self._check(draft, brief, previous) for _, draft in kept]
+        checked = [self._check(draft, candidate, previous) for candidate, draft in kept]
         # A candidate a blocking gate has already vetoed cannot win this
         # bake-off however well it reads: `EmailVersion.measured` puts the gate
         # first and the score second, so the comparison is settled before
@@ -799,9 +856,9 @@ class CraftLoop:
                 gates=gate,
                 substantiation=substantiation,
                 read=read,
-                idea=idea,
+                idea=candidate.single_idea,
             )
-            for (idea, draft), (gate, substantiation), read in zip(
+            for (candidate, draft), (gate, substantiation), read in zip(
                 kept, checked, reads, strict=True
             )
         ]
@@ -849,10 +906,10 @@ class CraftLoop:
         if self._judge is None or not losers:
             return winner
         runner_up = max(losers, key=lambda item: item.measured)
-        # Gates and comprehension settle eligibility. Relevance is a model
-        # judgment: compare the drafts instead of treating one isolated
-        # mismatch report as a factual veto on the runner-up.
-        if winner.measured[:2] != runner_up.measured[:2]:
+        # Gates, comprehension and the panel's explicit audience-fit verdict
+        # settle eligibility. A pairwise preference cannot make an argument
+        # applicable to a reader whose situation it presupposes.
+        if winner.measured[:3] != runner_up.measured[:3]:
             return winner
         self._observer.on_role_started(
             "preference_judge",
@@ -955,29 +1012,30 @@ class CraftLoop:
         # winning a duel does not turn a disputed draft into an approved one.
         return challenger.measured > champion.measured
 
-    def _pivot_idea(self, outcome: EmailOutcome) -> str:
-        """The best claim this email has not tried yet, or nothing.
+    def _pivot_brief(self, outcome: EmailOutcome) -> EmailBrief | None:
+        """The best complete argument this email has not tried yet, or none.
 
         One pivot per email. A second one is a campaign whose brief was wrong
         about who it is writing to, and no amount of re-arguing fixes that -
         it goes on the receipt instead, where the user can act on it.
         """
         if outcome.pivoted_to:
-            return ""
+            return None
         tried = {
             normalized(version.idea)
             for version in [*outcome.versions, *outcome.discarded]
             if version.idea
         }
         tried.add(normalized(outcome.brief.single_idea))
-        return next(
-            (
-                idea
-                for idea in outcome.brief.alternative_ideas
-                if normalized(idea) not in tried
-            ),
-            "",
-        )
+        for argument in outcome.brief.alternative_arguments:
+            if normalized(argument.single_idea) not in tried:
+                return outcome.brief.with_argument(argument)
+        # Historical briefs only carried claim strings. Preserve their old
+        # behavior, while every newly generated brief takes the complete path.
+        for idea in outcome.brief.alternative_ideas:
+            if normalized(idea) not in tried:
+                return outcome.brief.model_copy(update={"single_idea": idea})
+        return None
 
     async def _pivot_draft(
         self,
@@ -987,7 +1045,6 @@ class CraftLoop:
         request: CampaignRequest,
         previous: list[Email],
         attempt: int,
-        idea: str,
     ) -> tuple[Email, str]:
         """A fresh draft on a different claim - not a rewrite of the old one.
 
@@ -999,7 +1056,7 @@ class CraftLoop:
         self._observer.on_role_started(
             "email_writer",
             f"Email {brief.position} · a different argument",
-            {"position": brief.position, "attempt": attempt, "idea": idea},
+            {"position": brief.position, "attempt": attempt, "idea": brief.single_idea},
         )
         draft = await self._writer.draft(
             brief=brief,
@@ -1007,14 +1064,13 @@ class CraftLoop:
             request=request,
             artifacts=self._artifacts,
             previous=previous,
-            idea_override=idea,
             history=_history(outcome.versions, outcome.discarded),
         )
         self._observer.on_draft(brief.position, attempt, draft)
         self._observer.on_role_finished(
             "email_writer", f'Drafted "{draft.subject}"', {"subject": draft.subject}
         )
-        return draft, idea
+        return draft, brief.single_idea
 
     def _announce_stall(self, brief: EmailBrief, attempt: int) -> None:
         logger.info(
@@ -1056,11 +1112,10 @@ class CraftLoop:
             f"Email {brief.position} · rewrite {attempt - 1}",
             {"position": brief.position, "attempt": attempt},
         )
+        active_brief = _brief_for_idea(brief, version.idea)
         draft = await self._writer.revise(
             draft=version.email,
-            brief=brief if not version.idea else brief.model_copy(
-                update={"single_idea": version.idea}
-            ),
+            brief=active_brief,
             campaign=campaign,
             request=request,
             artifacts=self._artifacts,
@@ -1101,7 +1156,8 @@ class CraftLoop:
         if screened is not None:
             gates, substantiation, read = screened
         else:
-            gates, substantiation = self._check(draft, brief, previous)
+            active_brief = _brief_for_idea(brief, idea)
+            gates, substantiation = self._check(draft, active_brief, previous)
             self._observer.on_gates(brief.position, attempt, gates)
 
             self._observer.on_role_started(
@@ -1137,7 +1193,7 @@ class CraftLoop:
         )
         critique = await self._critic.critique(
             email=version.email,
-            brief=brief.model_copy(update={"single_idea": version.idea}) if version.idea else brief,
+            brief=_brief_for_idea(brief, version.idea),
             campaign=campaign,
             artifacts=self._artifacts,
             read=version.read,
@@ -1147,8 +1203,13 @@ class CraftLoop:
         self._observer.on_critique(brief.position, attempt, critique)
         self._observer.on_role_finished(
             "conversion_critic",
-            f"{critique.verdict} - {len(critique.edits)} edit(s) requested",
-            {"verdict": critique.verdict},
+            f"{critique.verdict} ({critique.failure_mode}) - "
+            f"{len(critique.edits)} edit(s) requested",
+            {
+                "verdict": critique.verdict,
+                "failure_mode": critique.failure_mode,
+                "strategy_gap": critique.strategy_gap,
+            },
         )
         return critique
 
@@ -1169,9 +1230,16 @@ class CraftLoop:
             return
         best = outcome.best
         best.critique = await self._critique(best, brief, campaign, best.attempt)
+        if best.critique is not None and best.critique.requires_new_strategy:
+            outcome.unresolved_strategy = (
+                best.critique.strategy_gap
+                or best.critique.summary
+                or "The selected argument needs material the campaign does not contain."
+            )
 
     async def _polish_subject(
-        self, outcome: EmailOutcome, brief: EmailBrief, previous: list[Email]
+        self, outcome: EmailOutcome, brief: EmailBrief, previous: list[Email],
+        campaign: CampaignBrief,
     ) -> None:
         """The last thing that happens to an email, and the only one after it
         has been judged.
@@ -1197,6 +1265,7 @@ class CraftLoop:
         if self._subjects is None or self._subject_variants < 1:
             return
         best = outcome.best
+        active_brief = _brief_for_idea(brief, best.idea)
         # Checked once per distinct line: the screen and the swap that follows
         # it ask the same question of the same email, and `_check` walks the
         # ledger and the whole sequence to answer it.
@@ -1205,7 +1274,7 @@ class CraftLoop:
         def check(candidate: Email) -> tuple[GateReport, Substantiation]:
             key = (candidate.subject, candidate.preview_text)
             if key not in checked:
-                checked[key] = self._check(candidate, brief, previous)
+                checked[key] = self._check(candidate, active_brief, previous)
             return checked[key]
 
         def clean(candidate: Email) -> bool:
@@ -1221,13 +1290,18 @@ class CraftLoop:
             f"Email {brief.position} · {self._subject_variants} alternative subject lines",
             {"position": brief.position, "variants": self._subject_variants},
         )
+        segment = self._artifacts.audience.match(campaign.reader_segment, campaign.reader)
         improved, summary = await self._subjects.improve(
             email=best.email,
-            brief=brief,
+            brief=active_brief,
             artifacts=self._artifacts,
             personas=self._personas,
             variants=self._subject_variants,
             screen=clean,
+            audience_context=(
+                segment.render_for_writing() if segment is not None
+                else "No recipient history is established."
+            ),
         )
         self._observer.on_role_finished("subject_writer", summary, {"subject": improved.subject})
         if improved.subject == best.email.subject:
@@ -1236,21 +1310,36 @@ class CraftLoop:
         best.gates, best.substantiation = check(improved)
 
 
-def _bets(brief: EmailBrief, candidates: int) -> list[tuple[str, str]]:
-    """What each candidate argues, and where it starts.
+def _brief_for_idea(brief: EmailBrief, idea: str) -> EmailBrief:
+    """Resolve a version's idea back to the complete argument that produced it."""
+    argument = brief.argument_for(idea)
+    if argument is not None:
+        return brief.with_argument(argument)
+    # Compatibility for stored briefs from before complete alternatives.
+    return brief.model_copy(update={"single_idea": idea}) if idea else brief
+
+
+def _bets(brief: EmailBrief, candidates: int) -> list[tuple[EmailBrief, str]]:
+    """Which complete argument each candidate uses, and where it starts.
 
     The brief's own idea is always the first bet - it is the one the strategist
     chose with everything in front of it, and a bake-off that does not include
     it is not testing the strategy, it is replacing it. After that come the
-    alternatives it named, best first, each on a different opening move.
+    complete alternatives it named, best first, each on a different opening
+    move. Historical string-only alternatives retain their old behavior.
 
     Where there are fewer alternatives than candidates the remaining drafts
     fall back to the brief's idea on an unused opening move, which is what this
     function did in its entirety before the brief carried alternatives.
     """
-    ideas = [brief.single_idea, *brief.alternative_ideas][:candidates]
-    ideas += [brief.single_idea] * (candidates - len(ideas))
-    return list(zip(ideas, _OPENING_MOVES[:candidates], strict=True))
+    arguments = [brief]
+    arguments.extend(brief.with_argument(item) for item in brief.alternative_arguments)
+    arguments.extend(
+        brief.model_copy(update={"single_idea": idea}) for idea in brief.alternative_ideas
+    )
+    arguments = arguments[:candidates]
+    arguments += [brief] * (candidates - len(arguments))
+    return list(zip(arguments, _OPENING_MOVES[:candidates], strict=True))
 
 
 def _unchanged(draft: Email, previous: Email) -> bool:
@@ -1266,8 +1355,8 @@ def _unchanged(draft: Email, previous: Email) -> bool:
 
 
 def _distinct(
-    drafted: list[tuple[str, Email]],
-) -> tuple[list[tuple[str, Email]], list[tuple[str, Email]]]:
+    drafted: list[tuple[EmailBrief, Email]],
+) -> tuple[list[tuple[EmailBrief, Email]], list[tuple[EmailBrief, Email]]]:
     """Candidates that are actually different, and the repeats.
 
     A bake-off exists to buy alternatives, and two drafts with the same subject
@@ -1281,17 +1370,17 @@ def _distinct(
     the candidates are ranked by the strategist and the earlier one is the
     better-ranked bet.
     """
-    kept: list[tuple[str, Email]] = []
-    repeats: list[tuple[str, Email]] = []
+    kept: list[tuple[EmailBrief, Email]] = []
+    repeats: list[tuple[EmailBrief, Email]] = []
     seen_subjects: set[str] = set()
     seen_openings: set[str] = set()
-    for idea, draft in drafted:
+    for candidate, draft in drafted:
         subject = normalized(draft.subject)
         opening = " ".join(normalized(_opening_line(draft)).split()[:_SAME_OPENING_WORDS])
         if subject in seen_subjects or (opening and opening in seen_openings):
-            repeats.append((idea, draft))
+            repeats.append((candidate, draft))
             continue
         seen_subjects.add(subject)
         seen_openings.add(opening)
-        kept.append((idea, draft))
+        kept.append((candidate, draft))
     return kept, repeats

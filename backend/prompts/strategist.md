@@ -56,9 +56,11 @@ everyone they are compared to.
 
 Use it for two things, and there is a line between them that matters.
 
-**To pick the claim.** Open ground is the one thing this company can say that the reader has not
-already been told by somebody else this month. Pick that as `single_idea`, and put the crowded
-claims in `must_not_say`.
+**To strengthen a relevant claim.** Start with the selected audience's documented job and the
+best-supported reason to act. Open ground can strengthen that argument when it matters to this
+reader; it does not outrank relevance or proof. A useful integration or test can be the right
+argument even when competitors offer something similar. Put unrelated crowded claims in
+`must_not_say` rather than forcing novelty into the email.
 
 **To find where the category falls short.** This is the half that used to go unused, and it is
 where most of the persuasion in a campaign actually lives. Everything above tells you what every
@@ -114,6 +116,14 @@ Buyer phrases may guide vocabulary, but are not attributed quotations and are ne
 evidence. Discovery `why_them`, `angle`, pains and sophistication are hypotheses only where they
 conflict with verified research.
 
+Research about people using a named partner platform describes that subsegment, not every
+member of a broader audience selected by the user. Compare the selected segment and campaign
+request with the research before choosing the primary idea. If neither explicitly targets
+users of that platform, do not make its integration, settings or pricing the primary launch
+proposition merely because some researched individuals use it. Lead with a documented benefit
+that applies to the selected audience's known job; keep the partner example as a conditional
+alternative or supporting detail when useful. Do not invent a different installed stack.
+
 For a CURRENT dossier, do not re-derive orientation: use its licensed orientation. Prefer LEAD
 evidence for the primary argument, SUPPORT to strengthen it, CONTEXT only to explain, and
 normally avoid WITHHOLD. SOLVED fits may lead when their evidence resolves. PARTIAL fits may be
@@ -137,6 +147,12 @@ a refresh: campaign execution reads persisted intelligence and never creates it.
 
 {{ relevant_material }}
 
+{% if recovery_material %}
+# Automatic recovery that this replan must use
+
+{{ recovery_material }}
+{% endif %}
+
 # What earlier campaigns for this business taught us
 
 {{ prior_learnings }}
@@ -150,10 +166,12 @@ owner, or lost weeks to maintenance. Keep unknown history out of every brief fie
 `job`, `objection`, `promise` and `single_idea`; appending a disclaimer elsewhere does not fix it.
 Use a conditional opportunity when the situation is only plausible. If the user's own campaign
 context contradicts what the compiler inferred, the user wins.
-Before returning the brief, check every proposed `objection`, `status_quo`, `job` and
-`single_idea` against `must_not_say`. A prohibition must not reappear as a premise in
-another field. Rewrite the concern as a conditional question when the reader's history
-or staffing is unknown.
+Before returning the brief, check every proposed `objection`, `status_quo`, `why_it_fails`,
+`job`, `single_idea` and `subject_strategy` against the selected audience's evidence and
+`must_not_say`. A prohibition must not reappear as a premise in another field. Do not
+transfer a source author's build, staffing problem or anticipated departure to this reader.
+A conditional question is useful only when the underlying concern is supported and relevant;
+adding "if" does not make an invented circumstance worth the reader's attention.
 
 Then put that segment's name in `reader_segment`, copied exactly as it is spelled in the list of
 segments above. This is not bookkeeping: every draft in this campaign is read cold by the person
@@ -170,6 +188,9 @@ problem-aware reader does not have loses them in one.
 Every email advances it; none of them restates it.
 
 Choose that promise for the selected audience's documented job, awareness and campaign goal.
+The primary promise must be useful without assuming an integration, provider or incident that
+the user's chosen segment and request did not establish. A conditional "if you use X" avoids a
+false assertion but does not by itself make X the strongest lead for a broad launch audience.
 An uncrowded competitive angle is not automatically their priority. In `single_idea`, choose
 the primary benefit; use `mechanism` and assigned evidence to explain how secondary benefits
 support it, and `must_not_say` to keep unrelated benefits out. Awareness of a category does
@@ -183,7 +204,7 @@ capability the news; a hypothetical failed build is not required to make the ann
 **Keep the promise within the scope of its support.** Interpret features into useful benefits
 and build a persuasive argument; you do not need a measured outcome for every benefit. But do
 not turn a plausible benefit into a guaranteed result. Apply this to every brief field, including
-`alternative_ideas`, `belief_shift`, and `subject_strategy`, and to claims inherited from research
+`alternative_arguments`, `belief_shift`, and `subject_strategy`, and to claims inherited from research
 or a dossier as well as claims you derive yourself:
 
 - A testimony establishes a situation worth addressing, not its prevalence. Use "if your app
@@ -202,11 +223,22 @@ or a dossier as well as claims you derive yourself:
   the evidence that supports the actual promise, not merely a related metric.
 - DIY can often implement the same function. State the documented work avoided, not an
   absolute inability; do not manufacture a failing alternative to fill `why_it_fails`.
+- Keep capability, default and guarantee distinct. Accessing source context does not
+  establish answer correctness; being able to cite facts does not promise citations
+  every time. Assign a source-comparison test when correctness is what must be checked.
+- Separate drafting, review and sending. Manual authorship is not the only way to retain
+  approval control; templates and other tools can preserve it too. Describe the work
+  this product handles, not a false choice between doing everything by hand and losing control.
 
 Check that `mechanism` actually addresses the failure named in `why_it_fails`. If the product
 shares that limitation, narrow the argument to the part it improves. Put the specific unsupported
 extension in `must_not_say`, and choose a supported promise rather than surrounding an unsupported
 one with hedges. These are scope checks, not a reason to flatten the copy into a feature list.
+When a change removes one documented constraint but leaves another, state both sides of that
+distinction in `single_idea`, `mechanism` and `belief_shift`: what becomes possible, and what
+still needs checking. Lead with the improvement the evidence actually proves. A true residual
+limit is a qualification of a benefit, not the entire reason to click. If the verified material
+does not establish what improves, choose a different proposition instead of implying relief.
 
 **Spend the evidence deliberately.** Evidence is finite. The strongest facts should carry the
 emails that need them most, and an id spent by one email is gone: assign it again to a later
@@ -278,19 +310,26 @@ move email 3's angle to email 2 without anything breaking, you have not designed
 have written the same email three times. `single_idea` is a claim, not a topic — "your in-house
 script costs more than you think", not "cost savings".
 
-**Name the claims you did not pick.** `alternative_ideas` is two or three other claims this same
-slot could have been built on, best first — each one a complete argument you would have been
-willing to send, not a runner-up you are listing to be thorough. They have to be genuinely
-different bets: a different reason to act, not the same reason with a different emphasis. If one
-of them is `single_idea` reworded, drop it.
+**Build one complete alternative proposition.** Put it in `alternative_arguments`, not in
+`alternative_ideas` (leave that legacy field empty). It is the other commercial bet this same
+slot could have been built on. Fill its situation, claim, belief shift, evidence, supported
+limitation, mechanism, objection, CTA and subject strategy as one coherent unit. It must offer a
+different reason to act, not the primary idea with new wording. Only include it when its product
+claim and next step are supported well enough that you would actually send it.
 
 This is the one field here whose value comes from being wrong. Which argument a stranger responds
 to is the thing about a campaign nobody can know in advance — not you, not the copywriter, not
-the reader model — and it is the only thing about it that can actually be found out. Each of
-these gets written as a real email and read by a cold reader, and when the loop finds that the
-copy has stopped improving, this list is what it moves to instead of rewriting a claim that is
-not landing. A brief that names one claim and no alternatives gives the run nothing to discover
-and one thing to defend.
+the reader model — and it is the only thing about it that can actually be found out. Both
+propositions are written as real emails and read by a cold reader. When the loop finds that copy
+has stopped improving, it may move to the untried complete proposition instead of replacing one
+sentence inside the old argument. A brief with no supported alternative is honest; do not
+manufacture one merely to fill the field.
+
+Keep each proposition's proof and destination isolated. An alternative must not borrow a price,
+limit or setup fact assigned to the primary proposition merely because it is available elsewhere
+in the ledger. When a recovered `R` fact supports the alternative's next-step payoff, use that
+fact's exact official source URL in the alternative CTA; do not send the reader to generic signup
+after the system found a pre-signup page that answers their question.
 
 **Name the belief this email moves.** `belief_shift` is what the reader thinks before it and what
 they think after — "before: assumes evaluating the product requires moving the whole workflow;
@@ -299,11 +338,15 @@ This is what actually decides whether something belongs in email 1 or email 3, a
 is the field that makes the order checkable rather than a matter of taste. If two emails have the
 same `belief_shift`, one of them is not needed.
 
-**Assign each email the objection it kills.** Put it in `objection`, word for word from the
-objection list above. An email
-that only sells does not convert; an email that removes the reason to hesitate does. If an
-objection has no answer in the evidence, do not assign it to an email — say so in
-`sequence_rationale` instead, so nobody downstream goes looking for proof that does not exist.
+**Assign a relevant reason to hesitate, when supported.** The objection list offers candidates,
+not facts about this recipient. Assign an `objection` only when the selected audience's evidence
+supports its applicability to the requested next step and product evidence supports an answer.
+Preserve the concern in plain language, but remove unsupported assumptions about prior builds,
+installed tools, staffing or future events; do not copy those assumptions verbatim. If removing
+them leaves no supported concern, leave `objection` empty and explain in `sequence_rationale`.
+An announcement can earn a concrete trial through its documented mechanism without staging a
+crisis first. If an applicable objection has no supported answer, record that gap in
+`sequence_rationale` rather than assigning the writer an objection it cannot resolve.
 
 **The arc escalates.** `arc` describes how the reader moves from the first email to the last —
 what changes in what they know, believe or feel. The default shape for a sequence is hook, then
@@ -311,9 +354,27 @@ proof, then the objection, then the deadline, but pick the shape this campaign n
 that one by habit. Each email must still stand alone: assume the reader missed every previous one.
 Say why this order beats the alternatives in `sequence_rationale`.
 
-**Ask only for what exists.** `call_to_action` comes from the offer sheet's list of actions. An
-email that asks for a demo when the product is self-serve sends a real reader to a page that is
-not there.
+**Ask only for what exists, and prove why this reader should take that step.**
+`call_to_action` comes from the offer sheet's list of actions. An email that asks for a demo when
+the product is self-serve sends a real reader to a page that is not there. A real action can still
+be the wrong action for this argument, so complete its decision bridge:
+
+- **`next_step_decision`** — the concrete decision this reader can make more confidently after
+  taking the action. “Learn more” and “evaluate the product” are not decisions.
+- **`next_step_value`** — exactly what the destination or action lets them see, do, compare or
+  verify. State only what the supplied material establishes.
+- **`next_step_evidence_ids`** — the ledger ids that prove that payoff. They must also appear in
+  this proposition's `evidence_ids`; an empty list means the proposed payoff is not verified.
+- **`next_step_limit`** — the adjacent decision the step does **not** answer. Name the interface,
+  environment or production boundary when it matters.
+
+Read those four fields as one sentence: “By taking [CTA], this reader gets [value], supported by
+[ids], which helps decide [decision], but does not establish [limit].” If that sentence does not
+connect the selected audience's situation to the action, discard the proposition before writing.
+Testing one interface does not validate another: an API-only simulation cannot be the first test
+of an SMTP route, a sandbox cannot prove production behavior, and a generic product trial cannot
+answer a platform-specific compatibility question unless the evidence explicitly builds that
+bridge. Do this check for the primary argument and every `alternative_arguments` entry.
 
 **`tone`** is how the email should feel — "matter-of-fact", "slightly impatient", "warm and
 unhurried". Vary it across the sequence; five emails in the same register read as one long email.

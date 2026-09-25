@@ -6,7 +6,7 @@ import pytest
 
 from app.knowledge.artifacts import KnowledgeArtifacts, Segment, Sophistication
 from app.knowledge.ledger import Evidence, EvidenceIndex, EvidenceKind
-from app.marketing.briefs import CampaignBrief, EmailBrief
+from app.marketing.briefs import ArgumentOption, CampaignBrief, EmailBrief
 from app.marketing.craft import CraftLoop, EmailVersion, _unchanged
 from app.marketing.critic import ConversionCritic, Critique, Edit
 from app.marketing.email_copy import parse_email, render_review
@@ -178,3 +178,80 @@ async def test_feedback_survives_format_repair_and_revised_claims_are_checked(
     assert outcome.best.attempt == (1 if unsupported else 2)
     assert provider.calls_by_role["conversion_critic"] == 1
     assert provider.calls_by_role["email_writer"] == 3
+
+
+@pytest.mark.asyncio
+async def test_missing_material_stops_before_a_futile_rewrite(provider, artifacts):
+    provider.set_default(
+        "conversion_critic",
+        Critique(
+            verdict="revise",
+            failure_mode="missing_material",
+            strategy_gap="A verified setup guide is absent from the campaign material.",
+            summary="The writer cannot invent the destination.",
+        ).model_dump_json(),
+    )
+    provider.set_default("blind_reader", blind_read(pull=4, would_act=False))
+
+    outcome = await loop(provider, artifacts, max_revisions=2).craft(
+        brief=EmailBrief(single_idea="Inspect the integration before signup"),
+        campaign=CampaignBrief(interpretation="A product announcement"),
+        request=CampaignRequest(name="Missing guide", request="Write one launch email"),
+        previous=[],
+    )
+
+    assert outcome.unresolved_strategy == (
+        "A verified setup guide is absent from the campaign material."
+    )
+    assert provider.calls_by_role["email_writer"] == 1
+    assert provider.calls_by_role["blind_reader"] == 1
+    assert provider.calls_by_role["conversion_critic"] == 1
+
+
+@pytest.mark.asyncio
+async def test_strategy_failure_pivots_with_the_complete_alternative(provider, artifacts):
+    provider.set_default(
+        "conversion_critic",
+        Critique(
+            verdict="revise",
+            failure_mode="argument",
+            strategy_gap="Account creation is too large a first step for this proposition.",
+        ).model_dump_json(),
+    )
+    provider.push(
+        "blind_reader",
+        blind_read(pull=4, would_act=False),
+        blind_read(pull=8, would_act=True),
+    )
+    alternative = ArgumentOption(
+        single_idea="Inspect one supported setup path first",
+        mechanism="A verified guide shows the configuration",
+        evidence_ids=["E2"],
+        call_to_action="Read the setup guide",
+        next_step_decision="Whether this setup path fits the current auth flow",
+        next_step_value="The guide shows the supported configuration",
+        next_step_evidence_ids=["E2"],
+        next_step_limit="It does not prove production deliverability",
+        subject_strategy="Name the integration",
+    )
+
+    outcome = await loop(provider, artifacts, max_revisions=2).craft(
+        brief=EmailBrief(
+            single_idea="Create an account now",
+            call_to_action="Start the trial",
+            alternative_arguments=[alternative],
+        ),
+        campaign=CampaignBrief(interpretation="A product announcement"),
+        request=CampaignRequest(name="Pivot CTA", request="Write one launch email"),
+        previous=[],
+    )
+
+    assert outcome.pivoted_to == alternative.single_idea
+    assert outcome.best.idea == alternative.single_idea
+    assert outcome.selected_brief.call_to_action == "Read the setup guide"
+    assert outcome.selected_brief.next_step_evidence_ids == ["E2"]
+    final_prompt = provider.requests_for("email_writer")[-1].system_prompt
+    assert "What it asks for: Read the setup guide" in final_prompt
+    assert "Evidence it spends: E2" in final_prompt
+    assert alternative.next_step_decision in final_prompt
+    assert alternative.next_step_limit in final_prompt

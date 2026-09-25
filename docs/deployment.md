@@ -4,7 +4,7 @@ Five stacks, deployed in this order, each consuming the previous one's outputs.
 
 | # | What | Where | Deployed by |
 |---|------|-------|-------------|
-| 1 | Postgres + the VPC around it | `infrastructure/database.yaml` | by hand, once |
+| 1 | Postgres + the VPC around it | `iac/database.yaml` | by hand, once |
 | 2 | Platform API | `backend/` | CodeBuild → `backend/buildspec.yml` |
 | 3 | Console (the product) | `frontend/` | CodeBuild → `frontend/buildspec.yml` |
 | 4 | Back-office API + hosting | `administration/backend/` | CodeBuild → its `buildspec.yml` |
@@ -12,6 +12,11 @@ Five stacks, deployed in this order, each consuming the previous one's outputs.
 
 Plus `landing-page/`, which is independent of all of them except for the URL it
 links to.
+
+The CloudFormation for everything those stacks sit on - the secrets, the
+database, the five CodeBuild projects and the optional worker - is in
+[iac/](../iac/README.md), which also carries the per-service cost breakdown
+and an ordered runbook.
 
 ---
 
@@ -64,7 +69,7 @@ vendor API keys to prevent an accidental switch to API-key billing.
 
 ```bash
 aws cloudformation deploy \
-  --template-file infrastructure/database.yaml \
+  --template-file iac/database.yaml \
   --stack-name marketingos-data-prod \
   --parameter-overrides Environment=prod DBPassword="$(openssl rand -base64 24 | tr -d '/@\"')" \
   --capabilities CAPABILITY_IAM

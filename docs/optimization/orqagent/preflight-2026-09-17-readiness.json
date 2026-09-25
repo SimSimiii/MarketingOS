@@ -1,0 +1,2806 @@
+{
+  "campaign_id": "263108f8-db04-4003-b3bf-2ce5c4089439",
+  "readiness": "GO_NARROW",
+  "recommendation": {
+    "state": "RECOMMENDED_NARROW",
+    "readiness": "GO_NARROW",
+    "reasons": [
+      "A licensed product bridge exists only for the qualified slice."
+    ],
+    "eligible_subsegment": "tech-forward mid-size companies",
+    "qualified_companies": [],
+    "adjacent_companies": [],
+    "excluded_companies": [],
+    "unverified_companies": [],
+    "allowed_claims": [
+      "orqAgent offers 99.9% uptime with serverless, auto-scaling infrastructure",
+      "Users can upload PDFs, docs, or plain text, and the agent automatically retrieves the most relevant context for every query with no vector DB to manage",
+      "Analytics automatically track P95 latency, token usage per model, daily spend trends, and guardrail trigger rates without extra config",
+      "Teams can invite collaborators with role-based permissions and access full audit logs for compliance",
+      "Per-agent API keys can have usage caps",
+      "Full run history is available with status filtering",
+      "The platform is serverless, scaling automatically with zero infrastructure to manage",
+      "orqAgent natively integrates with Slack, WhatsApp, Telegram, Email Inbox, REST Webhooks, Scheduled Runs, Custom Tools (HTTP), and Stripe Billing",
+      "Creating an agent — writing a system prompt, picking a model, configuring guardrails and tools — takes under 2 minutes",
+      "The Starter plan costs $0 and includes 1,500 free credits with no card required",
+      "The knowledge base supports .pdf, .txt, .markdown, and .csv file formats.",
+      "The top-scoring knowledge base chunks are injected into the system prompt as context.",
+      "The agent can cite specific facts from uploaded documents in its response.",
+      "Multiple documents can be uploaded, and the agent searches across all of them and cites the most relevant chunks.",
+      "The API response includes an estimated USD cost for the run, given to 6 decimal places.",
+      "The response includes latency_ms, the wall-clock latency of the LLM call in milliseconds.",
+      "Run status can be \"success\", \"error\", \"timeout\", or \"rate_limited\".",
+      "The response includes used_knowledge_base, true if document chunks were injected into that run.",
+      "The response includes chunks_injected, the number of knowledge base chunks included in the context.",
+      "Slack integration connects via OAuth install, with the bot replying to mentions and channel messages.",
+      "Notion integration connects via OAuth and syncs page/database content into the knowledge base.",
+      "Google Docs integration connects via OAuth and imports selected documents into the knowledge base.",
+      "Messages handled through any channel are real agent runs that consume credits and appear in Analytics exactly like API calls.",
+      "The Pro plan costs $29/month.",
+      "The Pro plan includes an unlimited-docs knowledge base."
+    ],
+    "allowed_evidence_ids": [
+      "E9",
+      "E11",
+      "E12",
+      "E14",
+      "E19",
+      "E21",
+      "E22",
+      "E23",
+      "E24",
+      "E25",
+      "E55",
+      "E58",
+      "E59",
+      "E60",
+      "E73",
+      "E74",
+      "E75",
+      "E76",
+      "E77",
+      "E90",
+      "E94",
+      "E95",
+      "E97",
+      "E123",
+      "E126"
+    ],
+    "forbidden_claims": [
+      "Do not promise voice or telephony support unless a current licensed source explicitly establishes it.",
+      "Do not claim that the agent layer replaces a company's complete backend, product UI, billing, or operational workflow without direct evidence.",
+      "Compliance and certification claims are unavailable unless the Evidence Ledger explicitly licenses them.",
+      "Do not claim Knowledge base / RAG context; its capability state is unknown.",
+      "Do not claim Agent guardrails; its capability state is unknown.",
+      "Do not claim Reusable per-client agent configuration; its capability state is unknown.",
+      "Do not claim Voice and telephony runtime; its capability state is unsupported.",
+      "Do not claim Full SaaS backend replacement; its capability state is unsupported.",
+      "Do not claim HIPAA compliance; its capability state is unknown.",
+      "Do not claim Deep domain-specific operational integrations; its capability state is unknown."
+    ],
+    "forbidden_capability_ids": [
+      "knowledge_base",
+      "guardrails",
+      "per_client_configuration",
+      "voice_telephony",
+      "full_saas_backend",
+      "hipaa_compliance",
+      "deep_vertical_integrations"
+    ],
+    "forbidden_evidence_ids": [
+      "E5",
+      "E6"
+    ],
+    "unresolved_objections": [],
+    "recommended_next_action": "Target only tech-forward mid-size companies.",
+    "override_risk": "Generating outside the eligible slice risks writing to a structurally similar company whose actual need the product cannot support.",
+    "claim_contract": {
+      "contract_version": 1,
+      "verified_product_claims": [
+        {
+          "id": "evidence:E1",
+          "text": "Signup grants 1,500 free credits with no card required",
+          "evidence_ids": [
+            "E1"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E2",
+          "text": "orqAgent supports 25 models across 9 providers",
+          "evidence_ids": [
+            "E2"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E3",
+          "text": "orqAgent has 8 native integrations",
+          "evidence_ids": [
+            "E3"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E4",
+          "text": "orqAgent supports BYOK — bring your own API keys",
+          "evidence_ids": [
+            "E4"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E5",
+          "text": "Customer data is encrypted end-to-end, protected in transit and at rest",
+          "evidence_ids": [
+            "E5"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E6",
+          "text": "Customer data is never used to train any model",
+          "evidence_ids": [
+            "E6"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E7",
+          "text": "Customer data is isolated by design with per-tenant data separation",
+          "evidence_ids": [
+            "E7"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E8",
+          "text": "orqAgent is GDPR-ready with EU data residency available",
+          "evidence_ids": [
+            "E8"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E9",
+          "text": "orqAgent offers 99.9% uptime with serverless, auto-scaling infrastructure",
+          "evidence_ids": [
+            "E9"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E10",
+          "text": "Users can switch between models like Claude, GPT-4, Mistral, Llama, and Gemini with a single field",
+          "evidence_ids": [
+            "E10"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E11",
+          "text": "Users can upload PDFs, docs, or plain text, and the agent automatically retrieves the most relevant context for every query with no vector DB to manage",
+          "evidence_ids": [
+            "E11"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E12",
+          "text": "Analytics automatically track P95 latency, token usage per model, daily spend trends, and guardrail trigger rates without extra config",
+          "evidence_ids": [
+            "E12"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E13",
+          "text": "Guardrails include PII masking, content filtering, and prompt injection detection, defined once and enforced on every run",
+          "evidence_ids": [
+            "E13"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E14",
+          "text": "Teams can invite collaborators with role-based permissions and access full audit logs for compliance",
+          "evidence_ids": [
+            "E14"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E15",
+          "text": "The entire dashboard can be white-labeled under the customer's own brand",
+          "evidence_ids": [
+            "E15"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E16",
+          "text": "Agents can be equipped with HTTP tools, A/B experiments on prompts, scheduled runs, and version history",
+          "evidence_ids": [
+            "E16"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E17",
+          "text": "Every agent built on orqAgent gets a dedicated REST endpoint with API key authentication",
+          "evidence_ids": [
+            "E17"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E18",
+          "text": "The API supports stateless calls or stateful conversation sessions",
+          "evidence_ids": [
+            "E18"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E19",
+          "text": "Per-agent API keys can have usage caps",
+          "evidence_ids": [
+            "E19"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E20",
+          "text": "orqAgent supports webhook callbacks on run completion",
+          "evidence_ids": [
+            "E20"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E21",
+          "text": "Full run history is available with status filtering",
+          "evidence_ids": [
+            "E21"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E22",
+          "text": "The platform is serverless, scaling automatically with zero infrastructure to manage",
+          "evidence_ids": [
+            "E22"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E23",
+          "text": "orqAgent natively integrates with Slack, WhatsApp, Telegram, Email Inbox, REST Webhooks, Scheduled Runs, Custom Tools (HTTP), and Stripe Billing",
+          "evidence_ids": [
+            "E23"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E24",
+          "text": "Creating an agent — writing a system prompt, picking a model, configuring guardrails and tools — takes under 2 minutes",
+          "evidence_ids": [
+            "E24"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E25",
+          "text": "The Starter plan costs $0 and includes 1,500 free credits with no card required",
+          "evidence_ids": [
+            "E25"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E26",
+          "text": "The Starter plan includes 1 knowledge base per agent",
+          "evidence_ids": [
+            "E26"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E27",
+          "text": "The Starter plan includes REST API access",
+          "evidence_ids": [
+            "E27"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E28",
+          "text": "The Starter plan includes 7-day run history",
+          "evidence_ids": [
+            "E28"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E29",
+          "text": "The Starter plan includes community support",
+          "evidence_ids": [
+            "E29"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E30",
+          "text": "The Pro plan costs $29 per month with credits included",
+          "evidence_ids": [
+            "E30"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E31",
+          "text": "The Pro plan includes unlimited agents",
+          "evidence_ids": [
+            "E31"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E32",
+          "text": "The Pro plan includes 30-day analytics history",
+          "evidence_ids": [
+            "E32"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E33",
+          "text": "The Pro plan includes priority support",
+          "evidence_ids": [
+            "E33"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E34",
+          "text": "The Enterprise plan has custom pricing and includes an SLA, dedicated infrastructure, and SSO",
+          "evidence_ids": [
+            "E34"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E35",
+          "text": "The Enterprise plan includes dedicated infrastructure / VPC",
+          "evidence_ids": [
+            "E35"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E36",
+          "text": "The Enterprise plan includes custom LLM endpoints",
+          "evidence_ids": [
+            "E36"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E37",
+          "text": "The Enterprise plan includes an SLA guarantee",
+          "evidence_ids": [
+            "E37"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E38",
+          "text": "The Enterprise plan includes onboarding and training",
+          "evidence_ids": [
+            "E38"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E39",
+          "text": "Signing up for orqAgent requires no credit card.",
+          "evidence_ids": [
+            "E39"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E40",
+          "text": "Claude Haiku is recommended as a free-tier friendly model.",
+          "evidence_ids": [
+            "E40"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E41",
+          "text": "Available models include Claude Haiku, Sonnet, Opus, GPT-4, and Gemini 2.0 Flash.",
+          "evidence_ids": [
+            "E41"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E42",
+          "text": "Default temperature is 0.7 (0 is deterministic, 1 is most creative).",
+          "evidence_ids": [
+            "E42"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E43",
+          "text": "Default max tokens per response is 1024.",
+          "evidence_ids": [
+            "E43"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E44",
+          "text": "Agent tone can be set to Professional, Friendly, Concise, Technical, or Creative.",
+          "evidence_ids": [
+            "E44"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E45",
+          "text": "Response format can be set to text, markdown, json, or bullet_points, controlling output structure.",
+          "evidence_ids": [
+            "E45"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E46",
+          "text": "When response format is JSON, a JSON Schema can be pasted in to enforce the response shape.",
+          "evidence_ids": [
+            "E46"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E47",
+          "text": "Rate limit/min sets the maximum calls per minute from a single session.",
+          "evidence_ids": [
+            "E47"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E48",
+          "text": "Rate limit/day sets the maximum calls per day across all sessions.",
+          "evidence_ids": [
+            "E48"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E49",
+          "text": "Max tokens/response overrides the global max_tokens setting for a given agent's API responses.",
+          "evidence_ids": [
+            "E49"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E50",
+          "text": "Each browser session in the Playground has its own conversation history, and the agent remembers context across turns.",
+          "evidence_ids": [
+            "E50"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E51",
+          "text": "A database icon appears in the Playground on any message where the agent pulled context from the knowledge base.",
+          "evidence_ids": [
+            "E51"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E52",
+          "text": "Clicking \"New session\" starts a fresh Playground conversation without clearing the conversation history.",
+          "evidence_ids": [
+            "E52"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E53",
+          "text": "Token counts and latency are shown per-run in the Analytics tab once calls have been made.",
+          "evidence_ids": [
+            "E53"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E54",
+          "text": "Playground calls count against the monthly quota just like API calls and appear in Analytics.",
+          "evidence_ids": [
+            "E54"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E55",
+          "text": "The knowledge base supports .pdf, .txt, .markdown, and .csv file formats.",
+          "evidence_ids": [
+            "E55"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E56",
+          "text": "Uploaded documents are split into overlapping chunks of about 500 tokens each.",
+          "evidence_ids": [
+            "E56"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E57",
+          "text": "On every agent call, the user's message is compared to all knowledge base chunks using keyword scoring.",
+          "evidence_ids": [
+            "E57"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E58",
+          "text": "The top-scoring knowledge base chunks are injected into the system prompt as context.",
+          "evidence_ids": [
+            "E58"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E59",
+          "text": "The agent can cite specific facts from uploaded documents in its response.",
+          "evidence_ids": [
+            "E59"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E60",
+          "text": "Multiple documents can be uploaded, and the agent searches across all of them and cites the most relevant chunks.",
+          "evidence_ids": [
+            "E60"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E61",
+          "text": "Analytics shows chunks_injected per run.",
+          "evidence_ids": [
+            "E61"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E62",
+          "text": "API keys start with the prefix orq_ and are shown only once when created.",
+          "evidence_ids": [
+            "E62"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E63",
+          "text": "A compromised API key can be revoked from the dashboard and a new one generated.",
+          "evidence_ids": [
+            "E63"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E64",
+          "text": "The API key Prefix field shows the first 10 characters, used to identify the key in the dashboard.",
+          "evidence_ids": [
+            "E64"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E65",
+          "text": "Each API key's call_count field tracks the total number of API calls made with that key.",
+          "evidence_ids": [
+            "E65"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E66",
+          "text": "Each API key's last_used_at field records the timestamp of the most recent call.",
+          "evidence_ids": [
+            "E66"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E67",
+          "text": "Expired API keys are automatically rejected.",
+          "evidence_ids": [
+            "E67"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E68",
+          "text": "An API key can be temporarily disabled without being revoked, via the is_active field.",
+          "evidence_ids": [
+            "E68"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E69",
+          "text": "The user_input field of a run request must be 1 to 10,000 characters.",
+          "evidence_ids": [
+            "E69"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E70",
+          "text": "The session_id field can be at most 128 characters and is passed across turns to maintain conversation history.",
+          "evidence_ids": [
+            "E70"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E71",
+          "text": "The response reports prompt_tokens, the tokens consumed by the input (system prompt + history + user message).",
+          "evidence_ids": [
+            "E71"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E72",
+          "text": "The response reports completion_tokens, the number of tokens in the agent's response.",
+          "evidence_ids": [
+            "E72"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E73",
+          "text": "The API response includes an estimated USD cost for the run, given to 6 decimal places.",
+          "evidence_ids": [
+            "E73"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E74",
+          "text": "The response includes latency_ms, the wall-clock latency of the LLM call in milliseconds.",
+          "evidence_ids": [
+            "E74"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E75",
+          "text": "Run status can be \"success\", \"error\", \"timeout\", or \"rate_limited\".",
+          "evidence_ids": [
+            "E75"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E76",
+          "text": "The response includes used_knowledge_base, true if document chunks were injected into that run.",
+          "evidence_ids": [
+            "E76"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E77",
+          "text": "The response includes chunks_injected, the number of knowledge base chunks included in the context.",
+          "evidence_ids": [
+            "E77"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E78",
+          "text": "Public agents can be called without an API key, but usage is still billed to the account.",
+          "evidence_ids": [
+            "E78"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E79",
+          "text": "A 400 Bad Request error means input was blocked by a guardrail or the request body was invalid.",
+          "evidence_ids": [
+            "E79"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E80",
+          "text": "A 401 Unauthorized error means the API key is missing or invalid.",
+          "evidence_ids": [
+            "E80"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E81",
+          "text": "A 403 Forbidden error means the agent is private, disabled, or not owned by the API key's user.",
+          "evidence_ids": [
+            "E81"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E82",
+          "text": "A 404 Not Found error means the agent ID does not exist.",
+          "evidence_ids": [
+            "E82"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E83",
+          "text": "A 429 Too Many Requests error means the per-minute or per-day rate limit was exceeded.",
+          "evidence_ids": [
+            "E83"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E84",
+          "text": "A 502 Bad Gateway error means the LLM provider returned an error and the caller should retry with exponential backoff.",
+          "evidence_ids": [
+            "E84"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E85",
+          "text": "Guardrails block requests containing explicit violence or self-harm instructions.",
+          "evidence_ids": [
+            "E85"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E86",
+          "text": "Guardrails block prompt injection attempts such as \"ignore your previous instructions\".",
+          "evidence_ids": [
+            "E86"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E87",
+          "text": "Guardrails block profanity and hate speech above a configured threshold.",
+          "evidence_ids": [
+            "E87"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E88",
+          "text": "When a guardrail fires, the API returns HTTP 400 and the run is logged with blocked_by_guardrail: true, visible in Analytics.",
+          "evidence_ids": [
+            "E88"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E89",
+          "text": "All integration credentials (tokens, passwords, OAuth secrets) are stored AES-256-GCM encrypted and are never returned to the browser once saved.",
+          "evidence_ids": [
+            "E89"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E90",
+          "text": "Slack integration connects via OAuth install, with the bot replying to mentions and channel messages.",
+          "evidence_ids": [
+            "E90"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E91",
+          "text": "Telegram integration connects by pasting a BotFather token, and the webhook is registered automatically.",
+          "evidence_ids": [
+            "E91"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E92",
+          "text": "WhatsApp integration connects via the Meta Cloud API by entering a phone number ID and access token.",
+          "evidence_ids": [
+            "E92"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E93",
+          "text": "Email Inbox integration connects via IMAP polling and SMTP replies, with a human approval queue.",
+          "evidence_ids": [
+            "E93"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E94",
+          "text": "Notion integration connects via OAuth and syncs page/database content into the knowledge base.",
+          "evidence_ids": [
+            "E94"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E95",
+          "text": "Google Docs integration connects via OAuth and imports selected documents into the knowledge base.",
+          "evidence_ids": [
+            "E95"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E96",
+          "text": "Channel and webhook callbacks live under /api/integrations/… on the API host, and the dashboard wires them up automatically (e.g. Telegram's webhook is set automatically on connect).",
+          "evidence_ids": [
+            "E96"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E97",
+          "text": "Messages handled through any channel are real agent runs that consume credits and appear in Analytics exactly like API calls.",
+          "evidence_ids": [
+            "E97"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E98",
+          "text": "The Email Inbox is configured per agent under the Email Inbox tab with no environment variables required, and all credentials are stored encrypted.",
+          "evidence_ids": [
+            "E98"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E99",
+          "text": "The SMTP server for Email Inbox is configured per integration in the Email Inbox tab, not via global SMTP_* environment variables; those global settings are only used by the unrelated Scheduled agents email output.",
+          "evidence_ids": [
+            "E99"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E100",
+          "text": "A background worker runs every minute and polls each active inbox whose check interval has elapsed (e.g. every 5 min); polling can also be forced via the \"Relever maintenant\" button.",
+          "evidence_ids": [
+            "E100"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E101",
+          "text": "Only unread (UNSEEN) messages are fetched from a connected inbox.",
+          "evidence_ids": [
+            "E101"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E102",
+          "text": "By default, auto-reply is off, so a drafted reply lands in an approval queue with status pending_approval for review before Send or Ignore.",
+          "evidence_ids": [
+            "E102"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E103",
+          "text": "If auto-reply is on, the drafted reply is sent immediately over SMTP.",
+          "evidence_ids": [
+            "E103"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E104",
+          "text": "Senders that look automated (no-reply, noreply, mailer-daemon, bounce, postmaster, notifications, etc.) are skipped by the Email Inbox agent.",
+          "evidence_ids": [
+            "E104"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E105",
+          "text": "Messages older than 24 hours are skipped, so connecting an inbox never replies to the whole archive.",
+          "evidence_ids": [
+            "E105"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E106",
+          "text": "Each inbox message is processed only once, idempotent on the email Message-ID.",
+          "evidence_ids": [
+            "E106"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E107",
+          "text": "Hosts that resolve to a private/loopback address are blocked as an SSRF guard, so a localhost mail server won't work and testing requires a real provider.",
+          "evidence_ids": [
+            "E107"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E108",
+          "text": "IMAP port 993 is implicit SSL, the only encrypted mode supported.",
+          "evidence_ids": [
+            "E108"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E109",
+          "text": "SMTP uses port 587 with STARTTLS; port 465 (implicit SSL) is not supported.",
+          "evidence_ids": [
+            "E109"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E110",
+          "text": "The polling cadence (check_interval_minutes) is 1–60, default 5, and the per-minute worker only polls once that interval has elapsed.",
+          "evidence_ids": [
+            "E110"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E111",
+          "text": "Auto-reply is OFF by default, meaning drafts go to the approval queue.",
+          "evidence_ids": [
+            "E111"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E112",
+          "text": "reply_requires_approval keeps a human in the loop and defaults to ON.",
+          "evidence_ids": [
+            "E112"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E113",
+          "text": "Gmail / Google Workspace uses imap.gmail.com and smtp.gmail.com on ports 993/587.",
+          "evidence_ids": [
+            "E113"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E114",
+          "text": "Outlook / Microsoft 365 uses outlook.office365.com and smtp.office365.com on ports 993/587.",
+          "evidence_ids": [
+            "E114"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E115",
+          "text": "Gmail requires an app password (a normal password is rejected): enable 2-Step Verification, generate a 16-character app password under Google Account → Security → App passwords, and use the full email plus that code as both IMAP and SMTP password.",
+          "evidence_ids": [
+            "E115"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E116",
+          "text": "AUTHENTICATIONFAILED IMAP errors result from using the account password instead of an app password, or from 2-Step Verification not being enabled.",
+          "evidence_ids": [
+            "E116"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E117",
+          "text": "An SSRF guard blocks pointing the connection at localhost or an internal host; a public provider must be used instead.",
+          "evidence_ids": [
+            "E117"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E118",
+          "text": "The Free plan includes 500 runs per month.",
+          "evidence_ids": [
+            "E118"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E119",
+          "text": "All models are available on the plan.",
+          "evidence_ids": [
+            "E119"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E120",
+          "text": "The Free plan includes a knowledge base of up to 5 docs.",
+          "evidence_ids": [
+            "E120"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E121",
+          "text": "The Free plan includes API key access.",
+          "evidence_ids": [
+            "E121"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E122",
+          "text": "The Free plan includes community support.",
+          "evidence_ids": [
+            "E122"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E123",
+          "text": "The Pro plan costs $29/month.",
+          "evidence_ids": [
+            "E123"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E124",
+          "text": "The Pro plan includes unlimited agents.",
+          "evidence_ids": [
+            "E124"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E125",
+          "text": "The Pro plan includes 10,000 runs per month.",
+          "evidence_ids": [
+            "E125"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E126",
+          "text": "The Pro plan includes an unlimited-docs knowledge base.",
+          "evidence_ids": [
+            "E126"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E127",
+          "text": "The Pro plan includes priority support.",
+          "evidence_ids": [
+            "E127"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E128",
+          "text": "The Pro plan includes advanced analytics.",
+          "evidence_ids": [
+            "E128"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E129",
+          "text": "Hitting the monthly run limit makes the API return HTTP 429 with code QUOTA_EXCEEDED.",
+          "evidence_ids": [
+            "E129"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E130",
+          "text": "You can create your first agent in under 2 minutes, no credit card required.",
+          "evidence_ids": [
+            "E130"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E131",
+          "text": "The Free plan gives 1,500 free credits at signup, about 55 Sonnet calls.",
+          "evidence_ids": [
+            "E131"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E132",
+          "text": "The Free plan includes 100 executions per month.",
+          "evidence_ids": [
+            "E132"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E133",
+          "text": "The Free plan includes community support.",
+          "evidence_ids": [
+            "E133"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E134",
+          "text": "The Free plan includes basic analytics.",
+          "evidence_ids": [
+            "E134"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E135",
+          "text": "The Pro plan includes 30,000 credits per month, about 1,100 Sonnet calls.",
+          "evidence_ids": [
+            "E135"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E136",
+          "text": "The Pro plan includes 20,000 executions per month.",
+          "evidence_ids": [
+            "E136"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E137",
+          "text": "The Pro plan includes all models (Claude, GPT-4).",
+          "evidence_ids": [
+            "E137"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E138",
+          "text": "The Pro plan includes an integration widget.",
+          "evidence_ids": [
+            "E138"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E139",
+          "text": "The Pro plan includes email support.",
+          "evidence_ids": [
+            "E139"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E140",
+          "text": "The Business plan includes 100,000 credits per month, about 3,700 Sonnet calls.",
+          "evidence_ids": [
+            "E140"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E141",
+          "text": "The Business plan includes 100,000 executions per month.",
+          "evidence_ids": [
+            "E141"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E142",
+          "text": "The Business plan includes all models plus priority routing.",
+          "evidence_ids": [
+            "E142"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E143",
+          "text": "The Business plan includes custom integrations.",
+          "evidence_ids": [
+            "E143"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E144",
+          "text": "The Business plan includes Slack support.",
+          "evidence_ids": [
+            "E144"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E145",
+          "text": "The Enterprise plan includes 300,000 credits per month, about 11,000 Sonnet calls.",
+          "evidence_ids": [
+            "E145"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E146",
+          "text": "The Enterprise plan includes unlimited agents.",
+          "evidence_ids": [
+            "E146"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E147",
+          "text": "The Enterprise plan guarantees a 99.9% uptime SLA.",
+          "evidence_ids": [
+            "E147"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E148",
+          "text": "orqAgent supports 9 AI providers.",
+          "evidence_ids": [
+            "E148"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E149",
+          "text": "orqAgent offers 25+ models to choose from.",
+          "evidence_ids": [
+            "E149"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E150",
+          "text": "orqAgent supports 6 channels to deploy to.",
+          "evidence_ids": [
+            "E150"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E151",
+          "text": "orqAgent supports bring-your-own-keys (BYOK).",
+          "evidence_ids": [
+            "E151"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E152",
+          "text": "orqAgent is powered by models including Claude, GPT, Gemini, Mistral, Llama, Grok, DeepSeek, and more.",
+          "evidence_ids": [
+            "E152"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E153",
+          "text": "The playground offers Claude Opus 4.8 from Anthropic as a selectable model.",
+          "evidence_ids": [
+            "E153"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E154",
+          "text": "In the playground demo, the agent replied in 0.8s using 1,200 tokens.",
+          "evidence_ids": [
+            "E154"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E155",
+          "text": "You bring your prompt and orqAgent handles routing, logs, billing, and analytics.",
+          "evidence_ids": [
+            "E155"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E156",
+          "text": "You can generate a chat widget for any website with a single snippet.",
+          "evidence_ids": [
+            "E156"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E157",
+          "text": "You can track executions, tokens, latency, and spend in a single dashboard.",
+          "evidence_ids": [
+            "E157"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E158",
+          "text": "You can switch between Claude, GPT-4, and more without changing code.",
+          "evidence_ids": [
+            "E158"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E159",
+          "text": "API keys are hashed at rest, auth uses JWT, and SOC 2 certification is in progress.",
+          "evidence_ids": [
+            "E159"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E160",
+          "text": "The free plan includes 100 executions per month with no credit card required.",
+          "evidence_ids": [
+            "E160"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:P1",
+          "text": "Listed as a supported provider in the LiteLLM integration directory",
+          "evidence_ids": [
+            "P1"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "text:voice and telephony runtime: unsupported.",
+          "text": "Voice and telephony runtime: unsupported.",
+          "evidence_ids": [],
+          "reason": "No current licensed product evidence establishes this capability."
+        },
+        {
+          "id": "text:full saas backend replacement: unsupported.",
+          "text": "Full SaaS backend replacement: unsupported.",
+          "evidence_ids": [],
+          "reason": "No current licensed product evidence establishes this capability."
+        },
+        {
+          "id": "text:hipaa compliance: unknown.",
+          "text": "HIPAA compliance: unknown.",
+          "evidence_ids": [],
+          "reason": "No current licensed product evidence establishes this capability."
+        },
+        {
+          "id": "text:deep domain-specific operational integrations: unknown.",
+          "text": "Deep domain-specific operational integrations: unknown.",
+          "evidence_ids": [],
+          "reason": "No current licensed product evidence establishes this capability."
+        }
+      ],
+      "campaign_allowed_claims": [
+        {
+          "id": "evidence:E9",
+          "text": "orqAgent offers 99.9% uptime with serverless, auto-scaling infrastructure",
+          "evidence_ids": [
+            "E9"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E11",
+          "text": "Users can upload PDFs, docs, or plain text, and the agent automatically retrieves the most relevant context for every query with no vector DB to manage",
+          "evidence_ids": [
+            "E11"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E12",
+          "text": "Analytics automatically track P95 latency, token usage per model, daily spend trends, and guardrail trigger rates without extra config",
+          "evidence_ids": [
+            "E12"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E14",
+          "text": "Teams can invite collaborators with role-based permissions and access full audit logs for compliance",
+          "evidence_ids": [
+            "E14"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E19",
+          "text": "Per-agent API keys can have usage caps",
+          "evidence_ids": [
+            "E19"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E21",
+          "text": "Full run history is available with status filtering",
+          "evidence_ids": [
+            "E21"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E22",
+          "text": "The platform is serverless, scaling automatically with zero infrastructure to manage",
+          "evidence_ids": [
+            "E22"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E23",
+          "text": "orqAgent natively integrates with Slack, WhatsApp, Telegram, Email Inbox, REST Webhooks, Scheduled Runs, Custom Tools (HTTP), and Stripe Billing",
+          "evidence_ids": [
+            "E23"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E24",
+          "text": "Creating an agent — writing a system prompt, picking a model, configuring guardrails and tools — takes under 2 minutes",
+          "evidence_ids": [
+            "E24"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E25",
+          "text": "The Starter plan costs $0 and includes 1,500 free credits with no card required",
+          "evidence_ids": [
+            "E25"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E55",
+          "text": "The knowledge base supports .pdf, .txt, .markdown, and .csv file formats.",
+          "evidence_ids": [
+            "E55"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E58",
+          "text": "The top-scoring knowledge base chunks are injected into the system prompt as context.",
+          "evidence_ids": [
+            "E58"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E59",
+          "text": "The agent can cite specific facts from uploaded documents in its response.",
+          "evidence_ids": [
+            "E59"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E60",
+          "text": "Multiple documents can be uploaded, and the agent searches across all of them and cites the most relevant chunks.",
+          "evidence_ids": [
+            "E60"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E73",
+          "text": "The API response includes an estimated USD cost for the run, given to 6 decimal places.",
+          "evidence_ids": [
+            "E73"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E74",
+          "text": "The response includes latency_ms, the wall-clock latency of the LLM call in milliseconds.",
+          "evidence_ids": [
+            "E74"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E75",
+          "text": "Run status can be \"success\", \"error\", \"timeout\", or \"rate_limited\".",
+          "evidence_ids": [
+            "E75"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E76",
+          "text": "The response includes used_knowledge_base, true if document chunks were injected into that run.",
+          "evidence_ids": [
+            "E76"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E77",
+          "text": "The response includes chunks_injected, the number of knowledge base chunks included in the context.",
+          "evidence_ids": [
+            "E77"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E90",
+          "text": "Slack integration connects via OAuth install, with the bot replying to mentions and channel messages.",
+          "evidence_ids": [
+            "E90"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E94",
+          "text": "Notion integration connects via OAuth and syncs page/database content into the knowledge base.",
+          "evidence_ids": [
+            "E94"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E95",
+          "text": "Google Docs integration connects via OAuth and imports selected documents into the knowledge base.",
+          "evidence_ids": [
+            "E95"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E97",
+          "text": "Messages handled through any channel are real agent runs that consume credits and appear in Analytics exactly like API calls.",
+          "evidence_ids": [
+            "E97"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E123",
+          "text": "The Pro plan costs $29/month.",
+          "evidence_ids": [
+            "E123"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        },
+        {
+          "id": "evidence:E126",
+          "text": "The Pro plan includes an unlimited-docs knowledge base.",
+          "evidence_ids": [
+            "E126"
+          ],
+          "reason": "Licensed by the current Evidence Ledger."
+        }
+      ],
+      "forbidden_claims": [
+        {
+          "id": "text:do not promise voice or telephony support unless a current licensed source explicitly establishes it.",
+          "text": "Do not promise voice or telephony support unless a current licensed source explicitly establishes it.",
+          "evidence_ids": [],
+          "reason": "Scope boundary no_voice_without_evidence."
+        },
+        {
+          "id": "text:do not claim that the agent layer replaces a company's complete backend, product ui, billing, or operational workflow without direct evidence.",
+          "text": "Do not claim that the agent layer replaces a company's complete backend, product UI, billing, or operational workflow without direct evidence.",
+          "evidence_ids": [],
+          "reason": "Scope boundary not_a_full_backend_replacement."
+        },
+        {
+          "id": "text:compliance and certification claims are unavailable unless the evidence ledger explicitly licenses them.",
+          "text": "Compliance and certification claims are unavailable unless the Evidence Ledger explicitly licenses them.",
+          "evidence_ids": [],
+          "reason": "Scope boundary no_compliance_by_implication."
+        },
+        {
+          "id": "text:knowledge base / rag context",
+          "text": "Do not claim Knowledge base / RAG context; its capability state is unknown.",
+          "evidence_ids": [],
+          "reason": "Capability knowledge_base is unknown."
+        },
+        {
+          "id": "text:agent guardrails",
+          "text": "Do not claim Agent guardrails; its capability state is unknown.",
+          "evidence_ids": [],
+          "reason": "Capability guardrails is unknown."
+        },
+        {
+          "id": "text:reusable per-client agent configuration",
+          "text": "Do not claim Reusable per-client agent configuration; its capability state is unknown.",
+          "evidence_ids": [],
+          "reason": "Capability per_client_configuration is unknown."
+        },
+        {
+          "id": "text:voice and telephony runtime",
+          "text": "Do not claim Voice and telephony runtime; its capability state is unsupported.",
+          "evidence_ids": [],
+          "reason": "Capability voice_telephony is unsupported."
+        },
+        {
+          "id": "text:full saas backend replacement",
+          "text": "Do not claim Full SaaS backend replacement; its capability state is unsupported.",
+          "evidence_ids": [],
+          "reason": "Capability full_saas_backend is unsupported."
+        },
+        {
+          "id": "text:hipaa compliance",
+          "text": "Do not claim HIPAA compliance; its capability state is unknown.",
+          "evidence_ids": [],
+          "reason": "Capability hipaa_compliance is unknown."
+        },
+        {
+          "id": "text:deep domain-specific operational integrations",
+          "text": "Do not claim Deep domain-specific operational integrations; its capability state is unknown.",
+          "evidence_ids": [],
+          "reason": "Capability deep_vertical_integrations is unknown."
+        }
+      ],
+      "withheld_claims": [
+        {
+          "id": "evidence:E1",
+          "text": "Signup grants 1,500 free credits with no card required",
+          "evidence_ids": [
+            "E1"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E2",
+          "text": "orqAgent supports 25 models across 9 providers",
+          "evidence_ids": [
+            "E2"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E3",
+          "text": "orqAgent has 8 native integrations",
+          "evidence_ids": [
+            "E3"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E4",
+          "text": "orqAgent supports BYOK — bring your own API keys",
+          "evidence_ids": [
+            "E4"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E5",
+          "text": "Customer data is encrypted end-to-end, protected in transit and at rest",
+          "evidence_ids": [
+            "E5"
+          ],
+          "reason": "Contested territory: every rival makes this claim too."
+        },
+        {
+          "id": "evidence:E6",
+          "text": "Customer data is never used to train any model",
+          "evidence_ids": [
+            "E6"
+          ],
+          "reason": "Contested territory: every rival makes this claim too."
+        },
+        {
+          "id": "evidence:E7",
+          "text": "Customer data is isolated by design with per-tenant data separation",
+          "evidence_ids": [
+            "E7"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E8",
+          "text": "orqAgent is GDPR-ready with EU data residency available",
+          "evidence_ids": [
+            "E8"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E10",
+          "text": "Users can switch between models like Claude, GPT-4, Mistral, Llama, and Gemini with a single field",
+          "evidence_ids": [
+            "E10"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E13",
+          "text": "Guardrails include PII masking, content filtering, and prompt injection detection, defined once and enforced on every run",
+          "evidence_ids": [
+            "E13"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E15",
+          "text": "The entire dashboard can be white-labeled under the customer's own brand",
+          "evidence_ids": [
+            "E15"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E16",
+          "text": "Agents can be equipped with HTTP tools, A/B experiments on prompts, scheduled runs, and version history",
+          "evidence_ids": [
+            "E16"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E17",
+          "text": "Every agent built on orqAgent gets a dedicated REST endpoint with API key authentication",
+          "evidence_ids": [
+            "E17"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E18",
+          "text": "The API supports stateless calls or stateful conversation sessions",
+          "evidence_ids": [
+            "E18"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E20",
+          "text": "orqAgent supports webhook callbacks on run completion",
+          "evidence_ids": [
+            "E20"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E26",
+          "text": "The Starter plan includes 1 knowledge base per agent",
+          "evidence_ids": [
+            "E26"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E27",
+          "text": "The Starter plan includes REST API access",
+          "evidence_ids": [
+            "E27"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E28",
+          "text": "The Starter plan includes 7-day run history",
+          "evidence_ids": [
+            "E28"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E29",
+          "text": "The Starter plan includes community support",
+          "evidence_ids": [
+            "E29"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E30",
+          "text": "The Pro plan costs $29 per month with credits included",
+          "evidence_ids": [
+            "E30"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E31",
+          "text": "The Pro plan includes unlimited agents",
+          "evidence_ids": [
+            "E31"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E32",
+          "text": "The Pro plan includes 30-day analytics history",
+          "evidence_ids": [
+            "E32"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E33",
+          "text": "The Pro plan includes priority support",
+          "evidence_ids": [
+            "E33"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E34",
+          "text": "The Enterprise plan has custom pricing and includes an SLA, dedicated infrastructure, and SSO",
+          "evidence_ids": [
+            "E34"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E35",
+          "text": "The Enterprise plan includes dedicated infrastructure / VPC",
+          "evidence_ids": [
+            "E35"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E36",
+          "text": "The Enterprise plan includes custom LLM endpoints",
+          "evidence_ids": [
+            "E36"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E37",
+          "text": "The Enterprise plan includes an SLA guarantee",
+          "evidence_ids": [
+            "E37"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E38",
+          "text": "The Enterprise plan includes onboarding and training",
+          "evidence_ids": [
+            "E38"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E39",
+          "text": "Signing up for orqAgent requires no credit card.",
+          "evidence_ids": [
+            "E39"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E40",
+          "text": "Claude Haiku is recommended as a free-tier friendly model.",
+          "evidence_ids": [
+            "E40"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E41",
+          "text": "Available models include Claude Haiku, Sonnet, Opus, GPT-4, and Gemini 2.0 Flash.",
+          "evidence_ids": [
+            "E41"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E42",
+          "text": "Default temperature is 0.7 (0 is deterministic, 1 is most creative).",
+          "evidence_ids": [
+            "E42"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E43",
+          "text": "Default max tokens per response is 1024.",
+          "evidence_ids": [
+            "E43"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E44",
+          "text": "Agent tone can be set to Professional, Friendly, Concise, Technical, or Creative.",
+          "evidence_ids": [
+            "E44"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E45",
+          "text": "Response format can be set to text, markdown, json, or bullet_points, controlling output structure.",
+          "evidence_ids": [
+            "E45"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E46",
+          "text": "When response format is JSON, a JSON Schema can be pasted in to enforce the response shape.",
+          "evidence_ids": [
+            "E46"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E47",
+          "text": "Rate limit/min sets the maximum calls per minute from a single session.",
+          "evidence_ids": [
+            "E47"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E48",
+          "text": "Rate limit/day sets the maximum calls per day across all sessions.",
+          "evidence_ids": [
+            "E48"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E49",
+          "text": "Max tokens/response overrides the global max_tokens setting for a given agent's API responses.",
+          "evidence_ids": [
+            "E49"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E50",
+          "text": "Each browser session in the Playground has its own conversation history, and the agent remembers context across turns.",
+          "evidence_ids": [
+            "E50"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E51",
+          "text": "A database icon appears in the Playground on any message where the agent pulled context from the knowledge base.",
+          "evidence_ids": [
+            "E51"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E52",
+          "text": "Clicking \"New session\" starts a fresh Playground conversation without clearing the conversation history.",
+          "evidence_ids": [
+            "E52"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E53",
+          "text": "Token counts and latency are shown per-run in the Analytics tab once calls have been made.",
+          "evidence_ids": [
+            "E53"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E54",
+          "text": "Playground calls count against the monthly quota just like API calls and appear in Analytics.",
+          "evidence_ids": [
+            "E54"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E56",
+          "text": "Uploaded documents are split into overlapping chunks of about 500 tokens each.",
+          "evidence_ids": [
+            "E56"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E57",
+          "text": "On every agent call, the user's message is compared to all knowledge base chunks using keyword scoring.",
+          "evidence_ids": [
+            "E57"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E61",
+          "text": "Analytics shows chunks_injected per run.",
+          "evidence_ids": [
+            "E61"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E62",
+          "text": "API keys start with the prefix orq_ and are shown only once when created.",
+          "evidence_ids": [
+            "E62"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E63",
+          "text": "A compromised API key can be revoked from the dashboard and a new one generated.",
+          "evidence_ids": [
+            "E63"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E64",
+          "text": "The API key Prefix field shows the first 10 characters, used to identify the key in the dashboard.",
+          "evidence_ids": [
+            "E64"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E65",
+          "text": "Each API key's call_count field tracks the total number of API calls made with that key.",
+          "evidence_ids": [
+            "E65"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E66",
+          "text": "Each API key's last_used_at field records the timestamp of the most recent call.",
+          "evidence_ids": [
+            "E66"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E67",
+          "text": "Expired API keys are automatically rejected.",
+          "evidence_ids": [
+            "E67"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E68",
+          "text": "An API key can be temporarily disabled without being revoked, via the is_active field.",
+          "evidence_ids": [
+            "E68"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E69",
+          "text": "The user_input field of a run request must be 1 to 10,000 characters.",
+          "evidence_ids": [
+            "E69"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E70",
+          "text": "The session_id field can be at most 128 characters and is passed across turns to maintain conversation history.",
+          "evidence_ids": [
+            "E70"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E71",
+          "text": "The response reports prompt_tokens, the tokens consumed by the input (system prompt + history + user message).",
+          "evidence_ids": [
+            "E71"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E72",
+          "text": "The response reports completion_tokens, the number of tokens in the agent's response.",
+          "evidence_ids": [
+            "E72"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E78",
+          "text": "Public agents can be called without an API key, but usage is still billed to the account.",
+          "evidence_ids": [
+            "E78"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E79",
+          "text": "A 400 Bad Request error means input was blocked by a guardrail or the request body was invalid.",
+          "evidence_ids": [
+            "E79"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E80",
+          "text": "A 401 Unauthorized error means the API key is missing or invalid.",
+          "evidence_ids": [
+            "E80"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E81",
+          "text": "A 403 Forbidden error means the agent is private, disabled, or not owned by the API key's user.",
+          "evidence_ids": [
+            "E81"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E82",
+          "text": "A 404 Not Found error means the agent ID does not exist.",
+          "evidence_ids": [
+            "E82"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E83",
+          "text": "A 429 Too Many Requests error means the per-minute or per-day rate limit was exceeded.",
+          "evidence_ids": [
+            "E83"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E84",
+          "text": "A 502 Bad Gateway error means the LLM provider returned an error and the caller should retry with exponential backoff.",
+          "evidence_ids": [
+            "E84"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E85",
+          "text": "Guardrails block requests containing explicit violence or self-harm instructions.",
+          "evidence_ids": [
+            "E85"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E86",
+          "text": "Guardrails block prompt injection attempts such as \"ignore your previous instructions\".",
+          "evidence_ids": [
+            "E86"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E87",
+          "text": "Guardrails block profanity and hate speech above a configured threshold.",
+          "evidence_ids": [
+            "E87"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E88",
+          "text": "When a guardrail fires, the API returns HTTP 400 and the run is logged with blocked_by_guardrail: true, visible in Analytics.",
+          "evidence_ids": [
+            "E88"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E89",
+          "text": "All integration credentials (tokens, passwords, OAuth secrets) are stored AES-256-GCM encrypted and are never returned to the browser once saved.",
+          "evidence_ids": [
+            "E89"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E91",
+          "text": "Telegram integration connects by pasting a BotFather token, and the webhook is registered automatically.",
+          "evidence_ids": [
+            "E91"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E92",
+          "text": "WhatsApp integration connects via the Meta Cloud API by entering a phone number ID and access token.",
+          "evidence_ids": [
+            "E92"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E93",
+          "text": "Email Inbox integration connects via IMAP polling and SMTP replies, with a human approval queue.",
+          "evidence_ids": [
+            "E93"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E96",
+          "text": "Channel and webhook callbacks live under /api/integrations/… on the API host, and the dashboard wires them up automatically (e.g. Telegram's webhook is set automatically on connect).",
+          "evidence_ids": [
+            "E96"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E98",
+          "text": "The Email Inbox is configured per agent under the Email Inbox tab with no environment variables required, and all credentials are stored encrypted.",
+          "evidence_ids": [
+            "E98"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E99",
+          "text": "The SMTP server for Email Inbox is configured per integration in the Email Inbox tab, not via global SMTP_* environment variables; those global settings are only used by the unrelated Scheduled agents email output.",
+          "evidence_ids": [
+            "E99"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E100",
+          "text": "A background worker runs every minute and polls each active inbox whose check interval has elapsed (e.g. every 5 min); polling can also be forced via the \"Relever maintenant\" button.",
+          "evidence_ids": [
+            "E100"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E101",
+          "text": "Only unread (UNSEEN) messages are fetched from a connected inbox.",
+          "evidence_ids": [
+            "E101"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E102",
+          "text": "By default, auto-reply is off, so a drafted reply lands in an approval queue with status pending_approval for review before Send or Ignore.",
+          "evidence_ids": [
+            "E102"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E103",
+          "text": "If auto-reply is on, the drafted reply is sent immediately over SMTP.",
+          "evidence_ids": [
+            "E103"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E104",
+          "text": "Senders that look automated (no-reply, noreply, mailer-daemon, bounce, postmaster, notifications, etc.) are skipped by the Email Inbox agent.",
+          "evidence_ids": [
+            "E104"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E105",
+          "text": "Messages older than 24 hours are skipped, so connecting an inbox never replies to the whole archive.",
+          "evidence_ids": [
+            "E105"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E106",
+          "text": "Each inbox message is processed only once, idempotent on the email Message-ID.",
+          "evidence_ids": [
+            "E106"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E107",
+          "text": "Hosts that resolve to a private/loopback address are blocked as an SSRF guard, so a localhost mail server won't work and testing requires a real provider.",
+          "evidence_ids": [
+            "E107"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E108",
+          "text": "IMAP port 993 is implicit SSL, the only encrypted mode supported.",
+          "evidence_ids": [
+            "E108"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E109",
+          "text": "SMTP uses port 587 with STARTTLS; port 465 (implicit SSL) is not supported.",
+          "evidence_ids": [
+            "E109"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E110",
+          "text": "The polling cadence (check_interval_minutes) is 1–60, default 5, and the per-minute worker only polls once that interval has elapsed.",
+          "evidence_ids": [
+            "E110"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E111",
+          "text": "Auto-reply is OFF by default, meaning drafts go to the approval queue.",
+          "evidence_ids": [
+            "E111"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E112",
+          "text": "reply_requires_approval keeps a human in the loop and defaults to ON.",
+          "evidence_ids": [
+            "E112"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E113",
+          "text": "Gmail / Google Workspace uses imap.gmail.com and smtp.gmail.com on ports 993/587.",
+          "evidence_ids": [
+            "E113"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E114",
+          "text": "Outlook / Microsoft 365 uses outlook.office365.com and smtp.office365.com on ports 993/587.",
+          "evidence_ids": [
+            "E114"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E115",
+          "text": "Gmail requires an app password (a normal password is rejected): enable 2-Step Verification, generate a 16-character app password under Google Account → Security → App passwords, and use the full email plus that code as both IMAP and SMTP password.",
+          "evidence_ids": [
+            "E115"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E116",
+          "text": "AUTHENTICATIONFAILED IMAP errors result from using the account password instead of an app password, or from 2-Step Verification not being enabled.",
+          "evidence_ids": [
+            "E116"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E117",
+          "text": "An SSRF guard blocks pointing the connection at localhost or an internal host; a public provider must be used instead.",
+          "evidence_ids": [
+            "E117"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E118",
+          "text": "The Free plan includes 500 runs per month.",
+          "evidence_ids": [
+            "E118"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E119",
+          "text": "All models are available on the plan.",
+          "evidence_ids": [
+            "E119"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E120",
+          "text": "The Free plan includes a knowledge base of up to 5 docs.",
+          "evidence_ids": [
+            "E120"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E121",
+          "text": "The Free plan includes API key access.",
+          "evidence_ids": [
+            "E121"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E122",
+          "text": "The Free plan includes community support.",
+          "evidence_ids": [
+            "E122"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E124",
+          "text": "The Pro plan includes unlimited agents.",
+          "evidence_ids": [
+            "E124"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E125",
+          "text": "The Pro plan includes 10,000 runs per month.",
+          "evidence_ids": [
+            "E125"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E127",
+          "text": "The Pro plan includes priority support.",
+          "evidence_ids": [
+            "E127"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E128",
+          "text": "The Pro plan includes advanced analytics.",
+          "evidence_ids": [
+            "E128"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E129",
+          "text": "Hitting the monthly run limit makes the API return HTTP 429 with code QUOTA_EXCEEDED.",
+          "evidence_ids": [
+            "E129"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E130",
+          "text": "You can create your first agent in under 2 minutes, no credit card required.",
+          "evidence_ids": [
+            "E130"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E131",
+          "text": "The Free plan gives 1,500 free credits at signup, about 55 Sonnet calls.",
+          "evidence_ids": [
+            "E131"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E132",
+          "text": "The Free plan includes 100 executions per month.",
+          "evidence_ids": [
+            "E132"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E133",
+          "text": "The Free plan includes community support.",
+          "evidence_ids": [
+            "E133"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E134",
+          "text": "The Free plan includes basic analytics.",
+          "evidence_ids": [
+            "E134"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E135",
+          "text": "The Pro plan includes 30,000 credits per month, about 1,100 Sonnet calls.",
+          "evidence_ids": [
+            "E135"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E136",
+          "text": "The Pro plan includes 20,000 executions per month.",
+          "evidence_ids": [
+            "E136"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E137",
+          "text": "The Pro plan includes all models (Claude, GPT-4).",
+          "evidence_ids": [
+            "E137"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E138",
+          "text": "The Pro plan includes an integration widget.",
+          "evidence_ids": [
+            "E138"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E139",
+          "text": "The Pro plan includes email support.",
+          "evidence_ids": [
+            "E139"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E140",
+          "text": "The Business plan includes 100,000 credits per month, about 3,700 Sonnet calls.",
+          "evidence_ids": [
+            "E140"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E141",
+          "text": "The Business plan includes 100,000 executions per month.",
+          "evidence_ids": [
+            "E141"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E142",
+          "text": "The Business plan includes all models plus priority routing.",
+          "evidence_ids": [
+            "E142"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E143",
+          "text": "The Business plan includes custom integrations.",
+          "evidence_ids": [
+            "E143"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E144",
+          "text": "The Business plan includes Slack support.",
+          "evidence_ids": [
+            "E144"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E145",
+          "text": "The Enterprise plan includes 300,000 credits per month, about 11,000 Sonnet calls.",
+          "evidence_ids": [
+            "E145"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E146",
+          "text": "The Enterprise plan includes unlimited agents.",
+          "evidence_ids": [
+            "E146"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E147",
+          "text": "The Enterprise plan guarantees a 99.9% uptime SLA.",
+          "evidence_ids": [
+            "E147"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E148",
+          "text": "orqAgent supports 9 AI providers.",
+          "evidence_ids": [
+            "E148"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E149",
+          "text": "orqAgent offers 25+ models to choose from.",
+          "evidence_ids": [
+            "E149"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E150",
+          "text": "orqAgent supports 6 channels to deploy to.",
+          "evidence_ids": [
+            "E150"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E151",
+          "text": "orqAgent supports bring-your-own-keys (BYOK).",
+          "evidence_ids": [
+            "E151"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E152",
+          "text": "orqAgent is powered by models including Claude, GPT, Gemini, Mistral, Llama, Grok, DeepSeek, and more.",
+          "evidence_ids": [
+            "E152"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E153",
+          "text": "The playground offers Claude Opus 4.8 from Anthropic as a selectable model.",
+          "evidence_ids": [
+            "E153"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E154",
+          "text": "In the playground demo, the agent replied in 0.8s using 1,200 tokens.",
+          "evidence_ids": [
+            "E154"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E155",
+          "text": "You bring your prompt and orqAgent handles routing, logs, billing, and analytics.",
+          "evidence_ids": [
+            "E155"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E156",
+          "text": "You can generate a chat widget for any website with a single snippet.",
+          "evidence_ids": [
+            "E156"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E157",
+          "text": "You can track executions, tokens, latency, and spend in a single dashboard.",
+          "evidence_ids": [
+            "E157"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E158",
+          "text": "You can switch between Claude, GPT-4, and more without changing code.",
+          "evidence_ids": [
+            "E158"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E159",
+          "text": "API keys are hashed at rest, auth uses JWT, and SOC 2 certification is in progress.",
+          "evidence_ids": [
+            "E159"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:E160",
+          "text": "The free plan includes 100 executions per month with no credit card required.",
+          "evidence_ids": [
+            "E160"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "evidence:P1",
+          "text": "Listed as a supported provider in the LiteLLM integration directory",
+          "evidence_ids": [
+            "P1"
+          ],
+          "reason": "No addressed or partial problem for this audience uses it."
+        },
+        {
+          "id": "text:voice and telephony runtime: unsupported.",
+          "text": "Voice and telephony runtime: unsupported.",
+          "evidence_ids": [],
+          "reason": "Not licensed for customer-facing copy."
+        },
+        {
+          "id": "text:full saas backend replacement: unsupported.",
+          "text": "Full SaaS backend replacement: unsupported.",
+          "evidence_ids": [],
+          "reason": "Not licensed for customer-facing copy."
+        },
+        {
+          "id": "text:hipaa compliance: unknown.",
+          "text": "HIPAA compliance: unknown.",
+          "evidence_ids": [],
+          "reason": "Not licensed for customer-facing copy."
+        },
+        {
+          "id": "text:deep domain-specific operational integrations: unknown.",
+          "text": "Deep domain-specific operational integrations: unknown.",
+          "evidence_ids": [],
+          "reason": "Not licensed for customer-facing copy."
+        }
+      ],
+      "warnings": [
+        "Claim 'Customer data is encrypted end-to-end, protected in transit and at rest' rests on withheld or forbidden evidence (E5) and is not campaign-safe.",
+        "Claim 'Customer data is never used to train any model' rests on withheld or forbidden evidence (E6) and is not campaign-safe."
+      ]
+    }
+  },
+  "dossier_status": "current",
+  "selected_company_name": "",
+  "selected_company_qualification": null,
+  "reasons": [
+    "A licensed product bridge exists only for the qualified slice."
+  ],
+  "override_required": false,
+  "can_generate": true,
+  "user_message": "Target only tech-forward mid-size companies."
+}

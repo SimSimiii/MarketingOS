@@ -46,39 +46,21 @@ def test_only_fast_will_write_from_material_that_proves_nothing():
     assert PRESETS["maximum"].require_proof is True
 
 
-def test_maximum_buys_more_judgment_without_repricing_reactions():
-    """`maximum` used to say `{"*": "opus"}`, and a blanket override beats the
-    tier map outright - so the cold reader, which asks for BALANCED because a
-    cold read is a reaction rather than a deliberation, ran on opus. In a
-    measured run it made 21 of 38 calls and was the largest line on the bill.
-
-    What the preset should widen is how much judgment is bought, not what a
-    reaction is charged at."""
-    router = ModelRouter(PRESETS["maximum"].model_overrides)
-
-    assert router.resolve("email_writer", ModelTier.DEEP) == "opus"
-    assert router.resolve("strategist", ModelTier.DEEP) == "opus"
-    assert router.resolve("conversion_critic", ModelTier.DEEP) == "opus"
-    assert router.resolve("sequence_reviewer", ModelTier.DEEP) == "opus"
-    # Writing eight subject lines that are eight different bets is craft.
-    assert router.resolve("subject_writer", ModelTier.DEEP) == "opus"
-    # ...and the roles that ask for a cheaper tier still get it. A choice
-    # between two emails and a glance at a subject line are reactions, like a
-    # cold read - the strongest preset buys more of them, not dearer ones.
-    assert router.resolve("blind_reader", ModelTier.BALANCED) == "sonnet"
-    assert router.resolve("preference_judge", ModelTier.BALANCED) == "sonnet"
-    assert router.resolve("inbox_scanner", ModelTier.BALANCED) == "sonnet"
-    assert router.resolve("knowledge_compiler", ModelTier.BALANCED) == "sonnet"
+def test_every_preset_defaults_to_the_model_that_cleared_the_sellable_bar():
+    """Preset pricing comes from call count rather than weaker default models."""
+    for preset in PRESETS.values():
+        router = ModelRouter(preset.model_overrides)
+        assert router.resolve("email_writer", ModelTier.DEEP) == "gpt-5.6-sol"
+        assert router.resolve("blind_reader", ModelTier.BALANCED) == "gpt-5.6-sol"
+        assert router.resolve("knowledge_compiler", ModelTier.FAST) == "gpt-5.6-sol"
 
 
 def test_a_user_can_still_put_a_whole_run_on_one_model():
-    """Removing the preset's blanket override must not remove the ability to
-    ask for one - a campaign's own model_overrides still take a `*`."""
+    """An operator wildcard can still replace the preset's validated default."""
     router = ModelRouter({**PRESETS["maximum"].model_overrides, "*": "haiku"})
 
     assert router.resolve("blind_reader", ModelTier.BALANCED) == "haiku"
-    # An exact role id is more specific than the wildcard, and still wins.
-    assert router.resolve("email_writer", ModelTier.DEEP) == "opus"
+    assert router.resolve("email_writer", ModelTier.DEEP) == "haiku"
 
 
 def test_custom_overrides_win_field_by_field_over_the_preset():

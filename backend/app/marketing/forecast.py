@@ -190,4 +190,12 @@ def forecast(
     total += Forecast(low=per_email.low * emails, high=per_email.high * emails)
     total += rework_forecast(policy, emails)
     # The strategist: one call, plus the correction turn at worst.
-    return total + Forecast(low=1, high=2)
+    total += Forecast(low=1, high=2)
+    if policy.critic_enabled:
+        # A missing-material verdict can buy exactly one recovery pass: one
+        # locating call with web search, one closed-world extraction call, a
+        # fresh strategy, and one fresh craft pass for every email. The floor
+        # stays unchanged because a landed campaign does none of this. The
+        # pipeline never invokes recovery twice, so this ceiling is bounded.
+        total += Forecast(low=0, high=2 + 2 + per_email.high * emails)
+    return total

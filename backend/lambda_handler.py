@@ -22,8 +22,18 @@ reads, results - and `POST /campaigns/{id}/start` needs the long-running
 worker described in `docs/deployment.md`.
 """
 
+import os
+
 from mangum import Mangum
 
 from app.main import app
 
-handler = Mangum(app, lifespan="off")
+# An HTTP API on a named stage hands the function `/<stage>/...` as the path,
+# and FastAPI knows no route starting with `/prod`. The template sets
+# API_GATEWAY_BASE_PATH to that stage so Mangum strips it; unset (a laptop,
+# a test), nothing is stripped.
+handler = Mangum(
+    app,
+    lifespan="off",
+    api_gateway_base_path=os.environ.get("API_GATEWAY_BASE_PATH", "/"),
+)

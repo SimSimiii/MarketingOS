@@ -46,7 +46,7 @@ phases:
       # NEXT_PUBLIC_* is inlined at build time, so it has to be present here
       # rather than at deploy time. There is no server to read it later.
       - NEXT_PUBLIC_ADMIN_API_URL="${NEXT_PUBLIC_ADMIN_API_URL}" npm run build
-      - test -f out/index.html || (echo "ERROR: export produced no index.html" && exit 1)
+      - test -f out/index.html || (echo "ERROR - the export produced no index.html" && exit 1)
 
   post_build:
     commands:

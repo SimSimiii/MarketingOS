@@ -18,6 +18,10 @@ version: 0.1
 #    ADMIN_CORS_ORIGINS    the AdminConsoleUrl output, after the first deploy
 #    VPC_SUBNET_IDS        subnet-aaa,subnet-bbb
 #    VPC_SECURITY_GROUPS   sg-aaa
+#    ADMIN_DOMAIN          (optional) admin.example.com
+#    ADMIN_CERT_ARN        (optional) an ACM ARN in us-east-1
+#    HOSTED_ZONE_ID        (optional) Route 53 zone of ADMIN_DOMAIN; writes its records
+#    ADMIN_WEB_ACL_ARN     (optional) AdminWebAclArn from iac/edge.yaml, for the Free plan
 #
 #  First deploy is a two-step: the console URL does not exist until CloudFront
 #  is created, so deploy once with the default ADMIN_CORS_ORIGINS, read
@@ -42,7 +46,11 @@ ci:
       capabilities: CAPABILITY_IAM CAPABILITY_NAMED_IAM
       confirm_changeset: false
       fail_on_empty_changeset: false
-      resolve_s3: true
+      # This stack's own bucket rather than resolve_s3, which makes SAM
+      # create and manage an aws-sam-cli-managed-default stack per region -
+      # one with no lifecycle rule, so every bundle ever built stays in it.
+      # iac/pipeline.yaml sets SAM_ARTIFACT_BUCKET and expires them at 30 days.
+      s3_bucket: ${SAM_ARTIFACT_BUCKET}
       parameter_overrides:
         - 'Environment=${ENVIRONMENT}'
         - 'AppEnv=${APP_ENV}'
@@ -56,3 +64,7 @@ ci:
         - 'AdminPlanPrices=${ADMIN_PLAN_PRICES}'
         - 'VpcSubnetIds=${VPC_SUBNET_IDS}'
         - 'VpcSecurityGroupIds=${VPC_SECURITY_GROUPS}'
+        - 'DomainName=${ADMIN_DOMAIN}'
+        - 'CertificateArn=${ADMIN_CERT_ARN}'
+        - 'HostedZoneId=${HOSTED_ZONE_ID}'
+        - 'WebAclArn=${ADMIN_WEB_ACL_ARN}'

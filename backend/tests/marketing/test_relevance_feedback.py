@@ -46,7 +46,7 @@ async def test_relevance_remains_the_fallback_without_a_comparison():
 
 
 @pytest.mark.asyncio
-async def test_bakeoff_compares_candidates_with_disputed_relevance():
+async def test_bakeoff_does_not_let_a_duel_override_audience_mismatch():
     from app.marketing.observer import RunObserver
     from app.marketing.tournament import PreferenceJudge
     from tests.marketing.conftest import (
@@ -63,8 +63,8 @@ async def test_bakeoff_compares_candidates_with_disputed_relevance():
     loop._personas = ["An ops generalist considering an internal assistant"]
     questioned, incumbent = version(False, 6, 1), version(True, 6, 1)
     questioned.email = questioned.email.model_copy(update={"body": "A different concrete offer"})
-    assert await loop._run_off(incumbent, [questioned], EmailBrief()) is questioned
-    assert provider.calls_by_role["preference_judge"] == 2
+    assert await loop._run_off(incumbent, [questioned], EmailBrief()) is incumbent
+    assert provider.calls_by_role["preference_judge"] == 0
     assert not questioned.read.relevant  # Preserve the unresolved finding.
 
 

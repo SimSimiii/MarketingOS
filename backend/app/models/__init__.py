@@ -9,6 +9,7 @@ from app.models.agent_execution import AgentExecution
 from app.models.brand import Brand
 from app.models.campaign import Campaign
 from app.models.campaign_execution import CampaignExecution
+from app.models.campaign_run_state import CampaignRunState
 from app.models.enums import (
     AdminRole,
     AssetType,
@@ -49,6 +50,7 @@ __all__ = [
     "Brand",
     "Campaign",
     "CampaignExecution",
+    "CampaignRunState",
     "ExecutionLog",
     "ExecutionStatus",
     "GeneratedAsset",

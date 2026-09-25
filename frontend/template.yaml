@@ -50,11 +50,27 @@ Parameters:
     Type: String
     Default: ""
     Description: ACM certificate ARN, which MUST be in us-east-1.
+  HostedZoneId:
+    Type: String
+    Default: ""
+    Description: >-
+      Route 53 zone that owns DomainName. Set, and this stack writes the A and
+      AAAA alias records itself; blank, and DNS is yours to point.
+  WebAclArn:
+    Type: String
+    Default: ""
+    Description: >-
+      A web ACL of this distribution's own, from iac/edge.yaml. The CloudFront
+      Free plan will not subscribe a distribution without one.
 
 Conditions:
   HasDomain: !And
     - !Not [!Equals [!Ref DomainName, ""]]
     - !Not [!Equals [!Ref CertificateArn, ""]]
+  HasDns: !And
+    - !Condition HasDomain
+    - !Not [!Equals [!Ref HostedZoneId, ""]]
+  HasWebAcl: !Not [!Equals [!Ref WebAclArn, ""]]
 
 Resources:
 
@@ -74,14 +90,20 @@ Resources:
           NEXT_PUBLIC_API_URL: !Ref ApiUrl
           NEXT_PUBLIC_AUTH_REQUIRED: "true"
           NODE_ENV: production
+          # What CloudFront stamps on every request as x-origin-verify, so
+          # src/proxy.ts can refuse anything that came around it. The stack's
+          # own UUID: stable, never published, and nothing to rotate by hand.
+          ORIGIN_VERIFY_SECRET: !Select [2, !Split ["/", !Ref AWS::StackId]]
       Policies:
         - AWSLambdaBasicExecutionRole
       FunctionUrlConfig:
-        # No IAM auth: CloudFront is the only thing that should call this, and
-        # the OAC below signs its requests. AuthType NONE with an unsigned
-        # Function URL would leave the origin publicly reachable, bypassing the
-        # CDN and every header policy on it.
-        AuthType: AWS_IAM
+        # NONE, not AWS_IAM with an origin access control. OAC can only sign a
+        # request body it can hash, and a browser's POST carries no
+        # x-amz-content-sha256 - so signing in, a POST to /api/auth/login,
+        # failed signature verification. The URL is reachable, and the
+        # x-origin-verify header CloudFront adds below is what src/proxy.ts
+        # checks to turn away anything that went around the CDN.
+        AuthType: NONE
         InvokeMode: BUFFERED
     Metadata:
       DockerContext: ./
@@ -99,25 +121,16 @@ Resources:
       LogGroupName: !Sub '/aws/lambda/marketingos-console-${Environment}'
       RetentionInDays: !Ref LogRetentionDays
 
-  # CloudFront signs its calls to the Function URL with SigV4, which is what
-  # lets the URL itself stay closed to everyone else.
-  ConsoleOriginAccessControl:
-    Type: AWS::CloudFront::OriginAccessControl
-    Properties:
-      OriginAccessControlConfig:
-        Name: !Sub 'marketingos-console-oac-${Environment}'
-        OriginAccessControlOriginType: lambda
-        SigningBehavior: always
-        SigningProtocol: sigv4
-
-  ConsoleFunctionUrlPermission:
+  # A public Function URL needs lambda:InvokeFunction as well as the
+  # InvokeFunctionUrl grant SAM writes; the condition limits it to calls that
+  # arrive through the URL.
+  ConsoleFunctionInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
       FunctionName: !Ref ConsoleFunction
-      Action: lambda:InvokeFunctionUrl
-      Principal: cloudfront.amazonaws.com
-      FunctionUrlAuthType: AWS_IAM
-      SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${ConsoleDistribution}'
+      Action: lambda:InvokeFunction
+      Principal: '*'
+      InvokedViaFunctionUrl: true
 
   ConsoleDistribution:
     Type: AWS::CloudFront::Distribution
@@ -127,7 +140,12 @@ Resources:
         Comment: !Sub 'MarketingOS console (${Environment})'
         HttpVersion: http2and3
         IPV6Enabled: true
-        PriceClass: PriceClass_100
+        # PriceClass_All, not _100: the CloudFront flat-rate plans refuse a
+        # distribution restricted to fewer edge locations ("not eligible for
+        # this subscription tier"), and on a flat rate the wider class costs
+        # nothing extra.
+        PriceClass: PriceClass_All
+        WebACLId: !If [HasWebAcl, !Ref WebAclArn, !Ref 'AWS::NoValue']
         Aliases: !If [HasDomain, [!Ref DomainName], !Ref 'AWS::NoValue']
         ViewerCertificate: !If
           - HasDomain
@@ -140,7 +158,9 @@ Resources:
             # !GetAtt on a Function URL returns https://<id>.lambda-url...,
             # and an origin wants the host on its own.
             DomainName: !Select [2, !Split ["/", !GetAtt ConsoleFunctionUrl.FunctionUrl]]
-            OriginAccessControlId: !Ref ConsoleOriginAccessControl
+            OriginCustomHeaders:
+              - HeaderName: x-origin-verify
+                HeaderValue: !Select [2, !Split ["/", !Ref AWS::StackId]]
             CustomOriginConfig:
               OriginProtocolPolicy: https-only
               OriginSSLProtocols: [TLSv1.2]
@@ -168,6 +188,28 @@ Resources:
             # CachingOptimized
             CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
             OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac
+
+  ConsoleDnsA:
+    Type: AWS::Route53::RecordSet
+    Condition: HasDns
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Ref DomainName
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt ConsoleDistribution.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2  # CloudFront's own zone, for every distribution
+
+  ConsoleDnsAAAA:
+    Type: AWS::Route53::RecordSet
+    Condition: HasDns
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Ref DomainName
+      Type: AAAA
+      AliasTarget:
+        DNSName: !GetAtt ConsoleDistribution.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2  # CloudFront's own zone, for every distribution
 
 Outputs:
   ConsoleUrl:

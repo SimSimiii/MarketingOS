@@ -182,26 +182,22 @@ async def test_the_panel_reads_the_same_draft_concurrently(
 # ------------------------------------------------------------------ routing
 
 
-def test_the_strongest_preset_does_not_reprice_the_cold_reader():
-    """21 of 38 calls in a measured maximum run were cold reads. A cold read
-    is a reaction, which is why the role asks for BALANCED - and a blanket
-    preset override used to overrule that."""
+def test_the_strongest_preset_uses_the_validated_sellable_model_for_every_role():
     from app.ai.model_router import ModelRouter
 
     router = ModelRouter(PRESETS["maximum"].model_overrides)
 
-    assert router.resolve("blind_reader", ModelTier.BALANCED) == "sonnet"
-    assert router.resolve("email_writer", ModelTier.DEEP) == "opus"
+    assert router.resolve("blind_reader", ModelTier.BALANCED) == "gpt-5.6-sol"
+    assert router.resolve("email_writer", ModelTier.DEEP) == "gpt-5.6-sol"
 
 
-def test_every_deep_role_is_named_in_the_strongest_preset():
-    """The preset lists roles by hand, so a role added later would silently
-    keep the default model. This is the reminder."""
+def test_the_strongest_preset_wildcard_covers_new_campaign_roles():
+    from app.ai.model_router import ModelRouter
     from app.marketing.critic import ROLE_ID as CRITIC
     from app.marketing.sequence import ROLE_ID as SEQUENCE
     from app.marketing.strategist import ROLE_ID as STRATEGIST
     from app.marketing.writer import ROLE_ID as WRITER
 
-    overrides = PRESETS["maximum"].model_overrides
+    router = ModelRouter(PRESETS["maximum"].model_overrides)
     for role in (STRATEGIST, WRITER, CRITIC, SEQUENCE):
-        assert overrides.get(role) == "opus", role
+        assert router.resolve(role, ModelTier.DEEP) == "gpt-5.6-sol", role

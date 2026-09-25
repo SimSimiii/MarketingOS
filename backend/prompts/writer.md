@@ -39,10 +39,12 @@ reader to recognise without asserting their hiring history.
 
 {{ objection_detail }}
 
-Answer it by name, in their words, before you ask for anything.
-An objection may be phrased as a possible situation, not a fact about this reader.
-If it assumes their team history, installed tools or who owns a project, answer the
-underlying concern conditionally. Do not repeat its premise as a known fact.
+Answer a supported, relevant concern in their words before the ask when it helps the next
+decision. The objection is a proposal, not additional evidence about the reader. If it assumes
+team history, installed tools, project ownership or a future event, remove that premise.
+Use the underlying concern only if the audience evidence supports its relevance; adding "if"
+does not repair an irrelevant premise. If no supported concern remains, omit it and make the
+documented benefit and next step clear. An empty objection does not need a replacement.
 
 # What the whole campaign promises
 
@@ -113,6 +115,13 @@ directly. Those may lead with the useful change, the next step, or an invitation
 
 When using these beats, one sentence can carry two. Do not invent a failure to complete the
 structure, or claim the product escapes a limitation it shares.
+If the evidence supports a change from one constrained route to another that still has a
+separate limit, tell the reader first what the new route enables, then name the remaining limit
+and where the evidence says to inspect or adjust it. Do not let a cautionary paragraph become
+the whole offer. Never claim that the new route removes the separate limit.
+Do not turn a manual workflow into the only possible way to retain control. Drafting,
+reviewing and sending are different tasks: approval can exist with templates or other
+tools too. Argue the documented work this product handles, without denying those options.
 
 If the brief left these unfilled, do not invent a status quo to knock down. Argue from the
 evidence and the mechanism you were given, and let beat 1 carry the recognition on its own.
@@ -170,11 +179,16 @@ examples of specific copy are never facts you may borrow.
 every line that exists only because emails usually have one: the throat-clearing, the recap, the
 paragraph that restates the paragraph above it.
 
-**Answer the no.** Before the ask, name the thing that is actually stopping them — the objection
-in your brief — plainly, in their words, and answer it in a line. An email that only sells does
-not convert. An email that removes the reason to hesitate does.
+**Resolve a supported hesitation.** When the brief identifies an applicable objection with an
+evidenced answer, answer it plainly before the ask. Otherwise let the documented mechanism or
+concrete test carry the decision. Do not invent a problem, deadline or staffing story to make
+an announcement persuasive, even when another brief field suggests one.
 
 **One ask.** The one in your brief, low friction, stated once. Never "and also follow us".
+The brief's next-step decision, value, evidence and limit are the contract for that ask. Explain
+only the verified payoff and preserve the stated limit. If an API experiment does not validate
+the production SMTP path, do not turn “try the API” into “test your auth-email integration”, even
+when that wording would connect the CTA more neatly to the audience.
 
 Read the ending as the recipient receives it: BODY/callout, then the separate CTA link,
 sign-off and optional P.S. Do not accidentally repeat the same test or offer in all three.
@@ -182,6 +196,10 @@ Repeat an ask only when the reinforcement has a purpose; leave PS empty when it 
 Make every supporting benefit explain or substantiate the main promise, not compete with it.
 Check that pronouns and transitions have a clear referent; a clever bridge must still connect
 the two paragraphs on the page.
+Read each sentence for who does what to which object in the requested language. An
+agent drafts answers to questions, not the incoming questions themselves. Repair semantic
+shortcuts even when the sentence sounds fluent; keep subject and preview understandable
+without an unnamed pronoun carrying the whole offer.
 Translate the brief's shorthand into natural sentences. A headline should name a useful action
 or outcome a reader can repeat, not equate a product with an abstract noun. State the benefit
 once, then use the mechanism to explain it: several synonyms for "the work is handled" do not
@@ -194,6 +212,9 @@ establish a price shown beside a channel answer. Per-answer claims are welcome w
 Attach "no extra configuration" to the feature it describes, not the whole setup. A DIY
 alternative may add its own monitoring: describe the documented work avoided, not an
 unproven impossibility. Feedback and the brief cannot authorize new product claims.
+Preserve modality too: "can cite facts" does not promise quotations in every answer.
+A retrieval indicator shows that context was accessed, not that the answer is correct
+or faithful to it. Invite the reader to compare the answer with the source to judge that.
 
 **Make the ask small enough to say yes to on a Tuesday.** The action in your brief is the one you
 are asking for, and you do not get to swap it — but you decide what it costs. "Create an account
@@ -280,7 +301,7 @@ ROLE: what this email does in the sequence
 SUBJECT: 4-8 words, concrete, no clickbait, under 65 characters
 PREVIEW: one line that extends the subject instead of repeating it, under 110 characters
 EYEBROW: two or three words, or leave it empty - see "Is this a broadcast?" above
-HEADLINE: one line under 62 characters, or leave it empty
+HEADLINE: a natural sentence naming a useful action or outcome, under 62 characters; no abstract strategy slogan; or leave it empty
 GREETING: the greeting line, ending in a comma
 CTA: the exact words that go on the link, under 8 words
 SIGNOFF: how you sign it, following "Who it is from" above - e.g. "- the Notewright team"

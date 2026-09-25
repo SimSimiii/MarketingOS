@@ -1,0 +1,1154 @@
+{
+  "id": "16c49a58-6292-4e50-8257-c6d5bf1d3e13",
+  "campaign_id": "c800b083-81be-4067-bda1-b47c44f56676",
+  "status": "completed",
+  "error_message": null,
+  "started_at": "2026-09-19T13:51:43.358053Z",
+  "completed_at": "2026-09-19T14:04:36.525909Z",
+  "created_at": "2026-09-19T13:51:43.358053Z",
+  "total_input_tokens": 1548997,
+  "total_output_tokens": 101364,
+  "total_cache_read_tokens": 1029120,
+  "estimated_cost_usd": 16.9441,
+  "recommendation_snapshot": {
+    "campaign_id": "c800b083-81be-4067-bda1-b47c44f56676",
+    "readiness": "DISCOVERY_ONLY",
+    "recommendation": {
+      "state": "DISCOVERY_ONLY",
+      "readiness": "DISCOVERY_ONLY",
+      "reasons": [
+        "No current V2 recommendation establishes product-to-audience fit."
+      ],
+      "eligible_subsegment": "",
+      "qualified_companies": [],
+      "adjacent_companies": [],
+      "excluded_companies": [],
+      "unverified_companies": [],
+      "allowed_claims": [],
+      "allowed_evidence_ids": [],
+      "forbidden_claims": [],
+      "forbidden_capability_ids": [],
+      "forbidden_evidence_ids": [],
+      "unresolved_objections": [],
+      "recommended_next_action": "Build or rebuild the Relevance Dossier V2, or generate explicitly as an audience-level hypothesis.",
+      "override_risk": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+      "claim_contract": null
+    },
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No current V2 recommendation establishes product-to-audience fit."
+    ],
+    "override_required": true,
+    "can_generate": true,
+    "user_message": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+    "override_explicit": true
+  },
+  "generated_despite_recommendation": true,
+  "agent_executions": [
+    {
+      "id": "21ea6698-a40a-4ee2-9f21-aa145b0c0425",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Avec orqAgent, l’équipe peut faire préparer des réponses sans déléguer l’envoi : l’auto-réponse est désactivée par défaut et chaque brouillon attend une validation humaine.",
+          "#2 Le lecteur peut juger orqAgent sur ses propres documents avant toute mise en production : importer une FAQ ou une politique, puis poser quelques vraies questions dans le Playground."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T13:51:43.544129Z",
+      "completed_at": "2026-09-19T13:52:58.035029Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 32654,
+      "output_tokens": 4744,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 12288,
+      "cost_usd": 0.864042,
+      "duration_ms": 74404.76829998079,
+      "attempt": 1
+    },
+    {
+      "id": "511fcc4b-3943-4b5e-952b-4ef7c8384083",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 4 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 4,
+        "ideas": [
+          "Avec orqAgent, l’équipe peut faire préparer des réponses sans déléguer l’envoi : l’auto-réponse est désactivée par défaut et chaque brouillon attend une validation humaine.",
+          "L’agent peut préparer ses réponses à partir des politiques et FAQ déjà documentées, avec la possibilité de citer les faits extraits.",
+          "Chaque exécution peut être inspectée dans l’historique afin d’évaluer le pilote avant d’élargir son usage.",
+          "La configuration de la boîte email se fait pour chaque agent depuis le tableau de bord, sans variables d’environnement."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Préparez des réponses avant envoi",
+          "Des brouillons avant tout envoi",
+          "L’auto-réponse est désactivée par défaut",
+          "Des brouillons avant chaque envoi"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T13:52:58.136384Z",
+      "completed_at": "2026-09-19T13:53:29.500446Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 47478,
+      "output_tokens": 6729,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 51712,
+      "cost_usd": 1.294413,
+      "duration_ms": 91657.8126999957,
+      "attempt": 1
+    },
+    {
+      "id": "bc701044-9279-4887-a618-d81879e0912e",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 4 candidate(s) read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 4,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 6,
+        "scores": [
+          6,
+          6,
+          6,
+          6
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T13:53:29.677297Z",
+      "completed_at": "2026-09-19T13:54:09.858713Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 80678,
+      "output_tokens": 17886,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 147456,
+      "cost_usd": 2.772804,
+      "duration_ms": 347767.6955999923,
+      "attempt": 1
+    },
+    {
+      "id": "b566212d-b1f0-4547-92f4-15bf9577d17e",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · the two best candidates, read side by side",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "challenger_won": true
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T13:54:09.870348Z",
+      "completed_at": "2026-09-19T13:54:19.062345Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 15779,
+      "output_tokens": 811,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 54272,
+      "cost_usd": 0.378918,
+      "duration_ms": 31118.01479998394,
+      "attempt": 1
+    },
+    {
+      "id": "634ba83b-b128-4c44-90ef-f7391378dd6d",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise"
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T13:54:19.087356Z",
+      "completed_at": "2026-09-19T13:54:54.464103Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 8896,
+      "output_tokens": 2289,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 14848,
+      "cost_usd": 0.327387,
+      "duration_ms": 35323.8868000044,
+      "attempt": 1
+    },
+    {
+      "id": "15094108-7f87-46b8-87b9-9c8c82aba377",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "Gardez la main sur chaque réponse"
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T13:54:54.475743Z",
+      "completed_at": "2026-09-19T13:55:13.434790Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 13823,
+      "output_tokens": 1202,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 14848,
+      "cost_usd": 0.319767,
+      "duration_ms": 18908.198999997694,
+      "attempt": 2
+    },
+    {
+      "id": "d0f3c7cb-3ca8-4a61-9822-65c7d15bdcb0",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 6
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T13:55:13.516672Z",
+      "completed_at": "2026-09-19T13:55:53.274816Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 28941,
+      "output_tokens": 5942,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 28160,
+      "cost_usd": 0.922005,
+      "duration_ms": 108307.01859999681,
+      "attempt": 2
+    },
+    {
+      "id": "66942d9c-62da-45ec-a3b9-b5dea9f8c17c",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 8,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1 read against the version it would replace",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "challenger_won": false
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T13:55:53.300781Z",
+      "completed_at": "2026-09-19T13:56:06.062241Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 21055,
+      "output_tokens": 1340,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 49152,
+      "cost_usd": 0.490053,
+      "duration_ms": 36066.17000000551,
+      "attempt": 2
+    },
+    {
+      "id": "8c482452-ddae-4670-8c03-75191af86b72",
+      "agent_id": "subject_writer",
+      "agent_name": "Subject Lines",
+      "sequence_order": 9,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 6 alternative subject lines",
+        "position": 1,
+        "variants": 6
+      },
+      "output_data": {
+        "subject": "Votre archive reste hors du périmètre"
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T13:56:06.082818Z",
+      "completed_at": "2026-09-19T13:56:34.865687Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 12530,
+      "output_tokens": 2385,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 56832,
+      "cost_usd": 0.452073,
+      "duration_ms": 48898.98169998196,
+      "attempt": 1
+    },
+    {
+      "id": "14742125-c01e-4a74-9b43-b35f7823ec19",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 10,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · 4 candidate(s), first draft",
+        "position": 2,
+        "attempt": 1,
+        "candidates": 4,
+        "ideas": [
+          "Le lecteur peut juger orqAgent sur ses propres documents avant toute mise en production : importer une FAQ ou une politique, puis poser quelques vraies questions dans le Playground.",
+          "Créer et configurer un agent depuis la console prend moins de deux minutes, ce qui permet de limiter l’évaluation à une première configuration.",
+          "Les garde-fous peuvent détecter les tentatives d’injection et consigner les blocages dans l’analytique.",
+          "L’historique des exécutions permet de présenter en interne les questions testées et les résultats observés plutôt qu’une simple promesse commerciale."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Testez orqAgent sur votre FAQ",
+          "Testez votre FAQ avant l’intégration",
+          "Testez orqAgent sur un document"
+        ],
+        "dropped": 1
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T13:56:34.884582Z",
+      "completed_at": "2026-09-19T13:57:01.039809Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 40426,
+      "output_tokens": 5949,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 59392,
+      "cost_usd": 1.141653,
+      "duration_ms": 88710.48690003227,
+      "attempt": 3
+    },
+    {
+      "id": "16783af8-0e93-4dc2-b18d-781a348ff1b2",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 11,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · 3 candidate(s) read cold by 3 reader(s)",
+        "position": 2,
+        "attempt": 1,
+        "candidates": 3,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 6,
+        "scores": [
+          6,
+          6,
+          5
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T13:57:01.163128Z",
+      "completed_at": "2026-09-19T13:57:45.736143Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 44871,
+      "output_tokens": 14400,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 125952,
+      "cost_usd": 1.941993,
+      "duration_ms": 265076.1000000639,
+      "attempt": 3
+    },
+    {
+      "id": "fcafb0f4-9623-4cc4-bba1-03c96ef70e38",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 12,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · the two best candidates, read side by side",
+        "position": 2,
+        "attempt": 1
+      },
+      "output_data": {
+        "challenger_won": true
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T13:57:45.744153Z",
+      "completed_at": "2026-09-19T13:57:57.890870Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 10567,
+      "output_tokens": 1274,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 59392,
+      "cost_usd": 0.343143,
+      "duration_ms": 33211.711600015406,
+      "attempt": 3
+    },
+    {
+      "id": "c0c37046-2963-4a76-9aa2-53400c8e1518",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 13,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · conversion critique",
+        "position": 2,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise"
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T13:57:57.914043Z",
+      "completed_at": "2026-09-19T13:58:31.756007Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 9063,
+      "output_tokens": 2419,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 14848,
+      "cost_usd": 0.339642,
+      "duration_ms": 33785.0080000062,
+      "attempt": 2
+    },
+    {
+      "id": "582f9194-2f8f-4881-944f-5efcfca7a790",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 14,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · rewrite 1",
+        "position": 2,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "Mettez une politique à l’épreuve"
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T13:58:31.768334Z",
+      "completed_at": "2026-09-19T13:59:13.669914Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 31200,
+      "output_tokens": 2957,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 27136,
+      "cost_usd": 0.730479,
+      "duration_ms": 41829.059499985306,
+      "attempt": 4
+    },
+    {
+      "id": "d9128865-2f3b-475f-9c68-245eae05b3d0",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 15,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · read cold by 3 reader(s)",
+        "position": 2,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 6
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T13:59:13.745014Z",
+      "completed_at": "2026-09-19T13:59:54.550423Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 19484,
+      "output_tokens": 5836,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 37632,
+      "cost_usd": 0.786408,
+      "duration_ms": 103586.97670002584,
+      "attempt": 4
+    },
+    {
+      "id": "b69b2bee-4e1e-4392-b4de-60a9011c29e6",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 16,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · rewrite 1 read against the version it would replace",
+        "position": 2,
+        "attempt": 2
+      },
+      "output_data": {
+        "challenger_won": true
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T13:59:54.561963Z",
+      "completed_at": "2026-09-19T14:00:01.515152Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 10827,
+      "output_tokens": 230,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 59392,
+      "cost_usd": 0.268743,
+      "duration_ms": 26065.868199977558,
+      "attempt": 4
+    },
+    {
+      "id": "18e6dfe9-7fa0-4a37-8676-2e48c4c51b9d",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 17,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · conversion critique",
+        "position": 2,
+        "attempt": 2
+      },
+      "output_data": {
+        "verdict": "revise"
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T14:00:01.528222Z",
+      "completed_at": "2026-09-19T14:00:49.030223Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 9197,
+      "output_tokens": 3302,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 14848,
+      "cost_usd": 0.407877,
+      "duration_ms": 47466.304499976104,
+      "attempt": 3
+    },
+    {
+      "id": "836e4ec6-1959-4419-8ee7-7b0d620591c9",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 18,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · rewrite 2",
+        "position": 2,
+        "attempt": 3
+      },
+      "output_data": {
+        "subject": "Vos règles face à des cas réels"
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T14:00:49.047035Z",
+      "completed_at": "2026-09-19T14:01:28.349873Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 14431,
+      "output_tokens": 3205,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 14848,
+      "cost_usd": 0.479112,
+      "duration_ms": 39244.93459999212,
+      "attempt": 5
+    },
+    {
+      "id": "13161284-5678-40a8-ab59-0fe472d93abd",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 19,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · read cold by 3 reader(s)",
+        "position": 2,
+        "attempt": 3
+      },
+      "output_data": {
+        "pull": 6
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T14:01:28.430260Z",
+      "completed_at": "2026-09-19T14:02:11.878643Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 12518,
+      "output_tokens": 5522,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 44544,
+      "cost_usd": 0.668736,
+      "duration_ms": 91682.65370003064,
+      "attempt": 5
+    },
+    {
+      "id": "09684cba-e79e-45a3-8085-59dfa8f3f50f",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 20,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · conversion critique",
+        "position": 2,
+        "attempt": 3
+      },
+      "output_data": {
+        "verdict": "revise"
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T14:02:11.894303Z",
+      "completed_at": "2026-09-19T14:02:57.835429Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 8893,
+      "output_tokens": 3421,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 14848,
+      "cost_usd": 0.412242,
+      "duration_ms": 45892.593299999135,
+      "attempt": 4
+    },
+    {
+      "id": "aa8d7dce-b4e7-4028-b893-3381ad7d1cc5",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 21,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · rewrite 3",
+        "position": 2,
+        "attempt": 4
+      },
+      "output_data": {
+        "subject": "Trois questions sur votre politique"
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T14:02:57.845227Z",
+      "completed_at": "2026-09-19T14:03:16.965738Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 14186,
+      "output_tokens": 1086,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 14848,
+      "cost_usd": 0.316512,
+      "duration_ms": 19056.936399982078,
+      "attempt": 6
+    },
+    {
+      "id": "f5b9a9ad-b41f-4fd3-9b57-1372bdbe6d52",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 22,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · read cold by 3 reader(s)",
+        "position": 2,
+        "attempt": 4
+      },
+      "output_data": {
+        "pull": 6
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T14:03:17.041596Z",
+      "completed_at": "2026-09-19T14:03:53.681833Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 19466,
+      "output_tokens": 5668,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 37632,
+      "cost_usd": 0.773538,
+      "duration_ms": 98496.18079999345,
+      "attempt": 6
+    },
+    {
+      "id": "8bc4bee3-4b9f-49e2-ba4d-0081607eb293",
+      "agent_id": "subject_writer",
+      "agent_name": "Subject Lines",
+      "sequence_order": 23,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · 6 alternative subject lines",
+        "position": 2,
+        "variants": 6
+      },
+      "output_data": {
+        "subject": "Avant de présenter orqAgent en interne"
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T14:03:53.703997Z",
+      "completed_at": "2026-09-19T14:04:23.501579Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 10042,
+      "output_tokens": 2368,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 59392,
+      "cost_usd": 0.417318,
+      "duration_ms": 51285.444599954644,
+      "attempt": 2
+    },
+    {
+      "id": "d419e8f6-8813-4dd5-9447-6cb5d85fea8f",
+      "agent_id": "sequence_reviewer",
+      "agent_name": "Sequence Reviewer",
+      "sequence_order": 24,
+      "status": "completed",
+      "input_data": {
+        "label": "Reading all 2 emails as one sequence"
+      },
+      "output_data": {
+        "passed": true
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T14:04:23.517331Z",
+      "completed_at": "2026-09-19T14:04:36.468107Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 2872,
+      "output_tokens": 399,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 14848,
+      "cost_usd": 0.095277,
+      "duration_ms": 12912.75200000382,
+      "attempt": 1
+    }
+  ],
+  "assets": [
+    {
+      "id": "35a2e28d-77ae-474b-a1f8-29934b16bfe6",
+      "asset_type": "email",
+      "title": "Votre archive reste hors du périmètre",
+      "content": "Subject: Votre archive reste hors du périmètre\nPreview text: Les expéditeurs automatisés et les messages de plus de 24 heures sont écartés.\n\nBonjour,\n\nL’auto-réponse est désactivée par défaut. Chaque réponse préparée arrive dans une file d’approbation avant tout envoi.\n\norqAgent est une plateforme sans code qui transforme vos FAQ et politiques en contexte pour un agent IA. Il prépare des brouillons dans votre boîte de réception et peut citer les faits extraits de vos documents.\n\nVous gardez la décision. Vous pouvez relire chaque brouillon, le modifier, l’envoyer ou l’ignorer.\n\nLors de la connexion, les expéditeurs automatisés sont écartés. Les messages vieux de plus de 24 heures le sont aussi — votre archive n’est pas reprise.\n\nCréez un premier agent sur un périmètre limité et examinez ses brouillons avant de décider de la suite.\n\nDémarrer gratuitement et créer un agent →\n\n- l’équipe orqAgent",
+      "content_html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n<meta name=\"x-apple-disable-message-reformatting\" />\n<meta name=\"color-scheme\" content=\"light\" />\n<meta name=\"supported-color-schemes\" content=\"light\" />\n<title>Votre archive reste hors du périmètre</title>\n</head>\n<body style=\"margin:0;padding:0;background-color:#eceef3;-webkit-text-size-adjust:100%;\">\n<div style=\"display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;\">Les expéditeurs automatisés et les messages de plus de 24 heures sont écartés.&#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; </div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#eceef3;\">\n<tr><td align=\"center\" style=\"padding:24px 12px;\">\n<table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;background-color:#ffffff;border-radius:12px;\">\n<tr><td style=\"background-color:#6609a5;height:4px;font-size:0;line-height:0;\">&nbsp;</td></tr>\n<tr><td style=\"padding:26px 36px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;font-weight:700;letter-spacing:0.2px;color:#14161a;\">orqagent</td></tr>\n<tr><td style=\"padding:32px 36px 16px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Bonjour,</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:17px;line-height:1.6;color:#3d434d;\">L’auto-réponse est désactivée par défaut. Chaque réponse préparée arrive dans une file d’approbation avant tout envoi.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">orqAgent est une plateforme sans code qui transforme vos FAQ et politiques en contexte pour un agent IA. Il prépare des brouillons dans votre boîte de réception et peut citer les faits extraits de vos documents.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Vous gardez la décision. Vous pouvez relire chaque brouillon, le modifier, l’envoyer ou l’ignorer.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Lors de la connexion, les expéditeurs automatisés sont écartés. Les messages vieux de plus de 24 heures le sont aussi — votre archive n’est pas reprise.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Créez un premier agent sur un périmètre limité et examinez ses brouillons avant de décider de la suite.</p></td></tr>\n<tr><td style=\"padding:6px 36px 22px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td style=\"border-top:1px solid #e6e9ef;font-size:0;line-height:0;\">&nbsp;</td></tr></table></td></tr>\n<tr><td align=\"center\" style=\"padding:4px 36px 8px;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"center\" style=\"background-color:#6609a5;border-radius:8px;\"><a href=\"https://app.orqagent.com/sign-up\" style=\"display:inline-block;padding:16px 40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;\">Démarrer gratuitement et créer un agent</a></td></tr></table></td></tr>\n<tr><td style=\"padding:22px 36px 20px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6;color:#767d89;\">- l’équipe orqAgent</p></td></tr>\n<tr><td align=\"center\" style=\"padding:22px 36px 28px;background-color:#fafbfc;border-top:1px solid #e6e9ef;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:12px;line-height:1.7;color:#767d89;\">Oussama BOURAJJAI<br />5 Avenue du commandant taillandier, Toulouse, France</td></tr>\n</table>\n</td></tr>\n</table>\n</body>\n</html>\n",
+      "position": 1,
+      "asset_metadata": {
+        "position": 1,
+        "role": "Lever la crainte d’un envoi sans contrôle",
+        "subject": "Votre archive reste hors du périmètre",
+        "preview_text": "Les expéditeurs automatisés et les messages de plus de 24 heures sont écartés.",
+        "eyebrow": "",
+        "headline": "",
+        "greeting": "Bonjour,",
+        "body": "L’auto-réponse est désactivée par défaut. Chaque réponse préparée arrive dans une file d’approbation avant tout envoi.\n\norqAgent est une plateforme sans code qui transforme vos FAQ et politiques en contexte pour un agent IA. Il prépare des brouillons dans votre boîte de réception et peut citer les faits extraits de vos documents.\n\nVous gardez la décision. Vous pouvez relire chaque brouillon, le modifier, l’envoyer ou l’ignorer.\n\nLors de la connexion, les expéditeurs automatisés sont écartés. Les messages vieux de plus de 24 heures le sont aussi — votre archive n’est pas reprise.\n\nCréez un premier agent sur un périmètre limité et examinez ses brouillons avant de décider de la suite.",
+        "call_to_action": "Démarrer gratuitement et créer un agent",
+        "sign_off": "- l’équipe orqAgent",
+        "postscript": "",
+        "pull": 6,
+        "revisions": 1,
+        "single_idea": "Avec orqAgent, l’équipe peut faire préparer des réponses sans déléguer l’envoi : l’auto-réponse est désactivée par défaut et chaque brouillon attend une validation humaine.",
+        "evidence_ids": [
+          "E102",
+          "E104",
+          "E105"
+        ],
+        "tier": "branded"
+      },
+      "created_at": "2026-09-19T14:04:36.504631Z"
+    },
+    {
+      "id": "5de6e4ff-4110-4663-a20a-80851641c432",
+      "asset_type": "email",
+      "title": "Avant de présenter orqAgent en interne",
+      "content": "Subject: Avant de présenter orqAgent en interne\nPreview text: Faites-le répondre à quelques questions réelles à partir d’un document que votre équipe connaît.\n\nBonjour,\n\nPour présenter un outil en interne, une démonstration générique apporte peu. Un essai sur une règle connue donne des réponses concrètes à examiner.\n\norqAgent permet de construire sans code un agent IA qui utilise vos documents de support pour préparer des réponses. La création du premier agent prend moins de deux minutes. L’import et l’évaluation viennent ensuite.\n\nCommencez par une politique publique ou non sensible, au format PDF, document ou texte brut. Pour chaque question, orqAgent recherche automatiquement le contexte qu’il juge le plus pertinent dans le fichier importé.\n\nDans le Playground, chaque session conserve son propre historique. L’agent garde aussi le contexte au fil de la conversation : vous pouvez poser plusieurs questions, puis comparer chaque réponse au texte d’origine.\n\nL’inscription ne demande aucune carte bancaire. Créez un agent, ajoutez une politique non sensible et soumettez-lui quelques questions réelles avant toute intégration.\n\nDémarrer gratuitement →\n\n- l’équipe orqAgent",
+      "content_html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n<meta name=\"x-apple-disable-message-reformatting\" />\n<meta name=\"color-scheme\" content=\"light\" />\n<meta name=\"supported-color-schemes\" content=\"light\" />\n<title>Avant de présenter orqAgent en interne</title>\n</head>\n<body style=\"margin:0;padding:0;background-color:#eceef3;-webkit-text-size-adjust:100%;\">\n<div style=\"display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;\">Faites-le répondre à quelques questions réelles à partir d’un document que votre équipe connaît.&#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; </div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#eceef3;\">\n<tr><td align=\"center\" style=\"padding:24px 12px;\">\n<table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;background-color:#ffffff;border-radius:12px;\">\n<tr><td style=\"background-color:#6609a5;height:4px;font-size:0;line-height:0;\">&nbsp;</td></tr>\n<tr><td style=\"padding:26px 36px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;font-weight:700;letter-spacing:0.2px;color:#14161a;\">orqagent</td></tr>\n<tr><td style=\"padding:32px 36px 16px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Bonjour,</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:17px;line-height:1.6;color:#3d434d;\">Pour présenter un outil en interne, une démonstration générique apporte peu. Un essai sur une règle connue donne des réponses concrètes à examiner.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">orqAgent permet de construire sans code un agent IA qui utilise vos documents de support pour préparer des réponses. La création du premier agent prend <strong style=\"font-weight:700;color:#14161a;\">moins de deux minutes</strong>. L’import et l’évaluation viennent ensuite.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Commencez par une politique publique ou non sensible, au format PDF, document ou texte brut. Pour chaque question, orqAgent recherche automatiquement le contexte qu’il juge le plus pertinent dans le fichier importé.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Dans le Playground, chaque session conserve son propre historique. L’agent garde aussi le contexte au fil de la conversation : vous pouvez poser plusieurs questions, puis comparer chaque réponse au texte d’origine.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">L’inscription ne demande <strong style=\"font-weight:700;color:#14161a;\">aucune carte bancaire</strong>. Créez un agent, ajoutez une politique non sensible et soumettez-lui quelques questions réelles avant toute intégration.</p></td></tr>\n<tr><td style=\"padding:6px 36px 22px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td style=\"border-top:1px solid #e6e9ef;font-size:0;line-height:0;\">&nbsp;</td></tr></table></td></tr>\n<tr><td align=\"center\" style=\"padding:4px 36px 8px;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"center\" style=\"background-color:#6609a5;border-radius:8px;\"><a href=\"https://app.orqagent.com/sign-up\" style=\"display:inline-block;padding:16px 40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;\">Démarrer gratuitement</a></td></tr></table></td></tr>\n<tr><td style=\"padding:22px 36px 20px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6;color:#767d89;\">- l’équipe orqAgent</p></td></tr>\n<tr><td align=\"center\" style=\"padding:22px 36px 28px;background-color:#fafbfc;border-top:1px solid #e6e9ef;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:12px;line-height:1.7;color:#767d89;\">Oussama BOURAJJAI<br />5 Avenue du commandant taillandier, Toulouse, France</td></tr>\n</table>\n</td></tr>\n</table>\n</body>\n</html>\n",
+      "position": 2,
+      "asset_metadata": {
+        "position": 2,
+        "role": "Faire tester une politique réelle sans intégration",
+        "subject": "Avant de présenter orqAgent en interne",
+        "preview_text": "Faites-le répondre à quelques questions réelles à partir d’un document que votre équipe connaît.",
+        "eyebrow": "",
+        "headline": "",
+        "greeting": "Bonjour,",
+        "body": "Pour présenter un outil en interne, une démonstration générique apporte peu. Un essai sur une règle connue donne des réponses concrètes à examiner.\n\norqAgent permet de construire sans code un agent IA qui utilise vos documents de support pour préparer des réponses. La création du premier agent prend **moins de deux minutes**. L’import et l’évaluation viennent ensuite.\n\nCommencez par une politique publique ou non sensible, au format PDF, document ou texte brut. Pour chaque question, orqAgent recherche automatiquement le contexte qu’il juge le plus pertinent dans le fichier importé.\n\nDans le Playground, chaque session conserve son propre historique. L’agent garde aussi le contexte au fil de la conversation : vous pouvez poser plusieurs questions, puis comparer chaque réponse au texte d’origine.\n\nL’inscription ne demande **aucune carte bancaire**. Créez un agent, ajoutez une politique non sensible et soumettez-lui quelques questions réelles avant toute intégration.",
+        "call_to_action": "Démarrer gratuitement",
+        "sign_off": "- l’équipe orqAgent",
+        "postscript": "",
+        "pull": 6,
+        "revisions": 3,
+        "single_idea": "Le lecteur peut juger orqAgent sur ses propres documents avant toute mise en production : importer une FAQ ou une politique, puis poser quelques vraies questions dans le Playground.",
+        "evidence_ids": [
+          "E11",
+          "E50",
+          "E39"
+        ],
+        "tier": "branded"
+      },
+      "created_at": "2026-09-19T14:04:36.515928Z"
+    }
+  ],
+  "result": {
+    "run_status": "degraded",
+    "report": {
+      "request": "Rédige une séquence de exactement 2 emails en français pour présenter orqAgent à des responsables support qui ne l’ont pas encore acheté et les inviter à essayer le produit. Chaque email doit donner une raison différente de passer à l’action. Ton professionnel, concret et naturel.",
+      "delivered": 2,
+      "promised": 2,
+      "contract_violations": [],
+      "emails": [
+        {
+          "position": 1,
+          "subject": "Votre archive reste hors du périmètre",
+          "single_idea": "Avec orqAgent, l’équipe peut faire préparer des réponses sans déléguer l’envoi : l’auto-réponse est désactivée par défaut et chaque brouillon attend une validation humaine.",
+          "pull": 6.0,
+          "revisions": 1,
+          "clean": true,
+          "landed": false,
+          "rewrites_stopped_helping": true,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E102",
+            "E104",
+            "E105"
+          ],
+          "evidence_spent": [
+            "E105"
+          ],
+          "attributions": 0,
+          "unresolved": [],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "A no-code support tool that uses our FAQ and policy documents to draft cited inbox replies for human approval, potentially reducing repetitive ticket work without sending automatically.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The repetitive support workload is explicitly part of the profile, and the approval queue directly addresses the stated need to avoid unsafe automated replies. The email additionally assumes we have usable FAQ or policy documents, a compatible inbox, and enough authority to connect it; those points are plausible but not established.",
+              "assumed_experiences": [
+                "Profile-supported: answering the same support questions repeatedly.",
+                "Profile-supported: needing to sell the idea upward.",
+                "Email-only: having FAQ and policy documents suitable for use as agent context.",
+                "Email-only: being willing and authorized to connect the live inbox.",
+                "Email-only: needing protection against automated senders and old messages during connection."
+              ],
+              "problem_now": "The repetitive workload matters now, especially with four hundred unread, while an incorrect policy or refund response is a consequential risk. Whether the documents are ready and the inbox can be connected safely is unknown.",
+              "stopped_at": "",
+              "biggest_doubt": "I do not know what prevents a draft from inventing or misreading a refund rule; citations help me inspect it, but they are not evidence that the draft stays within policy. I also cannot judge the setup effort, inbox compatibility, data handling, or eventual price before proposing this upward.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me I could test one FAQ document on sample tickets, without connecting the live inbox, and shown exactly how unsupported policy claims are flagged.",
+              "fixes": [
+                "Rewrite “orqAgent est une plateforme sans code qui transforme vos FAQ et politiques en contexte pour un agent IA.” as “Importez une FAQ ou une politique : orqAgent prépare des brouillons de réponse aux tickets répétitifs, sans développeur.”",
+                "Rewrite “Il prépare des brouillons dans votre boîte de réception et peut citer les faits extraits de vos documents.” to explain what happens when the documents do not support an answer and whether the citation is attached to every policy claim.",
+                "Rewrite “Créez un premier agent sur un périmètre limité et examinez ses brouillons avant de décider de la suite.” as a smaller, explicit test: “Testez un document sur quelques tickets d’exemple, sans connecter votre boîte de réception.”",
+                "Rewrite “Démarrer gratuitement et créer un agent →” to state the immediate commitment, setup time, and whether an inbox connection is required."
+              ],
+              "opens_in_100": 28,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (explicit constraints): Support lead who answers the same forty tickets and has to sell the idea upward.\nContext (inferred; applicability must be checked): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.\n\nProblem context: A large, repetitive share of inbound is order-status and policy questions whose answers already exist (inferred); source: unknown\nProblem context: Repetition drives burnout and slows response times on the hard tickets (inferred); source: unknown\nProblem context: No developer and no budget line to hire one, so just call the API is dead on arrival (inferred); source: unknown\nProblem context: Connecting anything to the live inbox risks blasting replies at the archive (inferred); source: unknown\nProblem context: One wrong refund promise costs more than a month of saved time (inferred); source: unknown",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "Un logiciel sans code qui utilise les FAQ et politiques de l’entreprise pour préparer, dans la boîte de réception, des réponses que le support doit approuver avant leur envoi, ce qui pourrait réduire le temps passé à rédiger les réponses répétitives.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Le problème central correspond au profil explicite : je traite les mêmes tickets à répétition et dois pouvoir défendre l’idée auprès de ma hiérarchie. En revanche, l’existence de FAQ exploitables, l’absence de développeur, le budget disponible et la compatibilité avec notre boîte de réception ne sont pas établis par le profil. L’email affirme aussi que les anciens messages et expéditeurs automatisés seront écartés, sans apporter de preuve suffisante pour que je confie immédiatement une boîte active au produit.",
+              "assumed_experiences": [
+                "Profile-supported: je réponds fréquemment aux mêmes demandes de support.",
+                "Profile-supported: je devrai vendre l’idée en interne.",
+                "Email-only: nous disposons de FAQ et de politiques suffisamment complètes et à jour pour alimenter l’agent.",
+                "Email-only: nous pouvons et voulons connecter notre boîte de réception à un service externe.",
+                "Email-only: une file d’approbation s’intégrera utilement à notre manière de travailler.",
+                "Unknown: nous n’avons aucun développeur disponible ni budget pour une autre solution.",
+                "Unknown: notre archive pourrait être traitée par erreur lors d’une intégration."
+              ],
+              "problem_now": "La répétition est un problème actuel et important d’après le profil. Le risque qu’une réponse automatisée promette quelque chose d’incorrect est également important, mais les incidents passés, l’urgence d’un déploiement et l’état réel de nos documents restent inconnus.",
+              "stopped_at": "",
+              "biggest_doubt": "Je ne sais pas combien de temps il faut pour connecter la boîte, préparer les documents et vérifier les brouillons, ni quelles protections concrètes empêchent une réponse erronée sur un remboursement. À trois minutes d’une réunion, « créer un agent » paraît plus lourd qu’un test rapide, et les affirmations sur le filtrage de l’archive ne suffisent pas à me rassurer.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me that I could test one FAQ on a handful of copied tickets, without connecting the live inbox, in under five minutes.",
+              "fixes": [
+                "Réécrire « Lors de la connexion, les expéditeurs automatisés sont écartés. Les messages vieux de plus de 24 heures le sont aussi — votre archive n’est pas reprise. » en « Avant toute connexion, vous pouvez tester sur quelques tickets copiés. Si vous connectez ensuite la boîte, expliquez-moi précisément ce qui est lu, exclu et envoyé. »",
+                "Réécrire « Créez un premier agent sur un périmètre limité et examinez ses brouillons avant de décider de la suite. » en « Testez une FAQ sur cinq tickets, sans envoi automatique ni accès à vos archives, puis montrez les brouillons à votre responsable. »",
+                "Réécrire « Démarrer gratuitement et créer un agent → » en « Tester cinq tickets sans connecter la boîte → »"
+              ],
+              "opens_in_100": 28,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (explicit constraints): Support lead who answers the same forty tickets and has to sell the idea upward.\nContext (inferred; applicability must be checked): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.\n\nProblem context: A large, repetitive share of inbound is order-status and policy questions whose answers already exist (inferred); source: unknown\nProblem context: Repetition drives burnout and slows response times on the hard tickets (inferred); source: unknown\nProblem context: No developer and no budget line to hire one, so just call the API is dead on arrival (inferred); source: unknown\nProblem context: Connecting anything to the live inbox risks blasting replies at the archive (inferred); source: unknown\nProblem context: One wrong refund promise costs more than a month of saved time (inferred); source: unknown\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "Un outil sans code qui utilise nos FAQ et politiques pour préparer dans la boîte de réception des réponses que je dois approuver, afin de réduire le travail répétitif sans envoyer automatiquement.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Le contrôle avant envoi correspond directement à ma crainte explicite qu’une réponse automatisée promette à tort un remboursement, et le « sans code » correspond à l’absence de développeur. Le profil établit aussi que je traite beaucoup de tickets répétitifs. En revanche, le fait que nos réponses soient exploitables telles quelles dans des documents, la compatibilité avec notre boîte de réception et la facilité réelle de mise en place restent inconnus.",
+              "assumed_experiences": [
+                "Profile-supported: je traite les mêmes tickets de support de façon répétitive.",
+                "Profile-supported: je dois pouvoir défendre l’idée auprès de ma hiérarchie.",
+                "Profile-supported: je n’ai pas de développeur disponible et je crains les réponses qui engagent l’entreprise à tort.",
+                "Email-only: nos FAQ et politiques sont suffisamment complètes et fiables pour servir de contexte à l’agent.",
+                "Email-only: notre boîte de réception est compatible avec la plateforme.",
+                "Email-only: exclure les expéditeurs automatisés et les messages de plus de 24 heures suffit à empêcher une reprise dangereuse de l’archive."
+              ],
+              "problem_now": "La répétition et le risque d’une mauvaise réponse sont importants pour mon travail, mais l’urgence d’adopter cet outil aujourd’hui et son adéquation technique à notre boîte restent inconnues.",
+              "stopped_at": "",
+              "biggest_doubt": "Je ne sais pas combien de temps prend le premier essai, quelles permissions la connexion exige, ni comment l’outil évite qu’un brouillon déforme une politique de remboursement malgré une citation.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me that I could test one FAQ on a few recent tickets in under five minutes, without enabling sending or connecting the live inbox.",
+              "fixes": [
+                "Remplacer « Il prépare des brouillons dans votre boîte de réception et peut citer les faits extraits de vos documents. » par « Testez une FAQ sur quelques tickets récents : vous verrez le passage source sous chaque brouillon avant toute décision d’envoi. »",
+                "Préciser « Lors de la connexion, les expéditeurs automatisés sont écartés. Les messages vieux de plus de 24 heures le sont aussi — votre archive n’est pas reprise. » en indiquant si ces protections sont garanties, configurables et visibles avant l’accès à la boîte.",
+                "Remplacer « Créez un premier agent sur un périmètre limité et examinez ses brouillons avant de décider de la suite. » par une première étape concrète indiquant le temps nécessaire, les permissions demandées et si l’essai peut se faire sans connexion à la boîte en production.",
+                "Remplacer « Démarrer gratuitement et créer un agent → » par un CTA moins engageant pour ce matin, par exemple une démonstration d’un brouillon à partir d’une FAQ, si cette possibilité existe."
+              ],
+              "opens_in_100": 29,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (explicit constraints): Support lead who answers the same forty tickets and has to sell the idea upward.\nContext (inferred; applicability must be checked): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.\n\nProblem context: A large, repetitive share of inbound is order-status and policy questions whose answers already exist (inferred); source: unknown\nProblem context: Repetition drives burnout and slows response times on the hard tickets (inferred); source: unknown\nProblem context: No developer and no budget line to hire one, so just call the API is dead on arrival (inferred); source: unknown\nProblem context: Connecting anything to the live inbox risks blasting replies at the archive (inferred); source: unknown\nProblem context: One wrong refund promise costs more than a month of saved time (inferred); source: unknown\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 6
+            }
+          ],
+          "sameness": []
+        },
+        {
+          "position": 2,
+          "subject": "Avant de présenter orqAgent en interne",
+          "single_idea": "Le lecteur peut juger orqAgent sur ses propres documents avant toute mise en production : importer une FAQ ou une politique, puis poser quelques vraies questions dans le Playground.",
+          "pull": 6.0,
+          "revisions": 3,
+          "clean": true,
+          "landed": false,
+          "rewrites_stopped_helping": true,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E11",
+            "E50",
+            "E39"
+          ],
+          "evidence_spent": [],
+          "attributions": 0,
+          "unresolved": [],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "A no-code AI support tool that uses our documents to draft answers, potentially reducing repetitive ticket work if its replies can be trusted.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile explicitly establishes that I must sell the idea upward, lack a developer, and fear an automated refund promise; the no-code setup and test with a non-sensitive policy fit those constraints. Repetitive policy questions and the usefulness of this particular document-based workflow are plausible but remain inferred rather than confirmed.",
+              "assumed_experiences": [
+                "Profile-supported: I need evidence concrete enough to present the idea internally.",
+                "Profile-supported: I cannot assign integration work to a developer.",
+                "Profile-supported: I need to assess the risk of an answer inventing an unsupported refund.",
+                "Email-only: I have a suitable public or non-sensitive support policy ready to import.",
+                "Email-only: testing document-grounded answers in a playground would give me useful evidence for an internal decision.",
+                "Unknown: whether repetitive order-status and policy questions make up a large share of my current inbox."
+              ],
+              "problem_now": "Burnout and delayed responses from repetitive tickets are plausible current problems, but their prevalence is not established. Preventing an incorrect policy promise is a consequential risk now; there is no documented rollout deadline beyond this being a busy Tuesday morning.",
+              "stopped_at": "Dans le Playground, chaque session conserve son propre historique.",
+              "biggest_doubt": "I cannot tell whether it only prepares drafts for review, shows the exact source behind each answer, or can confidently invent a refund that our policy does not permit.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me whether every answer is a reviewable draft with a visible citation to the exact policy passage, and what happens when the document does not contain an answer.",
+              "fixes": [
+                "Rewrite \"orqAgent permet de construire sans code un agent IA qui utilise vos documents de support pour préparer des réponses.\" to state whether these are drafts requiring approval and whether the tool identifies the supporting passage.",
+                "Cut \"Dans le Playground, chaque session conserve son propre historique.\" It is product detail I do not need before deciding whether the test is safe or useful.",
+                "Rewrite \"Pour chaque question, orqAgent recherche automatiquement le contexte qu’il juge le plus pertinent dans le fichier importé.\" to explain how I can verify that selected context and what the agent does when the file does not support an answer.",
+                "Rewrite \"Créez un agent, ajoutez une politique non sensible et soumettez-lui quelques questions réelles avant toute intégration.\" to give me a smaller, time-bounded test and explicitly say that nothing connects to or sends replies from the live inbox."
+              ],
+              "opens_in_100": 24,
+              "clicks_in_100": 4,
+              "persona": "Selected audience (explicit constraints): Support lead who answers the same forty tickets and has to sell the idea upward.\nContext (inferred; applicability must be checked): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.\n\nProblem context: A large, repetitive share of inbound is order-status and policy questions whose answers already exist (inferred); source: unknown\nProblem context: Repetition drives burnout and slows response times on the hard tickets (inferred); source: unknown\nProblem context: No developer and no budget line to hire one, so just call the API is dead on arrival (inferred); source: unknown\nProblem context: Connecting anything to the live inbox risks blasting replies at the archive (inferred); source: unknown\nProblem context: One wrong refund promise costs more than a month of saved time (inferred); source: unknown",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "Un outil sans code qui transforme des documents de support en contexte pour un agent IA préparant des réponses, afin de réduire le temps passé sur les questions répétitives.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Le besoin central correspond au profil explicite : je traite les mêmes tickets et dois défendre l’idée en interne; l’essai sans code sur un document non sensible est donc pertinent. En revanche, les catégories exactes de tickets, l’existence d’une politique importable et le comportement de l’outil face à une réponse risquée restent inconnus.",
+              "assumed_experiences": [
+                "Profile-supported: je réponds régulièrement aux mêmes tickets et dois vendre l’idée à ma hiérarchie.",
+                "Profile-supported: je n’ai pas de développeur disponible, ce qui rend la promesse « sans code » pertinente.",
+                "Email-only: je dispose immédiatement d’une politique publique ou non sensible dans un format importable.",
+                "Email-only: une démonstration générique ne suffirait pas à ma présentation interne.",
+                "Not established by the profile: mes tickets répétitifs portent précisément sur le suivi de commande ou les remboursements."
+              ],
+              "problem_now": "La répétition des tickets est un problème actuel établi par le profil et rend l’offre utile. Le risque qu’une IA formule une mauvaise promesse de remboursement est également important, mais la façon dont ce test le maîtrise n’est pas indiquée.",
+              "stopped_at": "« Dans le Playground, chaque session conserve son propre historique. »",
+              "biggest_doubt": "Je ne sais pas si le Playground produit uniquement des brouillons à valider, ni s’il montre précisément les passages sources; sans cela, je ne peux pas évaluer le risque d’une réponse qui invente une règle ou promet un remboursement.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me whether the Playground can only prepare drafts and is technically unable to send anything to customers.",
+              "fixes": [
+                "« La création du premier agent prend moins de deux minutes. L’import et l’évaluation viennent ensuite. » — remplacer cette chronologie incomplète par le temps total nécessaire pour importer un document et vérifier trois réponses.",
+                "« Pour chaque question, orqAgent recherche automatiquement le contexte qu’il juge le plus pertinent dans le fichier importé. » — préciser si la réponse affiche les passages utilisés et ce qui se passe lorsque le document ne contient pas la réponse.",
+                "« Dans le Playground, chaque session conserve son propre historique. L’agent garde aussi le contexte au fil de la conversation » — couper ces détails secondaires et utiliser cet espace pour répondre au risque principal : brouillon à valider ou réponse susceptible d’être envoyée.",
+                "« soumettez-lui quelques questions réelles avant toute intégration » — préciser si cet essai reste entièrement isolé de la boîte de réception et ne peut déclencher aucun envoi."
+              ],
+              "opens_in_100": 24,
+              "clicks_in_100": 4,
+              "persona": "Selected audience (explicit constraints): Support lead who answers the same forty tickets and has to sell the idea upward.\nContext (inferred; applicability must be checked): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.\n\nProblem context: A large, repetitive share of inbound is order-status and policy questions whose answers already exist (inferred); source: unknown\nProblem context: Repetition drives burnout and slows response times on the hard tickets (inferred); source: unknown\nProblem context: No developer and no budget line to hire one, so just call the API is dead on arrival (inferred); source: unknown\nProblem context: Connecting anything to the live inbox risks blasting replies at the archive (inferred); source: unknown\nProblem context: One wrong refund promise costs more than a month of saved time (inferred); source: unknown\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "Un outil sans code qui transforme mes documents de support en contexte pour qu’un agent IA prépare des réponses, ce qui pourrait réduire les questions répétitives que je traite.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Le profil établit que je traite beaucoup de tickets répétitifs et dois défendre l’idée en interne; tester une règle connue sur un document non sensible correspond donc bien à ma situation. En revanche, la présence de réponses déjà documentées, l’absence de développeur, le budget disponible et les contraintes exactes de la boîte de réception restent inconnus.",
+              "assumed_experiences": [
+                "Profile-supported: je dois présenter et vendre l’idée en interne.",
+                "Profile-supported: je réponds de façon répétitive aux mêmes types de tickets.",
+                "Email-only: je dispose d’une politique publique ou non sensible prête à importer.",
+                "Email-only: plusieurs questions réelles permettent d’évaluer utilement l’outil.",
+                "Email-only: comparer les réponses au document d’origine suffit à juger le risque avant intégration."
+              ],
+              "problem_now": "La répétition est un problème actuel établi par le profil, et le risque d’une réponse erronée sur un remboursement est important. L’urgence d’adopter un outil et l’état réel de notre documentation ne sont pas établis.",
+              "stopped_at": "",
+              "biggest_doubt": "Je ne sais pas si le Playground montre précisément les passages sources et garantit qu’aucune réponse ne peut être envoyée au client pendant l’essai; sans cela, je ne peux pas évaluer sérieusement le risque d’une promesse de remboursement inventée.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me that the Playground is disconnected from the live inbox and shows the exact source passage beside every draft answer.",
+              "fixes": [
+                "Rewrite « Pour chaque question, orqAgent recherche automatiquement le contexte qu’il juge le plus pertinent dans le fichier importé. » to state whether the selected source passage is visible beside the answer and what happens when the document contains no supported answer.",
+                "Rewrite « soumettez-lui quelques questions réelles avant toute intégration » to say explicitly whether this test is isolated from the live inbox and cannot send any customer reply.",
+                "Cut or shorten « Dans le Playground, chaque session conserve son propre historique. L’agent garde aussi le contexte au fil de la conversation » unless conversational memory is necessary for evaluating policy-answer accuracy."
+              ],
+              "opens_in_100": 24,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (explicit constraints): Support lead who answers the same forty tickets and has to sell the idea upward.\nContext (inferred; applicability must be checked): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.\n\nProblem context: A large, repetitive share of inbound is order-status and policy questions whose answers already exist (inferred); source: unknown\nProblem context: Repetition drives burnout and slows response times on the hard tickets (inferred); source: unknown\nProblem context: No developer and no budget line to hire one, so just call the API is dead on arrival (inferred); source: unknown\nProblem context: Connecting anything to the live inbox risks blasting replies at the archive (inferred); source: unknown\nProblem context: One wrong refund promise costs more than a month of saved time (inferred); source: unknown\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 6
+            }
+          ],
+          "sameness": []
+        }
+      ],
+      "limiting_gaps": [
+        "No customer names, quotes or case studies found - the copy can describe the product but cannot prove anyone uses it"
+      ],
+      "what_would_help_most": "Resolve this simulated next-step obstacle: I would have clicked if this email had told me I could test one FAQ document on sample tickets, without connecting the live inbox, and shown exactly how unsupported policy claims are flagged. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.",
+      "questions": [],
+      "sequence_summary": "La séquence tient sa promesse et progresse clairement de la maîtrise humaine des envois vers un test concret, autonome et sans intégration préalable.",
+      "knowledge_version": 5,
+      "notes": [],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "Séquence commerciale de 2 emails destinée à des responsables support qui ne connaissent pas encore orqAgent, afin de les amener à tester un usage étroit — préparer des réponses aux questions de politique ou de FAQ — sans leur demander de remplacer leur outil actuel ni d’automatiser les envois.",
+      "reader": "Selected audience: Support lead who answers the same forty tickets and has to sell the idea upward.\nSituation context (inferred; check applicability): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.",
+      "reader_segment": "Support lead who answers the same forty tickets and has to sell the idea upward",
+      "promise": "Tester orqAgent sur un périmètre FAQ ou politique limité permet de faire préparer des réponses par l’IA tout en gardant la décision d’envoi entre les mains de l’équipe support.",
+      "orientation": "orqAgent est une plateforme sans code qui transforme les documents de support en contexte pour un agent IA capable de préparer des réponses dans une boîte email, avec validation humaine avant envoi.",
+      "arc": "Le premier email rend l’essai acceptable en montrant que l’agent ne répond pas seul par défaut. Le second rend l’essai facile à engager en proposant de vérifier le résultat sur un document réel, dans le Playground et sans carte bancaire.",
+      "sequence_rationale": "L’objection la plus forte vient avant la commodité : tant que le lecteur pense qu’un essai peut envoyer une mauvaise réponse à un client ou toucher ses anciens messages, la gratuité ne compte pas. L’email 1 établit donc les limites opérationnelles concrètes. L’email 2 réduit ensuite le prochain pas à un test isolé sur une FAQ ou une politique, sans connexion immédiate à la boîte de réception. La séquence évite les questions de suivi de commande, qui exigent des données opérationnelles en temps réel non établies ici, ainsi que toute promesse de justesse ou de gain mesuré faute de résultats clients. Quels clients ou témoignages pouvons-nous citer ?",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Obtenir l’ouverture d’un essai en levant la crainte qu’un agent IA envoie directement une réponse incorrecte aux clients.",
+          "single_idea": "Avec orqAgent, l’équipe peut faire préparer des réponses sans déléguer l’envoi : l’auto-réponse est désactivée par défaut et chaque brouillon attend une validation humaine.",
+          "felt_need": "Je veux réduire la répétition, mais pas découvrir après coup qu’une IA a promis un remboursement ou donné une consigne que nous n’appliquons pas.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "Les brouillons arrivent dans une file d’approbation où ils peuvent être relus, modifiés, envoyés ou ignorés. Lors de la connexion, les expéditeurs automatisés et les messages vieux de plus de 24 heures sont écartés.",
+          "alternative_ideas": [
+            "L’agent peut préparer ses réponses à partir des politiques et FAQ déjà documentées, avec la possibilité de citer les faits extraits.",
+            "Chaque exécution peut être inspectée dans l’historique afin d’évaluer le pilote avant d’élargir son usage.",
+            "La configuration de la boîte email se fait pour chaque agent depuis le tableau de bord, sans variables d’environnement."
+          ],
+          "belief_shift": "Avant : essayer un agent sur la boîte support revient à risquer des envois incontrôlés. Après : le lecteur comprend qu’il peut commencer avec des brouillons soumis à validation, sans toucher aux anciens messages.",
+          "evidence_ids": [
+            "E102",
+            "E104",
+            "E105"
+          ],
+          "must_not_say": [
+            "Ne pas promettre que l’agent répond correctement à chaque demande ou élimine les erreurs.",
+            "Ne pas suggérer que les réponses sont envoyées automatiquement : la validation humaine est précisément l’argument de cet email.",
+            "Ne pas prétendre traiter les demandes de suivi de commande à partir de données en temps réel.",
+            "Ne pas citer les tarifs, crédits ou limites d’exécution, dont les tableaux disponibles se contredisent.",
+            "Ne pas ajouter les modèles, les intégrations, l’analytique, la sécurité ou la disponibilité : ils dilueraient l’argument unique.",
+            "Ne pas évoquer de clients, de résultats obtenus ou de gains de temps chiffrés, faute de preuve."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "Je ne peux pas laisser une IA répondre sans contrôle : une seule mauvaise promesse peut coûter plus cher que le temps économisé.",
+          "tone": "Rassurant, factuel et précis, sans dramatiser le risque.",
+          "call_to_action": "Démarrer gratuitement et créer un premier agent.",
+          "subject_strategy": "Mettre en avant la validation avant envoi, avec un sujet sobre qui signale le contrôle humain plutôt qu’une promesse générale d’automatisation.",
+          "must_not_reuse": []
+        },
+        {
+          "position": 2,
+          "job": "Transformer l’intérêt en test concret sur une FAQ ou une politique réelle, sans connexion immédiate à la boîte de réception.",
+          "single_idea": "Le lecteur peut juger orqAgent sur ses propres documents avant toute mise en production : importer une FAQ ou une politique, puis poser quelques vraies questions dans le Playground.",
+          "felt_need": "Avant de défendre un nouvel outil en interne, je dois voir ce qu’il produit à partir de nos propres règles — pas d’une démonstration générique.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "orqAgent récupère le contexte pertinent dans les documents importés, tandis que le Playground permet de tester la configuration de l’agent dans une conversation séparée. L’inscription est gratuite et ne demande pas de carte bancaire.",
+          "alternative_ideas": [
+            "Créer et configurer un agent depuis la console prend moins de deux minutes, ce qui permet de limiter l’évaluation à une première configuration.",
+            "Les garde-fous peuvent détecter les tentatives d’injection et consigner les blocages dans l’analytique.",
+            "L’historique des exécutions permet de présenter en interne les questions testées et les résultats observés plutôt qu’une simple promesse commerciale."
+          ],
+          "belief_shift": "Avant : évaluer orqAgent demande de connecter la boîte support ou de lancer un projet technique. Après : le lecteur voit un test autonome et réversible sur un seul document, réalisable avant toute intégration.",
+          "evidence_ids": [
+            "E11",
+            "E50",
+            "E39"
+          ],
+          "must_not_say": [
+            "Ne pas garantir que la récupération documentaire trouvera toujours le bon passage ni que la réponse sera exacte.",
+            "Ne pas présenter ce test comme une migration complète ou comme la preuve que tous les tickets peuvent être automatisés.",
+            "Ne pas affirmer que le produit traite le suivi de commande, les stocks ou d’autres données opérationnelles en direct.",
+            "Ne pas annoncer une durée pour l’intégration email ou pour le déploiement complet.",
+            "Ne pas citer de quota gratuit précis, car les sources disponibles se contredisent sur les exécutions incluses.",
+            "Ne pas promettre un gain de temps, un taux de déviation des tickets ou un retour sur investissement sans preuve client."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "La documentation semble technique et je n’ai pas de développeur disponible pour mener une évaluation.",
+          "tone": "Pratique, direct et légèrement encourageant, avec une prochaine étape très limitée.",
+          "call_to_action": "Créer gratuitement un agent et le tester dans le Playground sur un document de support.",
+          "subject_strategy": "Faire percevoir un test concret sur les propres documents du lecteur, sans annoncer une migration ni employer un vocabulaire technique.",
+          "must_not_reuse": [
+            "Avec orqAgent, l’équipe peut faire préparer des réponses sans déléguer l’envoi : l’auto-réponse est désactivée par défaut et chaque brouillon attend une validation humaine."
+          ]
+        }
+      ],
+      "voice_notes": "Écrire en français professionnel et naturel, avec des phrases courtes et des verbes concrets. Employer « vous » et le vocabulaire quotidien du support : brouillon, validation, FAQ, politique, boîte de réception. Éviter le jargon API, les superlatifs et les mots « révolutionnaire », « solution » ou « game-changing ».",
+      "contract": {
+        "kind": "email_sequence",
+        "count": 2,
+        "count_is_explicit": true,
+        "evidence": "2 emails"
+      }
+    },
+    "knowledge_version": 5,
+    "recommendation_at_generation": {
+      "campaign_id": "c800b083-81be-4067-bda1-b47c44f56676",
+      "readiness": "DISCOVERY_ONLY",
+      "recommendation": {
+        "state": "DISCOVERY_ONLY",
+        "readiness": "DISCOVERY_ONLY",
+        "reasons": [
+          "No current V2 recommendation establishes product-to-audience fit."
+        ],
+        "eligible_subsegment": "",
+        "qualified_companies": [],
+        "adjacent_companies": [],
+        "excluded_companies": [],
+        "unverified_companies": [],
+        "allowed_claims": [],
+        "allowed_evidence_ids": [],
+        "forbidden_claims": [],
+        "forbidden_capability_ids": [],
+        "forbidden_evidence_ids": [],
+        "unresolved_objections": [],
+        "recommended_next_action": "Build or rebuild the Relevance Dossier V2, or generate explicitly as an audience-level hypothesis.",
+        "override_risk": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+        "claim_contract": null
+      },
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No current V2 recommendation establishes product-to-audience fit."
+      ],
+      "override_required": true,
+      "can_generate": true,
+      "user_message": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+      "override_explicit": true
+    },
+    "generated_despite_recommendation": true,
+    "intelligence": {
+      "selected_audience": "Support lead who answers the same forty tickets and has to sell the idea upward",
+      "audience_resolution_status": "audience_research_missing",
+      "audience_research_id": null,
+      "audience_research_version": null,
+      "dossier_status": "missing",
+      "dossier_id": null,
+      "dossier_version": null,
+      "dossier_schema_version": 1,
+      "stale_reasons": [],
+      "legacy_fallback_used": true,
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [],
+      "validation_warnings": []
+    }
+  }
+}

@@ -34,6 +34,22 @@ these are already caught by the free gates, and those cases bench the gates -
 cheaply, and without a model. The interesting ones are judgment-only: no
 regular expression can see that an email opened on the company instead of the
 reader, so if the panel cannot either, then nothing in the system can.
+
+**Two tiers of damage, and the second exists because the first was passed.**
+The original six are gross: a whole proof paragraph deleted, an opening
+replaced outright with boilerplate. Measured across seven controls the judge
+caught 32 of 33 of them, which sounds like a finished instrument and is really
+a bench that has run out of room - at that rate the interval is 85-99%, and any
+regression that lands inside it is invisible. A measure everything passes has
+stopped measuring.
+
+So `HARD_MUTATIONS` breaks the same principles by one degree instead of
+entirely. The proof is still there and still attributed, it just stopped saying
+anything. The explanatory beat is still there, it just stopped explaining. The
+ask is still last, there is simply a second one before it. These are the
+failures the writer actually produces - a draft that argues a real thing badly
+is the normal output, and a draft with the proof paragraph deleted is not - so
+they are also the ones worth knowing whether the judge can see.
 """
 
 import re
@@ -243,6 +259,118 @@ def _clickbait_subject(email: Email) -> Email:
     )
 
 
+# ------------------------------------------------------ judgment-only, harder
+
+#: Still a testimonial, still attributed, and it has stopped being evidence.
+#: The specific outcome is what a quotation is *for*; a reader who believes
+#: this one has been given nothing to believe it about.
+_GENERIC_TESTIMONIAL = "It has made a real difference and we are very happy with it"
+
+_QUOTED_SPAN = re.compile(r'"([^"]+)"')
+
+
+def _generic_proof(email: Email) -> Email:
+    """The proof paragraph kept, and hollowed out.
+
+    Strictly harder than `strip_the_proof`, and harder in the direction the
+    system is weakest. Deleting the paragraph removes a name and a passage, so
+    `substantiation.py` sees it for free. Replacing what the person *said*
+    leaves the name, the quotation marks and the shape of proof exactly where
+    they were - the page still looks argued-from. Whether that is worth
+    anything is a judgment, and it is the judgment the whole evidence ledger
+    exists to make possible.
+    """
+    blocks = _blocks(email.body)
+    proof = next((index for index, block in enumerate(blocks) if _QUOTED_SPAN.search(block)), -1)
+    if proof < 0:
+        return email
+
+    def hollow(match: re.Match[str]) -> str:
+        inner = match.group(1)
+        # The punctuation lives inside the quotation marks and carries the
+        # grammar of the sentence around it - "...," said Ines reads as English
+        # and "..." said Ines does not. A mutant that reads as broken is
+        # detected as broken, which measures nothing.
+        tail = inner[-1] if inner[-1:] in {",", "."} else ""
+        return f'"{_GENERIC_TESTIMONIAL}{tail}"'
+
+    blocks[proof] = _QUOTED_SPAN.sub(hollow, blocks[proof], count=1)
+    return email.model_copy(update={"body": "\n\n".join(blocks)})
+
+
+#: A restatement of the promise where the reason used to be. Deliberately not
+#: bad writing - it is the sentence a competent writer produces when they have
+#: nothing to explain and a paragraph to fill.
+_BENEFIT_RESTATEMENT = (
+    "The result is that this part of the week gets easier, and you end up with "
+    "what you were after without the usual effort."
+)
+
+
+def _mechanism_to_benefit(email: Email) -> Email:
+    """The beat that explains, traded for the beat that promises.
+
+    `EmailBrief.why_it_fails` exists because a claim without a mechanism is a
+    boast: "we are fast" against "the reason every one of these is slow is that
+    it re-reads the whole corpus per call". The second block of a well-made
+    email is usually where that reason lives. This puts a benefit sentence
+    there instead, so the email keeps its promise, its proof and its ask, and
+    loses the only paragraph that gave a stranger a reason to believe the
+    premise.
+    """
+    blocks = _blocks(email.body)
+    if len(blocks) < 4:
+        return email
+    return email.model_copy(
+        update={"body": "\n\n".join([blocks[0], _BENEFIT_RESTATEMENT, *blocks[2:]])}
+    )
+
+
+#: A second thing to do, placed where it competes with the first. Phrased as a
+#: small favour rather than a hard sell, which is how a second ask actually
+#: arrives in real copy and is why it survives review.
+_COMPETING_ASK = (
+    "If this is not for you, it would still help us a lot if you passed it on to "
+    "somebody on your team who might want it."
+)
+
+
+def _second_ask(email: Email) -> Email:
+    """One email, two things to do.
+
+    Nothing is deleted and the real ask stays last, so every deterministic
+    check still passes - `repeated_call_to_action_gate` only fires on a body
+    block that repeats the CTA field word for word, and this is a different
+    sentence. What it costs is the one decision the email was built to make
+    easy, and a reader given two doors takes neither.
+    """
+    blocks = _blocks(email.body)
+    if len(blocks) < 3:
+        return email
+    return email.model_copy(
+        update={"body": "\n\n".join([*blocks[:-1], _COMPETING_ASK, blocks[-1]])}
+    )
+
+
+def _proof_after_the_ask(email: Email) -> Email:
+    """Every word kept, the proof arriving after the decision.
+
+    The mirror of `bury_the_ask` and the more interesting half: the evidence is
+    all still on the page, so substantiation is untouched and the word count
+    does not move. It simply turns up after the reader has already decided, at
+    which point it is a footnote about a product they have stopped reading
+    about.
+    """
+    blocks = _blocks(email.body)
+    if len(blocks) < 4:
+        return email
+    proof = next((index for index, block in enumerate(blocks) if _PROOF_RE.search(block)), -1)
+    if proof < 0 or proof == len(blocks) - 1:
+        return email
+    reordered = [block for index, block in enumerate(blocks) if index != proof]
+    return email.model_copy(update={"body": "\n\n".join([*reordered, blocks[proof]])})
+
+
 # ------------------------------------------------------------- gate-visible
 
 def _stock_phrase_open(email: Email) -> Email:
@@ -323,6 +451,26 @@ MUTATIONS: tuple[Mutation, ...] = (
         apply=_clickbait_subject,
     ),
     Mutation(
+        name="generic_proof",
+        breaks="Proof, not assertion - the quotation kept and the outcome inside it removed",
+        apply=_generic_proof,
+    ),
+    Mutation(
+        name="mechanism_to_benefit",
+        breaks="Argue, do not assert - the reason the current approach fails, replaced by a promise",
+        apply=_mechanism_to_benefit,
+    ),
+    Mutation(
+        name="second_ask",
+        breaks="One email, one ask - a second thing to do, placed where it competes",
+        apply=_second_ask,
+    ),
+    Mutation(
+        name="proof_after_the_ask",
+        breaks="Earn the ask before making it - every word kept, the proof arriving too late",
+        apply=_proof_after_the_ask,
+    ),
+    Mutation(
         name="stock_phrase_open",
         breaks="An opening interchangeable with every other cold email",
         apply=_stock_phrase_open,
@@ -352,6 +500,19 @@ MUTATIONS: tuple[Mutation, ...] = (
         apply=_neutral_greeting,
         invariant=True,
     ),
+)
+
+
+#: The subtle tier, by name. Held here rather than as a flag on `Mutation`
+#: because "hard" is a fact about this bench at this moment - the six originals
+#: were hard too, until they were passed - and a field on the type would make
+#: it sound permanent.
+HARD_MUTATION_NAMES = frozenset(
+    {"generic_proof", "mechanism_to_benefit", "second_ask", "proof_after_the_ask"}
+)
+
+HARD_MUTATIONS: tuple[Mutation, ...] = tuple(
+    item for item in MUTATIONS if item.name in HARD_MUTATION_NAMES
 )
 
 

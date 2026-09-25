@@ -12,6 +12,12 @@ From `administration/backend/`, with the product package importable:
 It needs the same DATABASE_URL the platform uses, and the same
 ADMIN_PWD_PEPPER the back-office Lambda will run with - a hash made with a
 different pepper is a password that will never verify.
+
+On AWS the database is only reachable from inside the VPC, so the same logic is
+also deployed as `marketingos-admin-bootstrap-<env>`, a function with no HTTP
+route that only an IAM principal can invoke:
+
+    aws lambda invoke --function-name marketingos-admin-bootstrap-prod       --cli-binary-format raw-in-base64-out       --payload '{"email": "you@example.com", "password": "..."}' out.json
 """
 
 from __future__ import annotations
@@ -31,6 +37,76 @@ if (_BACKEND / "app").is_dir():
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 
+def create_operator(
+    email: str,
+    password: str,
+    *,
+    name: str | None = None,
+    role: str = "superadmin",
+    reset_password: bool = False,
+) -> tuple[bool, str]:
+    """Create an operator, or reset one's password. Returns (ok, message)."""
+    from app.core.database import engine
+    from app.models.admin import AdminUser
+    from app.models.enums import AdminRole
+    from sqlmodel import Session, col, func, select
+
+    from admin.auth import hash_password
+    from admin.schemas import MIN_ADMIN_PASSWORD_LENGTH
+
+    if len(password) < MIN_ADMIN_PASSWORD_LENGTH:
+        return False, f"password must be at least {MIN_ADMIN_PASSWORD_LENGTH} characters."
+
+    email = email.strip().lower()
+    with Session(engine) as session:
+        existing = session.exec(
+            select(AdminUser).where(func.lower(col(AdminUser.email)) == email)
+        ).first()
+        if existing is not None:
+            if not reset_password:
+                return False, f"'{email}' is already an operator. Use --reset-password."
+            existing.password_hash = hash_password(password)
+            existing.is_active = True
+            session.add(existing)
+            session.commit()
+            return True, f"Password reset for {email}."
+
+        admin = AdminUser(
+            email=email,
+            password_hash=hash_password(password),
+            full_name=name,
+            role=AdminRole(role),
+        )
+        session.add(admin)
+        session.commit()
+        session.refresh(admin)
+        return True, f"Created operator {admin.email} ({admin.role})."
+
+
+def lambda_handler(event: dict | None, context: object = None) -> dict:
+    """The same thing, for a database only reachable from inside the VPC.
+
+    The password arrives in the invocation payload and is never logged or
+    returned. The function has no HTTP route; invoking it takes IAM.
+    """
+    event = event or {}
+    email = str(event.get("email") or "")
+    password = str(event.get("password") or "")
+    if not email or not password:
+        return {"ok": False, "error": "The payload needs 'email' and 'password'."}
+    role = str(event.get("role") or "superadmin")
+    if role not in ("support", "admin", "superadmin"):
+        return {"ok": False, "error": f"Unknown role '{role}'."}
+    ok, message = create_operator(
+        email,
+        password,
+        name=event.get("name"),
+        role=role,
+        reset_password=bool(event.get("reset_password")),
+    )
+    return {"ok": ok, "message" if ok else "error": message}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Create or reset a back-office operator.")
     parser.add_argument("--email", required=True)
@@ -45,12 +121,6 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    from app.core.database import engine
-    from app.models.admin import AdminUser
-    from app.models.enums import AdminRole
-    from sqlmodel import Session, col, func, select
-
-    from admin.auth import hash_password
     from admin.config import DEV_ADMIN_PEPPER, get_admin_settings
     from admin.schemas import MIN_ADMIN_PASSWORD_LENGTH
 
@@ -75,36 +145,15 @@ def main() -> int:
         print("ERROR: passwords do not match.", file=sys.stderr)
         return 1
 
-    email = args.email.lower()
-    with Session(engine) as session:
-        existing = session.exec(
-            select(AdminUser).where(func.lower(col(AdminUser.email)) == email)
-        ).first()
-        if existing is not None:
-            if not args.reset_password:
-                print(
-                    f"ERROR: '{email}' is already an operator. Use --reset-password.",
-                    file=sys.stderr,
-                )
-                return 1
-            existing.password_hash = hash_password(password)
-            existing.is_active = True
-            session.add(existing)
-            session.commit()
-            print(f"Password reset for {email}.")
-            return 0
-
-        admin = AdminUser(
-            email=email,
-            password_hash=hash_password(password),
-            full_name=args.name,
-            role=AdminRole(args.role),
-        )
-        session.add(admin)
-        session.commit()
-        session.refresh(admin)
-        print(f"Created operator {admin.email} ({admin.role}).")
-    return 0
+    ok, message = create_operator(
+        args.email,
+        password,
+        name=args.name,
+        role=args.role,
+        reset_password=args.reset_password,
+    )
+    print(message if ok else f"ERROR: {message}", file=sys.stdout if ok else sys.stderr)
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":

@@ -1,0 +1,492 @@
+{
+  "before": {
+    "execution_id": "3cc88cb7-71af-457c-8c7b-6a2d205c1e71",
+    "status": "completed",
+    "error_message": null,
+    "started_at": "2026-09-19T13:30:02.494179Z",
+    "completed_at": "2026-09-19T13:39:27.834913Z",
+    "estimated_cost_usd": 7.0135,
+    "total_input_tokens": 534003,
+    "total_output_tokens": 196743,
+    "agent_calls": 18,
+    "report": {
+      "request": "Rédige une séquence de exactement 2 emails en français pour présenter orqAgent à des responsables support qui ne l’ont pas encore acheté et les inviter à essayer le produit. Chaque email doit donner une raison différente de passer à l’action. Ton professionnel, concret et naturel.",
+      "delivered": 2,
+      "promised": 2,
+      "contract_violations": [],
+      "emails": [
+        {
+          "position": 1,
+          "subject": "Et si elle promet un remboursement qu'on ne fait pas",
+          "single_idea": "L'agent rédige la réponse, il ne l'envoie pas : par défaut l'auto-réponse est désactivée, le brouillon atterrit dans une file d'approbation où vous relisez, corrigez, puis envoyez ou ignorez.",
+          "pull": 7.0,
+          "revisions": 1,
+          "clean": true,
+          "landed": true,
+          "rewrites_stopped_helping": true,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E102",
+            "E105",
+            "E104"
+          ],
+          "evidence_spent": [
+            "E105"
+          ],
+          "attributions": 0,
+          "unresolved": [],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "A no-code tool that reads our internal documents and drafts replies to repetitive shared-inbox emails (returns, exchanges, FAQ), which I review and send myself — the send is never automatic by default.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Profile: I answer the same forty tickets a morning (return policy, order status) from documents nobody outside the team reads, no developer, no budget, and fear of a wrong refund promise going out automatically. Email-only premise: it names exactly 'politique de retour, conditions d'échange, FAQ' as the repetitive load, claims no-code setup ('sans rien programmer'), and states auto-reply is off by default with a human approval queue plus a 24h cutoff so connecting the inbox doesn't blast the archive. These directly answer three of my stated fears (no dev, no auto-send, no archive-blast) without contradicting the profile. What's email-only and unverified: whether it can actually ingest my specific documents correctly, what happens with edge cases, and pricing beyond the free tier — those are unknowns, not mismatches.",
+              "assumed_experiences": [
+                "profile-supported: recipient handles high volume of repetitive return/policy emails from a shared inbox",
+                "profile-supported: recipient has documents with answers but no engineering resource to build anything",
+                "email-only: recipient has a 'boîte partagée' (shared inbox) that can be connected to this tool — plausible given profile but not explicitly stated as email-connected today",
+                "email-only: recipient is comfortable configuring an 'agent' via interface without any technical walkthrough shown"
+              ],
+              "problem_now": "Documented as a daily, ongoing burden per profile (forty tickets every morning) — not a hypothetical risk, it's the actual current job. The email correctly targets this live problem rather than inventing urgency.",
+              "stopped_at": "orqAgent est une plateforme où vous configurez, depuis une interface et sans rien programmer, un agent qui lit vos documents et rédige les réponses aux emails répétitifs d'une boîte partagée.",
+              "biggest_doubt": "I still don't know if it can read our specific document formats/policies correctly, what it costs past the free tier once we'd need it at real volume, or how painful it is to connect and configure a shared inbox — and I have three minutes before a meeting to figure any of that out.",
+              "to_click_it_would_have_to": "told me exactly what document formats it reads (PDF? Google Doc? Notion?) and given one concrete number — how long setup takes or what it costs after the free tier — so I could judge if this is a 10-minute trial or a half-day project I don't have time for today.",
+              "fixes": [
+                "'Créer un compte gratuit →' — needs a smaller first step described, like 'upload one policy doc and see a draft in 2 minutes' instead of a full account creation ask",
+                "'un agent qui lit vos documents et rédige les réponses' — vague on which document types/formats are supported, leaves me guessing if my PDFs/Google Docs even work"
+              ],
+              "opens_in_100": 22,
+              "clicks_in_100": 7,
+              "persona": "Selected audience (explicit constraints): Support lead who answers the same forty tickets and has to sell the idea upward.\nContext (inferred; applicability must be checked): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.\n\nProblem context: A large, repetitive share of inbound is order-status and policy questions whose answers already exist (inferred); source: unknown\nProblem context: Repetition drives burnout and slows response times on the hard tickets (inferred); source: unknown\nProblem context: No developer and no budget line to hire one, so just call the API is dead on arrival (inferred); source: unknown\nProblem context: Connecting anything to the live inbox risks blasting replies at the archive (inferred); source: unknown\nProblem context: One wrong refund promise costs more than a month of saved time (inferred); source: unknown",
+              "pull": 7
+            },
+            {
+              "what_it_sells": "A no-code platform (orqAgent) that reads a company's internal documents and drafts replies to repetitive shared-inbox emails (return policy, order status), with every reply held in an approval queue for a human to send or ignore rather than auto-sending.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Profile establishes: repetitive order-status/policy tickets answered from internal documents, no developer/budget, fear of an auto-reply promising a refund that doesn't exist, and worry about a live-inbox connection blasting the archive. The email directly names all four: no-code setup, draft-only with human approval, auto-reply off by default, and messages older than 24h never processed. These are the sender's claims, not verified facts, but they are specifically responsive to the stated fears rather than generic reassurance, so the premise fits rather than assumes something unsupported.",
+              "assumed_experiences": [
+                "Reader has a shared inbox receiving repetitive policy/order-status emails - profile-supported ('forty tickets each morning')",
+                "Answers already exist in documents the reader can point the tool at - profile-supported ('has the answers in documents nobody outside the team reads')",
+                "Reader has no developer and needs a no-code setup - profile-supported",
+                "Reader specifically fears an auto-sent wrong refund promise - profile-supported, and the email's approval-queue default answers it directly",
+                "The shared inbox is a specific tool (Gmail/Outlook/helpdesk) that can be 'branché' - email-only, not established which platforms are supported"
+              ],
+              "problem_now": "Matters now and is ongoing, not a future risk - profile describes it as a daily morning routine (forty tickets), so the pain is current and recurring, not hypothetical.",
+              "stopped_at": "",
+              "biggest_doubt": "It never says what inbox tools it connects to or what document formats it reads, so I don't know if it would even work with what we use, and I'd have to test it myself before trusting it near real customer replies - which isn't a one-minute task even if signup is free.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me which inbox platforms it connects to (Gmail, Outlook, Zendesk, Gorgias...) and what document format it reads (PDF, Google Doc, a pasted FAQ) so I'd know in ten seconds whether it could even touch our setup.",
+              "fixes": [
+                "un agent qui lit vos documents",
+                "les emails répétitifs d'une boîte partagée"
+              ],
+              "opens_in_100": 33,
+              "clicks_in_100": 8,
+              "persona": "Selected audience (explicit constraints): Support lead who answers the same forty tickets and has to sell the idea upward.\nContext (inferred; applicability must be checked): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.\n\nProblem context: A large, repetitive share of inbound is order-status and policy questions whose answers already exist (inferred); source: unknown\nProblem context: Repetition drives burnout and slows response times on the hard tickets (inferred); source: unknown\nProblem context: No developer and no budget line to hire one, so just call the API is dead on arrival (inferred); source: unknown\nProblem context: Connecting anything to the live inbox risks blasting replies at the archive (inferred); source: unknown\nProblem context: One wrong refund promise costs more than a month of saved time (inferred); source: unknown\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 7
+            },
+            {
+              "what_it_sells": "A no-code platform that reads our internal policy documents and drafts replies to repetitive shared-inbox emails (order status, returns), with every draft sitting in an approval queue that I have to read and send myself before anything goes out.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Profile-supported: repetitive order-status/return-policy tickets, answers living in internal docs, no developer, fear of a wrong refund promise, and the risk of connecting a live inbox to an archive are all things the profile explicitly gives me. The email addresses each of these directly (no-code config, auto-reply off by default, 24h cutoff so it can't answer the archive, automated senders ignored) rather than assuming something the profile doesn't support. The one thing the email presupposes that the profile doesn't confirm is that my inbox setup is technically compatible with whatever 'brancher' means here (which mailbox provider, what access it needs) - that's unstated, not contradicted.",
+              "assumed_experiences": [
+                "Reader has internal documents describing return/exchange policy (profile-supported)",
+                "Reader manages a shared inbox, not just personal email (profile-supported)",
+                "Reader has no developer to build this in-house (profile-supported)",
+                "Reader has never connected an inbox to this or any similar tool before (unstated by profile, not contradicted - treated as unknown)"
+              ],
+              "problem_now": "This is a documented, present-tense pain from the profile (forty repeat tickets every morning), not a speculative future risk - so the problem itself is real and current, though whether *this specific email* lands on a day I have time to explore it is a different question.",
+              "stopped_at": "La garantie tient — son prix est fixe : une personne par réponse, même quand la réponse existe déjà dans un document.",
+              "biggest_doubt": "The approval queue stops a wrong reply from being *sent*, but nothing here tells me the drafted answer itself won't be wrong - it just adds a human check, which is what I already do. For something I have to defend to leadership, I'd want more than 'you review it': how does it decide which document is authoritative, what happens with conflicting policy docs, and what does it cost once the free tier isn't enough.",
+              "to_click_it_would_have_to": "shown me one real example - a source policy line next to the drafted reply it produced from it - so I could judge accuracy before creating an account, and named which inbox platform it connects to.",
+              "fixes": [
+                "La garantie tient — son prix est fixe : une personne par réponse, même quand la réponse existe déjà dans un document.",
+                "Deux autres réglages, avant de brancher quoi que ce soit : (should say which mailbox providers/integrations this actually supports)"
+              ],
+              "opens_in_100": 22,
+              "clicks_in_100": 7,
+              "persona": "Selected audience (explicit constraints): Support lead who answers the same forty tickets and has to sell the idea upward.\nContext (inferred; applicability must be checked): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.\n\nProblem context: A large, repetitive share of inbound is order-status and policy questions whose answers already exist (inferred); source: unknown\nProblem context: Repetition drives burnout and slows response times on the hard tickets (inferred); source: unknown\nProblem context: No developer and no budget line to hire one, so just call the API is dead on arrival (inferred); source: unknown\nProblem context: Connecting anything to the live inbox risks blasting replies at the archive (inferred); source: unknown\nProblem context: One wrong refund promise costs more than a month of saved time (inferred); source: unknown\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 7
+            }
+          ],
+          "sameness": []
+        },
+        {
+          "position": 2,
+          "subject": "Est-ce qu'il saurait répondre avec notre politique de retour",
+          "single_idea": "Vous pouvez savoir vous-même, sans développeur et avant de brancher quoi que ce soit, si l'agent sait répondre à vos questions de politique commerciale : vous lui téléversez votre politique de retour, vous l'interrogez dans l'interface, et vous voyez sur chaque message s'il s'est appuyé sur votre document.",
+          "pull": 7.0,
+          "revisions": 1,
+          "clean": true,
+          "landed": true,
+          "rewrites_stopped_helping": true,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E59",
+            "E51",
+            "E130"
+          ],
+          "evidence_spent": [
+            "E130"
+          ],
+          "attributions": 0,
+          "unresolved": [],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "A no-code platform (orqAgent) that lets you build an AI agent, upload a document like your return policy, and have it draft support replies while citing the exact passage it used — testable in a sandbox with real questions before connecting it to anything, so you can check whether it answers from your actual policy or makes something up.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile's own constraints — repetitive return/shipping questions with existing written answers, no developer to build anything, and specifically the fear of an agent promising a refund the company doesn't offer — are directly named or answered by the email's premise (no-code, no live-inbox connection, citation icon showing where an answer came from). The email doesn't claim it already knows my policy or that it's risk-free in production; it invites a sandboxed test on one category first, which is an appropriately small, conditional ask rather than an overreach.",
+              "assumed_experiences": [
+                "You already have a written return policy / delivery FAQ document — profile-supported ('has the answers in documents nobody outside the team reads')",
+                "You are the one manually rephrasing the same answers over and over — profile-supported (forty tickets a morning)",
+                "You are wary of connecting any tool to your live shared inbox — email-only claim, but matches the profile's stated fear of 'blasting replies at the archive'",
+                "You have no developer on staff, hence the no-code framing is meant for you — email-only inference, consistent with profile's explicit no-developer constraint"
+              ],
+              "problem_now": "Documented as current and ongoing per the profile (forty tickets every morning, order-status and policy questions), not a hypothetical future risk — the email's premise lines up with an existing daily burden rather than inventing urgency.",
+              "stopped_at": "",
+              "biggest_doubt": "This is a cold email from a vendor I've never heard of; the sandbox test proves the agent can cite the right passage on three cherry-picked questions, but says nothing about what happens after that — pricing, how (or whether) it ever gets connected to real replies, or how errors get caught once volume and edge cases show up. That gap is exactly where the refund-promise fear lives, and the email doesn't close it.",
+              "to_click_it_would_have_to": "told me what happens after the sandbox test — how the agent actually gets from 'verified in a demo' to 'answering real tickets,' and roughly what it costs — so I'm not evaluating a toy I can't act on even if the test goes well.",
+              "fixes": [
+                "Créer votre premier agent → — too generic as a final ask; a support lead three minutes from a meeting needs to know what happens after they click, not just that it's fast",
+                "orqAgent est une plateforme sans code pour créer des agents IA. — this is the one sentence that should say who else uses it or for what kind of team, since it's the only line that names the product and it stays abstract"
+              ],
+              "opens_in_100": 21,
+              "clicks_in_100": 6,
+              "persona": "Selected audience (explicit constraints): Support lead who answers the same forty tickets and has to sell the idea upward.\nContext (inferred; applicability must be checked): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.\n\nProblem context: A large, repetitive share of inbound is order-status and policy questions whose answers already exist (inferred); source: unknown\nProblem context: Repetition drives burnout and slows response times on the hard tickets (inferred); source: unknown\nProblem context: No developer and no budget line to hire one, so just call the API is dead on arrival (inferred); source: unknown\nProblem context: Connecting anything to the live inbox risks blasting replies at the archive (inferred); source: unknown\nProblem context: One wrong refund promise costs more than a month of saved time (inferred); source: unknown",
+              "pull": 7
+            },
+            {
+              "what_it_sells": "A no-code tool where you upload one document (like our return policy) and it builds an AI agent that answers customer questions by quoting straight from that document, with a visible marker showing when it actually pulled from the file versus answered from 'memory' — a sandbox test, not connected to our live shared inbox.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Profile-supported: the support lead has answers 'in documents nobody outside the team reads' and fears an automated reply promising something the company doesn't offer — this email's whole pitch (citation visibility, no inbox connection) is built around exactly that fear, and it's honest about scope ('prenez une seule catégorie pour commencer'). Email-only assumption: it demos policy/FAQ questions specifically, but the profile also names 'where is my order' as a huge share of the forty daily tickets — that needs live order data, not a static document, and the email never addresses it. So the premise fits the return-policy half of the job, not the order-status half; not a contradiction, just an unaddressed gap.",
+              "assumed_experiences": [
+                "Reader already has a clean return-policy document to upload (profile-supported: 'has the answers in documents nobody outside the team reads')",
+                "Reader can judge AI citation accuracy alone without developer help (profile-supported: 'no developer to assign')",
+                "A 'shared inbox' exists and staying disconnected from it is reassuring rather than confusing (profile-supported: fear of blasting replies at the archive)",
+                "That solving policy questions in a sandbox is a meaningful first step toward the real daily grind (email-only, not confirmed to scale to order-status questions)"
+              ],
+              "problem_now": "Matters now, not hypothetical — the profile describes this as a daily, ongoing grind (forty tickets every morning) and a standing fear (one wrong refund promise), not a future risk.",
+              "stopped_at": "",
+              "biggest_doubt": "The demo only proves it can quote a static document — it says nothing about what happens after the test, what it costs, or how (with no developer) this would ever actually touch real tickets, especially order-status questions that need live data rather than a document.",
+              "to_click_it_would_have_to": "told me what happens after the sandbox test — how (with zero developer help) this connects to real replies eventually, whether it can handle order-status questions that need live order data rather than just a document, and roughly what it costs once the free test is over.",
+              "fixes": [
+                "\"orqAgent est une plateforme sans code pour créer des agents IA.\" — never says what happens after the test or what it costs, so the next step past 'try it' is invisible.",
+                "\"Prenez une seule catégorie pour commencer : les questions de politique commerciale.\" — good scoping, but leaves the reader wondering if order-status (their other huge bucket) is even in scope at all."
+              ],
+              "opens_in_100": 22,
+              "clicks_in_100": 7,
+              "persona": "Selected audience (explicit constraints): Support lead who answers the same forty tickets and has to sell the idea upward.\nContext (inferred; applicability must be checked): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.\n\nProblem context: A large, repetitive share of inbound is order-status and policy questions whose answers already exist (inferred); source: unknown\nProblem context: Repetition drives burnout and slows response times on the hard tickets (inferred); source: unknown\nProblem context: No developer and no budget line to hire one, so just call the API is dead on arrival (inferred); source: unknown\nProblem context: Connecting anything to the live inbox risks blasting replies at the archive (inferred); source: unknown\nProblem context: One wrong refund promise costs more than a month of saved time (inferred); source: unknown\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 7
+            },
+            {
+              "what_it_sells": "A no-code platform (orqAgent) to build an AI agent: you upload a document (e.g. return policy), it answers questions by citing passages from that document, tested in a sandbox with a visible indicator showing when it pulled from the document — no inbox connection required for the test.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The email's premise — answers already exist in policy/FAQ documents, and staff time goes into reformulating them repeatedly for customers — matches the profile's explicit context (forty tickets a morning, answers in documents nobody outside the team reads). The email also explicitly avoids the two profile-flagged fears: it doesn't require a developer (no-code, 2-minute setup) and doesn't connect to the live inbox (sandbox test only, no refund-blast risk). Those are direct, appropriate matches, not just email-only assumptions. What the email doesn't address: how this scales to production, what it costs past the free test, or how 'sell this upward' actually gets solved — that's a real gap but it's about the next step, not a mismatch with my situation.",
+              "assumed_experiences": [
+                "Reader has a written return policy or delivery FAQ document available to upload — plausible/profile-supported (documents nobody outside the team reads)",
+                "Reader has authority or interest to run a sandbox test alone before looping in others — email-only, not established by profile",
+                "Reader is worried specifically about wrong answers/refund promises — profile-supported, and email addresses it directly via the citation/visibility mechanic"
+              ],
+              "problem_now": "This is a documented, ongoing daily problem (forty tickets a morning) per the profile, not a speculative future risk — so the 'problem exists' part is current and real, even though urgency to act on it *today* isn't established.",
+              "stopped_at": "",
+              "biggest_doubt": "The test is easy and low-risk, but I have zero information about what happens after the sandbox: price, whether it can connect to a shared inbox safely later, how it handles edge cases outside the uploaded doc, or what 'selling it upward' requires from me. A free two-minute test doesn't get me to a production decision my manager will sign off on.",
+              "to_click_it_would_have_to": "told me what this costs beyond the free test and whether/how it could eventually connect to our actual shared inbox safely, since a sandbox demo alone doesn't get me to a decision I can bring upward",
+              "fixes": [
+                "orqAgent est une plateforme sans code pour créer des agents IA. — this only names the category (no-code AI agent builder); it doesn't say what's needed to move from sandbox test to production use",
+                "Un document, trois questions réelles, une décision cette semaine. — 'une décision' implies I'd be ready to decide after one test, but the email gives no pricing or rollout info to base that decision on"
+              ],
+              "opens_in_100": 22,
+              "clicks_in_100": 7,
+              "persona": "Selected audience (explicit constraints): Support lead who answers the same forty tickets and has to sell the idea upward.\nContext (inferred; applicability must be checked): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.\n\nProblem context: A large, repetitive share of inbound is order-status and policy questions whose answers already exist (inferred); source: unknown\nProblem context: Repetition drives burnout and slows response times on the hard tickets (inferred); source: unknown\nProblem context: No developer and no budget line to hire one, so just call the API is dead on arrival (inferred); source: unknown\nProblem context: Connecting anything to the live inbox risks blasting replies at the archive (inferred); source: unknown\nProblem context: One wrong refund promise costs more than a month of saved time (inferred); source: unknown\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 7
+            }
+          ],
+          "sameness": []
+        }
+      ],
+      "limiting_gaps": [
+        "No customer names, quotes or case studies found - the copy can describe the product but cannot prove anyone uses it"
+      ],
+      "what_would_help_most": "Resolve this simulated next-step obstacle: told me exactly what document formats it reads (PDF? Google Doc? Notion?) and given one concrete number — how long setup takes or what it costs after the free tier — so I could judge if this is a 10-minute trial or a half-day project I don't have time for today. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.",
+      "questions": [],
+      "sequence_summary": "Two emails that move the reader from \"nothing leaves the inbox without me\" to \"I can test it against our own return policy this week,\" each explaining the product and its CTA on its own terms, with no back-references or drift.",
+      "knowledge_version": 5,
+      "notes": [],
+      "reads_expected": true
+    },
+    "assets": [
+      {
+        "title": "Et si elle promet un remboursement qu'on ne fait pas",
+        "content": "Subject: Et si elle promet un remboursement qu'on ne fait pas\nPreview text: Elle ne peut pas l'envoyer — le brouillon attend votre validation avant de sortir de la boîte.\n\nBonjour,\n\nLes questions qui reviennent toute la matinée — politique de retour, conditions d'échange, FAQ — peuvent être rédigées pour vous. C'est vous qui les envoyez.\n\norqAgent est une plateforme où vous configurez, depuis une interface et sans rien programmer, un agent qui lit vos documents et rédige les réponses aux emails répétitifs d'une boîte partagée.\n\nAujourd'hui, la seule façon d'être sûr de ce qui sort d'une boîte partagée, c'est de rédiger chaque réponse soi-même. La garantie tient — son prix est fixe : une personne par réponse, même quand la réponse existe déjà dans un document.\n\nLe contrôle n'est pas une promesse, c'est un réglage : l'auto-réponse est désactivée par défaut. Le brouillon arrive dans une file d'approbation, en attente de validation. Vous relisez, vous corrigez, puis vous envoyez ou vous ignorez.\n\nDeux autres réglages, avant de brancher quoi que ce soit : les messages de plus de 24 heures ne sont jamais traités — brancher une boîte ne répond donc pas à l'archive — et les expéditeurs automatiques (no-reply, mailer-daemon, notifications) sont ignorés.\n\nCréer un compte gratuit →\n\n— l'équipe orqAgent\n\nP.S. Le compte est à $0 et ne demande pas de carte bancaire.",
+        "content_html_length": 6068
+      },
+      {
+        "title": "Est-ce qu'il saurait répondre avec notre politique de retour",
+        "content": "Subject: Est-ce qu'il saurait répondre avec notre politique de retour\nPreview text: Vous pouvez le vérifier vous-même, dans l'interface, avant de brancher quoi que ce soit.\n\nBonjour,\n\nVous pouvez savoir vous-même si un agent sait répondre avec votre politique de retour — sans rien connecter à votre boîte partagée.\n\nLes réponses existent déjà : dans la politique de retour, dans la FAQ livraison. Mais un document ne répond pas tout seul. Le temps ne passe pas à chercher l'information, il passe à la reformuler — message après message, client après client.\n\norqAgent est une plateforme sans code pour créer des agents IA. Vous montez l'agent dans l'interface, vous lui téléversez le document, et il rédige à partir de ce qu'il contient : il cite les passages concernés plutôt que de répondre de mémoire.\n\nEt vous le vérifiez à l'œil nu. Dans le bac à sable, une icône de base de données apparaît sur chaque message où l'agent est allé chercher dans votre document. Vous voyez s'il a répondu depuis votre politique, ou à côté.\n\nPrenez une seule catégorie pour commencer : les questions de politique commerciale. Un document, trois questions réelles, une décision cette semaine.\n\nCréer votre premier agent →\n\n— l'équipe orqAgent\n\nP.S. Le premier agent se crée en moins de 2 minutes, sans carte bancaire.",
+        "content_html_length": 5916
+      }
+    ]
+  },
+  "after": {
+    "execution_id": "16c49a58-6292-4e50-8257-c6d5bf1d3e13",
+    "status": "completed",
+    "error_message": null,
+    "started_at": "2026-09-19T13:51:43.358053Z",
+    "completed_at": "2026-09-19T14:04:36.525909Z",
+    "estimated_cost_usd": 16.9441,
+    "total_input_tokens": 1548997,
+    "total_output_tokens": 101364,
+    "agent_calls": 24,
+    "report": {
+      "request": "Rédige une séquence de exactement 2 emails en français pour présenter orqAgent à des responsables support qui ne l’ont pas encore acheté et les inviter à essayer le produit. Chaque email doit donner une raison différente de passer à l’action. Ton professionnel, concret et naturel.",
+      "delivered": 2,
+      "promised": 2,
+      "contract_violations": [],
+      "emails": [
+        {
+          "position": 1,
+          "subject": "Votre archive reste hors du périmètre",
+          "single_idea": "Avec orqAgent, l’équipe peut faire préparer des réponses sans déléguer l’envoi : l’auto-réponse est désactivée par défaut et chaque brouillon attend une validation humaine.",
+          "pull": 6.0,
+          "revisions": 1,
+          "clean": true,
+          "landed": false,
+          "rewrites_stopped_helping": true,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E102",
+            "E104",
+            "E105"
+          ],
+          "evidence_spent": [
+            "E105"
+          ],
+          "attributions": 0,
+          "unresolved": [],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "A no-code support tool that uses our FAQ and policy documents to draft cited inbox replies for human approval, potentially reducing repetitive ticket work without sending automatically.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The repetitive support workload is explicitly part of the profile, and the approval queue directly addresses the stated need to avoid unsafe automated replies. The email additionally assumes we have usable FAQ or policy documents, a compatible inbox, and enough authority to connect it; those points are plausible but not established.",
+              "assumed_experiences": [
+                "Profile-supported: answering the same support questions repeatedly.",
+                "Profile-supported: needing to sell the idea upward.",
+                "Email-only: having FAQ and policy documents suitable for use as agent context.",
+                "Email-only: being willing and authorized to connect the live inbox.",
+                "Email-only: needing protection against automated senders and old messages during connection."
+              ],
+              "problem_now": "The repetitive workload matters now, especially with four hundred unread, while an incorrect policy or refund response is a consequential risk. Whether the documents are ready and the inbox can be connected safely is unknown.",
+              "stopped_at": "",
+              "biggest_doubt": "I do not know what prevents a draft from inventing or misreading a refund rule; citations help me inspect it, but they are not evidence that the draft stays within policy. I also cannot judge the setup effort, inbox compatibility, data handling, or eventual price before proposing this upward.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me I could test one FAQ document on sample tickets, without connecting the live inbox, and shown exactly how unsupported policy claims are flagged.",
+              "fixes": [
+                "Rewrite “orqAgent est une plateforme sans code qui transforme vos FAQ et politiques en contexte pour un agent IA.” as “Importez une FAQ ou une politique : orqAgent prépare des brouillons de réponse aux tickets répétitifs, sans développeur.”",
+                "Rewrite “Il prépare des brouillons dans votre boîte de réception et peut citer les faits extraits de vos documents.” to explain what happens when the documents do not support an answer and whether the citation is attached to every policy claim.",
+                "Rewrite “Créez un premier agent sur un périmètre limité et examinez ses brouillons avant de décider de la suite.” as a smaller, explicit test: “Testez un document sur quelques tickets d’exemple, sans connecter votre boîte de réception.”",
+                "Rewrite “Démarrer gratuitement et créer un agent →” to state the immediate commitment, setup time, and whether an inbox connection is required."
+              ],
+              "opens_in_100": 28,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (explicit constraints): Support lead who answers the same forty tickets and has to sell the idea upward.\nContext (inferred; applicability must be checked): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.\n\nProblem context: A large, repetitive share of inbound is order-status and policy questions whose answers already exist (inferred); source: unknown\nProblem context: Repetition drives burnout and slows response times on the hard tickets (inferred); source: unknown\nProblem context: No developer and no budget line to hire one, so just call the API is dead on arrival (inferred); source: unknown\nProblem context: Connecting anything to the live inbox risks blasting replies at the archive (inferred); source: unknown\nProblem context: One wrong refund promise costs more than a month of saved time (inferred); source: unknown",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "Un logiciel sans code qui utilise les FAQ et politiques de l’entreprise pour préparer, dans la boîte de réception, des réponses que le support doit approuver avant leur envoi, ce qui pourrait réduire le temps passé à rédiger les réponses répétitives.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Le problème central correspond au profil explicite : je traite les mêmes tickets à répétition et dois pouvoir défendre l’idée auprès de ma hiérarchie. En revanche, l’existence de FAQ exploitables, l’absence de développeur, le budget disponible et la compatibilité avec notre boîte de réception ne sont pas établis par le profil. L’email affirme aussi que les anciens messages et expéditeurs automatisés seront écartés, sans apporter de preuve suffisante pour que je confie immédiatement une boîte active au produit.",
+              "assumed_experiences": [
+                "Profile-supported: je réponds fréquemment aux mêmes demandes de support.",
+                "Profile-supported: je devrai vendre l’idée en interne.",
+                "Email-only: nous disposons de FAQ et de politiques suffisamment complètes et à jour pour alimenter l’agent.",
+                "Email-only: nous pouvons et voulons connecter notre boîte de réception à un service externe.",
+                "Email-only: une file d’approbation s’intégrera utilement à notre manière de travailler.",
+                "Unknown: nous n’avons aucun développeur disponible ni budget pour une autre solution.",
+                "Unknown: notre archive pourrait être traitée par erreur lors d’une intégration."
+              ],
+              "problem_now": "La répétition est un problème actuel et important d’après le profil. Le risque qu’une réponse automatisée promette quelque chose d’incorrect est également important, mais les incidents passés, l’urgence d’un déploiement et l’état réel de nos documents restent inconnus.",
+              "stopped_at": "",
+              "biggest_doubt": "Je ne sais pas combien de temps il faut pour connecter la boîte, préparer les documents et vérifier les brouillons, ni quelles protections concrètes empêchent une réponse erronée sur un remboursement. À trois minutes d’une réunion, « créer un agent » paraît plus lourd qu’un test rapide, et les affirmations sur le filtrage de l’archive ne suffisent pas à me rassurer.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me that I could test one FAQ on a handful of copied tickets, without connecting the live inbox, in under five minutes.",
+              "fixes": [
+                "Réécrire « Lors de la connexion, les expéditeurs automatisés sont écartés. Les messages vieux de plus de 24 heures le sont aussi — votre archive n’est pas reprise. » en « Avant toute connexion, vous pouvez tester sur quelques tickets copiés. Si vous connectez ensuite la boîte, expliquez-moi précisément ce qui est lu, exclu et envoyé. »",
+                "Réécrire « Créez un premier agent sur un périmètre limité et examinez ses brouillons avant de décider de la suite. » en « Testez une FAQ sur cinq tickets, sans envoi automatique ni accès à vos archives, puis montrez les brouillons à votre responsable. »",
+                "Réécrire « Démarrer gratuitement et créer un agent → » en « Tester cinq tickets sans connecter la boîte → »"
+              ],
+              "opens_in_100": 28,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (explicit constraints): Support lead who answers the same forty tickets and has to sell the idea upward.\nContext (inferred; applicability must be checked): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.\n\nProblem context: A large, repetitive share of inbound is order-status and policy questions whose answers already exist (inferred); source: unknown\nProblem context: Repetition drives burnout and slows response times on the hard tickets (inferred); source: unknown\nProblem context: No developer and no budget line to hire one, so just call the API is dead on arrival (inferred); source: unknown\nProblem context: Connecting anything to the live inbox risks blasting replies at the archive (inferred); source: unknown\nProblem context: One wrong refund promise costs more than a month of saved time (inferred); source: unknown\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "Un outil sans code qui utilise nos FAQ et politiques pour préparer dans la boîte de réception des réponses que je dois approuver, afin de réduire le travail répétitif sans envoyer automatiquement.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Le contrôle avant envoi correspond directement à ma crainte explicite qu’une réponse automatisée promette à tort un remboursement, et le « sans code » correspond à l’absence de développeur. Le profil établit aussi que je traite beaucoup de tickets répétitifs. En revanche, le fait que nos réponses soient exploitables telles quelles dans des documents, la compatibilité avec notre boîte de réception et la facilité réelle de mise en place restent inconnus.",
+              "assumed_experiences": [
+                "Profile-supported: je traite les mêmes tickets de support de façon répétitive.",
+                "Profile-supported: je dois pouvoir défendre l’idée auprès de ma hiérarchie.",
+                "Profile-supported: je n’ai pas de développeur disponible et je crains les réponses qui engagent l’entreprise à tort.",
+                "Email-only: nos FAQ et politiques sont suffisamment complètes et fiables pour servir de contexte à l’agent.",
+                "Email-only: notre boîte de réception est compatible avec la plateforme.",
+                "Email-only: exclure les expéditeurs automatisés et les messages de plus de 24 heures suffit à empêcher une reprise dangereuse de l’archive."
+              ],
+              "problem_now": "La répétition et le risque d’une mauvaise réponse sont importants pour mon travail, mais l’urgence d’adopter cet outil aujourd’hui et son adéquation technique à notre boîte restent inconnues.",
+              "stopped_at": "",
+              "biggest_doubt": "Je ne sais pas combien de temps prend le premier essai, quelles permissions la connexion exige, ni comment l’outil évite qu’un brouillon déforme une politique de remboursement malgré une citation.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me that I could test one FAQ on a few recent tickets in under five minutes, without enabling sending or connecting the live inbox.",
+              "fixes": [
+                "Remplacer « Il prépare des brouillons dans votre boîte de réception et peut citer les faits extraits de vos documents. » par « Testez une FAQ sur quelques tickets récents : vous verrez le passage source sous chaque brouillon avant toute décision d’envoi. »",
+                "Préciser « Lors de la connexion, les expéditeurs automatisés sont écartés. Les messages vieux de plus de 24 heures le sont aussi — votre archive n’est pas reprise. » en indiquant si ces protections sont garanties, configurables et visibles avant l’accès à la boîte.",
+                "Remplacer « Créez un premier agent sur un périmètre limité et examinez ses brouillons avant de décider de la suite. » par une première étape concrète indiquant le temps nécessaire, les permissions demandées et si l’essai peut se faire sans connexion à la boîte en production.",
+                "Remplacer « Démarrer gratuitement et créer un agent → » par un CTA moins engageant pour ce matin, par exemple une démonstration d’un brouillon à partir d’une FAQ, si cette possibilité existe."
+              ],
+              "opens_in_100": 29,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (explicit constraints): Support lead who answers the same forty tickets and has to sell the idea upward.\nContext (inferred; applicability must be checked): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.\n\nProblem context: A large, repetitive share of inbound is order-status and policy questions whose answers already exist (inferred); source: unknown\nProblem context: Repetition drives burnout and slows response times on the hard tickets (inferred); source: unknown\nProblem context: No developer and no budget line to hire one, so just call the API is dead on arrival (inferred); source: unknown\nProblem context: Connecting anything to the live inbox risks blasting replies at the archive (inferred); source: unknown\nProblem context: One wrong refund promise costs more than a month of saved time (inferred); source: unknown\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 6
+            }
+          ],
+          "sameness": []
+        },
+        {
+          "position": 2,
+          "subject": "Avant de présenter orqAgent en interne",
+          "single_idea": "Le lecteur peut juger orqAgent sur ses propres documents avant toute mise en production : importer une FAQ ou une politique, puis poser quelques vraies questions dans le Playground.",
+          "pull": 6.0,
+          "revisions": 3,
+          "clean": true,
+          "landed": false,
+          "rewrites_stopped_helping": true,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E11",
+            "E50",
+            "E39"
+          ],
+          "evidence_spent": [],
+          "attributions": 0,
+          "unresolved": [],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "A no-code AI support tool that uses our documents to draft answers, potentially reducing repetitive ticket work if its replies can be trusted.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile explicitly establishes that I must sell the idea upward, lack a developer, and fear an automated refund promise; the no-code setup and test with a non-sensitive policy fit those constraints. Repetitive policy questions and the usefulness of this particular document-based workflow are plausible but remain inferred rather than confirmed.",
+              "assumed_experiences": [
+                "Profile-supported: I need evidence concrete enough to present the idea internally.",
+                "Profile-supported: I cannot assign integration work to a developer.",
+                "Profile-supported: I need to assess the risk of an answer inventing an unsupported refund.",
+                "Email-only: I have a suitable public or non-sensitive support policy ready to import.",
+                "Email-only: testing document-grounded answers in a playground would give me useful evidence for an internal decision.",
+                "Unknown: whether repetitive order-status and policy questions make up a large share of my current inbox."
+              ],
+              "problem_now": "Burnout and delayed responses from repetitive tickets are plausible current problems, but their prevalence is not established. Preventing an incorrect policy promise is a consequential risk now; there is no documented rollout deadline beyond this being a busy Tuesday morning.",
+              "stopped_at": "Dans le Playground, chaque session conserve son propre historique.",
+              "biggest_doubt": "I cannot tell whether it only prepares drafts for review, shows the exact source behind each answer, or can confidently invent a refund that our policy does not permit.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me whether every answer is a reviewable draft with a visible citation to the exact policy passage, and what happens when the document does not contain an answer.",
+              "fixes": [
+                "Rewrite \"orqAgent permet de construire sans code un agent IA qui utilise vos documents de support pour préparer des réponses.\" to state whether these are drafts requiring approval and whether the tool identifies the supporting passage.",
+                "Cut \"Dans le Playground, chaque session conserve son propre historique.\" It is product detail I do not need before deciding whether the test is safe or useful.",
+                "Rewrite \"Pour chaque question, orqAgent recherche automatiquement le contexte qu’il juge le plus pertinent dans le fichier importé.\" to explain how I can verify that selected context and what the agent does when the file does not support an answer.",
+                "Rewrite \"Créez un agent, ajoutez une politique non sensible et soumettez-lui quelques questions réelles avant toute intégration.\" to give me a smaller, time-bounded test and explicitly say that nothing connects to or sends replies from the live inbox."
+              ],
+              "opens_in_100": 24,
+              "clicks_in_100": 4,
+              "persona": "Selected audience (explicit constraints): Support lead who answers the same forty tickets and has to sell the idea upward.\nContext (inferred; applicability must be checked): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.\n\nProblem context: A large, repetitive share of inbound is order-status and policy questions whose answers already exist (inferred); source: unknown\nProblem context: Repetition drives burnout and slows response times on the hard tickets (inferred); source: unknown\nProblem context: No developer and no budget line to hire one, so just call the API is dead on arrival (inferred); source: unknown\nProblem context: Connecting anything to the live inbox risks blasting replies at the archive (inferred); source: unknown\nProblem context: One wrong refund promise costs more than a month of saved time (inferred); source: unknown",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "Un outil sans code qui transforme des documents de support en contexte pour un agent IA préparant des réponses, afin de réduire le temps passé sur les questions répétitives.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Le besoin central correspond au profil explicite : je traite les mêmes tickets et dois défendre l’idée en interne; l’essai sans code sur un document non sensible est donc pertinent. En revanche, les catégories exactes de tickets, l’existence d’une politique importable et le comportement de l’outil face à une réponse risquée restent inconnus.",
+              "assumed_experiences": [
+                "Profile-supported: je réponds régulièrement aux mêmes tickets et dois vendre l’idée à ma hiérarchie.",
+                "Profile-supported: je n’ai pas de développeur disponible, ce qui rend la promesse « sans code » pertinente.",
+                "Email-only: je dispose immédiatement d’une politique publique ou non sensible dans un format importable.",
+                "Email-only: une démonstration générique ne suffirait pas à ma présentation interne.",
+                "Not established by the profile: mes tickets répétitifs portent précisément sur le suivi de commande ou les remboursements."
+              ],
+              "problem_now": "La répétition des tickets est un problème actuel établi par le profil et rend l’offre utile. Le risque qu’une IA formule une mauvaise promesse de remboursement est également important, mais la façon dont ce test le maîtrise n’est pas indiquée.",
+              "stopped_at": "« Dans le Playground, chaque session conserve son propre historique. »",
+              "biggest_doubt": "Je ne sais pas si le Playground produit uniquement des brouillons à valider, ni s’il montre précisément les passages sources; sans cela, je ne peux pas évaluer le risque d’une réponse qui invente une règle ou promet un remboursement.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me whether the Playground can only prepare drafts and is technically unable to send anything to customers.",
+              "fixes": [
+                "« La création du premier agent prend moins de deux minutes. L’import et l’évaluation viennent ensuite. » — remplacer cette chronologie incomplète par le temps total nécessaire pour importer un document et vérifier trois réponses.",
+                "« Pour chaque question, orqAgent recherche automatiquement le contexte qu’il juge le plus pertinent dans le fichier importé. » — préciser si la réponse affiche les passages utilisés et ce qui se passe lorsque le document ne contient pas la réponse.",
+                "« Dans le Playground, chaque session conserve son propre historique. L’agent garde aussi le contexte au fil de la conversation » — couper ces détails secondaires et utiliser cet espace pour répondre au risque principal : brouillon à valider ou réponse susceptible d’être envoyée.",
+                "« soumettez-lui quelques questions réelles avant toute intégration » — préciser si cet essai reste entièrement isolé de la boîte de réception et ne peut déclencher aucun envoi."
+              ],
+              "opens_in_100": 24,
+              "clicks_in_100": 4,
+              "persona": "Selected audience (explicit constraints): Support lead who answers the same forty tickets and has to sell the idea upward.\nContext (inferred; applicability must be checked): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.\n\nProblem context: A large, repetitive share of inbound is order-status and policy questions whose answers already exist (inferred); source: unknown\nProblem context: Repetition drives burnout and slows response times on the hard tickets (inferred); source: unknown\nProblem context: No developer and no budget line to hire one, so just call the API is dead on arrival (inferred); source: unknown\nProblem context: Connecting anything to the live inbox risks blasting replies at the archive (inferred); source: unknown\nProblem context: One wrong refund promise costs more than a month of saved time (inferred); source: unknown\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "Un outil sans code qui transforme mes documents de support en contexte pour qu’un agent IA prépare des réponses, ce qui pourrait réduire les questions répétitives que je traite.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Le profil établit que je traite beaucoup de tickets répétitifs et dois défendre l’idée en interne; tester une règle connue sur un document non sensible correspond donc bien à ma situation. En revanche, la présence de réponses déjà documentées, l’absence de développeur, le budget disponible et les contraintes exactes de la boîte de réception restent inconnus.",
+              "assumed_experiences": [
+                "Profile-supported: je dois présenter et vendre l’idée en interne.",
+                "Profile-supported: je réponds de façon répétitive aux mêmes types de tickets.",
+                "Email-only: je dispose d’une politique publique ou non sensible prête à importer.",
+                "Email-only: plusieurs questions réelles permettent d’évaluer utilement l’outil.",
+                "Email-only: comparer les réponses au document d’origine suffit à juger le risque avant intégration."
+              ],
+              "problem_now": "La répétition est un problème actuel établi par le profil, et le risque d’une réponse erronée sur un remboursement est important. L’urgence d’adopter un outil et l’état réel de notre documentation ne sont pas établis.",
+              "stopped_at": "",
+              "biggest_doubt": "Je ne sais pas si le Playground montre précisément les passages sources et garantit qu’aucune réponse ne peut être envoyée au client pendant l’essai; sans cela, je ne peux pas évaluer sérieusement le risque d’une promesse de remboursement inventée.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me that the Playground is disconnected from the live inbox and shows the exact source passage beside every draft answer.",
+              "fixes": [
+                "Rewrite « Pour chaque question, orqAgent recherche automatiquement le contexte qu’il juge le plus pertinent dans le fichier importé. » to state whether the selected source passage is visible beside the answer and what happens when the document contains no supported answer.",
+                "Rewrite « soumettez-lui quelques questions réelles avant toute intégration » to say explicitly whether this test is isolated from the live inbox and cannot send any customer reply.",
+                "Cut or shorten « Dans le Playground, chaque session conserve son propre historique. L’agent garde aussi le contexte au fil de la conversation » unless conversational memory is necessary for evaluating policy-answer accuracy."
+              ],
+              "opens_in_100": 24,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (explicit constraints): Support lead who answers the same forty tickets and has to sell the idea upward.\nContext (inferred; applicability must be checked): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.\n\nProblem context: A large, repetitive share of inbound is order-status and policy questions whose answers already exist (inferred); source: unknown\nProblem context: Repetition drives burnout and slows response times on the hard tickets (inferred); source: unknown\nProblem context: No developer and no budget line to hire one, so just call the API is dead on arrival (inferred); source: unknown\nProblem context: Connecting anything to the live inbox risks blasting replies at the archive (inferred); source: unknown\nProblem context: One wrong refund promise costs more than a month of saved time (inferred); source: unknown\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 6
+            }
+          ],
+          "sameness": []
+        }
+      ],
+      "limiting_gaps": [
+        "No customer names, quotes or case studies found - the copy can describe the product but cannot prove anyone uses it"
+      ],
+      "what_would_help_most": "Resolve this simulated next-step obstacle: I would have clicked if this email had told me I could test one FAQ document on sample tickets, without connecting the live inbox, and shown exactly how unsupported policy claims are flagged. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.",
+      "questions": [],
+      "sequence_summary": "La séquence tient sa promesse et progresse clairement de la maîtrise humaine des envois vers un test concret, autonome et sans intégration préalable.",
+      "knowledge_version": 5,
+      "notes": [],
+      "reads_expected": true
+    },
+    "assets": [
+      {
+        "title": "Votre archive reste hors du périmètre",
+        "content": "Subject: Votre archive reste hors du périmètre\nPreview text: Les expéditeurs automatisés et les messages de plus de 24 heures sont écartés.\n\nBonjour,\n\nL’auto-réponse est désactivée par défaut. Chaque réponse préparée arrive dans une file d’approbation avant tout envoi.\n\norqAgent est une plateforme sans code qui transforme vos FAQ et politiques en contexte pour un agent IA. Il prépare des brouillons dans votre boîte de réception et peut citer les faits extraits de vos documents.\n\nVous gardez la décision. Vous pouvez relire chaque brouillon, le modifier, l’envoyer ou l’ignorer.\n\nLors de la connexion, les expéditeurs automatisés sont écartés. Les messages vieux de plus de 24 heures le sont aussi — votre archive n’est pas reprise.\n\nCréez un premier agent sur un périmètre limité et examinez ses brouillons avant de décider de la suite.\n\nDémarrer gratuitement et créer un agent →\n\n- l’équipe orqAgent",
+        "content_html_length": 5035
+      },
+      {
+        "title": "Avant de présenter orqAgent en interne",
+        "content": "Subject: Avant de présenter orqAgent en interne\nPreview text: Faites-le répondre à quelques questions réelles à partir d’un document que votre équipe connaît.\n\nBonjour,\n\nPour présenter un outil en interne, une démonstration générique apporte peu. Un essai sur une règle connue donne des réponses concrètes à examiner.\n\norqAgent permet de construire sans code un agent IA qui utilise vos documents de support pour préparer des réponses. La création du premier agent prend moins de deux minutes. L’import et l’évaluation viennent ensuite.\n\nCommencez par une politique publique ou non sensible, au format PDF, document ou texte brut. Pour chaque question, orqAgent recherche automatiquement le contexte qu’il juge le plus pertinent dans le fichier importé.\n\nDans le Playground, chaque session conserve son propre historique. L’agent garde aussi le contexte au fil de la conversation : vous pouvez poser plusieurs questions, puis comparer chaque réponse au texte d’origine.\n\nL’inscription ne demande aucune carte bancaire. Créez un agent, ajoutez une politique non sensible et soumettez-lui quelques questions réelles avant toute intégration.\n\nDémarrer gratuitement →\n\n- l’équipe orqAgent",
+        "content_html_length": 5426
+      }
+    ]
+  }
+}

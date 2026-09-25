@@ -1,0 +1,184 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: MarketingOS - CloudFront Free plan (web ACLs and plan subscriptions)
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Deployed in us-east-1, whatever region the rest of MarketingOS is in: a
+#  CLOUDFRONT-scope web ACL only exists there, and the plan subscription is a
+#  global resource that CloudFormation manages from there too.
+#
+#  The CloudFront flat-rate Free plan covers one distribution per subscription,
+#  and each subscribed distribution must carry a web ACL of its own - one that
+#  no other distribution shares. Three distributions, so three ACLs and three
+#  subscriptions. Three is also the account's hard ceiling on Free plans, and
+#  it cannot be raised: a fourth distribution will have to be pay-as-you-go.
+#
+#  Deployed twice, because each half needs the other:
+#
+#    1. With no distribution ids. Creates the three web ACLs; their ARNs go
+#       into the console, back-office and landing templates as WebAclArn.
+#    2. Once the three distributions exist, with their ids. Creates the three
+#       subscriptions, which activate immediately on the Free tier.
+#
+#      aws cloudformation deploy --region us-east-1 \
+#        --template-file iac/edge.yaml \
+#        --stack-name marketingos-edge-prod \
+#        --parameter-overrides Environment=prod \
+#            ConsoleDistributionId=E... AdminDistributionId=E... LandingDistributionId=E...
+#
+#  The ACLs hold one rule each, a per-IP rate limit. Managed rule groups are
+#  one of the things the Free plan refuses, and a per-IP limit is the one rule
+#  worth having before there is traffic to learn from.
+# ─────────────────────────────────────────────────────────────────────────────
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+  ConsoleDistributionId:
+    Type: String
+    Default: ""
+  AdminDistributionId:
+    Type: String
+    Default: ""
+  LandingDistributionId:
+    Type: String
+    Default: ""
+  RateLimitPer5Min:
+    Type: Number
+    Default: 2000
+    MinValue: 100
+    Description: >-
+      Requests per client IP per five minutes before WAF blocks it. The console
+      renders every page on the server, so a normal session is a few hundred.
+
+Conditions:
+  # All three or none: the subscriptions are chained with DependsOn below, and
+  # a DependsOn on a resource its condition left out fails the deploy.
+  Subscribe: !And
+    - !Not [!Equals [!Ref ConsoleDistributionId, ""]]
+    - !Not [!Equals [!Ref AdminDistributionId, ""]]
+    - !Not [!Equals [!Ref LandingDistributionId, ""]]
+
+Resources:
+  ConsoleWebAcl:
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      Name: !Sub 'marketingos-console-${Environment}'
+      Scope: CLOUDFRONT
+      DefaultAction: { Allow: {} }
+      VisibilityConfig:
+        SampledRequestsEnabled: true
+        CloudWatchMetricsEnabled: true
+        MetricName: !Sub 'marketingos-console-${Environment}'
+      Rules:
+        - Name: rate-limit-per-ip
+          Priority: 0
+          Action: { Block: {} }
+          Statement:
+            RateBasedStatement:
+              Limit: !Ref RateLimitPer5Min
+              AggregateKeyType: IP
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: !Sub 'marketingos-console-rate-${Environment}'
+
+  AdminWebAcl:
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      Name: !Sub 'marketingos-admin-${Environment}'
+      Scope: CLOUDFRONT
+      DefaultAction: { Allow: {} }
+      VisibilityConfig:
+        SampledRequestsEnabled: true
+        CloudWatchMetricsEnabled: true
+        MetricName: !Sub 'marketingos-admin-${Environment}'
+      Rules:
+        - Name: rate-limit-per-ip
+          Priority: 0
+          Action: { Block: {} }
+          Statement:
+            RateBasedStatement:
+              Limit: !Ref RateLimitPer5Min
+              AggregateKeyType: IP
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: !Sub 'marketingos-admin-rate-${Environment}'
+
+  LandingWebAcl:
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      Name: !Sub 'marketingos-landing-${Environment}'
+      Scope: CLOUDFRONT
+      DefaultAction: { Allow: {} }
+      VisibilityConfig:
+        SampledRequestsEnabled: true
+        CloudWatchMetricsEnabled: true
+        MetricName: !Sub 'marketingos-landing-${Environment}'
+      Rules:
+        - Name: rate-limit-per-ip
+          Priority: 0
+          Action: { Block: {} }
+          Statement:
+            RateBasedStatement:
+              Limit: !Ref RateLimitPer5Min
+              AggregateKeyType: IP
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: !Sub 'marketingos-landing-rate-${Environment}'
+
+  # Created one after another. PricingPlanManager answers three concurrent
+  # creates with 429 Too Many Requests, and CloudFormation gives up after its
+  # retries rather than waiting.
+  #
+  # Every distribution here must be PriceClass_All: the plans refuse one
+  # restricted to fewer edge locations, with only "not eligible for this
+  # subscription tier" to say why.
+  ConsoleFreePlan:
+    Type: AWS::PricingPlanManager::Subscription
+    Condition: Subscribe
+    Properties:
+      PlanFamily: CloudFront
+      PlanTier: FREE
+      UsageLevel: DEFAULT
+      ResourceArns:
+        - !Sub 'arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${ConsoleDistributionId}'
+        - !GetAtt ConsoleWebAcl.Arn
+
+  AdminFreePlan:
+    Type: AWS::PricingPlanManager::Subscription
+    Condition: Subscribe
+    DependsOn: ConsoleFreePlan
+    Properties:
+      PlanFamily: CloudFront
+      PlanTier: FREE
+      UsageLevel: DEFAULT
+      ResourceArns:
+        - !Sub 'arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${AdminDistributionId}'
+        - !GetAtt AdminWebAcl.Arn
+
+  LandingFreePlan:
+    Type: AWS::PricingPlanManager::Subscription
+    Condition: Subscribe
+    DependsOn: AdminFreePlan
+    Properties:
+      PlanFamily: CloudFront
+      PlanTier: FREE
+      UsageLevel: DEFAULT
+      ResourceArns:
+        - !Sub 'arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${LandingDistributionId}'
+        - !GetAtt LandingWebAcl.Arn
+
+Outputs:
+  ConsoleWebAclArn:
+    Description: WebAclArn for frontend/template.yaml (CONSOLE_WEB_ACL_ARN in pipeline.yaml).
+    Value: !GetAtt ConsoleWebAcl.Arn
+  AdminWebAclArn:
+    Description: WebAclArn for administration/backend/template.yaml.
+    Value: !GetAtt AdminWebAcl.Arn
+  LandingWebAclArn:
+    Description: WebAclArn for landing-page/template.yaml.
+    Value: !GetAtt LandingWebAcl.Arn

@@ -185,6 +185,19 @@ ROLE_CATALOG: dict[str, RoleSpec] = {
             tools=_SEARCH,
         ),
         RoleSpec(
+            id="material_researcher",
+            label="Official material researcher",
+            blurb=(
+                "Finds and verifies official documentation when a campaign exposes a "
+                "specific missing fact."
+            ),
+            phase=RolePhase.MARKET,
+            tier=ModelTier.BALANCED,
+            # Search locates URLs; Python fetches them and a closed-world turn
+            # extracts only quotations found in that fetched text.
+            tools=_SEARCH,
+        ),
+        RoleSpec(
             id="relevance_analyst",
             label="Relevance analyst",
             blurb=(

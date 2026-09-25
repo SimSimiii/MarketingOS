@@ -8,6 +8,7 @@ until the invoice.
 """
 
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -17,6 +18,7 @@ from app.ai.openai_provider import (
     CodexNotInstalledError,
     OpenAIProvider,
     _clean_env,
+    _codex_path,
     _read_stream,
     _usage_from,
 )
@@ -58,6 +60,33 @@ def test_the_rest_of_the_environment_is_left_alone(monkeypatch):
 # ------------------------------------------------------------------- command
 
 
+def test_codex_path_finds_the_documented_windows_install(monkeypatch, tmp_path):
+    binary = tmp_path / "Programs" / "OpenAI" / "Codex" / "bin" / "codex.exe"
+    binary.parent.mkdir(parents=True)
+    binary.touch()
+    monkeypatch.setenv("LOCALAPPDATA", str(tmp_path))
+    monkeypatch.delenv("CODEX_CLI_PATH", raising=False)
+
+    assert _codex_path() == str(binary)
+
+
+def test_codex_path_finds_the_newest_desktop_bundled_cli(monkeypatch, tmp_path):
+    desktop_bin = tmp_path / "OpenAI" / "Codex" / "bin"
+    old_binary = desktop_bin / "old-build" / "codex.exe"
+    new_binary = desktop_bin / "new-build" / "codex.exe"
+    old_binary.parent.mkdir(parents=True)
+    new_binary.parent.mkdir(parents=True)
+    old_binary.touch()
+    new_binary.touch()
+    # Explicit mtimes make the expected choice stable on coarse filesystems.
+    os.utime(old_binary, ns=(1_000_000_000, 1_000_000_000))
+    os.utime(new_binary, ns=(2_000_000_000, 2_000_000_000))
+    monkeypatch.setenv("LOCALAPPDATA", str(tmp_path))
+    monkeypatch.delenv("CODEX_CLI_PATH", raising=False)
+
+    assert _codex_path() == str(new_binary)
+
+
 def test_the_command_is_confined_and_reads_its_prompt_from_stdin(monkeypatch):
     monkeypatch.setattr("app.ai.openai_provider._codex_path", lambda: "/usr/bin/codex")
     command = OpenAIProvider()._command(_request())
@@ -89,7 +118,9 @@ def test_web_search_is_only_enabled_when_a_role_asked_for_it(monkeypatch):
     provider = OpenAIProvider()
 
     assert "--search" not in provider._command(_request())
-    assert "--search" in provider._command(_request(tools=[ResearchTool.WEB_SEARCH]))
+    search_command = provider._command(_request(tools=[ResearchTool.WEB_SEARCH]))
+    assert "--search" in search_command
+    assert search_command.index("--search") < search_command.index("exec")
 
 
 def test_a_missing_binary_says_what_to_install(monkeypatch):

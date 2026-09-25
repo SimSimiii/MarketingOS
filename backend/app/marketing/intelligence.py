@@ -22,7 +22,7 @@ from app.knowledge.artifacts import (
     Provenance,
     Segment,
 )
-from app.knowledge.ledger import EvidenceLedger
+from app.knowledge.ledger import EvidenceLedger, EvidenceStrength
 from app.market.audience_research import (
     AudienceProblem,
     AudienceResearch,
@@ -34,12 +34,14 @@ from app.market.qualification import CompanyQualification, SignalGrounding
 from app.market.relevance import (
     CampaignReadiness,
     ClaimContract,
+    ContractClaim,
     DossierState,
     FitVerdict,
     RecommendationState,
     RelevanceBand,
     RelevanceDossier,
     RelevanceStatus,
+    claim_identity,
 )
 from app.models.market import AudienceResearchRow
 
@@ -550,6 +552,70 @@ class CampaignIntelligence(BaseModel):
     def v2_claim_boundary(self) -> bool:
         return self.trace.dossier_schema_version >= 2 and self.recommendation_state is not None
 
+    def admit_automatically_recovered(self, ledger: EvidenceLedger) -> None:
+        """Add verified recovery facts to an older dossier's claim boundary.
+
+        A relevance dossier is a snapshot of the ledger that existed when it
+        was built. Automatic material recovery enlarges that ledger after a
+        critic names a campaign-critical gap. Without this bridge, the facts
+        are shown to the Strategist and then removed during normalization.
+        """
+        if not self.v2_claim_boundary:
+            return
+        forbidden = set(self.forbidden_evidence_ids)
+        recovered = [
+            entry
+            for entry in ledger.entries
+            if re.fullmatch(r"R\d+", entry.id)
+            and entry.id not in forbidden
+            and entry.strength is EvidenceStrength.STRONG
+            and entry.source.startswith(("https://", "http://"))
+        ]
+        if not recovered:
+            return
+
+        if self.claim_contract is not None:
+            known = self.claim_contract.allowed_ids
+            additions = [
+                ContractClaim(
+                    id=claim_identity(entry.claim, [entry.id]),
+                    text=entry.claim,
+                    evidence_ids=[entry.id],
+                    reason=(
+                        "Automatically recovered from an official source after the "
+                        "campaign critic identified a missing-material gap."
+                    ),
+                )
+                for entry in recovered
+                if claim_identity(entry.claim, [entry.id]) not in known
+            ]
+            if additions:
+                self.claim_contract = self.claim_contract.model_copy(
+                    update={
+                        "verified_product_claims": [
+                            *self.claim_contract.verified_product_claims,
+                            *additions,
+                        ],
+                        "campaign_allowed_claims": [
+                            *self.claim_contract.campaign_allowed_claims,
+                            *additions,
+                        ],
+                    }
+                )
+                self.allowed_claims = [
+                    item.text for item in self.claim_contract.campaign_allowed_claims
+                ]
+                self.allowed_evidence_ids = self.claim_contract.allowed_evidence_ids
+        else:
+            self.allowed_claims = list(
+                dict.fromkeys([*self.allowed_claims, *(entry.claim for entry in recovered)])
+            )
+            self.allowed_evidence_ids = list(
+                dict.fromkeys(
+                    [*self.allowed_evidence_ids, *(entry.id for entry in recovered)]
+                )
+            )
+
 
 @dataclass(frozen=True)
 class CampaignIntelligenceBundle:
@@ -650,6 +716,7 @@ def build_campaign_intelligence(
     dossier = dossier_status.dossier
     trace.dossier_schema_version = dossier.schema_version
     _add_dossier(context, dossier, ledger)
+    context.admit_automatically_recovered(ledger)
     return context
 
 

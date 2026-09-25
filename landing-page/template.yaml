@@ -30,11 +30,27 @@ Parameters:
     Type: String
     Default: ""
     Description: ACM certificate ARN, which MUST be in us-east-1.
+  HostedZoneId:
+    Type: String
+    Default: ""
+    Description: >-
+      Route 53 zone that owns DomainName. Set, and this stack writes the A and
+      AAAA alias records itself; blank, and DNS is yours to point.
+  WebAclArn:
+    Type: String
+    Default: ""
+    Description: >-
+      LandingWebAclArn from iac/edge.yaml. The CloudFront Free plan requires a
+      web ACL of the distribution's own before it will subscribe it.
 
 Conditions:
   HasDomain: !And
     - !Not [!Equals [!Ref DomainName, ""]]
     - !Not [!Equals [!Ref CertificateArn, ""]]
+  HasDns: !And
+    - !Condition HasDomain
+    - !Not [!Equals [!Ref HostedZoneId, ""]]
+  HasWebAcl: !Not [!Equals [!Ref WebAclArn, ""]]
 
 Resources:
   LandingBucket:
@@ -72,7 +88,12 @@ Resources:
         DefaultRootObject: index.html
         HttpVersion: http2and3
         IPV6Enabled: true
-        PriceClass: PriceClass_100
+        # PriceClass_All, not _100: the CloudFront flat-rate plans refuse a
+        # distribution restricted to fewer edge locations ("not eligible for
+        # this subscription tier"), and on a flat rate the wider class costs
+        # nothing extra.
+        PriceClass: PriceClass_All
+        WebACLId: !If [HasWebAcl, !Ref WebAclArn, !Ref 'AWS::NoValue']
         Aliases: !If [HasDomain, [!Ref DomainName], !Ref 'AWS::NoValue']
         ViewerCertificate: !If
           - HasDomain
@@ -123,6 +144,30 @@ Resources:
             Condition:
               StringEquals:
                 AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${LandingDistribution}'
+
+  # Z2FDTNDATAQYW2 is CloudFront's own hosted zone - the same constant for
+  # every distribution, which is what an alias record to one has to name.
+  LandingDnsA:
+    Type: AWS::Route53::RecordSet
+    Condition: HasDns
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Ref DomainName
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt LandingDistribution.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2
+
+  LandingDnsAAAA:
+    Type: AWS::Route53::RecordSet
+    Condition: HasDns
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Ref DomainName
+      Type: AAAA
+      AliasTarget:
+        DNSName: !GetAtt LandingDistribution.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2
 
 Outputs:
   LandingBucketName:

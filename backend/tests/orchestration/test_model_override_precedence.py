@@ -1,10 +1,9 @@
 """Which model map a run actually routes on, once a preset and an operator
 have both had an opinion.
 
-`ModelRouter` checks an exact role id before it looks at the wildcard. That is
-right for the router and it is a trap here: `maximum` ships per-role overrides,
-so a plain merge would let a preset's suggestion outrank the operator's own
-"every agent" choice - silently, and on the five roles they most likely meant.
+`ModelRouter` checks an exact role id before it looks at the wildcard. Preset
+defaults and operator choices therefore need an explicit precedence contract:
+the operator's wildcard or role pin must replace the preset's opinion.
 """
 
 from app.ai.model_router import ModelRouter, ModelTier
@@ -35,7 +34,7 @@ def test_a_pin_beats_the_presets_choice_for_that_role():
 
     assert router.resolve("email_writer", ModelTier.DEEP) == "gpt-5.6-sol"
     # Everything the operator did not touch still follows the preset.
-    assert router.resolve("strategist", ModelTier.DEEP) == "opus"
+    assert router.resolve("strategist", ModelTier.DEEP) == "gpt-5.6-sol"
 
 
 def test_every_agent_displaces_the_presets_per_role_overrides():
@@ -72,4 +71,4 @@ def test_the_presets_own_wildcard_is_not_disturbed_by_a_pin():
     router = ModelRouter(overrides)
 
     assert router.resolve("email_writer", ModelTier.DEEP) == "fable5"
-    assert router.resolve("strategist", ModelTier.DEEP) == "sonnet"
+    assert router.resolve("strategist", ModelTier.DEEP) == "gpt-5.6-sol"

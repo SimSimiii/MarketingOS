@@ -19,6 +19,7 @@ import pytest
 
 from app.ai.model_router import ModelRouter, ModelTier
 from app.ai.models import ClaudeModel
+from app.evaluation.controls import CONTROL_DRAFTS, BenchSource, bench_only_sources
 from app.evaluation.golden import GOLDEN_CASES
 from app.evaluation.judge_bench import (
     DEFAULT_JUDGE_MODEL,
@@ -28,8 +29,16 @@ from app.evaluation.judge_bench import (
     _subject_only,
     bench_sources,
     run_bench,
+    wilson,
 )
-from app.evaluation.mutations import MUTATIONS, Mutation, mutation_named
+from app.evaluation.mutations import (
+    _PROOF_RE,
+    HARD_MUTATION_NAMES,
+    HARD_MUTATIONS,
+    MUTATIONS,
+    Mutation,
+    mutation_named,
+)
 from app.marketing.email_copy import Email, render_email
 from app.runtime.model_session import _PROVIDER_ATTEMPTS as PROVIDER_ATTEMPTS
 from tests.marketing.conftest import (
@@ -49,7 +58,11 @@ GATE_VISIBLE = [item for item in DEGRADATIONS if item.gate_visible]
 
 
 def controls() -> list[Email]:
-    return [email for _, email, _ in bench_sources()]
+    return [source.email for source in bench_sources()]
+
+
+def one_source(name: str, email: Email, *, anchor: bool = False) -> list[BenchSource]:
+    return [BenchSource(name=name, email=email, persona=PERSONA, anchor=anchor)]
 
 
 def plain_email() -> Email:
@@ -73,13 +86,50 @@ def plain_email() -> Email:
 # ------------------------------------------------------------ the mutations
 
 
-def test_the_golden_set_still_offers_the_bench_something_to_mutate():
-    """The bench reuses the human controls rather than fixtures of its own. If
-    a control stops parsing, the bench silently shrinks instead of failing."""
-    sources = bench_sources()
+def test_the_golden_set_still_offers_the_bench_its_human_controls():
+    """The anchors are the only items whose difficulty is independent of the
+    thing being measured. If a control stops parsing, the bench silently
+    shrinks instead of failing, and this is where that gets noticed."""
+    anchors = bench_sources(anchors_only=True)
 
-    assert sources, "no golden case has a control email the bench can use"
-    assert len(sources) == sum(1 for case in GOLDEN_CASES if case.control_email.strip())
+    assert anchors, "no golden case has a control email the bench can use"
+    assert all(source.anchor for source in anchors)
+
+
+def test_one_control_email_is_benched_once_however_many_cases_carry_it():
+    """The confound the widening exists to remove, and it was already here.
+
+    `rich-sequence` and `rich-single` are two requests against one business
+    carrying the same control email and the same persona. Keyed by case name
+    the set yielded both, so every pair on that email was bought twice and the
+    report counted them as two independent items - manufacturing the illusion
+    of a sample while charging for it.
+    """
+    carrying = [case for case in GOLDEN_CASES if case.control_email.strip()]
+    anchors = bench_sources(anchors_only=True)
+
+    assert len(carrying) > len(anchors), "the duplicate control this pins is gone from golden.py"
+    rendered = [render_email(source.email) for source in anchors]
+    assert len(set(rendered)) == len(rendered)
+
+
+def test_every_control_written_for_the_bench_is_sendable():
+    """`bench_only_sources` skips a draft it cannot parse, so a typo would
+    shrink the bench rather than fail it - and a smaller bench reports a
+    narrower rate with no sign that anything went missing."""
+    parsed = bench_only_sources()
+
+    assert len(parsed) == len(CONTROL_DRAFTS), (
+        "a control draft is not sendable: "
+        f"{sorted({draft.name for draft in CONTROL_DRAFTS} - {s.name for s in parsed})}"
+    )
+    assert not any(source.anchor for source in parsed)
+
+
+def test_the_bench_runs_on_more_than_one_item_by_default():
+    """The whole point. With one item a miss is unattributable: it is equally
+    a blind judge and an email that never carried the thing being removed."""
+    assert len(bench_sources()) >= 4
 
 
 @pytest.mark.parametrize("mutation", DEGRADATIONS, ids=lambda item: item.name)
@@ -150,7 +200,7 @@ async def test_a_mutation_that_changes_nothing_is_skipped_rather_than_scored(
 
     report = await run_bench(
         judge_session=make_session(provider),
-        sources=[("plain", plain_email(), PERSONA)],
+        sources=one_source("plain", plain_email()),
         mutations=(vagueness,),
         votes=2,
     )
@@ -171,7 +221,7 @@ async def test_a_judge_that_prefers_the_original_scores_a_catch(
 
     report = await run_bench(
         judge_session=make_session(provider),
-        sources=[("rich", controls()[0], PERSONA)],
+        sources=one_source("rich", controls()[0], anchor=True),
         mutations=(strip,),
         votes=4,
     )
@@ -198,7 +248,7 @@ async def test_a_tie_is_a_miss(provider: RoleScriptedProvider):
 
     report = await run_bench(
         judge_session=make_session(provider),
-        sources=[("rich", controls()[0], PERSONA)],
+        sources=one_source("rich", controls()[0], anchor=True),
         mutations=(strip,),
         votes=4,
     )
@@ -219,7 +269,7 @@ async def test_an_undamaged_pair_reports_the_noise_floor(provider: RoleScriptedP
 
     report = await run_bench(
         judge_session=make_session(provider),
-        sources=[("rich", controls()[0], PERSONA)],
+        sources=one_source("rich", controls()[0], anchor=True),
         mutations=(identity,),
         votes=4,
     )
@@ -251,7 +301,7 @@ async def test_a_provider_failure_costs_one_pair_and_not_the_run(
 
     report = await run_bench(
         judge_session=make_session(provider),
-        sources=[("rich", controls()[0], PERSONA)],
+        sources=one_source("rich", controls()[0], anchor=True),
         mutations=(strip, hedge),
         votes=2,
     )
@@ -294,11 +344,22 @@ def test_the_bench_judges_with_the_model_the_craft_loop_uses():
 # --------------------------------------------------------------- the metrics
 
 
-def _pair(mutation: str, original: int, mutant: int) -> PairResult:
+def _pair(
+    mutation: str,
+    original: int,
+    mutant: int,
+    source: str = "fixture",
+    *,
+    anchor: bool = False,
+) -> PairResult:
     found = mutation_named(mutation)
     assert found is not None
     return PairResult(
-        source="fixture", mutation=found, original_votes=original, mutant_votes=mutant
+        source=source,
+        mutation=found,
+        anchor=anchor,
+        original_votes=original,
+        mutant_votes=mutant,
     )
 
 
@@ -348,7 +409,7 @@ async def test_damage_above_the_body_goes_to_the_inbox_and_not_to_a_duel(
 
     report = await run_bench(
         judge_session=make_session(provider),
-        sources=[("rich", controls()[0], PERSONA)],
+        sources=one_source("rich", controls()[0], anchor=True),
         mutations=(clickbait,),
         votes=4,
     )
@@ -375,7 +436,7 @@ async def test_two_lines_the_scanner_cannot_separate_are_a_miss(
 
     report = await run_bench(
         judge_session=make_session(provider),
-        sources=[("rich", controls()[0], PERSONA)],
+        sources=one_source("rich", controls()[0], anchor=True),
         mutations=(clickbait,),
         votes=4,
     )
@@ -398,7 +459,7 @@ async def test_the_listing_order_is_cancelled_rather_than_trusted(
 
     report = await run_bench(
         judge_session=make_session(provider),
-        sources=[("rich", controls()[0], PERSONA)],
+        sources=one_source("rich", controls()[0], anchor=True),
         mutations=(clickbait,),
         votes=4,
     )
@@ -421,3 +482,185 @@ def test_only_damage_that_leaves_the_body_alone_is_ranked_rather_than_duelled():
     }
 
     assert routed == {"clickbait_subject"}
+
+
+# ------------------------------------------- telling a blind judge from an easy email
+
+
+def test_a_mutation_missed_everywhere_and_one_missed_on_one_item_are_different_rows():
+    """The measurement the single-item bench could not make.
+
+    Both mutations below score badly pooled. One is missed on every item,
+    which is a blind spot in the judge and belongs in the duel prompt or in
+    code. The other is missed on exactly one, which is an item that is not
+    carrying what the mutation removes and belongs in `controls.py`. With one
+    control email these are the same 2-2 and nothing can separate them.
+    """
+    report = BenchReport(
+        pairs=[
+            _pair("strip_the_proof", 2, 2, "one"),
+            _pair("strip_the_proof", 2, 2, "two"),
+            _pair("strip_the_proof", 2, 2, "three"),
+            _pair("bury_the_ask", 2, 2, "one"),
+            _pair("bury_the_ask", 4, 0, "two"),
+            _pair("bury_the_ask", 4, 0, "three"),
+        ]
+    )
+
+    blind, item = sorted(report.by_mutation(), key=lambda row: row.rate)
+    assert blind.mutation.name == "strip_the_proof"
+    assert blind.missed_on == ("one", "two", "three")
+    assert item.mutation.name == "bury_the_ask"
+    assert item.missed_on == ("one",)
+
+
+def test_an_item_nothing_separated_shows_up_as_a_ballot_share_not_a_rate():
+    """caught/judged cannot tell 4-0 from 3-1, and the difference is the whole
+    evidence. An item sitting at half its ballots was separated by nothing."""
+    report = BenchReport(
+        pairs=[
+            _pair("strip_the_proof", 2, 2, "opaque"),
+            _pair("bury_the_ask", 2, 2, "opaque"),
+            _pair("strip_the_proof", 4, 0, "clear"),
+            _pair("bury_the_ask", 3, 1, "clear"),
+        ]
+    )
+
+    opaque, clear = report.items()
+    assert (opaque.rate, clear.rate) == (0.0, 1.0)
+    assert opaque.ballot_share == 0.5
+    assert clear.ballot_share == 0.875
+
+
+def test_the_two_provenances_are_reported_apart_and_never_pooled_away():
+    """A control written for the bench may be easier to defend than one a
+    person wrote. If the two rates diverge the fixtures are the suspect, and
+    a single pooled percentage is exactly what would hide it."""
+    report = BenchReport(
+        pairs=[
+            _pair("strip_the_proof", 4, 0, "human", anchor=True),
+            _pair("bury_the_ask", 4, 0, "human", anchor=True),
+            _pair("strip_the_proof", 2, 2, "fixture"),
+            _pair("bury_the_ask", 2, 2, "fixture"),
+        ]
+    )
+
+    assert report.anchor_detection_rate == 1.0
+    assert report.bench_detection_rate == 0.0
+    assert report.detection_rate == 0.5
+
+
+def test_the_matrix_and_its_legend_appear_only_once_there_is_something_to_compare():
+    """One column is not a matrix, and printing one would suggest the bench
+    had made a comparison it cannot make."""
+    single = BenchReport(pairs=[_pair("strip_the_proof", 4, 0, "only")])
+    several = BenchReport(
+        pairs=[_pair("strip_the_proof", 4, 0, "one"), _pair("strip_the_proof", 2, 2, "two")]
+    )
+
+    assert "MATRIX" not in single.render()
+    assert "MATRIX" in several.render()
+    assert "PER MUTATION" in several.render()
+
+
+# ------------------------------------------------------------------- the interval
+
+
+def test_four_votes_do_not_settle_a_rate():
+    """The honesty device. A clean sweep of a four-vote ballot is consistent
+    with a judge that is right half the time, and the old report printed it
+    as 100%."""
+    low, high = wilson(4, 4)
+
+    assert low < 0.6 and high == 1.0
+
+
+def test_the_interval_narrows_as_items_are_added():
+    """What the widening actually buys, stated as a property rather than a
+    hope: the same rate over more pairs is a smaller claim."""
+    narrow_low, narrow_high = wilson(4, 6)
+    wide_low, wide_high = wilson(32, 48)
+
+    assert (wide_high - wide_low) < (narrow_high - narrow_low)
+
+
+def test_an_empty_bench_claims_nothing():
+    assert wilson(0, 0) == (0.0, 1.0)
+
+
+# --------------------------------------------------------------- the subtle tier
+
+
+def test_the_hard_tier_is_entirely_judgment_only():
+    """What `--hard` rests on.
+
+    The tier exists because the original six are passed 32/33, which leaves no
+    room to measure anything. If one of these were catchable by a gate it would
+    be benching the gate instead, and the flag would quietly restore the
+    ceiling it was added to escape.
+    """
+    assert HARD_MUTATIONS, "the hard tier is empty"
+    assert {item.name for item in HARD_MUTATIONS} == set(HARD_MUTATION_NAMES)
+    for mutation in HARD_MUTATIONS:
+        assert not mutation.gate_visible, f"{mutation.name} is caught by a free check"
+        assert not mutation.invariant, f"{mutation.name} is in the control arm"
+
+
+def test_the_hollowed_testimonial_still_looks_exactly_like_proof():
+    """The whole mechanism of `generic_proof`.
+
+    `strip_the_proof` deletes a name and a passage, which is a string
+    comparison and is already answered in code. This one keeps the name, the
+    quotation marks and the attribution clause, and removes only what the
+    person said. If any of that shape went missing, the pair would be scoring
+    the missing shape rather than the missing meaning.
+    """
+    mutation = mutation_named("generic_proof")
+    assert mutation is not None
+    for source in bench_sources():
+        original, mutant = source.email, mutation.apply(source.email)
+        if render_email(mutant) == render_email(original):
+            continue  # no quoted span to hollow - the bench skips this pair
+        assert mutant.body.count('"') == original.body.count('"')
+        # Asserted against the bench's own definition of a proof block rather
+        # than a list of reporting verbs: "told me", "wrote to us" and "said"
+        # are all attributions, and a test that knew about only some of them
+        # would fail on a control for being written differently.
+        assert _PROOF_RE.search(mutant.body), "the attribution shape did not survive"
+        assert "a real difference" in mutant.body
+
+
+def test_moving_the_proof_past_the_ask_changes_no_words():
+    """The pair isolates position. If a word moved, it would also be isolating
+    whatever that word was doing."""
+    mutation = mutation_named("proof_after_the_ask")
+    assert mutation is not None
+    for source in bench_sources():
+        mutant = mutation.apply(source.email)
+        assert sorted(mutant.body.split()) == sorted(source.email.body.split())
+
+
+def test_a_second_ask_adds_and_removes_nothing():
+    """Every original sentence survives, so the pair isolates the competition
+    between two asks rather than the loss of anything."""
+    mutation = mutation_named("second_ask")
+    assert mutation is not None
+    for source in bench_sources():
+        mutant = mutation.apply(source.email)
+        for block in source.email.body.split("\n\n"):
+            assert block.strip() in mutant.body
+        assert mutant.call_to_action == source.email.call_to_action
+
+
+def test_trading_the_mechanism_for_a_benefit_keeps_the_proof_and_the_ask():
+    """It removes the reason and nothing else. A mutant that also lost its
+    testimonial would be a second `strip_the_proof` with extra steps."""
+    mutation = mutation_named("mechanism_to_benefit")
+    assert mutation is not None
+    for source in bench_sources():
+        original, mutant = source.email, mutation.apply(source.email)
+        if render_email(mutant) == render_email(original):
+            continue
+        blocks = [b.strip() for b in original.body.split("\n\n") if b.strip()]
+        assert blocks[-1] in mutant.body, "the ask went missing"
+        assert mutant.body.count('"') == original.body.count('"'), "the proof went missing"

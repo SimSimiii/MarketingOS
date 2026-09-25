@@ -33,6 +33,16 @@ from app.knowledge.corpus import SourceCorpus
 from app.knowledge.ledger import EvidenceIndex
 from app.knowledge.store import StoredArtifacts
 from app.market.demand import DemandMap
+from app.market.material_research import (
+    ROLE_ID as MATERIAL_RESEARCH_ROLE,
+)
+from app.market.material_research import (
+    MaterialRecovery,
+    MaterialResearcher,
+    apply_recovery,
+    cited_recovery,
+    existing_recovery,
+)
 from app.market.positioning import PositioningMap
 from app.marketing.briefs import CampaignBrief
 from app.marketing.cancellation import CancellationToken
@@ -187,6 +197,18 @@ class KnowledgeGateway(ABC):
         """
         return None
 
+    def commit_recovered_material(
+        self, recovery: MaterialRecovery, artifacts: KnowledgeArtifacts
+    ) -> StoredArtifacts | None:
+        """Persist automatically verified sources when this gateway can.
+
+        Database-free and historical gateways keep the enrichment inside the
+        current run.  The application gateway stores the exact fetched pages
+        and the enriched artifact set so the next campaign does not rediscover
+        the same fact.
+        """
+        return None
+
 
 @dataclass
 class CampaignRunResult:
@@ -220,6 +242,37 @@ class CampaignRunResult:
         return len(self.outcomes) + (1 if self.message is not None else 0)
 
 
+@dataclass
+class RunContext:
+    """What a step reloads rather than carries between processes.
+
+    Every field here is derivable from the database plus the request, which is
+    the property that makes it safe to rebuild: two steps of the same run
+    reconstruct the same world because the corpus fingerprint, the stored
+    artifacts and the market tables have not moved underneath them.
+    """
+
+    artifacts: KnowledgeArtifacts
+    corpus: SourceCorpus
+    positioning: PositioningMap | None = None
+    demand: DemandMap | None = None
+    chosen: str = ""
+    intelligence: CampaignIntelligence | None = None
+
+
+class _RunStopped(Exception):
+    """A phase decided the run is over, with a finished result to report.
+
+    An exception rather than a sentinel return so `_prepare` has one return
+    type and the happy path in `run` stays linear. It is never allowed out of
+    this module.
+    """
+
+    def __init__(self, result: CampaignRunResult) -> None:
+        super().__init__(result.abort_reason or "stopped")
+        self.result = result
+
+
 class EmailCampaignPipeline:
     def __init__(
         self,
@@ -230,6 +283,7 @@ class EmailCampaignPipeline:
         observer: RunObserver | None = None,
         cancel_token: CancellationToken | None = None,
         deadline: float | None = None,
+        material_researcher: MaterialResearcher | None = None,
     ) -> None:
         self._session = session
         self._knowledge = knowledge
@@ -237,89 +291,17 @@ class EmailCampaignPipeline:
         self._observer = observer or RunObserver()
         self._cancel_token = cancel_token
         self._deadline = deadline
+        self._material_researcher = material_researcher or MaterialResearcher(session)
 
     async def run(self, request: CampaignRequest) -> CampaignRunResult:
         result = CampaignRunResult(usage=self._session.usage)
-        # The channel decides the deliverable; only an email campaign has a
-        # number to read out of the user's sentence.
-        contract = linkedin_contract() if request.channel else parse_contract(request.request)
-        self._observer.on_phase(
-            "contract",
-            f"Read the request as {contract.count} {contract.noun}(s)"
-            + (" - the user said so" if contract.count_is_explicit else " - not specified"),
-            {"count": contract.count, "explicit": contract.count_is_explicit,
-             "kind": contract.kind.value},
-        )
+        contract = self.read_contract(request)
 
         try:
-            artifacts, corpus = await self._phase_knowledge(result)
-            if (guard := self._guard()) is not None:
-                return self._stopped(request, contract, result, guard)
-
-            intelligence: CampaignIntelligence | None = None
-            if bundle := self._knowledge.campaign_intelligence(artifacts):
-                artifacts = bundle.artifacts
-                intelligence = bundle.context
-                result.artifacts = artifacts
-                result.intelligence = intelligence.trace
-                self._observer.on_phase(
-                    "intelligence",
-                    _intelligence_message(intelligence),
-                    intelligence.trace.model_dump(mode="json"),
-                )
-
-            # Said out loud before the strategy is decided rather than
-            # discovered on the receipt: what the copy is allowed to argue
-            # from constrains the campaign, and no rewrite later on can add a
-            # proof the material never contained.
-            posture = assess(artifacts)
-            self._observer.on_phase(
-                "proof",
-                posture.summary(),
-                {
-                    "proof": len(posture.proof),
-                    "checkable": len(posture.checkable),
-                    "asks": posture.asks[:1],
-                },
-            )
-            if self._policy.require_proof and posture.nothing_to_argue_from:
-                return self._needs_input(request, contract, result, posture)
-
-            positioning = self._knowledge.positioning()
-            if positioning is not None and not positioning.is_empty:
-                self._observer.on_phase(
-                    "market",
-                    positioning.summary(),
-                    {
-                        "rivals": positioning.rivals_profiled,
-                        "open_ground": [
-                            str(reading.axis) for reading in positioning.open_ground
-                        ],
-                    },
-                )
-
-            demand = self._knowledge.demand()
-            chosen = self._knowledge.audience_choice()
-            if chosen:
-                # Said out loud for the same reason the proof posture is: this
-                # decides who every draft in the run is written to and graded
-                # by, and a run whose audience was quietly swapped by a form
-                # field is a run whose report nobody can read afterwards.
-                mapped = demand.named(chosen) if demand is not None else None
-                if not any(segment.name == chosen for segment in artifacts.audience.segments):
-                    selected = mapped.as_segment() if mapped is not None else Segment(name=chosen)
-                    selected.name = chosen
-                    artifacts.audience.segments.insert(0, selected)
-                self._observer.on_phase(
-                    "audience",
-                    f"Written to {chosen}"
-                    + (
-                        f" - {round(mapped.fit * 100)}% of them are estimated to bite"
-                        if mapped is not None
-                        else " - which is not on this brand's audience map"
-                    ),
-                    {"segment": chosen, "mapped": mapped is not None},
-                )
+            context = await self._prepare(request, contract, result)
+            artifacts, corpus = context.artifacts, context.corpus
+            positioning, demand = context.positioning, context.demand
+            chosen, intelligence = context.chosen, context.intelligence
 
             brief = await self._phase_strategy(
                 request,
@@ -344,7 +326,49 @@ class EmailCampaignPipeline:
                 if guard is not None:
                     return self._stopped(request, contract, result, guard)
 
+                recovered = await self._phase_material_recovery(
+                    request=request,
+                    brief=brief,
+                    artifacts=artifacts,
+                    corpus=corpus,
+                    result=result,
+                )
+                if recovered is not None:
+                    artifacts, corpus, recovery = recovered
+                    if (guard := self._guard()) is not None:
+                        return self._stopped(request, contract, result, guard)
+                    # The first drafts are useful diagnostic work, not the
+                    # deliverable.  Re-plan from the enlarged closed world and
+                    # craft once more; the recovery phase is deliberately not
+                    # called a second time, so a stubborn gap cannot loop.
+                    recovered_brief = await self._phase_strategy(
+                        request,
+                        artifacts,
+                        corpus,
+                        contract,
+                        result,
+                        positioning,
+                        demand,
+                        chosen,
+                        intelligence,
+                        recovery,
+                    )
+                    brief = recovered_brief
+                    result.outcomes.clear()
+                    result.sequence = None
+                    if (guard := self._guard()) is not None:
+                        return self._stopped(request, contract, result, guard)
+                    guard = await self._phase_craft(
+                        request, brief, artifacts, corpus, result, positioning
+                    )
+                    if guard is not None:
+                        return self._stopped(request, contract, result, guard)
+
                 await self._phase_sequence(request, brief, artifacts, corpus, result)
+        except _RunStopped as stop:
+            # A deliberate stop - cancelled, out of time, or nothing to argue
+            # from. Already a finished result; it is not a failure.
+            return stop.result
         except ModelRuntimeError as exc:
             # The provider stopped answering, after `ModelSession` had already
             # resent the call. Treated exactly like running out of time: stop
@@ -392,7 +416,7 @@ class EmailCampaignPipeline:
             return result
         self._observer.on_phase(
             "finished",
-            f"{result.report.delivered} email(s) ready - average cold-reader pull "
+            f"{result.report.delivered} email(s) produced - average cold-reader pull "
             f"{result.report.average_pull:.1f}/10"
             + (
                 f" - {len(below)} still under the {PULL_THRESHOLD}/10 floor when the loop "
@@ -402,6 +426,227 @@ class EmailCampaignPipeline:
             ),
             {"status": result.status, "below_floor": [line.position for line in below]},
         )
+        return result
+
+
+    # ---------------------------------------------------------- stepped entry
+
+    def read_contract(self, request: CampaignRequest) -> DeliverableContract:
+        """How the request was read. Pure, so a later step can recompute it."""
+        # The channel decides the deliverable; only an email campaign has a
+        # number to read out of the user's sentence.
+        contract = linkedin_contract() if request.channel else parse_contract(request.request)
+        self._observer.on_phase(
+            "contract",
+            f"Read the request as {contract.count} {contract.noun}(s)"
+            + (" - the user said so" if contract.count_is_explicit else " - not specified"),
+            {"count": contract.count, "explicit": contract.count_is_explicit,
+             "kind": contract.kind.value},
+        )
+        return contract
+
+    async def _prepare(
+        self, request: CampaignRequest, contract: DeliverableContract, result: CampaignRunResult
+    ) -> "RunContext":
+        """Everything a run needs before it can plan, and nothing it produces.
+
+        Split out of `run` so a stepped execution can rebuild it in a fresh
+        process. It is cheap to repeat: `_phase_knowledge` reuses the stored
+        artifacts whenever the corpus fingerprint is unchanged, which costs no
+        model call, and the rest is database reads. That is what lets a
+        per-email Lambda reload its world instead of carrying it through a
+        state machine's 256 KB payload.
+        """
+        artifacts, corpus = await self._phase_knowledge(result)
+        if (guard := self._guard()) is not None:
+            raise _RunStopped(self._stopped(request, contract, result, guard))
+
+        intelligence: CampaignIntelligence | None = None
+        if bundle := self._knowledge.campaign_intelligence(artifacts):
+            artifacts = bundle.artifacts
+            intelligence = bundle.context
+            result.artifacts = artifacts
+            result.intelligence = intelligence.trace
+            self._observer.on_phase(
+                "intelligence",
+                _intelligence_message(intelligence),
+                intelligence.trace.model_dump(mode="json"),
+            )
+
+        # Said out loud before the strategy is decided rather than
+        # discovered on the receipt: what the copy is allowed to argue
+        # from constrains the campaign, and no rewrite later on can add a
+        # proof the material never contained.
+        posture = assess(artifacts)
+        self._observer.on_phase(
+            "proof",
+            posture.summary(),
+            {
+                "proof": len(posture.proof),
+                "checkable": len(posture.checkable),
+                "asks": posture.asks[:1],
+            },
+        )
+        if self._policy.require_proof and posture.nothing_to_argue_from:
+            raise _RunStopped(self._needs_input(request, contract, result, posture))
+
+        positioning = self._knowledge.positioning()
+        if positioning is not None and not positioning.is_empty:
+            self._observer.on_phase(
+                "market",
+                positioning.summary(),
+                {
+                    "rivals": positioning.rivals_profiled,
+                    "open_ground": [
+                        str(reading.axis) for reading in positioning.open_ground
+                    ],
+                },
+            )
+
+        demand = self._knowledge.demand()
+        chosen = self._knowledge.audience_choice()
+        if chosen:
+            # Said out loud for the same reason the proof posture is: this
+            # decides who every draft in the run is written to and graded
+            # by, and a run whose audience was quietly swapped by a form
+            # field is a run whose report nobody can read afterwards.
+            mapped = demand.named(chosen) if demand is not None else None
+            if not any(segment.name == chosen for segment in artifacts.audience.segments):
+                selected = mapped.as_segment() if mapped is not None else Segment(name=chosen)
+                selected.name = chosen
+                artifacts.audience.segments.insert(0, selected)
+            self._observer.on_phase(
+                "audience",
+                f"Written to {chosen}"
+                + (
+                    f" - {round(mapped.fit * 100)}% of them are estimated to bite"
+                    if mapped is not None
+                    else " - which is not on this brand's audience map"
+                ),
+                {"segment": chosen, "mapped": mapped is not None},
+            )
+        return RunContext(
+            artifacts=artifacts,
+            corpus=corpus,
+            positioning=positioning,
+            demand=demand,
+            chosen=chosen,
+            intelligence=intelligence,
+        )
+
+    @property
+    def session_usage(self) -> Usage:
+        """The running token tally, so a stepped run can seed a fresh result
+        object with the session it is actually spending."""
+        return self._session.usage
+
+    async def rebuild_context(
+        self, request: CampaignRequest, result: CampaignRunResult
+    ) -> "RunContext":
+        """The world a step needs, reconstructed in a process that never saw it.
+
+        Safe to call repeatedly and cheap when it matters: the artifacts come
+        back from the store whenever the corpus fingerprint is unchanged, which
+        is the normal case within one run and costs no model call. Everything
+        else is a database read.
+        """
+        return await self._prepare(request, self.read_contract(request), result)
+
+    async def plan(
+        self,
+        request: CampaignRequest,
+        contract: DeliverableContract,
+        result: CampaignRunResult,
+    ) -> tuple["RunContext", CampaignBrief]:
+        """Step one of a stepped run: know the business, decide the campaign.
+
+        Everything up to and including the single Strategist call, which is
+        the one decision the whole sequence has to agree on. Re-planning
+        between two emails would produce a second, differently-worded campaign
+        and leave emails 3 and 4 arguing something 1 and 2 never agreed to -
+        which is why the brief is written down once here and only read
+        afterwards.
+
+        `_phase_material_recovery` is deliberately not part of a stepped run.
+        It re-plans and re-crafts everything from an enlarged closed world, and
+        a step that can restart the whole state machine is not a step. A run
+        that needs it should be run in one process.
+        """
+        context = await self._prepare(request, contract, result)
+        brief = await self._phase_strategy(
+            request,
+            context.artifacts,
+            context.corpus,
+            contract,
+            result,
+            context.positioning,
+            context.demand,
+            context.chosen,
+            context.intelligence,
+        )
+        return context, brief
+
+    async def craft_position(
+        self,
+        *,
+        request: CampaignRequest,
+        brief: CampaignBrief,
+        context: "RunContext",
+        result: CampaignRunResult,
+        position: int,
+        previous: list[Email],
+    ) -> EmailOutcome | None:
+        """Step two, run once per email: write the email at `position`.
+
+        `previous` is the emails already accepted, in order, and it is not
+        optional context - email N is written knowing what N-1 said. Handing an
+        empty list to every position produces five first emails rather than a
+        sequence, which is why the accepted copy is persisted between steps.
+
+        Returns None when the guard has tripped, matching `_phase_craft`: stop
+        between emails, never inside one, because a half-written email is worse
+        than one fewer email.
+        """
+        if self._guard() is not None:
+            return None
+        email_brief = next(
+            (item for item in brief.emails if item.position == position), None
+        )
+        if email_brief is None:
+            return None
+        self._observer.on_phase(
+            "craft",
+            f"Email {email_brief.position} of {len(brief.emails)}: "
+            f"{email_brief.single_idea or email_brief.job}",
+            {"position": email_brief.position},
+        )
+        loop = self._craft_loop(
+            context.artifacts, context.corpus, brief, context.positioning
+        )
+        return await loop.craft(
+            brief=email_brief, campaign=brief, request=request, previous=previous
+        )
+
+    async def conclude(
+        self,
+        *,
+        request: CampaignRequest,
+        contract: DeliverableContract,
+        brief: CampaignBrief,
+        context: "RunContext",
+        result: CampaignRunResult,
+    ) -> CampaignRunResult:
+        """Step three: read the emails as one sequence, then report.
+
+        `result.outcomes` must already hold every email the run produced -
+        the sequence pass reads them together, which is the whole point of it,
+        and reworks the ones the others break.
+        """
+        await self._phase_sequence(request, brief, context.artifacts, context.corpus, result)
+        result.report = self._build_report(request, contract, result)
+        if result.status not in ("cancelled", "needs_input"):
+            result.status = "completed" if result.report.healthy else "degraded"
+        self._observer.on_report(result.report)
         return result
 
     # ----------------------------------------------------------- phase zero
@@ -479,6 +724,7 @@ class EmailCampaignPipeline:
         demand: DemandMap | None = None,
         chosen_segment: str = "",
         intelligence: CampaignIntelligence | None = None,
+        recovery: MaterialRecovery | None = None,
     ) -> CampaignBrief:
         self._observer.on_role_started(
             STRATEGIST_ROLE, "Deciding what this campaign says, and in what order"
@@ -493,6 +739,7 @@ class EmailCampaignPipeline:
             demand=demand,
             chosen_segment=chosen_segment,
             intelligence=intelligence,
+            recovery=recovery,
         )
         result.brief = brief
         if intelligence is not None:
@@ -567,6 +814,161 @@ class EmailCampaignPipeline:
             result.outcomes.append(outcome)
             accepted.append(outcome.email)
         return None
+
+    async def _phase_material_recovery(
+        self,
+        *,
+        request: CampaignRequest,
+        brief: CampaignBrief,
+        artifacts: KnowledgeArtifacts,
+        corpus: SourceCorpus,
+        result: CampaignRunResult,
+    ) -> tuple[KnowledgeArtifacts, SourceCorpus, MaterialRecovery] | None:
+        """Replan from cited proof or resolve missing material, at most once."""
+
+        gaps: list[str] = []
+        argument_gaps: list[str] = []
+        for outcome in result.outcomes:
+            if not outcome.unresolved_strategy:
+                continue
+            missing = next(
+                (
+                    version.critique
+                    for version in reversed(outcome.versions)
+                    if version.critique is not None
+                    and version.critique.failure_mode == "missing_material"
+                ),
+                None,
+            )
+            if missing is not None:
+                gaps.append(missing.strategy_gap or outcome.unresolved_strategy)
+                continue
+            argument = next(
+                (
+                    version.critique
+                    for version in reversed(outcome.versions)
+                    if version.critique is not None
+                    and version.critique.failure_mode == "argument"
+                ),
+                None,
+            )
+            if argument is not None:
+                argument_gaps.append(argument.strategy_gap or outcome.unresolved_strategy)
+        gaps = list(dict.fromkeys(gap.strip() for gap in gaps if gap.strip()))
+        if not gaps:
+            argument_gaps = list(dict.fromkeys(
+                gap.strip() for gap in argument_gaps if gap.strip()
+            ))
+            if not argument_gaps:
+                return None
+            gap = "\n".join(f"- {item}" for item in argument_gaps)
+            recovery = cited_recovery(gap=gap, artifacts=artifacts)
+            if recovery is None:
+                recovery = existing_recovery(gap=gap, artifacts=artifacts)
+            if recovery is None:
+                return None
+            self._observer.on_phase(
+                "material_recovery",
+                "The critic cited existing verified proof; rebuilding the argument once",
+                {
+                    "gaps": argument_gaps,
+                    "recovered": True,
+                    "reused": True,
+                    "evidence_ids": [entry.id for entry in recovery.evidence],
+                },
+            )
+            enriched, enlarged_corpus = apply_recovery(artifacts, corpus, recovery)
+            result.artifacts = enriched
+            return enriched, enlarged_corpus, recovery
+
+        gap = "\n".join(f"- {item}" for item in gaps)
+        if recovery := existing_recovery(gap=gap, artifacts=artifacts):
+            self._observer.on_phase(
+                "material_recovery",
+                (
+                    f"Reusing {len(recovery.evidence)} verified fact(s) already found by an "
+                    "earlier automatic recovery; rebuilding the strategy once"
+                ),
+                {
+                    "gaps": gaps,
+                    "recovered": True,
+                    "reused": True,
+                    "evidence_ids": [entry.id for entry in recovery.evidence],
+                    "sources": [entry.source for entry in recovery.evidence],
+                },
+            )
+            enriched, enlarged_corpus = apply_recovery(artifacts, corpus, recovery)
+            result.artifacts = enriched
+            return enriched, enlarged_corpus, recovery
+
+        self._observer.on_phase(
+            "material_recovery",
+            "The copy exposed missing campaign material; searching official sources now",
+            {"gaps": gaps, "attempt": 1, "maximum_attempts": 1},
+        )
+        self._observer.on_role_started(
+            MATERIAL_RESEARCH_ROLE,
+            f"Finding and verifying official material for {len(gaps)} gap(s)",
+        )
+        try:
+            recovery = await self._material_researcher.recover(
+                gap=gap,
+                artifacts=artifacts,
+                reader=brief.reader,
+                request=request.request,
+            )
+        except ModelRuntimeError as exc:
+            # Research is a recovery path.  If search is unavailable, preserve
+            # the honest original result rather than turning a usable degraded
+            # campaign into a provider failure.
+            self._observer.on_role_failed(MATERIAL_RESEARCH_ROLE, str(exc))
+            self._observer.on_phase(
+                "material_recovery",
+                "Official-source recovery was unavailable; the original gap remains explicit",
+                {"gaps": gaps, "recovered": False},
+            )
+            return None
+
+        self._observer.on_role_finished(
+            MATERIAL_RESEARCH_ROLE,
+            (
+                f"Verified {len(recovery.evidence)} fact(s) from "
+                f"{len(recovery.sources)} official source(s)"
+                if recovery.recovered
+                else recovery.note or "No verified official fact closed the gap"
+            ),
+            {
+                "recovered": recovery.recovered,
+                "evidence": [entry.model_dump(mode="json") for entry in recovery.evidence],
+                "sources": [source.final_url for source in recovery.sources],
+                "dropped_claims": recovery.dropped_claims,
+            },
+        )
+        if not recovery.recovered:
+            self._observer.on_phase(
+                "material_recovery",
+                "No fetched official source verified the missing fact; the gap remains explicit",
+                {"gaps": gaps, "recovered": False},
+            )
+            return None
+
+        enriched, enlarged_corpus = apply_recovery(artifacts, corpus, recovery)
+        stored = self._knowledge.commit_recovered_material(recovery, enriched)
+        if stored is not None:
+            enriched = stored.artifacts
+            enlarged_corpus = self._knowledge.corpus()
+        result.artifacts = enriched
+        self._observer.on_phase(
+            "material_recovery",
+            f"Added {len(recovery.evidence)} verified fact(s); rebuilding the strategy once",
+            {
+                "gaps": gaps,
+                "recovered": True,
+                "evidence_ids": [entry.id for entry in recovery.evidence],
+                "sources": [source.final_url for source in recovery.sources],
+            },
+        )
+        return enriched, enlarged_corpus, recovery
 
     async def _phase_message(
         self,
@@ -853,19 +1255,20 @@ class EmailCampaignPipeline:
             EmailReportLine(
                 position=outcome.brief.position,
                 subject=outcome.email.subject,
-                single_idea=outcome.brief.single_idea,
+                single_idea=outcome.selected_brief.single_idea,
                 pull=outcome.best.read.pull,
                 revisions=len(outcome.versions) - 1,
                 clean=not outcome.best.gates.blocking,
-                landed=outcome.best.read.landed,
+                landed=outcome.best.read.landed and not outcome.unresolved_strategy,
                 rewrites_stopped_helping=outcome.stopped_early,
                 read_reported=outcome.best.read.has_verdict,
                 understood=outcome.best.read.understood,
                 relevant=outcome.best.read.relevant,
-                evidence_assigned=outcome.brief.evidence_ids,
+                evidence_assigned=outcome.selected_brief.evidence_ids,
                 evidence_spent=list(outcome.best.substantiation.carried),
                 attributions=outcome.best.substantiation.attributions,
                 unresolved=[issue.detail for issue in outcome.best.gates.blocking]
+                + (["Unresolved strategy/material gap: " + outcome.unresolved_strategy] if outcome.unresolved_strategy else [])
                 + (["Unresolved audience mismatch: " + "; ".join(r.relevance_feedback for r in outcome.best.read.reported if r.situation_matches is False)] if not outcome.best.read.relevant else []),
                 reader_verdicts=ReaderVerdict.from_panel(outcome.best.read),
                 sameness=[

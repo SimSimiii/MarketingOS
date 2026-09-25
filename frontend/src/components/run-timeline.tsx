@@ -302,6 +302,11 @@ function LineDetail({ line }: { line: LiveExecutionEvent }) {
       {line.type === "critique" && (
         <>
           {line.critique_summary && <p>{line.critique_summary}</p>}
+          {line.strategy_gap && (
+            <p className="text-amber-400">
+              {line.failure_mode === "missing_material" ? "Missing material" : "Argument gap"}: {line.strategy_gap}
+            </p>
+          )}
           {line.brief_drift && (
             <p className="text-amber-400">Brief drift: {line.brief_drift}</p>
           )}
@@ -430,13 +435,24 @@ function LineDetail({ line }: { line: LiveExecutionEvent }) {
 function EmailArgument({
   email,
 }: {
-  email: { felt_need?: string; status_quo?: string; why_it_fails?: string; mechanism?: string };
+  email: {
+    felt_need?: string;
+    status_quo?: string;
+    why_it_fails?: string;
+    mechanism?: string;
+    next_step_decision?: string;
+    next_step_value?: string;
+    next_step_limit?: string;
+  };
 }) {
   const beats = [
     ["Living with", email.felt_need],
     ["Does today", email.status_quo],
     ["Why that fails", email.why_it_fails],
     ["This instead", email.mechanism],
+    ["CTA helps decide", email.next_step_decision],
+    ["CTA delivers", email.next_step_value],
+    ["CTA does not prove", email.next_step_limit],
   ].filter(([, value]) => value) as [string, string][];
   if (beats.length === 0) return null;
   return (

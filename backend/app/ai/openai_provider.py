@@ -63,12 +63,35 @@ def _codex_path() -> str | None:
 
     Same shape as `claude_provider._cli_path`: an explicit override first so an
     operator can point at a specific build, then the places npm and the
-    official installer put it, then whatever is on PATH.
+    official installers and Codex Desktop put it, then whatever is on PATH.
     """
     explicit = os.environ.get("CODEX_CLI_PATH")
     if explicit and Path(explicit).exists():
         return explicit
     candidates: list[Path] = []
+    if local_appdata := os.environ.get("LOCALAPPDATA"):
+        local_root = Path(local_appdata)
+        # Standalone Windows installer (the documented default).
+        candidates.append(local_root / "Programs" / "OpenAI" / "Codex" / "bin" / "codex.exe")
+
+        # Codex Desktop ships its own CLI under a versioned directory. The
+        # hash changes when the app updates, so discover it rather than baking
+        # today's directory name into configuration.
+        desktop_bin = local_root / "OpenAI" / "Codex" / "bin"
+        desktop_candidates: list[tuple[int, Path]] = []
+        try:
+            for path in desktop_bin.glob("*/codex.exe"):
+                try:
+                    desktop_candidates.append((path.stat().st_mtime_ns, path))
+                except OSError:
+                    # An app update can replace the directory while the server
+                    # is starting. Ignore the vanished candidate and keep
+                    # looking rather than turning discovery into a crash.
+                    continue
+        except OSError:
+            pass
+        if desktop_candidates:
+            candidates.append(max(desktop_candidates, key=lambda item: item[0])[1])
     if appdata := os.environ.get("APPDATA"):
         # npm global installs on Windows: the shim, not the JS entry point.
         candidates += [Path(appdata) / "npm" / name for name in ("codex.cmd", "codex.exe")]
@@ -176,8 +199,14 @@ class OpenAIProvider(AIProvider):
                 "at an existing build."
             )
         wants_search = ResearchTool.WEB_SEARCH in request.tools
-        command = [
-            binary,
+        command = [binary]
+        # `--search` is a root Codex flag. Putting it after `exec` happened to
+        # match an older CLI but current builds reject it before starting the
+        # model turn. Keep it before the subcommand exactly as `codex --help`
+        # documents.
+        if wants_search:
+            command.append("--search")
+        command += [
             "exec",
             # One JSON object per line on stdout: the only way to get the
             # answer and the token counts out of the same call.
@@ -197,8 +226,6 @@ class OpenAIProvider(AIProvider):
             "-C",
             self._cwd(),
         ]
-        if wants_search:
-            command.append("--search")
         # The prompt goes over stdin. Not an optimisation: Windows caps a whole
         # command line at 32,767 characters and a compiled-knowledge prompt runs
         # to ~42,000, so passing it as an argument fails to start the process at

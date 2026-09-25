@@ -257,7 +257,7 @@ def record_from(
         EmailRecord(
             position=outcome.brief.position,
             subject=outcome.email.subject,
-            single_idea=outcome.brief.single_idea,
+            single_idea=outcome.selected_brief.single_idea,
             pull=outcome.best.read.pull,
             landed=outcome.best.read.landed,
             rewrites=len(outcome.versions) - 1,
@@ -266,7 +266,7 @@ def record_from(
             biggest_doubt=outcome.best.read.worst.biggest_doubt,
             unresolved=[issue.detail for issue in outcome.best.gates.blocking],
             word_count=len(outcome.email.body.split()),
-            evidence_assigned=outcome.brief.evidence_ids,
+            evidence_assigned=outcome.selected_brief.evidence_ids,
             evidence_spent=list(outcome.best.substantiation.carried),
             attributions=outcome.best.substantiation.attributions,
             specifics=outcome.best.substantiation.specifics,

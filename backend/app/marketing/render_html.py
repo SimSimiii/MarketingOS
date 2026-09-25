@@ -37,9 +37,11 @@ a decade of client quirks.
 
 import html
 import re
-from dataclasses import dataclass
+from collections.abc import Iterable
+from dataclasses import dataclass, replace
 from enum import StrEnum
 
+from app.knowledge.artifacts import OfferSheet
 from app.marketing.email_copy import CALLOUT_PREFIX, Email
 
 #: Gmail clips a message past this and shows "[Message clipped] View entire
@@ -58,6 +60,29 @@ _CONTENT_WIDTH = 600
 _SANS = (
     "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif"
 )
+
+
+def style_for_action(
+    style: "BrandStyle", *, explicit_url: str | None, planned_action: str,
+    offer: OfferSheet | None, licensed_urls: Iterable[str] = (),
+) -> "BrandStyle":
+    """Use the strategy's selected offer link only when the source licenses it.
+
+    The user's campaign URL wins. Ambiguous or invented strategy URLs retain the
+    existing fallback; this does not guess an action from translated button text.
+    """
+    if explicit_url:
+        return replace(style, cta_url=explicit_url)
+    selected = {
+        value.rstrip(".,;:)")
+        for value in re.findall(r'https?://[^\s<>"\]]+', planned_action)
+    }
+    licensed = {url for url in licensed_urls if url}
+    if offer is not None:
+        licensed.update(action.url for action in offer.calls_to_action if action.url)
+    if len(selected) == 1 and selected <= licensed:
+        return replace(style, cta_url=selected.pop())
+    return style
 
 
 class EmailTier(StrEnum):
@@ -89,8 +114,8 @@ class BrandStyle:
     footer_lines: tuple[str, ...] = ()
     #: Where the call to action goes. The writer never knows this - it is told
     #: so, and told to write the words on the link rather than the link - so
-    #: it comes from the campaign, or from the brand's own website as a
-    #: fallback. Empty renders the CTA as a marked slot rather than a button
+    #: it comes from the campaign, a brief-selected licensed offer URL, or the
+    #: brand's own website as a fallback. Empty renders the CTA as a marked slot rather than a button
     #: to nowhere, which is the honest failure: a dead button in a sent email
     #: costs the reader a click and the sender the reply.
     cta_url: str = ""
@@ -533,8 +558,8 @@ def _cta(label: str, style: BrandStyle, tier: EmailTier, scale: _Scale) -> str:
 
     The writer never supplies the href - it is told it does not know the URL
     behind any button, because inventing one sends a real reader to a page
-    that does not exist. It comes from the campaign instead, or from the
-    brand's website, and when there is neither the anchor stays a marked slot
+    that does not exist. It comes from the campaign or a licensed offer URL,
+    with the brand's website as fallback. With neither, the anchor stays a marked slot
     for the user to fill rather than a dead link pretending to work.
 
     A dead button is worse than a link, which is why the branded tier falls

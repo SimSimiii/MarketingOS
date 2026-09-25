@@ -26,7 +26,7 @@ def _implemented_role_ids() -> set[str]:
     allowed to reach in the direction production code is not.
     """
     from app.knowledge import compiler
-    from app.market import audience_research, demand, proof, relevance, rivals
+    from app.market import audience_research, demand, material_research, proof, relevance, rivals
     from app.market.linkedin import ROLE_ID as LINKEDIN_RESEARCH
     from app.market.linkedin import TARGETING_ROLE_ID as LINKEDIN_TARGETING
     from app.marketing import (
@@ -52,6 +52,7 @@ def _implemented_role_ids() -> set[str]:
         demand.PROSPECTOR_ROLE_ID,
         demand.READER_ROLE_ID,
         audience_research.ROLE_ID,
+        material_research.ROLE_ID,
         relevance.ROLE_ID,
         critic.ROLE_ID,
         reader.ROLE_ID,

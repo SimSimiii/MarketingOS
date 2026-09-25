@@ -19,7 +19,7 @@ mechanical checks. This one reads one rendered email and names lines.
 
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from app.ai.model_router import ModelTier
 from app.knowledge.artifacts import KnowledgeArtifacts
@@ -62,6 +62,14 @@ class Edit(BaseModel):
 
 class Critique(BaseModel):
     verdict: Literal["ship", "revise"] = "revise"
+    #: Why this draft cannot ship. A prose defect can be rewritten from the
+    #: same brief; an argument defect or missing fact cannot. Keeping that
+    #: distinction structured prevents the loop from asking a writer to invent
+    #: a guide, compatibility guarantee or proof that is absent upstream.
+    failure_mode: Literal["none", "copy", "argument", "missing_material"] = "copy"
+    #: The exact unsupported decision or missing resource. Persisted on the
+    #: outcome and receipt when another writing pass cannot resolve it.
+    strategy_gap: str = ""
     #: Where the draft executes something other than its brief. The failure
     #: that is invisible from inside the copy.
     brief_drift: str = ""
@@ -94,6 +102,9 @@ class Critique(BaseModel):
 
     def render(self) -> str:
         parts: list[str] = []
+        if self.failure_mode in {"argument", "missing_material"}:
+            label = "Argument cannot be repaired by copy" if self.failure_mode == "argument" else "Missing material"
+            parts.append(f"{label}: {self.strategy_gap or self.summary or 'not specified'}")
         if self.brief_drift:
             parts.append(f"Brief drift: {self.brief_drift}")
         if self.unspent_evidence:
@@ -110,6 +121,53 @@ class Critique(BaseModel):
         if self.summary:
             parts.append(self.summary)
         return "\n".join(parts) or "No changes requested."
+
+    @property
+    def requires_new_strategy(self) -> bool:
+        return self.verdict == "revise" and self.failure_mode in {
+            "argument",
+            "missing_material",
+        }
+
+
+class CritiqueDecision(Critique):
+    """The response contract shown to the model.
+
+    ``Critique`` keeps defaults because tests, stored records and callers build
+    it directly.  Defaults are harmful in the model-facing schema, though: the
+    critic can describe a proposition that needs rebuilding while silently
+    inheriting ``copy``.  These three fields are therefore required on every
+    live decision, and contradictory combinations are rejected for the normal
+    structured-output repair pass to correct.
+    """
+
+    verdict: Literal["ship", "revise"] = Field(
+        description="Whether the email can be sent to a paying client's list as written."
+    )
+    failure_mode: Literal["none", "copy", "argument", "missing_material"] = Field(
+        description="The level at which the defect must be repaired."
+    )
+    strategy_gap: str = Field(
+        description=(
+            "The exact proposition or material gap for argument/missing_material; "
+            "an empty string for ship or copy."
+        )
+    )
+
+    @model_validator(mode="after")
+    def _consistent_route(self) -> "CritiqueDecision":
+        gap = self.strategy_gap.strip()
+        if self.verdict == "ship":
+            if self.failure_mode != "none" or gap:
+                raise ValueError("a shipping email must use failure_mode=none and no strategy_gap")
+            return self
+        if self.failure_mode == "none":
+            raise ValueError("a revision must identify copy, argument, or missing_material")
+        if self.failure_mode in {"argument", "missing_material"} and not gap:
+            raise ValueError("a strategy or material failure must name strategy_gap")
+        if self.failure_mode == "copy" and gap:
+            raise ValueError("a copy-only revision cannot also name a strategy_gap")
+        return self
 
 
 class ConversionCritic:
@@ -169,7 +227,7 @@ class ConversionCritic:
                 "Decide whether this email ships as it stands, and if not, name the lines that "
                 "have to change and what each change has to achieve."
             ),
-            schema=Critique,
+            schema=CritiqueDecision,
         )
 
 

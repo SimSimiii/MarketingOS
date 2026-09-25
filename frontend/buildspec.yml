@@ -18,6 +18,8 @@ env:
     CONSOLE_MEMORY_SIZE: "1536"
     CONSOLE_DOMAIN: ""
     CONSOLE_CERT_ARN: ""
+    HOSTED_ZONE_ID: ""
+    CONSOLE_WEB_ACL_ARN: ""
     S3_PREFIX: marketingos-console
 
 phases:
@@ -33,7 +35,7 @@ phases:
   pre_build:
     commands:
       - |
-        for VAR in CONSOLE_STACK_NAME NEXT_PUBLIC_API_URL IMAGE_REPOSITORY; do
+        for VAR in CONSOLE_STACK_NAME SAM_ARTIFACT_BUCKET NEXT_PUBLIC_API_URL IMAGE_REPOSITORY; do
           if [ -z "$(eval echo \$$VAR)" ]; then
             echo "ERROR: $VAR is not set on this CodeBuild project." && exit 1
           fi

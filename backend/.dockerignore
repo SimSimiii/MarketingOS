@@ -1,0 +1,35 @@
+# Keeps `COPY . /srv` in the Dockerfile honest. Without this the build context
+# is the whole backend directory, which on a development machine includes a
+# ~1 GB virtualenv, the local SQLite database and every .aws-sam bundle ever
+# built - all of it uploaded to the daemon, and most of it baked into a layer.
+
+# The big one. A venv built on the host is also the wrong ABI for the image.
+.venv/
+venv/
+
+# Dependencies are installed from requirements.txt in the deps stage.
+__pycache__/
+*.pyc
+*.egg-info/
+
+# The development database and its hand-made snapshots. A container that
+# shipped one would run against a copy of somebody's laptop.
+*.db
+*.db.*
+*.db-shm
+*.db-wal
+
+# Local configuration. The worker reads its secrets from Secrets Manager
+# through the task definition; a baked-in .env would silently win.
+.env
+
+# Test and tooling artifacts - none of it runs in the image.
+tests/
+.pytest_cache/
+.ruff_cache/
+.aws-sam/
+eval/
+
+# The Lambda entry points. This image serves uvicorn directly; leaving these
+# in would suggest the container has a handler somebody could invoke.
+lambda_handler.py

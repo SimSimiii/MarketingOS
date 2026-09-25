@@ -5,7 +5,10 @@ thing at a time - and those are different jobs, which is why what the critic
 reports and what the writer is handed are not the same list.
 """
 
-from app.marketing.critic import MAX_EDITS_PER_PASS, Critique, Edit
+import pytest
+from pydantic import ValidationError
+
+from app.marketing.critic import MAX_EDITS_PER_PASS, Critique, CritiqueDecision, Edit
 
 
 def edit(severity: str = "major", line: str = "some line") -> Edit:
@@ -59,3 +62,26 @@ def test_every_edit_survives_when_they_all_block():
 
 def test_a_critique_with_nothing_to_change_says_so():
     assert Critique(verdict="ship").render() == "No changes requested."
+
+
+def test_the_model_must_classify_the_level_of_repair_explicitly():
+    required = set(CritiqueDecision.model_json_schema()["required"])
+    assert {"verdict", "failure_mode", "strategy_gap"} <= required
+
+
+def test_a_strategy_failure_must_name_the_gap():
+    with pytest.raises(ValidationError):
+        CritiqueDecision(
+            verdict="revise",
+            failure_mode="argument",
+            strategy_gap="",
+        )
+
+
+def test_a_copy_revision_cannot_hide_a_strategy_gap():
+    with pytest.raises(ValidationError):
+        CritiqueDecision(
+            verdict="revise",
+            failure_mode="copy",
+            strategy_gap="The linked page does not answer the SMTP question.",
+        )

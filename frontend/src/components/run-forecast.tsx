@@ -9,9 +9,9 @@ import type { RunForecast as Forecast } from "@/lib/types";
 /**
  * What this run will cost, before it is bought.
  *
- * Every call here is billed against a personal Claude subscription, and until
+ * Every call here is billed against the subscription for its routed model, and until
  * this existed the only description of the difference between the presets was
- * two adjectives - "cheaper models", "most thorough review" - with the answer
+ * two adjectives - "fewer review passes", "most thorough review" - with the answer
  * arriving on the receipt. It is free to show: nothing in the pipeline spends
  * a model call deciding what happens next, so the number of calls a run makes
  * follows from the preset and from how many emails the request asked for.

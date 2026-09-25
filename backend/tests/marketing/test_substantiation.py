@@ -65,16 +65,25 @@ def named(name: str) -> Mutation:
 
 
 def evidence_bearing_controls() -> list[Email]:
-    """The bench's control emails that argue from the material at all.
+    """The bench's control emails that argue from *this* material at all.
 
-    The onboarding control deliberately does not - it writes to somebody who
-    has already signed up, from their own situation - so there is nothing in
-    it for a mutation to remove and nothing here to assert.
+    Anchors only, and the restriction is not incidental. LEDGER below is the
+    Notewright compile, so the question this file asks - did removing the proof
+    paragraph cost the email evidence it was carrying - is only meaningful
+    about emails written from that material. The controls in `controls.py` are
+    other businesses entirely: they name people and quote them, so an
+    attribution count picks them up, and then every assertion here is being
+    made about an email whose evidence was never in this ledger.
+
+    The onboarding control deliberately does not argue from the material - it
+    writes to somebody who has already signed up, from their own situation - so
+    there is nothing in it for a mutation to remove and nothing here to assert.
     """
     return [
-        email
-        for _, email, _ in bench_sources()
-        if assess(email, LEDGER, LEDGER).attributions or assess(email, LEDGER, LEDGER).carried
+        source.email
+        for source in bench_sources(anchors_only=True)
+        if assess(source.email, LEDGER, LEDGER).attributions
+        or assess(source.email, LEDGER, LEDGER).carried
     ]
 
 
@@ -125,17 +134,32 @@ def test_the_control_arm_moves_nothing(name: str):
 
 
 @pytest.mark.parametrize(
-    "name", ["hedge_the_claims", "bury_the_ask", "open_on_the_company", "clickbait_subject"]
+    "name",
+    [
+        "hedge_the_claims",
+        "bury_the_ask",
+        "open_on_the_company",
+        "clickbait_subject",
+        # The subtle tier, every one of which is outside this measure - see
+        # `mutations.HARD_MUTATIONS`. `generic_proof` is the one worth naming:
+        # it hollows out the testimonial and leaves the name and the quotation
+        # marks standing, so `carried` still matches and the page still looks
+        # argued-from. That is exactly the case `strip_the_proof` was not.
+        "generic_proof",
+        "mechanism_to_benefit",
+        "second_ask",
+        "proof_after_the_ask",
+    ],
 )
 def test_damage_that_only_a_reader_can_see_is_not_claimed(name: str):
     """What this measure is deliberately blind to.
 
     Every one of these leaves the evidence exactly where it was and makes the
     email worse anyway - a hedged claim, an ask nobody reaches, an opening
-    about the sender. No string comparison can see any of it, and a measure
-    that pretended to would be handed a veto over rewrites on a judgment it
-    never made. These stay the judges' job, and the judge bench is where they
-    are scored.
+    about the sender, a quotation that stopped saying anything. No string
+    comparison can see any of it, and a measure that pretended to would be
+    handed a veto over rewrites on a judgment it never made. These stay the
+    judges' job, and the judge bench is where they are scored.
     """
     mutation = named(name)
     for email in evidence_bearing_controls():

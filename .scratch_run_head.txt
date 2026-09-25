@@ -1,0 +1,83 @@
+    async def run(self, request: CampaignRequest) -> CampaignRunResult:
+        result = CampaignRunResult(usage=self._session.usage)
+        # The channel decides the deliverable; only an email campaign has a
+        # number to read out of the user's sentence.
+        contract = linkedin_contract() if request.channel else parse_contract(request.request)
+        self._observer.on_phase(
+            "contract",
+            f"Read the request as {contract.count} {contract.noun}(s)"
+            + (" - the user said so" if contract.count_is_explicit else " - not specified"),
+            {"count": contract.count, "explicit": contract.count_is_explicit,
+             "kind": contract.kind.value},
+        )
+
+        try:
+            artifacts, corpus = await self._phase_knowledge(result)
+            if (guard := self._guard()) is not None:
+                return self._stopped(request, contract, result, guard)
+
+            intelligence: CampaignIntelligence | None = None
+            if bundle := self._knowledge.campaign_intelligence(artifacts):
+                artifacts = bundle.artifacts
+                intelligence = bundle.context
+                result.artifacts = artifacts
+                result.intelligence = intelligence.trace
+                self._observer.on_phase(
+                    "intelligence",
+                    _intelligence_message(intelligence),
+                    intelligence.trace.model_dump(mode="json"),
+                )
+
+            # Said out loud before the strategy is decided rather than
+            # discovered on the receipt: what the copy is allowed to argue
+            # from constrains the campaign, and no rewrite later on can add a
+            # proof the material never contained.
+            posture = assess(artifacts)
+            self._observer.on_phase(
+                "proof",
+                posture.summary(),
+                {
+                    "proof": len(posture.proof),
+                    "checkable": len(posture.checkable),
+                    "asks": posture.asks[:1],
+                },
+            )
+            if self._policy.require_proof and posture.nothing_to_argue_from:
+                return self._needs_input(request, contract, result, posture)
+
+            positioning = self._knowledge.positioning()
+            if positioning is not None and not positioning.is_empty:
+                self._observer.on_phase(
+                    "market",
+                    positioning.summary(),
+                    {
+                        "rivals": positioning.rivals_profiled,
+                        "open_ground": [
+                            str(reading.axis) for reading in positioning.open_ground
+                        ],
+                    },
+                )
+
+            demand = self._knowledge.demand()
+            chosen = self._knowledge.audience_choice()
+            if chosen:
+                # Said out loud for the same reason the proof posture is: this
+                # decides who every draft in the run is written to and graded
+                # by, and a run whose audience was quietly swapped by a form
+                # field is a run whose report nobody can read afterwards.
+                mapped = demand.named(chosen) if demand is not None else None
+                if not any(segment.name == chosen for segment in artifacts.audience.segments):
+                    selected = mapped.as_segment() if mapped is not None else Segment(name=chosen)
+                    selected.name = chosen
+                    artifacts.audience.segments.insert(0, selected)
+                self._observer.on_phase(
+                    "audience",
+                    f"Written to {chosen}"
+                    + (
+                        f" - {round(mapped.fit * 100)}% of them are estimated to bite"
+                        if mapped is not None
+                        else " - which is not on this brand's audience map"
+                    ),
+                    {"segment": chosen, "mapped": mapped is not None},
+                )
+

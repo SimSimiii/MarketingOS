@@ -17,13 +17,14 @@ import logging
 import re
 
 from app.ai.model_router import ModelTier
-from app.knowledge.artifacts import KnowledgeArtifacts
+from app.knowledge.artifacts import Grounding, KnowledgeArtifacts
 from app.knowledge.base import build_knowledge_base
 from app.knowledge.corpus import SourceCorpus
 from app.knowledge.ledger import EvidenceLedger
 from app.market.demand import DemandMap
+from app.market.material_research import MaterialRecovery
 from app.market.positioning import PositioningMap
-from app.marketing.briefs import CampaignBrief, EmailBrief
+from app.marketing.briefs import ArgumentOption, CampaignBrief, EmailBrief
 from app.marketing.contract import DeliverableContract
 from app.marketing.exceptions import StrategyError
 from app.marketing.intelligence import CampaignIntelligence
@@ -55,6 +56,181 @@ MAX_EVIDENCE_PER_EMAIL = 3
 #: the prompt, for the same reason the evidence list is: it is a number.
 MAX_ALTERNATIVE_IDEAS = 3
 
+#: One second, complete commercial proposition. Two real bets are enough to
+#: discover whether the Strategist chose the wrong ground; more buys another
+#: full draft and reader panel before either bet is refined.
+MAX_ALTERNATIVE_ARGUMENTS = 1
+
+
+def _render_recovery(
+    recovery: MaterialRecovery | None, artifacts: KnowledgeArtifacts
+) -> str:
+    persisted = [
+        entry
+        for entry in artifacts.evidence.entries
+        if re.fullmatch(r"R\d+", entry.id)
+    ]
+    if recovery is None or not recovery.recovered:
+        if not persisted:
+            return ""
+        lines = [
+            (
+                "Earlier automatic recovery passes quotation-verified these official facts. "
+                "They are available when relevant; do not force them into an unrelated "
+                "campaign:"
+            ),
+        ]
+        lines.extend(
+            f"- [{entry.id}] {entry.claim} (official source: {entry.source})"
+            for entry in persisted
+        )
+        return "\n".join(lines)
+    lines = [
+        "The previous craft pass diagnosed this exact strategy or material gap:",
+        recovery.gap,
+        "",
+        "The system then found and quotation-verified these official facts:",
+    ]
+    lines.extend(
+        f"- [{entry.id}] {entry.claim} (official source: {entry.source})"
+        for entry in recovery.evidence
+    )
+    other = [entry for entry in persisted if entry.id not in {e.id for e in recovery.evidence}]
+    if other:
+        lines.append("")
+        lines.append("Other official facts recovered earlier remain available when useful:")
+        lines.extend(
+            f"- [{entry.id}] {entry.claim} (official source: {entry.source})"
+            for entry in other
+        )
+    lines.extend(
+        [
+            "",
+            (
+                "This is corrective material, not optional background. Rebuild at least one "
+                "primary email around a recovered id and assign that id in evidence_ids. If an "
+                "official source page lets the reader answer the diagnosed question before "
+                "signup, put its exact URL in call_to_action and explain the decision it enables "
+                "in the next-step fields. Do not claim that the page proves anything outside "
+                "its quoted fact."
+            ),
+        ]
+    )
+    return "\n".join(lines)
+
+
+def _spends_any(brief: CampaignBrief, evidence_ids: set[str]) -> bool:
+    return any(evidence_ids.intersection(email.evidence_ids) for email in brief.emails)
+
+
+def _recovered_next_step(
+    *,
+    artifacts: KnowledgeArtifacts,
+    evidence_ids: list[str],
+    next_step_evidence_ids: list[str],
+    call_to_action: str,
+    next_step_value: str,
+) -> tuple[str, str]:
+    """Tie an automatically recovered payoff to its exact official page."""
+    ordered = list(dict.fromkeys([*next_step_evidence_ids, *evidence_ids]))
+    entry = next(
+        (
+            found
+            for evidence_id in ordered
+            if evidence_id.startswith("R")
+            and (found := artifacts.evidence.get(evidence_id)) is not None
+            and found.source.startswith(("https://", "http://"))
+        ),
+        None,
+    )
+    if entry is None:
+        return call_to_action, next_step_value
+    urls = {
+        url.rstrip(".,;:)")
+        for url in re.findall(r'https?://[^\s<>"\]]+', call_to_action)
+    }
+    if urls == {entry.source}:
+        return call_to_action, next_step_value
+    return (
+        f"Review the official documentation: {entry.source}",
+        f"The official page documents this verified fact: {entry.claim}",
+    )
+
+
+_SOURCE_TOKEN_NOISE = frozenset(
+    {
+        "api", "auth", "changelog", "docs", "email", "emails", "feature",
+        "guide", "guides", "https", "integration", "knowledge", "pricing",
+        "reference", "send", "sending", "settings", "smtp", "test", "with",
+    }
+)
+
+
+def _unestablished_integration_partners(
+    evidence_ids: list[str],
+    artifacts: KnowledgeArtifacts,
+    supported_audience_context: str,
+) -> list[str]:
+    """Find partner names that only source material, not the user, establishes."""
+    company = artifacts.business.company_name.casefold()
+    supported = supported_audience_context.casefold()
+    partners: list[str] = []
+    for evidence_id in evidence_ids:
+        entry = artifacts.evidence.get(evidence_id)
+        if entry is None or not evidence_id.startswith("R"):
+            continue
+        source_tokens = {
+            token
+            for token in re.findall(r"[a-z0-9]{4,}", entry.source.casefold())
+            if token not in _SOURCE_TOKEN_NOISE
+        }
+        claim = entry.claim.casefold()
+        for token in source_tokens:
+            if token in company or token in supported or token not in claim:
+                continue
+            partners.append(token)
+    return list(dict.fromkeys(partners))
+
+
+def _integration_conditions(
+    evidence_ids: list[str],
+    artifacts: KnowledgeArtifacts,
+    supported_audience_context: str,
+) -> list[str]:
+    """Keep an integration relevant without inventing that the reader uses it."""
+    return [
+        (
+            f"Do not state or imply that every reader uses {partner.title()}. Present this "
+            f"integration conditionally (for example, 'If you use {partner.title()}...') "
+            "unless the user-supplied campaign context establishes it."
+        )
+        for partner in _unestablished_integration_partners(
+            evidence_ids, artifacts, supported_audience_context
+        )
+    ]
+
+
+def _depends_on_unestablished_partner(
+    alternative: ArgumentOption,
+    evidence_ids: list[str],
+    artifacts: KnowledgeArtifacts,
+    supported_audience_context: str,
+) -> bool:
+    partners = _unestablished_integration_partners(
+        evidence_ids, artifacts, supported_audience_context
+    )
+    if not partners:
+        return False
+    proposition = (
+        f"{alternative.single_idea} {alternative.felt_need} "
+        f"{alternative.mechanism} {alternative.call_to_action} "
+        f"{alternative.next_step_decision} {alternative.next_step_value}"
+    ).casefold()
+    return any(
+        re.search(rf"\b{re.escape(partner)}\b", proposition)
+        for partner in partners
+    )
+
 
 class Strategist:
     def __init__(self, session: ModelSession) -> None:
@@ -72,9 +248,13 @@ class Strategist:
         demand: DemandMap | None = None,
         chosen_segment: str = "",
         intelligence: CampaignIntelligence | None = None,
+        recovery: MaterialRecovery | None = None,
     ) -> CampaignBrief:
         prompt_artifacts = artifacts
+        prompt_intelligence = intelligence
+        researched = intelligence is not None and intelligence.research_loaded
         if intelligence is not None:
+            intelligence.admit_automatically_recovered(artifacts.evidence)
             intelligence.validate_against(artifacts.evidence)
             if intelligence.v2_claim_boundary:
                 forbidden = set(intelligence.forbidden_evidence_ids)
@@ -89,6 +269,24 @@ class Strategist:
                         )
                     }
                 )
+            if researched:
+                # Discovery imagined a buyer so research could find one. Once
+                # research exists, those biographies are not competing sources.
+                segment = prompt_artifacts.audience.match(
+                    chosen_segment or intelligence.selected_audience, "",
+                )
+                audience = prompt_artifacts.audience.model_copy(update={
+                    "segments": [segment] if segment is not None else [],
+                    "objections": [item for item in prompt_artifacts.audience.objections
+                                   if item.grounding is Grounding.USER_STATED
+                                   or (item.grounding is Grounding.GROUNDED and item.provenance)],
+                })
+                prompt_artifacts = prompt_artifacts.model_copy(update={"audience": audience})
+                prompt_intelligence = intelligence.model_copy(update={
+                    "objections": [item for item in intelligence.objections
+                                   if item.grounding is Grounding.USER_STATED
+                                   or (item.grounding is Grounding.GROUNDED and item.provenance)],
+                })
         variables = {
             "request": request.request,
             "campaign_context": request.render_context(),
@@ -107,21 +305,22 @@ class Strategist:
             "positioning": (
                 positioning or PositioningMap()
             ).render_for_strategy(),
-            # Who the market says would buy this, and which of them this
-            # campaign was pointed at. The chosen segment is already the
-            # primary one in `knowledge` above - this is the field of buyers
-            # it was chosen *out of*, which is what turns a target into a
-            # decision the strategist can reason about instead of an
-            # instruction it can only obey.
-            "demand": (demand or DemandMap()).render_for_strategy(chosen_segment),
+            # Unverified discovery remains a fallback, not a second biography
+            # beside the verified audience selected for this campaign.
+            "demand": (
+                "The audience is already selected. Use the verified research below; "
+                "discovery hypotheses are superseded, not additional facts about this reader."
+                if researched else (demand or DemandMap()).render_for_strategy(chosen_segment)
+            ),
             "campaign_intelligence": (
-                intelligence.render_for_strategy() if intelligence is not None else ""
+                prompt_intelligence.render_for_strategy() if prompt_intelligence is not None else ""
             ),
             "contract": contract.render(),
             "relevant_material": corpus.render_search(
                 f"{request.request} {request.product_description}", _RETRIEVAL_CHUNKS
             ),
             "prior_learnings": prior_learnings or "This is the first campaign for this business.",
+            "recovery_material": _render_recovery(recovery, artifacts),
         }
         brief = await self._session.structured(
             role=ROLE_ID,
@@ -134,16 +333,63 @@ class Strategist:
             ),
             schema=CampaignBrief,
         )
-        brief = self._normalize(brief, contract, artifacts, intelligence)
+        audience_context = f"{request.request}\n{request.render_context()}"
+        brief = self._normalize(
+            brief, contract, artifacts, intelligence, audience_context
+        )
 
-        if contract.count_is_explicit and len(brief.emails) != contract.count:
-            # One correction turn: the count is arithmetic, and a brief that
-            # got it wrong is wrong about the only part of the request that
-            # was never open to interpretation.
+        count_wrong = contract.count_is_explicit and len(brief.emails) != contract.count
+        unsupported_steps = [
+            email for email in brief.emails
+            if email.call_to_action and email.next_step_value
+            and not email.next_step_evidence_ids
+        ]
+        if count_wrong or unsupported_steps:
+            # Both are errors in the plan, so combine them into one bounded
+            # correction before paying a writer or a cold reader.
+            corrections: list[str] = []
+            if count_wrong:
+                corrections.append(
+                    f"Your brief planned {len(brief.emails)} emails; the user requested "
+                    f"exactly {contract.count}. Redesign the arc for that count."
+                )
+            if unsupported_steps:
+                positions = ", ".join(str(email.position) for email in unsupported_steps)
+                corrections.append(
+                    f"Email(s) {positions} promise a concrete next-step payoff but have no "
+                    "assigned next_step_evidence_ids. For each, choose verified ledger ids "
+                    "that prove what the action or destination actually lets the reader do, "
+                    "and include those ids in evidence_ids too. If no such fact exists, "
+                    "change the action and its payoff to a supported first decision. Do not "
+                    "treat generic account creation as proof that a test works."
+                )
+            logger.info("strategist: correcting %d plan defect(s)", len(corrections))
+            brief = await self._session.structured(
+                role=ROLE_ID,
+                tier=ModelTier.DEEP,
+                template="strategist",
+                variables=variables,
+                task="Rebuild the brief before drafting. " + " ".join(corrections),
+                schema=CampaignBrief,
+            )
+            brief = self._normalize(
+                brief, contract, artifacts, intelligence, audience_context
+            )
+            if any(
+                email.call_to_action and email.next_step_value
+                and not email.next_step_evidence_ids
+                for email in brief.emails
+            ):
+                raise StrategyError(
+                    "The strategy promises a next-step payoff without any assigned proof.",
+                    request=request.request,
+                )
+
+        recovered_ids = {entry.id for entry in recovery.evidence} if recovery else set()
+        if recovered_ids and not _spends_any(brief, recovered_ids):
             logger.info(
-                "strategist: planned %d emails against a contract of %d - correcting",
-                len(brief.emails),
-                contract.count,
+                "strategist: recovered evidence %s was ignored - correcting",
+                sorted(recovered_ids),
             )
             brief = await self._session.structured(
                 role=ROLE_ID,
@@ -151,14 +397,23 @@ class Strategist:
                 template="strategist",
                 variables=variables,
                 task=(
-                    f"Your brief planned {len(brief.emails)} emails. The user asked for exactly "
-                    f"{contract.count}. Rebuild the sequence with exactly {contract.count} "
-                    "emails - not by padding or truncating what you had, but by redesigning the "
-                    "arc so that many emails each carry a distinct idea worth sending."
+                    "Rebuild the brief around the automatic recovery section. The previous "
+                    "brief ignored every newly verified fact. At least one primary email "
+                    f"must assign one of {', '.join(sorted(recovered_ids))} in evidence_ids, "
+                    "use it to answer the diagnosed gap, and make the supported official "
+                    "documentation page the next step when it helps the reader decide before "
+                    "signup. Keep the requested email count and all claim boundaries."
                 ),
                 schema=CampaignBrief,
             )
-            brief = self._normalize(brief, contract, artifacts, intelligence)
+            brief = self._normalize(
+                brief, contract, artifacts, intelligence, audience_context
+            )
+            if not _spends_any(brief, recovered_ids):
+                raise StrategyError(
+                    "The recovery strategy ignored every newly verified fact.",
+                    request=request.request,
+                )
 
         if not brief.emails:
             raise StrategyError(
@@ -201,6 +456,7 @@ class Strategist:
         contract: DeliverableContract,
         artifacts: KnowledgeArtifacts,
         intelligence: CampaignIntelligence | None = None,
+        audience_context: str = "",
     ) -> CampaignBrief:
         """Fix in code everything about a brief that has a correct answer.
 
@@ -216,10 +472,14 @@ class Strategist:
                 brief.orientation = intelligence.orientation
 
         segment = artifacts.audience.match(brief.reader_segment, brief.reader)
+        supported_audience_context = audience_context
         if segment is not None:
             # Store it back exactly as the audience model spells it, so the
             # cold reader is looked up by identity rather than matched again.
             brief.reader_segment = segment.name
+            # A researched segment describes a plausible market, not this
+            # recipient's installed stack. Only user-supplied campaign context
+            # can establish that they already use an integration partner.
         elif artifacts.audience.segments:
             logger.info(
                 "strategist: reader segment %r matches no segment in the audience model",
@@ -295,7 +555,31 @@ class Strategist:
                     MAX_EVIDENCE_PER_EMAIL,
                 )
                 assigned = assigned[:MAX_EVIDENCE_PER_EMAIL]
-            constraints = list(email.must_not_say)
+            next_step_evidence = [
+                evidence_id
+                for evidence_id in email.next_step_evidence_ids
+                if evidence_id in assigned
+            ]
+            if email.next_step_evidence_ids and not next_step_evidence:
+                logger.info(
+                    "strategist: email %d named no assigned evidence for its CTA payoff",
+                    position,
+                )
+            call_to_action, next_step_value = _recovered_next_step(
+                artifacts=artifacts,
+                evidence_ids=assigned,
+                next_step_evidence_ids=next_step_evidence,
+                call_to_action=email.call_to_action,
+                next_step_value=email.next_step_value,
+            )
+            constraints = _distinct_constraints(
+                [
+                    *email.must_not_say,
+                    *_integration_conditions(
+                        assigned, artifacts, supported_audience_context
+                    ),
+                ]
+            )
             felt_need = email.felt_need
             status_quo = email.status_quo
             if intelligence is not None:
@@ -339,10 +623,105 @@ class Strategist:
                         intelligence.trace.warn(
                             f"WITHHOLD evidence selected by the Strategist: {evidence_id}."
                         )
+            alternative_arguments: list[ArgumentOption] = []
+            seen_argument_keys = {_idea_key(email.single_idea)}
+            for alternative in email.alternative_arguments:
+                idea_key = _idea_key(alternative.single_idea)
+                if (
+                    not idea_key
+                    or any(_too_close(idea_key, earlier) for earlier in seen_argument_keys)
+                    or len(alternative_arguments) >= MAX_ALTERNATIVE_ARGUMENTS
+                ):
+                    continue
+                seen_argument_keys.add(idea_key)
+                alternative_evidence = [
+                    evidence_id
+                    for evidence_id in alternative.evidence_ids
+                    if evidence_id in known_evidence
+                ]
+                if intelligence is not None and intelligence.v2_claim_boundary:
+                    allowed = set(intelligence.allowed_evidence_ids)
+                    forbidden = set(intelligence.forbidden_evidence_ids)
+                    alternative_evidence = [
+                        evidence_id
+                        for evidence_id in alternative_evidence
+                        if evidence_id in allowed and evidence_id not in forbidden
+                    ]
+                alternative_evidence = alternative_evidence[:MAX_EVIDENCE_PER_EMAIL]
+                if _depends_on_unestablished_partner(
+                    alternative, alternative_evidence, artifacts, supported_audience_context
+                ):
+                    logger.info(
+                        "strategist: alternative %r depends on partner usage absent from "
+                        "user-selected audience context - dropped before candidate drafting",
+                        alternative.single_idea,
+                    )
+                    continue
+                alternative_next_step_evidence = [
+                    evidence_id
+                    for evidence_id in alternative.next_step_evidence_ids
+                    if evidence_id in alternative_evidence
+                ]
+                alternative_action, alternative_next_step_value = _recovered_next_step(
+                    artifacts=artifacts,
+                    evidence_ids=alternative_evidence,
+                    next_step_evidence_ids=alternative_next_step_evidence,
+                    call_to_action=alternative.call_to_action,
+                    next_step_value=alternative.next_step_value,
+                )
+                alternative_constraints = _distinct_constraints(
+                    [
+                        *alternative.must_not_say,
+                        *_integration_conditions(
+                            alternative_evidence,
+                            artifacts,
+                            supported_audience_context,
+                        ),
+                    ]
+                )
+                alternative_felt_need = alternative.felt_need
+                alternative_status_quo = alternative.status_quo
+                if intelligence is not None:
+                    if intelligence.research_loaded:
+                        alternative_felt_need = intelligence.normalized_felt_need(
+                            alternative_felt_need
+                        )
+                        alternative_status_quo = intelligence.normalized_status_quo(
+                            alternative_status_quo
+                        )
+                    alternative_constraints = _distinct_constraints(
+                        [
+                            *alternative_constraints,
+                            *intelligence.constraints_for(
+                                alternative_evidence, artifacts.evidence
+                            ),
+                            *(
+                                intelligence.forbidden_claims
+                                if intelligence.v2_claim_boundary
+                                else []
+                            ),
+                        ]
+                    )
+                alternative_arguments.append(
+                    alternative.model_copy(
+                        update={
+                            "felt_need": alternative_felt_need,
+                            "status_quo": alternative_status_quo,
+                            "evidence_ids": alternative_evidence,
+                            "next_step_evidence_ids": alternative_next_step_evidence,
+                            "call_to_action": alternative_action,
+                            "next_step_value": alternative_next_step_value,
+                            "must_not_say": alternative_constraints,
+                        }
+                    )
+                )
             email = email.model_copy(
                 update={
                     "position": position,
                     "evidence_ids": assigned,
+                    "next_step_evidence_ids": next_step_evidence,
+                    "call_to_action": call_to_action,
+                    "next_step_value": next_step_value,
                     "felt_need": felt_need,
                     "status_quo": status_quo,
                     "must_not_say": constraints,
@@ -357,6 +736,7 @@ class Strategist:
                     "alternative_ideas": _distinct_ideas(
                         email.alternative_ideas, email.single_idea
                     )[:MAX_ALTERNATIVE_IDEAS],
+                    "alternative_arguments": alternative_arguments,
                 }
             )
             if cta_labels and email.call_to_action and email.call_to_action.lower() not in cta_labels:
@@ -365,6 +745,16 @@ class Strategist:
                 logger.info(
                     "strategist: call to action %r is not on the offer sheet", email.call_to_action
                 )
+            for alternative in alternative_arguments:
+                if (
+                    cta_labels
+                    and alternative.call_to_action
+                    and alternative.call_to_action.lower() not in cta_labels
+                ):
+                    logger.info(
+                        "strategist: alternative call to action %r is not on the offer sheet",
+                        alternative.call_to_action,
+                    )
             normalized.append(email)
             if email.single_idea:
                 spent.append(email.single_idea)

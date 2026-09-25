@@ -7,11 +7,14 @@ that ships an unsupported claim, a run that cannot stop.
 
 import json
 from dataclasses import replace
+from datetime import UTC, datetime
 
 import pytest
 
 from app.knowledge.artifacts import KnowledgeArtifacts, Segment
-from app.knowledge.ledger import Evidence, EvidenceKind
+from app.knowledge.ledger import Evidence, EvidenceKind, EvidenceStrength
+from app.market.audience_research import FetchedSource, SourceTier
+from app.market.material_research import MaterialRecovery
 from app.marketing.cancellation import CancellationToken
 from app.marketing.contract import parse_contract
 from app.marketing.observer import RunObserver
@@ -97,6 +100,154 @@ def bake_off_only(**overrides) -> ExecutionPolicy:
             **overrides,
         }
     )
+
+
+@pytest.mark.asyncio
+async def test_missing_material_is_researched_added_and_replanned_automatically(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    missing = json.dumps(
+        {
+            "verdict": "revise",
+            "failure_mode": "missing_material",
+            "strategy_gap": "The exact SMTP integration path is absent.",
+            "brief_drift": "",
+            "unspent_evidence": [],
+            "edits": [],
+            "summary": "The reader needs the documented integration path.",
+        }
+    )
+    recovered_brief = json.loads(campaign_brief(1))
+    recovered_brief["emails"][0].update(
+        {
+            "evidence_ids": ["R1"],
+            "next_step_evidence_ids": ["R1"],
+            "call_to_action": "Create an account: https://app.example.com/signup",
+            "next_step_value": "Create an account and configure the integration.",
+        }
+    )
+    provider.push("strategist", campaign_brief(1), json.dumps(recovered_brief))
+    provider.push("conversion_critic", missing, CRITIQUE_SHIP)
+    source = FetchedSource(
+        requested_url="https://docs.example.com/integration",
+        final_url="https://docs.example.com/integration",
+        title="Official integration",
+        tier=SourceTier.INTERPRETATION,
+        venue="Example",
+        fetched_at=datetime.now(UTC),
+        content_hash="b" * 64,
+        content="The native integration fills the SMTP settings automatically.",
+    )
+    recovery = MaterialRecovery(
+        gap="The exact SMTP integration path is absent.",
+        sources=[source],
+        evidence=[
+            Evidence(
+                id="R1",
+                kind=EvidenceKind.INTEGRATION,
+                claim="the native integration fills the SMTP settings",
+                verbatim="The native integration fills the SMTP settings automatically.",
+                source=source.final_url,
+            )
+        ],
+    )
+
+    class AutomaticResearcher:
+        calls = 0
+
+        async def recover(self, **_kwargs):
+            self.calls += 1
+            return recovery
+
+    researcher = AutomaticResearcher()
+    pipeline, _ = build(
+        provider,
+        refine_only(max_revisions=1),
+        material_researcher=researcher,
+    )
+
+    result = await pipeline.run(replace(request_fixture, request="Write me one launch email"))
+
+    assert researcher.calls == 1
+    assert provider.calls_by_role["strategist"] == 2
+    assert "[R1]" in (provider.requests_for("strategist")[1].system_prompt or "")
+    assert result.brief is not None and result.brief.emails[0].evidence_ids == ["R1"]
+    assert result.brief.emails[0].call_to_action == (
+        "Review the official documentation: https://docs.example.com/integration"
+    )
+    assert "native integration fills" in result.brief.emails[0].next_step_value
+    assert result.artifacts is not None and result.artifacts.evidence.get("R1") is not None
+    assert len(result.outcomes) == 1
+    assert not result.outcomes[0].unresolved_strategy
+
+
+@pytest.mark.asyncio
+async def test_argument_gap_citing_verified_fact_replans_without_web_search(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    artifacts = artifacts_fixture()
+    artifacts.evidence.entries.append(Evidence(
+        id="R1", kind=EvidenceKind.INTEGRATION,
+        claim="The settings page shows whether the connector is enabled.",
+        verbatim="Open Settings to see whether the connector is enabled.",
+        source="https://docs.example.com/settings", strength=EvidenceStrength.STRONG,
+    ))
+    gap = "The draft asks for a plan choice too early. R1 shows the first configuration check."
+    provider.push("conversion_critic", json.dumps({
+        "verdict": "revise", "failure_mode": "argument", "strategy_gap": gap,
+        "edits": [], "summary": "Make the configuration check the first decision.",
+    }), CRITIQUE_SHIP)
+    revised = json.loads(campaign_brief(1))
+    revised["emails"][0].update({
+        "evidence_ids": ["R1"], "next_step_evidence_ids": ["R1"],
+        "call_to_action": "Review settings", "next_step_value": "Check the connector setting.",
+    })
+    provider.push("strategist", campaign_brief(1), json.dumps(revised))
+
+    class NoResearch:
+        async def recover(self, **_kwargs):
+            raise AssertionError("existing cited proof should be reused")
+
+    pipeline, _ = build(
+        provider, refine_only(max_revisions=1), artifacts=artifacts,
+        material_researcher=NoResearch(),
+    )
+    result = await pipeline.run(replace(request_fixture, request="Write one launch email"))
+
+    assert provider.calls_by_role["strategist"] == 2
+    assert gap in provider.requests_for("strategist")[1].system_prompt
+    assert result.brief is not None
+    assert result.brief.emails[0].call_to_action.endswith(
+        "https://docs.example.com/settings"
+    )
+    assert len(result.outcomes) == 1
+    assert not result.outcomes[0].unresolved_strategy
+
+
+@pytest.mark.asyncio
+async def test_unproved_next_step_is_corrected_before_writing(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    initial = json.loads(campaign_brief(1))
+    initial["emails"][0].update({
+        "next_step_value": "The account reveals whether the test works.",
+        "next_step_evidence_ids": [],
+    })
+    corrected = json.loads(campaign_brief(1))
+    corrected["emails"][0].update({
+        "next_step_value": "Inspect the setup requirements in the verified guide.",
+        "next_step_evidence_ids": ["E1"],
+    })
+    provider.push("strategist", json.dumps(initial), json.dumps(corrected))
+    pipeline, _ = build(provider, refine_only(max_revisions=0))
+
+    result = await pipeline.run(replace(request_fixture, request="Write one launch email"))
+
+    assert provider.calls_by_role["strategist"] == 2
+    assert "generic account creation" in provider.requests_for("strategist")[1].messages[0].content
+    assert result.brief is not None
+    assert result.brief.emails[0].next_step_evidence_ids == ["E1"]
+    assert provider.calls_by_role["email_writer"] > 0
 
 
 @pytest.mark.asyncio
@@ -883,7 +1034,7 @@ async def test_the_opening_a_stranger_responded_to_is_the_one_that_ships(
     )
     provider.push("blind_reader", blind_read(pull=2), blind_read(pull=9), blind_read(pull=4))
 
-    pipeline, _ = build(provider, bake_off_only(max_revisions=0))
+    pipeline, _ = build(provider, bake_off_only(max_revisions=0, draft_candidates=3))
     result = await pipeline.run(request_fixture)
 
     assert provider.calls_by_role["email_writer"] == 3, "three openings, one email"
@@ -899,7 +1050,7 @@ async def test_the_winning_opening_is_not_read_a_second_time(
     is the whole saving of screening on the cheap judges, spent."""
     provider.set_default("strategist", campaign_brief(1))
 
-    pipeline, _ = build(provider, bake_off_only(max_revisions=0))
+    pipeline, _ = build(provider, bake_off_only(max_revisions=0, draft_candidates=3))
     await pipeline.run(request_fixture)
 
     assert provider.calls_by_role["blind_reader"] == 3
@@ -914,7 +1065,7 @@ async def test_every_opening_is_written_to_a_different_constraint(
     and a cold reader has nothing to choose between them."""
     provider.set_default("strategist", campaign_brief(1))
 
-    pipeline, _ = build(provider, bake_off_only(max_revisions=0))
+    pipeline, _ = build(provider, bake_off_only(max_revisions=0, draft_candidates=3))
     await pipeline.run(request_fixture)
 
     asks = [request.messages[0].content for request in provider.requests_for("email_writer")]

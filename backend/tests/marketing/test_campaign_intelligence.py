@@ -12,11 +12,12 @@ from app.knowledge.artifacts import (
     Grounding,
     KnowledgeArtifacts,
     Objection,
+    Provenance,
     Segment,
     Sophistication,
 )
 from app.knowledge.corpus import SourceCorpus
-from app.knowledge.ledger import Evidence, EvidenceKind, EvidenceLedger
+from app.knowledge.ledger import Evidence, EvidenceKind, EvidenceLedger, EvidenceStrength
 from app.knowledge.store import ArtifactScope, ArtifactStore, fingerprint_documents
 from app.market.audience_research import (
     AudienceProblem,
@@ -26,9 +27,11 @@ from app.market.audience_research import (
     EvidenceReference,
     SourcedObservation,
 )
+from app.market.demand import AudienceSegment, DemandMap
 from app.market.radar import MarketSnapshot
 from app.market.relevance import (
     CampaignReadiness,
+    ClaimContract,
     DossierSilence,
     DossierState,
     FitVerdict,
@@ -261,6 +264,32 @@ def context(
     )
 
 
+def test_strong_official_recovery_extends_the_stale_dossier_boundary():
+    intelligence, _ = context(state=DossierState.STALE)
+    intelligence.trace.dossier_schema_version = 2
+    intelligence.recommendation_state = RecommendationState.RECOMMENDED_NARROW
+    intelligence.claim_contract = ClaimContract()
+    current = ledger()
+    current.entries.append(
+        Evidence(
+            id="R1",
+            kind=EvidenceKind.INTEGRATION,
+            claim="The documented SMTP route uses port 587.",
+            verbatim="Configure the SMTP route using port 587.",
+            source="https://docs.example.test/smtp",
+            strength=EvidenceStrength.STRONG,
+        )
+    )
+
+    intelligence.admit_automatically_recovered(current)
+    intelligence.validate_against(current)
+
+    assert "R1" in intelligence.allowed_evidence_ids
+    assert "The documented SMTP route uses port 587." in intelligence.allowed_claims
+    assert intelligence.claim_contract is not None
+    assert "R1" in intelligence.claim_contract.allowed_evidence_ids
+
+
 def artifacts() -> KnowledgeArtifacts:
     found = artifacts_fixture()
     found.evidence = ledger()
@@ -409,6 +438,45 @@ async def test_current_dossier_and_research_change_the_normalized_brief_without_
         "It reduces repeat triage; it does not eliminate every warranty question."
     ]
     assert intelligence.trace.partial_caveats_injected == brief.emails[0].must_not_say
+
+
+@pytest.mark.asyncio
+async def test_researched_strategy_omits_unverified_biographies_and_objections():
+    intelligence, _ = context()
+    adapted = adapt_researched_audience(artifacts(), research(), intelligence)
+    invented = "Nobody owns the abandoned bot project"
+    intelligence.objections.append(Objection(objection=invented))
+    adapted.audience.objections.append(Objection(objection=invented))
+    sourced = Objection(
+        objection="We need to review a reply before it is sent",
+        grounding=Grounding.GROUNDED,
+        provenance=[Provenance(source="customer interview", quote="We need to review a reply")],
+    )
+    adapted.audience.objections.append(sourced)
+    adapted.audience.objections.append(Objection(
+        objection="Our buyer requires a trial", grounding=Grounding.USER_STATED,
+    ))
+    unrelated = "A founder with eleven unowned pipelines"
+    adapted.audience.segments.append(Segment(name=unrelated))
+    demand = DemandMap(segments=[AudienceSegment(
+        name=intelligence.selected_audience, workflow="Abandoned a homemade bot last June",
+    )])
+    before = adapted.model_dump()
+    provider = RoleScriptedProvider({"strategist": strategist_answer()})
+    await Strategist(make_session(provider)).build(
+        request=request(), artifacts=adapted, corpus=SourceCorpus(),
+        contract=parse_contract(request().request), intelligence=intelligence, demand=demand,
+    )
+    prompt = provider.requests_for("strategist")[0].system_prompt
+    assert invented not in prompt
+    assert unrelated not in prompt
+    assert "Abandoned a homemade bot last June" not in prompt
+    assert sourced.objection in prompt
+    assert "Our buyer requires a trial" in prompt
+    assert "Repeat warranty questions consume" in prompt
+    assert adapted.model_dump() == before
+    assert intelligence.objections[-1].objection == invented
+    assert provider.calls_by_role == {"strategist": 1}
 
 
 @pytest.mark.asyncio

@@ -19,9 +19,9 @@ import { useModelCatalog } from "@/lib/use-model-catalog";
 import type { Campaign, EmailTier, PolicyPreset } from "@/lib/types";
 
 const PRESET_LABELS: Record<PolicyPreset, string> = {
-  fast: "Fast - cheaper models, shorter budget",
+  fast: "Fast - fewer review passes, shorter budget",
   balanced: "Balanced - the default",
-  maximum: "Maximum - best models, most thorough review",
+  maximum: "Maximum - most variants and thorough review",
 };
 
 const TIER_LABELS: Record<EmailTier, string> = {

@@ -5,10 +5,16 @@ and about the one thing that makes compiled knowledge worth compiling: the
 second campaign for a brand does not pay for it again.
 """
 
+import hashlib
+from datetime import UTC, datetime
+
 import pytest
 from sqlalchemy.pool import StaticPool
 from sqlmodel import Session, SQLModel, create_engine, select
 
+from app.knowledge.ledger import Evidence, EvidenceKind
+from app.market.audience_research import FetchedSource, SourceTier
+from app.market.material_research import MaterialRecovery
 from app.models.agent_execution import AgentExecution
 from app.models.brand import Brand
 from app.models.campaign import Campaign
@@ -17,8 +23,13 @@ from app.models.execution_log import ExecutionLog
 from app.models.generated_asset import GeneratedAsset
 from app.models.knowledge_artifacts import KnowledgeArtifactSet
 from app.models.knowledge_document import KnowledgeDocument
-from app.orchestration.campaign_orchestrator import CampaignOrchestrator
-from tests.marketing.conftest import CRITIQUE_REVISE, RoleScriptedProvider, default_answers
+from app.orchestration.campaign_orchestrator import CampaignOrchestrator, _DbKnowledgeGateway
+from tests.marketing.conftest import (
+    CRITIQUE_REVISE,
+    RoleScriptedProvider,
+    artifacts_fixture,
+    default_answers,
+)
 
 SITE = """# Notewright
 
@@ -90,6 +101,53 @@ def add_document(
     session.commit()
 
 
+def test_automatically_recovered_material_is_filed_and_reused(
+    session: Session,
+):
+    brand = Brand(name="Notewright")
+    session.add(brand)
+    session.commit()
+    session.refresh(brand)
+    add_document(session, None, brand)
+    campaign = make_campaign(session, brand=brand)
+    page = "The native integration fills the SMTP settings automatically."
+    source = FetchedSource(
+        requested_url="https://docs.example.com/integration",
+        final_url="https://docs.example.com/integration",
+        title="Official integration",
+        tier=SourceTier.INTERPRETATION,
+        venue="Example",
+        fetched_at=datetime.now(UTC),
+        content_hash=hashlib.sha256(page.encode("utf-8")).hexdigest(),
+        content=page,
+    )
+    recovery = MaterialRecovery(
+        gap="The exact SMTP integration path is absent.",
+        sources=[source],
+        evidence=[
+            Evidence(
+                id="R1",
+                kind=EvidenceKind.INTEGRATION,
+                claim="the native integration fills the SMTP settings",
+                verbatim=page,
+                source=source.final_url,
+            )
+        ],
+    )
+    artifacts = artifacts_fixture()
+    artifacts.evidence.entries.extend(recovery.evidence)
+
+    gateway = _DbKnowledgeGateway(session, campaign)
+    stored = gateway.commit_recovered_material(recovery, artifacts)
+
+    recovered = session.exec(
+        select(KnowledgeDocument).where(KnowledgeDocument.source_url == source.final_url)
+    ).one()
+    assert recovered.document_metadata["automatically_discovered"] is True
+    assert stored.artifacts.evidence.get("R1").document_id == str(recovered.id)
+    assert page in gateway.corpus().text
+
+
 @pytest.mark.asyncio
 async def test_a_run_records_every_role_turn_and_the_emails_that_shipped(
     session: Session, provider: RoleScriptedProvider
@@ -137,7 +195,10 @@ async def test_every_draft_is_recorded_in_full_including_the_ones_that_lost(
     can circle back to a draft that was already read and thrown away without
     anyone being able to see it happen.
     """
-    campaign = make_campaign(session)
+    campaign = make_campaign(
+        session,
+        policy={"preset": "balanced", "draft_candidates": 3},
+    )
     execution = await CampaignOrchestrator(session, provider).run(campaign)
 
     drafts = session.exec(
@@ -200,6 +261,8 @@ async def test_a_critique_records_the_edits_it_asked_for(
     assert critiques
     edits = critiques[0].data["edits"]
     assert edits and all(edit["problem"] and edit["fix"] for edit in edits)
+    assert critiques[0].data["failure_mode"] == "copy"
+    assert critiques[0].data["strategy_gap"] == ""
     assert critiques[0].data["unspent_evidence"] == ["E1"]
     assert critiques[0].data["brief_drift"]
 

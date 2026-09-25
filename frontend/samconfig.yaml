@@ -14,6 +14,8 @@ version: 0.1
 #    IMAGE_REPOSITORY      an ECR repository URI for the console image
 #    CONSOLE_DOMAIN        (optional) app.example.com
 #    CONSOLE_CERT_ARN      (optional) an ACM ARN in us-east-1
+#    HOSTED_ZONE_ID        (optional) Route 53 zone of CONSOLE_DOMAIN; writes its records
+#    CONSOLE_WEB_ACL_ARN   (optional) ConsoleWebAclArn from iac/edge.yaml, for the Free plan
 #
 #  The image repository has to exist before the first deploy. `sam deploy
 #  --resolve-image-repos` will create one automatically, which is fine for dev
@@ -31,13 +33,23 @@ ci:
     parameters:
       cached: false
       parallel: false
+      # The image's DockerBuildArgs say `!Ref ApiUrl`, and `sam build` only
+      # resolves that when it is handed the parameter - without this the
+      # client bundle is baked with the literal string "ApiUrl".
+      parameter_overrides:
+        - 'Environment=${ENVIRONMENT}'
+        - 'ApiUrl=${NEXT_PUBLIC_API_URL}'
 
   deploy:
     parameters:
       capabilities: CAPABILITY_IAM
       confirm_changeset: false
       fail_on_empty_changeset: false
-      resolve_s3: true
+      # This stack's own bucket rather than resolve_s3, which makes SAM
+      # create and manage an aws-sam-cli-managed-default stack per region -
+      # one with no lifecycle rule, so every bundle ever built stays in it.
+      # iac/pipeline.yaml sets SAM_ARTIFACT_BUCKET and expires them at 30 days.
+      s3_bucket: ${SAM_ARTIFACT_BUCKET}
       image_repositories:
         - 'ConsoleFunction=${IMAGE_REPOSITORY}'
       parameter_overrides:
@@ -47,3 +59,5 @@ ci:
         - 'MemorySize=${CONSOLE_MEMORY_SIZE}'
         - 'DomainName=${CONSOLE_DOMAIN}'
         - 'CertificateArn=${CONSOLE_CERT_ARN}'
+        - 'HostedZoneId=${HOSTED_ZONE_ID}'
+        - 'WebAclArn=${CONSOLE_WEB_ACL_ARN}'

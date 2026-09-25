@@ -26,6 +26,7 @@ from app.knowledge.artifacts import BusinessProfile, OfferSheet
 from app.knowledge.ledger import Evidence, EvidenceIndex
 from app.market.positioning import PositioningMap
 from app.market.sameness import check as sameness_check
+from app.marketing.briefs import EmailBrief
 from app.marketing.email_copy import (
     Email,
     render_email,
@@ -253,6 +254,7 @@ _SHOUTING_ALLOWED = frozenset(
         # what a product built on someone else's API has to say out loud
         "HTTP", "HTTPS", "REST", "JSON", "YAML", "HTML", "GRPC", "CRUD", "WEBHOOK",
         "OAUTH", "SAML", "OIDC", "JWT", "CORS", "UUID", "CDN", "DNS", "TLS",
+        "SMTP", "IMAP", "DKIM", "DMARC",
         # compliance and commerce, which a reader wants to see stated plainly
         "SOC2", "GDPR", "HIPAA", "CCPA", "ISO", "SLA", "SLAS", "VAT", "SAAS",
         # the ones that carry a number the reader is meant to check
@@ -379,6 +381,70 @@ def call_to_action_gate(email: Email, offer: OfferSheet) -> GateReport:
             )
         ],
         GateSeverity.ADVISORY,
+    )
+
+
+def repeated_call_to_action_gate(email: Email) -> GateReport:
+    """Block a body paragraph that merely repeats the separately rendered CTA.
+
+    The CTA field becomes its own link or button in the assembled email. A
+    standalone body paragraph with the same words therefore renders twice in a
+    row; there is no editorial judgment involved in identifying that duplicate.
+    """
+    asked = _normalized(strip_markup(email.call_to_action))
+    if not asked:
+        return GateReport()
+    repeated = next(
+        (
+            block.strip()
+            for block in re.split(r"\n\s*\n", strip_markup(email.body))
+            if _normalized(block) == asked
+        ),
+        "",
+    )
+    if not repeated:
+        return GateReport()
+    return _report(
+        "duplicate-call-to-action",
+        [
+            (
+                f"the body repeats the CTA as its own paragraph ('{repeated}'). The CTA is "
+                "rendered separately as a link, so remove this body paragraph and let the "
+                "single linked action carry the ask"
+            )
+        ],
+        GateSeverity.BLOCKING,
+    )
+
+
+_GENERIC_ONBOARDING_CTA_RE = re.compile(
+    r"^(?:get started|start(?: free)?|sign[ -]?up|create (?:an? )?account|"
+    r"try (?:it|free|resend)|learn more)(?: now| today)?$",
+    re.IGNORECASE,
+)
+_DOCUMENTATION_PATH_RE = re.compile(
+    r"/(?:docs|guides|changelog|knowledge-base|api-reference)(?:/|$)",
+    re.IGNORECASE,
+)
+
+
+def planned_call_to_action_gate(email: Email, brief: EmailBrief) -> GateReport:
+    """A documentation destination needs a label that describes that click."""
+    urls = re.findall(r'https?://[^\s<>"\]]+', brief.call_to_action)
+    if not any(_DOCUMENTATION_PATH_RE.search(url) for url in urls):
+        return GateReport()
+    if not _GENERIC_ONBOARDING_CTA_RE.fullmatch(_normalized(email.call_to_action)):
+        return GateReport()
+    return _report(
+        "planned-call-to-action",
+        [
+            (
+                f"the brief sends this click to official documentation, but "
+                f"'{email.call_to_action}' promises generic onboarding - name what the page "
+                "lets the reader inspect or decide"
+            )
+        ],
+        GateSeverity.BLOCKING,
     )
 
 
@@ -736,6 +802,7 @@ def run_all(
         capability_scope_gate(text, forbidden_capability_ids),
         spam_gate(email),
         overlap_gate(email, previous or []),
+        repeated_call_to_action_gate(email),
         call_to_action_gate(email, offer),
         clarity_gate(email, business or BusinessProfile()),
         substantiation_gate(substantiation),

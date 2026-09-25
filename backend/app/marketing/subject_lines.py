@@ -115,6 +115,7 @@ class SubjectBakeOff:
         personas: list[str],
         variants: int,
         screen: Callable[[Email], bool] | None = None,
+        audience_context: str = "No recipient history is established.",
     ) -> tuple[Email, str]:
         """The same email, with the subject most people would open.
 
@@ -133,7 +134,7 @@ class SubjectBakeOff:
         scanned better than it. Screened here, the field the readers rank is
         the field the winner can actually be taken from.
         """
-        options = await self._write(email, brief, artifacts, variants)
+        options = await self._write(email, brief, artifacts, variants, audience_context)
         sendable = [option for option in options if option.sendable]
         clean = [option for option in sendable if screen is None or screen(_swapped(email, option))]
         dropped = len(sendable) - len(clean)
@@ -181,6 +182,7 @@ class SubjectBakeOff:
         brief: EmailBrief,
         artifacts: KnowledgeArtifacts,
         variants: int,
+        audience_context: str,
     ) -> list[SubjectOption]:
         try:
             written = await self._session.structured(
@@ -195,6 +197,8 @@ class SubjectBakeOff:
                     "objection": brief.objection or "none assigned",
                     "subject_strategy": brief.subject_strategy or "concrete, no clickbait",
                     "voice": artifacts.voice.render(),
+                    "audience_context": audience_context,
+                    "must_not_say": "\n".join(brief.must_not_say) or "None specified.",
                 },
                 task=(
                     f"Write {variants} subject lines for the email below, each betting on a "

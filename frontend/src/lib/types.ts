@@ -594,6 +594,11 @@ export type LiveExecutionEvent = LiveEventBase &
           status_quo?: string;
           why_it_fails?: string;
           mechanism?: string;
+          call_to_action?: string;
+          next_step_decision?: string;
+          next_step_value?: string;
+          next_step_evidence_ids?: string[];
+          next_step_limit?: string;
           /** What this email deliberately leaves out, though it could say it. */
           must_not_say?: string[];
         }[];
@@ -627,6 +632,8 @@ export type LiveExecutionEvent = LiveEventBase &
         position: number;
         attempt: number;
         verdict: "ship" | "revise";
+        failure_mode?: "none" | "copy" | "argument" | "missing_material";
+        strategy_gap?: string;
         brief_drift: string;
         /** Ledger ids this email was assigned and did not use. */
         unspent_evidence: string[];

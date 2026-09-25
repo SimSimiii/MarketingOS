@@ -1,6 +1,6 @@
 from dataclasses import asdict
 
-from app.ai.claude_provider import ClaudeProvider
+from app.ai.factory import anthropic_backend
 from app.ai.model_router import ModelRouter
 from app.core.config import PROMPTS_DIR
 from app.ingestion.exceptions import AnalysisError
@@ -31,7 +31,7 @@ from app.runtime.prompt_engine import get_prompt_engine
 class ClaudeVisionProvider(VisionProvider):
     def __init__(self, model: str) -> None:
         self._session = ModelSession(
-            ClaudeProvider(model), get_prompt_engine(PROMPTS_DIR), EventBus(),
+            anthropic_backend(model), get_prompt_engine(PROMPTS_DIR), EventBus(),
             ModelRouter(overrides={"image_reader": model}), "image-ingestion",
         )
 

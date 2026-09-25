@@ -32,6 +32,21 @@ class Settings(BaseSettings):
     #: backends are always built - see app.ai.factory - so this is a default,
     #: not a switch that turns the other vendor off.
     ai_provider: Literal["claude", "openai", "gemini", "local"] = "claude"
+    #: Who pays for a model call, and therefore which pair of backends is
+    #: built. Never inferred from whether an API key happens to be in the
+    #: environment: the two cost wildly different amounts - a `balanced`
+    #: campaign is 10 to 35 calls per email - and a deployment that quietly
+    #: started charging a card because a key leaked into `.env` is the exact
+    #: accident `_clean_env()` exists to prevent on the other side.
+    #:
+    #: `subscription` drives the `claude` and `codex` CLIs against the
+    #: operator's plans. It needs an authenticated `$HOME` and a process that
+    #: can spawn subprocesses, so it is the laptop's mode.
+    #:
+    #: `api` calls both vendors' HTTP APIs with keys and bills per token. It
+    #: needs no CLI, no `$HOME` and no subprocess, which is what makes a
+    #: Lambda able to run a campaign at all.
+    ai_billing: Literal["subscription", "api"] = "subscription"
     anthropic_model: str = "claude-sonnet-4-6"
     #: Mirrors app.ai.models.OpenAIModel.SOL - Codex's own default for a
     #: ChatGPT-authenticated session. Spelled out rather than imported to keep

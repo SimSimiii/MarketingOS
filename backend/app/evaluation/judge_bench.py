@@ -42,6 +42,7 @@ decides what ships can see what it is deciding about.
 import argparse
 import asyncio
 import logging
+import math
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -50,8 +51,14 @@ from app.ai.factory import get_ai_provider
 from app.ai.model_router import ModelRouter
 from app.ai.models import ClaudeModel
 from app.core.config import PROMPTS_DIR
+from app.evaluation.controls import BenchSource, bench_only_sources
 from app.evaluation.golden import GOLDEN_CASES, GoldenCase
-from app.evaluation.mutations import MUTATIONS, Mutation, mutation_named
+from app.evaluation.mutations import (
+    HARD_MUTATIONS,
+    MUTATIONS,
+    Mutation,
+    mutation_named,
+)
 from app.marketing.email_copy import Email, EmailCopyError, parse_email, render_email
 from app.marketing.gates import (
     GateReport,
@@ -138,6 +145,11 @@ class PairResult:
 
     source: str
     mutation: Mutation
+    #: True when the original is a control a person wrote. Carried on the pair
+    #: rather than looked up later so a report assembled from pairs alone -
+    #: which is how the tests build one - still knows which rate each belongs
+    #: in. See `controls.py` for why the two are never pooled.
+    anchor: bool = False
     #: Set when the pair was never judged - the mutation was a no-op on this
     #: email, so there was no damage to detect and scoring it either way would
     #: be a lie about the judge.
@@ -201,7 +213,7 @@ class PairResult:
 
     def render(self) -> str:
         if self.skipped:
-            return f"  · {self.mutation.name:<24} {self.source:<14} skipped - {self.skipped}"
+            return f"  · {self.mutation.name:<24} {self.source:<16} skipped - {self.skipped}"
         if self.mutation.invariant:
             verdict = "even" if self.lean == 0 else f"leans {self.lean}"
         else:
@@ -211,7 +223,7 @@ class PairResult:
         # was asked instead - printing 0-0 there would read as a duel nobody
         # could judge, which is a different result entirely.
         tally = "in inbox" if self.by_inbox else f"{self.original_votes}-{self.mutant_votes}"
-        line = f"  {mark} {self.mutation.name:<24} {self.source:<14} {tally:<8}  {verdict}"
+        line = f"  {mark} {self.mutation.name:<24} {self.source:<16} {tally:<8}  {verdict}"
         if self.by_inbox:
             line += f"   opens {self.original_opens:.0f} vs {self.mutant_opens:.0f} in 100"
         if self.original_pull is not None and self.mutant_pull is not None:
@@ -221,6 +233,85 @@ class PairResult:
         if self.unreported:
             line += f"   ({self.unreported} vote(s) did not come back)"
         return line
+
+
+#: Two-sided 95%. The bench is small and will stay small - every pair is
+#: billed - so the interval is not decoration here, it is the difference
+#: between "the judge improved" and "four votes landed the other way".
+_Z = 1.96
+
+
+def wilson(successes: int, trials: int, z: float = _Z) -> tuple[float, float]:
+    """A confidence interval that stays inside [0, 1] at these sample sizes.
+
+    The normal approximation everybody reaches for first gives 4/4 an interval
+    of exactly 4/4, which is the one answer a bench of four votes can never
+    support. Wilson's score interval does not collapse at the ends and does
+    not run off past 0 or 1, which is the whole reason to print one: the first
+    round's headline was 4/6, and 4/6 with six pairs is consistent with a judge
+    that is right nine times in ten and one that is guessing.
+    """
+    if trials <= 0:
+        return (0.0, 1.0)
+    rate = successes / trials
+    denominator = 1 + z * z / trials
+    centre = (rate + z * z / (2 * trials)) / denominator
+    spread = z * math.sqrt(rate * (1 - rate) / trials + z * z / (4 * trials * trials))
+    half = spread / denominator
+    return (max(0.0, centre - half), min(1.0, centre + half))
+
+
+@dataclass(frozen=True)
+class ItemResult:
+    """How one control email fared, across every mutation applied to it.
+
+    The number this bench was rebuilt to produce. A detection rate pooled over
+    items answers "can the judge read", and cannot answer "can the judge read
+    *this*" - so a miss on a single-item bench is unattributable, and the first
+    round's 2-2 on a stripped proof paragraph is still, today, either a blind
+    judge or an email whose proof was not carrying much. Reading the same
+    mutation down a column of items is what separates them.
+    """
+
+    source: str
+    anchor: bool
+    caught: int
+    judged: int
+    #: Ballots that went to the original, and ballots cast, over this item's
+    #: judgment-only pairs. Finer than caught/judged on purpose: 4-0 and 3-1
+    #: are both catches and are not the same evidence, and an item sitting at
+    #: half its ballots is one no judge could separate rather than one this
+    #: judge failed on.
+    original_ballots: int = 0
+    ballots: int = 0
+
+    @property
+    def rate(self) -> float:
+        return self.caught / self.judged if self.judged else 0.0
+
+    @property
+    def ballot_share(self) -> float:
+        return self.original_ballots / self.ballots if self.ballots else 0.5
+
+
+@dataclass(frozen=True)
+class MutationResult:
+    """How one kind of damage fared, across every item it was applied to.
+
+    The actionable half. "The judge misses `bury_the_ask`" is a sentence
+    somebody can act on - by changing the duel prompt, or by moving the check
+    into code the way `strip_the_proof` already was. "The judge scores 67%" is
+    not a sentence about anything.
+    """
+
+    mutation: Mutation
+    caught: int
+    judged: int
+    missed_on: tuple[str, ...] = ()
+
+    @property
+    def rate(self) -> float:
+        return self.caught / self.judged if self.judged else 0.0
 
 
 @dataclass
@@ -297,6 +388,75 @@ class BenchReport:
         )
 
     @property
+    def sources(self) -> list[str]:
+        """Item names, in the order they were benched."""
+        ordered: list[str] = []
+        for pair in self.pairs:
+            if pair.source not in ordered:
+                ordered.append(pair.source)
+        return ordered
+
+    def _judgment_for(self, source: str) -> list[PairResult]:
+        return [pair for pair in self.judgment_only if pair.source == source]
+
+    def items(self) -> list[ItemResult]:
+        """One row per control email."""
+        rows: list[ItemResult] = []
+        for name in self.sources:
+            scored = self._judgment_for(name)
+            if not scored:
+                continue
+            rows.append(
+                ItemResult(
+                    source=name,
+                    anchor=scored[0].anchor,
+                    caught=sum(1 for pair in scored if pair.caught),
+                    judged=len(scored),
+                    original_ballots=sum(pair.original_votes for pair in scored),
+                    ballots=sum(pair.cast for pair in scored),
+                )
+            )
+        return rows
+
+    def by_mutation(self) -> list[MutationResult]:
+        """One row per kind of damage, over every item it reached."""
+        rows: list[MutationResult] = []
+        for mutation in dict.fromkeys(pair.mutation for pair in self.judgment_only):
+            scored = [pair for pair in self.judgment_only if pair.mutation is mutation]
+            rows.append(
+                MutationResult(
+                    mutation=mutation,
+                    caught=sum(1 for pair in scored if pair.caught),
+                    judged=len(scored),
+                    missed_on=tuple(pair.source for pair in scored if not pair.caught),
+                )
+            )
+        return sorted(rows, key=lambda row: (row.rate, row.mutation.name))
+
+    def _anchored(self, anchor: bool) -> list[PairResult]:
+        return [pair for pair in self.judgment_only if pair.anchor is anchor]
+
+    @property
+    def anchor_detection_rate(self) -> float:
+        """The rate on the controls a person wrote.
+
+        Reported beside the pooled number rather than folded into it. The rest
+        of the set was written for this bench, and copy written the same way
+        the judge thinks may be easier to defend than copy a person wrote - so
+        if these two diverge, the suspect is `controls.py`, not the judge.
+        """
+        return self._rate(self._anchored(True))
+
+    @property
+    def bench_detection_rate(self) -> float:
+        return self._rate(self._anchored(False))
+
+    @property
+    def interval(self) -> tuple[float, float]:
+        caught = sum(1 for pair in self.judgment_only if pair.caught)
+        return wilson(caught, len(self.judgment_only))
+
+    @property
     def noise(self) -> float:
         """Average distance from an even split on pairs that are not damaged.
 
@@ -307,11 +467,97 @@ class BenchReport:
         pairs = self.invariants
         return sum(pair.lean for pair in pairs) / len(pairs) if pairs else 0.0
 
+    def _legend(self) -> list[str]:
+        rows = self.items()
+        return [
+            "  items: "
+            + "   ".join(
+                f"[{index}] {row.source}" + (" *" if row.anchor else "")
+                for index, row in enumerate(rows, 1)
+            ),
+            "         * written by a person; the rest were written for the bench",
+        ]
+
+    def _matrix(self) -> list[str]:
+        """Damage down the rows, items across the columns.
+
+        The one view the old report could not produce, because it had a single
+        column. A row of crosses is a blind spot in the judge, and belongs in
+        the duel prompt or - better - in code, the way `strip_the_proof` ended
+        up in `substantiation.py`. A column of crosses is a control that is not
+        carrying what the mutations remove, and belongs in `controls.py`.
+        Pooled into one percentage the two are indistinguishable, which is what
+        made the first round's 4/6 unactionable.
+        """
+        rows = self.items()
+        if len(rows) < 2:
+            return []
+        lines = [
+            "\nMATRIX  (judgment-only damage - \u2713 caught, \u2717 missed, \u00b7 not judged)",
+            "",
+            "  " + " " * 26
+            + "".join(f"{index:>3}" for index in range(1, len(rows) + 1))
+            + "   caught",
+        ]
+        for result in self.by_mutation():
+            seen = {
+                pair.source: pair.caught
+                for pair in self.judgment_only
+                if pair.mutation is result.mutation
+            }
+            cells = "".join(
+                "  " + ("\u2713" if seen[row.source] else "\u2717")
+                if row.source in seen
+                else "  \u00b7"
+                for row in rows
+            )
+            lines.append(
+                f"  {result.mutation.name:<26}{cells}   {result.caught}/{result.judged}"
+            )
+        lines.append("")
+        lines.extend(self._legend())
+        return lines
+
+    def _per_item(self) -> list[str]:
+        rows = self.items()
+        if len(rows) < 2:
+            return []
+        lines = ["\nPER ITEM  (judgment-only)"]
+        for index, row in enumerate(rows, 1):
+            origin = "person" if row.anchor else "bench"
+            lines.append(
+                f"  [{index}] {row.source:<20}{origin:<8}{row.caught}/{row.judged}"
+                f"   ballots to the original {row.ballot_share:.0%}"
+            )
+        lines.append(
+            "  An item whose ballots sit near 50% is one nothing separated. Read that as a "
+            "control\n  that is not carrying what the mutation removes, before reading it as "
+            "a judge that cannot see."
+        )
+        return lines
+
+    def _per_mutation(self) -> list[str]:
+        rows = self.by_mutation()
+        if not rows or len(self.items()) < 2:
+            return []
+        lines = ["\nPER MUTATION  (judgment-only, worst first)"]
+        for result in rows:
+            line = (
+                f"  {result.mutation.name:<26}{result.caught}/{result.judged} "
+                f"({result.rate:.0%})"
+            )
+            if result.missed_on:
+                line += f"   missed on: {', '.join(result.missed_on)}"
+            lines.append(line)
+        return lines
+
     def render(self) -> str:
+        anchors = len({pair.source for pair in self.pairs if pair.anchor})
         lines = [
             (
-                f"Judge bench - {len({pair.source for pair in self.pairs})} source email(s), "
-                f"{len(self.pairs)} pair(s), {self.votes_per_pair} votes each"
+                f"Judge bench - {len({pair.source for pair in self.pairs})} source email(s) "
+                f"({anchors} written by a person), {len(self.pairs)} pair(s), "
+                f"{self.votes_per_pair} votes each"
             ),
         ]
         for title, pairs, note in (
@@ -330,11 +576,27 @@ class BenchReport:
             lines.append("\nNOT JUDGED  (no damage to detect, or the call failed)")
             lines.extend(pair.render() for pair in skipped)
 
+        lines.extend(self._matrix())
+        lines.extend(self._per_item())
+        lines.extend(self._per_mutation())
+
+        low, high = self.interval
         lines.append("\nDetection")
         lines.append(
             f"  judgment-only   {sum(1 for p in self.judgment_only if p.caught)}"
-            f"/{len(self.judgment_only)} ({self.detection_rate:.0%})   <- the number that matters"
+            f"/{len(self.judgment_only)} ({self.detection_rate:.0%})"
+            f"  [95% CI {low:.0%}-{high:.0%}]   <- the number that matters"
         )
+        if self._anchored(True) and self._anchored(False):
+            lines.append(
+                f"    on the {len({p.source for p in self._anchored(True)})} control(s) a person "
+                f"wrote   {self.anchor_detection_rate:.0%}"
+            )
+            lines.append(
+                f"    on the {len({p.source for p in self._anchored(False)})} written for the "
+                f"bench    {self.bench_detection_rate:.0%}"
+                "   (a gap here indicts the fixtures, not the judge)"
+            )
         if self.gate_visible:
             lines.append(
                 f"  gate-visible    {sum(1 for p in self.gate_visible if p.caught)}"
@@ -353,10 +615,19 @@ class BenchReport:
                 f"/{len(graded)} pair(s) ({self.separation_rate:.0%})"
             )
         if self.invariants:
-            splits = ", ".join(f"{p.original_votes}-{p.mutant_votes}" for p in self.invariants)
+            leaning = [pair for pair in self.invariants if pair.lean]
             lines.append(
-                f"\nNoise floor\n  undamaged pairs split {splits} "
+                f"\nNoise floor\n  {len(self.invariants)} undamaged pair(s): "
+                f"{len(self.invariants) - len(leaning)} even, {len(leaning)} leaning "
                 f"(average lean {self.noise:.1f}; 0 is a judge reading the copy)"
+            )
+            # Named rather than counted: a judge that sweeps an email against
+            # itself discounts every detection it scored elsewhere, and the
+            # first question is always which item it did that on.
+            lines.extend(
+                f"    {pair.source} / {pair.mutation.name}: "
+                f"{pair.original_votes}-{pair.mutant_votes}"
+                for pair in leaning
             )
         return "\n".join(lines)
 
@@ -364,16 +635,28 @@ class BenchReport:
 # --------------------------------------------------------------------- run
 
 
-def bench_sources(cases: tuple[GoldenCase, ...] = GOLDEN_CASES) -> list[tuple[str, Email, str]]:
+def bench_sources(
+    cases: tuple[GoldenCase, ...] = GOLDEN_CASES, *, anchors_only: bool = False
+) -> list[BenchSource]:
     """The originals, and who reads them.
 
-    Reused from the golden set rather than written fresh: those controls are
-    already documented as what a competent freelancer sends on a Tuesday, they
-    are already held inline so they cannot drift, and a bench whose "good"
-    email is one the author wrote for the bench is a bench that proves the
-    author's taste.
+    Two families, kept apart all the way into the report. The golden set's
+    controls are the **anchors**: a person wrote them, so how hard they are to
+    defend is independent of the thing being measured. `controls.py` supplies
+    the rest, and they exist because two items cannot tell a blind judge from
+    an easy email - with one item, a 2-2 on a stripped proof paragraph is
+    equally a statement about the judge and about that email, and the bench
+    cannot say which it meant.
+
+    **Deduplicated on the control text, not on the case name**, and that is not
+    housekeeping. `rich-sequence` and `rich-single` are two requests against
+    one business carrying the *same* control email and the same persona, so the
+    set used to yield three sources of which two were one email under two
+    names. Every pair on it was bought twice, and the report counted them as
+    independent items - manufacturing exactly the confound the rest of this
+    file exists to remove, while charging for it.
     """
-    sources: list[tuple[str, Email, str]] = []
+    candidates: list[BenchSource] = []
     for case in cases:
         if not case.control_email.strip():
             continue
@@ -383,25 +666,42 @@ def bench_sources(cases: tuple[GoldenCase, ...] = GOLDEN_CASES) -> list[tuple[st
             logger.warning("bench: control for %s is not sendable (%s)", case.name, exc)
             continue
         persona = case.target_market or "a busy professional who has never heard of this company"
-        sources.append((case.name, email, persona))
+        candidates.append(
+            BenchSource(name=case.name, email=email, persona=persona, anchor=True)
+        )
+    if not anchors_only:
+        candidates.extend(bench_only_sources())
+
+    sources: list[BenchSource] = []
+    seen: set[str] = set()
+    for source in candidates:
+        fingerprint = render_email(source.email)
+        if fingerprint in seen:
+            logger.info(
+                "bench: %s carries a control already in the set - not benching it twice",
+                source.name,
+            )
+            continue
+        seen.add(fingerprint)
+        sources.append(source)
     return sources
 
 
 def pairs_for(
-    sources: list[tuple[str, Email, str]], mutations: tuple[Mutation, ...]
-) -> list[tuple[str, Email, Email, str, Mutation]]:
-    """Every (original, mutant) the bench would judge, built without a model.
+    sources: list[BenchSource], mutations: tuple[Mutation, ...]
+) -> list[tuple[BenchSource, Email, Mutation]]:
+    """Every (source, mutant) the bench would judge, built without a model.
 
     Separate from running them so `--dry-run` can print the mutants for a
     person to read. That check matters more than it looks: the whole bench
     rests on the mutants being plausible worse emails rather than broken ones,
     and that is a judgment only a human eye can make.
     """
-    built: list[tuple[str, Email, Email, str, Mutation]] = []
-    for name, original, persona in sources:
-        for mutation in mutations:
-            built.append((name, original, mutation.apply(original), persona, mutation))
-    return built
+    return [
+        (source, mutation.apply(source.email), mutation)
+        for source in sources
+        for mutation in mutations
+    ]
 
 
 async def _inbox_arm(
@@ -431,7 +731,7 @@ async def run_bench(
     *,
     judge_session: ModelSession,
     reader_session: ModelSession | None = None,
-    sources: list[tuple[str, Email, str]] | None = None,
+    sources: list[BenchSource] | None = None,
     mutations: tuple[Mutation, ...] = MUTATIONS,
     votes: int = DEFAULT_VOTES,
 ) -> BenchReport:
@@ -453,15 +753,22 @@ async def run_bench(
     # avoidable cost in the bench.
     original_pull: dict[str, float] = {}
     if reader is not None:
-        for name, original, persona in sources:
-            original_pull[name] = (await reader.read(original, [persona])).pull
+        for source in sources:
+            original_pull[source.name] = (
+                await reader.read(source.email, [source.persona])
+            ).pull
 
-    def unjudged(name: str, mutation: Mutation, reason: str) -> PairResult:
-        return PairResult(source=name, mutation=mutation, skipped=reason)
+    def unjudged(source: BenchSource, mutation: Mutation, reason: str) -> PairResult:
+        return PairResult(
+            source=source.name, mutation=mutation, anchor=source.anchor, skipped=reason
+        )
 
-    for name, original, mutant, persona, mutation in pairs_for(sources, mutations):
+    for source, mutant, mutation in pairs_for(sources, mutations):
+        name, original, persona = source.name, source.email, source.persona
         if not mutation.invariant and render_email(mutant) == render_email(original):
-            report.pairs.append(unjudged(name, mutation, "this email had nothing for it to break"))
+            report.pairs.append(
+                unjudged(source, mutation, "this email had nothing for it to break")
+            )
             continue
 
         # One pair at a time, because a bench is a hundred-odd billed calls and
@@ -474,13 +781,14 @@ async def run_bench(
                 ranked = await _inbox_arm(scanner, original, mutant, persona)
                 if ranked is None:
                     report.pairs.append(
-                        unjudged(name, mutation, "nobody could rank the two subject lines")
+                        unjudged(source, mutation, "nobody could rank the two subject lines")
                     )
                     continue
                 report.pairs.append(
                     PairResult(
                         source=name,
                         mutation=mutation,
+                        anchor=source.anchor,
                         original_opens=ranked[0],
                         mutant_opens=ranked[1],
                         gate_issues=tuple(
@@ -497,7 +805,7 @@ async def run_bench(
                 mutant_pull = (await reader.read(mutant, [persona])).pull
         except ProviderError as exc:
             logger.warning("bench: %s / %s could not be judged - %s", name, mutation.name, exc)
-            report.pairs.append(unjudged(name, mutation, f"the provider failed ({exc})"))
+            report.pairs.append(unjudged(source, mutation, f"the provider failed ({exc})"))
             continue
         if not duel.decided:
             # Every ballot line came back empty. The judge itself absorbs a
@@ -511,7 +819,7 @@ async def run_bench(
             )
             report.pairs.append(
                 unjudged(
-                    name,
+                    source,
                     mutation,
                     f"the provider failed ({duel.unreported} vote(s) never came back)",
                 )
@@ -521,6 +829,7 @@ async def run_bench(
             PairResult(
                 source=name,
                 mutation=mutation,
+                anchor=source.anchor,
                 original_votes=duel.champion_votes,
                 mutant_votes=duel.challenger_votes,
                 unreported=duel.unreported,
@@ -555,7 +864,25 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--votes", type=int, default=DEFAULT_VOTES)
     parser.add_argument("--mutation", action="append", help="run one mutation by name (repeatable)")
-    parser.add_argument("--case", action="append", help="run one golden case by name (repeatable)")
+    parser.add_argument(
+        "--hard",
+        action="store_true",
+        help=(
+            "run only the subtle tier. The original six are passed 32/33, so they are a "
+            "regression guard now rather than a measurement; these four still have room"
+        ),
+    )
+    parser.add_argument(
+        "--case", action="append", help="run one control by name (repeatable)"
+    )
+    parser.add_argument(
+        "--anchors-only",
+        action="store_true",
+        help=(
+            "bench only the controls a person wrote. Cheap, and the honest fallback if the "
+            "fixtures in controls.py are ever suspected of being easy"
+        ),
+    )
     parser.add_argument(
         "--with-reader",
         action="store_true",
@@ -581,16 +908,17 @@ def main(argv: list[str] | None = None) -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-    cases = GOLDEN_CASES
+    sources = bench_sources(anchors_only=args.anchors_only)
     if args.case:
-        cases = tuple(case for case in GOLDEN_CASES if case.name in set(args.case))
-        if not cases:
-            parser.error(f"no golden case named any of {args.case}")
-    sources = bench_sources(cases)
+        wanted = set(args.case)
+        sources = [source for source in sources if source.name in wanted]
     if not sources:
-        parser.error("no golden case in that selection has a control email to mutate")
+        parser.error(
+            f"no control email to mutate in that selection. Have: "
+            f"{', '.join(source.name for source in bench_sources())}"
+        )
 
-    mutations = MUTATIONS
+    mutations = HARD_MUTATIONS if args.hard else MUTATIONS
     if args.mutation:
         chosen = [mutation_named(name) for name in args.mutation]
         missing = [name for name, found in zip(args.mutation, chosen, strict=True) if found is None]
@@ -604,14 +932,19 @@ def main(argv: list[str] | None = None) -> int:
     pairs = pairs_for(sources, mutations)
     inbox_pairs = sum(
         1
-        for _, original, mutant, _, mutation in pairs
-        if not mutation.invariant and _subject_only(original, mutant)
+        for source, mutant, mutation in pairs
+        if not mutation.invariant and _subject_only(source.email, mutant)
     )
 
     if args.dry_run:
-        for name, original, mutant, _, mutation in pairs:
+        for source, mutant, mutation in pairs:
+            name, original = source.name, source.email
             unchanged = render_email(mutant) == render_email(original)
-            print(f"\n{'=' * 70}\n{name} · {mutation.name}\n  breaks: {mutation.breaks}")
+            origin = "written by a person" if source.anchor else "written for the bench"
+            print(
+                f"\n{'=' * 70}\n{name} ({origin}) · {mutation.name}"
+                f"\n  breaks: {mutation.breaks}"
+            )
             if unchanged and not mutation.invariant:
                 print("  !! no-op on this email - the bench will skip this pair")
             elif not mutation.invariant and _subject_only(original, mutant):

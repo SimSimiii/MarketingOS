@@ -1,0 +1,2557 @@
+{
+  "version": 5,
+  "compiled_at": "2026-09-05T09:48:36.718586Z",
+  "evidence_count": 160,
+  "segments": [
+    "A solo technical founder who is three weekends into a homemade support chatbot that still has no logs, no cost tracking and no way to stop it saying something stupid",
+    "A two-person automation agency owner who has sold the same WhatsApp assistant to six clients and now maintains six separate codebases",
+    "A support/ops lead at a 30-person e-commerce company who personally answers the same forty emails every morning before she can start her real job"
+  ],
+  "gaps": [
+    "No customer names, quotes or case studies found - the copy can describe the product but cannot prove anyone uses it"
+  ],
+  "voice_learned": true,
+  "artifacts": {
+    "business": {
+      "company_name": "orqAgent",
+      "what_it_does": "A no-code platform for building custom AI agents (chatbots/assistants) powered by models like Claude, GPT-4, and Gemini — each agent bundles a model, a system prompt, a persona, a knowledge base, guardrails, and gets its own REST API endpoint, deployable via API, embeddable widget, or channels like Slack, WhatsApp, and Telegram.",
+      "category": "AI agent platform / no-code AI chatbot & assistant builder",
+      "business_model": "Subscription SaaS billed monthly, with each plan including a bundle of usage credits (\"Payez uniquement ce que vous utilisez\" — pay only for what you use); a free tier with starting credits, self-serve paid upgrades, and custom-priced Enterprise sold via sales contact.",
+      "facts": [
+        {
+          "statement": "New signups get 1,500 free credits with no credit card required.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.orqagent.com/",
+            "quote": "1,500 free credits on signup — no card required",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "unknown"
+          }
+        },
+        {
+          "statement": "The Free plan (\"Gratuit\") includes 1 agent and 100 executions per month.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://app.orqagent.com/pricing/",
+            "quote": "1 agent\n- 100 exécutions / mois",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "unknown"
+          }
+        },
+        {
+          "statement": "The Pro plan costs $29/month and includes 30,000 credits (~1,100 Sonnet calls).",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://app.orqagent.com/pricing/",
+            "quote": "$29 /mois\n\n30 000 crédits inclus par mois (~1 100 appels Sonnet)",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "unknown"
+          }
+        },
+        {
+          "statement": "The Business plan costs $99/month, supports 50 agents and 100,000 executions per month.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://app.orqagent.com/pricing/",
+            "quote": "$99 /mois ... 50 agents\n- 100 000 exécutions / mois",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "unknown"
+          }
+        },
+        {
+          "statement": "The Enterprise plan has custom pricing and includes SSO/SAML, a dedicated CSM, and a 99.9% uptime SLA.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://app.orqagent.com/pricing/",
+            "quote": "SSO / SAML\n- CSM dédié\n- SLA de disponibilité 99,9%",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "unknown"
+          }
+        },
+        {
+          "statement": "The platform routes across 25+ models from 9 AI providers, and lets customers bring their own API keys (BYOK).",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.orqagent.com/",
+            "quote": "25 Models across 9 providers ... BYOK Bring your own API keys",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "unknown"
+          }
+        },
+        {
+          "statement": "Every agent gets a dedicated REST endpoint secured with an API key, callable via POST /api/agents/{agent_id}/run.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://app.orqagent.com/docs/",
+            "quote": "Every agent you build gets a dedicated REST endpoint with API key auth.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "unknown"
+          }
+        },
+        {
+          "statement": "Agents support a knowledge base: uploaded PDFs/text/markdown/CSV are chunked and retrieved via RAG so the agent can cite facts from documents.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://app.orqagent.com/docs/",
+            "quote": "Upload documents and your agent automatically retrieves the most relevant chunks for each user question. This is done via retrieval-augmented generation (RAG)",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "unknown"
+          }
+        },
+        {
+          "statement": "Agents can be configured with guardrails including PII masking, content filtering, and prompt injection detection.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.orqagent.com/",
+            "quote": "PII masking, content filtering, prompt injection detection. Define rules once in the console — enforced transparently on every run.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "unknown"
+          }
+        },
+        {
+          "statement": "Native integrations include Slack, WhatsApp, Telegram, Email Inbox, REST Webhooks, Scheduled Runs, Custom Tools (HTTP), and Stripe Billing.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.orqagent.com/",
+            "quote": "Slack\n\nWhatsApp\n\nTelegram\n\nEmail Inbox\n\nREST Webhooks\n\nScheduled Runs\n\nCustom Tools (HTTP)\n\nStripe Billing",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "unknown"
+          }
+        },
+        {
+          "statement": "Security posture: API keys are hashed at rest, auth uses JWT, and SOC 2 compliance is in progress (not yet certified).",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://app.orqagent.com/",
+            "quote": "Clés API hachées au repos. Auth JWT. SOC 2 en cours.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "unknown"
+          }
+        },
+        {
+          "statement": "An agent can be toggled \"Public\" to be called from a public endpoint without an API key, with usage still billed to the owning account.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://app.orqagent.com/docs/",
+            "quote": "If you've toggled Public on an agent, it can be called without an API key. Usage is still billed to your account.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "unknown"
+          }
+        },
+        {
+          "statement": "Each agent supports configurable rate limits per minute and per day, response format enforcement (text/markdown/json/bullet_points), and a JSON Schema to constrain JSON output.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://app.orqagent.com/docs/",
+            "quote": "Response format | enum | text · markdown · json · bullet_points ... Rate limit/min | integer | Maximum calls per minute from a single session.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "unknown"
+          }
+        },
+        {
+          "statement": "The site markets to multiple buyer segments: General, Developers, E-commerce, HR & Recruiting, and Enterprise.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.orqagent.com/",
+            "quote": "I'm building for…\n\nGeneral\nDevelopers\nE-commerce\nHR & Recruiting\nEnterprise",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "unknown"
+          }
+        },
+        {
+          "statement": "The company publishes two pricing tables that disagree on the Pro plan's limits — app.orqagent.com/pricing lists Pro at 10 agents / 20,000 executions per month, while orqagent.com's homepage lists Pro (same $29 price) as unlimited agents with no stated execution cap — so the exact current Pro limits are unclear from the material.",
+          "grounding": "inferred",
+          "provenance": null
+        }
+      ],
+      "vocabulary": [
+        "agents",
+        "system prompt",
+        "playground",
+        "knowledge base",
+        "guardrails",
+        "crédits",
+        "exécutions",
+        "BYOK",
+        "widget",
+        "chunks_injected",
+        "persona",
+        "session_id",
+        "white-label",
+        "no-code",
+        "routage prioritaire"
+      ]
+    },
+    "offer": {
+      "plans": [
+        {
+          "name": "Gratuit",
+          "price": "$0 /mois",
+          "includes": [
+            "1 agent",
+            "100 exécutions / mois",
+            "Support communautaire",
+            "Analytique basique",
+            "1 500 crédits offerts au démarrage (~55 appels Sonnet)"
+          ]
+        },
+        {
+          "name": "Pro",
+          "price": "$29 /mois",
+          "includes": [
+            "10 agents",
+            "20 000 exécutions / mois",
+            "Tous les modèles (Claude, GPT-4)",
+            "Widget d'intégration",
+            "Support par email",
+            "30 000 crédits inclus par mois (~1 100 appels Sonnet)"
+          ]
+        },
+        {
+          "name": "Business",
+          "price": "$99 /mois",
+          "includes": [
+            "50 agents",
+            "100 000 exécutions / mois",
+            "Tous les modèles + routage prioritaire",
+            "Intégrations personnalisées",
+            "Support Slack",
+            "100 000 crédits inclus par mois (~3 700 appels Sonnet)"
+          ]
+        },
+        {
+          "name": "Entreprise",
+          "price": "Sur mesure",
+          "includes": [
+            "Agents illimités",
+            "Limites personnalisées",
+            "SSO / SAML",
+            "CSM dédié",
+            "SLA de disponibilité 99,9%",
+            "300 000 crédits inclus par mois (~11 000 appels Sonnet)"
+          ]
+        },
+        {
+          "name": "Starter",
+          "price": "$0",
+          "includes": [
+            "1,500 free credits, no card required",
+            "1 agent",
+            "1 knowledge base per agent",
+            "REST API access",
+            "7-day run history",
+            "Community support"
+          ]
+        },
+        {
+          "name": "Pro",
+          "price": "$29",
+          "includes": [
+            "per month, credits included",
+            "Unlimited agents",
+            "Slack, WhatsApp & Telegram",
+            "A/B experiments on prompts",
+            "White-label dashboard",
+            "Teams & RBAC",
+            "30-day analytics history",
+            "Priority support"
+          ]
+        },
+        {
+          "name": "Enterprise",
+          "price": "Custom",
+          "includes": [
+            "Everything in Pro",
+            "Dedicated infrastructure / VPC",
+            "Custom LLM endpoints",
+            "SSO / SAML",
+            "SLA guarantee",
+            "Onboarding & training"
+          ]
+        }
+      ],
+      "free_entry": "1,500 crédits offerts au démarrage / 1,500 free credits on signup — no card required (Free/Starter plan, $0/mois: 1 agent, 100 exécutions / mois)",
+      "guarantees": [
+        "Annulez à tout moment.",
+        "Clés API hachées au repos. Auth JWT. SOC 2 en cours.",
+        "GDPR-ready — EU data residency available.",
+        "Reliable at scale — Serverless, auto-scaling, 99.9% uptime.",
+        "Encrypted end-to-end — Your data is protected in transit & at rest.",
+        "Your data stays yours — Never used to train any model.",
+        "Isolated by design — Per-tenant data separation.",
+        "SLA de disponibilité 99,9% (Entreprise)"
+      ],
+      "calls_to_action": [
+        {
+          "label": "Start for free",
+          "intent": "sign up for the free plan",
+          "url": "https://app.orqagent.com/sign-up"
+        },
+        {
+          "label": "Démarrer gratuitement",
+          "intent": "sign up for the free plan",
+          "url": null
+        },
+        {
+          "label": "Passer au Pro",
+          "intent": "upgrade to the Pro plan",
+          "url": null
+        },
+        {
+          "label": "Passer au Business",
+          "intent": "upgrade to the Business plan",
+          "url": null
+        },
+        {
+          "label": "Contacter les ventes",
+          "intent": "contact sales about the Enterprise plan",
+          "url": null
+        },
+        {
+          "label": "Contact us",
+          "intent": "contact sales about the Enterprise plan",
+          "url": "mailto:hello@orqagent.com"
+        },
+        {
+          "label": "Open Console",
+          "intent": "open the orqAgent app console",
+          "url": "https://app.orqagent.com"
+        },
+        {
+          "label": "Voir les tarifs",
+          "intent": "view the pricing page",
+          "url": "/pricing/"
+        },
+        {
+          "label": "Create your first agent",
+          "intent": "sign up and create an agent",
+          "url": "https://app.orqagent.com/sign-up"
+        }
+      ],
+      "purchase_motion": "Self-serve signup and in-app upgrade for Free/Starter, Pro, and Business plans (no card required to start); sales-led for Enterprise via \"Contacter les ventes\" / \"Contact us\"."
+    },
+    "evidence": {
+      "entries": [
+        {
+          "id": "E1",
+          "kind": "price",
+          "claim": "Signup grants 1,500 free credits with no card required",
+          "verbatim": "1,500 free credits on signup — no card required",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E2",
+          "kind": "feature",
+          "claim": "orqAgent supports 25 models across 9 providers",
+          "verbatim": "25 Models across 9 providers",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E3",
+          "kind": "integration",
+          "claim": "orqAgent has 8 native integrations",
+          "verbatim": "8 Native integrations",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E4",
+          "kind": "feature",
+          "claim": "orqAgent supports BYOK — bring your own API keys",
+          "verbatim": "BYOK Bring your own API keys",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E5",
+          "kind": "guarantee",
+          "claim": "Customer data is encrypted end-to-end, protected in transit and at rest",
+          "verbatim": "**Encrypted end-to-end**Your data is protected in transit & at rest.",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E6",
+          "kind": "guarantee",
+          "claim": "Customer data is never used to train any model",
+          "verbatim": "**Your data stays yours**Never used to train any model.",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E7",
+          "kind": "feature",
+          "claim": "Customer data is isolated by design with per-tenant data separation",
+          "verbatim": "**Isolated by design**Per-tenant data separation.",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E8",
+          "kind": "certification",
+          "claim": "orqAgent is GDPR-ready with EU data residency available",
+          "verbatim": "**GDPR-ready**EU data residency available.",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E9",
+          "kind": "guarantee",
+          "claim": "orqAgent offers 99.9% uptime with serverless, auto-scaling infrastructure",
+          "verbatim": "**Reliable at scale**Serverless, auto-scaling, 99.9% uptime.",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E10",
+          "kind": "feature",
+          "claim": "Users can switch between models like Claude, GPT-4, Mistral, Llama, and Gemini with a single field",
+          "verbatim": "Claude, GPT-4, Mistral, Llama, Gemini — switch models with a single field.",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E11",
+          "kind": "feature",
+          "claim": "Users can upload PDFs, docs, or plain text, and the agent automatically retrieves the most relevant context for every query with no vector DB to manage",
+          "verbatim": "Upload PDFs, docs or plain text. The agent retrieves the most relevant context for every query automatically — no vector DB to manage.",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E12",
+          "kind": "feature",
+          "claim": "Analytics automatically track P95 latency, token usage per model, daily spend trends, and guardrail trigger rates without extra config",
+          "verbatim": "P95 latency, token usage per model, daily spend trends, guardrail trigger rates — all tracked automatically without extra config.",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E13",
+          "kind": "feature",
+          "claim": "Guardrails include PII masking, content filtering, and prompt injection detection, defined once and enforced on every run",
+          "verbatim": "PII masking, content filtering, prompt injection detection. Define rules once in the console — enforced transparently on every run.",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E14",
+          "kind": "feature",
+          "claim": "Teams can invite collaborators with role-based permissions and access full audit logs for compliance",
+          "verbatim": "Invite collaborators with role-based permissions. Full audit logs for compliance.",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E15",
+          "kind": "feature",
+          "claim": "The entire dashboard can be white-labeled under the customer's own brand",
+          "verbatim": "White-label the entire dashboard under your brand.",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E16",
+          "kind": "feature",
+          "claim": "Agents can be equipped with HTTP tools, A/B experiments on prompts, scheduled runs, and version history",
+          "verbatim": "Equip agents with HTTP tools, A/B experiments on prompts, scheduled runs, and version history.",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E17",
+          "kind": "feature",
+          "claim": "Every agent built on orqAgent gets a dedicated REST endpoint with API key authentication",
+          "verbatim": "Every agent you build gets a dedicated REST endpoint with API key auth.",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E18",
+          "kind": "feature",
+          "claim": "The API supports stateless calls or stateful conversation sessions",
+          "verbatim": "Stateless calls or stateful conversation sessions",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E19",
+          "kind": "feature",
+          "claim": "Per-agent API keys can have usage caps",
+          "verbatim": "Per-agent API keys with usage caps",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E20",
+          "kind": "integration",
+          "claim": "orqAgent supports webhook callbacks on run completion",
+          "verbatim": "Webhook callbacks on run completion",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E21",
+          "kind": "feature",
+          "claim": "Full run history is available with status filtering",
+          "verbatim": "Full run history with status filter",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E22",
+          "kind": "feature",
+          "claim": "The platform is serverless, scaling automatically with zero infrastructure to manage",
+          "verbatim": "Serverless — scales automatically, zero infra to manage",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E23",
+          "kind": "integration",
+          "claim": "orqAgent natively integrates with Slack, WhatsApp, Telegram, Email Inbox, REST Webhooks, Scheduled Runs, Custom Tools (HTTP), and Stripe Billing",
+          "verbatim": "Slack WhatsApp Telegram Email Inbox REST Webhooks Scheduled Runs Custom Tools (HTTP) Stripe Billing",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E24",
+          "kind": "metric",
+          "claim": "Creating an agent — writing a system prompt, picking a model, configuring guardrails and tools — takes under 2 minutes",
+          "verbatim": "Write a system prompt, pick a model, configure guardrails and tools — all from the console. Done in under 2 minutes.",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "operations"
+        },
+        {
+          "id": "E25",
+          "kind": "price",
+          "claim": "The Starter plan costs $0 and includes 1,500 free credits with no card required",
+          "verbatim": "Starter $0 1,500 free credits · no card required",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E26",
+          "kind": "feature",
+          "claim": "The Starter plan includes 1 knowledge base per agent",
+          "verbatim": "1 knowledge base per agent",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E27",
+          "kind": "feature",
+          "claim": "The Starter plan includes REST API access",
+          "verbatim": "REST API access",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E28",
+          "kind": "feature",
+          "claim": "The Starter plan includes 7-day run history",
+          "verbatim": "7-day run history",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E29",
+          "kind": "feature",
+          "claim": "The Starter plan includes community support",
+          "verbatim": "Community support",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E30",
+          "kind": "price",
+          "claim": "The Pro plan costs $29 per month with credits included",
+          "verbatim": "Pro $29 per month · credits included",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E31",
+          "kind": "feature",
+          "claim": "The Pro plan includes unlimited agents",
+          "verbatim": "Unlimited agents",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E32",
+          "kind": "feature",
+          "claim": "The Pro plan includes 30-day analytics history",
+          "verbatim": "30-day analytics history",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E33",
+          "kind": "feature",
+          "claim": "The Pro plan includes priority support",
+          "verbatim": "Priority support",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E34",
+          "kind": "price",
+          "claim": "The Enterprise plan has custom pricing and includes an SLA, dedicated infrastructure, and SSO",
+          "verbatim": "Enterprise Custom SLA · dedicated infra · SSO",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E35",
+          "kind": "feature",
+          "claim": "The Enterprise plan includes dedicated infrastructure / VPC",
+          "verbatim": "Dedicated infrastructure / VPC",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E36",
+          "kind": "feature",
+          "claim": "The Enterprise plan includes custom LLM endpoints",
+          "verbatim": "Custom LLM endpoints",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E37",
+          "kind": "guarantee",
+          "claim": "The Enterprise plan includes an SLA guarantee",
+          "verbatim": "SLA guarantee",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E38",
+          "kind": "feature",
+          "claim": "The Enterprise plan includes onboarding and training",
+          "verbatim": "Onboarding & training",
+          "source": "https://www.orqagent.com/",
+          "document_id": "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "operations"
+        },
+        {
+          "id": "E39",
+          "kind": "guarantee",
+          "claim": "Signing up for orqAgent requires no credit card.",
+          "verbatim": "Go to [orqAgent](/sign-up/) and sign up for a free account. No credit card required.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E40",
+          "kind": "feature",
+          "claim": "Claude Haiku is recommended as a free-tier friendly model.",
+          "verbatim": "pick a model (Claude Haiku is free-tier friendly)",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E41",
+          "kind": "feature",
+          "claim": "Available models include Claude Haiku, Sonnet, Opus, GPT-4, and Gemini 2.0 Flash.",
+          "verbatim": "LLM to use: Claude Haiku / Sonnet / Opus, GPT-4, Gemini 2.0 Flash.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E42",
+          "kind": "feature",
+          "claim": "Default temperature is 0.7 (0 is deterministic, 1 is most creative).",
+          "verbatim": "Creativity level — 0 is deterministic, 1 is most creative. Default 0.7.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E43",
+          "kind": "feature",
+          "claim": "Default max tokens per response is 1024.",
+          "verbatim": "Maximum tokens in a single response. Default 1024.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E44",
+          "kind": "feature",
+          "claim": "Agent tone can be set to Professional, Friendly, Concise, Technical, or Creative.",
+          "verbatim": "Professional · Friendly · Concise · Technical · Creative",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E45",
+          "kind": "feature",
+          "claim": "Response format can be set to text, markdown, json, or bullet_points, controlling output structure.",
+          "verbatim": "text · markdown · json · bullet\\_points — controls output structure.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E46",
+          "kind": "feature",
+          "claim": "When response format is JSON, a JSON Schema can be pasted in to enforce the response shape.",
+          "verbatim": "When format is JSON, paste a JSON Schema to enforce the response shape.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E47",
+          "kind": "feature",
+          "claim": "Rate limit/min sets the maximum calls per minute from a single session.",
+          "verbatim": "Maximum calls per minute from a single session.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E48",
+          "kind": "feature",
+          "claim": "Rate limit/day sets the maximum calls per day across all sessions.",
+          "verbatim": "Maximum calls per day across all sessions.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E49",
+          "kind": "feature",
+          "claim": "Max tokens/response overrides the global max_tokens setting for a given agent's API responses.",
+          "verbatim": "Overrides the global max\\_tokens for this agent's API responses.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E50",
+          "kind": "feature",
+          "claim": "Each browser session in the Playground has its own conversation history, and the agent remembers context across turns.",
+          "verbatim": "Each browser session has its own conversation history — the agent remembers context across turns.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E51",
+          "kind": "feature",
+          "claim": "A database icon appears in the Playground on any message where the agent pulled context from the knowledge base.",
+          "verbatim": "A database icon appears on any message where the agent pulled context from the knowledge base.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E52",
+          "kind": "feature",
+          "claim": "Clicking \"New session\" starts a fresh Playground conversation without clearing the conversation history.",
+          "verbatim": "Click \"New session\" to start fresh without clearing the conversation history.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E53",
+          "kind": "feature",
+          "claim": "Token counts and latency are shown per-run in the Analytics tab once calls have been made.",
+          "verbatim": "Token counts and latency are shown per-run in the Analytics tab once you've made calls.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E54",
+          "kind": "feature",
+          "claim": "Playground calls count against the monthly quota just like API calls and appear in Analytics.",
+          "verbatim": "Playground calls count against your monthly quota just like API calls — they're real runs and appear in Analytics.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E55",
+          "kind": "feature",
+          "claim": "The knowledge base supports .pdf, .txt, .markdown, and .csv file formats.",
+          "verbatim": ".pdf.txt.markdown.csv",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E56",
+          "kind": "feature",
+          "claim": "Uploaded documents are split into overlapping chunks of about 500 tokens each.",
+          "verbatim": "Document is uploaded and split into overlapping chunks (~500 tokens each).",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E57",
+          "kind": "feature",
+          "claim": "On every agent call, the user's message is compared to all knowledge base chunks using keyword scoring.",
+          "verbatim": "On every agent call, the user's message is compared to all chunks using keyword scoring.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E58",
+          "kind": "feature",
+          "claim": "The top-scoring knowledge base chunks are injected into the system prompt as context.",
+          "verbatim": "The top-scoring chunks are injected into the system prompt as context.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E59",
+          "kind": "feature",
+          "claim": "The agent can cite specific facts from uploaded documents in its response.",
+          "verbatim": "The agent can then cite specific facts from the document in its response.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E60",
+          "kind": "feature",
+          "claim": "Multiple documents can be uploaded, and the agent searches across all of them and cites the most relevant chunks.",
+          "verbatim": "You can upload multiple documents. The agent will search across all of them and always cite the most relevant chunks.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E61",
+          "kind": "feature",
+          "claim": "Analytics shows chunks_injected per run.",
+          "verbatim": "Analytics shows **chunks\\_injected** per run.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E62",
+          "kind": "feature",
+          "claim": "API keys start with the prefix orq_ and are shown only once when created.",
+          "verbatim": "Copy the key immediately — it starts with `orq_` and is shown only once.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E63",
+          "kind": "guarantee",
+          "claim": "A compromised API key can be revoked from the dashboard and a new one generated.",
+          "verbatim": "If a key is compromised, revoke it from the dashboard and generate a new one.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E64",
+          "kind": "feature",
+          "claim": "The API key Prefix field shows the first 10 characters, used to identify the key in the dashboard.",
+          "verbatim": "First 10 characters — shown in the dashboard to identify a key.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E65",
+          "kind": "feature",
+          "claim": "Each API key's call_count field tracks the total number of API calls made with that key.",
+          "verbatim": "Total number of API calls made with this key.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E66",
+          "kind": "feature",
+          "claim": "Each API key's last_used_at field records the timestamp of the most recent call.",
+          "verbatim": "Timestamp of the most recent call.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E67",
+          "kind": "feature",
+          "claim": "Expired API keys are automatically rejected.",
+          "verbatim": "Optional expiry date. Expired keys are automatically rejected.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E68",
+          "kind": "feature",
+          "claim": "An API key can be temporarily disabled without being revoked, via the is_active field.",
+          "verbatim": "Disable a key temporarily without revoking it.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E69",
+          "kind": "feature",
+          "claim": "The user_input field of a run request must be 1 to 10,000 characters.",
+          "verbatim": "The user's message. 1–10 000 characters.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E70",
+          "kind": "feature",
+          "claim": "The session_id field can be at most 128 characters and is passed across turns to maintain conversation history.",
+          "verbatim": "Conversation session identifier (max 128 chars). Pass the same value across turns to maintain history. Omit for one-shot calls.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E71",
+          "kind": "feature",
+          "claim": "The response reports prompt_tokens, the tokens consumed by the input (system prompt + history + user message).",
+          "verbatim": "Tokens consumed by the input (system prompt + history + user message).",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E72",
+          "kind": "feature",
+          "claim": "The response reports completion_tokens, the number of tokens in the agent's response.",
+          "verbatim": "Tokens in the agent's response.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E73",
+          "kind": "feature",
+          "claim": "The API response includes an estimated USD cost for the run, given to 6 decimal places.",
+          "verbatim": "Estimated USD cost for this run (6 decimal places).",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E74",
+          "kind": "feature",
+          "claim": "The response includes latency_ms, the wall-clock latency of the LLM call in milliseconds.",
+          "verbatim": "Wall-clock latency of the LLM call in milliseconds.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E75",
+          "kind": "feature",
+          "claim": "Run status can be \"success\", \"error\", \"timeout\", or \"rate_limited\".",
+          "verbatim": "\"success\" | \"error\" | \"timeout\" | \"rate\\_limited\"",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E76",
+          "kind": "feature",
+          "claim": "The response includes used_knowledge_base, true if document chunks were injected into that run.",
+          "verbatim": "True if document chunks were injected into this run.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E77",
+          "kind": "feature",
+          "claim": "The response includes chunks_injected, the number of knowledge base chunks included in the context.",
+          "verbatim": "Number of KB chunks included in the context.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E78",
+          "kind": "feature",
+          "claim": "Public agents can be called without an API key, but usage is still billed to the account.",
+          "verbatim": "If you've toggled **Public** on an agent, it can be called without an API key. Usage is still billed to your account.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E79",
+          "kind": "feature",
+          "claim": "A 400 Bad Request error means input was blocked by a guardrail or the request body was invalid.",
+          "verbatim": "Input blocked by guardrail, or invalid request body.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E80",
+          "kind": "feature",
+          "claim": "A 401 Unauthorized error means the API key is missing or invalid.",
+          "verbatim": "Missing or invalid API key.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E81",
+          "kind": "feature",
+          "claim": "A 403 Forbidden error means the agent is private, disabled, or not owned by the API key's user.",
+          "verbatim": "Agent is private, disabled, or not owned by this key's user.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E82",
+          "kind": "feature",
+          "claim": "A 404 Not Found error means the agent ID does not exist.",
+          "verbatim": "Agent ID does not exist.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E83",
+          "kind": "feature",
+          "claim": "A 429 Too Many Requests error means the per-minute or per-day rate limit was exceeded.",
+          "verbatim": "Rate limit exceeded (per-minute or per-day).",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E84",
+          "kind": "feature",
+          "claim": "A 502 Bad Gateway error means the LLM provider returned an error and the caller should retry with exponential backoff.",
+          "verbatim": "LLM provider returned an error — retry with exponential backoff.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E85",
+          "kind": "guarantee",
+          "claim": "Guardrails block requests containing explicit violence or self-harm instructions.",
+          "verbatim": "Requests containing explicit violence or self-harm instructions",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E86",
+          "kind": "guarantee",
+          "claim": "Guardrails block prompt injection attempts such as \"ignore your previous instructions\".",
+          "verbatim": "Prompt injection attempts (\"ignore your previous instructions\")",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E87",
+          "kind": "guarantee",
+          "claim": "Guardrails block profanity and hate speech above a configured threshold.",
+          "verbatim": "Profanity and hate speech above a configured threshold",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E88",
+          "kind": "feature",
+          "claim": "When a guardrail fires, the API returns HTTP 400 and the run is logged with blocked_by_guardrail: true, visible in Analytics.",
+          "verbatim": "The API returns `HTTP 400` with a clear error message. The run is still logged with `blocked_by_guardrail: true` so you can track block rates in the Analytics tab.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E89",
+          "kind": "guarantee",
+          "claim": "All integration credentials (tokens, passwords, OAuth secrets) are stored AES-256-GCM encrypted and are never returned to the browser once saved.",
+          "verbatim": "all credentials (tokens, passwords, OAuth secrets) are stored **AES-256-GCM encrypted** — they are never returned to the browser once saved.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E90",
+          "kind": "integration",
+          "claim": "Slack integration connects via OAuth install, with the bot replying to mentions and channel messages.",
+          "verbatim": "OAuth install — the bot replies to mentions and channel messages.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E91",
+          "kind": "integration",
+          "claim": "Telegram integration connects by pasting a BotFather token, and the webhook is registered automatically.",
+          "verbatim": "Paste a BotFather token — the webhook is registered automatically.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E92",
+          "kind": "integration",
+          "claim": "WhatsApp integration connects via the Meta Cloud API by entering a phone number ID and access token.",
+          "verbatim": "Meta Cloud API — enter phone number ID + access token.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E93",
+          "kind": "integration",
+          "claim": "Email Inbox integration connects via IMAP polling and SMTP replies, with a human approval queue.",
+          "verbatim": "IMAP polling + SMTP replies, with a human approval queue.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E94",
+          "kind": "integration",
+          "claim": "Notion integration connects via OAuth and syncs page/database content into the knowledge base.",
+          "verbatim": "OAuth — syncs page/database content into the knowledge base.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E95",
+          "kind": "integration",
+          "claim": "Google Docs integration connects via OAuth and imports selected documents into the knowledge base.",
+          "verbatim": "OAuth — imports selected documents into the knowledge base.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E96",
+          "kind": "feature",
+          "claim": "Channel and webhook callbacks live under /api/integrations/… on the API host, and the dashboard wires them up automatically (e.g. Telegram's webhook is set automatically on connect).",
+          "verbatim": "Channel and webhook callbacks live under `/api/integrations/…` on the API host — the dashboard wires these up for you, so you normally don’t paste URLs by hand (Telegram’s webhook, for example, is set automatically on connect).",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E97",
+          "kind": "feature",
+          "claim": "Messages handled through any channel are real agent runs that consume credits and appear in Analytics exactly like API calls.",
+          "verbatim": "Messages handled through any channel are real agent runs: they consume credits and appear in Analytics exactly like API calls.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E98",
+          "kind": "feature",
+          "claim": "The Email Inbox is configured per agent under the Email Inbox tab with no environment variables required, and all credentials are stored encrypted.",
+          "verbatim": "It is configured per agent under the **Email Inbox** tab — no environment variables required, all credentials are stored encrypted.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "operations"
+        },
+        {
+          "id": "E99",
+          "kind": "feature",
+          "claim": "The SMTP server for Email Inbox is configured per integration in the Email Inbox tab, not via global SMTP_* environment variables; those global settings are only used by the unrelated Scheduled agents email output.",
+          "verbatim": "The SMTP server is configured **per integration** (the fields in the Email Inbox tab), *not* via global `SMTP_*` environment variables. The global `SMTP_*` settings are only used by the unrelated *Scheduled agents* email output.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E100",
+          "kind": "feature",
+          "claim": "A background worker runs every minute and polls each active inbox whose check interval has elapsed (e.g. every 5 min); polling can also be forced via the \"Relever maintenant\" button.",
+          "verbatim": "A background worker runs every minute and polls each active inbox whose check interval has elapsed (e.g. every 5 min). You can also force a poll any time with the « Relever maintenant » button.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E101",
+          "kind": "feature",
+          "claim": "Only unread (UNSEEN) messages are fetched from a connected inbox.",
+          "verbatim": "Only unread (UNSEEN) messages are fetched.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E102",
+          "kind": "feature",
+          "claim": "By default, auto-reply is off, so a drafted reply lands in an approval queue with status pending_approval for review before Send or Ignore.",
+          "verbatim": "If auto-reply is OFF (default) the draft lands in the approval queue with status pending\\_approval — you review, optionally edit, then Send or Ignore.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E103",
+          "kind": "feature",
+          "claim": "If auto-reply is on, the drafted reply is sent immediately over SMTP.",
+          "verbatim": "If auto-reply is ON, the reply is sent immediately over SMTP.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E104",
+          "kind": "guarantee",
+          "claim": "Senders that look automated (no-reply, noreply, mailer-daemon, bounce, postmaster, notifications, etc.) are skipped by the Email Inbox agent.",
+          "verbatim": "Senders that look automated (no-reply, noreply, mailer-daemon, bounce, postmaster, notifications, …) are skipped.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E105",
+          "kind": "guarantee",
+          "claim": "Messages older than 24 hours are skipped, so connecting an inbox never replies to the whole archive.",
+          "verbatim": "Messages older than 24 h are skipped — so connecting an inbox never replies to your whole archive.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E106",
+          "kind": "feature",
+          "claim": "Each inbox message is processed only once, idempotent on the email Message-ID.",
+          "verbatim": "Each message is processed once (idempotent on the email Message-ID).",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E107",
+          "kind": "guarantee",
+          "claim": "Hosts that resolve to a private/loopback address are blocked as an SSRF guard, so a localhost mail server won't work and testing requires a real provider.",
+          "verbatim": "Hosts that resolve to a private/loopback address are blocked (SSRF guard) — a localhost mail server won't work; test against a real provider.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E108",
+          "kind": "feature",
+          "claim": "IMAP port 993 is implicit SSL, the only encrypted mode supported.",
+          "verbatim": "Port 993 = implicit SSL (the only encrypted mode supported).",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E109",
+          "kind": "feature",
+          "claim": "SMTP uses port 587 with STARTTLS; port 465 (implicit SSL) is not supported.",
+          "verbatim": "Port 587 with STARTTLS (port 465 / implicit SSL is not supported).",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E110",
+          "kind": "feature",
+          "claim": "The polling cadence (check_interval_minutes) is 1–60, default 5, and the per-minute worker only polls once that interval has elapsed.",
+          "verbatim": "Polling cadence, 1–60. The per-minute worker only polls once this has elapsed. Default 5.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E111",
+          "kind": "feature",
+          "claim": "Auto-reply is OFF by default, meaning drafts go to the approval queue.",
+          "verbatim": "Send without review. OFF (default) = drafts go to the approval queue.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E112",
+          "kind": "feature",
+          "claim": "reply_requires_approval keeps a human in the loop and defaults to ON.",
+          "verbatim": "Keep a human in the loop. Leave ON while testing. Default ON.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E113",
+          "kind": "integration",
+          "claim": "Gmail / Google Workspace uses imap.gmail.com and smtp.gmail.com on ports 993/587.",
+          "verbatim": "Gmail / Google Workspace | imap.gmail.com | smtp.gmail.com | 993 / 587",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E114",
+          "kind": "integration",
+          "claim": "Outlook / Microsoft 365 uses outlook.office365.com and smtp.office365.com on ports 993/587.",
+          "verbatim": "Outlook / Microsoft 365 | outlook.office365.com | smtp.office365.com | 993 / 587",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E115",
+          "kind": "feature",
+          "claim": "Gmail requires an app password (a normal password is rejected): enable 2-Step Verification, generate a 16-character app password under Google Account → Security → App passwords, and use the full email plus that code as both IMAP and SMTP password.",
+          "verbatim": "Gmail requires an app password — a normal password is rejected. (1) Enable 2-Step Verification on the account. (2) Google Account → Security → App passwords → generate a 16-character code. (3) Use the full email as the username and that 16-char code as both the IMAP and SMTP password.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E116",
+          "kind": "feature",
+          "claim": "AUTHENTICATIONFAILED IMAP errors result from using the account password instead of an app password, or from 2-Step Verification not being enabled.",
+          "verbatim": "Using the account password instead of an app password, or 2-Step Verification not enabled.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E117",
+          "kind": "feature",
+          "claim": "An SSRF guard blocks pointing the connection at localhost or an internal host; a public provider must be used instead.",
+          "verbatim": "You pointed it at localhost / an internal host. Use a public provider.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E118",
+          "kind": "metric",
+          "claim": "The Free plan includes 500 runs per month.",
+          "verbatim": "500 runs / month",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E119",
+          "kind": "feature",
+          "claim": "All models are available on the plan.",
+          "verbatim": "All models available",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E120",
+          "kind": "feature",
+          "claim": "The Free plan includes a knowledge base of up to 5 docs.",
+          "verbatim": "Knowledge base (up to 5 docs)",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E121",
+          "kind": "feature",
+          "claim": "The Free plan includes API key access.",
+          "verbatim": "API key access",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E122",
+          "kind": "feature",
+          "claim": "The Free plan includes community support.",
+          "verbatim": "Community support",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E123",
+          "kind": "price",
+          "claim": "The Pro plan costs $29/month.",
+          "verbatim": "Pro$29 / month",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E124",
+          "kind": "feature",
+          "claim": "The Pro plan includes unlimited agents.",
+          "verbatim": "Unlimited agents",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E125",
+          "kind": "metric",
+          "claim": "The Pro plan includes 10,000 runs per month.",
+          "verbatim": "10 000 runs / month",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E126",
+          "kind": "feature",
+          "claim": "The Pro plan includes an unlimited-docs knowledge base.",
+          "verbatim": "Knowledge base (unlimited docs)",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E127",
+          "kind": "feature",
+          "claim": "The Pro plan includes priority support.",
+          "verbatim": "Priority support",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E128",
+          "kind": "feature",
+          "claim": "The Pro plan includes advanced analytics.",
+          "verbatim": "Advanced analytics",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E129",
+          "kind": "feature",
+          "claim": "Hitting the monthly run limit makes the API return HTTP 429 with code QUOTA_EXCEEDED.",
+          "verbatim": "When you hit the monthly run limit the API returns `HTTP 429` with code `QUOTA_EXCEEDED`.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E130",
+          "kind": "guarantee",
+          "claim": "You can create your first agent in under 2 minutes, no credit card required.",
+          "verbatim": "Create your first agent in under 2 minutes, no credit card required.",
+          "source": "https://app.orqagent.com/docs/",
+          "document_id": "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E131",
+          "kind": "metric",
+          "claim": "The Free plan gives 1,500 free credits at signup, about 55 Sonnet calls.",
+          "verbatim": "1 500 crédits offerts au démarrage (~55 appels Sonnet)",
+          "source": "https://app.orqagent.com/pricing/",
+          "document_id": "d74baaf0-4375-4834-aa50-89bbe7168f1f",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E132",
+          "kind": "metric",
+          "claim": "The Free plan includes 100 executions per month.",
+          "verbatim": "100 exécutions / mois",
+          "source": "https://app.orqagent.com/pricing/",
+          "document_id": "d74baaf0-4375-4834-aa50-89bbe7168f1f",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E133",
+          "kind": "feature",
+          "claim": "The Free plan includes community support.",
+          "verbatim": "Support communautaire",
+          "source": "https://app.orqagent.com/pricing/",
+          "document_id": "d74baaf0-4375-4834-aa50-89bbe7168f1f",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E134",
+          "kind": "feature",
+          "claim": "The Free plan includes basic analytics.",
+          "verbatim": "Analytique basique",
+          "source": "https://app.orqagent.com/pricing/",
+          "document_id": "d74baaf0-4375-4834-aa50-89bbe7168f1f",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E135",
+          "kind": "metric",
+          "claim": "The Pro plan includes 30,000 credits per month, about 1,100 Sonnet calls.",
+          "verbatim": "30 000 crédits inclus par mois (~1 100 appels Sonnet)",
+          "source": "https://app.orqagent.com/pricing/",
+          "document_id": "d74baaf0-4375-4834-aa50-89bbe7168f1f",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E136",
+          "kind": "metric",
+          "claim": "The Pro plan includes 20,000 executions per month.",
+          "verbatim": "20 000 exécutions / mois",
+          "source": "https://app.orqagent.com/pricing/",
+          "document_id": "d74baaf0-4375-4834-aa50-89bbe7168f1f",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E137",
+          "kind": "integration",
+          "claim": "The Pro plan includes all models (Claude, GPT-4).",
+          "verbatim": "Tous les modèles (Claude, GPT-4)",
+          "source": "https://app.orqagent.com/pricing/",
+          "document_id": "d74baaf0-4375-4834-aa50-89bbe7168f1f",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E138",
+          "kind": "feature",
+          "claim": "The Pro plan includes an integration widget.",
+          "verbatim": "Widget d'intégration",
+          "source": "https://app.orqagent.com/pricing/",
+          "document_id": "d74baaf0-4375-4834-aa50-89bbe7168f1f",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E139",
+          "kind": "feature",
+          "claim": "The Pro plan includes email support.",
+          "verbatim": "Support par email",
+          "source": "https://app.orqagent.com/pricing/",
+          "document_id": "d74baaf0-4375-4834-aa50-89bbe7168f1f",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E140",
+          "kind": "metric",
+          "claim": "The Business plan includes 100,000 credits per month, about 3,700 Sonnet calls.",
+          "verbatim": "100 000 crédits inclus par mois (~3 700 appels Sonnet)",
+          "source": "https://app.orqagent.com/pricing/",
+          "document_id": "d74baaf0-4375-4834-aa50-89bbe7168f1f",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E141",
+          "kind": "metric",
+          "claim": "The Business plan includes 100,000 executions per month.",
+          "verbatim": "100 000 exécutions / mois",
+          "source": "https://app.orqagent.com/pricing/",
+          "document_id": "d74baaf0-4375-4834-aa50-89bbe7168f1f",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E142",
+          "kind": "feature",
+          "claim": "The Business plan includes all models plus priority routing.",
+          "verbatim": "Tous les modèles + routage prioritaire",
+          "source": "https://app.orqagent.com/pricing/",
+          "document_id": "d74baaf0-4375-4834-aa50-89bbe7168f1f",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E143",
+          "kind": "feature",
+          "claim": "The Business plan includes custom integrations.",
+          "verbatim": "Intégrations personnalisées",
+          "source": "https://app.orqagent.com/pricing/",
+          "document_id": "d74baaf0-4375-4834-aa50-89bbe7168f1f",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E144",
+          "kind": "feature",
+          "claim": "The Business plan includes Slack support.",
+          "verbatim": "Support Slack",
+          "source": "https://app.orqagent.com/pricing/",
+          "document_id": "d74baaf0-4375-4834-aa50-89bbe7168f1f",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E145",
+          "kind": "metric",
+          "claim": "The Enterprise plan includes 300,000 credits per month, about 11,000 Sonnet calls.",
+          "verbatim": "300 000 crédits inclus par mois (~11 000 appels Sonnet)",
+          "source": "https://app.orqagent.com/pricing/",
+          "document_id": "d74baaf0-4375-4834-aa50-89bbe7168f1f",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E146",
+          "kind": "feature",
+          "claim": "The Enterprise plan includes unlimited agents.",
+          "verbatim": "Agents illimités",
+          "source": "https://app.orqagent.com/pricing/",
+          "document_id": "d74baaf0-4375-4834-aa50-89bbe7168f1f",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E147",
+          "kind": "guarantee",
+          "claim": "The Enterprise plan guarantees a 99.9% uptime SLA.",
+          "verbatim": "SLA de disponibilité 99,9%",
+          "source": "https://app.orqagent.com/pricing/",
+          "document_id": "d74baaf0-4375-4834-aa50-89bbe7168f1f",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E148",
+          "kind": "metric",
+          "claim": "orqAgent supports 9 AI providers.",
+          "verbatim": "9 AI providers",
+          "source": "https://app.orqagent.com/",
+          "document_id": "ac960173-ef3e-441c-93db-ea93b8545be5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E149",
+          "kind": "metric",
+          "claim": "orqAgent offers 25+ models to choose from.",
+          "verbatim": "25+ Models to choose from",
+          "source": "https://app.orqagent.com/",
+          "document_id": "ac960173-ef3e-441c-93db-ea93b8545be5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E150",
+          "kind": "metric",
+          "claim": "orqAgent supports 6 channels to deploy to.",
+          "verbatim": "6 Channels to deploy",
+          "source": "https://app.orqagent.com/",
+          "document_id": "ac960173-ef3e-441c-93db-ea93b8545be5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E151",
+          "kind": "feature",
+          "claim": "orqAgent supports bring-your-own-keys (BYOK).",
+          "verbatim": "BYOK Bring your own keys",
+          "source": "https://app.orqagent.com/",
+          "document_id": "ac960173-ef3e-441c-93db-ea93b8545be5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E152",
+          "kind": "integration",
+          "claim": "orqAgent is powered by models including Claude, GPT, Gemini, Mistral, Llama, Grok, DeepSeek, and more.",
+          "verbatim": "ClaudeGPTGeminiMistralLlamaGrokDeepSeek+ more",
+          "source": "https://app.orqagent.com/",
+          "document_id": "ac960173-ef3e-441c-93db-ea93b8545be5",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E153",
+          "kind": "integration",
+          "claim": "The playground offers Claude Opus 4.8 from Anthropic as a selectable model.",
+          "verbatim": "Claude Opus 4.8Anthropic ▾",
+          "source": "https://app.orqagent.com/",
+          "document_id": "ac960173-ef3e-441c-93db-ea93b8545be5",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E154",
+          "kind": "metric",
+          "claim": "In the playground demo, the agent replied in 0.8s using 1,200 tokens.",
+          "verbatim": "replied in 0.8s · 1,200 tokens",
+          "source": "https://app.orqagent.com/",
+          "document_id": "ac960173-ef3e-441c-93db-ea93b8545be5",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E155",
+          "kind": "feature",
+          "claim": "You bring your prompt and orqAgent handles routing, logs, billing, and analytics.",
+          "verbatim": "Apportez votre prompt — nous gérons le routage, les logs, la facturation et l'analytique.",
+          "source": "https://app.orqagent.com/",
+          "document_id": "ac960173-ef3e-441c-93db-ea93b8545be5",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E156",
+          "kind": "feature",
+          "claim": "You can generate a chat widget for any website with a single snippet.",
+          "verbatim": "Générez un widget de chat pour n'importe quel site avec un seul snippet.",
+          "source": "https://app.orqagent.com/",
+          "document_id": "ac960173-ef3e-441c-93db-ea93b8545be5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E157",
+          "kind": "feature",
+          "claim": "You can track executions, tokens, latency, and spend in a single dashboard.",
+          "verbatim": "Suivez les exécutions, tokens, latence et dépenses dans un seul dashboard.",
+          "source": "https://app.orqagent.com/",
+          "document_id": "ac960173-ef3e-441c-93db-ea93b8545be5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E158",
+          "kind": "feature",
+          "claim": "You can switch between Claude, GPT-4, and more without changing code.",
+          "verbatim": "Claude, GPT-4 et plus — changez de modèle sans modifier le code.",
+          "source": "https://app.orqagent.com/",
+          "document_id": "ac960173-ef3e-441c-93db-ea93b8545be5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E159",
+          "kind": "certification",
+          "claim": "API keys are hashed at rest, auth uses JWT, and SOC 2 certification is in progress.",
+          "verbatim": "Clés API hachées au repos. Auth JWT. SOC 2 en cours.",
+          "source": "https://app.orqagent.com/",
+          "document_id": "ac960173-ef3e-441c-93db-ea93b8545be5",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E160",
+          "kind": "price",
+          "claim": "The free plan includes 100 executions per month with no credit card required.",
+          "verbatim": "Le plan gratuit inclut 100 exécutions par mois. Aucune carte bancaire requise.",
+          "source": "https://app.orqagent.com/",
+          "document_id": "ac960173-ef3e-441c-93db-ea93b8545be5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        }
+      ]
+    },
+    "voice": {
+      "learned": true,
+      "tone": "Direct and benefit-first, sells on concrete numbers (credits, exécutions, latency, uptime) instead of adjectives; confident but plain — no hype words like 'revolutionary' or 'solution', just what it does and what it costs.",
+      "rhythm": "Short declarative sentences, often paired: a bold claim followed by a concrete, literal follow-up. Headlines are terse contrasts ('en quelques minutes, pas des semaines'). Clauses are frequently appended after an em dash rather than a comma.",
+      "person": "We/nous — the company speaks as the platform's builder ('nous gérons le routage...'), addresses the reader directly as 'vous'/'you', no individual name signs anything.",
+      "greetings": [],
+      "sign_offs": [],
+      "exemplars": [
+        "La plateforme pour déployer des chatbots et assistants IA prêts pour la production. Apportez votre prompt — nous gérons le routage, les logs, la facturation et l'analytique.",
+        "Build AI Agents. Deploy Everywhere. The full-stack platform to create AI agents that talk to your customers, automate your work, and connect to the tools you already use — no infrastructure to manage.",
+        "Payez uniquement ce que vous utilisez. Annulez à tout moment.",
+        "Le plan gratuit inclut 100 exécutions par mois. Aucune carte bancaire requise."
+      ],
+      "prefer_words": [
+        "no code / sans code",
+        "no infrastructure to manage",
+        "in minutes, not weeks",
+        "credits",
+        "production-ready / prêt pour la production",
+        "Bring your own keys (BYOK)",
+        "zero glue code"
+      ],
+      "avoid_words": [
+        "solution",
+        "synergy",
+        "leverage",
+        "cutting-edge",
+        "revolutionary",
+        "game-changing"
+      ]
+    },
+    "audience": {
+      "segments": [
+        {
+          "name": "A solo technical founder who is three weekends into a homemade support chatbot that still has no logs, no cost tracking and no way to stop it saying something stupid",
+          "situation": "He is the only engineer on a 4-person SaaS. A customer-facing assistant got promised on the roadmap call in January, so he wired the OpenAI SDK to a Postgres table, then added pgvector when the FAQ answers came back wrong, then added a retry loop when the provider 500'd during a demo. It half-works. What does not exist: per-request cost visibility (he found out the bill was $180 when Stripe emailed him), a way to see what users actually asked yesterday, any block on someone pasting 'ignore your previous instructions', and a session store that survives a redeploy. Every model announcement means another evening rewriting the client because the message format changed. He has a Notion page called 'agent infra TODO' with eleven items on it, and none of them are the product he is actually supposed to be building. His co-founder keeps asking why the chatbot is taking a month.",
+          "situation_grounding": "inferred",
+          "situation_provenance": [],
+          "job_to_be_done": "Ship the assistant his roadmap promised and go back to building the actual product — without becoming the guy who maintains an in-house LLM platform for the next two years.",
+          "trigger": "A model deprecation email, a surprise provider bill, or a demo where the bot answered a prospect wrongly in front of the co-founder — whichever lands first in a given month.",
+          "sophistication": "solution_aware",
+          "pains": [
+            {
+              "statement": "He is maintaining a vector database he never wanted to run, purely so the bot can answer questions from a PDF.",
+              "grounding": "inferred",
+              "provenance": {
+                "source": "orqagent.com homepage — Knowledge Base feature",
+                "quote": "The agent retrieves the most relevant context for every query automatically — no vector DB to manage.",
+                "document_id": null,
+                "evidence_id": "",
+                "source_kind": "unknown"
+              }
+            },
+            {
+              "statement": "Every provider swap means rewriting client code and juggling another SDK, so he is quietly locked into whichever model he integrated first.",
+              "grounding": "inferred",
+              "provenance": {
+                "source": "orqagent.com homepage — Any LLM, One API",
+                "quote": "Claude, GPT-4, Mistral, Llama, Gemini — switch models with a single field. No SDK juggling, no vendor lock-in.",
+                "document_id": null,
+                "evidence_id": "",
+                "source_kind": "unknown"
+              }
+            },
+            {
+              "statement": "The work he keeps doing is not the agent — it is routing, logs, billing and analytics around the agent, and none of it is differentiated.",
+              "grounding": "inferred",
+              "provenance": {
+                "source": "app.orqagent.com homepage",
+                "quote": "Apportez votre prompt — nous gérons le routage, les logs, la facturation et l'analytique.",
+                "document_id": null,
+                "evidence_id": "",
+                "source_kind": "unknown"
+              }
+            },
+            {
+              "statement": "He cannot answer 'what did this cost us last week and which model was it' without writing a reporting job first.",
+              "grounding": "inferred",
+              "provenance": null
+            },
+            {
+              "statement": "There is nothing between a hostile user and his system prompt; he knows it and has been putting off building it.",
+              "grounding": "inferred",
+              "provenance": null
+            },
+            {
+              "statement": "The 'few weeks' estimate he gave has already been wrong twice, and the credibility cost is worse than the engineering cost.",
+              "grounding": "inferred",
+              "provenance": {
+                "source": "app.orqagent.com hero",
+                "quote": "Créez des agents IA en quelques minutes, pas des semaines",
+                "document_id": null,
+                "evidence_id": "",
+                "source_kind": "unknown"
+              }
+            }
+          ]
+        },
+        {
+          "name": "A two-person automation agency owner who has sold the same WhatsApp assistant to six clients and now maintains six separate codebases",
+          "situation": "She runs a small francophone dev/automation shop. Clients are dentists, e-commerce shops, a driving school — each one wanted 'un chatbot qui répond aux clients'. She built the first in n8n plus a Python script, then copy-pasted it five times. Now client #3's Telegram bot is on an old prompt, client #5 wants their logo on the dashboard and she has been stalling because there is no dashboard, and every month she manually reconciles which client burned how many API tokens against what she invoiced them. Onboarding a new client is a four-day job that she can only charge two days for, so growth actively costs her margin. Her recurring revenue is real but her delivery does not scale, and the last two prospects asked questions about data handling she could not answer in writing.",
+          "situation_grounding": "inferred",
+          "situation_provenance": [],
+          "job_to_be_done": "Turn a bespoke four-day build into a same-week deliverable she can resell under her own brand, so adding client seven does not add a maintenance burden she carries forever.",
+          "trigger": "A prospect asks for something she cannot deliver on the copy-paste stack — their own branding, a client login, a written answer on where the data lives — or a client churns because their bot silently broke and nobody noticed.",
+          "sophistication": "solution_aware",
+          "pains": [
+            {
+              "statement": "Six clients means six deployments to patch by hand; a prompt fix is a day of work instead of a field edit.",
+              "grounding": "inferred",
+              "provenance": null
+            },
+            {
+              "statement": "She cannot put her own brand in front of clients, so she is reselling someone else's tooling visibly, at agency prices.",
+              "grounding": "inferred",
+              "provenance": {
+                "source": "orqagent.com homepage — Teams & RBAC",
+                "quote": "White-label the entire dashboard under your brand.",
+                "document_id": null,
+                "evidence_id": "",
+                "source_kind": "unknown"
+              }
+            },
+            {
+              "statement": "Per-client usage and cost are invisible until the provider bill arrives, so her margin on each retainer is a guess.",
+              "grounding": "inferred",
+              "provenance": null
+            },
+            {
+              "statement": "Clients want the bot where their customers already are — WhatsApp, Slack, Telegram — and each channel is a separate integration she has to build and babysit.",
+              "grounding": "inferred",
+              "provenance": {
+                "source": "orqagent.com homepage — Integrations",
+                "quote": "Native integrations with the channels and tools your team already uses.",
+                "document_id": null,
+                "evidence_id": "",
+                "source_kind": "unknown"
+              }
+            },
+            {
+              "statement": "She has no written answer to 'is our client data used to train the model', which is now costing her deals with slightly larger prospects.",
+              "grounding": "inferred",
+              "provenance": null
+            }
+          ]
+        },
+        {
+          "name": "A support/ops lead at a 30-person e-commerce company who personally answers the same forty emails every morning before she can start her real job",
+          "situation": "She is not a developer and has no engineering time allocated to her. The shared inbox gets 40–60 messages a day and roughly two-thirds are 'où est ma commande', 'quelle est votre politique de retour', 'ça existe en taille 42'. All the answers exist — in a returns policy PDF, a shipping FAQ and a spreadsheet nobody outside the team has read. Peak season doubles the volume and last November they paid for a temp who needed three weeks of training to be useful for six weeks of work. She has tried the canned-responses feature in the helpdesk; it saves keystrokes, not decisions. Someone showed her ChatGPT and she pasted a policy into it once, which worked beautifully and taught her nothing about how to make it happen 40 times a day without a person in the loop. Her genuine fear is not that it costs money — it is that an automated reply promises a refund the company does not offer and she finds out from a furious customer on Instagram.",
+          "situation_grounding": "inferred",
+          "situation_provenance": [],
+          "job_to_be_done": "Get the repetitive two-thirds of the inbox handled accurately so the team can answer the hard third properly — and stop hiring seasonal temps to read the same FAQ out loud.",
+          "trigger": "Q4 volume planning, or a resignation on a two-person support team that makes the coming month obviously impossible.",
+          "sophistication": "problem_aware",
+          "pains": [
+            {
+              "statement": "The answers to most incoming questions already exist in documents; the cost is a human retyping them, not finding them.",
+              "grounding": "inferred",
+              "provenance": {
+                "source": "orqagent.com homepage — Knowledge Base",
+                "quote": "Upload PDFs, docs or plain text.",
+                "document_id": null,
+                "evidence_id": "",
+                "source_kind": "unknown"
+              }
+            },
+            {
+              "statement": "Any automation that replies without her seeing it first is unacceptable — one wrong refund promise costs more than the whole month of saved time.",
+              "grounding": "inferred",
+              "provenance": {
+                "source": "app.orqagent.com/docs — Email Inbox",
+                "quote": "IMAP polling + SMTP replies, with a human approval queue.",
+                "document_id": null,
+                "evidence_id": "",
+                "source_kind": "unknown"
+              }
+            },
+            {
+              "statement": "She has no developer to assign this to and no budget line to hire one, so anything requiring 'just an API call' is dead on arrival.",
+              "grounding": "inferred",
+              "provenance": null
+            },
+            {
+              "statement": "Connecting anything to the live shared inbox terrifies her, because a bad setup could blast replies at every old thread in the archive.",
+              "grounding": "inferred",
+              "provenance": {
+                "source": "app.orqagent.com/docs — Email Inbox",
+                "quote": "Messages older than 24 h are skipped — so connecting an inbox never replies to your whole archive.",
+                "document_id": null,
+                "evidence_id": "",
+                "source_kind": "unknown"
+              }
+            },
+            {
+              "statement": "Her mornings are gone before they start, and the strategic work she was actually hired for slides to evenings.",
+              "grounding": "inferred",
+              "provenance": null
+            }
+          ]
+        }
+      ],
+      "objections": [
+        {
+          "objection": "I'm a developer. This is a wrapper around an API call — I could build it myself in a weekend, and then I own it.",
+          "severity": "blocking",
+          "answer": "Partially answerable, and only by refusing to argue about the model call. The evidence says the weekend job is the call; the year-long job is everything around it — a dedicated REST endpoint with key auth per agent (E17), stateful sessions (E18), per-key usage caps and per-minute/per-day rate limits (E19, E47, E48), RAG over uploaded docs with no vector DB to run (E11), guardrails for PII/content/injection defined once and enforced every run (E13), P95 latency, per-model token usage, daily spend and guardrail trigger rates tracked with no extra config (E12), per-run USD cost and latency in the response body (E73, E74), run history with status filter (E21), eight channel integrations (E23), and serverless scaling with no infra (E22). Honest limit: nothing in the evidence quantifies the build-vs-buy gap in hours or money, so the copy has to enumerate rather than assert.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E17",
+            "E18",
+            "E19",
+            "E47",
+            "E48",
+            "E11",
+            "E13",
+            "E12",
+            "E73",
+            "E74",
+            "E21",
+            "E23",
+            "E22",
+            "E16"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "Your own pricing pages contradict each other. Pro is 10 agents / 20,000 executions on one page and unlimited agents on another; free is 100 executions on one page and 500 runs on a third. If I can't trust the pricing table, why would I trust the billing?",
+          "severity": "blocking",
+          "answer": "Nothing in the evidence resolves this. The material genuinely carries three incompatible descriptions of the same $29 plan and two of the free plan, plus a credits-vs-executions dual currency that is never reconciled (a run consumes both, and it is never stated which one cuts you off first). This objection cannot be beaten with what we currently know — the copy must avoid stating specific plan limits at all, or the company must fix the tables before any email quotes a number beyond the $0 / $29 / $99 prices and the 1,500 signup credits.",
+          "grounding": "inferred",
+          "evidence_ids": [],
+          "provenance": []
+        },
+        {
+          "objection": "Credits are an unpredictable second currency. I don't know what my month costs until it's over, and if I run out mid-month my production agent stops answering customers.",
+          "severity": "strong",
+          "answer": "Only partly. In favour: every run returns an estimated USD cost to 6 decimals (E73), analytics show daily spend trends and token usage per model without config (E12), per-agent rate limits and per-key usage caps let you bound the blast radius (E19, E47, E48), BYOK means you can put the model spend on your own provider account instead (E4, E151), and the credit bundles are stated with a Sonnet-call equivalent (E131, E135, E140). Against, and it must be conceded rather than hidden: hitting the monthly run limit returns HTTP 429 QUOTA_EXCEEDED (E129) — the agent does stop — and no auto-top-up, overage rate or spend alert exists anywhere in the evidence.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E73",
+            "E12",
+            "E19",
+            "E47",
+            "E48",
+            "E4",
+            "E151",
+            "E131",
+            "E135",
+            "E140",
+            "E129"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "Your retrieval is keyword scoring, not embeddings. On my documents that will miss the paraphrased question, which is the only kind of question real users ask.",
+          "severity": "strong",
+          "answer": "Weakly answered, and only for a reader who will test rather than argue. The mechanism is stated plainly — ~500-token overlapping chunks, keyword scoring against the user message, top chunks injected into the system prompt (E56, E57, E58) — and it is inspectable rather than a black box: chunks_injected appears per run in analytics and in the API response (E61, E77), used_knowledge_base is returned per run (E76), and a database icon marks any Playground message that pulled context (E51). The free tier with 1,500 credits and no card lets them upload their own docs and find out in ten minutes (E25, E39, E120). Nothing in the evidence claims or measures retrieval quality, so the only honest move is to invite the test.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E56",
+            "E57",
+            "E58",
+            "E61",
+            "E77",
+            "E76",
+            "E51",
+            "E25",
+            "E39",
+            "E120"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "We can't route customer data through a vendor that isn't certified. SOC 2 'in progress' is not SOC 2.",
+          "severity": "blocking",
+          "answer": "Answerable for a startup buyer, not for a procurement-gated one. Available: encrypted in transit and at rest (E5), never used to train any model (E6), per-tenant isolation (E7), GDPR-ready with EU data residency (E8), API keys hashed at rest with JWT auth (E159), integration credentials AES-256-GCM encrypted and never returned to the browser (E89), key revocation, expiry and temporary disable (E63, E67, E68), PII masking guardrail (E13), RBAC and full audit logs (E14), and for Enterprise, dedicated infrastructure/VPC, custom LLM endpoints, SSO/SAML and an SLA (E35, E36, E34, E37, E147). What is missing is the certification itself — E159 concedes SOC 2 is only in progress. For a buyer whose security review requires the report, this stays blocking and no email fixes it.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E5",
+            "E6",
+            "E7",
+            "E8",
+            "E159",
+            "E89",
+            "E63",
+            "E67",
+            "E68",
+            "E13",
+            "E14",
+            "E35",
+            "E36",
+            "E34",
+            "E37",
+            "E147"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "I've never heard of you. No logos, no case studies, no funding, no track record — if you shut down in a year, my client's live chatbot dies with you and I'm the one who has to explain it.",
+          "severity": "strong",
+          "answer": "Nothing in the evidence answers this. There is not a single customer name, testimonial, usage number, founding date, team page or funding fact in the entire material — the only social proof is the phrase 'Join developers building smarter products', which names nobody. The 99.9% uptime claim (E9) speaks to availability, not to company survival, and the SLA is Enterprise-only (E37, E147). The adjacent mitigations — BYOK so the model relationship stays yours (E4), and a portable pattern where each agent is just a REST endpoint you call (E17) — reduce the damage but do not answer the doubt. This is the single largest unaddressed risk for the agency segment and should be flagged upward as a missing-asset problem, not written around.",
+          "grounding": "inferred",
+          "evidence_ids": [],
+          "provenance": []
+        },
+        {
+          "objection": "We already have something — a helpdesk with AI replies, or a ChatGPT Team subscription the team already uses. Ripping that out is not worth the disruption.",
+          "severity": "strong",
+          "answer": "Barely answered by the evidence. The only real lever is that trying it costs nothing and displaces nothing: 1,500 credits, no card (E1, E25, E39), an agent configured in under two minutes (E24, E130), and it runs alongside what exists because it deploys into the channels already in use — Slack, WhatsApp, Telegram, Email Inbox, webhooks (E23) — rather than replacing the system of record. The differentiators a generic assistant lacks are a callable endpoint per agent (E17), enforced guardrails (E13), document-grounded answers with citations (E11, E59, E60) and per-run cost/latency analytics (E12, E73). There is no migration path, no importer, and no comparison anywhere in the material, so the honest ask is 'run one workflow beside it', never 'switch'.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E1",
+            "E25",
+            "E39",
+            "E24",
+            "E130",
+            "E23",
+            "E17",
+            "E13",
+            "E11",
+            "E59",
+            "E60",
+            "E12",
+            "E73"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "If I let an AI answer customers unsupervised it will eventually promise something we don't offer, and that costs me more than the time it saves.",
+          "severity": "strong",
+          "answer": "This one is well answered — it is arguably the strongest thing in the evidence. Auto-reply is off by default, so drafts land in an approval queue with status pending_approval for review, edit, then Send or Ignore (E102, E111); reply_requires_approval defaults to ON to keep a human in the loop (E112); guardrails block injection attempts, violence/self-harm content and profanity above a threshold (E85, E86, E87), return HTTP 400 and log blocked_by_guardrail so block rates are visible (E88, E79); automated senders like no-reply and mailer-daemon are skipped (E104); messages over 24 hours old are skipped so connecting an inbox never replies to the archive (E105); each message is processed exactly once, idempotent on Message-ID (E106); answers can be constrained to uploaded documents and cite them (E11, E59); Constraints and response-format/JSON-schema fields hard-bound what it may say (E45, E46); and every run is inspectable with full history and status filtering (E21).",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E102",
+            "E111",
+            "E112",
+            "E85",
+            "E86",
+            "E87",
+            "E88",
+            "E104",
+            "E105",
+            "E106",
+            "E11",
+            "E59",
+            "E45",
+            "E46",
+            "E21"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "This is sold as no-code but the documentation is curl commands, API keys, JSON schemas and IMAP ports. It's clearly built for developers, and I don't have one.",
+          "severity": "strong",
+          "answer": "Answerable, but only by leading with the console path and never showing a code block to this reader. Evidence: it is described as a no-code platform where you write a system prompt, pick a model and configure guardrails and tools entirely from the console in under two minutes (E24, E130); persona is set with plain fields — role, tone, language, constraints, welcome message (E44); a chat widget is one snippet for any site (E156); the Email Inbox is configured per agent in its own tab with no environment variables required (E98); Telegram is a pasted BotFather token with the webhook registered automatically (E91), Slack and Notion and Google Docs are OAuth installs (E90, E94, E95), and channel callbacks are wired up by the dashboard so no URLs are pasted by hand (E96); the Playground is a chat window for iterating before going live (E50, E51). The docs' centre of gravity remains the REST API, and no non-technical walkthrough exists in the material.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E24",
+            "E130",
+            "E44",
+            "E156",
+            "E98",
+            "E91",
+            "E90",
+            "E94",
+            "E95",
+            "E96",
+            "E50",
+            "E51"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "White-labelling is on your feature list, but can I actually hand a client a dashboard with my name on it — my domain, my login, their data separated from my other clients?",
+          "severity": "strong",
+          "answer": "Half answered. Confirmed: the entire dashboard can be white-labelled under your brand (E15), collaborators can be invited with role-based permissions and full audit logs (E14), tenants are separated by design (E7), and Pro includes white-label plus Teams & RBAC at $29 (E30, E31). Not answered anywhere in the evidence: a custom domain, client-facing sub-accounts, per-client billing separation, or reselling terms. Stripe Billing appears only as an integration in the list (E23) with no detail. An agency asking the precise version of this question will not find the answer in the material.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E15",
+            "E14",
+            "E7",
+            "E30",
+            "E31",
+            "E23"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "Unlimited agents for $29 is too cheap to be real. Where is the catch, and what happens on the invoice at month three?",
+          "severity": "mild",
+          "answer": "The catch is real, nameable, and better said out loud: the plan price buys a credit bundle, not unlimited usage. Pro is $29/month with 30,000 credits, stated as roughly 1,100 Sonnet calls (E30, E123, E135); the agent count is what is unlimited, not the runs (E31, E124). Free is 1,500 credits, about 55 Sonnet calls (E131). Playground testing burns the same quota as production (E54), and channel messages are real billed runs too (E97, E78). Naming this before the reader finds it converts the objection into a trust signal; hiding it makes the first invoice a churn event.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E30",
+            "E123",
+            "E135",
+            "E31",
+            "E124",
+            "E131",
+            "E54",
+            "E97",
+            "E78"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "I'm mid-quarter with a shipping deadline. Even if this is better, evaluating it is a week I don't have.",
+          "severity": "mild",
+          "answer": "Answered by shrinking the ask rather than arguing urgency: signup is free with no card (E1, E39), sign-up to first API call is documented as under five minutes and agent creation as under two (E24, E130), the Playground tests the exact live configuration — same model, prompt and knowledge base — before any code is written (E50), and the endpoint is a single POST from any language with no SDK to install (E17). The realistic first step is one agent over one document, not a migration.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E1",
+            "E39",
+            "E24",
+            "E130",
+            "E50",
+            "E17"
+          ],
+          "provenance": []
+        }
+      ]
+    },
+    "gaps": {
+      "gaps": [
+        {
+          "id": "G-proof",
+          "missing": "No customer names, quotes or case studies found",
+          "impact": "the copy can describe the product but cannot prove anyone uses it",
+          "question": "Which customers or quotes may we name?",
+          "severity": "significant",
+          "answer": ""
+        }
+      ]
+    },
+    "version": 5,
+    "compiled_at": "2026-09-05T09:48:36.718586Z",
+    "source_document_ids": [
+      "f9a09fc0-a74f-46d6-91ab-cd749f24408e",
+      "0e15f279-b7c2-46a3-8ec6-b894c2cee753",
+      "d74baaf0-4375-4834-aa50-89bbe7168f1f",
+      "ac960173-ef3e-441c-93db-ea93b8545be5"
+    ],
+    "notes": [
+      "12 of 172 candidate fact(s) were discarded because the quote supporting them could not be found in the source."
+    ]
+  }
+}

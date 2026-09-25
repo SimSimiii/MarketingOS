@@ -1,0 +1,852 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: MarketingOS - the five CodeBuild projects, their roles, and the registry
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  The build side of the deployment, as one stack instead of five console
+#  sessions.
+#
+#      aws cloudformation deploy \
+#        --template-file iac/pipeline.yaml \
+#        --stack-name marketingos-pipeline-prod \
+#        --parameter-overrides \
+#            Environment=prod \
+#            GitHubRepositoryUrl=https://github.com/<you>/MarketingOS \
+#            CorsOrigins=https://app.example.com \
+#            ConsoleAppUrl=https://app.example.com \
+#        --capabilities CAPABILITY_NAMED_IAM
+#
+#  Five projects, because there are five things that deploy on different
+#  cadences and must be able to fail independently:
+#
+#    marketingos-build-api       backend/buildspec.yml
+#    marketingos-build-console   frontend/buildspec.yml          (privileged: Docker)
+#    marketingos-build-admin-api administration/backend/buildspec.yml
+#    marketingos-build-admin-ui  administration/frontend/buildspec.yml
+#    marketingos-build-landing   landing-page/buildspec.yml
+#
+#  Every secret arrives through CodeBuild's SECRETS_MANAGER environment type,
+#  which resolves the value on the build agent. Nothing secret is a PLAINTEXT
+#  variable here, and nothing secret is in this repository. Deploy
+#  iac/secrets.yaml first: these projects reference its secrets by name.
+#
+#  What this stack does NOT create: a CodePipeline. Five projects with a source
+#  webhook each is the whole of what this repository needs - there is no
+#  approval gate, no cross-account promotion and no artifact to pass between
+#  stages, because each buildspec deploys its own stack directly. A pipeline
+#  around them would be a second thing to debug when a build goes red.
+# ─────────────────────────────────────────────────────────────────────────────
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+
+  GitHubRepositoryUrl:
+    Type: String
+    Description: >-
+      https://github.com/<owner>/<repo>. CodeBuild needs a GitHub connection in
+      this account and region before a build can clone it - see the runbook;
+      it is an OAuth authorisation, not something a template can create.
+
+  SourceBranch:
+    Type: String
+    Default: master
+    Description: Branch the webhook builds. Only pushes to this branch trigger.
+
+  EnableWebhooks:
+    Type: String
+    Default: "false"
+    AllowedValues: ["true", "false"]
+    Description: >-
+      Off by default, and that is the safe side: a webhook turned on before the
+      environment variables are right means the first push to master deploys a
+      half-configured stack to production. Turn it on once a manual
+      `start-build` of each project has gone green.
+
+  # ── Wiring between stacks ───────────────────────────────────────────────────
+  # These are the values that cannot be discovered at build time because they
+  # describe a stack that may not exist yet. The runbook fills them in order.
+  ApiStackName:
+    Type: String
+    Default: ""
+    Description: Defaults to marketingos-api-${Environment} when blank.
+  ConsoleStackName:
+    Type: String
+    Default: ""
+  AdminStackName:
+    Type: String
+    Default: ""
+
+  CorsOrigins:
+    Type: String
+    Default: "http://localhost:3000"
+    Description: >-
+      Comma-separated origins allowed to call the platform API. The console's
+      own URL belongs here once the console stack exists.
+
+  ApiUrl:
+    Type: String
+    Default: ""
+    Description: >-
+      The API stack's ApiEndpoint output WITH /api appended. Blank until the
+      API has been deployed once; the console build refuses to run without it.
+
+  AdminApiUrl:
+    Type: String
+    Default: ""
+    Description: The admin stack's AdminApiEndpoint output.
+
+  AdminCorsOrigins:
+    Type: String
+    Default: "http://localhost:3001"
+    Description: The back-office console's own origin, and nothing else.
+
+  ConsoleAppUrl:
+    Type: String
+    Default: ""
+    Description: >-
+      Where the product lives, with NO trailing slash - the landing page
+      appends /login. The landing build fails on a trailing slash.
+
+  AdminFrontendBucket:
+    Type: String
+    Default: ""
+    Description: AdminFrontendBucketName, from the admin stack's outputs.
+  AdminDistributionId:
+    Type: String
+    Default: ""
+  LandingBucket:
+    Type: String
+    Default: ""
+    Description: LandingBucketName, from the landing stack's outputs.
+  LandingDistributionId:
+    Type: String
+    Default: ""
+
+  AllowPublicSignup:
+    Type: String
+    Default: "false"
+    AllowedValues: ["true", "false"]
+    Description: >-
+      ALLOW_PUBLIC_SIGNUP for the platform API. Off unless the first accounts
+      have to be created from the browser - there is no other way in from
+      outside the VPC.
+
+  # ── Domains ─────────────────────────────────────────────────────────────────
+  # All optional. Blank serves each console on its *.cloudfront.net domain.
+  CertificateArn:
+    Type: String
+    Default: ""
+    Description: >-
+      One ACM certificate in us-east-1 covering both console domains - a
+      wildcard is the natural fit. CloudFront reads certificates from there
+      only, whatever region the stacks are in.
+  HostedZoneId:
+    Type: String
+    Default: ""
+    Description: >-
+      Route 53 zone the domains live in. Set, and each stack writes its own
+      alias records.
+  ConsoleDomain:
+    Type: String
+    Default: ""
+    Description: e.g. app.example.com
+  AdminDomain:
+    Type: String
+    Default: ""
+    Description: e.g. admin.example.com
+
+  # ── CloudFront Free plan ────────────────────────────────────────────────────
+  # From iac/edge.yaml, which has to be deployed in us-east-1 first. A
+  # distribution only subscribes to the Free plan with a web ACL of its own.
+  ConsoleWebAclArn:
+    Type: String
+    Default: ""
+  AdminWebAclArn:
+    Type: String
+    Default: ""
+
+  # ── Networking ──────────────────────────────────────────────────────────────
+  VpcSubnetIds:
+    Type: String
+    Default: ""
+    Description: >-
+      Comma-separated private subnets, from database.yaml's VpcSubnetIds. Passed
+      through to the SAM templates as a build variable - the builds themselves
+      run outside the VPC, because they need PyPI and npm and there is no NAT.
+  VpcSecurityGroups:
+    Type: String
+    Default: ""
+
+  # ── Sizing ──────────────────────────────────────────────────────────────────
+  BuildTimeoutMinutes:
+    Type: Number
+    Default: 30
+    MinValue: 5
+    MaxValue: 480
+    Description: >-
+      The API build runs 1,170 tests and a container-mode SAM build; 30 minutes
+      is roughly triple its normal run and still stops a hung build from
+      billing all afternoon.
+
+  LogRetentionDays:
+    Type: Number
+    Default: 30
+    AllowedValues: [1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365]
+
+Conditions:
+  UseWebhooks: !Equals [!Ref EnableWebhooks, "true"]
+  NoApiStackName: !Equals [!Ref ApiStackName, ""]
+  NoConsoleStackName: !Equals [!Ref ConsoleStackName, ""]
+  NoAdminStackName: !Equals [!Ref AdminStackName, ""]
+
+Resources:
+
+  # ═══ Shared build infrastructure ════════════════════════════════════════════
+
+  # SAM uploads its bundle here before CloudFormation reads it. The three
+  # samconfigs name it through SAM_ARTIFACT_BUCKET rather than using
+  # `resolve_s3: true`, which would make SAM create and manage its own bucket
+  # behind an aws-sam-cli-managed-default stack nobody remembers owning - and
+  # one with no lifecycle rule, so every bundle ever built would stay in it.
+  ArtifactBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Sub 'marketingos-artifacts-${AWS::AccountId}-${Environment}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
+      LifecycleConfiguration:
+        Rules:
+          # Every deploy writes a new bundle and never reads the old one again.
+          # Without this the bucket grows by the size of the dependency tree on
+          # every single build, forever, and nobody notices until the bill does.
+          - Id: ExpireOldBundles
+            Status: Enabled
+            ExpirationInDays: 30
+            NoncurrentVersionExpirationInDays: 7
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 3
+
+  # The console is the only thing here that ships as a container image.
+  ConsoleRepository:
+    Type: AWS::ECR::Repository
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      RepositoryName: !Sub 'marketingos-console-${Environment}'
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      ImageTagMutability: MUTABLE
+      LifecyclePolicy:
+        # A Next.js image is ~400 MB. Ten of them is 4 GB at $0.10/GB-month,
+        # and the eleventh is never going to be rolled back to.
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Keep the last 10 images",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 10
+                },
+                "action": { "type": "expire" }
+              }
+            ]
+          }
+
+  # ═══ IAM ════════════════════════════════════════════════════════════════════
+  #
+  #  Two roles, not five and not one.
+  #
+  #  The deploy role is broad, and there is no honest way around that: `sam
+  #  deploy` creates Lambda functions, API Gateways, CloudFront distributions,
+  #  IAM roles for the functions, log groups and alarms. Narrowing it to the
+  #  exact set would mean re-narrowing it every time a template grows a
+  #  resource, and a permissions error that surfaces halfway through a
+  #  CloudFormation update is worse than the breadth.
+  #
+  #  The static role is not broad, because it does not have to be: two of the
+  #  five projects only ever sync files to a bucket and invalidate a
+  #  distribution. Giving those the deploy role would mean a compromised
+  #  landing-page build could rewrite the platform API.
+
+  DeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'marketingos-codebuild-deploy-${Environment}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: codebuild.amazonaws.com }
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: build-and-deploy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: Logs
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource:
+                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/marketingos-*'
+                  # The application templates declare their own log groups
+                  # rather than letting Lambda create unbounded ones, so the
+                  # deploy has to be able to create these too.
+                  - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/marketingos-*'
+
+              - Sid: Artifacts
+                Effect: Allow
+                # GetObjectVersion as well: a build started from a source zip
+                # in this bucket (rather than GitHub) reads it by version.
+                Action: [s3:GetObject, s3:GetObjectVersion, s3:PutObject, s3:GetBucketLocation, s3:ListBucket, s3:ListBucketVersions]
+                Resource:
+                  - !GetAtt ArtifactBucket.Arn
+                  - !Sub '${ArtifactBucket.Arn}/*'
+
+              - Sid: GitHubThroughCodeConnections
+                Effect: Allow
+                # The account's GitHub credential is a CodeConnections
+                # connection, and the build role - not the caller - is what
+                # asks it for a token at clone time.
+                Action:
+                  - codeconnections:GetConnection
+                  - codeconnections:GetConnectionToken
+                  - codeconnections:UseConnection
+                  - codestar-connections:GetConnection
+                  - codestar-connections:GetConnectionToken
+                  - codestar-connections:UseConnection
+                Resource: '*'
+
+              - Sid: StackOwnedBuckets
+                Effect: Allow
+                # The admin stack creates and configures the back-office
+                # bucket; CloudFormation reads and tags it on every update.
+                Action: s3:*
+                Resource:
+                  - 'arn:aws:s3:::marketingos-*'
+                  - 'arn:aws:s3:::marketingos-*/*'
+
+              - Sid: CampaignStateMachine
+                Effect: Allow
+                Action: states:*
+                Resource:
+                  - !Sub 'arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:marketingos-*'
+                  - !Sub 'arn:aws:states:${AWS::Region}:${AWS::AccountId}:execution:marketingos-*'
+
+              - Sid: DomainsAndEdge
+                Effect: Allow
+                # Alias records for the consoles, and the web ACL a Free-plan
+                # distribution has to name. The ACL itself is created by
+                # iac/edge.yaml; a build only ever associates it.
+                Action:
+                  - route53:ChangeResourceRecordSets
+                  - route53:GetChange
+                  - route53:GetHostedZone
+                  - route53:ListHostedZones
+                  - route53:ListResourceRecordSets
+                  - wafv2:GetWebACL
+                  - wafv2:GetWebACLForResource
+                  - wafv2:ListWebACLs
+                  - acm:DescribeCertificate
+                  - acm:ListCertificates
+                Resource: '*'
+
+              - Sid: CloudFormation
+                Effect: Allow
+                Action: [cloudformation:*]
+                Resource:
+                  - !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/marketingos-*/*'
+                  # SAM validates against the transform, which lives in a
+                  # service-owned stack in every region.
+                  - !Sub 'arn:aws:cloudformation:${AWS::Region}:aws:transform/Serverless-2016-10-31'
+
+              - Sid: CloudFormationAccountWideReads
+                Effect: Allow
+                # These three take no resource ARN. `sam deploy` calls
+                # GetTemplateSummary against a template body - not a stack -
+                # before it has anything to name, so scoping this statement to
+                # marketingos-* would fail the deploy before it started.
+                Action:
+                  - cloudformation:GetTemplateSummary
+                  - cloudformation:ValidateTemplate
+                  - cloudformation:ListStacks
+                Resource: '*'
+
+              - Sid: ServerlessResources
+                Effect: Allow
+                Action:
+                  - lambda:*
+                  - apigateway:*
+                  - cloudfront:*
+                  - logs:PutRetentionPolicy
+                  - logs:DeleteLogGroup
+                  - logs:DescribeLogGroups
+                  - logs:ListTagsForResource
+                  - logs:TagResource
+                  - cloudwatch:PutMetricAlarm
+                  - cloudwatch:DeleteAlarms
+                  - cloudwatch:DescribeAlarms
+                  - xray:PutTraceSegments
+                  - s3:CreateBucket
+                  - s3:PutBucketPolicy
+                  - s3:PutBucketPublicAccessBlock
+                  - s3:PutEncryptionConfiguration
+                  - s3:GetBucketPolicy
+                  - s3:DeleteBucketPolicy
+                Resource: '*'
+
+              - Sid: PassAndCreateFunctionRoles
+                Effect: Allow
+                Action:
+                  - iam:CreateRole
+                  - iam:DeleteRole
+                  - iam:GetRole
+                  - iam:PassRole
+                  - iam:AttachRolePolicy
+                  - iam:DetachRolePolicy
+                  - iam:PutRolePolicy
+                  - iam:DeleteRolePolicy
+                  - iam:GetRolePolicy
+                  - iam:TagRole
+                  - iam:UntagRole
+                  - iam:ListRolePolicies
+                  - iam:ListAttachedRolePolicies
+                  - iam:ListRoleTags
+                Resource: !Sub 'arn:aws:iam::${AWS::AccountId}:role/marketingos-*'
+
+              - Sid: VpcConfigForFunctions
+                Effect: Allow
+                # Read-only. A function with a VpcConfig makes CloudFormation
+                # check the subnets and groups exist; it never creates them.
+                Action:
+                  - ec2:DescribeSubnets
+                  - ec2:DescribeSecurityGroups
+                  - ec2:DescribeVpcs
+                Resource: '*'
+
+              - Sid: ContainerImages
+                Effect: Allow
+                Action:
+                  - ecr:GetAuthorizationToken
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:CompleteLayerUpload
+                  - ecr:InitiateLayerUpload
+                  - ecr:PutImage
+                  - ecr:UploadLayerPart
+                  - ecr:BatchGetImage
+                  - ecr:GetDownloadUrlForLayer
+                  - ecr:DescribeRepositories
+                  - ecr:DescribeImages
+                  - ecr:ListImages
+                  - ecr:GetRepositoryPolicy
+                  - ecr:SetRepositoryPolicy
+                Resource: '*'
+
+              - Sid: RunTheMigrator
+                Effect: Allow
+                # backend/buildspec.yml invokes this in post_build and fails the
+                # build if the migration fails. A deployed API against an
+                # un-migrated database is worse than a red build.
+                Action: lambda:InvokeFunction
+                Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:marketingos-migrate-*'
+
+              - Sid: ReadOwnSecrets
+                Effect: Allow
+                Action: secretsmanager:GetSecretValue
+                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:marketingos/${Environment}/*'
+
+  StaticDeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'marketingos-codebuild-static-${Environment}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: codebuild.amazonaws.com }
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: sync-and-invalidate
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: Logs
+                Effect: Allow
+                Action: [logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents]
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/marketingos-*'
+
+              - Sid: PublishToTheTwoStaticBuckets
+                Effect: Allow
+                # `s3 sync --delete` needs ListBucket and DeleteObject as well
+                # as Put; scoped to the two buckets these builds own.
+                Action: [s3:PutObject, s3:GetObject, s3:DeleteObject, s3:ListBucket]
+                Resource:
+                  - !Sub 'arn:aws:s3:::marketingos-landing-${AWS::AccountId}-${Environment}'
+                  - !Sub 'arn:aws:s3:::marketingos-landing-${AWS::AccountId}-${Environment}/*'
+                  - !Sub 'arn:aws:s3:::marketingos-admin-console-${AWS::AccountId}-${Environment}'
+                  - !Sub 'arn:aws:s3:::marketingos-admin-console-${AWS::AccountId}-${Environment}/*'
+
+              - Sid: ReadSourceBundles
+                Effect: Allow
+                Action: [s3:GetObject, s3:GetObjectVersion, s3:GetBucketLocation, s3:ListBucket, s3:ListBucketVersions]
+                Resource:
+                  - !GetAtt ArtifactBucket.Arn
+                  - !Sub '${ArtifactBucket.Arn}/*'
+
+              - Sid: GitHubThroughCodeConnections
+                Effect: Allow
+                Action:
+                  - codeconnections:GetConnection
+                  - codeconnections:GetConnectionToken
+                  - codeconnections:UseConnection
+                  - codestar-connections:GetConnection
+                  - codestar-connections:GetConnectionToken
+                  - codestar-connections:UseConnection
+                Resource: '*'
+
+              - Sid: Invalidate
+                Effect: Allow
+                # CreateInvalidation has no resource-level scoping in IAM, so
+                # '*' is the only expressible form. It can purge a cache and
+                # nothing else - it cannot read, change or delete a
+                # distribution.
+                Action: cloudfront:CreateInvalidation
+                Resource: '*'
+
+  # ═══ Projects ═══════════════════════════════════════════════════════════════
+
+  # ── 1. Platform API ─────────────────────────────────────────────────────────
+  ApiBuild:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub 'marketingos-build-api-${Environment}'
+      Description: Lints, runs the full test suite, then deploys the platform API stack.
+      ServiceRole: !GetAtt DeployRole.Arn
+      TimeoutInMinutes: !Ref BuildTimeoutMinutes
+      Artifacts: { Type: NO_ARTIFACTS }
+      Cache:
+        Type: LOCAL
+        Modes: [LOCAL_CUSTOM_CACHE, LOCAL_DOCKER_LAYER_CACHE, LOCAL_SOURCE_CACHE]
+      Source:
+        Type: GITHUB
+        Location: !Ref GitHubRepositoryUrl
+        BuildSpec: backend/buildspec.yml
+        GitCloneDepth: 1
+        ReportBuildStatus: true
+      SourceVersion: !Ref SourceBranch
+      Environment:
+        Type: ARM_CONTAINER
+        # ARM, matching the functions' arm64 architecture. `sam build
+        # --use-container` builds wheels against the Lambda image for the
+        # target architecture, and an ARM builder is the one that has the
+        # emulation-free path to an arm64 psycopg.
+        Image: aws/codebuild/amazonlinux2-aarch64-standard:3.0
+        ComputeType: BUILD_GENERAL1_LARGE
+        # --use-container runs the builder in Docker, which needs privileged.
+        PrivilegedMode: true
+        EnvironmentVariables:
+          - { Name: AWS_DEFAULT_REGION, Type: PLAINTEXT, Value: !Ref 'AWS::Region' }
+          - { Name: ENVIRONMENT, Type: PLAINTEXT, Value: !Ref Environment }
+          - Name: SAM_STACK_NAME
+            Type: PLAINTEXT
+            Value: !If [NoApiStackName, !Sub 'marketingos-api-${Environment}', !Ref ApiStackName]
+          - { Name: APP_ENV, Type: PLAINTEXT, Value: production }
+          - { Name: LOG_LEVEL, Type: PLAINTEXT, Value: INFO }
+          - { Name: LOG_RETENTION_DAYS, Type: PLAINTEXT, Value: !Ref LogRetentionDays }
+          - { Name: AUTH_REQUIRED, Type: PLAINTEXT, Value: "true" }
+          - { Name: ALLOW_PUBLIC_SIGNUP, Type: PLAINTEXT, Value: !Ref AllowPublicSignup }
+          - { Name: ACCESS_TOKEN_TTL_MINUTES, Type: PLAINTEXT, Value: "60" }
+          - { Name: REFRESH_TOKEN_TTL_DAYS, Type: PLAINTEXT, Value: "30" }
+          - { Name: API_MEMORY_SIZE, Type: PLAINTEXT, Value: "1024" }
+          - { Name: CORS_ORIGINS, Type: PLAINTEXT, Value: !Ref CorsOrigins }
+          - { Name: S3_PREFIX, Type: PLAINTEXT, Value: marketingos }
+          - { Name: SAM_ARTIFACT_BUCKET, Type: PLAINTEXT, Value: !Ref ArtifactBucket }
+          - { Name: VPC_SUBNET_IDS, Type: PLAINTEXT, Value: !Ref VpcSubnetIds }
+          - { Name: VPC_SECURITY_GROUPS, Type: PLAINTEXT, Value: !Ref VpcSecurityGroups }
+          # Resolved on the agent, never stored on the project.
+          - Name: DATABASE_URL
+            Type: SECRETS_MANAGER
+            Value: !Sub 'marketingos/${Environment}/database-url'
+          - Name: JWT_SECRET
+            Type: SECRETS_MANAGER
+            Value: !Sub 'marketingos/${Environment}/jwt-secret'
+          - Name: PASSWORD_PEPPER
+            Type: SECRETS_MANAGER
+            Value: !Sub 'marketingos/${Environment}/password-pepper'
+          # Baked into the campaign state machine's functions as NoEcho stack
+          # parameters. The API function never sees them - it cannot run a
+          # model job at all, so a key there would be a liability with no use.
+          - Name: ANTHROPIC_API_KEY
+            Type: SECRETS_MANAGER
+            Value: !Sub 'marketingos/${Environment}/anthropic-api-key'
+          - Name: OPENAI_API_KEY
+            Type: SECRETS_MANAGER
+            Value: !Sub 'marketingos/${Environment}/openai-api-key'
+          - { Name: JOB_MEMORY_SIZE, Type: PLAINTEXT, Value: "2048" }
+      LogsConfig:
+        CloudWatchLogs:
+          Status: ENABLED
+          GroupName: !Sub '/aws/codebuild/marketingos-build-api-${Environment}'
+      Triggers: !If
+        - UseWebhooks
+        - Webhook: true
+          FilterGroups:
+            - - { Type: EVENT, Pattern: PUSH }
+              - { Type: HEAD_REF, Pattern: !Sub '^refs/heads/${SourceBranch}$' }
+              # Only rebuild when something the API is made of changed. Without
+              # this, a typo fix in the landing page runs 1,170 tests and
+              # redeploys production.
+              - { Type: FILE_PATH, Pattern: '^backend/.*' }
+        - !Ref 'AWS::NoValue'
+
+  # ── 2. Console ──────────────────────────────────────────────────────────────
+  ConsoleBuild:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub 'marketingos-build-console-${Environment}'
+      Description: Builds the Next.js Lambda container image and deploys it behind CloudFront.
+      ServiceRole: !GetAtt DeployRole.Arn
+      TimeoutInMinutes: !Ref BuildTimeoutMinutes
+      Artifacts: { Type: NO_ARTIFACTS }
+      Cache:
+        Type: LOCAL
+        Modes: [LOCAL_CUSTOM_CACHE, LOCAL_DOCKER_LAYER_CACHE, LOCAL_SOURCE_CACHE]
+      Source:
+        Type: GITHUB
+        Location: !Ref GitHubRepositoryUrl
+        BuildSpec: frontend/buildspec.yml
+        GitCloneDepth: 1
+        ReportBuildStatus: true
+      SourceVersion: !Ref SourceBranch
+      Environment:
+        # x86_64 here, matching ConsoleFunction's Architectures. The image has
+        # to be built for the architecture the function runs on, and a
+        # cross-architecture Docker build under emulation is slow enough to
+        # notice.
+        Type: LINUX_CONTAINER
+        Image: aws/codebuild/standard:7.0
+        ComputeType: BUILD_GENERAL1_LARGE
+        PrivilegedMode: true
+        EnvironmentVariables:
+          - { Name: AWS_DEFAULT_REGION, Type: PLAINTEXT, Value: !Ref 'AWS::Region' }
+          - { Name: ENVIRONMENT, Type: PLAINTEXT, Value: !Ref Environment }
+          - Name: CONSOLE_STACK_NAME
+            Type: PLAINTEXT
+            Value: !If [NoConsoleStackName, !Sub 'marketingos-console-${Environment}', !Ref ConsoleStackName]
+          - { Name: NEXT_PUBLIC_API_URL, Type: PLAINTEXT, Value: !Ref ApiUrl }
+          - { Name: IMAGE_REPOSITORY, Type: PLAINTEXT, Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ConsoleRepository}' }
+          - { Name: LOG_RETENTION_DAYS, Type: PLAINTEXT, Value: !Ref LogRetentionDays }
+          - { Name: CONSOLE_MEMORY_SIZE, Type: PLAINTEXT, Value: "1536" }
+          - { Name: CONSOLE_DOMAIN, Type: PLAINTEXT, Value: !Ref ConsoleDomain }
+          - { Name: CONSOLE_CERT_ARN, Type: PLAINTEXT, Value: !Ref CertificateArn }
+          - { Name: HOSTED_ZONE_ID, Type: PLAINTEXT, Value: !Ref HostedZoneId }
+          - { Name: CONSOLE_WEB_ACL_ARN, Type: PLAINTEXT, Value: !Ref ConsoleWebAclArn }
+          - { Name: S3_PREFIX, Type: PLAINTEXT, Value: marketingos-console }
+          - { Name: SAM_ARTIFACT_BUCKET, Type: PLAINTEXT, Value: !Ref ArtifactBucket }
+      LogsConfig:
+        CloudWatchLogs:
+          Status: ENABLED
+          GroupName: !Sub '/aws/codebuild/marketingos-build-console-${Environment}'
+      Triggers: !If
+        - UseWebhooks
+        - Webhook: true
+          FilterGroups:
+            - - { Type: EVENT, Pattern: PUSH }
+              - { Type: HEAD_REF, Pattern: !Sub '^refs/heads/${SourceBranch}$' }
+              - { Type: FILE_PATH, Pattern: '^frontend/.*' }
+        - !Ref 'AWS::NoValue'
+
+  # ── 3. Back-office API ──────────────────────────────────────────────────────
+  AdminApiBuild:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub 'marketingos-build-admin-api-${Environment}'
+      Description: >-
+        Vendors backend/app into the admin bundle, runs its suite, deploys the
+        isolated admin stack.
+      ServiceRole: !GetAtt DeployRole.Arn
+      TimeoutInMinutes: !Ref BuildTimeoutMinutes
+      Artifacts: { Type: NO_ARTIFACTS }
+      Cache:
+        Type: LOCAL
+        Modes: [LOCAL_CUSTOM_CACHE, LOCAL_DOCKER_LAYER_CACHE, LOCAL_SOURCE_CACHE]
+      Source:
+        Type: GITHUB
+        Location: !Ref GitHubRepositoryUrl
+        BuildSpec: administration/backend/buildspec.yml
+        GitCloneDepth: 1
+        ReportBuildStatus: true
+      SourceVersion: !Ref SourceBranch
+      Environment:
+        Type: ARM_CONTAINER
+        Image: aws/codebuild/amazonlinux2-aarch64-standard:3.0
+        ComputeType: BUILD_GENERAL1_MEDIUM
+        PrivilegedMode: true
+        EnvironmentVariables:
+          - { Name: AWS_DEFAULT_REGION, Type: PLAINTEXT, Value: !Ref 'AWS::Region' }
+          - { Name: ENVIRONMENT, Type: PLAINTEXT, Value: !Ref Environment }
+          - Name: ADMIN_STACK_NAME
+            Type: PLAINTEXT
+            Value: !If [NoAdminStackName, !Sub 'marketingos-admin-${Environment}', !Ref AdminStackName]
+          - { Name: APP_ENV, Type: PLAINTEXT, Value: production }
+          - { Name: LOG_LEVEL, Type: PLAINTEXT, Value: INFO }
+          - { Name: LOG_RETENTION_DAYS, Type: PLAINTEXT, Value: !Ref LogRetentionDays }
+          - { Name: ADMIN_JWT_TTL_HOURS, Type: PLAINTEXT, Value: "12" }
+          - { Name: ADMIN_PLAN_PRICES, Type: PLAINTEXT, Value: '{"free": 0, "pro": 49, "business": 149}' }
+          - { Name: ADMIN_CORS_ORIGINS, Type: PLAINTEXT, Value: !Ref AdminCorsOrigins }
+          - { Name: ADMIN_DOMAIN, Type: PLAINTEXT, Value: !Ref AdminDomain }
+          - { Name: ADMIN_CERT_ARN, Type: PLAINTEXT, Value: !Ref CertificateArn }
+          - { Name: HOSTED_ZONE_ID, Type: PLAINTEXT, Value: !Ref HostedZoneId }
+          - { Name: ADMIN_WEB_ACL_ARN, Type: PLAINTEXT, Value: !Ref AdminWebAclArn }
+          - { Name: S3_PREFIX, Type: PLAINTEXT, Value: marketingos-admin }
+          - { Name: SAM_ARTIFACT_BUCKET, Type: PLAINTEXT, Value: !Ref ArtifactBucket }
+          - { Name: VPC_SUBNET_IDS, Type: PLAINTEXT, Value: !Ref VpcSubnetIds }
+          - { Name: VPC_SECURITY_GROUPS, Type: PLAINTEXT, Value: !Ref VpcSecurityGroups }
+          - Name: DATABASE_URL
+            Type: SECRETS_MANAGER
+            Value: !Sub 'marketingos/${Environment}/database-url'
+          - Name: ADMIN_JWT_SECRET
+            Type: SECRETS_MANAGER
+            Value: !Sub 'marketingos/${Environment}/admin-jwt-secret'
+          - Name: ADMIN_PWD_PEPPER
+            Type: SECRETS_MANAGER
+            Value: !Sub 'marketingos/${Environment}/admin-pwd-pepper'
+          # JWT_SECRET is deliberately NOT here. The buildspec's cross-check
+          # (`ADMIN_JWT_SECRET must not equal JWT_SECRET`) only fires when
+          # JWT_SECRET is set, and giving this project the platform's signing
+          # key to run one comparison would defeat the isolation the comparison
+          # exists to protect. The two secrets are generated independently in
+          # secrets.yaml and cannot collide.
+      LogsConfig:
+        CloudWatchLogs:
+          Status: ENABLED
+          GroupName: !Sub '/aws/codebuild/marketingos-build-admin-api-${Environment}'
+      Triggers: !If
+        - UseWebhooks
+        - Webhook: true
+          FilterGroups:
+            # Two groups, which is an OR. The admin bundle vendors backend/app,
+            # so a change to the platform's models has to rebuild it too - that
+            # is the whole reason the copy is made at build time.
+            - - { Type: EVENT, Pattern: PUSH }
+              - { Type: HEAD_REF, Pattern: !Sub '^refs/heads/${SourceBranch}$' }
+              - { Type: FILE_PATH, Pattern: '^administration/backend/.*' }
+            - - { Type: EVENT, Pattern: PUSH }
+              - { Type: HEAD_REF, Pattern: !Sub '^refs/heads/${SourceBranch}$' }
+              - { Type: FILE_PATH, Pattern: '^backend/app/.*' }
+        - !Ref 'AWS::NoValue'
+
+  # ── 4. Back-office console ──────────────────────────────────────────────────
+  AdminUiBuild:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub 'marketingos-build-admin-ui-${Environment}'
+      Description: Static Next export onto the admin bucket, then an invalidation.
+      ServiceRole: !GetAtt StaticDeployRole.Arn
+      TimeoutInMinutes: !Ref BuildTimeoutMinutes
+      Artifacts: { Type: NO_ARTIFACTS }
+      Cache:
+        Type: LOCAL
+        Modes: [LOCAL_CUSTOM_CACHE, LOCAL_SOURCE_CACHE]
+      Source:
+        Type: GITHUB
+        Location: !Ref GitHubRepositoryUrl
+        BuildSpec: administration/frontend/buildspec.yml
+        GitCloneDepth: 1
+        ReportBuildStatus: true
+      SourceVersion: !Ref SourceBranch
+      Environment:
+        Type: LINUX_CONTAINER
+        Image: aws/codebuild/standard:7.0
+        ComputeType: BUILD_GENERAL1_SMALL
+        EnvironmentVariables:
+          - { Name: AWS_DEFAULT_REGION, Type: PLAINTEXT, Value: !Ref 'AWS::Region' }
+          - { Name: FRONTEND_S3_BUCKET, Type: PLAINTEXT, Value: !Ref AdminFrontendBucket }
+          - { Name: CLOUDFRONT_DISTRIBUTION_ID, Type: PLAINTEXT, Value: !Ref AdminDistributionId }
+          - { Name: NEXT_PUBLIC_ADMIN_API_URL, Type: PLAINTEXT, Value: !Ref AdminApiUrl }
+      LogsConfig:
+        CloudWatchLogs:
+          Status: ENABLED
+          GroupName: !Sub '/aws/codebuild/marketingos-build-admin-ui-${Environment}'
+      Triggers: !If
+        - UseWebhooks
+        - Webhook: true
+          FilterGroups:
+            - - { Type: EVENT, Pattern: PUSH }
+              - { Type: HEAD_REF, Pattern: !Sub '^refs/heads/${SourceBranch}$' }
+              - { Type: FILE_PATH, Pattern: '^administration/frontend/.*' }
+        - !Ref 'AWS::NoValue'
+
+  # ── 5. Landing page ─────────────────────────────────────────────────────────
+  LandingBuild:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub 'marketingos-build-landing-${Environment}'
+      Description: Substitutes CONSOLE_APP_URL into index.html and uploads it.
+      ServiceRole: !GetAtt StaticDeployRole.Arn
+      TimeoutInMinutes: 15
+      Artifacts: { Type: NO_ARTIFACTS }
+      Source:
+        Type: GITHUB
+        Location: !Ref GitHubRepositoryUrl
+        BuildSpec: landing-page/buildspec.yml
+        GitCloneDepth: 1
+        ReportBuildStatus: true
+      SourceVersion: !Ref SourceBranch
+      Environment:
+        Type: LINUX_CONTAINER
+        Image: aws/codebuild/standard:7.0
+        # One sed and two uploads. SMALL is already more machine than this needs.
+        ComputeType: BUILD_GENERAL1_SMALL
+        EnvironmentVariables:
+          - { Name: AWS_DEFAULT_REGION, Type: PLAINTEXT, Value: !Ref 'AWS::Region' }
+          - { Name: LANDING_S3_BUCKET, Type: PLAINTEXT, Value: !Ref LandingBucket }
+          - { Name: CLOUDFRONT_DISTRIBUTION_ID, Type: PLAINTEXT, Value: !Ref LandingDistributionId }
+          - { Name: CONSOLE_APP_URL, Type: PLAINTEXT, Value: !Ref ConsoleAppUrl }
+      LogsConfig:
+        CloudWatchLogs:
+          Status: ENABLED
+          GroupName: !Sub '/aws/codebuild/marketingos-build-landing-${Environment}'
+      Triggers: !If
+        - UseWebhooks
+        - Webhook: true
+          FilterGroups:
+            - - { Type: EVENT, Pattern: PUSH }
+              - { Type: HEAD_REF, Pattern: !Sub '^refs/heads/${SourceBranch}$' }
+              - { Type: FILE_PATH, Pattern: '^landing-page/.*' }
+        - !Ref 'AWS::NoValue'
+
+Outputs:
+  ArtifactBucketName:
+    Value: !Ref ArtifactBucket
+  ConsoleRepositoryUri:
+    Description: IMAGE_REPOSITORY for the console build - already wired in above.
+    Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ConsoleRepository}'
+  ApiBuildProject:
+    Value: !Ref ApiBuild
+  ConsoleBuildProject:
+    Value: !Ref ConsoleBuild
+  AdminApiBuildProject:
+    Value: !Ref AdminApiBuild
+  AdminUiBuildProject:
+    Value: !Ref AdminUiBuild
+  LandingBuildProject:
+    Value: !Ref LandingBuild

@@ -80,8 +80,36 @@ Parameters:
     Type: CommaDelimitedList
     Default: ""
 
+  DomainName:
+    Type: String
+    Default: ""
+    Description: e.g. admin.example.com. Blank uses the CloudFront domain.
+  CertificateArn:
+    Type: String
+    Default: ""
+    Description: ACM certificate ARN, which MUST be in us-east-1.
+  HostedZoneId:
+    Type: String
+    Default: ""
+    Description: >-
+      Route 53 zone that owns DomainName. Set, and this stack writes the A and
+      AAAA alias records itself; blank, and DNS is yours to point.
+  WebAclArn:
+    Type: String
+    Default: ""
+    Description: >-
+      A web ACL of this distribution's own, from iac/edge.yaml. The CloudFront
+      Free plan will not subscribe a distribution without one.
+
 Conditions:
   HasVpcConfig: !Not [!Equals [!Join ["", !Ref VpcSubnetIds], ""]]
+  HasDomain: !And
+    - !Not [!Equals [!Ref DomainName, ""]]
+    - !Not [!Equals [!Ref CertificateArn, ""]]
+  HasDns: !And
+    - !Condition HasDomain
+    - !Not [!Equals [!Ref HostedZoneId, ""]]
+  HasWebAcl: !Not [!Equals [!Ref WebAclArn, ""]]
 
 Globals:
   Function:
@@ -99,6 +127,9 @@ Globals:
         ADMIN_JWT_TTL_HOURS: !Ref AdminJwtTtlHours
         ADMIN_CORS_ORIGINS: !Ref AdminCorsOrigins
         ADMIN_PLAN_PRICES: !Ref AdminPlanPrices
+        # The HTTP API's stage, which API Gateway leaves at the front of every
+        # path. admin.main strips it before FastAPI routes.
+        API_GATEWAY_BASE_PATH: !Sub '/${Environment}'
 
 Resources:
 
@@ -154,6 +185,41 @@ Resources:
     UpdateReplacePolicy: Retain
     Properties:
       LogGroupName: !Sub '/aws/lambda/marketingos-admin-api-${Environment}'
+      RetentionInDays: !Ref LogRetentionDays
+
+  # ── First operator ──────────────────────────────────────────────────────────
+  # scripts/bootstrap_admin.py, as a function. The database is only reachable
+  # from inside the VPC, and this is the one piece of the back-office that has
+  # to run before anyone can sign in to it. No event source: it has no HTTP
+  # route, and invoking it takes lambda:InvokeFunction on this exact ARN.
+  #
+  #   aws lambda invoke --function-name marketingos-admin-bootstrap-<env> \
+  #     --cli-binary-format raw-in-base64-out \
+  #     --payload '{"email": "you@example.com", "password": "..."}' out.json
+  AdminBootstrapFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'marketingos-admin-bootstrap-${Environment}'
+      Description: Creates (or resets) a back-office operator. Invoke by hand.
+      CodeUri: ./
+      Handler: scripts.bootstrap_admin.lambda_handler
+      MemorySize: 512
+      Timeout: 60
+      VpcConfig: !If
+        - HasVpcConfig
+        - SubnetIds: !Ref VpcSubnetIds
+          SecurityGroupIds: !Ref VpcSecurityGroupIds
+        - !Ref AWS::NoValue
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+
+  AdminBootstrapLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/marketingos-admin-bootstrap-${Environment}'
       RetentionInDays: !Ref LogRetentionDays
 
   # ── Console hosting: private bucket, CloudFront with OAC ────────────────────
@@ -212,10 +278,20 @@ Resources:
         Enabled: true
         Comment: !Sub 'MarketingOS back-office (${Environment})'
         DefaultRootObject: index.html
-        # PriceClass_100 is North America and Europe. A console used by a
-        # handful of operators does not need edge locations in Asia.
-        PriceClass: PriceClass_100
+        # PriceClass_All, not _100: the CloudFront flat-rate plans refuse a
+        # distribution restricted to fewer edge locations ("not eligible for
+        # this subscription tier"), and on a flat rate the wider class costs
+        # nothing extra.
+        PriceClass: PriceClass_All
         HttpVersion: http2
+        WebACLId: !If [HasWebAcl, !Ref WebAclArn, !Ref 'AWS::NoValue']
+        Aliases: !If [HasDomain, [!Ref DomainName], !Ref 'AWS::NoValue']
+        ViewerCertificate: !If
+          - HasDomain
+          - AcmCertificateArn: !Ref CertificateArn
+            SslSupportMethod: sni-only
+            MinimumProtocolVersion: TLSv1.2_2021
+          - CloudFrontDefaultCertificate: true
         Origins:
           - Id: AdminS3Origin
             DomainName: !GetAtt AdminFrontendBucket.RegionalDomainName
@@ -262,6 +338,28 @@ Resources:
               StringEquals:
                 AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${AdminDistribution}'
 
+  AdminDnsA:
+    Type: AWS::Route53::RecordSet
+    Condition: HasDns
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Ref DomainName
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt AdminDistribution.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2  # CloudFront's own zone, for every distribution
+
+  AdminDnsAAAA:
+    Type: AWS::Route53::RecordSet
+    Condition: HasDns
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Ref DomainName
+      Type: AAAA
+      AliasTarget:
+        DNSName: !GetAtt AdminDistribution.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2  # CloudFront's own zone, for every distribution
+
 Outputs:
   AdminApiEndpoint:
     Description: Set the console's NEXT_PUBLIC_ADMIN_API_URL to this.
@@ -270,10 +368,16 @@ Outputs:
     Description: >-
       The back-office. Put this in ADMIN_CORS_ORIGINS and redeploy, or the
       browser will refuse every call it makes.
-    Value: !Sub 'https://${AdminDistribution.DomainName}'
+    Value: !If
+      - HasDomain
+      - !Sub 'https://${DomainName}'
+      - !Sub 'https://${AdminDistribution.DomainName}'
   AdminFrontendBucketName:
     Description: FRONTEND_S3_BUCKET for the console buildspec.
     Value: !Ref AdminFrontendBucket
   AdminDistributionId:
     Description: CLOUDFRONT_DISTRIBUTION_ID for the console buildspec.
     Value: !Ref AdminDistribution
+  AdminBootstrapFunctionName:
+    Description: Invoke once to create the first operator - see the resource's comment.
+    Value: !Ref AdminBootstrapFunction

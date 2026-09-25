@@ -1,0 +1,139 @@
+Judge bench - 8 source email(s) (2 written by a person), 88 pair(s), 4 votes each
+
+JUDGMENT-ONLY  (nothing mechanical can catch these)
+  ✓ specifics_to_adjectives  rich-sequence    4-0       caught
+  ✓ open_on_the_company      rich-sequence    4-0       caught
+  ✓ strip_the_proof          rich-sequence    4-0       caught
+  ✓ hedge_the_claims         rich-sequence    4-0       caught
+  ✓ bury_the_ask             rich-sequence    3-1       caught
+  ✓ specifics_to_adjectives  onboarding       4-0       caught
+  ✓ open_on_the_company      onboarding       3-1       caught
+  ✓ strip_the_proof          onboarding       3-1       caught
+  ✓ hedge_the_claims         onboarding       3-1       caught
+  ✓ bury_the_ask             onboarding       4-0       caught
+  ✓ specifics_to_adjectives  renewal-warm     4-0       caught
+  ✓ open_on_the_company      renewal-warm     4-0       caught
+  ✓ strip_the_proof          renewal-warm     4-0       caught
+  ✓ hedge_the_claims         renewal-warm     4-0       caught
+  ✗ bury_the_ask             renewal-warm     0-4       MISSED
+  ✓ specifics_to_adjectives  compliance-cold  4-0       caught
+  ✓ open_on_the_company      compliance-cold  4-0       caught
+  ✓ strip_the_proof          compliance-cold  3-1       caught
+  ✓ hedge_the_claims         compliance-cold  4-0       caught
+  ✓ bury_the_ask             compliance-cold  4-0       caught
+  ✓ specifics_to_adjectives  workshop-local   4-0       caught
+  ✓ open_on_the_company      workshop-local   4-0       caught
+  ✓ strip_the_proof          workshop-local   4-0       caught
+  ✓ hedge_the_claims         workshop-local   4-0       caught
+  ✓ bury_the_ask             workshop-local   4-0       caught
+  ✓ specifics_to_adjectives  shelter-appeal   4-0       caught
+  ✓ open_on_the_company      shelter-appeal   4-0       caught
+  ✓ strip_the_proof          shelter-appeal   3-1       caught
+  ✓ hedge_the_claims         shelter-appeal   4-0       caught
+  ✓ bury_the_ask             shelter-appeal   4-0       caught
+  ✓ specifics_to_adjectives  infra-terse      3-0       caught   (1 vote(s) did not come back)
+  ✓ open_on_the_company      infra-terse      1-0       caught   (3 vote(s) did not come back)
+  ✓ strip_the_proof          infra-terse      1-0       caught   (3 vote(s) did not come back)
+
+GATE-VISIBLE  (the free checks should catch these too)
+  ✓ stock_phrase_open        rich-sequence    4-0       caught   gates: 1
+  ✗ wall_of_text             rich-sequence    1-3       MISSED   gates: 2
+  ✓ shout_and_exclaim        rich-sequence    4-0       caught   gates: 3
+  ✓ stock_phrase_open        onboarding       3-1       caught   gates: 1
+  ✓ wall_of_text             onboarding       3-1       caught   gates: 2
+  ✓ shout_and_exclaim        onboarding       4-0       caught   gates: 3
+  ✗ stock_phrase_open        renewal-warm     2-2       MISSED   gates: 1
+  ✓ wall_of_text             renewal-warm     4-0       caught   gates: 2
+  ✓ shout_and_exclaim        renewal-warm     4-0       caught   gates: 3
+  ✗ stock_phrase_open        compliance-cold  2-2       MISSED   gates: 1
+  ✓ wall_of_text             compliance-cold  3-1       caught   gates: 2
+  ✓ shout_and_exclaim        compliance-cold  4-0       caught   gates: 3
+  ✗ stock_phrase_open        workshop-local   2-2       MISSED   gates: 1
+  ✗ wall_of_text             workshop-local   2-2       MISSED   gates: 2
+  ✓ shout_and_exclaim        workshop-local   4-0       caught   gates: 3
+  ✗ stock_phrase_open        shelter-appeal   2-2       MISSED   gates: 1
+  ✗ wall_of_text             shelter-appeal   1-3       MISSED   gates: 2
+  ✓ shout_and_exclaim        shelter-appeal   4-0       caught   gates: 3
+
+INBOX  (damage above the body - ranked as lines, not duelled)
+  ✓ clickbait_subject        rich-sequence    in inbox  caught   opens 32 vs 7 in 100
+  ✓ clickbait_subject        onboarding       in inbox  caught   opens 28 vs 8 in 100
+  ✓ clickbait_subject        renewal-warm     in inbox  caught   opens 34 vs 7 in 100
+  ✓ clickbait_subject        compliance-cold  in inbox  caught   opens 34 vs 6 in 100
+  ✓ clickbait_subject        workshop-local   in inbox  caught   opens 34 vs 6 in 100
+  ✓ clickbait_subject        shelter-appeal   in inbox  caught   opens 35 vs 7 in 100
+
+INVARIANCE  (the verdict should not move)
+  · identity                 rich-sequence    2-2       even
+  · neutral_greeting         rich-sequence    2-2       even
+  · identity                 onboarding       2-2       even
+  · neutral_greeting         onboarding       2-2       even
+  · identity                 renewal-warm     2-2       even
+  · neutral_greeting         renewal-warm     2-2       even
+  · identity                 compliance-cold  2-2       even
+  · neutral_greeting         compliance-cold  2-2       even
+  · identity                 workshop-local   2-2       even
+  · neutral_greeting         workshop-local   2-2       even
+  · identity                 shelter-appeal   2-2       even
+  · neutral_greeting         shelter-appeal   2-2       even
+
+NOT JUDGED  (no damage to detect, or the call failed)
+  · hedge_the_claims         infra-terse      skipped - the provider failed (4 vote(s) never came back)
+  · bury_the_ask             infra-terse      skipped - the provider failed (4 vote(s) never came back)
+  · clickbait_subject        infra-terse      skipped - nobody could rank the two subject lines
+  · stock_phrase_open        infra-terse      skipped - the provider failed (4 vote(s) never came back)
+  · wall_of_text             infra-terse      skipped - the provider failed (4 vote(s) never came back)
+  · shout_and_exclaim        infra-terse      skipped - the provider failed (4 vote(s) never came back)
+  · identity                 infra-terse      skipped - the provider failed (4 vote(s) never came back)
+  · neutral_greeting         infra-terse      skipped - the provider failed (4 vote(s) never came back)
+  · specifics_to_adjectives  trade-plain      skipped - the provider failed (4 vote(s) never came back)
+  · open_on_the_company      trade-plain      skipped - the provider failed (4 vote(s) never came back)
+  · strip_the_proof          trade-plain      skipped - the provider failed (4 vote(s) never came back)
+  · hedge_the_claims         trade-plain      skipped - the provider failed (4 vote(s) never came back)
+  · bury_the_ask             trade-plain      skipped - the provider failed (4 vote(s) never came back)
+  · clickbait_subject        trade-plain      skipped - nobody could rank the two subject lines
+  · stock_phrase_open        trade-plain      skipped - the provider failed (4 vote(s) never came back)
+  · wall_of_text             trade-plain      skipped - the provider failed (4 vote(s) never came back)
+  · shout_and_exclaim        trade-plain      skipped - the provider failed (4 vote(s) never came back)
+  · identity                 trade-plain      skipped - the provider failed (4 vote(s) never came back)
+  · neutral_greeting         trade-plain      skipped - the provider failed (4 vote(s) never came back)
+
+MATRIX  (judgment-only damage - ✓ caught, ✗ missed, · not judged)
+
+                              1  2  3  4  5  6  7   caught
+  bury_the_ask                ✓  ✓  ✗  ✓  ✓  ✓  ·   5/6
+  hedge_the_claims            ✓  ✓  ✓  ✓  ✓  ✓  ·   6/6
+  open_on_the_company         ✓  ✓  ✓  ✓  ✓  ✓  ✓   7/7
+  specifics_to_adjectives     ✓  ✓  ✓  ✓  ✓  ✓  ✓   7/7
+  strip_the_proof             ✓  ✓  ✓  ✓  ✓  ✓  ✓   7/7
+
+  items: [1] rich-sequence *   [2] onboarding *   [3] renewal-warm   [4] compliance-cold   [5] workshop-local   [6] shelter-appeal   [7] infra-terse
+         * written by a person; the rest were written for the bench
+
+PER ITEM  (judgment-only)
+  [1] rich-sequence       person  5/5   ballots to the original 95%
+  [2] onboarding          person  5/5   ballots to the original 85%
+  [3] renewal-warm        bench   4/5   ballots to the original 80%
+  [4] compliance-cold     bench   5/5   ballots to the original 95%
+  [5] workshop-local      bench   5/5   ballots to the original 100%
+  [6] shelter-appeal      bench   5/5   ballots to the original 95%
+  [7] infra-terse         bench   3/3   ballots to the original 100%
+  An item whose ballots sit near 50% is one nothing separated. Read that as a control
+  that is not carrying what the mutation removes, before reading it as a judge that cannot see.
+
+PER MUTATION  (judgment-only, worst first)
+  bury_the_ask              5/6 (83%)   missed on: renewal-warm
+  hedge_the_claims          6/6 (100%)
+  open_on_the_company       7/7 (100%)
+  specifics_to_adjectives   7/7 (100%)
+  strip_the_proof           7/7 (100%)
+
+Detection
+  judgment-only   32/33 (97%)  [95% CI 85%-99%]   <- the number that matters
+    on the 2 control(s) a person wrote   100%
+    on the 5 written for the bench    96%   (a gap here indicts the fixtures, not the judge)
+  gate-visible    11/18 (61%)
+  inbox           6/6 (100%)   <- the subject decision, asked of the scanner rather than the judge
+
+Noise floor
+  12 undamaged pair(s): 12 even, 0 leaning (average lean 0.0; 0 is a judge reading the copy)

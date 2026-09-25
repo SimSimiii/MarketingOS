@@ -17,6 +17,8 @@ that has never seen the brief, and rewrites what did not land. Backend is FastAP
 SQLModel + SQLite; frontend is Next.js App Router. `README.md` explains *why* the
 architecture is shaped this way and is worth reading before changing the pipeline — almost
 every design decision in it was made against a measured failure.
+[docs/architecture-fonctionnelle.md](docs/architecture-fonctionnelle.md) is the shorter
+functional counterpart, in French: what each phase does today and which module does it.
 
 Four directories, not two. `backend/` and `frontend/` are the product;
 `administration/` is an isolated back-office (its own stack, its own signing secret,
@@ -104,9 +106,30 @@ spend real subscription quota** — reach for the free ones first.
 ```
 
 Those two call nothing. The billed pair: `judge_bench --out eval/judges.txt` asks whether the
-judges can tell good copy from deliberately damaged copy (~132 calls), and
-`runner --preset balanced --out eval/after` runs whole campaigns end to end, duelling the
-first email against a human-written one. Both take `--case` to run a single case.
+judges can tell good copy from deliberately damaged copy (~464 calls over eight control
+emails), and `runner --preset balanced --out eval/after` runs whole campaigns end to end,
+duelling the first email against a human-written one. Both take `--case` to run a single case.
+
+The bench reports a **matrix**, not a rate, and that is the part to read: a row of misses is
+a blind spot in the judge and belongs in the duel prompt or in code, a column of misses is a
+control that never carried what the mutation removes and belongs in `app/evaluation/controls.py`.
+Pooled into one percentage the two are the same number, which is what made the first round's
+4/6 unactionable. Two of the eight controls were written by a person (`golden.py`) and the
+report rates them separately - `judge_bench --anchors-only` runs just those, and a gap
+between the two rates indicts the fixtures rather than the judge.
+
+**Run `--hard` (~128 calls), not the whole thing.** The gross tier - a proof paragraph
+deleted outright, an opening replaced with boilerplate - was measured across seven controls
+on 21 September 2026 and came back 32/33, with a clean invariance arm. That is a finished
+regression guard and a dead measurement: at 97% the interval is 85-99%, so any regression
+landing inside it is invisible. `mutations.HARD_MUTATIONS` breaks the same principles by one
+degree instead - the testimonial kept and hollowed out, the explanatory beat traded for a
+benefit, a second ask beside the first, the proof arriving after the ask. All four are
+invisible to the gates *and* to `substantiation.py`, so they are pure judge territory and
+they are where the room to measure now is. The same round also found the judge is a content
+instrument and measurably poor on form (`stock_phrase_open` 2/6, and it twice preferred the
+wall of text) - harmless, because `_prefers` runs the gates before the duel and never lets
+the judge overrule them, and worth keeping that way.
 
 Beside them sit two **experiments** rather than benchmarks — they hold a golden case still
 and vary one thing, what the campaign knows about its buyer, to answer whether audience

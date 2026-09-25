@@ -16,7 +16,7 @@ class ExecutionPolicy(BaseModel):
     which is the generic behavior the rest of this system exists to avoid.
 
     What a preset actually trades is judgment calls per email. `fast` writes
-    one draft and reads it; `balanced` writes several openings, keeps the one
+    one draft and reads it; `balanced` writes two complete propositions, keeps the one
     a stranger responded to, and adds the critic and a rewrite; `maximum`
     widens both, and adds a panel of cold readers, because variance between
     readings is the signal a single read cannot give.
@@ -27,11 +27,11 @@ class ExecutionPolicy(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     max_revisions: int = Field(default=2, ge=0, le=4)
-    #: How many openings are written for each email before one is chosen. The
+    #: How many propositions are written for each email before one is chosen. The
     #: cheapest quality in the system: a second candidate buys a different
     #: argument, where a second rewrite only buys the same argument sanded
     #: smoother. One disables the bake-off entirely.
-    draft_candidates: int = Field(default=3, ge=1, le=4)
+    draft_candidates: int = Field(default=2, ge=1, le=4)
     #: The Conversion Critic. Off, the loop still catches everything
     #: deterministic and everything a cold reader feels - it loses brief drift
     #: and unspent evidence, which are the failures that look finished.
@@ -99,30 +99,15 @@ class ExecutionPolicy(BaseModel):
     model_overrides: dict[str, str] = Field(default_factory=dict)
 
 
-#: Every role whose work is judgment or craft, and therefore the only ones the
-#: strongest preset should move onto the strongest model.
-#:
-#: `maximum` used to say `{"*": "opus"}`, and a blanket override wins over the
-#: tier map outright (see ModelRouter.resolve), which quietly re-priced the
-#: cheap roles as expensive ones. The cold reader asks for BALANCED because a
-#: cold read is a reaction, not a deliberation - and in a measured maximum run
-#: it made 21 of the 38 model calls. Running those on opus bought nothing a
-#: reaction needs and was the single largest line on the bill.
-#:
-#: What `maximum` should widen is how much judgment is bought - more openings,
-#: a full reader panel, more rewrites - not the price of a reaction.
-#: The preference judge and the inbox scanner are deliberately absent, for the
-#: same reason the cold reader is: a choice between two emails and a glance at
-#: a subject line are reactions, and the strongest preset should widen how many
-#: reactions are bought rather than what each one costs. The subject *writer*
-#: is here - writing eight lines that are eight different bets is craft.
-_DEEP_ROLES = (
-    "strategist",
-    "email_writer",
-    "conversion_critic",
-    "sequence_reviewer",
-    "subject_writer",
-)
+#: The first measured cross-provider validation that cleared the sellable-result
+#: bar used this model: a two-email French support sequence scored 87/100 after
+#: source and browser review. Until another default model clears the same bar,
+#: every campaign preset uses the validated model and trades speed for review
+#: depth through the policy shape below. This costs more per call than the old
+#: fast/balanced routing, but avoids selling a cheaper default whose delivered
+#: quality has not met the product bar.
+_SELLABLE_DEFAULT_MODEL = "gpt-5.6-sol"
+_SELLABLE_MODEL_OVERRIDE = {"*": _SELLABLE_DEFAULT_MODEL}
 
 PRESETS: dict[PolicyPreset, ExecutionPolicy] = {
     "fast": ExecutionPolicy(
@@ -138,7 +123,7 @@ PRESETS: dict[PolicyPreset, ExecutionPolicy] = {
         max_total_tokens=400_000,
         max_crawl_pages=5,
         require_proof=False,
-        model_overrides={"*": "sonnet", "knowledge_compiler": "haiku"},
+        model_overrides=_SELLABLE_MODEL_OVERRIDE.copy(),
     ),
     # Rebalanced after a measured run in which a third of the budget bought
     # refinement that moved nothing: a critique whose edits were discarded, a
@@ -146,10 +131,13 @@ PRESETS: dict[PolicyPreset, ExecutionPolicy] = {
     # moved to the two places the same run showed were starved - how many
     # different arguments get written, and whether the instrument comparing
     # them can tell them apart.
-    "balanced": ExecutionPolicy(),
+    "balanced": ExecutionPolicy(model_overrides=_SELLABLE_MODEL_OVERRIDE.copy()),
     "maximum": ExecutionPolicy(
         max_revisions=3,
-        draft_candidates=4,
+        # Two candidates are two complete propositions. Extra openings on the
+        # same proposition spend writer and reader calls without testing a new
+        # commercial decision.
+        draft_candidates=2,
         critic_enabled=True,
         reader_panel=True,
         tournament=True,
@@ -159,7 +147,7 @@ PRESETS: dict[PolicyPreset, ExecutionPolicy] = {
         max_duration_seconds=2_400,
         max_total_tokens=4_000_000,
         max_crawl_pages=20,
-        model_overrides={role: "opus" for role in _DEEP_ROLES},
+        model_overrides=_SELLABLE_MODEL_OVERRIDE.copy(),
     ),
 }
 

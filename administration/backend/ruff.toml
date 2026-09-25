@@ -10,3 +10,10 @@ target-version = "py312"
 [lint.flake8-bugbear]
 # FastAPI's dependency markers are meant to be called in argument defaults.
 extend-immutable-calls = ["fastapi.Depends", "fastapi.File", "fastapi.Form", "fastapi.Query"]
+
+[lint.isort]
+# `app` is the product package. Locally it resolves from ../../backend and
+# sorts as third-party; in CodeBuild it is vendored into this directory and
+# would sort as first-party - the same file, two verdicts. Pinned here so the
+# build and a laptop agree.
+known-third-party = ["app"]

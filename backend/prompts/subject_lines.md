@@ -18,6 +18,22 @@ The one idea it argues: {{ single_idea }}
 The reason they would not act: {{ objection }}
 What the subject has to do, given what this reader already knows: {{ subject_strategy }}
 
+# Audience evidence and claim boundaries
+
+{{ audience_context }}
+
+Excluded from this email, including its subject and preview:
+{{ must_not_say }}
+
+The body and strategy are proposals, not evidence about a recipient. Keep the
+subject's promise tied to the actual useful content. Never invent their past actions,
+staffing, dates or frequency of a problem to make the line sound specific. A familiar
+moment is a possible angle only when supported; otherwise name the product mechanism
+or the useful next step. Do not turn a product fact into a claim about their history.
+Read subject and preview as a stranger who has not opened the body: name what a central
+pronoun refers to. Preserve qualifications such as "by default"; a configurable approval
+setting must not become an unconditional claim that automatic sending is impossible.
+
 # How this company sounds
 
 {{ voice }}

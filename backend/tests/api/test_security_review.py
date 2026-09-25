@@ -171,3 +171,54 @@ def test_cookie_alone_cannot_authorize_mutations_and_query_tokens_are_ignored(lo
     assert client.get("/api/auth/me").status_code == 200
     assert client.post("/api/brands", json={"name": "Cross site"}).status_code == 403
     assert client.post("/api/brands", json={"name": "Explicit"}, headers=headers).status_code == 201
+
+
+def test_a_job_host_lambda_may_admit_model_work(monkeypatch):
+    """The campaign state machine's three functions run on Lambda and do model
+    work, which the blanket refusal above would make impossible.
+
+    They opt in with JOB_HOST, and they may because each one is invoked with a
+    single email to write - ten to thirty-five calls, roughly four minutes -
+    which finishes well inside the 900-second ceiling. The API function does
+    not set it and must not: it answers a button press behind a 30-second
+    gateway timeout.
+    """
+    from app.runtime.work_limits import is_job_host
+
+    monkeypatch.delenv("AWS_LAMBDA_FUNCTION_NAME", raising=False)
+    monkeypatch.delenv("JOB_HOST", raising=False)
+    assert is_job_host() is True, "anything that is not Lambda owns its own uptime"
+
+    monkeypatch.setenv("AWS_LAMBDA_FUNCTION_NAME", "marketingos-api-prod")
+    assert is_job_host() is False, "a plain Lambda still refuses"
+
+    monkeypatch.setenv("JOB_HOST", "true")
+    assert is_job_host() is True, "a step of the state machine may"
+
+
+def test_a_resumed_reservation_does_not_charge_the_quota_again(engine):
+    """A stepped run is one campaign spread over several invocations, and the
+    user bought one campaign. Charging per step would make a five-email run
+    cost seven runs against the account."""
+    with Session(engine) as db:
+        user = User(email="stepped@example.com", password_hash="unused", monthly_run_quota=10)
+        db.add(user)
+        db.commit()
+        owner = user.id
+        before = user.runs_used
+
+    first = Reservation(engine, owner)
+    first.attempt()
+    with Session(engine) as db:
+        charged = db.get(User, owner).runs_used
+    assert charged == before + 1, "the plan step charges the run"
+    first.finish()
+
+    resumed = Reservation(engine, owner, resume=True)
+    resumed.attempt()
+    with Session(engine) as db:
+        assert db.get(User, owner).runs_used == charged, "a craft step must not charge again"
+    resumed.finish()
+
+    with Session(engine) as db:
+        assert db.get(User, owner).runs_used == charged, "and must not refund on close"

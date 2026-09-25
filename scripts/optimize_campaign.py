@@ -57,13 +57,15 @@ def main():
     parser.add_argument("action", choices=["inspect", "run", "resume", "compare"])
     parser.add_argument("--case", type=Path, default=DEFAULT_CASE)
     parser.add_argument("--base-url", default="http://127.0.0.1:8000")
-    parser.add_argument("--max-runs", type=int, default=2)
+    parser.add_argument("--max-runs", type=int, default=None,
+                        help="Optional explicit total generation cap; unlimited by default")
     parser.add_argument("--timeout-seconds", type=int, default=2700)
     parser.add_argument("--poll-seconds", type=int, default=10)
     parser.add_argument("--before", help="First execution ID for compare")
     parser.add_argument("--after", help="Second execution ID for compare")
     args = parser.parse_args()
-    if args.max_runs < 1 or args.timeout_seconds < 30 or args.poll_seconds < 1:
+    args.case = args.case.resolve()
+    if (args.max_runs is not None and args.max_runs < 1) or args.timeout_seconds < 30 or args.poll_seconds < 1:
         parser.error("limits must be positive; timeout must be at least 30 seconds")
     case = json.loads(args.case.read_text(encoding="utf-8"))
     base = args.base_url
@@ -73,6 +75,9 @@ def main():
     directory = args.case.parent
     state_path = directory / "state.json"
     state = json.loads(state_path.read_text(encoding="utf-8")) if state_path.exists() else {"runs": []}
+    # Older/manual case state may predate durable run capture. Preserve every
+    # quality field it contains and add only the runner's missing collection.
+    state.setdefault("runs", [])
 
     if args.action == "compare":
         if not args.before or not args.after:
@@ -122,7 +127,7 @@ def main():
     if args.action == "run":
         if any(not run.get("result_dir") for run in state["runs"]):
             raise RuntimeError("A recorded run is in progress; use resume")
-        if len(state["runs"]) >= args.max_runs:
+        if args.max_runs is not None and len(state["runs"]) >= args.max_runs:
             raise RuntimeError("Generation limit reached; raise --max-runs deliberately for a new cycle")
         started = api(base, f"/campaigns/{campaign_id}/start", token, "POST", {})
         entry = {

@@ -330,10 +330,20 @@ def inbox_verdict(*opens: int) -> str:
         }
     )
 
-CRITIQUE_SHIP = json.dumps({"verdict": "ship", "edits": [], "summary": "Ready to send."})
+CRITIQUE_SHIP = json.dumps(
+    {
+        "verdict": "ship",
+        "failure_mode": "none",
+        "strategy_gap": "",
+        "edits": [],
+        "summary": "Ready to send.",
+    }
+)
 CRITIQUE_REVISE = json.dumps(
     {
         "verdict": "revise",
+        "failure_mode": "copy",
+        "strategy_gap": "",
         "brief_drift": "argues speed, but the brief assigned the switching-cost objection",
         "unspent_evidence": ["E1"],
         "edits": [

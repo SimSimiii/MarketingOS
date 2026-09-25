@@ -29,9 +29,35 @@ _active: dict[UUID | None, int] = {}
 current_work: ContextVar["Reservation | None"] = ContextVar("current_work", default=None)
 
 
+def is_job_host() -> bool:
+    """Whether this process may admit model work.
+
+    Anything that is not Lambda may: a laptop and a container both own their
+    own uptime and can finish what they start. A Lambda may only when it was
+    deployed as a step of the campaign state machine, which says so by setting
+    JOB_HOST - because such a function is invoked with exactly one email to
+    write and finishes it well inside the 900-second ceiling.
+
+    The API function does not set it, and must not. It is invoked by a user
+    pressing a button, has 30 seconds of API Gateway timeout in front of it,
+    and accepting a whole campaign there is how a run gets silently truncated
+    with no record of where it stopped.
+    """
+    if not os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+        return True
+    return os.environ.get("JOB_HOST", "").lower() in {"1", "true", "yes"}
+
+
 class Reservation:
-    def __init__(self, engine, owner: UUID | None):
-        if os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+    def __init__(self, engine, owner: UUID | None, *, resume: bool = False):
+        """`resume` attaches to a job already admitted, without charging again.
+
+        A stepped run is one campaign spread over several invocations, and the
+        user bought one campaign. The plan step charges the quota; every craft
+        step after it sets `resume` so a five-email run costs one run against
+        the account rather than seven.
+        """
+        if not is_job_host():
             raise WorkLimitError("Model jobs require a persistent worker; this host cannot run them.", 503)
         settings = get_settings()
         self.engine, self.owner = engine, owner
@@ -44,7 +70,8 @@ class Reservation:
                 raise WorkLimitError("The server is busy. Wait for a running job to finish.")
             if _active.get(owner, 0) >= settings.max_jobs_per_account:
                 raise WorkLimitError("Your account already has the maximum number of running jobs.")
-            if owner is not None:
+            self.resumed = resume
+            if owner is not None and not resume:
                 with Session(engine) as db:
                     db.execute(update(User).where(User.id == owner, or_(
                         col(User.quota_reset_at).is_(None), User.quota_reset_at < self.period,
@@ -71,7 +98,7 @@ class Reservation:
                 return
             self.closed = True
             try:
-                if not self.started and self.owner is not None:
+                if not self.started and self.owner is not None and not self.resumed:
                     with Session(self.engine) as db:
                         db.execute(update(User).where(
                             User.id == self.owner, User.quota_reset_at == self.period, User.runs_used > 0,

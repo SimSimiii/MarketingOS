@@ -198,10 +198,8 @@ def test_a_policy_preset_routes_roles_to_its_overridden_model(
     execution = await_terminal_status(client, started.json()["id"])
     assert execution["status"] == "completed", execution.get("error_message")
 
-    # "fast" moves every role to sonnet - the writer's own call must have gone
-    # out with that model, proving the preset reached the pipeline instead of
-    # only being stored on the campaign row.
-    assert provider.requests_for("email_writer")[0].model == "sonnet"
+    # Fast keeps the validated model and saves time through fewer review passes.
+    assert provider.requests_for("email_writer")[0].model == "gpt-5.6-sol"
     # ...and it turns the critic off entirely.
     assert provider.calls_by_role["conversion_critic"] == 0
 

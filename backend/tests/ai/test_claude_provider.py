@@ -63,6 +63,7 @@ async def test_generate_runs_on_the_caller_loop_when_it_can_spawn_subprocesses(m
     assert loops == [asyncio.get_running_loop()]
 
 
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows-only loop constraint")
 @pytest.mark.asyncio
 async def test_generate_moves_to_its_own_loop_when_the_host_loop_cannot(monkeypatch):
     loops: list[object] = []
@@ -76,6 +77,7 @@ async def test_generate_moves_to_its_own_loop_when_the_host_loop_cannot(monkeypa
     assert loops and loops[0] is not asyncio.get_running_loop()
 
 
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows-only loop constraint")
 @pytest.mark.asyncio
 async def test_generate_reuses_the_same_proactor_loop_across_calls(monkeypatch):
     """The actual bug this fixes: a fresh ProactorEventLoop (and OS thread)
@@ -94,6 +96,7 @@ async def test_generate_reuses_the_same_proactor_loop_across_calls(monkeypatch):
     assert len({id(loop) for loop in loops}) == 1
 
 
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows-only loop constraint")
 @pytest.mark.asyncio
 async def test_stream_is_bridged_back_to_the_caller_loop(monkeypatch):
     loops: list[object] = []
@@ -106,6 +109,7 @@ async def test_stream_is_bridged_back_to_the_caller_loop(monkeypatch):
     assert loops and loops[0] is not asyncio.get_running_loop()
 
 
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows-only loop constraint")
 @pytest.mark.asyncio
 async def test_stream_failures_reach_the_caller(monkeypatch):
     async def exploding_query(prompt: str, options):

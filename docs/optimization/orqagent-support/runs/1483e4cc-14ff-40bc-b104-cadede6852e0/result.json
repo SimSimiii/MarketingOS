@@ -1,0 +1,364 @@
+{
+  "id": "1483e4cc-14ff-40bc-b104-cadede6852e0",
+  "campaign_id": "c800b083-81be-4067-bda1-b47c44f56676",
+  "status": "failed",
+  "error_message": "The model stopped answering and did not come back after several attempts. Everything finished before that point is below.",
+  "started_at": "2026-09-19T14:46:54.557561Z",
+  "completed_at": "2026-09-19T14:49:28.307654Z",
+  "created_at": "2026-09-19T14:46:54.557561Z",
+  "total_input_tokens": 119637,
+  "total_output_tokens": 7512,
+  "total_cache_read_tokens": 52480,
+  "estimated_cost_usd": 1.6495,
+  "recommendation_snapshot": {
+    "campaign_id": "c800b083-81be-4067-bda1-b47c44f56676",
+    "readiness": "DISCOVERY_ONLY",
+    "recommendation": {
+      "state": "DISCOVERY_ONLY",
+      "readiness": "DISCOVERY_ONLY",
+      "reasons": [
+        "No current V2 recommendation establishes product-to-audience fit."
+      ],
+      "eligible_subsegment": "",
+      "qualified_companies": [],
+      "adjacent_companies": [],
+      "excluded_companies": [],
+      "unverified_companies": [],
+      "allowed_claims": [],
+      "allowed_evidence_ids": [],
+      "forbidden_claims": [],
+      "forbidden_capability_ids": [],
+      "forbidden_evidence_ids": [],
+      "unresolved_objections": [],
+      "recommended_next_action": "Build or rebuild the Relevance Dossier V2, or generate explicitly as an audience-level hypothesis.",
+      "override_risk": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+      "claim_contract": null
+    },
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No current V2 recommendation establishes product-to-audience fit."
+    ],
+    "override_required": true,
+    "can_generate": true,
+    "user_message": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+    "override_explicit": true
+  },
+  "generated_despite_recommendation": true,
+  "agent_executions": [
+    {
+      "id": "30981419-ff61-478d-863e-3ad34a137725",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Vous pouvez commencer par faire rédiger les réponses par l’agent tout en conservant la décision finale : l’envoi automatique est désactivé par défaut et chaque brouillon peut être relu, modifié, envoyé ou ignoré.",
+          "#2 Il n’est pas nécessaire de remplacer le processus support pour évaluer orqAgent : le lecteur peut créer un agent, lui confier un seul document de référence et tester ses propres questions gratuitement."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T14:46:54.725865Z",
+      "completed_at": "2026-09-19T14:47:51.357999Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 37096,
+      "output_tokens": 2717,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.772119,
+      "duration_ms": 56525.80339999986,
+      "attempt": 1
+    },
+    {
+      "id": "91cd9a1f-eb31-45c7-b8d6-d3f3d0264aea",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 3 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 3,
+        "ideas": [
+          "Vous pouvez commencer par faire rédiger les réponses par l’agent tout en conservant la décision finale : l’envoi automatique est désactivé par défaut et chaque brouillon peut être relu, modifié, envoyé ou ignoré.",
+          "Tester l’assistance sur les seules questions de politique, sans toucher aux demandes nécessitant des données de commande en direct.",
+          "Utiliser les garde-fous pour bloquer les tentatives d’injection avant qu’elles n’atteignent le modèle."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Gardez la main sur chaque réponse",
+          "Du document au brouillon validé",
+          "Chaque réponse reste à valider"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T14:47:51.473324Z",
+      "completed_at": "2026-09-19T14:48:22.187664Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 30061,
+      "output_tokens": 4795,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 44544,
+      "cost_usd": 0.877356,
+      "duration_ms": 72294.28780003218,
+      "attempt": 1
+    },
+    {
+      "id": "1c6c82ab-8111-48f6-85d9-d9d2add8cba4",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 3 candidate(s) read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 3,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 0.0,
+        "scores": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T14:48:22.320647Z",
+      "completed_at": "2026-09-19T14:48:32.653234Z",
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.0,
+      "duration_ms": 0.0,
+      "attempt": 1
+    },
+    {
+      "id": "ebcb23a5-2c4b-4e29-9ca8-f6a8e747916e",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · the two best candidates, read side by side",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "challenger_won": false
+      },
+      "error_message": null,
+      "started_at": "2026-09-19T14:48:32.667273Z",
+      "completed_at": "2026-09-19T14:49:04.490829Z",
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.0,
+      "duration_ms": 0.0,
+      "attempt": 1
+    },
+    {
+      "id": "8cd5089d-3e26-41ec-9b8d-24a1a54c4422",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 5,
+      "status": "failed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": null,
+      "error_message": "RoutingProvider call failed after 3 attempt(s): codex exec reported a failed turn: You’ve hit your usage limit. Upgrade to Pro (https://chatgpt.com/explore/pro), visit https://chatgpt.com/codex/settings/usage to purchase more credits or try again at 8:49 PM.",
+      "started_at": "2026-09-19T14:49:04.531497Z",
+      "completed_at": "2026-09-19T14:49:28.282589Z",
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.0,
+      "duration_ms": 0.0,
+      "attempt": 1
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "provider_unavailable",
+    "report": {
+      "request": "Rédige une séquence de exactement 2 emails en français pour présenter orqAgent à des responsables support qui ne l’ont pas encore acheté et les inviter à essayer le produit. Chaque email doit donner une raison différente de passer à l’action. Ton professionnel, concret et naturel.",
+      "delivered": 0,
+      "promised": 2,
+      "contract_violations": [
+        "the user asked for 2 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [
+        "No customer names, quotes or case studies found - the copy can describe the product but cannot prove anyone uses it"
+      ],
+      "what_would_help_most": "Which customers or quotes may we name?",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 5,
+      "notes": [
+        "The model stopped answering and did not come back after several attempts. Everything finished before that point is below."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "Séquence d’acquisition de exactement 2 emails destinée à des responsables support qui connaissent leur problème mais n’ont pas encore acheté orqAgent. L’objectif est de leur faire tester gratuitement le produit sur les questions de politique ou de FAQ, sans promettre l’automatisation des demandes qui exigent des données de commande en temps réel.",
+      "reader": "Selected audience: Support lead who answers the same forty tickets and has to sell the idea upward.\nSituation context (inferred; check applicability): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.",
+      "reader_segment": "Support lead who answers the same forty tickets and has to sell the idea upward",
+      "promise": "orqAgent permet de tester le traitement des questions répétitives à partir de vos propres documents tout en gardant la validation humaine avant chaque envoi.",
+      "orientation": "orqAgent est une plateforme sans code qui prépare des réponses de support à partir de vos documents et peut les placer dans une file de validation avant leur envoi.",
+      "arc": "Le premier email réduit le risque perçu en montrant que l’essai peut rester entièrement supervisé. Le second réduit l’effort nécessaire pour agir en proposant un test limité, gratuit et rapide sur un seul document.",
+      "sequence_rationale": "Cette audience est consciente du temps absorbé par les questions répétitives, mais sa première crainte est une réponse erronée envoyée sans contrôle. L’email 1 traite donc le risque avant de parler de simplicité ou de gratuité. Une fois le cadre de validation établi, l’email 2 transforme l’intérêt en expérience concrète : créer un agent sur un document réel, sans carte bancaire. Les demandes de suivi de commande sont volontairement exclues, car elles nécessitent souvent des données opérationnelles en temps réel que les éléments fournis ne permettent pas de promettre. Faute de témoignages ou de résultats clients, la séquence repose sur des mécanismes vérifiables et invite à tester plutôt qu’à croire une affirmation. Ce qui changerait le plus cette campagne : quels clients ou quelles citations pouvons-nous nommer ?",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Faire accepter l’idée d’un premier essai en montrant que tester orqAgent ne signifie pas autoriser des réponses automatiques incontrôlées.",
+          "single_idea": "Vous pouvez commencer par faire rédiger les réponses par l’agent tout en conservant la décision finale : l’envoi automatique est désactivé par défaut et chaque brouillon peut être relu, modifié, envoyé ou ignoré.",
+          "felt_need": "Les questions répétitives prennent du temps, mais une réponse qui promet par erreur un remboursement ou une condition inexistante serait plus coûteuse que le temps économisé.",
+          "status_quo": "Quand les réponses se trouvent déjà dans les politiques et FAQ, l’équipe les recherche puis les reformule manuellement pour garder le contrôle.",
+          "why_it_fails": "Cette méthode conserve le contrôle, mais laisse à l’équipe tout le travail de recherche et de rédaction sur chaque demande similaire.",
+          "mechanism": "orqAgent prépare un brouillon dans une file d’approbation. Par défaut, rien n’est envoyé sans validation ; les expéditeurs automatisés et les messages vieux de plus de 24 heures sont également ignorés.",
+          "alternative_ideas": [
+            "Tester l’assistance sur les seules questions de politique, sans toucher aux demandes nécessitant des données de commande en direct.",
+            "Utiliser les garde-fous pour bloquer les tentatives d’injection avant qu’elles n’atteignent le modèle.",
+            "Évaluer l’agent dans un environnement limité avant de l’appliquer à une boîte support active."
+          ],
+          "belief_shift": "Avant : essayer une IA dans la boîte support signifie risquer des réponses envoyées sans contrôle. Après : l’essai peut commencer avec une validation humaine systématique et des limites explicites.",
+          "evidence_ids": [
+            "E102",
+            "E104",
+            "E105"
+          ],
+          "must_not_say": [
+            "Ne pas promettre que l’agent répond correctement à toutes les demandes.",
+            "Ne pas présenter orqAgent comme capable de traiter le suivi de commande sans accès à des données opérationnelles en temps réel.",
+            "Ne pas affirmer que les responsables support utilisent tous une méthode entièrement manuelle.",
+            "Ne pas évoquer les tarifs Pro ou leurs limites contradictoires.",
+            "Ne pas prétendre que l’approbation humaine est une capacité exclusive à orqAgent.",
+            "Ne pas ajouter de témoignage, de logo client ou de résultat chiffré inexistant."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "Je ne peux pas laisser une IA répondre seule aux clients : une seule mauvaise promesse peut créer un problème plus grave que les tickets répétitifs.",
+          "tone": "Rassurant, précis et sobre ; décrire les réglages par défaut sans dramatiser le risque.",
+          "call_to_action": "Démarrer gratuitement pour configurer un premier agent avec validation humaine : https://app.orqagent.com/sign-up",
+          "subject_strategy": "Faire comprendre immédiatement que le responsable garde la main sur chaque réponse ; éviter les promesses générales sur l’automatisation ou le gain de temps.",
+          "must_not_reuse": []
+        },
+        {
+          "position": 2,
+          "job": "Obtenir la création d’un premier agent en ramenant l’évaluation à un test court sur un document réel.",
+          "single_idea": "Il n’est pas nécessaire de remplacer le processus support pour évaluer orqAgent : le lecteur peut créer un agent, lui confier un seul document de référence et tester ses propres questions gratuitement.",
+          "felt_need": "Une évaluation longue ou une migration complète est difficile à justifier quand l’équipe doit déjà traiter la boîte de réception.",
+          "status_quo": "Le responsable peut continuer à utiliser ses outils actuels et isoler une seule FAQ ou politique pour vérifier si les réponses produites sont utiles.",
+          "why_it_fails": "",
+          "mechanism": "La création d’un agent est annoncée en moins de deux minutes dans la console. Le document chargé sert de base de connaissances pour retrouver le contexte pertinent, et l’inscription fournit 1 500 crédits sans carte bancaire.",
+          "alternative_ideas": [
+            "Comparer plusieurs formulations de questions réelles dans le Playground avant tout déploiement.",
+            "Tester si l’agent retrouve les bons passages d’une politique en observant l’usage de la base de connaissances.",
+            "Commencer par une catégorie de demandes stable, comme les retours ou les conditions de livraison, plutôt que par toute la boîte support."
+          ],
+          "belief_shift": "Avant : évaluer le produit suppose un projet de migration ou une intégration lourde. Après : un agent sur un document et quelques questions réelles suffisent pour décider si l’essai mérite d’aller plus loin.",
+          "evidence_ids": [
+            "E130",
+            "E11",
+            "E1"
+          ],
+          "must_not_say": [
+            "Ne pas promettre une migration complète en moins de deux minutes ; ce délai concerne uniquement la création du premier agent.",
+            "Ne pas garantir l’exactitude des réponses ou la qualité de la récupération documentaire.",
+            "Ne pas prétendre que le test ne consomme aucun crédit.",
+            "Ne pas citer de nombre d’exécutions mensuelles ou de limite de plan, les sources étant contradictoires.",
+            "Ne pas suggérer de remplacer immédiatement le helpdesk ou le processus existant.",
+            "Ne pas reprendre l’argument de la file d’approbation, des anciens messages ou des expéditeurs automatisés de l’email 1."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "Je n’ai pas une semaine à consacrer à l’évaluation d’un nouvel outil ni envie de déplacer tout le processus support pour le tester.",
+          "tone": "Pragmatique et légèrement plus direct ; proposer une expérience limitée plutôt qu’un engagement.",
+          "call_to_action": "Créer gratuitement un premier agent sur un document réel : https://app.orqagent.com/sign-up",
+          "subject_strategy": "Présenter un test très circonscrit et concret — un agent, un document, quelques questions — sans faire du mot « gratuit » l’unique argument.",
+          "must_not_reuse": [
+            "Vous pouvez commencer par faire rédiger les réponses par l’agent tout en conservant la décision finale : l’envoi automatique est désactivé par défaut et chaque brouillon peut être relu, modifié, envoyé ou ignoré."
+          ]
+        }
+      ],
+      "voice_notes": "Écrire en français professionnel, concret et naturel. Employer « vous », des phrases courtes et les termes « agent », « base de connaissances », « brouillon » et « validation ». Éviter le jargon API, les superlatifs, les scénarios catastrophes et les mots « révolutionnaire », « solution » ou « game-changing ».",
+      "contract": {
+        "kind": "email_sequence",
+        "count": 2,
+        "count_is_explicit": true,
+        "evidence": "2 emails"
+      }
+    },
+    "knowledge_version": 5,
+    "recommendation_at_generation": {
+      "campaign_id": "c800b083-81be-4067-bda1-b47c44f56676",
+      "readiness": "DISCOVERY_ONLY",
+      "recommendation": {
+        "state": "DISCOVERY_ONLY",
+        "readiness": "DISCOVERY_ONLY",
+        "reasons": [
+          "No current V2 recommendation establishes product-to-audience fit."
+        ],
+        "eligible_subsegment": "",
+        "qualified_companies": [],
+        "adjacent_companies": [],
+        "excluded_companies": [],
+        "unverified_companies": [],
+        "allowed_claims": [],
+        "allowed_evidence_ids": [],
+        "forbidden_claims": [],
+        "forbidden_capability_ids": [],
+        "forbidden_evidence_ids": [],
+        "unresolved_objections": [],
+        "recommended_next_action": "Build or rebuild the Relevance Dossier V2, or generate explicitly as an audience-level hypothesis.",
+        "override_risk": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+        "claim_contract": null
+      },
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No current V2 recommendation establishes product-to-audience fit."
+      ],
+      "override_required": true,
+      "can_generate": true,
+      "user_message": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+      "override_explicit": true
+    },
+    "generated_despite_recommendation": true,
+    "intelligence": {
+      "selected_audience": "Support lead who answers the same forty tickets and has to sell the idea upward",
+      "audience_resolution_status": "audience_research_missing",
+      "audience_research_id": null,
+      "audience_research_version": null,
+      "dossier_status": "missing",
+      "dossier_id": null,
+      "dossier_version": null,
+      "dossier_schema_version": 1,
+      "stale_reasons": [],
+      "legacy_fallback_used": true,
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [],
+      "validation_warnings": []
+    }
+  }
+}

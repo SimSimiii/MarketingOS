@@ -17,7 +17,12 @@ dependencies = [
     "pyjwt>=2.9.0",
     # Lets the same ASGI app answer an API Gateway event without a change.
     "mangum>=0.19.0",
-    "claude-agent-sdk>=0.2.128",
+    # The metered HTTP clients, and the reason `claude-agent-sdk` is no longer
+    # here: it bundles a ~210 MB CLI binary, which is dead weight on any host
+    # that bills per token and is on its own enough to push a Lambda bundle
+    # past the 250 MB unzipped limit. It moved to the `cli` extra below.
+    "anthropic>=0.69.0",
+    "openai>=1.68.0",
     "httpx>=0.27.0",
     "python-multipart>=0.0.12",
     "jinja2>=3.1.0",
@@ -32,10 +37,16 @@ dependencies = [
 
 [project.optional-dependencies]
 postgres = ["psycopg[binary]>=3.2.0"]
+#: Subscription billing. Needed only where `AI_BILLING=subscription` drives the
+#: `claude` CLI - a development machine with an authenticated $HOME. A host
+#: that bills per token never imports it; see app.ai.factory.
+cli = ["claude-agent-sdk>=0.2.128"]
 dev = [
     "pytest>=8.3.0",
     "pytest-asyncio>=0.24.0",
     "ruff>=0.7.0",
+    # The suite covers both billing modes, so it needs both sets of backends.
+    "claude-agent-sdk>=0.2.128",
 ]
 
 [tool.ruff]

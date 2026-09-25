@@ -1,0 +1,553 @@
+{
+  "id": "1283bf9c-517a-4228-9084-d6751a9244c6",
+  "campaign_id": "c800b083-81be-4067-bda1-b47c44f56676",
+  "status": "failed",
+  "error_message": "The model stopped answering and did not come back after several attempts. Everything finished before that point is below.",
+  "started_at": "2026-09-18T13:28:51.145782Z",
+  "completed_at": "2026-09-18T13:35:11.686106Z",
+  "created_at": "2026-09-18T13:28:51.145782Z",
+  "total_input_tokens": 288704,
+  "total_output_tokens": 93246,
+  "total_cache_read_tokens": 0,
+  "estimated_cost_usd": 3.7539,
+  "recommendation_snapshot": {
+    "campaign_id": "c800b083-81be-4067-bda1-b47c44f56676",
+    "readiness": "DISCOVERY_ONLY",
+    "recommendation": {
+      "state": "DISCOVERY_ONLY",
+      "readiness": "DISCOVERY_ONLY",
+      "reasons": [
+        "No current V2 recommendation establishes product-to-audience fit."
+      ],
+      "eligible_subsegment": "",
+      "qualified_companies": [],
+      "adjacent_companies": [],
+      "excluded_companies": [],
+      "unverified_companies": [],
+      "allowed_claims": [],
+      "allowed_evidence_ids": [],
+      "forbidden_claims": [],
+      "forbidden_capability_ids": [],
+      "forbidden_evidence_ids": [],
+      "unresolved_objections": [],
+      "recommended_next_action": "Build or rebuild the Relevance Dossier V2, or generate explicitly as an audience-level hypothesis.",
+      "override_risk": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+      "claim_contract": null
+    },
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No current V2 recommendation establishes product-to-audience fit."
+    ],
+    "override_required": true,
+    "can_generate": true,
+    "user_message": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+    "override_explicit": true
+  },
+  "generated_despite_recommendation": true,
+  "agent_executions": [
+    {
+      "id": "6f54eebe-1d42-4f0d-b891-431f784ab421",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 An agent can draft the repetitive replies without a single word reaching a customer unapproved — human validation is the default setting, not an option you have to remember to switch on.",
+          "#2 You can find out whether it actually answers your questions — on your own returns policy, in a browser, without a developer and without touching the live inbox."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-09-18T13:28:51.452513Z",
+      "completed_at": "2026-09-18T13:29:37.041430Z",
+      "model": "opus",
+      "input_tokens": 2,
+      "output_tokens": 8678,
+      "cache_creation_input_tokens": 45485,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.704747,
+      "duration_ms": 45468.77759999916,
+      "attempt": 1
+    },
+    {
+      "id": "a17f7c2a-25a8-4ae4-ab04-76be792abdee",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 4 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 4,
+        "ideas": [
+          "An agent can draft the repetitive replies without a single word reaching a customer unapproved — human validation is the default setting, not an option you have to remember to switch on.",
+          "The risk you are worried about is a configuration question, not a judgement question: what an agent may say can be bounded in advance — constrained to your uploaded documents, with a fixed response format and rules enforced on every run.",
+          "Start it on the part of the inbox where a mistake is cheap: let it draft only the policy and FAQ replies you already answer identically, and keep the hard third entirely human.",
+          "You do not have to give it your inbox to see what it would have written — the drafts it produces are the evaluation."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Aucune réponse ne part sans votre accord",
+          "Les réponses types ne décident pas à votre place",
+          "Rien ne part sans votre validation"
+        ],
+        "dropped": 1
+      },
+      "error_message": null,
+      "started_at": "2026-09-18T13:29:37.140554Z",
+      "completed_at": "2026-09-18T13:29:54.856878Z",
+      "model": "opus",
+      "input_tokens": 8,
+      "output_tokens": 13698,
+      "cache_creation_input_tokens": 62187,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 1.009858,
+      "duration_ms": 67859.02509999869,
+      "attempt": 1
+    },
+    {
+      "id": "bf71f586-be5c-4a40-a577-f779d17690dc",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 3 candidate(s) read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 3,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 7,
+        "scores": [
+          7,
+          7,
+          7
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-09-18T13:29:55.017816Z",
+      "completed_at": "2026-09-18T13:31:14.257424Z",
+      "model": "sonnet",
+      "input_tokens": 18,
+      "output_tokens": 29288,
+      "cache_creation_input_tokens": 55065,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.525007,
+      "duration_ms": 359087.49169999646,
+      "attempt": 1
+    },
+    {
+      "id": "406dc51d-40ed-472c-89be-aa2ed1c0d451",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · the two best candidates, read side by side",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "challenger_won": false
+      },
+      "error_message": null,
+      "started_at": "2026-09-18T13:31:14.268441Z",
+      "completed_at": "2026-09-18T13:31:20.190629Z",
+      "model": "sonnet",
+      "input_tokens": 8,
+      "output_tokens": 465,
+      "cache_creation_input_tokens": 16543,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.075044,
+      "duration_ms": 20585.93500000279,
+      "attempt": 1
+    },
+    {
+      "id": "61466f2b-7c21-4b1b-b816-639f930ff939",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise"
+      },
+      "error_message": null,
+      "started_at": "2026-09-18T13:31:20.214952Z",
+      "completed_at": "2026-09-18T13:31:42.745475Z",
+      "model": "opus",
+      "input_tokens": 2,
+      "output_tokens": 4381,
+      "cache_creation_input_tokens": 13949,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.259029,
+      "duration_ms": 22475.709199999983,
+      "attempt": 1
+    },
+    {
+      "id": "babc49d3-1398-4567-8eb9-b0a8f0e71582",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "C'est vous qui décidez ce qui part"
+      },
+      "error_message": null,
+      "started_at": "2026-09-18T13:31:42.761417Z",
+      "completed_at": "2026-09-18T13:32:00.827696Z",
+      "model": "opus",
+      "input_tokens": 2,
+      "output_tokens": 3676,
+      "cache_creation_input_tokens": 21916,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.327091,
+      "duration_ms": 18009.83450000058,
+      "attempt": 2
+    },
+    {
+      "id": "f54df0e1-af6f-42ca-9c4f-f45c9aa8718a",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-09-18T13:32:00.901842Z",
+      "completed_at": "2026-09-18T13:33:14.612996Z",
+      "model": "sonnet",
+      "input_tokens": 6,
+      "output_tokens": 14182,
+      "cache_creation_input_tokens": 18123,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.218271,
+      "duration_ms": 166005.72249999823,
+      "attempt": 2
+    },
+    {
+      "id": "93e25aa8-8663-41e2-9141-e35f00105d8b",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 8,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1 read against the version it would replace",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "challenger_won": false
+      },
+      "error_message": null,
+      "started_at": "2026-09-18T13:33:14.632761Z",
+      "completed_at": "2026-09-18T13:33:20.575343Z",
+      "model": "sonnet",
+      "input_tokens": 8,
+      "output_tokens": 508,
+      "cache_creation_input_tokens": 16239,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.074263,
+      "duration_ms": 21176.013299998885,
+      "attempt": 2
+    },
+    {
+      "id": "ccdba4f6-353b-4661-9b95-4915d7f98ebc",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 9,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · a different argument",
+        "position": 1,
+        "attempt": 3,
+        "idea": "You do not have to give it your inbox to see what it would have written — the drafts it produces are the evaluation."
+      },
+      "output_data": {
+        "subject": "Relier une boîte support sans répondre à l'archive"
+      },
+      "error_message": null,
+      "started_at": "2026-09-18T13:33:20.597904Z",
+      "completed_at": "2026-09-18T13:33:51.410058Z",
+      "model": "opus",
+      "input_tokens": 2,
+      "output_tokens": 6984,
+      "cache_creation_input_tokens": 16582,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.35261,
+      "duration_ms": 30754.426699997566,
+      "attempt": 3
+    },
+    {
+      "id": "8b0f8778-3d33-455a-a1a5-8808aaac4c71",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 10,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 3
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-09-18T13:33:51.489932Z",
+      "completed_at": "2026-09-18T13:35:04.596431Z",
+      "model": "sonnet",
+      "input_tokens": 6,
+      "output_tokens": 11264,
+      "cache_creation_input_tokens": 18381,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.190123,
+      "duration_ms": 136305.87560000276,
+      "attempt": 3
+    },
+    {
+      "id": "54a2d2f2-42bc-4f38-869c-3e7807cee3cf",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 11,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 2 read against the version it would replace",
+        "position": 1,
+        "attempt": 3
+      },
+      "output_data": {
+        "challenger_won": true
+      },
+      "error_message": null,
+      "started_at": "2026-09-18T13:35:04.608521Z",
+      "completed_at": "2026-09-18T13:35:09.904526Z",
+      "model": "sonnet",
+      "input_tokens": 2,
+      "output_tokens": 122,
+      "cache_creation_input_tokens": 4170,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.017904,
+      "duration_ms": 5263.6413000000175,
+      "attempt": 3
+    },
+    {
+      "id": "d70d8338-18cb-4ca3-b495-c3fc2de8048e",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 12,
+      "status": "failed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 3
+      },
+      "output_data": null,
+      "error_message": "RoutingProvider call failed after 1 attempt(s): Claude Code rate limit: You've hit your session limit · resets 8:20pm (Europe/Paris).",
+      "started_at": "2026-09-18T13:35:09.916128Z",
+      "completed_at": "2026-09-18T13:35:11.657217Z",
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.0,
+      "duration_ms": 0.0,
+      "attempt": 2
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "provider_unavailable",
+    "report": {
+      "request": "Rédige une séquence de exactement 2 emails en français pour présenter orqAgent à des responsables support qui ne l’ont pas encore acheté et les inviter à essayer le produit. Chaque email doit donner une raison différente de passer à l’action. Ton professionnel, concret et naturel.",
+      "delivered": 0,
+      "promised": 2,
+      "contract_violations": [
+        "the user asked for 2 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [
+        "No customer names, quotes or case studies found - the copy can describe the product but cannot prove anyone uses it"
+      ],
+      "what_would_help_most": "Which customers or quotes may we name?",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 5,
+      "notes": [
+        "The model stopped answering and did not come back after several attempts. Everything finished before that point is below."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "Read as an acquisition sequence, not onboarding: 2 emails in French to support leads who have never bought orqAgent, each giving a different reason to start a free trial. The chosen segment is the one marked for this campaign ('Support lead who answers the same forty tickets and has to sell the idea upward'), which is problem_aware, non-technical and has no developer — so the sequence opens on her documented fear of an unsupervised auto-reply, not on the product category. No verified research exists for this segment (audience_research_missing), so the reader is built from the compiled audience and discovery material, treated as audience-level hypotheses rather than facts about any individual recipient. The campaign's stated frame is 'Optimization — support inbox sequence', so both emails stay on the shared inbox, never on agents in general.",
+      "reader": "Selected audience: Support lead who answers the same forty tickets and has to sell the idea upward.\nSituation context (inferred; check applicability): The full-time support person at a 30-40 person company who answers where is my order and what is your return policy forty times a morning, has the answers in documents nobody outside the team reads, no developer to assign, and a genuine fear that an automated reply promises a refund the company does not offer.",
+      "reader_segment": "Support lead who answers the same forty tickets and has to sell the idea upward",
+      "promise": "You can put an AI agent on the repetitive part of your support inbox and stay the one who decides what is sent — with the safeguards as defaults, and a way to check its answers yourself before anything touches a customer.",
+      "orientation": "orqAgent is a no-code platform where you set up an assistant from a console — you give it your support documents, it drafts replies to incoming email, and by default those drafts wait for you to approve them.",
+      "arc": "Email 1 removes the reason she will not start: it names the fear (an automated reply promising a refund, or a connected inbox answering the archive) and answers it with defaults rather than promises — human approval is the out-of-the-box setting. Email 2 changes the size of the ask: she does not have to connect a live inbox or find a developer to find out whether it answers her questions correctly; she can upload her own policy document and test it in a browser, seeing per message whether the answer came from her document. Email 1 makes it safe to consider; email 2 makes it cheap to find out. Each stands alone.",
+      "sequence_rationale": "The decisive objection for this reader is not price, quality or breadth — all three are crowded ground where the field is ahead of us — it is control. So email 1 spends the strongest thing in the ledger (approval queue off-by-default, automated senders skipped, 24-hour cutoff) rather than saving it, because if that fear is unanswered nothing later gets read. Email 2 cannot repeat it, so it takes the second-largest blocker for a non-technical buyer — 'I have no developer, evaluating this is a project I cannot start' — and answers it with the console-and-Playground path plus the inspectable knowledge-base signal, which is also the one axis (visibility into what each run actually did) where the competitor read shows open ground. The reverse order fails: an invitation to test lands on someone who has already decided that any automation of her inbox is unacceptable. No plan limits are quoted anywhere in the sequence beyond the free-to-start fact, because the company's own pricing pages contradict each other on Pro and Free, and a number a reader can disprove costs more than it buys. Order-status / WISMO questions are deliberately excluded from both briefs: answering them needs live fulfilment data the evidence does not cover, and promising it would break on first contact. The single thing that would most change this campaign: which customers or quotes may we name? There is not one customer name, quote or usage figure in the entire material, so both emails argue from documented product defaults and from an invitation to test — never from anyone else's result.",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Get a support lead who considers inbox automation too risky to open a free account and look at the approval queue.",
+          "single_idea": "An agent can draft the repetitive replies without a single word reaching a customer unapproved — human validation is the default setting, not an option you have to remember to switch on.",
+          "felt_need": "Two-thirds of what lands in the shared inbox every morning is the same policy and returns questions, and I retype the answers myself before I can start my actual job. But one automated reply promising a refund we don't offer would cost more than the whole month it saves me.",
+          "status_quo": "Answering by hand, at audience level — possibly with canned replies in the helpdesk — copying answers that already exist in a returns policy or FAQ document.",
+          "why_it_fails": "Canned replies save keystrokes, not decisions: someone still has to read every message and pick the answer, so the cost stays proportional to the volume.",
+          "mechanism": "The agent drafts from the connected inbox, but auto-reply is off by default — the draft lands in an approval queue with status pending_approval, and you review, edit, then send or ignore. Two more defaults shrink the blast radius: senders that look automated (no-reply, mailer-daemon, postmaster) are skipped, and messages older than 24 hours are never touched, so connecting an inbox does not answer the archive.",
+          "alternative_ideas": [
+            "The risk you are worried about is a configuration question, not a judgement question: what an agent may say can be bounded in advance — constrained to your uploaded documents, with a fixed response format and rules enforced on every run.",
+            "Start it on the part of the inbox where a mistake is cheap: let it draft only the policy and FAQ replies you already answer identically, and keep the hard third entirely human.",
+            "You do not have to give it your inbox to see what it would have written — the drafts it produces are the evaluation."
+          ],
+          "belief_shift": "Before: automating the shared inbox means handing a machine the right to speak to my customers, and I would find out about the mistake from an angry customer. After: the machine's default is a draft that waits for me, and the two things I feared most — replying to the archive, replying to robots — are already off by design.",
+          "evidence_ids": [
+            "E102",
+            "E105",
+            "E104"
+          ],
+          "must_not_say": [
+            "Any plan limit, credit count or execution count — the company's own pricing pages contradict each other on Pro and Free; only $0/$29/$99 and the 1,500 signup credits are safe, and none of them belong in this email",
+            "Any promise about order status / 'où est ma commande' questions — answering those needs live tracking data the product evidence does not cover",
+            "Anything about the knowledge base, uploaded documents, citing sources or the Playground — email 2 owns that argument",
+            "Code, curl, API keys, JSON schemas, IMAP/SMTP ports, webhooks or endpoints — one code-shaped line loses this reader",
+            "Security, uptime, SOC 2, GDPR or encryption claims — she is not running a vendor security review at this stage, and the field is ahead of us on that axis",
+            "Any customer name, testimonial, logo or usage figure — none exist",
+            "Any quantified saving: no hours per week, no percentage of tickets deflected, no response-time figure",
+            "Do not claim the agent is accurate or that its drafts will be good — this email is about who decides, not about answer quality"
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "If I let an AI answer customers unsupervised, it will eventually promise something we don't offer, and that costs more than the time it saves.",
+          "tone": "Matter-of-fact and reassuring without being soft — the tone of someone reading you the default settings rather than selling you a vision.",
+          "call_to_action": "Démarrer gratuitement — create a free account and look at the approval queue before connecting anything (https://app.orqagent.com/sign-up)",
+          "subject_strategy": "Name the fear, not the product. The subject has to say 'nothing goes out without you' in her own terms, so that a problem-aware reader who has already dismissed inbox automation once reopens the question. No curiosity gap, no 'IA' as a headline word.",
+          "must_not_reuse": []
+        },
+        {
+          "position": 2,
+          "job": "Get a support lead with no developer to sign up and test the agent on her own support document in the Playground, without connecting an inbox.",
+          "single_idea": "You can find out whether it actually answers your questions — on your own returns policy, in a browser, without a developer and without touching the live inbox.",
+          "felt_need": "The answers are all in a PDF and a FAQ nobody outside the team reads. I have no developer to assign this to, so 'try an AI tool' has stayed on my list for months as something I cannot start.",
+          "status_quo": "The evaluation gets postponed: with no engineering time allocated and no obvious first step, the question of whether an AI could handle the repetitive part stays theoretical.",
+          "why_it_fails": "A question you cannot test stays an opinion. As long as trying it looks like a project that needs someone technical, it loses every week to the inbox itself.",
+          "mechanism": "You create the agent from the console — write what it should do, pick a model, no code — and upload your returns policy or shipping FAQ as a document. On each question the agent pulls the relevant passages from your documents automatically; there is no vector database to run. In the Playground you ask it your ten most frequent questions and a database icon appears on every message where it actually used your document, so you can see whether the answer came from your policy or from the model.",
+          "alternative_ideas": [
+            "Judge it on your ten most frequent questions, not on a demo: whoever wrote the policy is the only person who can tell whether the answer is right, and that person is you.",
+            "The evaluation costs you one document and twenty minutes, not a project plan and a developer's week.",
+            "What you are really testing is whether your own documents are good enough to answer from — and that is worth knowing either way."
+          ],
+          "belief_shift": "Before: to find out whether this works on my inbox I need a technical person and a project. After: I can answer that myself today, with one document and a browser, before anyone else is involved.",
+          "evidence_ids": [
+            "E11",
+            "E51",
+            "E130"
+          ],
+          "must_not_say": [
+            "Do not re-argue the approval queue, auto-reply defaults, the 24-hour rule or skipped automated senders — email 1 owns those",
+            "Do not promise retrieval quality: no claim that it will answer every question correctly, understand paraphrases, or match a human. The honest move is to invite the test, because nothing in the evidence measures retrieval quality",
+            "Do not extend the 'under 2 minutes' figure beyond creating an agent — it does not cover connecting an inbox, a full setup or a rollout",
+            "Any plan limit, credit count or execution count — the pricing tables contradict each other; 'gratuit, sans carte bancaire' is the only commercial fact this email may use",
+            "Any promise about order status / 'où est ma commande' — not supported",
+            "No code, curl, API keys, JSON, IMAP/SMTP ports or endpoint talk, even to say it is optional",
+            "Do not position this as replacing the helpdesk or migrating anything — the ask is one document beside what already exists",
+            "No customer names, quotes, logos or usage figures — none exist",
+            "Do not name or compare competitors, and do not raise speed, breadth, quality or security as axes"
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "It is sold as no-code, but everything I can find about it looks like it was written for developers — and I don't have one.",
+          "tone": "Practical and slightly brisk — an instruction for the next twenty minutes rather than an argument about the future.",
+          "call_to_action": "Démarrer gratuitement — create a free account, upload your returns policy and ask it your ten most frequent questions (https://app.orqagent.com/sign-up)",
+          "subject_strategy": "Make the test concrete and small in the subject line itself — one document, your own questions, no developer. The open has to feel like a task she can finish, not a product she has to evaluate.",
+          "must_not_reuse": [
+            "An agent can draft the repetitive replies without a single word reaching a customer unapproved — human validation is the default setting, not an option you have to remember to switch on."
+          ]
+        }
+      ],
+      "voice_notes": "French throughout, vouvoiement, professional and plain. Match the company's published rhythm: short declarative sentences, a claim followed by a literal follow-up, clauses appended after an em dash. Use their own words where they exist — agent, brouillon, file d'approbation, base de connaissances, Playground, crédits. No English jargon beyond that. Never 'solution', 'révolutionnaire', 'synergie', 'levier', 'game-changer'. No exclamation marks, no fake urgency, no signature from a named individual — the company speaks as 'nous'. Not a single line of code, curl command, JSON or port number: this reader reads a code block as 'this is not for me'.",
+      "contract": {
+        "kind": "email_sequence",
+        "count": 2,
+        "count_is_explicit": true,
+        "evidence": "2 emails"
+      }
+    },
+    "knowledge_version": 5,
+    "recommendation_at_generation": {
+      "campaign_id": "c800b083-81be-4067-bda1-b47c44f56676",
+      "readiness": "DISCOVERY_ONLY",
+      "recommendation": {
+        "state": "DISCOVERY_ONLY",
+        "readiness": "DISCOVERY_ONLY",
+        "reasons": [
+          "No current V2 recommendation establishes product-to-audience fit."
+        ],
+        "eligible_subsegment": "",
+        "qualified_companies": [],
+        "adjacent_companies": [],
+        "excluded_companies": [],
+        "unverified_companies": [],
+        "allowed_claims": [],
+        "allowed_evidence_ids": [],
+        "forbidden_claims": [],
+        "forbidden_capability_ids": [],
+        "forbidden_evidence_ids": [],
+        "unresolved_objections": [],
+        "recommended_next_action": "Build or rebuild the Relevance Dossier V2, or generate explicitly as an audience-level hypothesis.",
+        "override_risk": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+        "claim_contract": null
+      },
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No current V2 recommendation establishes product-to-audience fit."
+      ],
+      "override_required": true,
+      "can_generate": true,
+      "user_message": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+      "override_explicit": true
+    },
+    "generated_despite_recommendation": true,
+    "intelligence": {
+      "selected_audience": "Support lead who answers the same forty tickets and has to sell the idea upward",
+      "audience_resolution_status": "audience_research_missing",
+      "audience_research_id": null,
+      "audience_research_version": null,
+      "dossier_status": "missing",
+      "dossier_id": null,
+      "dossier_version": null,
+      "dossier_schema_version": 1,
+      "stale_reasons": [],
+      "legacy_fallback_used": true,
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [],
+      "validation_warnings": []
+    }
+  }
+}

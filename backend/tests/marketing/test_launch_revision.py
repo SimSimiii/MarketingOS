@@ -9,7 +9,13 @@ from pathlib import Path
 import pytest
 
 from app.evaluation.campaign_quality import CampaignQualityCase
-from app.knowledge.artifacts import AudienceModel, BusinessProfile, KnowledgeArtifacts, Segment
+from app.knowledge.artifacts import (
+    AudienceModel,
+    BusinessProfile,
+    KnowledgeArtifacts,
+    Objection,
+    Segment,
+)
 from app.knowledge.corpus import SourceCorpus
 from app.knowledge.ledger import Evidence, EvidenceIndex, EvidenceKind, EvidenceLedger
 from app.marketing.briefs import CampaignBrief, EmailBrief
@@ -144,7 +150,13 @@ async def test_strategy_biography_is_not_passed_to_the_writer(launch_material, o
 
 @pytest.mark.asyncio
 async def test_critic_gets_the_scaling_source_despite_reader_skepticism(observed, launch_material):
-    provider = RoleScriptedProvider({"conversion_critic": Critique(verdict="ship").model_dump_json()})
+    provider = RoleScriptedProvider(
+        {
+            "conversion_critic": Critique(
+                verdict="ship", failure_mode="none"
+            ).model_dump_json()
+        }
+    )
     await ConversionCritic(make_session(provider)).critique(
         email=observed.drafts[0].email, brief=EmailBrief(evidence_ids=["E22"]),
         campaign=CampaignBrief(), artifacts=launch_material, gates=GateReport(),
@@ -154,3 +166,26 @@ async def test_critic_gets_the_scaling_source_despite_reader_skepticism(observed
     assert '[E22]' in prompt
     assert launch_material.evidence.get("E22").verbatim in prompt
     assert "I do not believe it scales automatically." in prompt
+
+
+@pytest.mark.asyncio
+async def test_related_objection_does_not_restore_a_removed_recipient_history(
+    observed, launch_material,
+):
+    launch_material.audience.objections = [Objection(
+        objection="Internal tooling maintenance after the original builder leaves",
+        answer="Hosted document retrieval", evidence_ids=["E11"],
+    )]
+    provider = RoleScriptedProvider({"email_writer": envelope(observed.drafts[0].email)})
+    await EmailWriter(make_session(provider)).draft(
+        brief=EmailBrief(objection="Internal tooling maintenance"),
+        campaign=CampaignBrief(reader_segment=launch_material.audience.primary().name),
+        request=CampaignRequest(name="Launch", request="Announce the launch in one email"),
+        artifacts=launch_material, previous=[],
+    )
+    prompt = provider.requests_for("email_writer")[0].system_prompt
+    assert "original builder leaves" not in prompt
+    assert "Internal tooling maintenance" in prompt
+    assert "Hosted document retrieval" in prompt
+    assert "[E11]" in prompt
+    assert "inferred" in prompt

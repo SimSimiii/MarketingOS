@@ -28,6 +28,7 @@ env:
     ACCESS_TOKEN_TTL_MINUTES: "60"
     REFRESH_TOKEN_TTL_DAYS: "30"
     API_MEMORY_SIZE: "1024"
+    JOB_MEMORY_SIZE: "2048"
     S3_PREFIX: marketingos
 
 phases:
@@ -45,7 +46,7 @@ phases:
       # The application makes the same check at startup, but failing here costs
       # a build instead of a rollback.
       - |
-        for VAR in SAM_STACK_NAME DATABASE_URL JWT_SECRET PASSWORD_PEPPER CORS_ORIGINS; do
+        for VAR in SAM_STACK_NAME SAM_ARTIFACT_BUCKET DATABASE_URL JWT_SECRET PASSWORD_PEPPER CORS_ORIGINS; do
           if [ -z "$(eval echo \$$VAR)" ]; then
             echo "ERROR: $VAR is not set on this CodeBuild project." && exit 1
           fi
@@ -61,7 +62,11 @@ phases:
       - pip install --require-hashes -r requirements.lock
       - pip install --no-deps -e .
       - python -m ruff check app tests scripts
-      - python -m pytest tests -q
+      # With the project's environment stripped. This build carries
+      # AUTH_REQUIRED=true, APP_ENV=production and the production DATABASE_URL
+      # and signing secrets; the suite assumes single-user mode and a scratch
+      # database, and has no business seeing any of those.
+      - env -i PATH="$PATH" HOME="$HOME" LANG=C.UTF-8 python -m pytest tests -q
       - python scripts/export_api_types.py --check
       - python scripts/check_migrations.py
 

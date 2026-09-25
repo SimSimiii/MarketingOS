@@ -52,6 +52,21 @@ async def improve(provider: RoleScriptedProvider, variants: int = 4, screen=None
 
 
 @pytest.mark.asyncio
+async def test_subject_writer_receives_audience_evidence_and_brief_exclusions():
+    provider = RoleScriptedProvider({"subject_lines": json.dumps({"options": []})})
+    await SubjectBakeOff(make_session(provider)).improve(
+        email=email(),
+        brief=EmailBrief(must_not_say=["Do not assume a previous bot deployment"]),
+        artifacts=artifacts_fixture(), personas=PERSONAS, variants=2,
+        audience_context="Considering a Slack assistant; no installed bot is established.",
+    )
+    prompt = provider.requests_for("subject_writer")[0].system_prompt
+    assert "Considering a Slack assistant; no installed bot is established." in prompt
+    assert "Do not assume a previous bot deployment" in prompt
+    assert len(provider.requests) == 1
+
+
+@pytest.mark.asyncio
 async def test_the_line_it_already_had_is_in_the_running():
     """Without the incumbent in the field the bake-off can only replace the
     subject, never keep it - so four weak alternatives would evict a strong

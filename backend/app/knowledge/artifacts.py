@@ -549,12 +549,12 @@ class KnowledgeArtifacts(BaseModel):
         )
 
     def objection_detail(self, objection: str) -> str:
-        """The full entry for an objection a brief named, with what answers it.
+        """The selected concern, with a related answer kept separate from it.
 
         The brief carries the objection as one line of text. That line says
         what the reader's doubt is and nothing about what in the material
-        resolves it - so a writer told to "answer the no" has been told the
-        no and not the answer, and writes around it.
+        resolves it. Matching may recover an answer from a broader objection,
+        but must not substitute that objection's recipient history for the brief.
         """
         if not objection:
             return "This email was assigned no particular objection to answer."
@@ -571,7 +571,14 @@ class KnowledgeArtifacts(BaseModel):
                 "    Nothing in the audience model matches this objection, so nothing here "
                 "tells you what answers it - answer it from the evidence or leave it alone."
             )
-        return best.render()
+        ids = f" [{', '.join(best.evidence_ids)}]" if best.evidence_ids else ""
+        return (
+            f"Selected concern (check against the selected audience): {objection}\n"
+            f"    Possible answer from the broader audience model ({best.grounding}): "
+            f"{best.answer or 'nothing in the material answers this yet'}{ids}\n"
+            "    This related answer is not evidence of this recipient's situation. "
+            "Use it only where the selected audience and licensed product evidence support it."
+        )
 
     @property
     def is_empty(self) -> bool:

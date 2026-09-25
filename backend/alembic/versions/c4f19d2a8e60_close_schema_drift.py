@@ -71,6 +71,9 @@ _MISSING_INDEXES = [
 ]
 
 
+_CAMPAIGN_STATUS = sa.Enum("ACTIVE", "ARCHIVED", name="campaignstatus")
+
+
 def upgrade() -> None:
     for table, column, column_type, default in _MISSING_COLUMNS:
         if column in _columns(table):
@@ -83,12 +86,18 @@ def upgrade() -> None:
     # `status` is the one enum in the set. SQLAlchemy stores a Python enum by
     # member *name*, so the stored value is "ACTIVE" rather than "active" -
     # writing the value here would produce rows the ORM cannot load back.
+    #
+    # On Postgres the enum is a named type that has to exist before a column
+    # can use it - `add_column` does not create it, unlike `create_table`. On
+    # SQLite `create` is a no-op, which is why this went unnoticed until the
+    # chain first ran against RDS.
     if "status" not in _columns("campaign"):
+        _CAMPAIGN_STATUS.create(op.get_bind(), checkfirst=True)
         op.add_column(
             "campaign",
             sa.Column(
                 "status",
-                sa.Enum("ACTIVE", "ARCHIVED", name="campaignstatus"),
+                _CAMPAIGN_STATUS,
                 nullable=False,
                 server_default="ACTIVE",
             ),
@@ -105,6 +114,7 @@ def downgrade() -> None:
             op.drop_index(name, table_name=table)
     if "status" in _columns("campaign"):
         op.drop_column("campaign", "status")
+    _CAMPAIGN_STATUS.drop(op.get_bind(), checkfirst=True)
     for table, column, _, _default in reversed(_MISSING_COLUMNS):
         if column in _columns(table):
             op.drop_column(table, column)

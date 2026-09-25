@@ -53,7 +53,7 @@ async def test_candidates_argue_different_claims_when_the_brief_names_them(
         "strategist", campaign_brief(1, alternatives=[ALTERNATIVE, "a third claim entirely"])
     )
 
-    pipeline, _ = build(provider, bake_off_only(max_revisions=0))
+    pipeline, _ = build(provider, bake_off_only(max_revisions=0, draft_candidates=3))
     await pipeline.run(one_email(request_fixture))
 
     claims = writer_briefs(provider)
@@ -91,7 +91,7 @@ async def test_two_candidates_that_came_back_the_same_are_not_read_twice(
         email_draft(subject="A different line", body=_BODY_THREE),
     )
 
-    pipeline, _ = build(provider, bake_off_only(max_revisions=0))
+    pipeline, _ = build(provider, bake_off_only(max_revisions=0, draft_candidates=3))
     await pipeline.run(one_email(request_fixture))
 
     assert provider.calls_by_role["email_writer"] == 3, "all three were still written"
@@ -117,7 +117,7 @@ async def test_a_candidate_a_gate_already_vetoed_is_not_read_cold(
         email_draft(subject="The other one that reads clean", body=_BODY_THREE),
     )
 
-    pipeline, _ = build(provider, bake_off_only(max_revisions=0))
+    pipeline, _ = build(provider, bake_off_only(max_revisions=0, draft_candidates=3))
     result = await pipeline.run(one_email(request_fixture))
 
     assert provider.calls_by_role["email_writer"] == 3, "all three were still written"
@@ -148,7 +148,7 @@ async def test_candidates_that_all_broke_a_check_are_still_read(
         email_draft(subject="Act now, the third one", body=_BODY_BLOCKED_THREE),
     )
 
-    pipeline, _ = build(provider, bake_off_only(max_revisions=0))
+    pipeline, _ = build(provider, bake_off_only(max_revisions=0, draft_candidates=3))
     result = await pipeline.run(one_email(request_fixture))
 
     assert provider.calls_by_role["blind_reader"] == 3

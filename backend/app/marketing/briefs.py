@@ -17,6 +17,57 @@ from pydantic import BaseModel, Field
 from app.marketing.contract import DeliverableContract
 
 
+class ArgumentOption(BaseModel):
+    """One complete commercial bet for an email slot.
+
+    An alternative is useful only when everything that makes the claim true and
+    actionable moves with it. A bare replacement for ``single_idea`` leaves the
+    old evidence, objection and CTA attached to a new claim, which produces a
+    coherent sentence and an incoherent email.
+    """
+
+    single_idea: str = ""
+    felt_need: str = ""
+    status_quo: str = ""
+    why_it_fails: str = ""
+    mechanism: str = ""
+    belief_shift: str = ""
+    evidence_ids: list[str] = Field(default_factory=list)
+    must_not_say: list[str] = Field(default_factory=list)
+    objection: str = ""
+    call_to_action: str = ""
+    #: The buyer decision this action makes easier, what the destination or
+    #: action actually gives them, which ledger facts support that payoff, and
+    #: the boundary it does not validate.  Keeping these with the proposition
+    #: prevents a generic trial CTA from masquerading as an answer to a
+    #: platform-specific integration question.
+    next_step_decision: str = ""
+    next_step_value: str = ""
+    next_step_evidence_ids: list[str] = Field(default_factory=list)
+    next_step_limit: str = ""
+    subject_strategy: str = ""
+
+    def render(self) -> str:
+        evidence = ", ".join(self.evidence_ids) or "none assigned"
+        return (
+            f"Idea: {self.single_idea}\n"
+            f"Need: {self.felt_need or 'not established'}\n"
+            f"Current approach: {self.status_quo or 'not established'}\n"
+            f"Its supported limitation: {self.why_it_fails or 'not established'}\n"
+            f"Mechanism: {self.mechanism or 'not established'}\n"
+            f"Belief shift: {self.belief_shift or 'not specified'}\n"
+            f"Evidence: {evidence}\n"
+            f"Limits: {'; '.join(self.must_not_say) or 'none named'}\n"
+            f"Objection: {self.objection or 'none assigned'}\n"
+            f"CTA: {self.call_to_action or 'the single next step'}\n"
+            f"Decision the CTA enables: {self.next_step_decision or 'not established'}\n"
+            f"What the next step delivers: {self.next_step_value or 'not established'}\n"
+            f"Evidence for that payoff: {', '.join(self.next_step_evidence_ids) or 'none assigned'}\n"
+            f"What it does not validate: {self.next_step_limit or 'not established'}\n"
+            f"Subject approach: {self.subject_strategy or 'concrete, no clickbait'}"
+        )
+
+
 class EmailBrief(BaseModel):
     """One slot in the sequence, decided before any of it is written."""
 
@@ -82,6 +133,11 @@ class EmailBrief(BaseModel):
     #: These are what the bake-off actually varies, and what the loop pivots to
     #: when rewriting stops moving the copy.
     alternative_ideas: list[str] = Field(default_factory=list)
+    #: Fully specified alternatives for the bake-off and the one allowed pivot.
+    #: New briefs use this field. ``alternative_ideas`` remains readable for
+    #: historical stored briefs and scripted fixtures, but can only change the
+    #: claim because those records never carried the rest of the argument.
+    alternative_arguments: list[ArgumentOption] = Field(default_factory=list)
     #: What the reader believes before this email and what they believe after
     #: it. The field that says where an email belongs in a sequence: `job` is
     #: the outcome and `single_idea` is the claim, but neither says what has
@@ -108,9 +164,88 @@ class EmailBrief(BaseModel):
     tone: str = ""
     #: The single thing it asks for, taken from the offer sheet.
     call_to_action: str = ""
+    #: The explicit bridge from that action to the reader's decision. A CTA
+    #: can exist on the offer sheet and still be useless for this proposition.
+    next_step_decision: str = ""
+    next_step_value: str = ""
+    next_step_evidence_ids: list[str] = Field(default_factory=list)
+    next_step_limit: str = ""
     subject_strategy: str = ""
     #: Angles, proofs and opening moves already spent by earlier emails.
     must_not_reuse: list[str] = Field(default_factory=list)
+
+    def primary_argument(self) -> ArgumentOption:
+        return ArgumentOption(
+            single_idea=self.single_idea,
+            felt_need=self.felt_need,
+            status_quo=self.status_quo,
+            why_it_fails=self.why_it_fails,
+            mechanism=self.mechanism,
+            belief_shift=self.belief_shift,
+            evidence_ids=list(self.evidence_ids),
+            must_not_say=list(self.must_not_say),
+            objection=self.objection,
+            call_to_action=self.call_to_action,
+            next_step_decision=self.next_step_decision,
+            next_step_value=self.next_step_value,
+            next_step_evidence_ids=list(self.next_step_evidence_ids),
+            next_step_limit=self.next_step_limit,
+            subject_strategy=self.subject_strategy,
+        )
+
+    def with_argument(self, argument: ArgumentOption) -> "EmailBrief":
+        """Return this slot with one whole argument applied atomically."""
+        return self.model_copy(
+            update={
+                "single_idea": argument.single_idea,
+                "felt_need": argument.felt_need,
+                "status_quo": argument.status_quo,
+                "why_it_fails": argument.why_it_fails,
+                "mechanism": argument.mechanism,
+                "belief_shift": argument.belief_shift,
+                "evidence_ids": list(argument.evidence_ids),
+                # Safety and scope constraints from the slot remain binding;
+                # the alternative may narrow them further.
+                "must_not_say": list(dict.fromkeys([
+                    *self.must_not_say,
+                    *argument.must_not_say,
+                ])),
+                "objection": argument.objection,
+                "call_to_action": argument.call_to_action,
+                "next_step_decision": argument.next_step_decision,
+                "next_step_value": argument.next_step_value,
+                "next_step_evidence_ids": list(argument.next_step_evidence_ids),
+                "next_step_limit": argument.next_step_limit,
+                "subject_strategy": argument.subject_strategy,
+                # Keep the durable ledger intact while removing the previous
+                # proposition's proof from this candidate's prompt slice.
+                "forbidden_evidence_ids": list(
+                    dict.fromkeys(
+                        [
+                            *self.forbidden_evidence_ids,
+                            *(
+                                evidence_id
+                                for evidence_id in self.evidence_ids
+                                if evidence_id not in argument.evidence_ids
+                            ),
+                        ]
+                    )
+                ),
+            }
+        )
+
+    def argument_for(self, idea: str) -> ArgumentOption | None:
+        key = " ".join(idea.casefold().split())
+        if not key or key == " ".join(self.single_idea.casefold().split()):
+            return self.primary_argument()
+        return next(
+            (
+                item
+                for item in self.alternative_arguments
+                if " ".join(item.single_idea.casefold().split()) == key
+            ),
+            None,
+        )
 
     def render_argument(self) -> str:
         """The proposed argument, kept separate from audience evidence.
@@ -138,10 +273,9 @@ class EmailBrief(BaseModel):
         )
 
     def render(self) -> str:
-        # Deliberately without `alternative_ideas`. A writer shown the claims
-        # this email could have argued writes an email that gestures at all of
-        # them; the alternatives are for the loop to choose between, one draft
-        # at a time, and each draft is told about exactly one idea - its own.
+        # Deliberately without either alternative field. A writer shown the
+        # arguments this email could have used gestures at all of them; the
+        # alternatives belong to the loop, and each draft receives one only.
         return (
             f"Position: {self.position}\n"
             f"Its job: {self.job}\n"
@@ -153,6 +287,10 @@ class EmailBrief(BaseModel):
             f"The objection it answers: {self.objection or 'none assigned'}\n"
             f"Register: {self.tone or 'plain and direct'}\n"
             f"What it asks for: {self.call_to_action or 'the single next step'}\n"
+            f"Decision that step enables: {self.next_step_decision or 'not established'}\n"
+            f"What the step actually delivers: {self.next_step_value or 'not established'}\n"
+            f"Evidence for that payoff: {', '.join(self.next_step_evidence_ids) or 'none assigned'}\n"
+            f"What the step does not validate: {self.next_step_limit or 'not established'}\n"
             f"Subject approach: {self.subject_strategy or 'concrete, no clickbait'}\n"
             f"Do not reuse: {'; '.join(self.must_not_reuse) or 'nothing spent yet'}"
         )

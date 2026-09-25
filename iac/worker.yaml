@@ -1,0 +1,504 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: MarketingOS - the persistent worker that Lambda cannot be (ECS Fargate)
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  OPTIONAL, and the only stack here that costs money while idle. Deploy it
+#  when campaigns have to actually run; skip it and the product serves reads,
+#  auth and CRUD from Lambda and answers 503 to every job.
+#
+#  That 503 is not a bug and not a configuration mistake. It is
+#  `app/runtime/work_limits.py`:
+#
+#      if os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+#          raise WorkLimitError("Model jobs require a persistent worker; ...", 503)
+#
+#  Five entry points take that reservation, and they are exactly the five
+#  things this stack exists to host:
+#
+#      app/orchestration/execution_manager.py   campaign runs
+#      app/services/market_service.py           market research
+#      app/services/knowledge_compilation.py    corpus compilation
+#      app/services/linkedin_service.py         LinkedIn search / messages
+#      app/services/knowledge_service.py        ingestion that calls a model
+#
+#  Why a container and not a bigger Lambda: a run drives the `claude` and
+#  `codex` CLIs as subprocesses for minutes at a time, keeps its execution
+#  registry and SSE broker in memory, and has to survive longer than Lambda's
+#  15-minute ceiling. None of those are sizing problems.
+#
+#  ── DesiredCount is 1, and must stay 1 ──────────────────────────────────────
+#  Not a cost decision. `reap_orphaned_executions()` runs at startup and fails
+#  every execution still marked RUNNING, on the reasoning that the only process
+#  that could have owned it has died. A second replica starting up would
+#  therefore kill the first one's in-flight campaigns. The registry and the
+#  broker being process-local is the same constraint from the other side.
+#  Two workers needs Redis and worker-aware recovery first; see
+#  docs/deployment.md.
+#
+#  ── What it costs, monthly, eu-west-3, at idle ──────────────────────────────
+#      Fargate 0.5 vCPU / 1 GB, arm64, always on   ~$13
+#      Application Load Balancer                   ~$17
+#      Public IP on the task (IPv4 charge)          ~$4
+#                                                  ───────
+#                                                   ~$34
+#
+#  No NAT Gateway, deliberately: that is $32/month before a byte moves, and a
+#  Fargate task in a public subnet with a public IP reaches the internet for
+#  free. The task is not *reachable* from the internet - its security group
+#  takes inbound from the load balancer only - and "public subnet" here means
+#  a route to the gateway, not an open door.
+# ─────────────────────────────────────────────────────────────────────────────
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+
+  # ── From the database stack's outputs ───────────────────────────────────────
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: The VpcId output of iac/database.yaml.
+  DatabaseSecurityGroupId:
+    Type: AWS::EC2::SecurityGroup::Id
+    Description: >-
+      The DatabaseSecurityGroupId output of iac/database.yaml. This stack adds
+      one ingress rule to it, so the worker can reach Postgres without
+      database.yaml having to know the worker exists.
+
+  PublicSubnetCidrA:
+    Type: String
+    Default: 10.42.11.0/24
+    Description: >-
+      Must not overlap the private subnets database.yaml created (10.42.1.0/24
+      and 10.42.2.0/24).
+  PublicSubnetCidrB:
+    Type: String
+    Default: 10.42.12.0/24
+
+  # ── The image ───────────────────────────────────────────────────────────────
+  ImageUri:
+    Type: String
+    Description: >-
+      Full ECR image URI including the tag, e.g.
+      123456789012.dkr.ecr.eu-west-3.amazonaws.com/marketingos-worker-prod:latest.
+      Built from backend/Dockerfile - see the runbook in iac/README.md.
+
+  # ── Sizing ──────────────────────────────────────────────────────────────────
+  TaskCpu:
+    Type: String
+    Default: "512"
+    AllowedValues: ["256", "512", "1024", "2048", "4096"]
+    Description: >-
+      CPU units; 1024 = 1 vCPU. The worker spends most of a run waiting on a
+      subprocess that is waiting on a model, so this is not the bottleneck -
+      but 256 is too little to run the CLIs and the app beside each other.
+  TaskMemory:
+    Type: String
+    Default: "1024"
+    AllowedValues: ["512", "1024", "2048", "3072", "4096", "8192"]
+
+  # ── Application configuration ───────────────────────────────────────────────
+  CorsOrigins:
+    Type: String
+    Default: "http://localhost:3000"
+  AllowPublicSignup:
+    Type: String
+    Default: "false"
+    AllowedValues: ["true", "false"]
+  LogLevel:
+    Type: String
+    Default: INFO
+    AllowedValues: [DEBUG, INFO, WARNING, ERROR]
+  LogRetentionDays:
+    Type: Number
+    Default: 30
+    AllowedValues: [1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365]
+
+  CertificateArn:
+    Type: String
+    Default: ""
+    Description: >-
+      ACM certificate in THIS region (unlike CloudFront's, which must be in
+      us-east-1). Blank serves plain HTTP on port 80, which is acceptable only
+      while the console in front of it is the sole caller and the deployment is
+      a test.
+
+Conditions:
+  HasCertificate: !Not [!Equals [!Ref CertificateArn, ""]]
+
+Resources:
+
+  # ═══ Egress path ════════════════════════════════════════════════════════════
+  # The private subnets in database.yaml have no route off the VPC. The worker
+  # needs one: the CLIs call Anthropic and OpenAI, and app/market fetches the
+  # open web. These two subnets provide it without a NAT Gateway.
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub 'marketingos-igw-${Environment}'
+
+  GatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VpcId
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      CidrBlock: !Ref PublicSubnetCidrA
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub 'marketingos-public-a-${Environment}'
+
+  PublicSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      CidrBlock: !Ref PublicSubnetCidrB
+      AvailabilityZone: !Select [1, !GetAZs ""]
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub 'marketingos-public-b-${Environment}'
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VpcId
+
+  DefaultRoute:
+    Type: AWS::EC2::Route
+    DependsOn: GatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetARouteAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetA
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicSubnetBRouteAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetB
+      RouteTableId: !Ref PublicRouteTable
+
+  # ═══ Security groups ════════════════════════════════════════════════════════
+
+  LoadBalancerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: MarketingOS worker load balancer
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: !If [HasCertificate, 443, 80]
+          ToPort: !If [HasCertificate, 443, 80]
+          CidrIp: 0.0.0.0/0
+          Description: Viewers
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 8000
+          ToPort: 8000
+          CidrIp: 0.0.0.0/0
+          Description: To the worker task
+
+  WorkerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: MarketingOS worker task
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 8000
+          ToPort: 8000
+          SourceSecurityGroupId: !Ref LoadBalancerSecurityGroup
+          Description: >-
+            From the load balancer and nothing else. The task has a public IP
+            for egress; this is what stops that being an inbound door.
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+          Description: Postgres, ECR, CloudWatch, and the model vendors' APIs
+
+  # Added here rather than in database.yaml, so the database stack does not
+  # have to be edited (and its RDS instance re-evaluated) to let an optional
+  # stack in.
+  DatabaseIngressFromWorker:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref DatabaseSecurityGroupId
+      IpProtocol: tcp
+      FromPort: 5432
+      ToPort: 5432
+      SourceSecurityGroupId: !Ref WorkerSecurityGroup
+      Description: Postgres from the MarketingOS worker
+
+  # ═══ Load balancer ══════════════════════════════════════════════════════════
+
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub 'marketingos-worker-${Environment}'
+      Type: application
+      Scheme: internet-facing
+      SecurityGroups: [!Ref LoadBalancerSecurityGroup]
+      Subnets: [!Ref PublicSubnetA, !Ref PublicSubnetB]
+      LoadBalancerAttributes:
+        # A campaign run can hold a request open for minutes. The default 60
+        # seconds would cut the response off and leave the console showing a
+        # gateway error over a run that is still going.
+        - Key: idle_timeout.timeout_seconds
+          Value: "300"
+
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub 'marketingos-worker-${Environment}'
+      VpcId: !Ref VpcId
+      Port: 8000
+      Protocol: HTTP
+      TargetType: ip
+      HealthCheckPath: /api/health
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 10
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
+      TargetGroupAttributes:
+        # Time for an in-flight run to finish rather than being cut mid-call.
+        - Key: deregistration_delay.timeout_seconds
+          Value: "60"
+
+  HttpListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: !If [HasCertificate, 443, 80]
+      Protocol: !If [HasCertificate, HTTPS, HTTP]
+      Certificates: !If
+        - HasCertificate
+        - [{ CertificateArn: !Ref CertificateArn }]
+        - !Ref 'AWS::NoValue'
+      SslPolicy: !If [HasCertificate, ELBSecurityPolicy-TLS13-1-2-2021-06, !Ref 'AWS::NoValue']
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
+
+  # ═══ ECS ════════════════════════════════════════════════════════════════════
+
+  Cluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub 'marketingos-${Environment}'
+      ClusterSettings:
+        - Name: containerInsights
+          Value: disabled  # ~$3/month per task for metrics nobody reads yet.
+
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      LogGroupName: !Sub '/ecs/marketingos-worker-${Environment}'
+      RetentionInDays: !Ref LogRetentionDays
+
+  # Pulls the image and resolves the secrets. This is the role ECS itself uses
+  # before the container starts, which is why the secret grants live here and
+  # not on the task role.
+  ExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'marketingos-worker-exec-${Environment}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: ecs-tasks.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies:
+        - PolicyName: read-own-secrets
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: secretsmanager:GetSecretValue
+                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:marketingos/${Environment}/*'
+
+  # What the application itself may do, which is almost nothing: it talks to
+  # Postgres over the network and to two CLIs over stdin. No bucket, no queue,
+  # no other AWS API.
+  TaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'marketingos-worker-task-${Environment}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: ecs-tasks.amazonaws.com }
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: exec-into-the-container
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              # ECS Exec. This is how the operator authenticates the `claude`
+              # and `codex` CLIs the first time: there is no way to script an
+              # OAuth device flow, so somebody opens a shell in the running
+              # container and signs in. See the runbook.
+              - Effect: Allow
+                Action:
+                  - ssmmessages:CreateControlChannel
+                  - ssmmessages:CreateDataChannel
+                  - ssmmessages:OpenControlChannel
+                  - ssmmessages:OpenDataChannel
+                Resource: '*'
+
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub 'marketingos-worker-${Environment}'
+      Cpu: !Ref TaskCpu
+      Memory: !Ref TaskMemory
+      NetworkMode: awsvpc
+      RequiresCompatibilities: [FARGATE]
+      RuntimePlatform:
+        CpuArchitecture: ARM64  # ~20% cheaper per hour, same code.
+        OperatingSystemFamily: LINUX
+      ExecutionRoleArn: !GetAtt ExecutionRole.Arn
+      TaskRoleArn: !GetAtt TaskRole.Arn
+      Volumes:
+        # The CLIs write their OAuth credentials under $HOME. A writable volume
+        # is what lets a sign-in inside the container survive until the task is
+        # replaced - and no longer, which is the limitation the runbook is
+        # honest about.
+        - Name: home
+      ContainerDefinitions:
+        - Name: worker
+          Image: !Ref ImageUri
+          Essential: true
+          PortMappings:
+            - ContainerPort: 8000
+              Protocol: tcp
+          MountPoints:
+            - SourceVolume: home
+              ContainerPath: /home/app
+          Environment:
+            - { Name: APP_ENV, Value: production }
+            - { Name: ENVIRONMENT, Value: !Ref Environment }
+            - { Name: LOG_LEVEL, Value: !Ref LogLevel }
+            - { Name: AUTH_REQUIRED, Value: "true" }
+            - { Name: ALLOW_PUBLIC_SIGNUP, Value: !Ref AllowPublicSignup }
+            - { Name: CORS_ORIGINS, Value: !Ref CorsOrigins }
+            - { Name: HOME, Value: /home/app }
+            # No ANTHROPIC_API_KEY and no OPENAI_API_KEY, and their absence is
+            # load-bearing rather than an omission. Both providers bill a
+            # subscription through their CLI; a visible API key makes the CLI
+            # switch to API-key billing and charge a card. `_clean_env()` strips
+            # the key defensively, and this is the other half of that: never
+            # put it in the environment to begin with.
+          Secrets:
+            - Name: DATABASE_URL
+              ValueFrom: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:marketingos/${Environment}/database-url'
+            - Name: JWT_SECRET
+              ValueFrom: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:marketingos/${Environment}/jwt-secret'
+            - Name: PASSWORD_PEPPER
+              ValueFrom: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:marketingos/${Environment}/password-pepper'
+          HealthCheck:
+            Command: ["CMD-SHELL", "curl -fsS http://localhost:8000/api/health || exit 1"]
+            Interval: 30
+            Timeout: 10
+            Retries: 3
+            StartPeriod: 60
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref LogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: worker
+
+  Service:
+    Type: AWS::ECS::Service
+    DependsOn: HttpListener
+    Properties:
+      ServiceName: !Sub 'marketingos-worker-${Environment}'
+      Cluster: !Ref Cluster
+      TaskDefinition: !Ref TaskDefinition
+      LaunchType: FARGATE
+      # One. See the header: a second replica's startup reaper would fail the
+      # first replica's running campaigns.
+      DesiredCount: 1
+      EnableExecuteCommand: true
+      DeploymentConfiguration:
+        # 100/0 rather than the rolling default: with DesiredCount 1, allowing
+        # 200% would briefly run two tasks, and the new one's
+        # reap_orphaned_executions() would fail every campaign the old one
+        # still had in flight. This deploys by stopping the old task first,
+        # which costs a short outage and is the correct trade here.
+        MaximumPercent: 100
+        MinimumHealthyPercent: 0
+        DeploymentCircuitBreaker:
+          Enable: true
+          Rollback: true
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          Subnets: [!Ref PublicSubnetA, !Ref PublicSubnetB]
+          SecurityGroups: [!Ref WorkerSecurityGroup]
+          # Required without a NAT: this is how the task reaches ECR to pull
+          # its own image, and the vendors' APIs afterwards.
+          AssignPublicIp: ENABLED
+      LoadBalancers:
+        - ContainerName: worker
+          ContainerPort: 8000
+          TargetGroupArn: !Ref TargetGroup
+      HealthCheckGracePeriodSeconds: 120
+
+  # The one alarm worth having: the service is meant to have exactly one task
+  # running at all times, so zero is the whole failure condition.
+  WorkerDownAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub 'marketingos-worker-down-${Environment}'
+      AlarmDescription: No healthy worker task - every campaign is failing.
+      Namespace: AWS/ApplicationELB
+      MetricName: HealthyHostCount
+      Dimensions:
+        - Name: TargetGroup
+          Value: !GetAtt TargetGroup.TargetGroupFullName
+        - Name: LoadBalancer
+          Value: !GetAtt LoadBalancer.LoadBalancerFullName
+      Statistic: Minimum
+      Period: 60
+      EvaluationPeriods: 3
+      Threshold: 1
+      ComparisonOperator: LessThanThreshold
+      TreatMissingData: breaching
+
+Outputs:
+  WorkerUrl:
+    Description: >-
+      Base URL of the worker. The console's NEXT_PUBLIC_API_URL is this plus
+      /api.
+    Value: !If
+      - HasCertificate
+      - !Sub 'https://${LoadBalancer.DNSName}'
+      - !Sub 'http://${LoadBalancer.DNSName}'
+  ClusterName:
+    Value: !Ref Cluster
+  ServiceName:
+    Value: !GetAtt Service.Name
+  LogGroupName:
+    Value: !Ref LogGroup

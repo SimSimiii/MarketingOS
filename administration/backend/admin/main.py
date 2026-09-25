@@ -13,6 +13,7 @@ cannot read it.
 from __future__ import annotations
 
 import logging
+import os
 
 from app.core.database import engine
 from fastapi import FastAPI, Request
@@ -99,7 +100,15 @@ def _lambda_handler():
         return _missing
     # lifespan="off": there is no startup work here, and Mangum's lifespan
     # emulation would run it on every cold start for nothing.
-    return Mangum(app, lifespan="off")
+    #
+    # An HTTP API on a named stage hands the function `/<stage>/...` as the
+    # path; the template sets API_GATEWAY_BASE_PATH to that stage so Mangum
+    # strips it before routing.
+    return Mangum(
+        app,
+        lifespan="off",
+        api_gateway_base_path=os.environ.get("API_GATEWAY_BASE_PATH", "/"),
+    )
 
 
 lambda_handler = _lambda_handler()

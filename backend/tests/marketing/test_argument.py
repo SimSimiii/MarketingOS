@@ -16,7 +16,7 @@ import json
 
 import pytest
 
-from app.marketing.briefs import CampaignBrief, EmailBrief
+from app.marketing.briefs import ArgumentOption, CampaignBrief, EmailBrief
 from app.marketing.request import CampaignRequest
 from tests.marketing.conftest import RoleScriptedProvider, campaign_brief
 from tests.marketing.test_choosing import one_email, writer_briefs
@@ -64,6 +64,36 @@ def test_the_orientation_is_what_the_reader_has_to_be_left_holding():
     )
     assert "What we are selling them, in one sentence" in brief.render()
     assert "Notewright writes the release note" in brief.render()
+
+
+def test_the_next_step_decision_contract_moves_with_the_argument():
+    alternative = ArgumentOption(
+        single_idea="Inspect one documented route",
+        call_to_action="Read the SMTP guide",
+        next_step_decision="Whether the documented SMTP route fits the auth platform",
+        next_step_value="The guide shows the supported SMTP connection method",
+        next_step_evidence_ids=["E2"],
+        next_step_limit="It does not validate production delivery or setup time",
+        evidence_ids=["E2"],
+    )
+
+    selected = EmailBrief(
+        single_idea="Try the API",
+        call_to_action="Create an account",
+        next_step_decision="Whether the API is understandable",
+        evidence_ids=["E1"],
+        next_step_evidence_ids=["E1"],
+    ).with_argument(alternative)
+
+    assert selected.call_to_action == "Read the SMTP guide"
+    assert selected.next_step_decision == alternative.next_step_decision
+    assert selected.next_step_value == alternative.next_step_value
+    assert selected.next_step_evidence_ids == ["E2"]
+    assert selected.next_step_limit == alternative.next_step_limit
+    assert selected.forbidden_evidence_ids == ["E1"]
+    rendered = selected.render()
+    assert "Decision that step enables" in rendered
+    assert "does not validate production delivery" in rendered
 
 
 @pytest.mark.asyncio

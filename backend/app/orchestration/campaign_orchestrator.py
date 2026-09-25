@@ -1,19 +1,22 @@
+import hashlib
 import logging
 import time
 from datetime import UTC, datetime
 from typing import Any
 from uuid import UUID
 
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from app.ai.base import AIProvider
 from app.ai.model_router import ModelRouter
 from app.ai.roles import WILDCARD_ROLE
 from app.core.config import PROMPTS_DIR
+from app.ingestion.documents import SourceType
 from app.knowledge.artifacts import KnowledgeArtifacts
 from app.knowledge.corpus import SourceCorpus
 from app.knowledge.store import ArtifactScope, ArtifactStore, StoredArtifacts, fingerprint_documents
 from app.market.demand import DemandMap
+from app.market.material_research import MaterialRecovery
 from app.market.positioning import PositioningMap
 from app.market.store import (
     MarketStore,
@@ -42,7 +45,13 @@ from app.marketing.pipeline import (
 )
 from app.marketing.policy import ExecutionPolicy, resolve_policy
 from app.marketing.reader import PanelRead
-from app.marketing.render_html import MAX_EMAIL_BYTES, BrandStyle, EmailTier, render_html
+from app.marketing.render_html import (
+    MAX_EMAIL_BYTES,
+    BrandStyle,
+    EmailTier,
+    render_html,
+    style_for_action,
+)
 from app.marketing.report import CampaignReport
 from app.marketing.request import CampaignRequest
 from app.marketing.sequence import SequenceReport
@@ -51,6 +60,7 @@ from app.models.campaign import Campaign
 from app.models.campaign_execution import CampaignExecution
 from app.models.enums import AssetType, ExecutionStatus, LogLevel
 from app.models.generated_asset import GeneratedAsset
+from app.models.knowledge_document import KnowledgeDocument
 from app.models.market import ProspectRow
 from app.orchestration.event_emitter import ExecutionEventEmitter
 from app.orchestration.live_broker import broker
@@ -60,6 +70,7 @@ from app.repositories.campaign_execution_repository import CampaignExecutionRepo
 from app.repositories.campaign_repository import CampaignRepository
 from app.repositories.execution_log_repository import ExecutionLogRepository
 from app.repositories.generated_asset_repository import GeneratedAssetRepository
+from app.repositories.knowledge_repository import KnowledgeDocumentRepository
 from app.runtime.events import (
     EventBus,
     ModelCallFinished,
@@ -97,6 +108,7 @@ ROLE_NAMES: dict[str, str] = {
     "preference_judge": "Side-by-Side Reader",
     "subject_writer": "Subject Lines",
     "inbox_scanner": "Inbox Glance",
+    "material_researcher": "Official Material Researcher",
 }
 
 
@@ -134,6 +146,63 @@ class _DbKnowledgeGateway(KnowledgeGateway):
 
     def save(self, artifacts: KnowledgeArtifacts, fingerprint: str) -> StoredArtifacts:
         return self._with_market(self._store.save(self._scope, artifacts, fingerprint))
+
+    def commit_recovered_material(
+        self, recovery: MaterialRecovery, artifacts: KnowledgeArtifacts
+    ) -> StoredArtifacts:
+        """File verified pages and the enriched ledger without another compile."""
+
+        repository = KnowledgeDocumentRepository(self._session)
+        enriched = artifacts.model_copy(deep=True)
+        by_hash = {
+            hashlib.sha256(document.content.encode("utf-8")).hexdigest(): document
+            for document in self._documents
+        }
+        persisted_ids: list[str] = []
+        source_documents: dict[str, str] = {}
+        for source in recovery.sources:
+            document = by_hash.get(source.content_hash)
+            if document is None:
+                document = repository.create(
+                    KnowledgeDocument(
+                        owner_id=self._campaign.owner_id,
+                        brand_id=self._scope.brand_id,
+                        campaign_id=self._scope.campaign_id,
+                        title=source.title or source.final_url,
+                        source_type=SourceType.WEBSITE,
+                        content=source.content,
+                        source_url=source.final_url,
+                        word_count=len(source.content.split()),
+                        document_metadata={
+                            "automatically_discovered": True,
+                            "recovered_for": recovery.gap,
+                            "content_hash": source.content_hash,
+                        },
+                    )
+                )
+                self._documents.append(document)
+                by_hash[source.content_hash] = document
+            document_id = str(document.id)
+            persisted_ids.append(document_id)
+            source_documents[source.final_url.rstrip("/").lower()] = document_id
+
+        enriched.source_document_ids = [
+            item for item in enriched.source_document_ids if not item.startswith("auto:")
+        ]
+        for document_id in persisted_ids:
+            if document_id not in enriched.source_document_ids:
+                enriched.source_document_ids.append(document_id)
+        for entry in enriched.evidence.entries:
+            if document_id := source_documents.get(entry.source.rstrip("/").lower()):
+                entry.document_id = document_id
+
+        self._corpus = self._store.corpus_for(self._scope)
+        stored = self._store.save(
+            self._scope,
+            enriched,
+            fingerprint_documents(self._documents),
+        )
+        return self._with_market(stored) or stored
 
     def positioning(self) -> PositioningMap | None:
         """The latest market scan for this brand, if there is one.
@@ -446,6 +515,14 @@ class _PersistenceObserver(RunObserver):
                         "status_quo": item.status_quo,
                         "why_it_fails": item.why_it_fails,
                         "mechanism": item.mechanism,
+                        "call_to_action": item.call_to_action,
+                        "next_step_decision": item.next_step_decision,
+                        "next_step_value": item.next_step_value,
+                        "next_step_evidence_ids": item.next_step_evidence_ids,
+                        "next_step_limit": item.next_step_limit,
+                        "alternative_arguments": [
+                            argument.model_dump() for argument in item.alternative_arguments
+                        ],
                     }
                     for item in brief.emails
                 ],
@@ -580,6 +657,8 @@ class _PersistenceObserver(RunObserver):
                 "position": position,
                 "attempt": attempt,
                 "verdict": critique.verdict,
+                "failure_mode": critique.failure_mode,
+                "strategy_gap": critique.strategy_gap,
                 "brief_drift": critique.brief_drift,
                 "unspent_evidence": critique.unspent_evidence,
                 "critique_summary": critique.summary,
@@ -864,14 +943,22 @@ class CampaignOrchestrator:
                     asset_type=AssetType.EMAIL,
                     title=email.subject,
                     content=render_email(email),
-                    content_html=_html_or_none(email, tier, brand),
+                    content_html=_html_or_none(email, tier, style_for_action(
+                        brand, explicit_url=campaign.cta_url,
+                        planned_action=outcome.selected_brief.call_to_action,
+                        offer=result.artifacts.offer if result.artifacts else None,
+                        licensed_urls=(
+                            [entry.source for entry in result.artifacts.evidence.entries]
+                            if result.artifacts else []
+                        ),
+                    )),
                     position=email.position,
                     asset_metadata={
                         **email.model_dump(mode="json"),
                         "pull": outcome.best.read.pull,
                         "revisions": len(outcome.versions) - 1,
-                        "single_idea": outcome.brief.single_idea,
-                        "evidence_ids": outcome.brief.evidence_ids,
+                        "single_idea": outcome.selected_brief.single_idea,
+                        "evidence_ids": outcome.selected_brief.evidence_ids,
                         "tier": tier.value,
                     },
                 )
@@ -1097,3 +1184,120 @@ def _bridge_runtime_events(events: EventBus, emitter: ExecutionEventEmitter) -> 
     events.subscribe(ModelCallStarted, on_model_call_started)
     events.subscribe(ModelCallRetried, on_model_call_retried)
     events.subscribe(ModelCallFinished, on_model_call_finished)
+
+
+# ───────────────────────────────────────────────── stepped execution ────────
+#
+#  A stepped run (see app.orchestration.stepped_runner) builds exactly the same
+#  pipeline as `CampaignOrchestrator.execute`, once per step, in a process that
+#  has never seen the run before. These two functions are that construction and
+#  that persistence, reachable without the orchestrator instance - so there is
+#  one definition of how a run is wired and not a second one that drifts.
+
+
+def build_stepped_pipeline(
+    session: Session,
+    campaign: Campaign,
+    execution: CampaignExecution,
+    ai_provider: AIProvider,
+) -> tuple[EmailCampaignPipeline, CampaignRequest, "_PersistenceObserver"]:
+    """The pipeline, the request and the observer for one step of a run.
+
+    No deadline is passed. A step is bounded by its own host - Lambda's 900
+    seconds - and the campaign-wide `max_duration_seconds` is meaningless to a
+    process that started thirty seconds ago and knows nothing of the four
+    invocations before it. Enforcing the campaign budget across steps is the
+    state machine's job, not this one's.
+    """
+    orchestrator = CampaignOrchestrator(session, ai_provider)
+    emitter = orchestrator._emitter_for(execution.id)
+    observer = _PersistenceObserver(orchestrator, execution, emitter)
+    policy = resolve_policy(
+        (campaign.policy or {}).get("preset"),
+        {k: v for k, v in (campaign.policy or {}).items() if k != "preset"} or None,
+    )
+    events = EventBus()
+    _bridge_runtime_events(events, emitter)
+
+    model_session = ModelSession(
+        provider=orchestrator._ai_provider,
+        prompt_engine=get_prompt_engine(PROMPTS_DIR),
+        events=events,
+        model_router=ModelRouter(_resolve_overrides(policy, campaign)),
+        execution_id=str(execution.id),
+        on_call=observer.record_call,
+    )
+    pipeline = EmailCampaignPipeline(
+        session=model_session,
+        knowledge=_DbKnowledgeGateway(session, campaign),
+        policy=policy,
+        observer=observer,
+        cancel_token=None,
+        deadline=None,
+    )
+    request = CampaignRequest(
+        name=campaign.name,
+        request=campaign.request,
+        product_description=campaign.product_description,
+        product_url=campaign.product_url,
+        target_market=campaign.target_market,
+        goals=campaign.goals,
+        sender_name=campaign.sender_name or "",
+        sender_role=campaign.sender_role or "",
+        channel=LinkedInChannel.model_validate(campaign.channel) if campaign.channel else None,
+    )
+    return pipeline, request, observer
+
+
+
+def rehydrate_writer_rows(
+    session: Session, execution: CampaignExecution, observer: "_PersistenceObserver"
+) -> None:
+    """Rebuild the position → writer-row map from the database.
+
+    `_persist_assets` needs an `agent_execution_id` for every deliverable, and
+    in an in-process run the observer collected those as the writer finished
+    each email. A stepped run's finish step is a different process with a fresh
+    observer that saw none of them - so without this every asset would have no
+    row to hang off and the run would hand over nothing.
+
+    The rows themselves are already in the database; each craft step wrote its
+    own. Only the in-memory index has to be rebuilt.
+    """
+    rows = session.exec(
+        select(AgentExecution)
+        .where(AgentExecution.campaign_execution_id == execution.id)
+        .where(AgentExecution.agent_id == "email_writer")
+        .order_by(AgentExecution.sequence_order)
+    ).all()
+    for row in rows:
+        position = (row.input_data or {}).get("position")
+        if position is not None:
+            observer.writer_rows[int(position)] = row.id
+
+def persist_stepped_result(
+    session: Session,
+    campaign: Campaign,
+    execution: CampaignExecution,
+    result: CampaignRunResult,
+    observer: "_PersistenceObserver",
+    ai_provider: AIProvider,
+) -> CampaignExecution:
+    """Close a stepped run exactly as `execute` closes an in-process one."""
+    orchestrator = CampaignOrchestrator(session, ai_provider)
+    emitter = orchestrator._emitter_for(execution.id)
+    emitter.current_step = None
+    orchestrator._persist_assets(campaign, execution, result, observer)
+    orchestrator._finalize(execution, result)
+    emitter.emit(
+        "execution_finished",
+        f"Campaign run finished: {result.status}",
+        data={
+            "status": execution.status.value,
+            "run_status": result.status,
+            "estimated_cost_usd": execution.estimated_cost_usd,
+            "delivered": result.deliverables,
+        },
+    )
+    broker.close(execution.id)
+    return orchestrator._usable_after_close(execution)

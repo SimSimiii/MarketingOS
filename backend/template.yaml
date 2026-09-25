@@ -91,6 +91,34 @@ Parameters:
     Default: INFO
     AllowedValues: [DEBUG, INFO, WARNING, ERROR]
 
+  JobMemorySize:
+    Type: Number
+    Default: 2048
+    MinValue: 512
+    MaxValue: 10240
+    Description: >-
+      The campaign steps hold the whole evidence ledger and several drafts in
+      memory while they work, and Lambda scales CPU with memory - a step that
+      spends four minutes waiting on a model should not also spend thirty
+      seconds parsing its own prompts.
+
+  AnthropicApiKey:
+    Type: String
+    NoEcho: true
+    Default: ""
+    Description: >-
+      Billed per token. The deliberate opposite of the CLI path, where
+      `_clean_env()` strips the key so a run bills the operator's subscription
+      instead - here there is no CLI, no $HOME to authenticate and no browser
+      for an OAuth flow, so a key is the only way a Lambda can call a model at
+      all. Empty leaves the campaign workflow unable to run.
+
+  OpenAiApiKey:
+    Type: String
+    NoEcho: true
+    Default: ""
+    Description: The same, for the GPT half of the catalog.
+
   # ── Networking ─────────────────────────────────────────────────────────────
   VpcSubnetIds:
     Type: CommaDelimitedList
@@ -140,6 +168,9 @@ Globals:
         ACCESS_TOKEN_TTL_MINUTES: !Ref AccessTokenTtlMinutes
         REFRESH_TOKEN_TTL_DAYS: !Ref RefreshTokenTtlDays
         CORS_ORIGINS: !Ref CorsOrigins
+        # The HTTP API's stage, which API Gateway leaves at the front of every
+        # path. lambda_handler.py strips it before FastAPI routes.
+        API_GATEWAY_BASE_PATH: !Sub '/${Environment}'
         # No ANTHROPIC_API_KEY, and that is load-bearing rather than an
         # oversight: both providers bill a subscription through their CLI, and
         # a visible API key makes the CLI switch to API-key billing and charge
@@ -237,6 +268,216 @@ Resources:
       LogGroupName: !Sub '/aws/lambda/marketingos-migrate-${Environment}'
       RetentionInDays: !Ref LogRetentionDays
 
+  # -- Campaign execution: three functions and a state machine -----------------
+  #
+  #  A campaign cannot run in one Lambda. `balanced` budgets itself 1200
+  #  seconds and `maximum` 2400, and Lambda stops at 900 - not a setting, a
+  #  ceiling. But one email is 10 to 35 model calls, roughly four minutes, so
+  #  the work fits once the unit is an email rather than a campaign.
+  #
+  #  Hence: plan once, craft N times, finish once, with Step Functions owning
+  #  the loop. Nothing but an execution id travels between the states; the run
+  #  itself lives in `campaignrunstate` and the artifacts in their own tables,
+  #  which is what keeps the payload far under the 256 KB state limit.
+  #
+  #  These three set JOB_HOST, which is what lets `work_limits` admit model
+  #  work on Lambda at all. The API function deliberately does not: it answers
+  #  a button press behind a 30-second gateway timeout, and accepting a whole
+  #  campaign there is how a run gets truncated with nothing recording where
+  #  it stopped.
+
+  PlanFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'marketingos-plan-${Environment}'
+      Description: Compiles knowledge and decides the campaign. One Strategist call.
+      CodeUri: ./
+      Handler: step_handlers.plan
+      MemorySize: !Ref JobMemorySize
+      Timeout: 900
+      VpcConfig: !If
+        - HasVpcConfig
+        - SubnetIds: !Ref VpcSubnetIds
+          SecurityGroupIds: !Ref VpcSecurityGroupIds
+        - !Ref AWS::NoValue
+      Environment:
+        Variables:
+          JOB_HOST: "true"
+          AI_BILLING: api
+          ANTHROPIC_API_KEY: !Ref AnthropicApiKey
+          OPENAI_API_KEY: !Ref OpenAiApiKey
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+
+  CraftFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'marketingos-craft-${Environment}'
+      Description: Writes one email. Invoked once per email by the state machine.
+      CodeUri: ./
+      Handler: step_handlers.craft
+      MemorySize: !Ref JobMemorySize
+      Timeout: 900
+      VpcConfig: !If
+        - HasVpcConfig
+        - SubnetIds: !Ref VpcSubnetIds
+          SecurityGroupIds: !Ref VpcSecurityGroupIds
+        - !Ref AWS::NoValue
+      Environment:
+        Variables:
+          JOB_HOST: "true"
+          AI_BILLING: api
+          ANTHROPIC_API_KEY: !Ref AnthropicApiKey
+          OPENAI_API_KEY: !Ref OpenAiApiKey
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+
+  FinishFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'marketingos-finish-${Environment}'
+      Description: Sequence pass, report, deliverables.
+      CodeUri: ./
+      Handler: step_handlers.finish
+      MemorySize: !Ref JobMemorySize
+      Timeout: 900
+      VpcConfig: !If
+        - HasVpcConfig
+        - SubnetIds: !Ref VpcSubnetIds
+          SecurityGroupIds: !Ref VpcSecurityGroupIds
+        - !Ref AWS::NoValue
+      Environment:
+        Variables:
+          JOB_HOST: "true"
+          AI_BILLING: api
+          ANTHROPIC_API_KEY: !Ref AnthropicApiKey
+          OPENAI_API_KEY: !Ref OpenAiApiKey
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+
+  PlanLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/marketingos-plan-${Environment}'
+      RetentionInDays: !Ref LogRetentionDays
+
+  CraftLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/marketingos-craft-${Environment}'
+      RetentionInDays: !Ref LogRetentionDays
+
+  FinishLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/marketingos-finish-${Environment}'
+      RetentionInDays: !Ref LogRetentionDays
+
+  CampaignWorkflow:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      Name: !Sub 'marketingos-campaign-${Environment}'
+      Type: STANDARD
+      Definition:
+        Comment: Plan once, craft once per email, finish once.
+        StartAt: Plan
+        States:
+          Plan:
+            Type: Task
+            Resource: !GetAtt PlanFunction.Arn
+            # Transient failures only. A ProviderCallError the provider
+            # classified as permanent - a bad key, a rejected parameter - fails
+            # identically every time, and retrying it spends the budget three
+            # times over to learn nothing.
+            Retry:
+              - ErrorEquals:
+                  - Lambda.ServiceException
+                  - Lambda.AWSLambdaException
+                  - Lambda.SdkClientException
+                  - Lambda.TooManyRequestsException
+                IntervalSeconds: 5
+                MaxAttempts: 3
+                BackoffRate: 2.0
+            Catch:
+              - ErrorEquals: [States.ALL]
+                Next: Failed
+            Next: MoreEmails
+
+          MoreEmails:
+            Type: Choice
+            # `more` comes from the run state's own cursor rather than a
+            # counter this state machine keeps, so a retried step that already
+            # advanced the cursor is read correctly instead of double-counted.
+            Choices:
+              - Variable: $.more
+                BooleanEquals: true
+                Next: CraftEmail
+            Default: Finish
+
+          CraftEmail:
+            Type: Task
+            Resource: !GetAtt CraftFunction.Arn
+            Retry:
+              - ErrorEquals:
+                  - Lambda.ServiceException
+                  - Lambda.AWSLambdaException
+                  - Lambda.SdkClientException
+                  - Lambda.TooManyRequestsException
+                IntervalSeconds: 5
+                MaxAttempts: 3
+                BackoffRate: 2.0
+              # A step that timed out may well have finished and failed to
+              # report it. Retrying is safe because `craft` is idempotent on
+              # position - it reads the cursor it already advanced.
+              - ErrorEquals: [States.Timeout]
+                IntervalSeconds: 10
+                MaxAttempts: 2
+                BackoffRate: 2.0
+            Catch:
+              - ErrorEquals: [States.ALL]
+                # Finish, not Failed. Emails already written are worth keeping,
+                # and the report says degraded rather than losing them.
+                # Degrade, never deadlock.
+                Next: Finish
+            Next: MoreEmails
+
+          Finish:
+            Type: Task
+            Resource: !GetAtt FinishFunction.Arn
+            Retry:
+              - ErrorEquals:
+                  - Lambda.ServiceException
+                  - Lambda.AWSLambdaException
+                  - Lambda.SdkClientException
+                  - Lambda.TooManyRequestsException
+                IntervalSeconds: 5
+                MaxAttempts: 3
+                BackoffRate: 2.0
+            Catch:
+              - ErrorEquals: [States.ALL]
+                Next: Failed
+            End: true
+
+          Failed:
+            Type: Fail
+            Cause: The campaign run could not be completed.
+      Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref PlanFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref CraftFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref FinishFunction
+
   # ── Alarms ──────────────────────────────────────────────────────────────────
   # Two alarms, no dashboard. With no users yet the question worth answering is
   # "is it broken", not "how is it trending", and an alarm nobody has wired to
@@ -287,3 +528,8 @@ Outputs:
   MigrateFunctionName:
     Description: Invoke this after every deploy that carries a migration.
     Value: !Ref MigrateFunction
+  CampaignWorkflowArn:
+    Description: >-
+      The campaign state machine. Start a run against an existing execution row
+      with an input of {"execution_id": "<uuid>"}.
+    Value: !Ref CampaignWorkflow

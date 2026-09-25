@@ -86,8 +86,8 @@ export function SettingsForm({ settings }: { settings: UserSettings }) {
               <Label htmlFor="ai_provider">AI provider</Label>
               <Input id="ai_provider" className="h-9" value={settings.default_ai_provider} disabled />
               <p className="text-xs leading-relaxed text-muted-foreground">
-                Only Claude is implemented in this MVP; other providers require a new AIProvider
-                implementation.
+                Campaign presets may route through Claude or GPT using the connected CLI
+                subscriptions.
               </p>
             </div>
 

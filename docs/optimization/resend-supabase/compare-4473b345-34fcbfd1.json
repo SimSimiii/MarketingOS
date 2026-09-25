@@ -1,0 +1,283 @@
+{
+  "before": {
+    "execution_id": "4473b345-5da5-465c-8152-312732d57607",
+    "status": "completed",
+    "error_message": null,
+    "started_at": "2026-09-20T22:08:10.612722Z",
+    "completed_at": "2026-09-20T22:16:19.452085Z",
+    "estimated_cost_usd": 9.4352,
+    "total_input_tokens": 904534,
+    "total_output_tokens": 48599,
+    "agent_calls": 10,
+    "report": {
+      "request": "Write exactly 1 email announcing the launch of this product to people who have not bought it yet - make the case for why it matters now and what to do next.\n\nTone of voice: Professional and polished - confident and credible, no slang or hype.",
+      "delivered": 1,
+      "promised": 1,
+      "contract_violations": [],
+      "emails": [
+        {
+          "position": 1,
+          "subject": "Test Resend without real recipients",
+          "single_idea": "Resend can be evaluated without risking messages to real recipients by using its documented test addresses to simulate delivered, bounced, and spam-complaint events.",
+          "pull": 6.0,
+          "revisions": 0,
+          "clean": true,
+          "landed": false,
+          "rewrites_stopped_helping": false,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "R3"
+          ],
+          "evidence_spent": [
+            "R3"
+          ],
+          "attributions": 26,
+          "unresolved": [
+            "Unresolved strategy/material gap: The signup destination and supplied evidence do not establish the prerequisites or effort for running a first simulated event—particularly whether domain verification, DNS changes, production routing, SDK integration, or webhook setup are required—so the reader cannot judge the cost of the trial before clicking."
+          ],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "Resend is a transactional email platform for developers, and its test addresses would let me exercise delivery, bounce, and complaint handling before connecting a production email route.",
+              "understood": true,
+              "situation_matches": null,
+              "relevance_feedback": "The profile explicitly establishes that I am the engineer who owns email on a small team, so safely testing transactional-email events is relevant. The email additionally presupposes that I am evaluating a provider or preparing a production route; neither is established, so whether this is timely is unknown.",
+              "assumed_experiences": [
+                "Profile-supported: I own email alongside other backend responsibilities on a small product team.",
+                "Email-only: I am currently evaluating an email provider.",
+                "Email-only: I am preparing to configure a new production transactional-email route.",
+                "Email-only: I need to test delivered, bounced, and complaint webhook events now."
+              ],
+              "problem_now": "Reliable authentication and notification email is important to my role, and an invisible failure would be costly, but the profile does not establish a current outage, launch deadline, provider migration, or active evaluation. This is a plausible operational risk rather than a documented problem today.",
+              "stopped_at": "",
+              "biggest_doubt": "I cannot tell whether trying the simulation requires an account, domain verification, DNS changes, or integration work, and I do not know that I need a new provider today.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me whether I could run one simulated event in under five minutes without changing DNS or routing production mail.",
+              "fixes": [
+                "Rewrite \"Resend is now available as an email sending platform for developers, connecting application-triggered messages through SMTP or official SDKs.\" as \"Resend sends transactional email from your application through SMTP or an SDK; these test addresses let you inspect its API, dashboard, and webhook events before connecting production mail.\"",
+                "Rewrite \"Get started →\" as a concrete, bounded CTA such as \"See the test-address setup steps →\", with the expected time and prerequisites stated nearby.",
+                "Cut \"PRODUCT LAUNCH\"; it reads like promotional labeling and adds nothing to the decision.",
+                "Rewrite \"A provider evaluation should not require sending test messages to real people.\" to avoid assuming an active evaluation: \"If you are comparing email providers, you can test delivery, bounce, and complaint events without messaging real recipients.\""
+              ],
+              "opens_in_100": 28,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (explicit constraints): The one backend engineer at a ten-person product team who owns email because nobody else does.\nContext (inferred; applicability must be checked): The single engineer at a small product team who shipped auth, billing and notifications and therefore inherited email; visible in auth-platform issue threads asking why confirmation mail stopped at four an hour, and in provider-choice threads where the criterion is 'start sending on day 0 once you verify your domain'\n\nProblem context: Platform-default mailers cap auth email at a rate that fails on the first real launch day, so sign-up silently breaks for some users (inferred); source: unknown\nProblem context: They are debugging a send they cannot see: the API returned success and the only signal is a user who bothered to complain (inferred); source: unknown\nProblem context: Every email interruption comes out of the same week as the roadmap, and there is nobody to hand it to (inferred); source: unknown\nProblem context: Choosing a provider means also learning DKIM, SPF and DMARC well enough to not get it wrong once (inferred); source: unknown",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "Resend is a transactional email platform for application-triggered messages, with test addresses that would let me inspect delivery, bounce, and complaint events before wiring up production email.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile explicitly establishes that I own email on a small team and have considered providers in terms of getting started after domain verification, so a bounded provider test is relevant. The email additionally presupposes that I am evaluating a provider now and want to test Dashboard, Webhooks, and API together; that timing and workflow are unknown, but the premise is appropriately conditional rather than asserted as my current situation.",
+              "assumed_experiences": [
+                "Profile-supported: I own email responsibilities because nobody else on the team does.",
+                "Profile-supported: provider selection and the ability to begin sending after domain verification are relevant concerns.",
+                "Email-only: I am currently evaluating a new email provider.",
+                "Email-only: I need to simulate delivered, bounced, and complaint events through a dashboard, webhooks, and API.",
+                "Email-only: I have enough time today to begin an unspecified setup flow."
+              ],
+              "problem_now": "Reliable transactional email and visibility into failures are documented responsibilities for this role, so the problem matters. Whether I am choosing a provider or need this test today is unknown; the email addresses a plausible risk, not an established current outage or deadline.",
+              "stopped_at": "",
+              "biggest_doubt": "I cannot tell how much setup the generic “Get started” step requires—account creation, domain verification, SDK integration, or webhook configuration—so I cannot judge whether this is useful enough for the time it will take today.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me whether I could run one complete delivered-or-bounced test in under five minutes without verifying a domain or configuring a production route.",
+              "fixes": [
+                "Rewrite “Resend is now available as an email sending platform for developers, connecting application-triggered messages through SMTP or official SDKs.” as “Resend sends transactional application email through SMTP or SDKs; these test addresses let you inspect its event path before deciding whether to configure production sending.”",
+                "Replace “Get started →” with a specific description of the next step and its prerequisites, such as whether the link opens a runnable test, documentation, or account setup.",
+                "Cut the “PRODUCT LAUNCH” label; it makes a focused testing tip look like a broad announcement in a crowded inbox."
+              ],
+              "opens_in_100": 28,
+              "clicks_in_100": 4,
+              "persona": "Selected audience (explicit constraints): The one backend engineer at a ten-person product team who owns email because nobody else does.\nContext (inferred; applicability must be checked): The single engineer at a small product team who shipped auth, billing and notifications and therefore inherited email; visible in auth-platform issue threads asking why confirmation mail stopped at four an hour, and in provider-choice threads where the criterion is 'start sending on day 0 once you verify your domain'\n\nProblem context: Platform-default mailers cap auth email at a rate that fails on the first real launch day, so sign-up silently breaks for some users (inferred); source: unknown\nProblem context: They are debugging a send they cannot see: the API returned success and the only signal is a user who bothered to complain (inferred); source: unknown\nProblem context: Every email interruption comes out of the same week as the roadmap, and there is nobody to hand it to (inferred); source: unknown\nProblem context: Choosing a provider means also learning DKIM, SPF and DMARC well enough to not get it wrong once (inferred); source: unknown\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "Resend is a transactional-email platform with SMTP and SDK integration, offering test addresses so I could inspect delivery, bounce, and complaint events before routing production email through it.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile explicitly establishes that I own email for a small product team and participate in provider-choice discussions, so a bounded provider test is relevant. The email additionally presupposes that I am evaluating a provider now and need event simulations; that timing is unknown. The inferred rate-limit, observability, roadmap, and DNS problems are plausible but are not established as current incidents.",
+              "assumed_experiences": [
+                "Profile-supported: I am the sole engineer responsible for email on a ten-person product team.",
+                "Profile-supported: I participate in provider-choice discussions where being able to send after domain verification matters.",
+                "Email-only: I am currently evaluating an email provider and want to test delivered, bounced, and complaint events.",
+                "Email-only: avoiding reputation impact while testing is a current concern.",
+                "Not established: I have an active outage, have been testing with real recipients, or am preparing an imminent production migration."
+              ],
+              "problem_now": "Email reliability and provider setup fall within my documented responsibilities, but no active evaluation, launch, or incident is established for this Tuesday. This is a plausible anticipated need rather than a proven problem I must solve before the meeting.",
+              "stopped_at": "",
+              "biggest_doubt": "I cannot tell whether the link leads straight to a runnable test or into an account, domain-verification, and integration setup flow, so I do not know what trying it will cost me today.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me exactly what setup is required before sending to the test addresses and whether the first event-path test can be completed in under five minutes.",
+              "fixes": [
+                "Cut \"PRODUCT LAUNCH\"; it makes a useful engineering test sound like a generic announcement.",
+                "Rewrite \"Resend is now available as an email sending platform for developers, connecting application-triggered messages through SMTP or official SDKs.\" as \"Resend is a transactional-email service you can connect through SMTP or an SDK.\"",
+                "Qualify or substantiate \"without affecting your domain reputation,\" because that assurance matters and the email provides no explanation for it.",
+                "Replace \"Get started →\" with \"See test setup and prerequisites →\" so I know the click will answer the setup-cost question rather than begin an unspecified onboarding flow."
+              ],
+              "opens_in_100": 27,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (explicit constraints): The one backend engineer at a ten-person product team who owns email because nobody else does.\nContext (inferred; applicability must be checked): The single engineer at a small product team who shipped auth, billing and notifications and therefore inherited email; visible in auth-platform issue threads asking why confirmation mail stopped at four an hour, and in provider-choice threads where the criterion is 'start sending on day 0 once you verify your domain'\n\nProblem context: Platform-default mailers cap auth email at a rate that fails on the first real launch day, so sign-up silently breaks for some users (inferred); source: unknown\nProblem context: They are debugging a send they cannot see: the API returned success and the only signal is a user who bothered to complain (inferred); source: unknown\nProblem context: Every email interruption comes out of the same week as the roadmap, and there is nobody to hand it to (inferred); source: unknown\nProblem context: Choosing a provider means also learning DKIM, SPF and DMARC well enough to not get it wrong once (inferred); source: unknown\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 6
+            }
+          ],
+          "sameness": []
+        }
+      ],
+      "limiting_gaps": [],
+      "what_would_help_most": "Resolve this simulated next-step obstacle: I would have clicked if this email had told me whether I could run one simulated event in under five minutes without changing DNS or routing production mail. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 4,
+      "notes": [],
+      "reads_expected": true
+    },
+    "assets": [
+      {
+        "title": "Test Resend without real recipients",
+        "content": "Subject: Test Resend without real recipients\nPreview text: Simulate delivery, bounce, and complaint events before configuring a production route.\n\nTest the email event path before production\n\nHi there,\n\nA provider evaluation should not require sending test messages to real people. Resend provides test addresses that simulate delivered, bounced, and spam-complaint events without affecting your domain reputation.\n\nResend is now available as an email sending platform for developers, connecting application-triggered messages through SMTP or official SDKs.\n\nSend to delivered@resend.dev, bounced@resend.dev, and complained@resend.dev. These simulations let you exercise Resend’s Dashboard, Webhooks, and API together before configuring a real transactional-email route.\n\nThe Free plan allows 100 transactional emails per day and 3,000 per month. Check that boundary against expected authentication and notification volume before investing setup time.\n\nThis test does not validate production deliverability, production volume, or your hosted authentication platform’s SMTP and rate-limit configuration. It gives you a bounded way to inspect the event path first.\n\nGet started →\n\n- the Resend team",
+        "content_html_length": 5835
+      }
+    ]
+  },
+  "after": {
+    "execution_id": "34fcbfd1-622b-430a-b06b-5c9ba0451ed8",
+    "status": "completed",
+    "error_message": null,
+    "started_at": "2026-09-20T22:21:56.522213Z",
+    "completed_at": "2026-09-20T22:32:31.312841Z",
+    "estimated_cost_usd": 10.8633,
+    "total_input_tokens": 936421,
+    "total_output_tokens": 72667,
+    "agent_calls": 11,
+    "report": {
+      "request": "Write exactly 1 email announcing the launch of this product to people who have not bought it yet - make the case for why it matters now and what to do next.\n\nTone of voice: Professional and polished - confident and credible, no slang or hype.",
+      "delivered": 1,
+      "promised": 1,
+      "contract_violations": [],
+      "emails": [
+        {
+          "position": 1,
+          "subject": "Send Supabase Auth email with Resend",
+          "single_idea": "Announce Resend as an available external SMTP option for Supabase Auth: the engineer can route account emails through Resend, choose a plan with known sending limits, and separately set Supabase's Auth rate limit for the volume they expect.",
+          "pull": 6.0,
+          "revisions": 0,
+          "clean": true,
+          "landed": false,
+          "rewrites_stopped_helping": false,
+          "read_reported": true,
+          "understood": true,
+          "relevant": false,
+          "evidence_assigned": [
+            "R6",
+            "R7",
+            "R8"
+          ],
+          "evidence_spent": [
+            "R6",
+            "R7",
+            "R8"
+          ],
+          "attributions": 27,
+          "unresolved": [
+            "Unresolved strategy/material gap: The draft only presents Resend as another set of sending limits; it does not establish the supported bridge from a conditional Supabase rate-limit or production-SMTP requirement to why reviewing a separate SMTP route is useful. Rebuild the argument around that distinction while explicitly limiting it to readers who use or evaluate Supabase Auth.",
+            "Unresolved audience mismatch: The profile establishes that I own email and auth on a small team, so reliable auth mail is relevant. However, the email's central premise is that we use Supabase Auth, which is not established. Whether its built-in mailer or custom-SMTP limit affects us is unknown."
+          ],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "Resend is an external SMTP email service I could connect to Supabase Auth to send account emails instead of using Supabase's built-in mailer, adding provider setup and separate sending limits to manage.",
+              "understood": true,
+              "situation_matches": null,
+              "relevance_feedback": "The profile establishes that I own email on a small team and care about auth-email limits and day-zero sending, so the subject and limit details are relevant. However, only the email presupposes that our product uses Supabase Auth or needs a new SMTP provider; the profile establishes neither, so actual fit is unknown.",
+              "assumed_experiences": [
+                "Profile-supported: I own email because nobody else on the team does.",
+                "Profile-supported: I have participated in auth-platform discussions about confirmation-email limits and provider selection.",
+                "Email-only: Our product uses Supabase Auth.",
+                "Email-only: We currently rely on Supabase's built-in mailer or are considering replacing it.",
+                "Email-only: Resend's stated limits and pricing suit our expected Auth-email volume."
+              ],
+              "problem_now": "Auth-email capacity and provider setup are credible responsibilities for this role, but the profile does not establish that we use Supabase, are approaching a launch, or need to change providers now. This is a plausible risk rather than a documented Tuesday-morning incident.",
+              "stopped_at": "",
+              "biggest_doubt": "I do not know whether this applies to our current auth stack, and the email gives me no evidence that switching would improve visibility or reliability beyond changing the sending limits.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me what delivery and debugging visibility Resend provides for a Supabase Auth message after the SMTP handoff.",
+              "fixes": [
+                "Rewrite \"Resend is now available as an external SMTP option for Supabase Auth\" to \"If you use Supabase Auth, Resend can send its confirmation, reset and other account emails over SMTP.\"",
+                "Rewrite \"Review the documented Supabase setup and current plan limits before signing up\" to name what the linked page contains and whether reviewing it requires an account.",
+                "After \"Supabase initially limits custom-SMTP Auth sending to 30 messages per hour,\" add a direct explanation that this limit belongs to Supabase and must be raised separately from the Resend plan limit.",
+                "Cut the repeated CTA sentence \"Compare both limits with the Auth-email volume you expect\" or fold it into the link label."
+              ],
+              "opens_in_100": 28,
+              "clicks_in_100": 4,
+              "persona": "Selected audience (explicit constraints): The one backend engineer at a ten-person product team who owns email because nobody else does.\nContext (inferred; applicability must be checked): The single engineer at a small product team who shipped auth, billing and notifications and therefore inherited email; visible in auth-platform issue threads asking why confirmation mail stopped at four an hour, and in provider-choice threads where the criterion is 'start sending on day 0 once you verify your domain'\n\nProblem context: Platform-default mailers cap auth email at a rate that fails on the first real launch day, so sign-up silently breaks for some users (inferred); source: unknown\nProblem context: They are debugging a send they cannot see: the API returned success and the only signal is a user who bothered to complain (inferred); source: unknown\nProblem context: Every email interruption comes out of the same week as the roadmap, and there is nobody to hand it to (inferred); source: unknown\nProblem context: Choosing a provider means also learning DKIM, SPF and DMARC well enough to not get it wrong once (inferred); source: unknown",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "Resend is a paid email-sending service that can replace Supabase Auth's built-in mailer for account emails, adding an SMTP setup and separate sending limits to my workload.",
+              "understood": true,
+              "situation_matches": false,
+              "relevance_feedback": "The profile establishes that I own email and auth on a small team, so reliable auth mail is relevant. However, the email's central premise is that we use Supabase Auth, which is not established. Whether its built-in mailer or custom-SMTP limit affects us is unknown.",
+              "assumed_experiences": [
+                "Profile-supported: I own email because nobody else on the team does.",
+                "Profile-supported: I have shipped auth and notifications.",
+                "Email-only: our product uses Supabase Auth.",
+                "Email-only: we currently rely on Supabase's built-in mailer or need to configure its custom SMTP.",
+                "Email-only: Resend's stated limits fit our expected Auth-email volume."
+              ],
+              "problem_now": "Reliable auth email is important because failures can block sign-ups, but the profile does not establish that we use Supabase, are hitting its limits, or need to change providers now. This is a plausible risk, not a documented current incident.",
+              "stopped_at": "Resend is now available as an external SMTP option for Supabase Auth.",
+              "biggest_doubt": "I cannot tell whether this applies to our stack, and the email does not show what operational benefit Resend provides beyond replacing one set of limits with another.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me how Resend changes delivery visibility and failure diagnosis for Supabase Auth, including whether I can inspect the outcome of an accepted send.",
+              "fixes": [
+                "Rewrite \"Resend is now available as an external SMTP option for Supabase Auth\" to state the practical outcome: what I can see or control after routing Auth email through Resend.",
+                "Cut \"PRODUCT LAUNCH\"; it reads like promotion and adds nothing before the meeting.",
+                "Rewrite \"The setup is explicit\" as a time estimate and prerequisites, including whether domain verification, DNS changes, or application changes are required.",
+                "Rewrite \"Review the documented Supabase setup and current plan limits before signing up\" to name the specific document and what I will learn from opening it."
+              ],
+              "opens_in_100": 14,
+              "clicks_in_100": 2,
+              "persona": "Selected audience (explicit constraints): The one backend engineer at a ten-person product team who owns email because nobody else does.\nContext (inferred; applicability must be checked): The single engineer at a small product team who shipped auth, billing and notifications and therefore inherited email; visible in auth-platform issue threads asking why confirmation mail stopped at four an hour, and in provider-choice threads where the criterion is 'start sending on day 0 once you verify your domain'\n\nProblem context: Platform-default mailers cap auth email at a rate that fails on the first real launch day, so sign-up silently breaks for some users (inferred); source: unknown\nProblem context: They are debugging a send they cannot see: the API returned success and the only signal is a user who bothered to complain (inferred); source: unknown\nProblem context: Every email interruption comes out of the same week as the roadmap, and there is nobody to hand it to (inferred); source: unknown\nProblem context: Choosing a provider means also learning DKIM, SPF and DMARC well enough to not get it wrong once (inferred); source: unknown\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 4
+            },
+            {
+              "what_it_sells": "Resend is an email-delivery service I could use as the external SMTP provider for Supabase Auth emails, replacing Supabase’s built-in mailer and giving me separate sending limits.",
+              "understood": true,
+              "situation_matches": null,
+              "relevance_feedback": "The profile establishes that I am the sole engineer responsible for email on a small team, so auth-email infrastructure is relevant. The email additionally presupposes that we use Supabase Auth or are considering it; that is not established. Whether its limits affect us depends on our unknown stack and expected Auth-email volume.",
+              "assumed_experiences": [
+                "Profile-supported: I own email engineering because nobody else on the team does.",
+                "Email-only: we use or are evaluating Supabase Auth.",
+                "Email-only: we may want to replace Supabase’s built-in mailer with custom SMTP.",
+                "Email-only: our expected Auth-email volume may exceed one of the stated limits."
+              ],
+              "problem_now": "Email reliability and interruptions matter because I own them, but a current Supabase limit problem is not established. The launch-day cap, silent signup failures, and lack of send visibility are plausible inferred risks rather than confirmed incidents happening now.",
+              "stopped_at": "",
+              "biggest_doubt": "The email gives limits and configuration steps but does not tell me what production readiness requires—especially domain verification—or what visibility I would get when an Auth email fails after the API accepts it.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me exactly what domain verification is required before the first production Auth email can be sent.",
+              "fixes": [
+                "Rewrite \"The setup is explicit: open Authentication > Email > SMTP Settings, add your sender details, then paste your Resend SMTP credentials.\" to include the domain-verification prerequisite and distinguish configuration from being ready to send in production.",
+                "Rewrite \"Review the documented Supabase setup and current plan limits before signing up.\" to name what the linked page contains, including domain verification, failure visibility, and the date or source of the stated limits.",
+                "Cut \"PRODUCT LAUNCH\"; the subject already identifies the specific integration and this label reads like promotional overhead."
+              ],
+              "opens_in_100": 27,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (explicit constraints): The one backend engineer at a ten-person product team who owns email because nobody else does.\nContext (inferred; applicability must be checked): The single engineer at a small product team who shipped auth, billing and notifications and therefore inherited email; visible in auth-platform issue threads asking why confirmation mail stopped at four an hour, and in provider-choice threads where the criterion is 'start sending on day 0 once you verify your domain'\n\nProblem context: Platform-default mailers cap auth email at a rate that fails on the first real launch day, so sign-up silently breaks for some users (inferred); source: unknown\nProblem context: They are debugging a send they cannot see: the API returned success and the only signal is a user who bothered to complain (inferred); source: unknown\nProblem context: Every email interruption comes out of the same week as the roadmap, and there is nobody to hand it to (inferred); source: unknown\nProblem context: Choosing a provider means also learning DKIM, SPF and DMARC well enough to not get it wrong once (inferred); source: unknown\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 6
+            }
+          ],
+          "sameness": []
+        }
+      ],
+      "limiting_gaps": [],
+      "what_would_help_most": "Recheck the selected audience situation: The profile establishes that I own email and auth on a small team, so reliable auth mail is relevant. However, the email's central premise is that we use Supabase Auth, which is not established. Whether its built-in mailer or custom-SMTP limit affects us is unknown.",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 5,
+      "notes": [],
+      "reads_expected": true
+    },
+    "assets": [
+      {
+        "title": "Send Supabase Auth email with Resend",
+        "content": "Subject: Send Supabase Auth email with Resend\nPreview text: Review the SMTP setup and sending limits before signing up.\n\nRoute Supabase Auth email through Resend\n\nHi there,\n\nResend is now available as an external SMTP option for Supabase Auth. You can route account emails through Resend instead of relying on the built-in mailer.\n\nThe setup is explicit: open Authentication > Email > SMTP Settings, add your sender details, then paste your Resend SMTP credentials. Supabase initially limits custom-SMTP Auth sending to 30 messages per hour, which you adjust separately under Auth rate limits.\n\nResend Free includes 3,000 emails per month, with a 100-email daily limit. Pro costs $20 per month for 50,000 emails, has no daily limit, and charges $0.90 per 1,000 additional emails.\n\nReview the documented Supabase setup and current plan limits before signing up. Compare both limits with the Auth-email volume you expect.\n\nReview setup and plan limits →\n\n- the Resend engineering team",
+        "content_html_length": 5463
+      }
+    ]
+  }
+}

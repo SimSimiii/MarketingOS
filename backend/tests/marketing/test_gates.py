@@ -5,6 +5,7 @@ import pytest
 
 from app.knowledge.artifacts import CallToAction, OfferSheet
 from app.knowledge.ledger import Evidence, EvidenceIndex, EvidenceKind, EvidenceLedger
+from app.marketing.briefs import EmailBrief
 from app.marketing.email_copy import Email
 from app.marketing.gates import (
     call_to_action_gate,
@@ -12,6 +13,8 @@ from app.marketing.gates import (
     evidence_gate,
     overlap_gate,
     placeholder_gate,
+    planned_call_to_action_gate,
+    repeated_call_to_action_gate,
     spam_gate,
     stock_phrase_gate,
 )
@@ -177,13 +180,29 @@ def test_shouting_and_punctuation_abuse_block():
 
 
 def test_known_acronyms_are_not_shouting():
-    assert spam_gate(email("We are SOC2 compliant.\n\nSecond.\n\nThird.")).passed
+    assert spam_gate(
+        email("We are SOC2 compliant and support SMTP.\n\nSecond.\n\nThird.")
+    ).passed
 
 
 def test_click_here_link_text_is_flagged():
     report = spam_gate(email("A body.\n\nSecond.\n\nThird.", call_to_action="Click here"))
     assert not report.passed
     assert "tells the reader nothing" in report.render()
+
+
+def test_generic_signup_label_is_blocked_when_the_plan_points_to_documentation():
+    report = planned_call_to_action_gate(
+        email("A body.\n\nSecond.\n\nThird.", call_to_action="Get started"),
+        EmailBrief(
+            call_to_action=(
+                "Review the official documentation: "
+                "https://docs.example.test/knowledge-base/quotas"
+            )
+        ),
+    )
+    assert not report.passed
+    assert "official documentation" in report.render()
 
 
 # ------------------------------------------------------------------- overlap
@@ -231,3 +250,27 @@ def test_a_rephrased_but_real_action_is_accepted():
     assert not call_to_action_gate(
         email("B.\n\nB.\n\nC.", call_to_action="Start the trial"), offer
     ).issues
+
+
+def test_a_standalone_body_line_must_not_repeat_the_rendered_cta():
+    report = repeated_call_to_action_gate(
+        email(
+            "First paragraph.\n\nSign up for free\n\nLast paragraph.",
+            call_to_action="Sign up for free",
+        )
+    )
+
+    assert not report.passed
+    assert report.blocking[0].gate == "duplicate-call-to-action"
+    assert "rendered separately" in report.blocking[0].detail
+
+
+def test_a_cta_phrase_inside_a_real_sentence_is_not_a_duplicate_block():
+    report = repeated_call_to_action_gate(
+        email(
+            "You can sign up for free and inspect the dashboard before setup.\n\nNext step.\n\nDone.",
+            call_to_action="Sign up for free",
+        )
+    )
+
+    assert report.passed

@@ -320,6 +320,13 @@ class CampaignReport(BaseModel):
                 f"Email(s) {positions} did not satisfy the simulated assessment criteria. The loop "
                 "stopped rewriting them; it did not decide these were ready to send."
             )
+        unresolved = [
+            f"Email {line.position}: {issue}"
+            for line in self.emails
+            for issue in line.unresolved
+        ]
+        if unresolved:
+            lines.append("Unresolved before sending: " + "; ".join(unresolved))
         if self.sequence_summary:
             lines.append(f"Sequence: {self.sequence_summary}")
         if self.unsubstantiated:

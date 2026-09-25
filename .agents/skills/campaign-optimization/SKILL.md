@@ -1,6 +1,6 @@
 ---
 name: campaign-optimization
-description: Operate MarketingOS campaigns and autonomously improve their generated quality from saved real runs, with bounded model spending and persistent case state.
+description: Autonomously improve MarketingOS from real campaign runs until its generated emails meet a sellable-result bar, using subscription quota and persistent case state.
 ---
 
 # Campaign optimization operator
@@ -12,6 +12,13 @@ requires it. The AI chooses the audience, scenario, defect, correction and stop
 point; the script only performs reliable API operations and capture.
 
 ## Setup
+
+Invoking this skill authorizes generator changes, tests and real draft generations
+using the configured subscription quota until the sellable-result bar below is met.
+There is no default total generation limit or unsuccessful-cycle limit. Continue
+without asking for renewed permission between cycles. Honor any explicit user cap.
+Older case limits and cycle-stop flags are historical when superseded by this
+authorization; record the reopened state before continuing.
 
 From the repository root, start the backend in a separate terminal:
 
@@ -46,7 +53,7 @@ Use the case runner for durable launch and collection:
 
 ```powershell
 backend/.venv/Scripts/python.exe scripts/optimize_campaign.py inspect --case docs/optimization/orqagent/case.json
-backend/.venv/Scripts/python.exe scripts/optimize_campaign.py run --case docs/optimization/orqagent/case.json --max-runs 2
+backend/.venv/Scripts/python.exe scripts/optimize_campaign.py run --case docs/optimization/orqagent/case.json
 backend/.venv/Scripts/python.exe scripts/optimize_campaign.py resume --case docs/optimization/orqagent/case.json
 backend/.venv/Scripts/python.exe scripts/optimize_campaign.py compare --case docs/optimization/orqagent/case.json --before <execution-id> --after <execution-id>
 ```
@@ -57,7 +64,9 @@ records the execution ID immediately in `state.json`, polls to a terminal state,
 then saves `runs/<execution_id>/{campaign,forecast,result,logs,timeline}.json`.
 `resume` collects an interrupted run without buying another. Missing snapshot
 responses appear as `.error.json`. Defaults: 2700-second wait, 10-second polls,
-two total generations; flags configure all three. A timeout requests cooperative
+no total generation cap; flags configure polling, timeout and an optional user cap.
+Each invocation launches only one generation, allowing diagnosis before the next.
+A timeout requests cooperative
 cancellation. If the server died, restart it first; startup marks orphaned runs
 failed. Never start another run while an entry lacks `result_dir`.
 `compare` reads saved results only and writes a side-by-side JSON with the actual
@@ -79,8 +88,9 @@ brief, report, role traces and HTML, with the same case inputs. The free
 deterministic quality evaluator is `backend/.venv/Scripts/python.exe -m
 app.evaluation.runner --compare <before-dir> <after-dir>` from `backend/` when
 those directories are runner evaluation outputs. Do not present its simulated
-open or click estimates as customer measurements. Billed evaluation commands
-need a separate explicit call budget; check `--dry-run` first.
+open or click estimates as customer measurements. Use billed evaluation when it
+answers a concrete unresolved quality question; check `--dry-run` first and record
+why its quota cost is useful. Do not rerun unchanged failures blindly.
 
 ## Decision and safety loop
 
@@ -89,15 +99,66 @@ offer/benefit/action clarity, argument specificity, subject/body/CTA continuity,
 unsupported promises or repetition, HTML rendering, status/duration/cost. Mark
 missing source facts separately from generator defects. Quote before/after
 assets and cite saved evidence IDs; model scores alone do not prove improvement.
+
+### Iteration quality note
+
+At the end of **every completed iteration** — diagnosis, correction, targeted
+tests and required validation checks, followed by a regenerated run when one is
+needed to assess the change — append a short, reader-friendly quality note to
+`journal.md` and update the matching summary in `state.json`. This is a progress
+report, not a substitute for the sellable-result verdict.
+
+Use a 0–100 internal product-quality score for the generated deliverable. Score
+the same stable grid on every iteration: factual support (25), audience and offer
+clarity (20), specificity and persuasive argument (20), subject/body/CTA
+continuity (15), polish and rendering (10), and absence of unsupported promises
+or repetition (10). State the score as an informed review judgment, not a model
+measurement or customer outcome. Do not invent a score if a generation did not
+complete; instead record `not scored` and why.
+
+Keep the note compact (roughly 3–6 lines) and include: iteration number; current
+score and change versus the previous scored iteration; the best score so far and
+which iteration/run achieved it; 1–2 concrete strengths; the most important
+remaining defect; tests/run evidence; and the next action or the final
+sellable-result verdict. Preserve score history so the "best so far" figure is
+the maximum among all comparable completed iterations in the case, not merely
+the previous run. If inputs, audience, or evaluation conditions changed, label
+the score non-comparable and start a separately labelled comparison track.
+
+Suggested durable `state.json` shape (add fields without discarding existing
+case state): `quality_history` entries with `iteration`, `execution_id`,
+`score`, `comparable`, `strengths`, `remaining_defect`, `evidence`, and
+`next_action`; plus `quality_best` with the best comparable `score`,
+`iteration`, and `execution_id`. Recompute `quality_best` after every scored
+iteration. A passing test suite assesses the implementation only; it must never
+raise the product-quality score without inspection of the resulting assets.
+
+Judge the actual delivered email(s) against a sellable-result bar: a reasonable
+buyer in the target market could use the copy after ordinary brand review and
+minor personalization, and could plausibly find the result worth paying for.
+This requires supported claims, clear audience and offer, a specific and
+persuasive reason to act, a coherent subject/body/CTA, and polished copy and
+rendering without material defects. Base the judgment on the saved assets and
+source evidence, not a model score or an untested claim about actual customer
+willingness to pay. Record the concrete strengths and remaining defects in
+`journal.md` and the verdict in `state.json`.
 Record cause, hypothesis and expected observable change in `journal.md` before
 editing. Change the generator, run targeted tests plus required lint/test checks,
-then regenerate on unchanged inputs. Consider a second scenario when budget
-permits. Update `state.json` with conclusions and next action. Stop on confirmed
-improvement, exhausted generation limit, two unsuccessful cycles, or a genuine
-external blocker. Preserve the exact resume action.
+then regenerate on unchanged inputs. Validate the project on another relevant
+audience or campaign scenario before claiming general sellability; one good email
+only establishes that case. Update `state.json` with
+conclusions and next action. Stop successfully as soon as the delivered email(s)
+meet the sellable-result bar; do not buy more runs or keep polishing for marginal
+scores once the reviewed cases support the intended product scope. Unsuccessful
+cycles require a revised diagnosis, implementation or scenario, not automatic
+termination. Continue autonomously until success, user interruption, an explicit
+user budget, or a genuine external blocker such as unavailable quota or login.
+Repair local failures autonomously. Record external blockers as incomplete with
+the exact resume action. Never claim actual willingness to pay without real buyer
+evidence: the operational target is supported, persuasive, usable paid-quality copy.
 
-Real runs spend subscription quota. Count failed runs, internal retries and
-reader/judge calls in the generation limit. Observe policy duration and token
+Real runs spend subscription quota. Track failed runs, internal retries and
+reader/judge calls as well as successful generations. Observe per-run duration and token
 caps. `estimated_cost_usd` is an estimate, not a billing guarantee. Generate
 drafts only: no sending, production deployment or secret exposure. Keep changes
 on the current branch and preserve unrelated local work.

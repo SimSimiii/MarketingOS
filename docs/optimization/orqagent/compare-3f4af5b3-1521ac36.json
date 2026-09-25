@@ -1,0 +1,268 @@
+{
+  "before": {
+    "execution_id": "3f4af5b3-dfc2-4788-a6df-6b6021b4fc55",
+    "status": "completed",
+    "error_message": null,
+    "started_at": "2026-09-17T21:08:00.796714Z",
+    "completed_at": "2026-09-17T21:12:51.113249Z",
+    "estimated_cost_usd": 3.7141,
+    "total_input_tokens": 329149,
+    "total_output_tokens": 100804,
+    "agent_calls": 9,
+    "report": {
+      "request": "Write exactly 1 email announcing the launch of this product to people who have not bought it yet - make the case for why it matters now and what to do next.\n\nTone of voice: Professional and polished - confident and credible, no slang or hype.",
+      "delivered": 1,
+      "promised": 1,
+      "contract_violations": [],
+      "emails": [
+        {
+          "position": 1,
+          "subject": "For the handbook questions that keep landing in your DMs",
+          "single_idea": "orqAgent is live: the Slack answer-bot over your handbook is now a configuration rather than a build — you point it at your documents, install it in Slack, and every answer it gives is a logged run you can open up.",
+          "pull": 7.0,
+          "revisions": 1,
+          "clean": true,
+          "landed": true,
+          "rewrites_stopped_helping": true,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E11",
+            "E90",
+            "E12"
+          ],
+          "evidence_spent": [
+            "E11"
+          ],
+          "attributions": 1,
+          "unresolved": [],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "An AI-powered Slack bot builder (orqAgent) that you point at your uploaded policy/handbook documents; it answers employee questions in Slack via mention, with no vector database to manage, plus built-in usage/latency/cost monitoring - this is basically the exact 'answer-bot over the handbook' project I'm already weighing.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Profile establishes I'm actively considering building a Slack answer-bot over Handbook/Docs/Issue Trackers because repeated policy questions come to me and answers are buried in Notion-like docs - the email's opening ('the policy questions that keep coming back to you') and the Notion/keyword-guessing description match that documented problem closely. The email additionally presupposes I've already priced out building this myself ('If you have priced out wiring this yourself') - plausible given the profile says I'm 'considering building,' but not confirmed I've actually scoped costs. It also assumes I'll eventually want this open to 'the whole company,' which the profile doesn't establish - I may only want a small internal tool.",
+              "assumed_experiences": [
+                "Assumes I have already considered or priced out a DIY build with Slack events, a vector store, and a model API - profile-supported as plausible ('considering building') but not confirmed as done",
+                "Assumes docs live in Notion or similar and are hard to search by keyword - profile-supported",
+                "Assumes the end goal is a company-wide deployment, not just a team channel - email-only, not established by profile",
+                "Assumes I can authorize a Slack OAuth install and upload policy documents to a third-party service - not addressed in profile"
+              ],
+              "problem_now": "This is a documented, current problem per the profile: the same handbook/policy questions repeatedly land in Slack DMs or the team channel and require manual multi-page searches. The email doesn't invent urgency beyond that - it doesn't claim I have a deadline, just that the recurring pain exists now.",
+              "stopped_at": "",
+              "biggest_doubt": "This is a company I've never heard of asking me to upload internal policy documents (and eventually run it for the whole company) with zero mention of data handling, security, or accuracy safeguards for something that would be answering HR/policy questions authoritatively - that's the part I can't get past for a company-wide tool, even though the two-minute single-channel test is low-risk.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me where the uploaded documents are stored/processed and whether they leave our environment, since that's the first question I'd get asked before even trying the single-channel test.",
+              "fixes": [
+                "Hi there,",
+                "the agent retrieves the most relevant context for every query, with no vector DB to manage",
+                "What follows is a production system the whole company uses, and it has no owner."
+              ],
+              "opens_in_100": 32,
+              "clicks_in_100": 9,
+              "persona": "Selected audience (explicit constraints): Ops or IT generalist standing up an internal Slack answer-bot over company docs.\nContext (grounded; applicability must be checked): This is an ops/IT-adjacent person at a company where policies and handbooks are written up in Notion or similar docs and employees communicate primarily in Slack; when someone can't find an answer, they ping this person (or the team channel) directly, and this person has been asked to build or is considering building an automated Slack responder that draws on the Handbook, Docs, and Issue Trackers.\nSource: https://dev.to/codelink/how-we-turned-our-notion-playbook-into-a-slack-assistant-with-a-low-code-rag-stack-5182; quote: It’s mid-morning, your coffee’s gone cold, and someone on the team pings in Slack asking:\nSource: https://gitlab.com/gitlab-com/organization/-/work_items/218; quote: It would be nice to have an automated responder in `#questions` that has access to content from the Handbook, Docs and Issue Trackers.\nProblem context: The same policy and handbook questions get asked repeatedly in Slack, and the answers are buried in documentation that is difficult to navigate.; source: https://blog.ippon.tech/building-a-company-knowledge-bot\nProblem context: Finding the right answer inside company docs requires multiple manual searches across many pages before it turns up.; source: https://dev.to/codelink/how-we-turned-our-notion-playbook-into-a-slack-assistant-with-a-low-code-rag-stack-5182\nProblem context: Low-code tooling used to stand up a homegrown Slack bot is not well suited to high-scale, latency-sensitive, or highly reliable production use.; source: https://dev.to/codelink/how-we-turned-our-notion-playbook-into-a-slack-assistant-with-a-low-code-rag-stack-5182",
+              "pull": 8
+            },
+            {
+              "what_it_sells": "A SaaS tool that lets you upload your handbook/policy docs and deploy a Slack bot that answers employees' recurring policy questions using retrieval, without you building or hosting the RAG pipeline yourself.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Profile-supported: this person is actively weighing building exactly this — a Slack bot over Handbook/Docs/Issue Trackers that fields repeated policy questions currently routed to them manually. The email's core premise (buried docs, repeat Slack pings) matches that documented problem closely. It hedges the DIY-cost claim with 'if you have priced out wiring this yourself' rather than asserting it as fact, so it stays appropriately conditional. One gap: the profile explicitly names Issue Trackers as a required source alongside Handbook/Docs, but the email only mentions 'PDFs, docs or plain text' upload — it doesn't say whether Issue Trackers or a live Notion sync are supported, which is a real unaddressed piece of the stated use case, not a contradiction of it.",
+              "assumed_experiences": [
+                "Email-only: implies the reader may have already priced out building this themselves (Slack events + vector store + model API), hedged with 'if'",
+                "Profile-supported: recurring policy questions land in this person's Slack DMs/team channel because docs are hard to search",
+                "Email-only: assumes a future state where the bot is 'open to the whole company,' which presumes scale/rollout ambitions not established in the profile"
+              ],
+              "problem_now": "The underlying problem — repeated Slack questions, answers buried across docs — is documented as an existing situation in the profile context, not a manufactured urgency. The email adds no deadline or trigger event; it just names a problem that's plausibly already live for this person.",
+              "stopped_at": "If you have priced out wiring this yourself — Slack events, a store to search, a model API — the prototype is the quick part.",
+              "biggest_doubt": "Trust and data scope: this is a company I've never heard of, and the ask is to upload internal handbook/policy documents to their system — no mention of security, data handling, or retention. It also doesn't say whether it connects to Issue Trackers or syncs live from Notion versus manual file upload, which is half of what I'd actually need it to cover.",
+              "to_click_it_would_have_to": "told me whether it can pull from Issue Trackers and sync live from Notion (not just manual PDF/doc upload), and said one concrete thing about where uploaded docs are stored or who can see them.",
+              "fixes": [
+                "What follows is a production system the whole company uses, and it has no owner.",
+                "Upload PDFs, docs or plain text; the agent retrieves the most relevant context for every query, with no vector DB to manage."
+              ],
+              "opens_in_100": 26,
+              "clicks_in_100": 6,
+              "persona": "Selected audience (explicit constraints): Ops or IT generalist standing up an internal Slack answer-bot over company docs.\nContext (grounded; applicability must be checked): This is an ops/IT-adjacent person at a company where policies and handbooks are written up in Notion or similar docs and employees communicate primarily in Slack; when someone can't find an answer, they ping this person (or the team channel) directly, and this person has been asked to build or is considering building an automated Slack responder that draws on the Handbook, Docs, and Issue Trackers.\nSource: https://dev.to/codelink/how-we-turned-our-notion-playbook-into-a-slack-assistant-with-a-low-code-rag-stack-5182; quote: It’s mid-morning, your coffee’s gone cold, and someone on the team pings in Slack asking:\nSource: https://gitlab.com/gitlab-com/organization/-/work_items/218; quote: It would be nice to have an automated responder in `#questions` that has access to content from the Handbook, Docs and Issue Trackers.\nProblem context: The same policy and handbook questions get asked repeatedly in Slack, and the answers are buried in documentation that is difficult to navigate.; source: https://blog.ippon.tech/building-a-company-knowledge-bot\nProblem context: Finding the right answer inside company docs requires multiple manual searches across many pages before it turns up.; source: https://dev.to/codelink/how-we-turned-our-notion-playbook-into-a-slack-assistant-with-a-low-code-rag-stack-5182\nProblem context: Low-code tooling used to stand up a homegrown Slack bot is not well suited to high-scale, latency-sensitive, or highly reliable production use.; source: https://dev.to/codelink/how-we-turned-our-notion-playbook-into-a-slack-assistant-with-a-low-code-rag-stack-5182\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 7
+            },
+            {
+              "what_it_sells": "A configurable Slack bot builder — upload your handbook/policy docs and it retrieves answers to post in a Slack channel, with usage/latency/spend dashboards; it would let me try the exact bot I'm considering building without hand-wiring the Slack-events-plus-vector-search-plus-model-API stack myself.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Profile-supported: recurring policy/handbook questions in Slack that get routed to this person (source: 'same policy and handbook questions get asked repeatedly'), docs living in Notion-like tools, and the DIY-build framing ('It would be nice to have an automated responder'). The email's core premise — that the reader is weighing exactly this build — lines up with the profile. But the email adds unsupported assumptions on top: that I've already 'priced out wiring this yourself,' and that the hard part after prototype is an ownerless production system — neither is established by the profile, which only says I'm 'considering' this, not that I've scoped a build or hit a specific pain point about ownership.",
+              "assumed_experiences": [
+                "'the policy questions that keep coming back to you' — profile-supported (source quote on repeated questions)",
+                "'written up in Notion or somewhere like it' — profile-supported (source quote on Notion/similar docs)",
+                "'If you have priced out wiring this yourself — Slack events, a store to search, a model API' — email-only; profile establishes I'm considering a build, not that I've already scoped/priced the components",
+                "'What follows is a production system the whole company uses, and it has no owner' — email-only dramatization of a risk not stated in the profile"
+              ],
+              "problem_now": "The core problem (repeated Slack questions, hard-to-search docs) is documented as current per the profile's own sourced context, not a hypothetical. Whether I've reached the point of actually starting a build, or on what timeline, is not established — the profile says 'is building or considering building,' which leaves urgency unknown.",
+              "stopped_at": "What follows is a production system the whole company uses, and it has no owner.",
+              "biggest_doubt": "This is an unknown vendor making a production-reliability claim ('the whole company uses it') with zero proof — no customer name, no accuracy safeguards for policy answers, no detail on what 'no vector DB to manage' actually means under the hood. For a bot that will give employees answers about company policy, being wrong is worse than being slow, and nothing here addresses accuracy or citations.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me how the agent handles wrong or uncertain answers on policy questions — e.g., does it cite the source doc, refuse when confidence is low, or just generate a plausible-sounding answer — since that's the actual risk in putting this in front of the whole company.",
+              "fixes": [
+                "What follows is a production system the whole company uses, and it has no owner.",
+                "with no vector DB to manage",
+                "Before you open it to the whole company, the usage is visible while it runs"
+              ],
+              "opens_in_100": 26,
+              "clicks_in_100": 7,
+              "persona": "Selected audience (explicit constraints): Ops or IT generalist standing up an internal Slack answer-bot over company docs.\nContext (grounded; applicability must be checked): This is an ops/IT-adjacent person at a company where policies and handbooks are written up in Notion or similar docs and employees communicate primarily in Slack; when someone can't find an answer, they ping this person (or the team channel) directly, and this person has been asked to build or is considering building an automated Slack responder that draws on the Handbook, Docs, and Issue Trackers.\nSource: https://dev.to/codelink/how-we-turned-our-notion-playbook-into-a-slack-assistant-with-a-low-code-rag-stack-5182; quote: It’s mid-morning, your coffee’s gone cold, and someone on the team pings in Slack asking:\nSource: https://gitlab.com/gitlab-com/organization/-/work_items/218; quote: It would be nice to have an automated responder in `#questions` that has access to content from the Handbook, Docs and Issue Trackers.\nProblem context: The same policy and handbook questions get asked repeatedly in Slack, and the answers are buried in documentation that is difficult to navigate.; source: https://blog.ippon.tech/building-a-company-knowledge-bot\nProblem context: Finding the right answer inside company docs requires multiple manual searches across many pages before it turns up.; source: https://dev.to/codelink/how-we-turned-our-notion-playbook-into-a-slack-assistant-with-a-low-code-rag-stack-5182\nProblem context: Low-code tooling used to stand up a homegrown Slack bot is not well suited to high-scale, latency-sensitive, or highly reliable production use.; source: https://dev.to/codelink/how-we-turned-our-notion-playbook-into-a-slack-assistant-with-a-low-code-rag-stack-5182\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 7
+            }
+          ],
+          "sameness": []
+        }
+      ],
+      "limiting_gaps": [
+        "No customer names, quotes or case studies found - the copy can describe the product but cannot prove anyone uses it"
+      ],
+      "what_would_help_most": "Resolve this simulated next-step obstacle: I would have clicked if this email had told me where the uploaded documents are stored/processed and whether they leave our environment, since that's the first question I'd get asked before even trying the single-channel test. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 5,
+      "notes": [],
+      "reads_expected": true
+    },
+    "assets": [
+      {
+        "title": "For the handbook questions that keep landing in your DMs",
+        "content": "Subject: For the handbook questions that keep landing in your DMs\nPreview text: orqAgent is live — put an agent over the policy docs, install it in Slack, and point people at the channel.\n\nPut an answer-bot in Slack over your own handbook\n\nHi there,\n\norqAgent is live. You can now stand up an agent over your own handbook documents and put it in Slack, where it answers the policy questions that keep coming back to you.\n\nThose answers usually exist already, written up in Notion or somewhere like it. Finding one means guessing at keywords and document titles until something turns up — which is why the question comes to you instead.\n\nIf you have priced out wiring this yourself — Slack events, a store to search, a model API — the prototype is the quick part. What follows is a production system the whole company uses, and it has no owner.\n\nHere that assembly is configuration. Upload PDFs, docs or plain text; the agent retrieves the most relevant context for every query, with no vector DB to manage. Slack is an OAuth install — the bot replies to mentions and channel messages.\n\nBefore you open it to the whole company, the usage is visible while it runs: token usage per model, P95 latency and daily spend trends, tracked automatically without extra configuration.\n\nPoint one agent at one set of policy documents, connect a single channel, and read the first runs.\n\nCreate your first agent →\n\n- the orqAgent team\n\nP.S. Your first agent takes under two minutes to create, and no card is required.",
+        "content_html_length": 6809
+      }
+    ]
+  },
+  "after": {
+    "execution_id": "1521ac36-679b-408f-928e-46cd6bde0129",
+    "status": "completed",
+    "error_message": null,
+    "started_at": "2026-09-18T13:23:42.042578Z",
+    "completed_at": "2026-09-18T13:27:55.288077Z",
+    "estimated_cost_usd": 3.5323,
+    "total_input_tokens": 285803,
+    "total_output_tokens": 84856,
+    "agent_calls": 9,
+    "report": {
+      "request": "Write exactly 1 email announcing the launch of this product to people who have not bought it yet - make the case for why it matters now and what to do next.\n\nTone of voice: Professional and polished - confident and credible, no slang or hype.",
+      "delivered": 1,
+      "promised": 1,
+      "contract_violations": [],
+      "emails": [
+        {
+          "position": 1,
+          "subject": "The same handbook question, back in the channel",
+          "single_idea": "The Slack handbook bot you have been scoping is now a configuration job over the docs you already keep — the retrieval layer is part of the platform, not something you stand up.",
+          "pull": 7.0,
+          "revisions": 1,
+          "clean": true,
+          "landed": true,
+          "rewrites_stopped_helping": true,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E94",
+            "E90",
+            "E11"
+          ],
+          "evidence_spent": [],
+          "attributions": 1,
+          "unresolved": [],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "A no-code platform (orqAgent) that connects to Notion and Slack over OAuth to let you build a Slack bot that answers questions from your handbook, without you having to build the retrieval/vector-DB layer yourself.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The email's premise — 'same handbook questions come back in the channel, and the answers sit several searches deep' — matches the profile's documented problem context (dev.to quote about repeated questions, ippon.tech quote about buried answers). The profile establishes this person is 'building or considering building' exactly this kind of bot, and the email's core offer (Slack+Notion RAG bot) lines up with the GitLab work-item quote about wanting a responder with Handbook/Docs/Issue Tracker access. Where the email goes further than the profile supports: it assumes the reader's current blocker is specifically the 'integration project' of building retrieval/vector DB from scratch — the profile doesn't establish they've already started building or hit that specific wall, just that they're 'standing up' or 'considering' one. So the general problem is supported, but the specific narrative of 'you're mid-build and stuck on plumbing' is email-only, not profile-confirmed.",
+              "assumed_experiences": [
+                "Reader has already scoped or attempted a DIY Slack+retrieval+model integration — email-only, not confirmed by profile",
+                "Reader is currently frustrated by repeated handbook questions in Slack — profile-supported (GitLab/ippon quotes)",
+                "Reader knows what a 'vector database' is and would see not needing one as a relief — email-only assumption about technical background",
+                "Reader has decision authority to 'decide whether it belongs in front of the whole company' — email-only"
+              ],
+              "problem_now": "The repeated-question problem is documented as a real, ongoing pain in the profile's sourced context, not a hypothetical. But there's no established urgency or deadline — it's a standing annoyance, not a fire, and the profile doesn't say they've already tried and failed to build something.",
+              "stopped_at": "Between them, the agent retrieves the most relevant context for every question automatically — there is no vector database to stand up or keep running.",
+              "biggest_doubt": "It's a low-code/no-code platform for something the sourced problem context explicitly flags as needing production-grade reliability, not low-code tooling — so even if it solves the demo, I don't know if it holds up once the whole company depends on it. Also no mention of what happens with sensitive HR/policy docs going through a third-party OAuth connection, and no pricing beyond '1,500 free credits' with no sense of what that buys.",
+              "to_click_it_would_have_to": "told me what happens to document access/permissions when Notion connects over OAuth — do all pages sync, can I scope it, and what does 1,500 credits actually get me before I hit a paywall",
+              "fixes": [
+                "Standing up a Slack bot over your handbook reads like an integration project.",
+                "there is no vector database to stand up or keep running",
+                "Read what comes back, then decide whether it belongs in front of the whole company."
+              ],
+              "opens_in_100": 22,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (explicit constraints): Ops or IT generalist standing up an internal Slack answer-bot over company docs.\nContext (grounded; applicability must be checked): This is an ops/IT-adjacent person at a company where policies and handbooks are written up in Notion or similar docs and employees communicate primarily in Slack; when someone can't find an answer, they ping this person (or the team channel) directly, and this person has been asked to build or is considering building an automated Slack responder that draws on the Handbook, Docs, and Issue Trackers.\nSource: https://dev.to/codelink/how-we-turned-our-notion-playbook-into-a-slack-assistant-with-a-low-code-rag-stack-5182; quote: It’s mid-morning, your coffee’s gone cold, and someone on the team pings in Slack asking:\nSource: https://gitlab.com/gitlab-com/organization/-/work_items/218; quote: It would be nice to have an automated responder in `#questions` that has access to content from the Handbook, Docs and Issue Trackers.\nProblem context: The same policy and handbook questions get asked repeatedly in Slack, and the answers are buried in documentation that is difficult to navigate.; source: https://blog.ippon.tech/building-a-company-knowledge-bot\nProblem context: Finding the right answer inside company docs requires multiple manual searches across many pages before it turns up.; source: https://dev.to/codelink/how-we-turned-our-notion-playbook-into-a-slack-assistant-with-a-low-code-rag-stack-5182\nProblem context: Low-code tooling used to stand up a homegrown Slack bot is not well suited to high-scale, latency-sensitive, or highly reliable production use.; source: https://dev.to/codelink/how-we-turned-our-notion-playbook-into-a-slack-assistant-with-a-low-code-rag-stack-5182",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "A no-code platform (orqAgent) that connects a company's Notion docs and Slack via OAuth so you can spin up an agent that answers employee questions in Slack, skipping the custom retrieval/vector-database build.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile establishes this person is specifically weighing building a Slack answer-bot over the Handbook/Docs/Issue Trackers, and the email's premise ('standing up a Slack bot over your handbook reads like an integration project') matches that exact scenario without contradiction. What the email adds beyond the profile is its own claim: that Notion+Slack OAuth plus its retrieval layer removes the need for a vector database entirely - that's the email's own unverified technical assertion, not something the profile confirms or denies. Unknown: whether this person's Notion/Slack setup, data-sensitivity requirements, or IT approval process would tolerate a third-party OAuth connection to production docs.",
+              "assumed_experiences": [
+                "Reader is currently getting repeated handbook/policy questions in Slack that are hard to find answers to - profile-supported.",
+                "Reader has been mentally scoping this as a multi-part integration project (events, retrieval layer, model API, maintenance) - email-only, plausible but not confirmed by the profile.",
+                "Reader can freely connect the company's real Notion workspace and Slack via OAuth to a new third-party vendor without a separate security/IT review - email-only assumption, not supported or contradicted by the profile.",
+                "Reader is comfortable letting an unfamiliar vendor host retrieval over company policy content - email-only assumption."
+              ],
+              "problem_now": "Documented as an existing, ongoing pain point in the profile context (recurring handbook questions in Slack, answers buried several searches deep) - this is a current problem, not a speculative future risk. The email doesn't add urgency beyond that; it just names the same standing problem.",
+              "stopped_at": "Create one agent, connect the handbook, and ask it one real policy question in a Slack channel. Read what comes back, then decide whether it belongs in front of the whole company.",
+              "biggest_doubt": "This is a company I've never heard of, and the email wants me to OAuth-connect our actual Notion handbook and Slack workspace to try it - that's a bigger ask than 'one click' once real company data and IT approval are involved, and there's zero detail here about where that data goes, how accuracy/hallucination risk is handled for policy answers, or what happens after the free credits run out.",
+              "to_click_it_would_have_to": "told me how it handles the data once Notion is connected (storage, retention, whether it trains on our content) or given a way to test retrieval quality on a sample doc before granting OAuth access to our real handbook.",
+              "fixes": [
+                "Between them, the agent retrieves the most relevant context for every question automatically — there is no vector database to stand up or keep running.",
+                "No card required to start — new accounts get 1,500 free credits."
+              ],
+              "opens_in_100": 25,
+              "clicks_in_100": 6,
+              "persona": "Selected audience (explicit constraints): Ops or IT generalist standing up an internal Slack answer-bot over company docs.\nContext (grounded; applicability must be checked): This is an ops/IT-adjacent person at a company where policies and handbooks are written up in Notion or similar docs and employees communicate primarily in Slack; when someone can't find an answer, they ping this person (or the team channel) directly, and this person has been asked to build or is considering building an automated Slack responder that draws on the Handbook, Docs, and Issue Trackers.\nSource: https://dev.to/codelink/how-we-turned-our-notion-playbook-into-a-slack-assistant-with-a-low-code-rag-stack-5182; quote: It’s mid-morning, your coffee’s gone cold, and someone on the team pings in Slack asking:\nSource: https://gitlab.com/gitlab-com/organization/-/work_items/218; quote: It would be nice to have an automated responder in `#questions` that has access to content from the Handbook, Docs and Issue Trackers.\nProblem context: The same policy and handbook questions get asked repeatedly in Slack, and the answers are buried in documentation that is difficult to navigate.; source: https://blog.ippon.tech/building-a-company-knowledge-bot\nProblem context: Finding the right answer inside company docs requires multiple manual searches across many pages before it turns up.; source: https://dev.to/codelink/how-we-turned-our-notion-playbook-into-a-slack-assistant-with-a-low-code-rag-stack-5182\nProblem context: Low-code tooling used to stand up a homegrown Slack bot is not well suited to high-scale, latency-sensitive, or highly reliable production use.; source: https://dev.to/codelink/how-we-turned-our-notion-playbook-into-a-slack-assistant-with-a-low-code-rag-stack-5182\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 7
+            },
+            {
+              "what_it_sells": "orqAgent is a no-code platform where I connect Notion (handbook) and Slack over OAuth and it auto-builds the retrieval so the bot can answer handbook questions in Slack, saving me from building the integration/vector-db plumbing myself.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The email's core premise - that building a Slack bot over the handbook looks like an integration project (Slack events, retrieval layer, model API) and that the same handbook questions keep resurfacing in the channel - matches what the GitLab work item and dev.to source establish about this exact persona considering this exact build. It assumes I'm on Notion specifically; the profile only says 'Notion or similar,' so that's a reasonable but not certain fit. The bigger tension is with the sourced problem context that low-code tooling is 'not well suited to high-scale, latency-sensitive, or highly reliable production use' - the email pitches a no-code platform for precisely the production use case that context flags as risky, and never addresses that gap.",
+              "assumed_experiences": [
+                "That I am actively weighing building this bot myself and know what 'retrieval layer' and 'vector database' mean without explanation - email-only, plausible for an IT/ops generalist but not confirmed by the profile.",
+                "That our handbook lives in Notion specifically - email-only; profile only establishes 'Notion or similar.'",
+                "That a single successful test answer in one channel is evidence the approach will hold at company-wide production scale - email-only, not established, and in tension with the sourced concern about low-code tools at production scale."
+              ],
+              "problem_now": "The recurring-question, buried-answer problem is documented as current and real for this persona (matches the ippon.tech and dev.to sourced context directly), not a speculative future risk - but the email gives no schedule or urgency beyond that general ongoing friction.",
+              "stopped_at": "Between them, the agent retrieves the most relevant context for every question automatically — there is no vector database to stand up or keep running.",
+              "biggest_doubt": "Whether a no-code platform holds up as the actual production answer-bot for the whole company, versus just a nice one-question demo - the email never mentions reliability, latency, or what happens past the free-credit stage, and the sourced problem context specifically flags low-code tools as weak on exactly those points.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me how it behaves once it's the production bot for the whole company - something concrete on latency, reliability at scale, or what it costs past the 1,500 free credits.",
+              "fixes": [
+                "there is no vector database to stand up or keep running",
+                "NOW AVAILABLE",
+                "then decide whether it belongs in front of the whole company"
+              ],
+              "opens_in_100": 24,
+              "clicks_in_100": 6,
+              "persona": "Selected audience (explicit constraints): Ops or IT generalist standing up an internal Slack answer-bot over company docs.\nContext (grounded; applicability must be checked): This is an ops/IT-adjacent person at a company where policies and handbooks are written up in Notion or similar docs and employees communicate primarily in Slack; when someone can't find an answer, they ping this person (or the team channel) directly, and this person has been asked to build or is considering building an automated Slack responder that draws on the Handbook, Docs, and Issue Trackers.\nSource: https://dev.to/codelink/how-we-turned-our-notion-playbook-into-a-slack-assistant-with-a-low-code-rag-stack-5182; quote: It’s mid-morning, your coffee’s gone cold, and someone on the team pings in Slack asking:\nSource: https://gitlab.com/gitlab-com/organization/-/work_items/218; quote: It would be nice to have an automated responder in `#questions` that has access to content from the Handbook, Docs and Issue Trackers.\nProblem context: The same policy and handbook questions get asked repeatedly in Slack, and the answers are buried in documentation that is difficult to navigate.; source: https://blog.ippon.tech/building-a-company-knowledge-bot\nProblem context: Finding the right answer inside company docs requires multiple manual searches across many pages before it turns up.; source: https://dev.to/codelink/how-we-turned-our-notion-playbook-into-a-slack-assistant-with-a-low-code-rag-stack-5182\nProblem context: Low-code tooling used to stand up a homegrown Slack bot is not well suited to high-scale, latency-sensitive, or highly reliable production use.; source: https://dev.to/codelink/how-we-turned-our-notion-playbook-into-a-slack-assistant-with-a-low-code-rag-stack-5182\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 7
+            }
+          ],
+          "sameness": []
+        }
+      ],
+      "limiting_gaps": [
+        "No customer names, quotes or case studies found - the copy can describe the product but cannot prove anyone uses it"
+      ],
+      "what_would_help_most": "Resolve this simulated next-step obstacle: told me what happens to document access/permissions when Notion connects over OAuth — do all pages sync, can I scope it, and what does 1,500 credits actually get me before I hit a paywall Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 5,
+      "notes": [],
+      "reads_expected": true
+    },
+    "assets": [
+      {
+        "title": "The same handbook question, back in the channel",
+        "content": "Subject: The same handbook question, back in the channel\nPreview text: The answer sits several searches deep in Notion. An agent over those pages can take the question instead.\n\nAnswer handbook questions in Slack without building retrieval\n\nHi there,\n\nStanding up a Slack bot over your handbook reads like an integration project.\n\nSlack events on one side, a retrieval layer in the middle, a model API on the other — and something to keep working afterwards. Meanwhile the same handbook questions come back in the channel, and the answers sit several searches deep.\n\norqAgent is now available: a no-code platform for building AI agents. For this job, it is one agent and two connections.\n\nNotion connects over OAuth and syncs your page and database content into the agent's knowledge base. Slack installs over OAuth, and the bot replies to mentions and channel messages.\n\nBetween them, the agent retrieves the most relevant context for every question automatically — there is no vector database to stand up or keep running.\n\nCreate one agent, connect the handbook, and ask it one real policy question in a Slack channel. Read what comes back, then decide whether it belongs in front of the whole company.\n\nCreate your first agent →\n\n- the orqAgent team\n\nP.S. No card required to start — new accounts get 1,500 free credits.",
+        "content_html_length": 6634
+      }
+    ]
+  }
+}
