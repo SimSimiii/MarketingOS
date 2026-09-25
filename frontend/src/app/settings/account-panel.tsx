@@ -36,7 +36,7 @@ function PasswordCard() {
       // so the honest next step is the sign-in page, not a success toast on a
       // page whose next request will 401.
       toast.success("Password changed. Sign in again with the new one.");
-      await fetch("/api/auth/logout", { method: "POST" }).catch(() => undefined);
+      await fetch("/bff/auth/logout", { method: "POST" }).catch(() => undefined);
       router.replace("/login");
       router.refresh();
     } catch (error) {
@@ -112,7 +112,7 @@ function SessionsCard({ account }: { account: Account }) {
     setBusy(true);
     try {
       await api.signOutEverywhere();
-      await fetch("/api/auth/logout", { method: "POST" }).catch(() => undefined);
+      await fetch("/bff/auth/logout", { method: "POST" }).catch(() => undefined);
       router.replace("/login");
       router.refresh();
     } catch (error) {

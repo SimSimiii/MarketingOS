@@ -48,6 +48,13 @@ class AdminSettings(BaseSettings):
     #: a migration on a table that has customers in it.
     admin_plan_prices: str = '{"free": 0, "pro": 49, "business": 149}'
 
+    #: The *platform's* PASSWORD_PEPPER, under another name so it can never be
+    #: mistaken for this console's own. It is what lets an operator create a
+    #: test account whose password the platform will verify. Blank turns that
+    #: one feature off and nothing else; the platform's signing secret is still
+    #: never here.
+    platform_password_pepper: str = ""
+
     @property
     def is_production(self) -> bool:
         return self.environment.lower() in ("prod", "production")

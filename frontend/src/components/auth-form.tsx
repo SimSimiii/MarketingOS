@@ -18,7 +18,7 @@ type Mode = "login" | "register";
  * copies of the same error handling, the same redirect logic and the same
  * layout - which is how one of them ends up with a bug the other does not.
  *
- * It posts to this app's own `/api/auth/*` handlers rather than to the API.
+ * It posts to this app's own `/bff/auth/*` handlers rather than to the API.
  * Those are what turn the API's tokens into cookies on this origin, which is
  * the only way a server-rendered page can know who is looking at it.
  */
@@ -39,7 +39,7 @@ export function AuthForm({ mode, allowSignup }: { mode: Mode; allowSignup: boole
     setBusy(true);
     setError("");
     try {
-      const response = await fetch(`/api/auth/${mode}`, {
+      const response = await fetch(`/bff/auth/${mode}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(

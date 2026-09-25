@@ -1,5 +1,19 @@
-export const API_URL =
+const PUBLIC_API_URL =
   process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "http://localhost:8000/api";
+
+/** Where the API is, from wherever this code is running.
+ *
+ * On AWS the browser calls "/api" - the console's own domain, which CloudFront
+ * routes to API Gateway - so the bundle names no domain and needs no CORS. A
+ * server has no page for "/api" to be relative to, so the server side reads
+ * API_INTERNAL_URL instead: API Gateway's own address, set at runtime by
+ * frontend/template.yaml. It is not NEXT_PUBLIC_, so it never reaches the
+ * browser. Unset (a laptop), both sides use NEXT_PUBLIC_API_URL as before.
+ */
+export const API_URL =
+  typeof window === "undefined"
+    ? (process.env.API_INTERNAL_URL?.replace(/\/$/, "") ?? PUBLIC_API_URL)
+    : PUBLIC_API_URL;
 
 /** Whether this deployment has accounts at all.
  *

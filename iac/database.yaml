@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: MarketingOS - Postgres, and the network the Lambdas reach it through
+Description: MarketingOS - Aurora Serverless v2 Postgres, and the network the Lambdas reach it through
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  Deployed once, by hand, before anything else. Everything after it consumes
@@ -8,8 +8,11 @@ Description: MarketingOS - Postgres, and the network the Lambdas reach it throug
 #      aws cloudformation deploy \
 #        --template-file iac/database.yaml \
 #        --stack-name marketingos-data-prod \
-#        --parameter-overrides Environment=prod DBPassword=<generated> \
+#        --parameter-overrides Environment=prod \
 #        --capabilities CAPABILITY_IAM
+#
+#  The master password is read from /marketingos/<env>/db-password, which
+#  iac/parameters.sh creates - it never passes through a shell.
 #
 #  The shape is deliberately the smallest thing that is not wrong:
 #
@@ -21,7 +24,14 @@ Description: MarketingOS - Postgres, and the network the Lambdas reach it throug
 #    internet - `app/market` does, and market work runs on the worker, not on
 #    Lambda. Add one here if that changes.
 #  - Two AZs because RDS demands a subnet group spanning two, not because this
-#    is highly available. It is a single instance; see MultiAZ below.
+#    is highly available. It is a single writer and no reader.
+#  - Aurora Serverless v2 rather than an RDS instance, with a minimum of zero
+#    capacity: after AutoPauseSeconds without a connection it pauses and bills
+#    storage only, and the first connection after that resumes it in about
+#    fifteen seconds. A db.t4g.micro instance bills ~$15 a month whether or
+#    not anybody signed in; this bills for the minutes somebody did. The
+#    Lambdas open a connection per request (app/core/database.py) precisely
+#    so that a frozen container's pooled connection cannot hold it awake.
 # ─────────────────────────────────────────────────────────────────────────────
 
 Parameters:
@@ -35,39 +45,27 @@ Parameters:
   DBUsername:
     Type: String
     Default: marketingos
-  DBPassword:
-    Type: String
-    NoEcho: true
-    MinLength: 16
-    Description: >-
-      Generate it, store it, never type it twice. RDS rejects '/', '@', '"'
-      and spaces, and a URL-encoding surprise in DATABASE_URL is a bad way to
-      learn that.
-  DBInstanceClass:
-    Type: String
-    Default: db.t4g.micro
-    Description: >-
-      Enough for the first customers. The workload is small transactional
-      reads; the expensive thing in this product is model calls, not SQL.
-  DBAllocatedStorage:
+  MaxCapacity:
     Type: Number
-    Default: 20
-    MinValue: 20
-  MultiAZ:
-    Type: String
-    Default: "false"
-    AllowedValues: ["true", "false"]
+    Default: 2
+    MinValue: 1
+    MaxValue: 16
     Description: >-
-      Doubles the bill for a standby. Worth it once losing an afternoon of
-      availability costs more than that; not before.
+      Aurora capacity units at most (1 ACU is about 2 GB of memory). The cap is
+      also the ceiling on what an hour of the database can cost.
+  AutoPauseSeconds:
+    Type: Number
+    Default: 300
+    MinValue: 300
+    MaxValue: 86400
+    Description: >-
+      Idle seconds before the database pauses to zero capacity. Shorter pauses
+      sooner and bills less; every resume costs the next request ~15 seconds.
   BackupRetentionDays:
     Type: Number
     Default: 7
     MinValue: 1
     Description: Automated backups. 0 disables them, which is never the answer.
-
-Conditions:
-  IsMultiAZ: !Equals [!Ref MultiAZ, "true"]
 
 Resources:
   Vpc:
@@ -132,36 +130,42 @@ Resources:
       DBSubnetGroupDescription: MarketingOS private subnets
       SubnetIds: [!Ref PrivateSubnetA, !Ref PrivateSubnetB]
 
-  Database:
-    Type: AWS::RDS::DBInstance
-    # Snapshot rather than Delete: `cloudformation delete-stack` on the wrong
-    # environment should cost an afternoon, not the customers.
+  # Snapshot rather than Delete: `cloudformation delete-stack` on the wrong
+  # environment should cost an afternoon, not the customers.
+  DatabaseCluster:
+    Type: AWS::RDS::DBCluster
     DeletionPolicy: Snapshot
     UpdateReplacePolicy: Snapshot
     Properties:
-      DBInstanceIdentifier: !Sub 'marketingos-${Environment}'
-      Engine: postgres
-      EngineVersion: "16"
-      DBInstanceClass: !Ref DBInstanceClass
-      AllocatedStorage: !Ref DBAllocatedStorage
-      MaxAllocatedStorage: 100
-      StorageType: gp3
-      StorageEncrypted: true
-      DBName: !Ref DBName
+      DBClusterIdentifier: !Sub 'marketingos-${Environment}'
+      Engine: aurora-postgresql
+      # 16.3 is the first 16.x that can scale to zero.
+      EngineVersion: "16.15"
+      DatabaseName: !Ref DBName
       MasterUsername: !Ref DBUsername
-      MasterUserPassword: !Ref DBPassword
+      # A SecureString, resolved by CloudFormation at deploy time and never
+      # stored in the template or the stack's parameters.
+      MasterUserPassword: !Sub '{{resolve:ssm-secure:/marketingos/${Environment}/db-password}}'
       DBSubnetGroupName: !Ref DatabaseSubnetGroup
-      VPCSecurityGroups: [!Ref DatabaseSecurityGroup]
-      PubliclyAccessible: false
-      MultiAZ: !If [IsMultiAZ, true, false]
+      VpcSecurityGroupIds: [!Ref DatabaseSecurityGroup]
+      StorageEncrypted: true
       BackupRetentionPeriod: !Ref BackupRetentionDays
-      # Sunday 03:00-04:00 UTC, and maintenance an hour later, so both land
-      # when nobody is writing copy.
       PreferredBackupWindow: "03:00-04:00"
       PreferredMaintenanceWindow: "sun:04:00-sun:05:00"
+      ServerlessV2ScalingConfiguration:
+        MinCapacity: 0
+        MaxCapacity: !Ref MaxCapacity
+        SecondsUntilAutoPause: !Ref AutoPauseSeconds
+
+  DatabaseInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: !Sub 'marketingos-${Environment}-writer'
+      DBClusterIdentifier: !Ref DatabaseCluster
+      Engine: aurora-postgresql
+      DBInstanceClass: db.serverless
+      PubliclyAccessible: false
       AutoMinorVersionUpgrade: true
-      EnableCloudwatchLogsExports: [postgresql]
-      DeletionProtection: !If [IsMultiAZ, true, false]
 
 Outputs:
   DatabaseUrl:
@@ -170,10 +174,10 @@ Outputs:
       Manager and reference it from CodeBuild - do not paste it into a file.
     Value: !Sub
       - 'postgresql+psycopg://${DBUsername}:PASSWORD@${Endpoint}:${Port}/${DBName}'
-      - Endpoint: !GetAtt Database.Endpoint.Address
-        Port: !GetAtt Database.Endpoint.Port
+      - Endpoint: !GetAtt DatabaseCluster.Endpoint.Address
+        Port: !GetAtt DatabaseCluster.Endpoint.Port
   DatabaseEndpoint:
-    Value: !GetAtt Database.Endpoint.Address
+    Value: !GetAtt DatabaseCluster.Endpoint.Address
   VpcSubnetIds:
     Description: VPC_SUBNET_IDS for the backend and back-office buildspecs.
     Value: !Sub '${PrivateSubnetA},${PrivateSubnetB}'

@@ -14,7 +14,7 @@ from app.models.admin import AdminUser
 from app.models.brand import Brand
 from app.models.campaign import Campaign
 from app.models.enums import AdminRole
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, Depends, Query, Request, status
 from sqlmodel import Session, col, select
 
 from .. import service
@@ -24,6 +24,8 @@ from ..schemas import (
     PlanChangeRequest,
     QuotaRequest,
     SuspendRequest,
+    TesterAccountCreate,
+    TesterAccountCreated,
     UserDetail,
     UserListResponse,
 )
@@ -54,6 +56,15 @@ def list_users(
         offset=offset,
     )
     return UserListResponse(items=items, total=total, limit=limit, offset=offset)
+
+
+@router.post("", response_model=TesterAccountCreated, status_code=status.HTTP_201_CREATED)
+def create_test_account(
+    data: TesterAccountCreate, request: Request, session: SessionDep, admin: AdminWriterDep
+) -> TesterAccountCreated:
+    """A platform account for a tester. Public signup stays shut; this is
+    the way in."""
+    return service.create_test_account(session, admin, data, service.client_ip(request))
 
 
 @router.get("/{user_id}", response_model=UserDetail)

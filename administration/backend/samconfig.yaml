@@ -16,6 +16,7 @@ version: 0.1
 #    ADMIN_JWT_SECRET      must differ from the platform's JWT_SECRET
 #    ADMIN_PWD_PEPPER      must match what bootstrap_admin.py used
 #    ADMIN_CORS_ORIGINS    the AdminConsoleUrl output, after the first deploy
+#    PLATFORM_PASSWORD_PEPPER  the platform's PASSWORD_PEPPER, for test accounts
 #    VPC_SUBNET_IDS        subnet-aaa,subnet-bbb
 #    VPC_SECURITY_GROUPS   sg-aaa
 #    ADMIN_DOMAIN          (optional) admin.example.com
@@ -62,6 +63,7 @@ ci:
         - 'AdminJwtTtlHours=${ADMIN_JWT_TTL_HOURS}'
         - 'AdminCorsOrigins=${ADMIN_CORS_ORIGINS}'
         - 'AdminPlanPrices=${ADMIN_PLAN_PRICES}'
+        - 'PlatformPasswordPepper=${PLATFORM_PASSWORD_PEPPER}'
         - 'VpcSubnetIds=${VPC_SUBNET_IDS}'
         - 'VpcSecurityGroupIds=${VPC_SECURITY_GROUPS}'
         - 'DomainName=${ADMIN_DOMAIN}'

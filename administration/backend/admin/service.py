@@ -13,15 +13,17 @@ Two rules run through everything here:
 
 from __future__ import annotations
 
+import secrets
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
+from app.auth.passwords import hash_password
 from app.models.admin import AdminAuditLog, AdminUser
 from app.models.brand import Brand
 from app.models.campaign import Campaign
 from app.models.campaign_execution import CampaignExecution
-from app.models.enums import ExecutionStatus, UserPlan, UserStatus
+from app.models.enums import ExecutionStatus, UserPlan, UserRole, UserStatus
 from app.models.knowledge_document import KnowledgeDocument
 from app.models.user import User, UserSession
 from app.models.user_settings import UserSettings
@@ -32,6 +34,8 @@ from sqlmodel import Session, col, select
 from .config import get_admin_settings
 from .schemas import (
     OverviewResponse,
+    TesterAccountCreate,
+    TesterAccountCreated,
     TimeseriesPoint,
     UserDetail,
     UserSummary,
@@ -214,6 +218,54 @@ def user_detail(session: Session, user: User) -> UserDetail:
 
 
 # ── Changing ─────────────────────────────────────────────────────────────────
+
+
+def create_test_account(
+    session: Session, admin: AdminUser, data: TesterAccountCreate, ip: str | None
+) -> TesterAccountCreated:
+    """Create a platform account an operator can hand to a tester.
+
+    The password is hashed with the platform's pepper, passed explicitly: this
+    process deliberately has no platform JWT_SECRET, so it cannot load the
+    platform's settings in production and must not try.
+    """
+    pepper = get_admin_settings().platform_password_pepper
+    if not pepper:
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            "Creating accounts is off: PLATFORM_PASSWORD_PEPPER is not set on this console.",
+        )
+    email = data.email.strip().lower()
+    if session.exec(select(User).where(col(User.email) == email)).first() is not None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "An account already exists for that address.")
+
+    generated = None if data.password else secrets.token_urlsafe(12)
+    password = data.password or generated
+    user = User(
+        email=email,
+        password_hash=hash_password(password, pepper=pepper),
+        full_name=(data.full_name or "").strip() or None,
+        company_name=(data.company_name or "").strip() or None,
+        role=UserRole.OWNER,
+        status=UserStatus.ACTIVE,
+        plan=data.plan,
+        monthly_run_quota=data.monthly_run_quota,
+    )
+    session.add(user)
+    session.flush()
+    log_action(
+        session,
+        admin,
+        "user.create",
+        target_type="user",
+        target_id=user.id,
+        # The address and the grant, never the password - generated or not.
+        detail={"email": email, "plan": str(data.plan), "monthly_run_quota": data.monthly_run_quota},
+        ip=ip,
+    )
+    session.commit()
+    session.refresh(user)
+    return TesterAccountCreated(user=user_detail(session, user), generated_password=generated)
 
 
 def change_plan(

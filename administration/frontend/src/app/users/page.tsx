@@ -3,10 +3,11 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 
-import { api, type UserSummary } from "@/lib/api";
+import { api, atLeast, type UserPlan, type UserSummary } from "@/lib/api";
 import { formatDate } from "@/lib/format";
+import { useSession } from "@/lib/session";
 import { PageHeader, Shell } from "@/components/shell";
-import { Badge, Button, Empty, Notice, Select } from "@/components/ui";
+import { Badge, Button, Card, Empty, Field, Notice, Select } from "@/components/ui";
 
 const PAGE_SIZE = 25;
 
@@ -19,6 +20,7 @@ export default function UsersPage() {
 }
 
 function UsersBody() {
+  const { admin: me } = useSession();
   const [search, setSearch] = useState("");
   const [plan, setPlan] = useState("");
   const [status, setStatus] = useState("");
@@ -56,6 +58,8 @@ function UsersBody() {
         title="Accounts"
         description="Everyone with a login. Search matches email, name and company."
       />
+
+      {atLeast(me?.role, "admin") && <NewTesterForm onCreated={load} />}
 
       <div className="mb-4 grid gap-3 sm:grid-cols-[2fr_1fr_1fr]">
         <label className="block">
@@ -167,5 +171,87 @@ function UsersBody() {
         </div>
       </div>
     </>
+  );
+}
+
+/** Public signup is off, so this is how a tester gets in. Leave the password
+ *  blank and one is generated and shown here once - it is not stored anywhere
+ *  this console can read it back from. */
+function NewTesterForm({ onCreated }: { onCreated: () => Promise<void> }) {
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [plan, setPlan] = useState<UserPlan>("free");
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [created, setCreated] = useState<{ email: string; password: string | null } | null>(null);
+
+  return (
+    <div className="mb-6">
+      <Card title="Create a test account">
+        <form
+          className="grid gap-3 sm:grid-cols-[2fr_1.5fr_1fr_1.5fr_auto] sm:items-end"
+          onSubmit={async (event) => {
+            event.preventDefault();
+            setBusy(true);
+            setError("");
+            setCreated(null);
+            try {
+              const result = await api.createUser({
+                email,
+                plan,
+                full_name: name || undefined,
+                password: password || undefined,
+              });
+              setCreated({ email: result.user.email, password: result.generated_password });
+              setEmail("");
+              setName("");
+              setPassword("");
+              await onCreated();
+            } catch (exception) {
+              setError(exception instanceof Error ? exception.message : "Could not create it.");
+            } finally {
+              setBusy(false);
+            }
+          }}
+        >
+          <Field
+            label="Email"
+            type="email"
+            required
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
+          <Field label="Name" value={name} onChange={(event) => setName(event.target.value)} />
+          <Select label="Plan" value={plan} onChange={(value) => setPlan(value as UserPlan)}>
+            <option value="free">Free</option>
+            <option value="pro">Pro</option>
+            <option value="business">Business</option>
+          </Select>
+          <Field
+            label="Password"
+            type="text"
+            minLength={10}
+            autoComplete="off"
+            placeholder="blank = generate one"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+          />
+          <Button type="submit" variant="primary" disabled={busy}>
+            {busy ? "Creating…" : "Create"}
+          </Button>
+        </form>
+        <div className="mt-3 space-y-2">
+          <Notice>{error}</Notice>
+          {created && (
+            <Notice tone="ok">
+              {created.password
+                ? `${created.email} can sign in with ${created.password} - copy it now, it is not shown again.`
+                : `${created.email} can sign in with the password you chose.`}
+            </Notice>
+          )}
+        </div>
+      </Card>
+    </div>
   );
 }

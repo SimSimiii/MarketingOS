@@ -1,6 +1,6 @@
 /**
  * Server-side session plumbing, shared by the route handlers under
- * `src/app/api/auth`.
+ * `src/app/bff/auth`.
  *
  * Those handlers exist for one reason: cookies are per-origin. The API sets
  * its own cookies on its own hostname, and a Next.js server component can only
@@ -13,7 +13,7 @@
  * - The **access token** is readable by script, because client components and
  *   the `EventSource` URL builder need it and neither can read an httpOnly
  *   cookie. It is worth sixty minutes.
- * - The **refresh token** is httpOnly and scoped to `/api/auth`, so it is sent
+ * - The **refresh token** is httpOnly and scoped to `/bff/auth`, so it is sent
  *   to these handlers and to nothing else - not to a page, not to a client
  *   component, not to the API. It is worth a month, which is exactly why.
  */

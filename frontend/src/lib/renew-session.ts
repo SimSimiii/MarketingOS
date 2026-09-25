@@ -12,7 +12,7 @@ export function renewSession(): Promise<boolean> {
   const previous = token();
   async function renew() {
     if (token() && token() !== previous) return true;
-    const response = await fetch("/api/auth/refresh", { method: "POST", credentials: "same-origin" });
+    const response = await fetch("/bff/auth/refresh", { method: "POST", credentials: "same-origin" });
     if (response.status >= 500) throw new Error("Session service unavailable. Please retry.");
     return response.ok;
   }

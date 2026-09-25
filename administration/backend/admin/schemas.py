@@ -103,6 +103,29 @@ class UserDetail(UserSummary):
     last_run_at: UtcDatetime | None
 
 
+class TesterAccountCreate(BaseModel):
+    """A platform account made by an operator, for somebody who will test.
+
+    Leave `password` out and one is generated and shown once, in the response -
+    the operator hands it over, the tester changes it from their settings.
+    """
+
+    email: EmailStr
+    full_name: str | None = Field(default=None, max_length=120)
+    company_name: str | None = Field(default=None, max_length=120)
+    plan: UserPlan = UserPlan.FREE
+    #: Runs per period. 0 is unlimited, matching the platform's convention.
+    monthly_run_quota: int = Field(default=0, ge=0)
+    password: str | None = Field(default=None, min_length=10, max_length=200)
+
+
+class TesterAccountCreated(BaseModel):
+    user: UserDetail
+    #: Only when the console generated it. Never stored, never logged, never
+    #: returned again.
+    generated_password: str | None = None
+
+
 class PlanChangeRequest(BaseModel):
     plan: UserPlan
     #: Runs per period the new plan grants. Left out means "leave the quota

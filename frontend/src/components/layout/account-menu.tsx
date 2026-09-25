@@ -41,7 +41,7 @@ export function AccountMenu() {
 
   async function signOut() {
     setBusy(true);
-    await fetch("/api/auth/logout", { method: "POST" }).catch(() => undefined);
+    await fetch("/bff/auth/logout", { method: "POST" }).catch(() => undefined);
     // `refresh` as well: every page is server-rendered from the cookie that
     // was just deleted, and the router cache still holds the signed-in render.
     router.replace("/login");

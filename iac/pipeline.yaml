@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: MarketingOS - the five CodeBuild projects, their roles, and the registry
+Description: MarketingOS - the five CodeBuild projects, their roles, and the artifact bucket
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  The build side of the deployment, as one stack instead of five console
@@ -19,15 +19,19 @@ Description: MarketingOS - the five CodeBuild projects, their roles, and the reg
 #  cadences and must be able to fail independently:
 #
 #    marketingos-build-api       backend/buildspec.yml
-#    marketingos-build-console   frontend/buildspec.yml          (privileged: Docker)
+#    marketingos-build-console   frontend/buildspec.yml
 #    marketingos-build-admin-api administration/backend/buildspec.yml
 #    marketingos-build-admin-ui  administration/frontend/buildspec.yml
 #    marketingos-build-landing   landing-page/buildspec.yml
 #
-#  Every secret arrives through CodeBuild's SECRETS_MANAGER environment type,
-#  which resolves the value on the build agent. Nothing secret is a PLAINTEXT
-#  variable here, and nothing secret is in this repository. Deploy
-#  iac/secrets.yaml first: these projects reference its secrets by name.
+#  Every secret arrives through CodeBuild's PARAMETER_STORE environment type,
+#  which resolves the SecureString on the build agent. Nothing secret is a
+#  PLAINTEXT variable here, and nothing secret is in this repository. Run
+#  iac/parameters.sh first: these projects reference its parameters by name.
+#
+#  Source is GitHub through the account's CodeConnections connection
+#  (GitHubConnectionArn). Every project can also build a zip from the artifact
+#  bucket with a source override - see iac/README.md.
 #
 #  What this stack does NOT create: a CodePipeline. Five projects with a source
 #  webhook each is the whole of what this repository needs - there is no
@@ -48,6 +52,13 @@ Parameters:
       https://github.com/<owner>/<repo>. CodeBuild needs a GitHub connection in
       this account and region before a build can clone it - see the runbook;
       it is an OAuth authorisation, not something a template can create.
+
+  GitHubConnectionArn:
+    Type: String
+    Default: ""
+    Description: >-
+      The CodeConnections connection to GitHub every project clones through.
+      Blank falls back to the account's default GitHub credential.
 
   SourceBranch:
     Type: String
@@ -87,15 +98,19 @@ Parameters:
 
   ApiUrl:
     Type: String
-    Default: ""
+    Default: "/api"
     Description: >-
-      The API stack's ApiEndpoint output WITH /api appended. Blank until the
-      API has been deployed once; the console build refuses to run without it.
+      The platform API as the console's browser code calls it. "/api": the
+      console's CloudFront routes /api/* to the platform API Gateway, so the
+      browser stays on one origin and the bundle names no domain. The server
+      side reaches API Gateway directly - see frontend/template.yaml.
 
   AdminApiUrl:
     Type: String
-    Default: ""
-    Description: The admin stack's AdminApiEndpoint output.
+    Default: "/"
+    Description: >-
+      The back-office API as its console calls it. "/" means same origin: the
+      back-office CloudFront routes /api/* to the admin API Gateway.
 
   AdminCorsOrigins:
     Type: String
@@ -196,6 +211,7 @@ Parameters:
     AllowedValues: [1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365]
 
 Conditions:
+  HasConnection: !Not [!Equals [!Ref GitHubConnectionArn, ""]]
   UseWebhooks: !Equals [!Ref EnableWebhooks, "true"]
   NoApiStackName: !Equals [!Ref ApiStackName, ""]
   NoConsoleStackName: !Equals [!Ref ConsoleStackName, ""]
@@ -238,35 +254,6 @@ Resources:
             NoncurrentVersionExpirationInDays: 7
             AbortIncompleteMultipartUpload:
               DaysAfterInitiation: 3
-
-  # The console is the only thing here that ships as a container image.
-  ConsoleRepository:
-    Type: AWS::ECR::Repository
-    DeletionPolicy: Retain
-    UpdateReplacePolicy: Retain
-    Properties:
-      RepositoryName: !Sub 'marketingos-console-${Environment}'
-      ImageScanningConfiguration:
-        ScanOnPush: true
-      ImageTagMutability: MUTABLE
-      LifecyclePolicy:
-        # A Next.js image is ~400 MB. Ten of them is 4 GB at $0.10/GB-month,
-        # and the eleventh is never going to be rolled back to.
-        LifecyclePolicyText: |
-          {
-            "rules": [
-              {
-                "rulePriority": 1,
-                "description": "Keep the last 10 images",
-                "selection": {
-                  "tagStatus": "any",
-                  "countType": "imageCountMoreThan",
-                  "countNumber": 10
-                },
-                "action": { "type": "expire" }
-              }
-            ]
-          }
 
   # ═══ IAM ════════════════════════════════════════════════════════════════════
   #
@@ -442,24 +429,6 @@ Resources:
                   - ec2:DescribeVpcs
                 Resource: '*'
 
-              - Sid: ContainerImages
-                Effect: Allow
-                Action:
-                  - ecr:GetAuthorizationToken
-                  - ecr:BatchCheckLayerAvailability
-                  - ecr:CompleteLayerUpload
-                  - ecr:InitiateLayerUpload
-                  - ecr:PutImage
-                  - ecr:UploadLayerPart
-                  - ecr:BatchGetImage
-                  - ecr:GetDownloadUrlForLayer
-                  - ecr:DescribeRepositories
-                  - ecr:DescribeImages
-                  - ecr:ListImages
-                  - ecr:GetRepositoryPolicy
-                  - ecr:SetRepositoryPolicy
-                Resource: '*'
-
               - Sid: RunTheMigrator
                 Effect: Allow
                 # backend/buildspec.yml invokes this in post_build and fails the
@@ -468,10 +437,12 @@ Resources:
                 Action: lambda:InvokeFunction
                 Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:marketingos-migrate-*'
 
-              - Sid: ReadOwnSecrets
+              - Sid: ReadOwnParameters
                 Effect: Allow
-                Action: secretsmanager:GetSecretValue
-                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:marketingos/${Environment}/*'
+                # SecureStrings under the default aws/ssm key, which SSM
+                # decrypts on the caller's behalf - no KMS grant needed.
+                Action: [ssm:GetParameters, ssm:GetParameter]
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/marketingos/${Environment}/*'
 
   StaticDeployRole:
     Type: AWS::IAM::Role
@@ -548,6 +519,10 @@ Resources:
       Source:
         Type: GITHUB
         Location: !Ref GitHubRepositoryUrl
+        Auth: !If
+          - HasConnection
+          - { Type: CODECONNECTIONS, Resource: !Ref GitHubConnectionArn }
+          - !Ref 'AWS::NoValue'
         BuildSpec: backend/buildspec.yml
         GitCloneDepth: 1
         ReportBuildStatus: true
@@ -583,23 +558,23 @@ Resources:
           - { Name: VPC_SECURITY_GROUPS, Type: PLAINTEXT, Value: !Ref VpcSecurityGroups }
           # Resolved on the agent, never stored on the project.
           - Name: DATABASE_URL
-            Type: SECRETS_MANAGER
-            Value: !Sub 'marketingos/${Environment}/database-url'
+            Type: PARAMETER_STORE
+            Value: !Sub '/marketingos/${Environment}/database-url'
           - Name: JWT_SECRET
-            Type: SECRETS_MANAGER
-            Value: !Sub 'marketingos/${Environment}/jwt-secret'
+            Type: PARAMETER_STORE
+            Value: !Sub '/marketingos/${Environment}/jwt-secret'
           - Name: PASSWORD_PEPPER
-            Type: SECRETS_MANAGER
-            Value: !Sub 'marketingos/${Environment}/password-pepper'
+            Type: PARAMETER_STORE
+            Value: !Sub '/marketingos/${Environment}/password-pepper'
           # Baked into the campaign state machine's functions as NoEcho stack
           # parameters. The API function never sees them - it cannot run a
           # model job at all, so a key there would be a liability with no use.
           - Name: ANTHROPIC_API_KEY
-            Type: SECRETS_MANAGER
-            Value: !Sub 'marketingos/${Environment}/anthropic-api-key'
+            Type: PARAMETER_STORE
+            Value: !Sub '/marketingos/${Environment}/anthropic-api-key'
           - Name: OPENAI_API_KEY
-            Type: SECRETS_MANAGER
-            Value: !Sub 'marketingos/${Environment}/openai-api-key'
+            Type: PARAMETER_STORE
+            Value: !Sub '/marketingos/${Environment}/openai-api-key'
           - { Name: JOB_MEMORY_SIZE, Type: PLAINTEXT, Value: "2048" }
       LogsConfig:
         CloudWatchLogs:
@@ -622,29 +597,31 @@ Resources:
     Type: AWS::CodeBuild::Project
     Properties:
       Name: !Sub 'marketingos-build-console-${Environment}'
-      Description: Builds the Next.js Lambda container image and deploys it behind CloudFront.
+      Description: Builds Next.js into a zip Lambda and S3 assets, and deploys it behind CloudFront.
       ServiceRole: !GetAtt DeployRole.Arn
       TimeoutInMinutes: !Ref BuildTimeoutMinutes
       Artifacts: { Type: NO_ARTIFACTS }
       Cache:
         Type: LOCAL
-        Modes: [LOCAL_CUSTOM_CACHE, LOCAL_DOCKER_LAYER_CACHE, LOCAL_SOURCE_CACHE]
+        Modes: [LOCAL_CUSTOM_CACHE, LOCAL_SOURCE_CACHE]
       Source:
         Type: GITHUB
         Location: !Ref GitHubRepositoryUrl
+        Auth: !If
+          - HasConnection
+          - { Type: CODECONNECTIONS, Resource: !Ref GitHubConnectionArn }
+          - !Ref 'AWS::NoValue'
         BuildSpec: frontend/buildspec.yml
         GitCloneDepth: 1
         ReportBuildStatus: true
       SourceVersion: !Ref SourceBranch
       Environment:
-        # x86_64 here, matching ConsoleFunction's Architectures. The image has
-        # to be built for the architecture the function runs on, and a
-        # cross-architecture Docker build under emulation is slow enough to
-        # notice.
+        # x86_64, matching ConsoleFunction's Architectures: the standalone
+        # output can carry native modules built for the machine that built it.
+        # No Docker, so no privileged mode.
         Type: LINUX_CONTAINER
         Image: aws/codebuild/standard:7.0
-        ComputeType: BUILD_GENERAL1_LARGE
-        PrivilegedMode: true
+        ComputeType: BUILD_GENERAL1_MEDIUM
         EnvironmentVariables:
           - { Name: AWS_DEFAULT_REGION, Type: PLAINTEXT, Value: !Ref 'AWS::Region' }
           - { Name: ENVIRONMENT, Type: PLAINTEXT, Value: !Ref Environment }
@@ -652,7 +629,6 @@ Resources:
             Type: PLAINTEXT
             Value: !If [NoConsoleStackName, !Sub 'marketingos-console-${Environment}', !Ref ConsoleStackName]
           - { Name: NEXT_PUBLIC_API_URL, Type: PLAINTEXT, Value: !Ref ApiUrl }
-          - { Name: IMAGE_REPOSITORY, Type: PLAINTEXT, Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ConsoleRepository}' }
           - { Name: LOG_RETENTION_DAYS, Type: PLAINTEXT, Value: !Ref LogRetentionDays }
           - { Name: CONSOLE_MEMORY_SIZE, Type: PLAINTEXT, Value: "1536" }
           - { Name: CONSOLE_DOMAIN, Type: PLAINTEXT, Value: !Ref ConsoleDomain }
@@ -691,6 +667,10 @@ Resources:
       Source:
         Type: GITHUB
         Location: !Ref GitHubRepositoryUrl
+        Auth: !If
+          - HasConnection
+          - { Type: CODECONNECTIONS, Resource: !Ref GitHubConnectionArn }
+          - !Ref 'AWS::NoValue'
         BuildSpec: administration/backend/buildspec.yml
         GitCloneDepth: 1
         ReportBuildStatus: true
@@ -721,20 +701,28 @@ Resources:
           - { Name: VPC_SUBNET_IDS, Type: PLAINTEXT, Value: !Ref VpcSubnetIds }
           - { Name: VPC_SECURITY_GROUPS, Type: PLAINTEXT, Value: !Ref VpcSecurityGroups }
           - Name: DATABASE_URL
-            Type: SECRETS_MANAGER
-            Value: !Sub 'marketingos/${Environment}/database-url'
+            Type: PARAMETER_STORE
+            Value: !Sub '/marketingos/${Environment}/database-url'
           - Name: ADMIN_JWT_SECRET
-            Type: SECRETS_MANAGER
-            Value: !Sub 'marketingos/${Environment}/admin-jwt-secret'
+            Type: PARAMETER_STORE
+            Value: !Sub '/marketingos/${Environment}/admin-jwt-secret'
           - Name: ADMIN_PWD_PEPPER
-            Type: SECRETS_MANAGER
-            Value: !Sub 'marketingos/${Environment}/admin-pwd-pepper'
+            Type: PARAMETER_STORE
+            Value: !Sub '/marketingos/${Environment}/admin-pwd-pepper'
+          # The platform's password pepper, and only that: it is what lets an
+          # operator create a test account whose password the platform will
+          # verify. The back-office can already write any row in the shared
+          # database, so this adds the ability to set a password and nothing
+          # a stolen operator token did not already have.
+          - Name: PLATFORM_PASSWORD_PEPPER
+            Type: PARAMETER_STORE
+            Value: !Sub '/marketingos/${Environment}/password-pepper'
           # JWT_SECRET is deliberately NOT here. The buildspec's cross-check
           # (`ADMIN_JWT_SECRET must not equal JWT_SECRET`) only fires when
           # JWT_SECRET is set, and giving this project the platform's signing
           # key to run one comparison would defeat the isolation the comparison
-          # exists to protect. The two secrets are generated independently in
-          # secrets.yaml and cannot collide.
+          # exists to protect. The two secrets are generated independently by
+          # iac/parameters.sh and cannot collide.
       LogsConfig:
         CloudWatchLogs:
           Status: ENABLED
@@ -769,6 +757,10 @@ Resources:
       Source:
         Type: GITHUB
         Location: !Ref GitHubRepositoryUrl
+        Auth: !If
+          - HasConnection
+          - { Type: CODECONNECTIONS, Resource: !Ref GitHubConnectionArn }
+          - !Ref 'AWS::NoValue'
         BuildSpec: administration/frontend/buildspec.yml
         GitCloneDepth: 1
         ReportBuildStatus: true
@@ -807,6 +799,10 @@ Resources:
       Source:
         Type: GITHUB
         Location: !Ref GitHubRepositoryUrl
+        Auth: !If
+          - HasConnection
+          - { Type: CODECONNECTIONS, Resource: !Ref GitHubConnectionArn }
+          - !Ref 'AWS::NoValue'
         BuildSpec: landing-page/buildspec.yml
         GitCloneDepth: 1
         ReportBuildStatus: true
@@ -837,9 +833,6 @@ Resources:
 Outputs:
   ArtifactBucketName:
     Value: !Ref ArtifactBucket
-  ConsoleRepositoryUri:
-    Description: IMAGE_REPOSITORY for the console build - already wired in above.
-    Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ConsoleRepository}'
   ApiBuildProject:
     Value: !Ref ApiBuild
   ConsoleBuildProject:

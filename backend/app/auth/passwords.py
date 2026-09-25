@@ -23,13 +23,17 @@ from app.core.config import get_settings
 _ROUNDS = 12
 
 
-def _peppered(password: str) -> bytes:
-    pepper = get_settings().password_pepper.encode()
-    return hmac.new(pepper, password.encode("utf-8"), hashlib.sha256).hexdigest().encode()
+def _peppered(password: str, pepper: str | None = None) -> bytes:
+    key = (pepper if pepper is not None else get_settings().password_pepper).encode()
+    return hmac.new(key, password.encode("utf-8"), hashlib.sha256).hexdigest().encode()
 
 
-def hash_password(password: str) -> str:
-    return bcrypt.hashpw(_peppered(password), bcrypt.gensalt(rounds=_ROUNDS)).decode()
+def hash_password(password: str, *, pepper: str | None = None) -> str:
+    """`pepper` is for a caller that holds the platform's pepper without the
+    rest of its settings - the back-office creating a test account, whose
+    process has no platform JWT_SECRET and so cannot load `Settings` in
+    production. Everything else leaves it out."""
+    return bcrypt.hashpw(_peppered(password, pepper), bcrypt.gensalt(rounds=_ROUNDS)).decode()
 
 
 def verify_password(password: str, password_hash: str) -> bool:

@@ -254,7 +254,7 @@ export function createApi(auth: AuthSource) {
       const query = new URLSearchParams();
       if (afterEventId) query.set("after_event_id", String(afterEventId));
       const suffix = query.toString() ? `?${query}` : "";
-      return `/api/download/executions/${executionId}/stream${suffix}`;
+      return `/bff/download/executions/${executionId}/stream${suffix}`;
     },
 
     listKnowledgeDocuments: (scope: { campaignId?: string; brandId?: string } = {}, page?: { limit: number; offset: number }) => {
@@ -489,7 +489,7 @@ export function createApi(auth: AuthSource) {
       const query = new URLSearchParams();
       if (segment) query.set("segment", segment);
       const suffix = query.toString() ? `?${query}` : "";
-      return `/api/download/market/${brandId}/prospects.csv${suffix}`;
+      return `/bff/download/market/${brandId}/prospects.csv${suffix}`;
     },
 
     listRadar: (brandId: string, limit = 50) =>

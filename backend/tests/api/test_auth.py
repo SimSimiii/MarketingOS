@@ -382,3 +382,15 @@ def test_linkedin_mutations_are_closed_to_other_accounts(locked_client, engine):
     ]:
         response = locked_client.post(f"/api/market/{brand_id}/linkedin/{path}", json=data, headers=bob)
         assert response.status_code == 404
+
+
+def test_a_hash_made_with_an_explicit_pepper_verifies_where_that_pepper_is_configured():
+    """The back-office creates test accounts holding the platform pepper but not
+    its settings; the platform must accept what it wrote, and only that."""
+    from app.auth.passwords import hash_password, verify_password
+
+    configured = get_settings().password_pepper
+    assert verify_password("a-test-password", hash_password("a-test-password", pepper=configured))
+    assert not verify_password(
+        "a-test-password", hash_password("a-test-password", pepper=configured + "x")
+    )

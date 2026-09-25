@@ -48,6 +48,14 @@ Parameters:
   AdminJwtTtlHours:
     Type: Number
     Default: 12
+  PlatformPasswordPepper:
+    Type: String
+    NoEcho: true
+    Default: ""
+    Description: >-
+      The platform's PASSWORD_PEPPER, so an operator can create a test account
+      whose password the platform verifies. Blank turns that feature off. The
+      platform's signing secret is never given to this stack.
 
   AdminCorsOrigins:
     Type: String
@@ -127,6 +135,7 @@ Globals:
         ADMIN_JWT_TTL_HOURS: !Ref AdminJwtTtlHours
         ADMIN_CORS_ORIGINS: !Ref AdminCorsOrigins
         ADMIN_PLAN_PRICES: !Ref AdminPlanPrices
+        PLATFORM_PASSWORD_PEPPER: !Ref PlatformPasswordPepper
         # The HTTP API's stage, which API Gateway leaves at the front of every
         # path. admin.main strips it before FastAPI routes.
         API_GATEWAY_BASE_PATH: !Sub '/${Environment}'
@@ -292,12 +301,29 @@ Resources:
             SslSupportMethod: sni-only
             MinimumProtocolVersion: TLSv1.2_2021
           - CloudFrontDefaultCertificate: true
+        # Two origins on one domain: the console's static export from S3, and
+        # /api/* to this stack's HTTP API - so the console calls "/api/..." on
+        # its own origin, with no CORS and no API hostname in the bundle.
         Origins:
           - Id: AdminS3Origin
             DomainName: !GetAtt AdminFrontendBucket.RegionalDomainName
             OriginAccessControlId: !Ref AdminOriginAccessControl
             S3OriginConfig:
               OriginAccessIdentity: ""
+          - Id: AdminApiOrigin
+            DomainName: !Sub '${AdminApi}.execute-api.${AWS::Region}.amazonaws.com'
+            # The stage; admin.main strips it again before FastAPI routes.
+            OriginPath: !Sub '/${Environment}'
+            CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+              OriginSSLProtocols: [TLSv1.2]
+        CacheBehaviors:
+          - PathPattern: /api/*
+            TargetOriginId: AdminApiOrigin
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods: [GET, HEAD, OPTIONS, PUT, POST, PATCH, DELETE]
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad   # CachingDisabled
+            OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac  # AllViewerExceptHostHeader
         DefaultCacheBehavior:
           TargetOriginId: AdminS3Origin
           ViewerProtocolPolicy: redirect-to-https
@@ -311,12 +337,11 @@ Resources:
             - EventType: viewer-request
               FunctionARN: !GetAtt AdminUrlRewriteFunction.FunctionMetadata.FunctionARN
         CustomErrorResponses:
-          # S3 returns 403 for a missing key when the bucket is private, so an
-          # unknown path would otherwise read as "forbidden" rather than "not
-          # a page".
-          - ErrorCode: 403
-            ResponseCode: 404
-            ResponsePagePath: /404.html
+          # 404 only. An error response applies to every behavior, /api/*
+          # included, so mapping 403 as well would turn the API's "your role
+          # cannot do that" into an HTML page. S3 answers a missing key with a
+          # real 404 instead of 403 because CloudFront may list the bucket -
+          # see the bucket policy.
           - ErrorCode: 404
             ResponseCode: 404
             ResponsePagePath: /404.html
@@ -334,6 +359,16 @@ Resources:
               Service: cloudfront.amazonaws.com
             Action: s3:GetObject
             Resource: !Sub '${AdminFrontendBucket.Arn}/*'
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${AdminDistribution}'
+          # Without ListBucket, S3 answers a missing key with 403.
+          - Sid: AllowCloudFrontServicePrincipalList
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:ListBucket
+            Resource: !GetAtt AdminFrontendBucket.Arn
             Condition:
               StringEquals:
                 AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${AdminDistribution}'
@@ -362,7 +397,9 @@ Resources:
 
 Outputs:
   AdminApiEndpoint:
-    Description: Set the console's NEXT_PUBLIC_ADMIN_API_URL to this.
+    Description: >-
+      The API's own address. The console does not use it - it calls /api/* on
+      its own domain - but it is what to curl when CloudFront is in doubt.
     Value: !Sub 'https://${AdminApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}'
   AdminConsoleUrl:
     Description: >-

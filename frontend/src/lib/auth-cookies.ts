@@ -12,7 +12,7 @@
 
 export const ACCESS_TOKEN_COOKIE = "mos_access_token";
 
-/** httpOnly and scoped to `/api/auth`, so it is sent only to the route
+/** httpOnly and scoped to `/bff/auth`, so it is sent only to the route
  * handlers that mint access tokens from it and to nothing else. */
 export const REFRESH_TOKEN_COOKIE = "mos_refresh_token";
-export const REFRESH_COOKIE_PATH = "/api/auth";
+export const REFRESH_COOKIE_PATH = "/bff/auth";

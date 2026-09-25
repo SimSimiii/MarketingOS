@@ -63,6 +63,9 @@ async function readError(response: Response): Promise<string> {
   } catch {
     /* Not JSON - a gateway error page or a crash. Fall through. */
   }
+  // An HTML body is CloudFront's error page standing in for the API's own
+  // answer - worth a status, not worth pasting into a notice.
+  if (body.trimStart().startsWith("<")) return `Request failed (${response.status}).`;
   return body || `Request failed (${response.status}).`;
 }
 
@@ -202,6 +205,20 @@ export const api = {
       offset: number;
     }>(`/api/users?${query}`);
   },
+  /** A platform account for a tester. Without `password`, one is generated
+   *  and returned once as `generated_password`. */
+  createUser: (body: {
+    email: string;
+    full_name?: string;
+    company_name?: string;
+    plan: UserPlan;
+    monthly_run_quota?: number;
+    password?: string;
+  }) =>
+    request<{ user: UserDetail; generated_password: string | null }>("/api/users", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
   getUser: (id: string) => request<UserDetail>(`/api/users/${id}`),
   getWorkspace: (id: string) => request<Workspace>(`/api/users/${id}/workspace`),
   changePlan: (

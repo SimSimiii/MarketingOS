@@ -22,9 +22,9 @@ import { AUTH_REQUIRED } from "@/lib/config";
  * On AWS the console's Function URL is public - CloudFront's origin access
  * control cannot sign a browser's POST, and signing in is a POST - so
  * CloudFront stamps every request with a header only it knows, and anything
- * arriving without it came around the CDN and its WAF. Unset (a laptop, a
- * test), nothing is checked. `/api/health` is exempt: the Lambda Web Adapter
- * polls it from inside the container, not through CloudFront.
+ * arriving without it came around the CDN. Unset (a laptop, a test), nothing
+ * is checked. `/bff/health` is exempt: the Lambda Web Adapter polls it from
+ * inside the function, not through CloudFront.
  */
 const ORIGIN_VERIFY_SECRET = process.env.ORIGIN_VERIFY_SECRET;
 
@@ -33,14 +33,16 @@ export function proxy(request: NextRequest) {
 
   if (
     ORIGIN_VERIFY_SECRET &&
-    pathname !== "/api/health" &&
+    pathname !== "/bff/health" &&
     request.headers.get("x-origin-verify") !== ORIGIN_VERIFY_SECRET
   ) {
     return new NextResponse("Forbidden", { status: 403 });
   }
-  // The auth route handlers are how you sign in; the redirects below are for
-  // pages only. They are matched at all so the origin check covers them.
-  if (pathname.startsWith("/api/")) return NextResponse.next();
+  // This app's own route handlers (sign-in, refresh, downloads) - how you sign
+  // in, so the redirects below are for pages only. They are matched at all so
+  // the origin check covers them. /api/* never reaches this server: CloudFront
+  // sends it to API Gateway.
+  if (pathname.startsWith("/bff/")) return NextResponse.next();
 
   // Single-user mode: no accounts, no sign-in page, nothing to guard. This is
   // the shape a laptop install keeps, and putting a login wall in front of it
@@ -79,7 +81,7 @@ export const config = {
    *   _next/*     - the build output
    *   favicon,
    *   any path with a file extension (static assets)
-   * `api/*` is matched for the origin check and then passed straight through.
+   * `bff/*` is matched for the origin check and then passed straight through.
    */
   matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.[^/]+$).*)"],
 };

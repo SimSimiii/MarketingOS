@@ -25,9 +25,9 @@ Description: MarketingOS - CloudFront Free plan (web ACLs and plan subscriptions
 #        --parameter-overrides Environment=prod \
 #            ConsoleDistributionId=E... AdminDistributionId=E... LandingDistributionId=E...
 #
-#  The ACLs hold one rule each, a per-IP rate limit. Managed rule groups are
-#  one of the things the Free plan refuses, and a per-IP limit is the one rule
-#  worth having before there is traffic to learn from.
+#  The ACLs are empty - allow everything, no rules. They exist because the
+#  Free plan will not subscribe a distribution without one, and they cost
+#  nothing on it. Rules are for when there is traffic worth filtering.
 # ─────────────────────────────────────────────────────────────────────────────
 
 Parameters:
@@ -44,13 +44,6 @@ Parameters:
   LandingDistributionId:
     Type: String
     Default: ""
-  RateLimitPer5Min:
-    Type: Number
-    Default: 2000
-    MinValue: 100
-    Description: >-
-      Requests per client IP per five minutes before WAF blocks it. The console
-      renders every page on the server, so a normal session is a few hundred.
 
 Conditions:
   # All three or none: the subscriptions are chained with DependsOn below, and
@@ -71,18 +64,6 @@ Resources:
         SampledRequestsEnabled: true
         CloudWatchMetricsEnabled: true
         MetricName: !Sub 'marketingos-console-${Environment}'
-      Rules:
-        - Name: rate-limit-per-ip
-          Priority: 0
-          Action: { Block: {} }
-          Statement:
-            RateBasedStatement:
-              Limit: !Ref RateLimitPer5Min
-              AggregateKeyType: IP
-          VisibilityConfig:
-            SampledRequestsEnabled: true
-            CloudWatchMetricsEnabled: true
-            MetricName: !Sub 'marketingos-console-rate-${Environment}'
 
   AdminWebAcl:
     Type: AWS::WAFv2::WebACL
@@ -94,18 +75,6 @@ Resources:
         SampledRequestsEnabled: true
         CloudWatchMetricsEnabled: true
         MetricName: !Sub 'marketingos-admin-${Environment}'
-      Rules:
-        - Name: rate-limit-per-ip
-          Priority: 0
-          Action: { Block: {} }
-          Statement:
-            RateBasedStatement:
-              Limit: !Ref RateLimitPer5Min
-              AggregateKeyType: IP
-          VisibilityConfig:
-            SampledRequestsEnabled: true
-            CloudWatchMetricsEnabled: true
-            MetricName: !Sub 'marketingos-admin-rate-${Environment}'
 
   LandingWebAcl:
     Type: AWS::WAFv2::WebACL
@@ -117,18 +86,6 @@ Resources:
         SampledRequestsEnabled: true
         CloudWatchMetricsEnabled: true
         MetricName: !Sub 'marketingos-landing-${Environment}'
-      Rules:
-        - Name: rate-limit-per-ip
-          Priority: 0
-          Action: { Block: {} }
-          Statement:
-            RateBasedStatement:
-              Limit: !Ref RateLimitPer5Min
-              AggregateKeyType: IP
-          VisibilityConfig:
-            SampledRequestsEnabled: true
-            CloudWatchMetricsEnabled: true
-            MetricName: !Sub 'marketingos-landing-rate-${Environment}'
 
   # Created one after another. PricingPlanManager answers three concurrent
   # creates with 429 Too Many Requests, and CloudFormation gives up after its

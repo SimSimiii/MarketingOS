@@ -3,13 +3,13 @@ version: 0.2
 # ─────────────────────────────────────────────────────────────────────────────
 #  MarketingOS - console, CodeBuild spec.
 #
-#  Builds the Next.js app into a Lambda container image and deploys it behind
-#  CloudFront. Needs privileged mode on the CodeBuild project (it runs Docker)
-#  and the environment variables listed at the top of samconfig.yaml.
+#  Builds Next.js natively, packs its standalone server into a plain Node.js
+#  Lambda zip (.lambda/), puts the content-hashed assets in S3, and deploys the
+#  stack behind CloudFront. No container image and no Docker: the function
+#  runs on the nodejs22.x runtime with the AWS Lambda Web Adapter as a layer.
 #
-#  Deploy the backend stack first: NEXT_PUBLIC_API_URL is inlined into the
-#  client bundle at image build time, so the API has to have a URL before the
-#  console can be built against it.
+#  Deploy the backend stack first: the console stack imports its API endpoint
+#  for CloudFront's /api/* origin and for the server side's API_INTERNAL_URL.
 # ─────────────────────────────────────────────────────────────────────────────
 
 env:
@@ -20,7 +20,9 @@ env:
     CONSOLE_CERT_ARN: ""
     HOSTED_ZONE_ID: ""
     CONSOLE_WEB_ACL_ARN: ""
+    NEXT_PUBLIC_API_URL: "/api"
     S3_PREFIX: marketingos-console
+    NEXT_TELEMETRY_DISABLED: "1"
 
 phases:
   install:
@@ -30,43 +32,68 @@ phases:
     commands:
       - pip install --upgrade pip
       - pip install "aws-sam-cli>=1.130.0"
-      - node --version && docker --version
+      - node --version
 
   pre_build:
     commands:
       - |
-        for VAR in CONSOLE_STACK_NAME SAM_ARTIFACT_BUCKET NEXT_PUBLIC_API_URL IMAGE_REPOSITORY; do
+        for VAR in CONSOLE_STACK_NAME SAM_ARTIFACT_BUCKET NEXT_PUBLIC_API_URL; do
           if [ -z "$(eval echo \$$VAR)" ]; then
             echo "ERROR: $VAR is not set on this CodeBuild project." && exit 1
           fi
         done
       # The client calls `${NEXT_PUBLIC_API_URL}/brands`, so a URL that does
       # not end in /api produces a bundle whose every request 404s - and it
-      # would only show up after the image was built and deployed.
+      # would only show up after it was deployed.
       - |
         case "$NEXT_PUBLIC_API_URL" in
           */api) : ;;
-          *) echo "ERROR: NEXT_PUBLIC_API_URL must end with /api." && exit 1 ;;
+          *) echo "ERROR - NEXT_PUBLIC_API_URL must end with /api." && exit 1 ;;
         esac
 
       - cd $CODEBUILD_SRC_DIR/frontend
       - npm ci
-      # Typecheck and lint here rather than inside the image: a type error
-      # should fail in thirty seconds, not after a multi-stage Docker build.
+      # Typecheck and lint before the build: a type error should fail in
+      # thirty seconds, not after `next build`.
       - npx tsc --noEmit
       - npm run lint
       - npm test
 
-      - rm -rf .aws-sam
-      - envsubst < samconfig.yaml > /tmp/console-samconfig.resolved.yaml
-      - aws ecr get-login-password | docker login --username AWS --password-stdin "${IMAGE_REPOSITORY%%/*}"
-
   build:
     commands:
       - cd $CODEBUILD_SRC_DIR/frontend
-      - sam build --config-file /tmp/console-samconfig.resolved.yaml --config-env ci
+      - STATIC_BUCKET="marketingos-console-static-$(aws sts get-caller-identity --query Account --output text)-${ENVIRONMENT}"
+      # A restored .next can carry a previous NEXT_PUBLIC_* in the bundle.
+      - rm -rf .next .lambda
+      - NEXT_PUBLIC_AUTH_REQUIRED=true npm run build
+      - test -f .next/standalone/server.js || (echo "ERROR - no standalone server.js" && exit 1)
+
+      # The function's zip: the standalone server, public/, and a start script.
+      # .next/static is left out - CloudFront serves it from S3.
+      - mkdir .lambda
+      - cp -r .next/standalone/. .lambda/
+      - cp -r public .lambda/public
+      # The deployment package is read-only; Next writes its cache under
+      # .next/cache, so that path points at /tmp, the one writable place.
+      - rm -rf .lambda/.next/cache && ln -s /tmp/next-cache .lambda/.next/cache
+      - printf '#!/bin/bash\nmkdir -p /tmp/next-cache\nexec node server.js\n' > .lambda/run.sh
+      - chmod +x .lambda/run.sh
+      - du -sh .lambda
+
+      # Assets first when the bucket already exists, so the new pages never
+      # reference a chunk that is not there yet. Old chunks are kept: a tab
+      # opened before this deploy still asks for them.
+      - |
+        if aws s3api head-bucket --bucket "$STATIC_BUCKET" 2>/dev/null; then
+          aws s3 sync .next/static "s3://${STATIC_BUCKET}/_next/static" \
+            --cache-control "public,max-age=31536000,immutable" --only-show-errors
+        fi
+
+      - rm -rf .aws-sam
+      - envsubst < samconfig.yaml > /tmp/console-samconfig.resolved.yaml
       - |
         sam deploy \
+          --template-file template.yaml \
           --config-file /tmp/console-samconfig.resolved.yaml \
           --config-env ci \
           --no-confirm-changeset \
@@ -74,17 +101,22 @@ phases:
 
   post_build:
     commands:
+      - cd $CODEBUILD_SRC_DIR/frontend
+      - STATIC_BUCKET="marketingos-console-static-$(aws sts get-caller-identity --query Account --output text)-${ENVIRONMENT}"
+      # Again, for the first deploy, when the bucket did not exist yet.
+      - |
+        aws s3 sync .next/static "s3://${STATIC_BUCKET}/_next/static" \
+          --cache-control "public,max-age=31536000,immutable" --only-show-errors
       - |
         aws cloudformation describe-stacks --stack-name "${CONSOLE_STACK_NAME}" \
           --query "Stacks[0].Outputs" --output table
-      # A CloudFront distribution keeps serving the previous render until it is
-      # told otherwise; the pages themselves are uncacheable but the static
-      # chunk manifest is not.
+      # The pages are uncacheable, but the edge may hold an old 404 for a
+      # chunk that exists now.
       - |
         DIST=$(aws cloudformation describe-stacks --stack-name "${CONSOLE_STACK_NAME}" \
           --query "Stacks[0].Outputs[?OutputKey=='ConsoleDistributionId'].OutputValue" --output text)
         aws cloudfront create-invalidation --distribution-id "$DIST" --paths "/*" >/dev/null
-      - echo "Console deployed. Add its URL to the API's CORS_ORIGINS if it changed."
+      - echo "Console deployed."
 
 cache:
   paths:

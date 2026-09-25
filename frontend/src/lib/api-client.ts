@@ -7,8 +7,8 @@
  * cookies; a browser has the document's, and neither can read the other's.
  *
  * The access token cookie is readable by script on purpose. The refresh token
- * is not: it is httpOnly and scoped to `/api/auth`, so only the route handlers
- * under `src/app/api/auth` ever see it. That is the split that matters - an
+ * is not: it is httpOnly and scoped to `/bff/auth`, so only the route handlers
+ * under `src/app/bff/auth` ever see it. That is the split that matters - an
  * access token is worth sixty minutes, a refresh token is worth a month.
  */
 
