@@ -98,7 +98,10 @@ Resources:
   ConsoleFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub 'marketingos-console-${Environment}'
+      # "-web": the name changed when the function went from a container
+      # image to a zip, because CloudFormation cannot replace a function that
+      # keeps its custom name.
+      FunctionName: !Sub 'marketingos-console-web-${Environment}'
       Description: MarketingOS console (Next.js SSR)
       # Built by buildspec.yml from .next/standalone; see there.
       CodeUri: console-lambda.zip
@@ -152,7 +155,7 @@ Resources:
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
     Properties:
-      LogGroupName: !Sub '/aws/lambda/marketingos-console-${Environment}'
+      LogGroupName: !Sub '/aws/lambda/marketingos-console-web-${Environment}'
       RetentionInDays: !Ref LogRetentionDays
 
   # A public Function URL needs lambda:InvokeFunction as well as the
