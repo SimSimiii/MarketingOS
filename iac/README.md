@@ -1,15 +1,18 @@
 # Infrastructure as code
 
-Everything AWS holds for MarketingOS, as CloudFormation. Four templates here,
-four SAM templates beside the code they deploy, and one ordered runbook below.
+Everything AWS holds for MarketingOS. Serverless end to end: Lambda (zip
+packages only - no container image anywhere), API Gateway, S3, CloudFront,
+Aurora Serverless v2, SSM Parameter Store. Four files here, four SAM or
+CloudFormation templates beside the code they deploy, and one ordered runbook
+below.
 
-| Template | Creates | Deployed |
+| File | Creates | Deployed |
 |---|---|---|
-| [`secrets.yaml`](secrets.yaml) | Eight Secrets Manager secrets, five of them generated | once, first |
-| [`database.yaml`](database.yaml) | VPC, two private subnets, two security groups, RDS Postgres | once, by hand |
-| [`pipeline.yaml`](pipeline.yaml) | Five CodeBuild projects, two IAM roles, ECR, artifact bucket | once, then updated |
-| [`edge.yaml`](edge.yaml) | Three WAF web ACLs and three CloudFront **Free plan** subscriptions — **us-east-1** | twice: ACLs first, plans once the distributions exist |
-| [`worker.yaml`](worker.yaml) | ECS Fargate service, ALB, public subnets — **optional** | only for subscription billing |
+| [`parameters.sh`](parameters.sh) | Eight SSM SecureStrings, five of them generated | once, first; never overwrites |
+| [`database.yaml`](database.yaml) | VPC, two private subnets, two security groups, Aurora Serverless v2 Postgres | once, by hand |
+| [`pipeline.yaml`](pipeline.yaml) | Five CodeBuild projects (GitHub through CodeConnections, webhooks), two IAM roles, artifact bucket | once, then updated |
+| [`edge.yaml`](edge.yaml) | Three empty WAF web ACLs and three CloudFront **Free plan** subscriptions — **us-east-1** | twice: ACLs first, plans once the distributions exist |
+| [`worker.yaml`](worker.yaml) | ECS Fargate service, ALB — **optional, not serverless, not deployed** | only for subscription billing |
 
 The application stacks are not here, deliberately: a SAM template belongs next
 to the code it packages, because `CodeUri: ./` is relative to it.
@@ -17,10 +20,24 @@ to the code it packages, because `CodeUri: ./` is relative to it.
 `administration/backend/template.yaml` and `landing-page/template.yaml` are
 deployed by the CodeBuild projects `pipeline.yaml` creates.
 
-> **On the filename.** SAM looks for `template.yaml` or `template.yml` and has
-> done since it shipped; `sam.yml` is not a name it reads. The four templates
-> above already exist under the name the tooling expects, so nothing here
-> renames them.
+## How a request travels
+
+```
+                 ┌─ /api/*          → API Gateway (HTTP) → Lambda (FastAPI, Python) ─┐
+app.orqagent.com ┼─ /_next/static/* → S3 (build assets, OAC)                          ├→ Aurora Serverless v2
+ (CloudFront)    └─ everything else → Lambda (Next.js server, Node.js, zip)           │   (private subnets)
+                                                                                      │
+admin.orqagent.com ┬─ /api/*        → API Gateway (HTTP) → Lambda (FastAPI, Python) ─┘
+ (CloudFront)      └─ everything else → S3 (static export)
+
+orqagent.com (CloudFront) → S3 (index.html)
+```
+
+Each domain is one CloudFront distribution, so the browser never leaves its
+origin: no CORS, and no API hostname baked into a bundle. The console's pages
+are rendered per request with the caller's cookie, which is why the console
+has a server at all where the back-office is a static export; its own route
+handlers live under `/bff/*` because `/api/*` belongs to the API.
 
 ---
 
@@ -28,58 +45,39 @@ deployed by the CodeBuild projects `pipeline.yaml` creates.
 
 Monthly, eu-west-3, at the traffic this product currently has — which is none.
 
-### Deployed by default
-
 | Service | Why it is there | Idle cost |
 |---|---|---|
-| **RDS Postgres** `db.t4g.micro`, 20 GB gp3 | The only durable state. Every table hangs off `Brand` or `Campaign`; multi-tenancy is `owner_id` on those two. | ~$15 |
-| **Secrets Manager** × 8 | `JWT_SECRET`, `PASSWORD_PEPPER`, the two admin secrets, the DB password, `DATABASE_URL`, and the two vendor API keys. | ~$3.20 |
-| **Lambda** (`api`, `migrate`, `console`, `plan`, `craft`, `finish`) | Scales to zero. The API is arm64 and ~1 GB; the console is an x86 container image; the three campaign steps are 2 GB and 900s. | ~$0 |
-| **API Gateway** (HTTP API) × 2 | $1.00 per million requests. HTTP, not REST — nothing needs usage plans, because auth is a bearer token the app verifies itself. | ~$0 |
-| **CloudFront** × 3 | Console, back-office, landing page. Flat-rate **Free plan**, WAF included. `PriceClass_All` - the plans refuse `_100`. | $0 |
-| **S3** × 3 | Back-office export, landing page, build artifacts. All private, all read through an OAC. | <$1 |
-| **ECR** | The console image, last 10 retained by lifecycle policy. | ~$1 |
-| **Step Functions** | Drives the campaign loop. Standard workflows are $25 per million transitions; a five-email run is about nine. | ~$0 |
-| **CodeBuild** | Billed per build-minute; nothing runs between pushes. | ~$1 |
-| **CloudWatch Logs** | Retention is set on every group. An unbounded group is the cost nobody notices. | ~$1 |
+| **Aurora Serverless v2** Postgres 16, 0–2 ACU | The only durable state. Pauses to zero after 5 idle minutes and bills storage only; the first request after that waits ~15 s for it to resume. The Lambdas open a connection per request so a frozen container cannot hold it awake. | ~$0.10 storage + ~$0.07 per hour actually used |
+| **Lambda** × 8 (`api`, `migrate`, `console-web`, `plan`, `craft`, `finish`, `admin-api`, `admin-bootstrap`) | All zip packages. Python on arm64; the console is Node.js 22 on x86_64 with the AWS Lambda Web Adapter layer. | $0 (the permanent free tier covers 1M requests) |
+| **API Gateway** (HTTP API) × 2 | The entry point to the Python Lambdas, reached through CloudFront's `/api/*`. | ~$0 ($1 per million requests) |
+| **CloudFront** × 3 | Console, back-office, landing. On the flat-rate **Free plan**, which needs `PriceClass_All`. | $0 |
+| **WAF** × 3 web ACLs | Empty. The Free plan will not subscribe a distribution without one, and includes it. | $0 |
+| **S3** × 4 | Console assets, back-office export, landing page, build artifacts. All private; the three sites are read through an OAC. | < $0.10 |
+| **SSM Parameter Store** | The eight secrets, as standard SecureStrings under the AWS-managed key. | $0 |
+| **Step Functions** | Drives the campaign loop (plan → craft × N → finish). | $0 (4,000 transitions free) |
+| **CodeBuild** | Five projects, built on push by webhook, each only when its own directory changed. | ~$0.05–0.15 per build |
+| **CloudWatch** | Logs with a retention on every group, two alarms. | < $0.50 |
+| **Route 53** | The existing `orqagent.com` zone; each stack writes its own alias records. | $0.50 (the zone) |
+| **ACM, CodeConnections, VPC** | The us-east-1 wildcard certificate, the GitHub link, a VPC with no NAT and no public IP. | $0 |
 
-**≈ $22/month**, almost all of it RDS.
+**≈ $1–5/month** depending on how many hours the database is awake and how
+many builds run. The previous shape - an RDS instance, eight Secrets Manager
+secrets, an ECR image - was about $22 before a single user.
 
 ### Not deployed, and why
 
 - **NAT Gateway** — $32/month before a byte moves. Nothing in the Lambda
   stacks calls the open web: `app/market/` does, and market work cannot run on
-  Lambda anyway. The worker reaches the internet from a public subnet instead.
+  Lambda anyway. It is also what a campaign run on Lambda would need to reach
+  Anthropic or OpenAI - see *Billing* below.
 - **ElastiCache / Redis** — the SSE broker and `ExecutionRegistry` are
   in-memory and process-local. Correct for one worker, and the first thing a
   second one would need.
 - **SQS** — there is no durable job handoff yet. See the worker section.
-- **RDS Multi-AZ** — doubles the bill for a standby. Worth it when losing an
-  afternoon costs more than that.
-- **WAF on the APIs** — the three distributions carry one each (a per-IP rate
-  limit, from `edge.yaml`, paid for by the Free plan). The two HTTP APIs are
-  reached directly, so API Gateway's per-stage throttles are what they have.
-- **A paid CloudFront bill** — the three distributions sit on the flat-rate
-  **Free plan** (`edge.yaml`), which also covers their WAF. Three is the
-  account's hard ceiling on Free plans; a fourth distribution is
-  pay-as-you-go. Each subscribed distribution needs a web ACL of its own, and
-  that ACL can't be removed afterwards without leaving the plan.
-
-Domains: `pipeline.yaml`, `frontend/template.yaml`,
-`administration/backend/template.yaml` and `landing-page/template.yaml` all
-take a domain, a us-east-1 ACM certificate and a Route 53 zone id, and write
-their own alias records when given all three. The APIs stay on their
-`execute-api` URLs.
-
-### If the worker is deployed
-
-| Service | Idle cost |
-|---|---|
-| Fargate, 0.5 vCPU / 1 GB, arm64, always on | ~$13 |
-| Application Load Balancer | ~$17 |
-| Public IPv4 on the task | ~$4 |
-
-**+ ≈ $34/month.** Only needed to bill a subscription instead of a card — the campaign state machine runs every preset on Lambda without it.
+- **Secrets Manager** — nothing here rotates, and two of the secrets must never
+  rotate at all; Parameter Store holds them for nothing.
+- **WAF rules, Shield, Multi-AZ, RDS Proxy** — protection and availability for
+  traffic that does not exist yet.
 
 ---
 
@@ -182,32 +180,199 @@ every craft call resends the same role prompt and the same Evidence Ledger.
 
 ## Runbook
 
-Ordered, because each step consumes the previous one's outputs. `REGION` and
-`ENV` are yours; the examples use `eu-west-3` and `prod`.
+Ordered, because each step consumes the previous one's outputs. The examples
+use `eu-west-3` and `prod`.
 
 ```bash
 export AWS_DEFAULT_REGION=eu-west-3 ENV=prod
 ```
 
-### 0. What is live today (prod, eu-west-3)
+**On Windows**, two things about the CLI: set `AWS_CLI_FILE_ENCODING=UTF-8`
+before any `file://` template (they contain box-drawing characters the default
+code page cannot decode), and `MSYS_NO_PATHCONV=1` in Git Bash, which otherwise
+rewrites `/aws/codebuild/...` and `/prod` into Windows paths.
+
+### 0. What is live today (prod)
 
 | | |
 |---|---|
 | Landing | https://orqagent.com |
 | Console | https://app.orqagent.com |
 | Back-office | https://admin.orqagent.com |
-| Platform API | `ApiEndpoint` of `marketingos-api-prod` (+ `/api`) |
-| Stacks | `marketingos-{secrets,data,pipeline,api,console,admin,landing}-prod` in eu-west-3, `marketingos-edge-prod` in us-east-1 |
+| Stacks, eu-west-3 | `marketingos-{data,pipeline,api,console,admin,landing}-prod` |
+| Stack, us-east-1 | `marketingos-edge-prod` |
 
-`ALLOW_PUBLIC_SIGNUP` is **on** (`AllowPublicSignup=true` on the pipeline
-stack) so the first account can be made from `/register`; turn it off and
-rebuild the API once it exists.
+Public signup is **off**: testers get their accounts from the back-office
+(step 10).
 
-**Building from a working tree instead of GitHub.** Every project also builds
-from a zip in the artifact bucket, which is how a change that is not pushed yet
-reaches AWS. Zip the tracked and untracked-but-not-ignored files (keep the unix
-mode bits: `ruff`'s `EXE001` reads them), upload it, and pass the object
-version:
+### 1. Parameters
+
+```bash
+ENV=prod bash iac/parameters.sh
+```
+
+Five values are generated and never printed. It never overwrites an existing
+parameter, which is the point: `password-pepper` and `admin-pwd-pepper` are
+folded into every password hash and must never change.
+
+### 2. Database and network
+
+```bash
+aws cloudformation deploy \
+  --template-file iac/database.yaml \
+  --stack-name "marketingos-data-$ENV" \
+  --parameter-overrides "Environment=$ENV" \
+  --capabilities CAPABILITY_IAM
+```
+
+The master password is resolved from `/marketingos/$ENV/db-password` by
+CloudFormation. About ten minutes. Then write the URL the other stacks read:
+
+```bash
+ENDPOINT=$(aws cloudformation describe-stacks --stack-name "marketingos-data-$ENV" \
+  --query "Stacks[0].Outputs[?OutputKey=='DatabaseEndpoint'].OutputValue" --output text)
+PASSWORD=$(aws ssm get-parameter --name "/marketingos/$ENV/db-password" \
+  --with-decryption --query Parameter.Value --output text)
+aws ssm put-parameter --overwrite --type SecureString \
+  --name "/marketingos/$ENV/database-url" \
+  --value "postgresql+psycopg://marketingos:$PASSWORD@$ENDPOINT:5432/marketingos"
+```
+
+Keep the subnets and security group; step 4 wants them:
+
+```bash
+aws cloudformation describe-stacks --stack-name "marketingos-data-$ENV" \
+  --query "Stacks[0].Outputs" --output table
+```
+
+### 3. GitHub, and the Free-plan web ACLs
+
+CodeBuild clones through a **CodeConnections** connection to GitHub, created
+once in the console (Developer Tools → Connections) because it is an OAuth
+grant. Its ARN is `GitHubConnectionArn` in step 4.
+
+```bash
+aws cloudformation deploy --region us-east-1 \
+  --template-file iac/edge.yaml \
+  --stack-name "marketingos-edge-$ENV" \
+  --parameter-overrides "Environment=$ENV"
+```
+
+Three empty ACLs, one per distribution. Their ARNs go to the pipeline stack
+(`ConsoleWebAclArn`, `AdminWebAclArn`) and to the landing stack (`WebAclArn`).
+
+### 4. The five CodeBuild projects
+
+```bash
+aws cloudformation deploy \
+  --template-file iac/pipeline.yaml \
+  --stack-name "marketingos-pipeline-$ENV" \
+  --parameter-overrides \
+      "Environment=$ENV" \
+      "GitHubRepositoryUrl=https://github.com/<owner>/MarketingOS" \
+      "GitHubConnectionArn=arn:aws:codeconnections:..." \
+      "VpcSubnetIds=subnet-aaa,subnet-bbb" "VpcSecurityGroups=sg-aaa" \
+      "CertificateArn=arn:aws:acm:us-east-1:..." "HostedZoneId=Z..." \
+      "ConsoleDomain=app.example.com" "AdminDomain=admin.example.com" \
+      "CorsOrigins=https://app.example.com" "AdminCorsOrigins=https://admin.example.com" \
+      "ConsoleAppUrl=https://app.example.com" \
+      "ConsoleWebAclArn=..." "AdminWebAclArn=..." \
+  --capabilities CAPABILITY_NAMED_IAM
+```
+
+Webhooks are off until `EnableWebhooks=true`. Turn them on once every
+project has gone green by hand: from then on a push to the branch rebuilds
+only the projects whose directory it touched.
+
+### 5. Platform API
+
+```bash
+aws codebuild start-build --project-name "marketingos-build-api-$ENV"
+```
+
+Lints, runs the full suite (no model quota), deploys, then invokes the
+migrator and fails the build if the migration fails. It must precede the
+console: the console stack imports its endpoint.
+
+### 6. Console
+
+```bash
+aws codebuild start-build --project-name "marketingos-build-console-$ENV"
+```
+
+`next build` on the build host, the standalone server zipped into a Node.js
+Lambda, `.next/static` synced to S3. The browser's API URL is `/api`, so
+changing the domain needs no rebuild.
+
+### 7. Back-office
+
+```bash
+aws codebuild start-build --project-name "marketingos-build-admin-api-$ENV"
+```
+
+Then set `AdminFrontendBucket` and `AdminDistributionId` from its outputs on
+the pipeline stack, and:
+
+```bash
+aws codebuild start-build --project-name "marketingos-build-admin-ui-$ENV"
+```
+
+### 8. Landing page
+
+```bash
+aws cloudformation deploy \
+  --template-file landing-page/template.yaml \
+  --stack-name "marketingos-landing-$ENV" \
+  --parameter-overrides "Environment=$ENV" "DomainName=example.com" \
+      "CertificateArn=..." "HostedZoneId=Z..." "WebAclArn=..."
+```
+
+Then set `LandingBucket`, `LandingDistributionId` and `ConsoleAppUrl` (no
+trailing slash) on the pipeline stack, and build
+`marketingos-build-landing-$ENV`.
+
+### 9. Subscribe the three distributions to the Free plan
+
+```bash
+aws cloudformation deploy --region us-east-1 \
+  --template-file iac/edge.yaml \
+  --stack-name "marketingos-edge-$ENV" \
+  --parameter-overrides "Environment=$ENV" \
+      ConsoleDistributionId=E... AdminDistributionId=E... LandingDistributionId=E...
+```
+
+Three is the account's ceiling on Free plans; one held elsewhere has to be
+cancelled first. A distribution restricted to `PriceClass_100` is refused as
+"not eligible for this subscription tier".
+
+### 10. People: the first operator, then testers
+
+The database is not reachable from outside the VPC, so the operator bootstrap
+is a function with no HTTP route. Run it yourself, with your own password -
+it is never stored anywhere but as a bcrypt hash:
+
+```bash
+aws lambda invoke --function-name "marketingos-admin-bootstrap-$ENV" \
+  --cli-binary-format raw-in-base64-out \
+  --payload '{"email": "you@example.com", "password": "at-least-12-characters"}' out.json
+cat out.json
+```
+
+`"reset_password": true` in the payload resets an existing operator. That
+operator is the only one who can sign in to the back-office until they add
+others under *Operators*.
+
+Tester accounts are created in the back-office under **Accounts → Create a
+test account** (role `admin` or above). Leave the password blank to have one
+generated and shown once.
+
+### Building from a working tree instead of GitHub
+
+Every project also builds from a zip in the artifact bucket - how a change
+that is not pushed yet reaches AWS. Zip the tracked and untracked-but-not-ignored
+files with their unix mode bits (`ruff`'s `EXE001` reads them), upload it, and
+pass the object version, without which CodeBuild looks for a version called
+`master`:
 
 ```bash
 aws s3 cp source.zip s3://marketingos-artifacts-<account>-prod/source/marketingos-source.zip
@@ -219,247 +384,22 @@ aws codebuild start-build --project-name marketingos-build-api-prod \
   --source-version "$V"
 ```
 
-Without `--source-version` CodeBuild looks for an object version called
-`master` and fails in `DOWNLOAD_SOURCE`.
+### The worker — optional, and the one thing here that is not serverless
 
-**On Windows**, two things about the CLI: set `AWS_CLI_FILE_ENCODING=UTF-8`
-before any `file://` template (they contain box-drawing characters the default
-code page cannot decode), and `MSYS_NO_PATHCONV=1` in Git Bash, which otherwise
-rewrites `/aws/codebuild/...` and `/prod` into Windows paths.
-
-### 1. Secrets
-
-```bash
-aws cloudformation deploy \
-  --template-file iac/secrets.yaml \
-  --stack-name "marketingos-secrets-$ENV" \
-  --parameter-overrides "Environment=$ENV"
-```
-
-Five values are generated and never printed. `DATABASE_URL` is a placeholder
-until step 2 fills it.
-
-### 2. Database and network
-
-The password is passed as a dynamic reference, so it never transits a shell or
-a shell history:
-
-```bash
-aws cloudformation deploy \
-  --template-file iac/database.yaml \
-  --stack-name "marketingos-data-$ENV" \
-  --parameter-overrides "Environment=$ENV" \
-      "DBPassword={{resolve:secretsmanager:marketingos/$ENV/db-password:SecretString}}" \
-  --capabilities CAPABILITY_IAM
-```
-
-Ten to fifteen minutes. Then write the URL that other stacks read:
-
-```bash
-ENDPOINT=$(aws cloudformation describe-stacks --stack-name "marketingos-data-$ENV" \
-  --query "Stacks[0].Outputs[?OutputKey=='DatabaseEndpoint'].OutputValue" --output text)
-PASSWORD=$(aws secretsmanager get-secret-value --secret-id "marketingos/$ENV/db-password" \
-  --query SecretString --output text)
-aws secretsmanager put-secret-value --secret-id "marketingos/$ENV/database-url" \
-  --secret-string "postgresql+psycopg://marketingos:$PASSWORD@$ENDPOINT:5432/marketingos"
-```
-
-Keep the subnets and security group; the next step wants them:
-
-```bash
-aws cloudformation describe-stacks --stack-name "marketingos-data-$ENV" \
-  --query "Stacks[0].Outputs" --output table
-```
-
-### 3. Authorise CodeBuild against GitHub
-
-Once per account and region, and not something a template can express — it is
-an OAuth grant:
-
-```bash
-aws codebuild import-source-credentials \
-  --server-type GITHUB --auth-type PERSONAL_ACCESS_TOKEN \
-  --token "$GITHUB_TOKEN"
-```
-
-A fine-grained token needs *Contents: read* and *Webhooks: read and write* on
-this repository. Without the webhook scope the projects still build on demand;
-they just cannot be triggered by a push.
-
-### 3b. Web ACLs for the CloudFront Free plan
-
-```bash
-aws cloudformation deploy --region us-east-1 \
-  --template-file iac/edge.yaml \
-  --stack-name "marketingos-edge-$ENV" \
-  --parameter-overrides "Environment=$ENV"
-```
-
-Three ACLs, one per distribution. Their ARNs go to the pipeline stack
-(`ConsoleWebAclArn`, `AdminWebAclArn`) and to the landing stack
-(`WebAclArn`). The subscriptions come in step 9b, once the distributions exist.
-
-### 4. The five CodeBuild projects
-
-```bash
-aws cloudformation deploy \
-  --template-file iac/pipeline.yaml \
-  --stack-name "marketingos-pipeline-$ENV" \
-  --parameter-overrides \
-      "Environment=$ENV" \
-      "GitHubRepositoryUrl=https://github.com/<owner>/MarketingOS" \
-      "SourceBranch=master" \
-      "VpcSubnetIds=subnet-aaa,subnet-bbb" \
-      "VpcSecurityGroups=sg-aaa" \
-  --capabilities CAPABILITY_NAMED_IAM
-```
-
-Webhooks are **off** by default. Turn them on with
-`EnableWebhooks=true` once each project has gone green by hand — a webhook
-enabled before the variables are right means the next push deploys a
-half-configured stack.
-
-### 5. Platform API
-
-```bash
-aws codebuild start-build --project-name "marketingos-build-api-$ENV"
-```
-
-Lints, runs the full suite (~1,170 tests, no model quota), deploys, then
-invokes the migrator and fails the build if the migration fails. Take
-`ApiEndpoint` and **append `/api`**:
-
-```bash
-aws cloudformation describe-stacks --stack-name "marketingos-api-$ENV" \
-  --query "Stacks[0].Outputs[?OutputKey=='ApiEndpoint'].OutputValue" --output text
-```
-
-### 6. Console
-
-Feed the API URL back in, then build:
-
-```bash
-aws cloudformation deploy \
-  --template-file iac/pipeline.yaml \
-  --stack-name "marketingos-pipeline-$ENV" \
-  --parameter-overrides "Environment=$ENV" \
-      "GitHubRepositoryUrl=https://github.com/<owner>/MarketingOS" \
-      "ApiUrl=https://xxxx.execute-api.$AWS_DEFAULT_REGION.amazonaws.com/$ENV/api" \
-  --capabilities CAPABILITY_NAMED_IAM
-
-aws codebuild start-build --project-name "marketingos-build-console-$ENV"
-```
-
-`NEXT_PUBLIC_API_URL` is inlined into the client bundle at **image build
-time**, so changing it later means another build, not a stack update.
-
-Then put the console's URL into `CorsOrigins` and rebuild the API — the
-browser refuses every call until that lands.
-
-### 7. Back-office
-
-Two builds, and the first one twice. `ADMIN_CORS_ORIGINS` has to name a
-CloudFront domain that does not exist until the stack is created:
-
-```bash
-aws codebuild start-build --project-name "marketingos-build-admin-api-$ENV"
-# read AdminConsoleUrl, set AdminCorsOrigins on the pipeline stack, then:
-aws codebuild start-build --project-name "marketingos-build-admin-api-$ENV"
-aws codebuild start-build --project-name "marketingos-build-admin-ui-$ENV"
-```
-
-The first operator has to be created from inside the VPC or through a tunnel,
-with the same `ADMIN_PWD_PEPPER` the Lambda has — see
-[docs/deployment.md](../docs/deployment.md).
-
-### 8. Landing page
-
-```bash
-aws cloudformation deploy \
-  --template-file landing-page/template.yaml \
-  --stack-name "marketingos-landing-$ENV" \
-  --parameter-overrides "Environment=$ENV"
-```
-
-Then set `LandingBucket`, `LandingDistributionId` and `ConsoleAppUrl` (no
-trailing slash — the build fails on one) on the pipeline stack and:
-
-```bash
-aws codebuild start-build --project-name "marketingos-build-landing-$ENV"
-```
-
-### 9b. Subscribe the three distributions to the Free plan
-
-```bash
-aws cloudformation deploy --region us-east-1 \
-  --template-file iac/edge.yaml \
-  --stack-name "marketingos-edge-$ENV" \
-  --parameter-overrides "Environment=$ENV" \
-      ConsoleDistributionId=E... AdminDistributionId=E... LandingDistributionId=E...
-```
-
-Three is the account's ceiling on Free plans; one already held elsewhere has to
-be cancelled first. A distribution restricted to `PriceClass_100` is refused
-as "not eligible for this subscription tier".
-
-### 9c. The first back-office operator
-
-The database is not reachable from outside the VPC, so the bootstrap script is
-also a function with no HTTP route:
-
-```bash
-aws lambda invoke --function-name "marketingos-admin-bootstrap-$ENV" \
-  --cli-binary-format raw-in-base64-out \
-  --payload '{"email": "you@example.com", "password": "at-least-12-characters"}' out.json
-cat out.json
-```
-
-`"reset_password": true` in the payload resets an existing operator instead.
-
-### 9. The worker — optional
-
-Build and push the image. There is no CodeBuild project for it, because five
-was the number asked for; adding a sixth is a copy of `ConsoleBuild` in
-`pipeline.yaml` with `backend/Dockerfile` as its source.
-
-```bash
-ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
-REPO="$ACCOUNT.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/marketingos-worker-$ENV"
-
-aws ecr create-repository --repository-name "marketingos-worker-$ENV"
-aws ecr get-login-password | docker login --username AWS --password-stdin "${REPO%%/*}"
-
-docker build --platform linux/arm64 -t "$REPO:latest" backend/
-docker push "$REPO:latest"
-```
-
-`--platform linux/arm64` matters: `worker.yaml` asks Fargate for ARM64, and an
-x86 image against it fails at task start with an exec-format error rather than
-at build.
-
-```bash
-aws cloudformation deploy \
-  --template-file iac/worker.yaml \
-  --stack-name "marketingos-worker-$ENV" \
-  --parameter-overrides "Environment=$ENV" \
-      "VpcId=vpc-xxx" "DatabaseSecurityGroupId=sg-xxx" \
-      "ImageUri=$REPO:latest" \
-      "CorsOrigins=https://<console domain>" \
-  --capabilities CAPABILITY_NAMED_IAM
-```
-
-Then sign the two CLIs in, as described above, and repoint the console's
-`ApiUrl` at `WorkerUrl` + `/api`.
+A Fargate container with the `claude` and `codex` CLIs, for billing campaign
+runs to a subscription rather than an API key. Not deployed. `backend/Dockerfile`
+builds its image and `worker.yaml` runs it; see the comments in both.
 
 ---
 
 ## Tearing it down
 
-Reverse order. Three things survive on purpose, and a delete that appears to
-succeed will leave them: the RDS instance (`DeletionPolicy: Snapshot`), the six
-secrets, and both S3 buckets with their contents.
+Reverse order. Some things survive on purpose, and a delete that appears to
+succeed will leave them: the Aurora cluster (`DeletionPolicy: Snapshot`), the
+SSM parameters (`parameters.sh` made them, not a stack), and the S3 buckets
+with their contents.
 
-That is deliberate for `PASSWORD_PEPPER` above all — it is folded into every
+That is deliberate for `password-pepper` above all — it is folded into every
 bcrypt hash in the database, so deleting it makes every password in every
 account permanently unverifiable. A stack delete must not be able to do that by
 accident.

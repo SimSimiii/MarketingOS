@@ -4,7 +4,7 @@ Five stacks, deployed in this order, each consuming the previous one's outputs.
 
 | # | What | Where | Deployed by |
 |---|------|-------|-------------|
-| 1 | Postgres + the VPC around it | `iac/database.yaml` | by hand, once |
+| 1 | Aurora Serverless v2 Postgres + the VPC around it | `iac/database.yaml` | by hand, once |
 | 2 | Platform API | `backend/` | CodeBuild → `backend/buildspec.yml` |
 | 3 | Console (the product) | `frontend/` | CodeBuild → `frontend/buildspec.yml` |
 | 4 | Back-office API + hosting | `administration/backend/` | CodeBuild → its `buildspec.yml` |
@@ -14,9 +14,16 @@ Plus `landing-page/`, which is independent of all of them except for the URL it
 links to.
 
 The CloudFormation for everything those stacks sit on - the secrets, the
-database, the five CodeBuild projects and the optional worker - is in
-[iac/](../iac/README.md), which also carries the per-service cost breakdown
-and an ordered runbook.
+database, the five CodeBuild projects, the CloudFront Free-plan subscriptions
+and the optional worker - is in [iac/](../iac/README.md), which also carries
+the request path, the per-service cost breakdown and **the ordered runbook.
+Follow that one**; this page explains the constraints behind it.
+
+Everything that runs is serverless and a zip package: Python Lambdas behind
+API Gateway for both APIs, a Node.js Lambda for the console's server-rendered
+pages, S3 for everything static, Aurora Serverless v2 that pauses to zero,
+secrets in SSM Parameter Store. Each product is one CloudFront domain with
+`/api/*` routed to its API Gateway, so browsers never make a cross-origin call.
 
 ---
 
@@ -65,117 +72,33 @@ vendor API keys to prevent an accidental switch to API-key billing.
 
 ---
 
-## 1. Database and network
+## The constraints behind the runbook
 
-```bash
-aws cloudformation deploy \
-  --template-file iac/database.yaml \
-  --stack-name marketingos-data-prod \
-  --parameter-overrides Environment=prod DBPassword="$(openssl rand -base64 24 | tr -d '/@\"')" \
-  --capabilities CAPABILITY_IAM
-```
-
-Take `DatabaseEndpoint`, `VpcSubnetIds` and `VpcSecurityGroups` from the
-outputs. Build the URL yourself and put it in Secrets Manager:
-
-```
-postgresql+psycopg://marketingos:<password>@<endpoint>:5432/marketingos
-```
-
-The instance is not publicly reachable, on purpose. Schema changes go through
-the migration Lambda in the next stack, not through a laptop.
-
-## 2. Secrets
-
-Generate three, once, and never rotate two of them casually:
-
-```bash
-python -c "import secrets; print(secrets.token_hex(32))"   # JWT_SECRET
-python -c "import secrets; print(secrets.token_hex(32))"   # PASSWORD_PEPPER
-python -c "import secrets; print(secrets.token_hex(32))"   # ADMIN_JWT_SECRET
-python -c "import secrets; print(secrets.token_hex(32))"   # ADMIN_PWD_PEPPER
-```
-
-- `JWT_SECRET` — rotating it signs everybody out. Survivable.
-- `PASSWORD_PEPPER` — **rotating it invalidates every password in the
-  database.** Treat it as permanent from the moment there is a second account.
-- `ADMIN_JWT_SECRET` must differ from `JWT_SECRET`. The back-office buildspec
-  fails the build if they match; two systems that accept each other's tokens
-  are one system.
-- `ADMIN_PWD_PEPPER` must be the value `bootstrap_admin.py` ran with, or no
-  operator can sign in.
-
-A production process refuses to start while `JWT_SECRET` or `PASSWORD_PEPPER`
-are still their development defaults, and forces `AUTH_REQUIRED` on regardless
-of what the parameter said. Both are startup failures rather than warnings,
-because the alternative failure is silent.
-
-## 3. Platform API
-
-Create a CodeBuild project pointed at `backend/buildspec.yml` with the
-environment variables listed at the top of `backend/samconfig.yaml`. The build
-runs `ruff` and the full test suite before it deploys (~90 seconds, no model
-quota - the suite is scripted-provider based), then invokes the migration
-Lambda and fails if the migration fails.
-
-Output `ApiEndpoint` is the base URL. The console wants it **with `/api`
-appended**.
-
-Migrations run separately from the API on purpose: concurrent cold starts would
-race each other through the same revisions. To run one by hand:
-
-```bash
-aws lambda invoke --function-name marketingos-migrate-prod --payload '{}' out.json && cat out.json
-```
-
-## 4. Console
-
-`frontend/buildspec.yml`. Needs **privileged mode** on the CodeBuild project -
-it builds a Docker image - and an ECR repository.
-
-The console renders on the server (its pages are server components that call
-the API with the caller's cookie), so it cannot be a static export the way the
-back-office is. It runs as a Lambda container image behind the AWS Lambda Web
-Adapter, fronted by CloudFront. `NEXT_PUBLIC_API_URL` and
-`NEXT_PUBLIC_AUTH_REQUIRED` are inlined into the client bundle at **image build
-time**, so changing either needs a rebuild, not a stack update.
-
-Then put the console's URL into the API's `CORS_ORIGINS` and redeploy the API.
-
-## 5. Back-office
-
-`administration/backend/buildspec.yml` first — it vendors `backend/app` into
-the admin bundle so both share one definition of every model, builds an
-isolated stack (`marketingos-admin-*`), and creates the console's bucket and
-distribution.
-
-First deploy is a two-step: `ADMIN_CORS_ORIGINS` has to name a CloudFront
-domain that does not exist until the stack is created. Deploy, read
-`AdminConsoleUrl`, set it, deploy again.
-
-Then create the first operator. It has to run inside the VPC or through a
-tunnel, with the same `ADMIN_PWD_PEPPER` the Lambda has:
-
-```bash
-cd administration/backend
-PYTHONPATH=../../backend python -m scripts.bootstrap_admin --email you@example.com
-```
-
-Then `administration/frontend/buildspec.yml` for the console itself.
-
-## 6. Landing page
-
-```bash
-aws cloudformation deploy \
-  --template-file landing-page/template.yaml \
-  --stack-name marketingos-landing-prod \
-  --parameter-overrides Environment=prod
-```
-
-Then a CodeBuild project on `landing-page/buildspec.yml` with
-`CONSOLE_APP_URL` set to the console's URL (no trailing slash). The build
-fails if any `CONSOLE_APP_URL` placeholder survives substitution, so the page
-can never ship with a dead sign-in link.
+- **The database is private.** Aurora sits in private subnets with no NAT and
+  no public endpoint. Schema changes go through the migration Lambda, which
+  the API build invokes after every deploy and fails on; routine operator
+  tasks go through functions too (`marketingos-admin-bootstrap-<env>`).
+- **The first request after an idle spell waits.** Aurora pauses after five
+  minutes without a connection and takes ~15 seconds to resume. On Lambda the
+  engine opens one connection per request (`app/core/database.py`) - a pooled
+  connection held by a frozen container would keep it awake and billing.
+- **Secrets are SSM SecureStrings**, created by `iac/parameters.sh`, which
+  never overwrites. `JWT_SECRET` can rotate (it signs everybody out);
+  `PASSWORD_PEPPER` and `ADMIN_PWD_PEPPER` can never rotate, because every
+  password hash is made with them. A production process refuses to start with
+  the development values of the first two, and forces `AUTH_REQUIRED` on.
+- **The two signing secrets must differ.** `ADMIN_JWT_SECRET` and `JWT_SECRET`
+  are generated independently; the back-office buildspec fails if they match.
+  The back-office does receive the platform's `PASSWORD_PEPPER` - under the
+  name `PLATFORM_PASSWORD_PEPPER`, and only to create test accounts.
+- **The console renders on the server**, which is why it is a Lambda and not a
+  bucket like the back-office. Its build bakes `NEXT_PUBLIC_API_URL=/api`
+  (relative, so a domain change needs no rebuild); its server side reads
+  `API_INTERNAL_URL`, set by the stack. Its own route handlers - sign-in,
+  refresh, downloads - live under `/bff/*`, because `/api/*` on the same domain
+  is the API's.
+- **CloudFront error pages apply to every behavior**, API included. The
+  back-office maps only 404 to its error page, so an API 403 stays JSON.
 
 ---
 
@@ -183,7 +106,10 @@ can never ship with a dead sign-in link.
 
 Public signup is **off** by default (`ALLOW_PUBLIC_SIGNUP=false`). Every run
 spends model quota, so an open form is a bill rather than a funnel until there
-is metering behind it. Invite testers by hand:
+is metering behind it. On AWS, testers get their accounts from the back-office:
+**Accounts → Create a test account**, with a password you choose or one
+generated and shown once. Against a database you can reach directly (a laptop),
+the script does the same:
 
 ```bash
 cd backend

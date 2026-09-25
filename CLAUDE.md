@@ -305,6 +305,13 @@ live events go through the same function. Theme is dark-only, violet accent, no 
   `backend/app` in at build time so both stacks share one definition of every model. A
   checked-in copy is a second definition, and the day it drifts is the day the console
   reports numbers the product disagrees with. It is in that directory's `.gitignore`.
+- **On the console's domain, `/api/*` is the API, not Next.** CloudFront sends it to
+  API Gateway; the console's own route handlers (sign-in, refresh, downloads) live in
+  `frontend/src/app/bff/`. A new Next route handler under `src/app/api/` would be
+  unreachable in production. Server-side, `API_URL` reads `API_INTERNAL_URL`.
+- **On Lambda the database engine has no pool** (`app/core/database.py`). Aurora
+  Serverless pauses only when no connection is open; a pooled connection in a frozen
+  container would keep it awake and billing around the clock.
 - **A run cannot happen on Lambda.** Subprocess CLIs, minutes of wall clock, SSE, and an
   in-memory registry. The API stack serves everything else; see
   [docs/deployment.md](docs/deployment.md).
