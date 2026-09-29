@@ -22,6 +22,9 @@ from pathlib import Path
 
 from alembic import command
 from alembic.config import Config
+from sqlalchemy.exc import OperationalError
+
+from app.core.database import connect_with_retry
 
 logger = logging.getLogger("marketingos.migrate")
 logger.setLevel(logging.INFO)
@@ -48,7 +51,12 @@ def handler(event: dict | None = None, context: object = None) -> dict:
 
     logger.info("alembic %s %s", action, revision)
     try:
-        getattr(command, action)(_config(), revision)
+        # Alembic makes its own engine, so it does not get the app's wait for
+        # an Aurora resume; the first connection to a paused cluster is
+        # closed. A migration is one transaction, so a failed try left nothing.
+        connect_with_retry(
+            lambda: getattr(command, action)(_config(), revision), OperationalError
+        )
     except Exception as exc:  # noqa: BLE001 - the caller is a CLI invoke.
         logger.exception("migration failed")
         return {"ok": False, "command": action, "revision": revision, "error": str(exc)}
