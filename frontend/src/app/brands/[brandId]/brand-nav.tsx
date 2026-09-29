@@ -4,9 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BookOpen, Compass, Files, LayoutDashboard, ContactRound, Palette } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { normalizePath } from "@/lib/paths";
 
 export function BrandNav({ brandId, counts }: { brandId: string; counts: { sources: number; facts: number | null; rivals: number; alerts: number } }) {
-  const pathname = usePathname();
+  const pathname = normalizePath(usePathname());
   const base = `/brands/${brandId}`;
   const items = [
     { href: base, label: "Overview", hint: "At a glance", icon: LayoutDashboard, badge: null, exact: true },

@@ -8,6 +8,8 @@ import { LogOut } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { AUTH_REQUIRED } from "@/lib/config";
 import type { Account } from "@/lib/types";
+import { API_URL } from "@/lib/config";
+import { refreshPage } from "@/lib/page-data";
 
 /**
  * Who is signed in, and the way out.
@@ -41,11 +43,11 @@ export function AccountMenu() {
 
   async function signOut() {
     setBusy(true);
-    await fetch("/bff/auth/logout", { method: "POST" }).catch(() => undefined);
+    await fetch(`${API_URL}/auth/logout`, { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: "{}" }).catch(() => undefined);
     // `refresh` as well: every page is server-rendered from the cookie that
     // was just deleted, and the router cache still holds the signed-in render.
-    router.replace("/login");
-    router.refresh();
+    router.replace("/login/");
+    refreshPage();
   }
 
   return (

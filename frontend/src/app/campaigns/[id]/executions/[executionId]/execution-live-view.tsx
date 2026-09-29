@@ -26,6 +26,7 @@ import { estimateCost, reduceRun, runsPerRole } from "@/lib/run-timeline";
 import { ROLE_CATALOG } from "@/lib/specialists";
 import { cn } from "@/lib/utils";
 import type { ExecutionStatus, GeneratedAsset } from "@/lib/types";
+import { refreshPage } from "@/lib/page-data";
 
 const TERMINAL: ExecutionStatus[] = ["completed", "failed", "cancelled"];
 
@@ -170,7 +171,7 @@ export function ExecutionLiveView({
         setErrorMessage(result.error_message);
       })
       .catch(() => undefined);
-    router.refresh();
+    refreshPage();
   }, [run.finalStatus, executionId, router]);
 
   async function handleCancel() {
@@ -257,7 +258,7 @@ export function ExecutionLiveView({
               setAssets(result.assets);
               setErrorMessage(result.error_message);
             } catch (error) { toast.error(error instanceof Error ? error.message : "Could not refresh results"); }
-            router.refresh();
+            refreshPage();
           }}>
             <RefreshCw
               className={cn("size-3.5", phase === "loading" && "motion-safe:animate-spin")}

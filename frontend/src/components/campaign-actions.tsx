@@ -8,6 +8,7 @@ import { ConfirmDialog, useConfirm } from "@/components/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api-client";
 import type { Campaign } from "@/lib/types";
+import { refreshPage } from "@/lib/page-data";
 
 type Action = "archive" | "unarchive" | "duplicate" | "delete";
 
@@ -34,7 +35,7 @@ export function CampaignActions({
       if (archiving) await api.archiveCampaign(campaign.id);
       else await api.unarchiveCampaign(campaign.id);
       toast.success(archiving ? "Campaign archived" : "Campaign restored");
-      router.refresh();
+      refreshPage();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Something went wrong");
     } finally {
@@ -61,7 +62,7 @@ export function CampaignActions({
       confirmDelete.setOpen(false);
       toast.success("Campaign deleted");
       if (redirectOnDeleteTo) router.push(redirectOnDeleteTo);
-      else router.refresh();
+      else refreshPage();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not delete");
       setBusy(null);

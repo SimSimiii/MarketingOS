@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/lib/api-client";
+import { refreshPage } from "@/lib/page-data";
 
 /**
  * The other half of a run that stopped to ask.
@@ -65,7 +66,7 @@ export function AnswerQuestionsCard({
       });
       if (!thenRun) {
         toast.success("Saved - the next run reads this before it writes anything");
-        router.refresh();
+        refreshPage();
         return;
       }
       const advice = await api.getCampaignGenerationAdvice(campaignId);

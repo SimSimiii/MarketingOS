@@ -95,6 +95,31 @@ def test_registering_returns_a_usable_token(client: TestClient, open_signup):
     assert me.json()["email"] == "founder@example.com"
 
 
+def test_signing_in_sets_the_console_session_as_two_cookies(client: TestClient, open_signup):
+    """The console is a static site on the API's own domain, so these cookies are
+    its whole session: the access token readable by its script (it becomes the
+    bearer header mutations need), the refresh token httpOnly and kept to
+    /api/auth, where only refresh and sign-out read it."""
+    response = client.post(
+        "/api/auth/register", json={"email": "cookies@example.com", "password": PASSWORD}
+    )
+    assert response.status_code == 201
+    cookies = {
+        header.split("=", 1)[0]: header.lower()
+        for header in response.headers.get_list("set-cookie")
+    }
+
+    assert "httponly" not in cookies["mos_access_token"]
+    assert "path=/;" in cookies["mos_access_token"] or cookies["mos_access_token"].endswith("path=/")
+    assert "httponly" in cookies["mos_refresh_token"]
+    assert "path=/api/auth" in cookies["mos_refresh_token"]
+
+    # And the refresh cookie alone is enough to renew: the console sends an
+    # empty body and never sees the refresh token.
+    renewed = client.post("/api/auth/refresh", json={})
+    assert renewed.status_code == 200
+
+
 def test_signup_is_refused_when_the_deployment_is_invite_only(client: TestClient):
     response = client.post(
         "/api/auth/register", json={"email": "stranger@example.com", "password": PASSWORD}

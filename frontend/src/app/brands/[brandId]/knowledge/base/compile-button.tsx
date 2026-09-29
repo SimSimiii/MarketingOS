@@ -1,16 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2, RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api-client";
 import type { CompilationStatus } from "@/lib/types";
+import { refreshPage } from "@/lib/page-data";
 
 export function CompileButton({ brandId, compiled }: { brandId: string; compiled: boolean }) {
-  const router = useRouter();
   const [job, setJob] = useState<CompilationStatus | null>(null);
   const [starting, setStarting] = useState(false);
   const [error, setError] = useState("");
@@ -23,11 +22,11 @@ export function CompileButton({ brandId, compiled }: { brandId: string; compiled
       const status = await api.getKnowledgeCompilation(brandId);
       setJob(status);
       setPollError("");
-      if (wasRunning.current && status.state === "completed") router.refresh();
+      if (wasRunning.current && status.state === "completed") refreshPage();
       wasRunning.current = status.state === "running";
     } catch (err) { setPollError(err instanceof Error ? err.message : "Unable to check compilation."); }
     finally { setRefreshing(false); }
-  }, [brandId, router]);
+  }, [brandId]);
   useEffect(() => {
     let cancelled = false;
     api.getKnowledgeCompilation(brandId).then((status) => {

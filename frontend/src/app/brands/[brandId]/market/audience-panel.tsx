@@ -1,7 +1,6 @@
 "use client";
 
 import { useId, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { Search, ChevronDown, Users, SlidersHorizontal } from "lucide-react";
@@ -34,6 +33,7 @@ import type {
   SegmentKind,
   UserAudienceInput,
 } from "@/lib/types";
+import { refreshPage } from "@/lib/page-data";
 
 /** What each kind of segment is, in one phrase.
  *
@@ -1923,7 +1923,6 @@ export function AudiencePanel({
   busy: boolean;
   runningKind: string | null;
 }) {
-  const router = useRouter();
   const [query, setQuery] = useState("");
   const [view, setView] = useState<"audiences" | "organisations">("audiences");
   const [organisationQuery, setOrganisationQuery] = useState("");
@@ -1997,7 +1996,7 @@ export function AudiencePanel({
         <AudienceAdder
           brandId={brandId}
           defaultOpen
-          onSaved={() => router.refresh()}
+          onSaved={() => refreshPage()}
         />
         <Card>
           <CardHeader className="flex flex-row flex-wrap items-start justify-between gap-4">
@@ -2049,7 +2048,7 @@ export function AudiencePanel({
       <AudienceAdder
         brandId={brandId}
         defaultOpen={false}
-        onSaved={() => router.refresh()}
+        onSaved={() => refreshPage()}
       />
 
       <div className="space-y-3">
@@ -2077,7 +2076,7 @@ export function AudiencePanel({
             onProspect={() => onProspect(segment.name)}
             onResearch={() => onResearch(segment.name)}
             onDossier={(rebuild) => onDossier(segment.name, rebuild)}
-            onChanged={() => router.refresh()}
+            onChanged={() => refreshPage()}
             busy={busy}
           />
         ))}

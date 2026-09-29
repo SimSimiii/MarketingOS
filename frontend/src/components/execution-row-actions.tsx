@@ -8,6 +8,7 @@ import { ConfirmDialog, useConfirm } from "@/components/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api-client";
 import type { CampaignExecution } from "@/lib/types";
+import { refreshPage } from "@/lib/page-data";
 
 /** Cancel (running/pending) or restart (failed/cancelled) for one execution
  * row in a campaign's Runs table. */
@@ -28,7 +29,7 @@ export function ExecutionRowActions({
       await api.cancelExecution(execution.id);
       confirmStop.setOpen(false);
       toast.success("Stopping - it finishes the model call it's on, then stops for good");
-      router.refresh();
+      refreshPage();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not cancel");
     } finally {

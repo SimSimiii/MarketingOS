@@ -1,8 +1,9 @@
 # Infrastructure as code
 
-Everything AWS holds for MarketingOS. Serverless end to end: Lambda (zip
-packages only - no container image anywhere), API Gateway, S3, CloudFront,
-Aurora Serverless v2, SSM Parameter Store. Four files here, four SAM or
+Everything AWS holds for MarketingOS. Serverless end to end: Python Lambdas
+behind API Gateway for everything that runs, S3 for everything the browser
+loads (both consoles are static exports), CloudFront in front, Aurora
+Serverless v2, SSM Parameter Store. Four files here, four SAM or
 CloudFormation templates beside the code they deploy, and one ordered runbook
 below.
 
@@ -10,7 +11,7 @@ below.
 |---|---|---|
 | [`parameters.sh`](parameters.sh) | Eight SSM SecureStrings, five of them generated | once, first; never overwrites |
 | [`database.yaml`](database.yaml) | VPC, two private subnets, two security groups, Aurora Serverless v2 Postgres | once, by hand |
-| [`pipeline.yaml`](pipeline.yaml) | Five CodeBuild projects (GitHub through CodeConnections, webhooks), two IAM roles, artifact bucket | once, then updated |
+| [`pipeline.yaml`](pipeline.yaml) | Five CodeBuild projects (GitHub through CodeConnections, started by hand only), two IAM roles, artifact bucket | once, then updated |
 | [`edge.yaml`](edge.yaml) | Three empty WAF web ACLs and three CloudFront **Free plan** subscriptions — **us-east-1** | twice: ACLs first, plans once the distributions exist |
 | [`worker.yaml`](worker.yaml) | ECS Fargate service, ALB — **optional, not serverless, not deployed** | only for subscription billing |
 
@@ -23,21 +24,20 @@ deployed by the CodeBuild projects `pipeline.yaml` creates.
 ## How a request travels
 
 ```
-                 ┌─ /api/*          → API Gateway (HTTP) → Lambda (FastAPI, Python) ─┐
-app.orqagent.com ┼─ /_next/static/* → S3 (build assets, OAC)                          ├→ Aurora Serverless v2
- (CloudFront)    └─ everything else → Lambda (Next.js server, Node.js, zip)           │   (private subnets)
-                                                                                      │
-admin.orqagent.com ┬─ /api/*        → API Gateway (HTTP) → Lambda (FastAPI, Python) ─┘
+app.orqagent.com   ┬─ /api/*          → API Gateway (HTTP) → Lambda (FastAPI, Python) ─┐
+ (CloudFront)      └─ everything else → S3 (static export)                            ├→ Aurora Serverless v2
+                                                                                      │   (private subnets)
+admin.orqagent.com ┬─ /api/*          → API Gateway (HTTP) → Lambda (FastAPI, Python) ─┘
  (CloudFront)      └─ everything else → S3 (static export)
 
 orqagent.com (CloudFront) → S3 (index.html)
 ```
 
 Each domain is one CloudFront distribution, so the browser never leaves its
-origin: no CORS, and no API hostname baked into a bundle. The console's pages
-are rendered per request with the caller's cookie, which is why the console
-has a server at all where the back-office is a static export; its own route
-handlers live under `/bff/*` because `/api/*` belongs to the API.
+origin: no CORS, and no API hostname baked into a bundle. Both consoles are
+static exports that load their data from the browser; a CloudFront function
+maps deep links (`/brands/<id>/…`) onto the one page exported per dynamic
+route. The API sets the session cookies itself, on that same domain.
 
 ---
 
@@ -48,14 +48,14 @@ Monthly, eu-west-3, at the traffic this product currently has — which is none.
 | Service | Why it is there | Idle cost |
 |---|---|---|
 | **Aurora Serverless v2** Postgres 16, 0–2 ACU | The only durable state. Pauses to zero after 5 idle minutes and bills storage only; the first request after that waits ~15 s for it to resume. The Lambdas open a connection per request so a frozen container cannot hold it awake. | ~$0.10 storage + ~$0.07 per hour actually used |
-| **Lambda** × 8 (`api`, `migrate`, `console-web`, `plan`, `craft`, `finish`, `admin-api`, `admin-bootstrap`) | All zip packages. Python on arm64; the console is Node.js 22 on x86_64 with the AWS Lambda Web Adapter layer. | $0 (the permanent free tier covers 1M requests) |
+| **Lambda** × 7 (`api`, `migrate`, `plan`, `craft`, `finish`, `admin-api`, `admin-bootstrap`) | Python 3.12 on arm64, all of them. Nothing else runs code. | $0 (the permanent free tier covers 1M requests) |
 | **API Gateway** (HTTP API) × 2 | The entry point to the Python Lambdas, reached through CloudFront's `/api/*`. | ~$0 ($1 per million requests) |
 | **CloudFront** × 3 | Console, back-office, landing. On the flat-rate **Free plan**, which needs `PriceClass_All`. | $0 |
 | **WAF** × 3 web ACLs | Empty. The Free plan will not subscribe a distribution without one, and includes it. | $0 |
-| **S3** × 4 | Console assets, back-office export, landing page, build artifacts. All private; the three sites are read through an OAC. | < $0.10 |
+| **S3** × 4 | Console export, back-office export, landing page, build artifacts. All private; the three sites are read through an OAC. | < $0.10 |
 | **SSM Parameter Store** | The eight secrets, as standard SecureStrings under the AWS-managed key. | $0 |
 | **Step Functions** | Drives the campaign loop (plan → craft × N → finish). | $0 (4,000 transitions free) |
-| **CodeBuild** | Five projects, built on push by webhook, each only when its own directory changed. | ~$0.05–0.15 per build |
+| **CodeBuild** | Five projects, started by hand, on the branch chosen at start. | ~$0.05–0.15 per build |
 | **CloudWatch** | Logs with a retention on every group, two alarms. | < $0.50 |
 | **Route 53** | The existing `orqagent.com` zone; each stack writes its own alias records. | $0.50 (the zone) |
 | **ACM, CodeConnections, VPC** | The us-east-1 wildcard certificate, the GitHub link, a VPC with no NAT and no public IP. | $0 |
@@ -280,9 +280,12 @@ aws cloudformation deploy \
   --capabilities CAPABILITY_NAMED_IAM
 ```
 
-Webhooks are off until `EnableWebhooks=true`. Turn them on once every
-project has gone green by hand: from then on a push to the branch rebuilds
-only the projects whose directory it touched.
+There is no webhook and no pipeline: every deploy is a build started by hand,
+on whichever branch you name (`SourceBranch` is only the default):
+
+```bash
+aws codebuild start-build --project-name "marketingos-build-api-$ENV" --source-version <branch>
+```
 
 ### 5. Platform API
 
@@ -300,8 +303,9 @@ console: the console stack imports its endpoint.
 aws codebuild start-build --project-name "marketingos-build-console-$ENV"
 ```
 
-`next build` on the build host, the standalone server zipped into a Node.js
-Lambda, `.next/static` synced to S3. The browser's API URL is `/api`, so
+A static export: `next build` writes `out/`, `template.yaml` (plain
+CloudFormation) holds the bucket, the distribution and its rewrite function,
+and `out/` is synced into the bucket. The API URL in the bundle is `/api`, so
 changing the domain needs no rebuild.
 
 ### 7. Back-office

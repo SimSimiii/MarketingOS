@@ -1,10 +1,12 @@
 """Sign-up, sign-in, refresh, sign-out.
 
 The tokens go back in the body *and* as cookies. The body is what a script or
-a native client uses; the cookies are what makes server-rendered pages work,
-because a Next.js server component has the request's cookies and does not have
-whatever the browser put in `localStorage`. Both carry the same token, so
-neither is a second way in.
+a native client uses; the cookies are the console's session. The console is a
+static site on the same domain as this API (CloudFront routes /api/* here), so
+these cookies are its whole session mechanism: the access token is readable by
+its script, which sends it back as the bearer header mutations require, and the
+refresh token is httpOnly and only ever sent to /api/auth. Both carry the same
+token as the body, so neither is a second way in.
 """
 
 from typing import Annotated
@@ -43,7 +45,11 @@ def _set_cookies(response: Response, tokens: service.IssuedTokens) -> None:
         ACCESS_TOKEN_COOKIE,
         tokens.access_token,
         max_age=tokens.expires_in,
-        httponly=True,
+        # Readable by the console's script on purpose: it becomes the bearer
+        # header, and a mutation without one is refused (CSRF), so an httpOnly
+        # access cookie would leave the console unable to change anything. It
+        # is worth sixty minutes; the refresh token below stays httpOnly.
+        httponly=False,
         secure=secure,
         samesite="lax",
         path="/",

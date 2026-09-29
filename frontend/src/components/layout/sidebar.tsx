@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Activity, ArrowUpRight, AudioLines, BookOpen, Building2, LayoutDashboard, Mail, Settings2, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AccountMenu } from "@/components/layout/account-menu";
+import { normalizePath } from "@/lib/paths";
 
 // Knowledge and market remain inside each brand's workspace.
 const NAV_ITEMS = [
@@ -18,7 +19,7 @@ const NAV_ITEMS = [
 ];
 
 export function Sidebar() {
-  const pathname = usePathname();
+  const pathname = normalizePath(usePathname());
   const activeHref = NAV_ITEMS.find((item) => item.href === "/" ? pathname === "/" : pathname === item.href || pathname.startsWith(`${item.href}/`))?.href;
 
   return (

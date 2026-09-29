@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -18,9 +17,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/lib/api-client";
 import type { UserSettings } from "@/lib/types";
+import { refreshPage } from "@/lib/page-data";
 
 export function SettingsForm({ settings }: { settings: UserSettings }) {
-  const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [companyName, setCompanyName] = useState(settings.company_name ?? "");
   const [brandVoice, setBrandVoice] = useState(settings.brand_voice ?? "");
@@ -36,7 +35,7 @@ export function SettingsForm({ settings }: { settings: UserSettings }) {
         default_model: defaultModel,
       });
       toast.success("Settings saved");
-      router.refresh();
+      refreshPage();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to save settings");
     } finally {

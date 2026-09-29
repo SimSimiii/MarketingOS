@@ -10,6 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { API_URL } from "@/lib/config";
+import { refreshPage } from "@/lib/page-data";
+
 
 /** The account half of Settings: the password, and where it is signed in. */
 export function AccountPanel({ account }: { account: Account }) {
@@ -36,9 +39,9 @@ function PasswordCard() {
       // so the honest next step is the sign-in page, not a success toast on a
       // page whose next request will 401.
       toast.success("Password changed. Sign in again with the new one.");
-      await fetch("/bff/auth/logout", { method: "POST" }).catch(() => undefined);
-      router.replace("/login");
-      router.refresh();
+      await fetch(`${API_URL}/auth/logout`, { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: "{}" }).catch(() => undefined);
+      router.replace("/login/");
+      refreshPage();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not change the password.");
       setBusy(false);
@@ -112,9 +115,9 @@ function SessionsCard({ account }: { account: Account }) {
     setBusy(true);
     try {
       await api.signOutEverywhere();
-      await fetch("/bff/auth/logout", { method: "POST" }).catch(() => undefined);
-      router.replace("/login");
-      router.refresh();
+      await fetch(`${API_URL}/auth/logout`, { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: "{}" }).catch(() => undefined);
+      router.replace("/login/");
+      refreshPage();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not sign out.");
       setBusy(false);

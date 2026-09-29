@@ -19,7 +19,7 @@ Description: MarketingOS - the five CodeBuild projects, their roles, and the art
 #  cadences and must be able to fail independently:
 #
 #    marketingos-build-api       backend/buildspec.yml
-#    marketingos-build-console   frontend/buildspec.yml
+#    marketingos-build-console   frontend/buildspec.yml          (static export to S3)
 #    marketingos-build-admin-api administration/backend/buildspec.yml
 #    marketingos-build-admin-ui  administration/frontend/buildspec.yml
 #    marketingos-build-landing   landing-page/buildspec.yml
@@ -33,11 +33,13 @@ Description: MarketingOS - the five CodeBuild projects, their roles, and the art
 #  (GitHubConnectionArn). Every project can also build a zip from the artifact
 #  bucket with a source override - see iac/README.md.
 #
-#  What this stack does NOT create: a CodePipeline. Five projects with a source
-#  webhook each is the whole of what this repository needs - there is no
-#  approval gate, no cross-account promotion and no artifact to pass between
-#  stages, because each buildspec deploys its own stack directly. A pipeline
-#  around them would be a second thing to debug when a build goes red.
+#  What this stack does NOT create: a CodePipeline, or any trigger at all.
+#  Every deploy is started by hand, on the branch chosen at start time:
+#
+#      aws codebuild start-build --project-name marketingos-build-api-prod --source-version <branch>
+#
+#  Each buildspec deploys its own stack directly, so there is no artifact to
+#  pass between stages and nothing for a pipeline to add.
 # ─────────────────────────────────────────────────────────────────────────────
 
 Parameters:
@@ -63,17 +65,10 @@ Parameters:
   SourceBranch:
     Type: String
     Default: master
-    Description: Branch the webhook builds. Only pushes to this branch trigger.
-
-  EnableWebhooks:
-    Type: String
-    Default: "false"
-    AllowedValues: ["true", "false"]
     Description: >-
-      Off by default, and that is the safe side: a webhook turned on before the
-      environment variables are right means the first push to master deploys a
-      half-configured stack to production. Turn it on once a manual
-      `start-build` of each project has gone green.
+      The branch a build uses when none is given. Builds only ever start by
+      hand - there is no webhook - and any branch can be chosen at start time:
+      aws codebuild start-build --project-name <project> --source-version <branch>
 
   # ── Wiring between stacks ───────────────────────────────────────────────────
   # These are the values that cannot be discovered at build time because they
@@ -212,7 +207,6 @@ Parameters:
 
 Conditions:
   HasConnection: !Not [!Equals [!Ref GitHubConnectionArn, ""]]
-  UseWebhooks: !Equals [!Ref EnableWebhooks, "true"]
   NoApiStackName: !Equals [!Ref ApiStackName, ""]
   NoConsoleStackName: !Equals [!Ref ConsoleStackName, ""]
   NoAdminStackName: !Equals [!Ref AdminStackName, ""]
@@ -580,24 +574,13 @@ Resources:
         CloudWatchLogs:
           Status: ENABLED
           GroupName: !Sub '/aws/codebuild/marketingos-build-api-${Environment}'
-      Triggers: !If
-        - UseWebhooks
-        - Webhook: true
-          FilterGroups:
-            - - { Type: EVENT, Pattern: PUSH }
-              - { Type: HEAD_REF, Pattern: !Sub '^refs/heads/${SourceBranch}$' }
-              # Only rebuild when something the API is made of changed. Without
-              # this, a typo fix in the landing page runs 1,170 tests and
-              # redeploys production.
-              - { Type: FILE_PATH, Pattern: '^backend/.*' }
-        - !Ref 'AWS::NoValue'
 
   # ── 2. Console ──────────────────────────────────────────────────────────────
   ConsoleBuild:
     Type: AWS::CodeBuild::Project
     Properties:
       Name: !Sub 'marketingos-build-console-${Environment}'
-      Description: Builds Next.js into a zip Lambda and S3 assets, and deploys it behind CloudFront.
+      Description: Static Next.js export onto S3, behind CloudFront with /api/* to the platform API.
       ServiceRole: !GetAtt DeployRole.Arn
       TimeoutInMinutes: !Ref BuildTimeoutMinutes
       Artifacts: { Type: NO_ARTIFACTS }
@@ -616,9 +599,7 @@ Resources:
         ReportBuildStatus: true
       SourceVersion: !Ref SourceBranch
       Environment:
-        # x86_64, matching ConsoleFunction's Architectures: the standalone
-        # output can carry native modules built for the machine that built it.
-        # No Docker, so no privileged mode.
+        # A static export: no Docker, no privileged mode, no Lambda.
         Type: LINUX_CONTAINER
         Image: aws/codebuild/standard:7.0
         ComputeType: BUILD_GENERAL1_MEDIUM
@@ -629,26 +610,14 @@ Resources:
             Type: PLAINTEXT
             Value: !If [NoConsoleStackName, !Sub 'marketingos-console-${Environment}', !Ref ConsoleStackName]
           - { Name: NEXT_PUBLIC_API_URL, Type: PLAINTEXT, Value: !Ref ApiUrl }
-          - { Name: LOG_RETENTION_DAYS, Type: PLAINTEXT, Value: !Ref LogRetentionDays }
-          - { Name: CONSOLE_MEMORY_SIZE, Type: PLAINTEXT, Value: "1536" }
           - { Name: CONSOLE_DOMAIN, Type: PLAINTEXT, Value: !Ref ConsoleDomain }
           - { Name: CONSOLE_CERT_ARN, Type: PLAINTEXT, Value: !Ref CertificateArn }
           - { Name: HOSTED_ZONE_ID, Type: PLAINTEXT, Value: !Ref HostedZoneId }
           - { Name: CONSOLE_WEB_ACL_ARN, Type: PLAINTEXT, Value: !Ref ConsoleWebAclArn }
-          - { Name: S3_PREFIX, Type: PLAINTEXT, Value: marketingos-console }
-          - { Name: SAM_ARTIFACT_BUCKET, Type: PLAINTEXT, Value: !Ref ArtifactBucket }
       LogsConfig:
         CloudWatchLogs:
           Status: ENABLED
           GroupName: !Sub '/aws/codebuild/marketingos-build-console-${Environment}'
-      Triggers: !If
-        - UseWebhooks
-        - Webhook: true
-          FilterGroups:
-            - - { Type: EVENT, Pattern: PUSH }
-              - { Type: HEAD_REF, Pattern: !Sub '^refs/heads/${SourceBranch}$' }
-              - { Type: FILE_PATH, Pattern: '^frontend/.*' }
-        - !Ref 'AWS::NoValue'
 
   # ── 3. Back-office API ──────────────────────────────────────────────────────
   AdminApiBuild:
@@ -727,20 +696,6 @@ Resources:
         CloudWatchLogs:
           Status: ENABLED
           GroupName: !Sub '/aws/codebuild/marketingos-build-admin-api-${Environment}'
-      Triggers: !If
-        - UseWebhooks
-        - Webhook: true
-          FilterGroups:
-            # Two groups, which is an OR. The admin bundle vendors backend/app,
-            # so a change to the platform's models has to rebuild it too - that
-            # is the whole reason the copy is made at build time.
-            - - { Type: EVENT, Pattern: PUSH }
-              - { Type: HEAD_REF, Pattern: !Sub '^refs/heads/${SourceBranch}$' }
-              - { Type: FILE_PATH, Pattern: '^administration/backend/.*' }
-            - - { Type: EVENT, Pattern: PUSH }
-              - { Type: HEAD_REF, Pattern: !Sub '^refs/heads/${SourceBranch}$' }
-              - { Type: FILE_PATH, Pattern: '^backend/app/.*' }
-        - !Ref 'AWS::NoValue'
 
   # ── 4. Back-office console ──────────────────────────────────────────────────
   AdminUiBuild:
@@ -778,14 +733,6 @@ Resources:
         CloudWatchLogs:
           Status: ENABLED
           GroupName: !Sub '/aws/codebuild/marketingos-build-admin-ui-${Environment}'
-      Triggers: !If
-        - UseWebhooks
-        - Webhook: true
-          FilterGroups:
-            - - { Type: EVENT, Pattern: PUSH }
-              - { Type: HEAD_REF, Pattern: !Sub '^refs/heads/${SourceBranch}$' }
-              - { Type: FILE_PATH, Pattern: '^administration/frontend/.*' }
-        - !Ref 'AWS::NoValue'
 
   # ── 5. Landing page ─────────────────────────────────────────────────────────
   LandingBuild:
@@ -821,14 +768,6 @@ Resources:
         CloudWatchLogs:
           Status: ENABLED
           GroupName: !Sub '/aws/codebuild/marketingos-build-landing-${Environment}'
-      Triggers: !If
-        - UseWebhooks
-        - Webhook: true
-          FilterGroups:
-            - - { Type: EVENT, Pattern: PUSH }
-              - { Type: HEAD_REF, Pattern: !Sub '^refs/heads/${SourceBranch}$' }
-              - { Type: FILE_PATH, Pattern: '^landing-page/.*' }
-        - !Ref 'AWS::NoValue'
 
 Outputs:
   ArtifactBucketName:

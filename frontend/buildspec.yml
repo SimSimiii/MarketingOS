@@ -3,54 +3,45 @@ version: 0.2
 # ─────────────────────────────────────────────────────────────────────────────
 #  MarketingOS - console, CodeBuild spec.
 #
-#  Builds Next.js natively, packs its standalone server into a plain Node.js
-#  Lambda zip (.lambda/), puts the content-hashed assets in S3, and deploys the
-#  stack behind CloudFront. No container image and no Docker: the function
-#  runs on the nodejs22.x runtime with the AWS Lambda Web Adapter as a layer.
+#  A static export: `next build` writes out/, the stack in template.yaml holds
+#  the bucket and the CloudFront distribution, and out/ is synced into the
+#  bucket. No server, no Lambda, no container.
 #
 #  Deploy the backend stack first: the console stack imports its API endpoint
-#  for CloudFront's /api/* origin and for the server side's API_INTERNAL_URL.
+#  for CloudFront's /api/* origin.
 # ─────────────────────────────────────────────────────────────────────────────
 
 env:
   variables:
-    LOG_RETENTION_DAYS: "14"
-    CONSOLE_MEMORY_SIZE: "1536"
     CONSOLE_DOMAIN: ""
     CONSOLE_CERT_ARN: ""
     HOSTED_ZONE_ID: ""
     CONSOLE_WEB_ACL_ARN: ""
     NEXT_PUBLIC_API_URL: "/api"
-    S3_PREFIX: marketingos-console
     NEXT_TELEMETRY_DISABLED: "1"
 
 phases:
   install:
     runtime-versions:
       nodejs: "22"
-      python: "3.12"
     commands:
-      - pip install --upgrade pip
-      - pip install "aws-sam-cli>=1.130.0"
-      - node --version
+      - node --version && npm --version
 
   pre_build:
     commands:
       - |
-        for VAR in CONSOLE_STACK_NAME SAM_ARTIFACT_BUCKET NEXT_PUBLIC_API_URL; do
+        for VAR in CONSOLE_STACK_NAME ENVIRONMENT NEXT_PUBLIC_API_URL; do
           if [ -z "$(eval echo \$$VAR)" ]; then
-            echo "ERROR: $VAR is not set on this CodeBuild project." && exit 1
+            echo "ERROR - $VAR is not set on this CodeBuild project." && exit 1
           fi
         done
       # The client calls `${NEXT_PUBLIC_API_URL}/brands`, so a URL that does
-      # not end in /api produces a bundle whose every request 404s - and it
-      # would only show up after it was deployed.
+      # not end in /api produces a bundle whose every request 404s.
       - |
         case "$NEXT_PUBLIC_API_URL" in
           */api) : ;;
           *) echo "ERROR - NEXT_PUBLIC_API_URL must end with /api." && exit 1 ;;
         esac
-
       - cd $CODEBUILD_SRC_DIR/frontend
       - npm ci
       # Typecheck and lint before the build: a type error should fail in
@@ -62,67 +53,46 @@ phases:
   build:
     commands:
       - cd $CODEBUILD_SRC_DIR/frontend
-      - STATIC_BUCKET="marketingos-console-static-$(aws sts get-caller-identity --query Account --output text)-${ENVIRONMENT}"
-      # A restored .next can carry a previous NEXT_PUBLIC_* in the bundle.
-      - rm -rf .next .lambda
+      # A restored .next can carry a previous NEXT_PUBLIC_* into the bundle.
+      - rm -rf .next out
       - NEXT_PUBLIC_AUTH_REQUIRED=true npm run build
-      - test -f .next/standalone/server.js || (echo "ERROR - no standalone server.js" && exit 1)
-
-      # The function's zip: the standalone server, public/, and a start script.
-      # .next/static is left out - CloudFront serves it from S3.
-      - rm -f console-lambda.zip
-      - mkdir .lambda
-      - cp -r .next/standalone/. .lambda/
-      - cp -r public .lambda/public
-      # The deployment package is read-only; Next writes its cache under
-      # .next/cache, so that path points at /tmp, the one writable place.
-      - rm -rf .lambda/.next/cache && ln -s /tmp/next-cache .lambda/.next/cache
-      - printf '#!/bin/bash\nmkdir -p /tmp/next-cache\nexec node server.js\n' > .lambda/run.sh
-      - chmod +x .lambda/run.sh
-      # Zipped here with -y rather than left to `sam deploy`, which follows
-      # symlinks and fails on one whose target only exists inside Lambda.
-      - (cd .lambda && zip -qry ../console-lambda.zip .)
-      - du -h console-lambda.zip
-
-      # Assets first when the bucket already exists, so the new pages never
-      # reference a chunk that is not there yet. Old chunks are kept: a tab
-      # opened before this deploy still asks for them.
+      - test -f out/index.html || (echo "ERROR - the export produced no index.html" && exit 1)
       - |
-        if aws s3api head-bucket --bucket "$STATIC_BUCKET" 2>/dev/null; then
-          aws s3 sync .next/static "s3://${STATIC_BUCKET}/_next/static" \
-            --cache-control "public,max-age=31536000,immutable" --only-show-errors
-        fi
-
-      - rm -rf .aws-sam
-      - envsubst < samconfig.yaml > /tmp/console-samconfig.resolved.yaml
-      - |
-        sam deploy \
+        aws cloudformation deploy \
           --template-file template.yaml \
-          --config-file /tmp/console-samconfig.resolved.yaml \
-          --config-env ci \
-          --no-confirm-changeset \
-          --no-fail-on-empty-changeset
+          --stack-name "${CONSOLE_STACK_NAME}" \
+          --no-fail-on-empty-changeset \
+          --parameter-overrides \
+            "Environment=${ENVIRONMENT}" \
+            "DomainName=${CONSOLE_DOMAIN}" \
+            "CertificateArn=${CONSOLE_CERT_ARN}" \
+            "HostedZoneId=${HOSTED_ZONE_ID}" \
+            "WebAclArn=${CONSOLE_WEB_ACL_ARN}"
 
   post_build:
     commands:
       - cd $CODEBUILD_SRC_DIR/frontend
-      - STATIC_BUCKET="marketingos-console-static-$(aws sts get-caller-identity --query Account --output text)-${ENVIRONMENT}"
-      # Again, for the first deploy, when the bucket did not exist yet.
       - |
-        aws s3 sync .next/static "s3://${STATIC_BUCKET}/_next/static" \
-          --cache-control "public,max-age=31536000,immutable" --only-show-errors
+        BUCKET=$(aws cloudformation describe-stacks --stack-name "${CONSOLE_STACK_NAME}" \
+          --query "Stacks[0].Outputs[?OutputKey=='ConsoleStaticBucketName'].OutputValue" --output text)
+        DIST=$(aws cloudformation describe-stacks --stack-name "${CONSOLE_STACK_NAME}" \
+          --query "Stacks[0].Outputs[?OutputKey=='ConsoleDistributionId'].OutputValue" --output text)
+        # Content-hashed assets first, cached for a year and never deleted: a
+        # tab opened before this deploy still asks for the previous chunks.
+        aws s3 sync out/ "s3://${BUCKET}/" --only-show-errors \
+          --cache-control "public,max-age=31536000,immutable" \
+          --exclude "*.html" --exclude "*.txt" --exclude "*.json"
+        # Then the pages and their RSC payloads, revalidated on every request
+        # so a deploy is live at once. --delete only reaches these.
+        aws s3 sync out/ "s3://${BUCKET}/" --only-show-errors --delete \
+          --cache-control "public,no-cache,must-revalidate" \
+          --exclude "*" --include "*.html" --include "*.txt" --include "*.json"
+        aws cloudfront create-invalidation --distribution-id "$DIST" --paths "/*" >/dev/null
       - |
         aws cloudformation describe-stacks --stack-name "${CONSOLE_STACK_NAME}" \
           --query "Stacks[0].Outputs" --output table
-      # The pages are uncacheable, but the edge may hold an old 404 for a
-      # chunk that exists now.
-      - |
-        DIST=$(aws cloudformation describe-stacks --stack-name "${CONSOLE_STACK_NAME}" \
-          --query "Stacks[0].Outputs[?OutputKey=='ConsoleDistributionId'].OutputValue" --output text)
-        aws cloudfront create-invalidation --distribution-id "$DIST" --paths "/*" >/dev/null
       - echo "Console deployed."
 
 cache:
   paths:
     - frontend/node_modules/**/*
-    - /root/.cache/pip/**/*

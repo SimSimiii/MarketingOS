@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { renewSession } from "@/lib/renew-session";
 
+
 export default function RenewSessionPage() {
   const [error, setError] = useState("");
   useEffect(() => {
@@ -11,7 +12,7 @@ export default function RenewSessionPage() {
     const next = requested.startsWith("/") && !requested.startsWith("//") && !requested.includes("\\")
       && !requested.startsWith("/session/renew") ? requested : "/";
     void renewSession().then(ok => {
-      if (active) window.location.replace(ok ? next : `/login?next=${encodeURIComponent(next)}`);
+      if (active) window.location.replace(ok ? next : `/login/?next=${encodeURIComponent(next)}`);
     }).catch(() => { if (active) setError("Connexion momentanément indisponible."); });
     return () => { active = false; };
   }, []);

@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -19,6 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/lib/api-client";
 import type { Brand, Campaign } from "@/lib/types";
+import { refreshPage } from "@/lib/page-data";
 
 /** Every document needs a home a campaign run can actually find: a brand
  * (reused by every campaign attached to it) or a single campaign (read once,
@@ -37,7 +37,6 @@ export function AddKnowledgeDialog({
   brands?: Brand[];
   brand?: Brand;
 }) {
-  const router = useRouter();
   const fileInput = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -91,7 +90,7 @@ export function AddKnowledgeDialog({
       toast.success("Knowledge added");
       setOpen(false);
       reset();
-      router.refresh();
+      refreshPage();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to add knowledge");
     } finally {

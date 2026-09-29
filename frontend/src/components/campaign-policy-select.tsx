@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import {
@@ -17,6 +16,7 @@ import { RunForecast } from "@/components/run-forecast";
 import { api } from "@/lib/api-client";
 import { useModelCatalog } from "@/lib/use-model-catalog";
 import type { Campaign, EmailTier, PolicyPreset } from "@/lib/types";
+import { refreshPage } from "@/lib/page-data";
 
 const PRESET_LABELS: Record<PolicyPreset, string> = {
   fast: "Fast - fewer review passes, shorter budget",
@@ -44,7 +44,6 @@ function currentTier(campaign: Campaign): EmailTier {
 }
 
 export function CampaignPolicySelect({ campaign }: { campaign: Campaign }) {
-  const router = useRouter();
   const catalog = useModelCatalog();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(currentPreset(campaign) as string);
@@ -64,7 +63,7 @@ export function CampaignPolicySelect({ campaign }: { campaign: Campaign }) {
       // what was stored, not from what was clicked.
       setSaved(`${body.preset ?? currentPreset(campaign)}:${JSON.stringify(overrides)}`);
       toast.success(success);
-      router.refresh();
+      refreshPage();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not save");
     } finally {

@@ -3,12 +3,13 @@
 import { usePathname } from "next/navigation";
 
 import { Sidebar } from "@/components/layout/sidebar";
+import { normalizePath } from "@/lib/paths";
 
 /** Routes that are the whole page: no sidebar, no workspace chrome. */
 const BARE_ROUTES = new Set(["/login", "/register"]);
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
+  const pathname = normalizePath(usePathname());
 
   // Signing in is not part of the workspace, and a sidebar full of links to
   // pages that will redirect straight back here is worse than no sidebar.

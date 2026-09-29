@@ -1,13 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import Link from "next/link";
 import { AlertTriangle } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { refreshPage } from "@/lib/page-data";
 
 export default function ErrorPage({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
-  const router = useRouter();
   const [pending, startTransition] = useTransition();
   return (
     <div
@@ -27,7 +26,7 @@ export default function ErrorPage({ reset }: { error: Error & { digest?: string 
           size="lg"
           disabled={pending}
           onClick={() => startTransition(() => {
-            router.refresh();
+            refreshPage();
             reset();
           })}
         >

@@ -1,35 +1,26 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Transform: AWS::Serverless-2016-10-31
-Description: MarketingOS - console (Next.js SSR on Lambda, zip package, behind CloudFront)
+Description: MarketingOS - console (static site on S3, API through CloudFront)
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  Why this is a function and not only a bucket.
+#  The console is a static export: HTML, JS and CSS in a private bucket, no
+#  server of its own. Every page loads its data from the browser, through
+#  /api on this same domain.
 #
-#  The console renders on the server: its pages are server components that call
-#  the API with the signed-in caller's cookie. A static export would render
-#  them at build time, before anyone had signed in - which is why the
-#  back-office (administration/frontend) can be a static export and this cannot.
-#
-#  So Next's standalone server runs unmodified in a plain Node.js Lambda - a
-#  zip, no container image - with the AWS Lambda Web Adapter as a layer. The
-#  adapter turns an invocation into an ordinary HTTP request to the server on
-#  localhost. buildspec.yml assembles the zip, console-lambda.zip.
-#
-#  One domain, three origins, chosen by path:
+#  One domain, two origins, chosen by path:
 #
 #    /api/*           the platform API Gateway (backend/template.yaml), which
-#                     routes to the API Lambda. Same origin as the pages, so
+#                     routes to the Python Lambda. Same origin as the pages, so
 #                     the browser needs no CORS and the bundle names no domain.
-#    /_next/static/*  an S3 bucket holding the build's content-hashed assets,
-#                     uploaded by buildspec.yml. Cached at the edge for a year.
-#    everything else  the Next server in this Lambda, which renders the pages.
+#    everything else  the export in S3, through a viewer-request function:
+#                       - "/campaigns" redirects to "/campaigns/", the form the
+#                         export was built in;
+#                       - an id in the path becomes "_": each dynamic route was
+#                         exported once, for that placeholder, and the page
+#                         reads the real id from the address bar;
+#                       - "/x/" serves "/x/index.html".
 #
-#  The pages cannot come from S3 like the assets do: they are rendered per
-#  request, with the caller's cookie, which is the whole reason this is a
-#  container rather than a static export.
-#
-#  The console's own route handlers (sign-in, sign-out, token refresh,
-#  downloads) live under /bff/* for the same reason - /api/* is the API's.
+#  Plain CloudFormation, deployed by buildspec.yml with
+#  `aws cloudformation deploy`; the export itself is synced to the bucket after.
 # ─────────────────────────────────────────────────────────────────────────────
 
 Parameters:
@@ -37,26 +28,6 @@ Parameters:
     Type: String
     Default: dev
     AllowedValues: [dev, staging, prod]
-  LogRetentionDays:
-    Type: Number
-    Default: 14
-    AllowedValues: [1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365]
-  ApiUrl:
-    Type: String
-    Default: "/api"
-    Description: >-
-      The platform API as the browser calls it. "/api" - CloudFront routes it
-      to API Gateway on this distribution's own domain. Baked into the client
-      bundle at image build time.
-  MemorySize:
-    Type: Number
-    Default: 1536
-    MinValue: 512
-    MaxValue: 3008
-    Description: >-
-      Lambda scales CPU with memory, and a server-rendered page is CPU work.
-      Below about 1 GB the render, not the API call, is what the reader waits
-      for.
   DomainName:
     Type: String
     Default: ""
@@ -77,12 +48,6 @@ Parameters:
     Description: >-
       A web ACL of this distribution's own, from iac/edge.yaml. The CloudFront
       Free plan will not subscribe a distribution without one.
-  WebAdapterLayerVersion:
-    Type: Number
-    Default: 25
-    Description: >-
-      Version of AWS's published LambdaAdapterLayerX86 layer. 25 is adapter
-      0.9.1.
 
 Conditions:
   HasDomain: !And
@@ -95,84 +60,10 @@ Conditions:
 
 Resources:
 
-  ConsoleFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      # "-web": the name changed when the function went from a container
-      # image to a zip, because CloudFormation cannot replace a function that
-      # keeps its custom name.
-      FunctionName: !Sub 'marketingos-console-web-${Environment}'
-      Description: MarketingOS console (Next.js SSR)
-      # Built by buildspec.yml from .next/standalone; see there.
-      CodeUri: console-lambda.zip
-      Runtime: nodejs22.x
-      # run.sh starts `node server.js`; the adapter's wrapper runs first and
-      # forwards each invocation to it as HTTP.
-      Handler: run.sh
-      MemorySize: !Ref MemorySize
-      Timeout: 30
-      # x86_64 because the build runs on x86 CodeBuild, and Next's standalone
-      # output can carry native modules built for the machine that built it.
-      Architectures: [x86_64]
-      Layers:
-        - !Sub 'arn:aws:lambda:${AWS::Region}:753240598075:layer:LambdaAdapterLayerX86:${WebAdapterLayerVersion}'
-      Environment:
-        Variables:
-          AWS_LAMBDA_EXEC_WRAPPER: /opt/bootstrap
-          PORT: "3000"
-          # The adapter waits for this before forwarding the first request.
-          AWS_LWA_READINESS_CHECK_PATH: /bff/health
-          # Read by the Next server at runtime. The client half of the app got
-          # its copy inlined at build time - see buildspec.yml.
-          NEXT_PUBLIC_API_URL: !Ref ApiUrl
-          NEXT_PUBLIC_AUTH_REQUIRED: "true"
-          NODE_ENV: production
-          NEXT_TELEMETRY_DISABLED: "1"
-          # Where the server side calls the API. The browser's "/api" is
-          # relative to a page; a server has no page to be relative to, so it
-          # goes straight to API Gateway instead of back out through CloudFront.
-          API_INTERNAL_URL: !Sub
-            - '${Endpoint}/api'
-            - Endpoint: { 'Fn::ImportValue': !Sub 'marketingos-api-endpoint-${Environment}' }
-          # What CloudFront stamps on every request as x-origin-verify, so
-          # src/proxy.ts can refuse anything that came around it. The stack's
-          # own UUID: stable, never published, and nothing to rotate by hand.
-          ORIGIN_VERIFY_SECRET: !Select [2, !Split ["/", !Ref AWS::StackId]]
-      Policies:
-        - AWSLambdaBasicExecutionRole
-      FunctionUrlConfig:
-        # NONE, not AWS_IAM with an origin access control. OAC can only sign a
-        # request body it can hash, and a browser's POST carries no
-        # x-amz-content-sha256 - so signing in, a POST to /bff/auth/login,
-        # failed signature verification. The URL is reachable, and the
-        # x-origin-verify header CloudFront adds below is what src/proxy.ts
-        # checks to turn away anything that went around the CDN.
-        AuthType: NONE
-        InvokeMode: BUFFERED
-
-  ConsoleLogGroup:
-    Type: AWS::Logs::LogGroup
-    DeletionPolicy: Retain
-    UpdateReplacePolicy: Retain
-    Properties:
-      LogGroupName: !Sub '/aws/lambda/marketingos-console-web-${Environment}'
-      RetentionInDays: !Ref LogRetentionDays
-
-  # A public Function URL needs lambda:InvokeFunction as well as the
-  # InvokeFunctionUrl grant SAM writes; the condition limits it to calls that
-  # arrive through the URL.
-  ConsoleFunctionInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Ref ConsoleFunction
-      Action: lambda:InvokeFunction
-      Principal: '*'
-      InvokedViaFunctionUrl: true
-
-  # ── Static assets ───────────────────────────────────────────────────────────
-  # `.next/static`, copied out of the image by buildspec.yml. Old files are
-  # kept on purpose: a tab opened before a deploy still asks for the previous
-  # build's chunks, and deleting them would break it mid-session.
+  # ── The site ────────────────────────────────────────────────────────────────
+  # Same logical id and name as when it held only the build's assets, so the
+  # bucket survived the move to a fully static console instead of being
+  # replaced.
   StaticBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -212,6 +103,63 @@ Resources:
             Condition:
               StringEquals:
                 AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${ConsoleDistribution}'
+          # Without ListBucket, S3 answers a missing key with 403 rather than
+          # 404, and only 404 maps to the error page (see the distribution).
+          - Sid: AllowCloudFrontServicePrincipalList
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:ListBucket
+            Resource: !GetAtt StaticBucket.Arn
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${ConsoleDistribution}'
+
+  # ── Deep links onto the export ──────────────────────────────────────────────
+  ConsoleUrlRewriteFunction:
+    Type: AWS::CloudFront::Function
+    Properties:
+      Name: !Sub 'marketingos-console-url-rewrite-${Environment}'
+      AutoPublish: true
+      FunctionConfig:
+        Comment: Trailing slash, id placeholder and index.html for the console export
+        Runtime: cloudfront-js-2.0
+      FunctionCode: |
+        var ID = /\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?=\/|$)/g;
+        var FILE = /\.[a-zA-Z0-9]+$/;
+
+        function query(qs) {
+          var parts = [];
+          for (var key in qs) {
+            var entry = qs[key];
+            var values = entry.multiValue ? entry.multiValue : [entry];
+            for (var i = 0; i < values.length; i++) {
+              parts.push(values[i].value === '' ? key : key + '=' + values[i].value);
+            }
+          }
+          return parts.length ? '?' + parts.join('&') : '';
+        }
+
+        function handler(event) {
+          var request = event.request;
+          var uri = request.uri;
+          // The export was built with trailing slashes; a page reached
+          // without one would be the same HTML at a URL the app does not
+          // expect, and the first render would disagree with it.
+          if (!FILE.test(uri) && uri.charAt(uri.length - 1) !== '/') {
+            return {
+              statusCode: 301,
+              statusDescription: 'Moved Permanently',
+              headers: { location: { value: uri + '/' + query(request.querystring) } }
+            };
+          }
+          uri = uri.replace(ID, '/_');
+          if (!FILE.test(uri)) {
+            uri = uri + 'index.html';
+          }
+          request.uri = uri;
+          return request;
+        }
 
   ConsoleDistribution:
     Type: AWS::CloudFront::Distribution
@@ -221,6 +169,7 @@ Resources:
         Comment: !Sub 'MarketingOS console (${Environment})'
         HttpVersion: http2and3
         IPV6Enabled: true
+        DefaultRootObject: index.html
         # PriceClass_All, not _100: the CloudFront flat-rate plans refuse a
         # distribution restricted to fewer edge locations ("not eligible for
         # this subscription tier"), and on a flat rate the wider class costs
@@ -235,16 +184,11 @@ Resources:
             MinimumProtocolVersion: TLSv1.2_2021
           - CloudFrontDefaultCertificate: true
         Origins:
-          - Id: ConsoleLambdaOrigin
-            # !GetAtt on a Function URL returns https://<id>.lambda-url...,
-            # and an origin wants the host on its own.
-            DomainName: !Select [2, !Split ["/", !GetAtt ConsoleFunctionUrl.FunctionUrl]]
-            OriginCustomHeaders:
-              - HeaderName: x-origin-verify
-                HeaderValue: !Select [2, !Split ["/", !Ref AWS::StackId]]
-            CustomOriginConfig:
-              OriginProtocolPolicy: https-only
-              OriginSSLProtocols: [TLSv1.2]
+          - Id: StaticS3Origin
+            DomainName: !GetAtt StaticBucket.RegionalDomainName
+            OriginAccessControlId: !Ref StaticOriginAccessControl
+            S3OriginConfig:
+              OriginAccessIdentity: ""
           - Id: PlatformApiOrigin
             # The API stack exports https://<id>.execute-api.<region>.amazonaws.com/<stage>:
             # the host is the origin, the stage is its path, and backend/lambda_handler.py
@@ -256,28 +200,21 @@ Resources:
             CustomOriginConfig:
               OriginProtocolPolicy: https-only
               OriginSSLProtocols: [TLSv1.2]
-          - Id: StaticS3Origin
-            DomainName: !GetAtt StaticBucket.RegionalDomainName
-            OriginAccessControlId: !Ref StaticOriginAccessControl
-            S3OriginConfig:
-              OriginAccessIdentity: ""
         DefaultCacheBehavior:
-          TargetOriginId: ConsoleLambdaOrigin
+          TargetOriginId: StaticS3Origin
           ViewerProtocolPolicy: redirect-to-https
-          AllowedMethods: [GET, HEAD, OPTIONS, PUT, POST, PATCH, DELETE]
+          AllowedMethods: [GET, HEAD, OPTIONS]
           Compress: true
-          # CachingDisabled: every page here is per-account. Caching a rendered
-          # page at the edge would serve one customer's workspace to the next
-          # visitor, which is the worst bug this stack could have.
-          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
-          # AllViewerExceptHostHeader: forwards cookies and the Authorization
-          # header to the origin, without the Host header that would break
-          # SigV4 against the Function URL.
-          OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac
+          # CachingOptimized. The HTML is uploaded with no-cache, so this long
+          # TTL only really applies to the content-hashed assets beside it.
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          FunctionAssociations:
+            - EventType: viewer-request
+              FunctionARN: !GetAtt ConsoleUrlRewriteFunction.FunctionMetadata.FunctionARN
         CacheBehaviors:
-          # The API, never cached: every answer is per-account. The Authorization
-          # header travels with the rest of the viewer's headers; Host does not,
-          # because API Gateway routes on its own.
+          # The API, never cached: every answer is per-account. Cookies and the
+          # Authorization header travel with the rest of the viewer's headers;
+          # Host does not, because API Gateway routes on its own.
           - PathPattern: /api/*
             TargetOriginId: PlatformApiOrigin
             ViewerProtocolPolicy: redirect-to-https
@@ -285,14 +222,13 @@ Resources:
             Compress: true
             CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad   # CachingDisabled
             OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac  # AllViewerExceptHostHeader
-          # Build output is content-hashed, so it can be cached hard and never
-          # needs to reach a function at all.
-          - PathPattern: /_next/static/*
-            TargetOriginId: StaticS3Origin
-            ViewerProtocolPolicy: redirect-to-https
-            AllowedMethods: [GET, HEAD]
-            Compress: true
-            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6   # CachingOptimized
+        CustomErrorResponses:
+          # 404 only. An error response applies to every behavior, /api/*
+          # included, so mapping 403 as well would turn the API's "your role
+          # cannot do that" into an HTML page.
+          - ErrorCode: 404
+            ResponseCode: 404
+            ResponsePagePath: /404.html
 
   ConsoleDnsA:
     Type: AWS::Route53::RecordSet
@@ -325,10 +261,8 @@ Outputs:
       - HasDomain
       - !Sub 'https://${DomainName}'
       - !Sub 'https://${ConsoleDistribution.DomainName}'
-  ConsoleFunctionArn:
-    Value: !GetAtt ConsoleFunction.Arn
   ConsoleDistributionId:
     Value: !Ref ConsoleDistribution
   ConsoleStaticBucketName:
-    Description: Where buildspec.yml puts .next/static, under _next/static/.
+    Description: Where buildspec.yml syncs the export.
     Value: !Ref StaticBucket

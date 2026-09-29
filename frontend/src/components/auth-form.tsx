@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { API_URL } from "@/lib/config";
 
 type Mode = "login" | "register";
 
@@ -18,12 +19,12 @@ type Mode = "login" | "register";
  * copies of the same error handling, the same redirect logic and the same
  * layout - which is how one of them ends up with a bug the other does not.
  *
- * It posts to this app's own `/bff/auth/*` handlers rather than to the API.
- * Those are what turn the API's tokens into cookies on this origin, which is
- * the only way a server-rendered page can know who is looking at it.
+ * It posts to the API's own `/auth/*`, on this origin (CloudFront routes
+ * /api/* to it). The API answers with the session as two cookies: the access
+ * token, readable by script so the client can send it as a bearer header, and
+ * the refresh token, httpOnly and scoped to /api/auth.
  */
 export function AuthForm({ mode, allowSignup }: { mode: Mode; allowSignup: boolean }) {
-  const router = useRouter();
   const params = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,8 +40,9 @@ export function AuthForm({ mode, allowSignup }: { mode: Mode; allowSignup: boole
     setBusy(true);
     setError("");
     try {
-      const response = await fetch(`/bff/auth/${mode}`, {
+      const response = await fetch(`${API_URL}/auth/${mode}`, {
         method: "POST",
+        credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(
           signingUp
@@ -54,8 +56,13 @@ export function AuthForm({ mode, allowSignup }: { mode: Mode; allowSignup: boole
         ),
       });
       if (!response.ok) {
-        const body = (await response.json().catch(() => null)) as { detail?: string } | null;
-        setError(body?.detail ?? "That did not work. Try again.");
+        const body = (await response.json().catch(() => null)) as { detail?: unknown } | null;
+        // A string from the API's own checks, or a list from request
+        // validation (a malformed address, say) - rendering the list itself
+        // would crash the form instead of explaining.
+        const detail = body?.detail;
+        const first = Array.isArray(detail) ? (detail[0] as { msg?: unknown } | undefined)?.msg : detail;
+        setError(typeof first === "string" && first ? first : "That did not work. Try again.");
         return;
       }
       // Only a path from this origin: `next` is resolved against the current
@@ -66,11 +73,9 @@ export function AuthForm({ mode, allowSignup }: { mode: Mode; allowSignup: boole
         requested && new URL(requested, window.location.origin).origin === window.location.origin
           ? requested
           : "/";
-      // `refresh` as well as `replace`: every page here is server-rendered
-      // from the cookie that was just set, and the router cache still holds
-      // the signed-out render.
-      router.replace(destination);
-      router.refresh();
+      // A full load rather than a client navigation: the whole app starts
+      // again with the cookies that were just set.
+      window.location.replace(destination);
     } catch {
       setError("Could not reach the server. Is the API running?");
     } finally {

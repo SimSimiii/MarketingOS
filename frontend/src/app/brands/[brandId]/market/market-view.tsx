@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 import { Crosshair, Users, ShieldCheck, Radar, Swords, RefreshCw, ScanSearch } from "lucide-react";
@@ -27,6 +27,7 @@ import type {
   ProofCandidate,
   RadarEvent,
 } from "@/lib/types";
+import { refreshPage } from "@/lib/page-data";
 
 /** The same card the live board uses.
  *
@@ -53,7 +54,6 @@ export function MarketView({
   initialAudience: AudienceRead;
   initialJob: MarketJob | null;
 }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [job, setJob] = useState<MarketJob | null>(initialJob);
   const [starting, setStarting] = useState(false);
@@ -67,7 +67,7 @@ export function MarketView({
     try {
       setJob(await api.getMarketJob(brand.id));
       setNow(Date.now());
-      router.refresh();
+      refreshPage();
     } catch (error) { toast.error(error instanceof Error ? error.message : "Could not refresh status"); }
     finally { setRefreshing(false); }
   }
@@ -133,7 +133,7 @@ export function MarketView({
         // enters the polling effect. Refresh the server data here too.
         if (started.state === "done") {
           toast.success(started.summary || "Relevance dossier is current");
-          router.refresh();
+          refreshPage();
         }
       } catch (error) {
         toast.error(error instanceof Error ? error.message : "Could not build that dossier");
@@ -141,7 +141,7 @@ export function MarketView({
         setStarting(false);
       }
     },
-    [brand.id, router],
+    [brand.id],
   );
 
   const { positioning, profiles, rivals, note } = initialMarket;
@@ -205,7 +205,7 @@ export function MarketView({
             /* Remounted when the server data changes, so a finished search
                actually appears. The panel keeps the user's keep/dismiss
                decisions in local state, which would otherwise survive a
-               `router.refresh()` and hide the rows it just fetched. */
+               `refreshPage()` and hide the rows it just fetched. */
             key={`${initialAudience.map?.mapped_at ?? "none"}:${initialAudience.prospects.length}:${initialAudience.research.map((item) => item.version).join("-")}:${initialAudience.relevance.map((item) => `${item.status}-${item.generation_version ?? 0}`).join("-")}`}
             brandId={brand.id}
             audience={initialAudience}

@@ -1,15 +1,13 @@
 /**
- * The API as the browser sees it.
+ * The API as the browser sees it - and, the console being a static export,
+ * the only way anything here reaches it.
  *
- * Client components import this. Server components import `@/lib/api-server`
- * instead - same sixty calls, built from the same factory, differing only in
- * where the bearer token comes from. A server component has the request's
- * cookies; a browser has the document's, and neither can read the other's.
- *
- * The access token cookie is readable by script on purpose. The refresh token
- * is not: it is httpOnly and scoped to `/bff/auth`, so only the route handlers
- * under `src/app/bff/auth` ever see it. That is the split that matters - an
- * access token is worth sixty minutes, a refresh token is worth a month.
+ * The API sets both session cookies itself, on this origin (CloudFront routes
+ * /api/* to it). The access token cookie is readable by script on purpose: it
+ * goes back as a bearer header, which mutations require. The refresh token is
+ * not: it is httpOnly and scoped to /api/auth, so only the refresh and sign-out
+ * endpoints ever see it. That is the split that matters - an access token is
+ * worth sixty minutes, a refresh token is worth a month.
  */
 
 import { createApi, type AuthSource } from "@/lib/api-core";

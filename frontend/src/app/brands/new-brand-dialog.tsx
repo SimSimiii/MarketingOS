@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api } from "@/lib/api-client";
+import { refreshPage } from "@/lib/page-data";
 
 export function NewBrandDialog() {
   const router = useRouter();
@@ -37,7 +38,7 @@ export function NewBrandDialog() {
       // row worth returning to a list for - the next thing to do is add its
       // material, and that lives inside it.
       router.push(`/brands/${brand.id}/knowledge`);
-      router.refresh();
+      refreshPage();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to create brand");
     } finally {

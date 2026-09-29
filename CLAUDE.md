@@ -239,17 +239,22 @@ because Codex has no `web_fetch` equivalent.
 
 ### Frontend
 
-Pages are server components calling the API directly; mutations are small colocated
-`"use client"` components. Everything scoped to a business lives under
+The console is a **static export** (`output: "export"`), served from S3 - there is no
+Next server anywhere. Each `page.tsx` is a thin wrapper around a `"use client"` view that
+loads its data in the browser through `usePageData` and renders it through `<PageData>`
+(`src/lib/page-data.tsx`), which also handles loading, `notFound()`, `redirect()` and an
+expired session. After a mutation call `refreshPage()`, not `router.refresh()` - there is
+no server to re-render. Dynamic routes export one placeholder page (`_`) via
+`generateStaticParams`; a CloudFront function serves it for every real id, so read ids
+with `useRouteIds()`, never `useParams()`. Compare pathnames through `normalizePath()`:
+the export has trailing slashes. Everything scoped to a business lives under
 `src/app/brands/[brandId]/` (knowledge, market, proof) — `/market` and
 `/knowledge/base?brand=` redirect there for old bookmarks, and what remains at `/knowledge` is
 sources attached to a one-off campaign. `src/lib/types.ts` mirrors the backend's Pydantic
 schemas by hand, so a schema change means changing both. The API surface lives in
-`src/lib/api-core.ts` as a factory; `api-client.ts` (browser, reads the cookie via
-`document.cookie`) and `api-server.ts` (server components, reads it via `next/headers`)
-are thin modules over it and differ only in where the bearer token comes from. **A server
-component must import `@/lib/api-server`** — importing the browser one silently makes
-unauthenticated calls, which still work in single-user mode. The execution page splits into a
+`src/lib/api-core.ts` as a factory and `api-client.ts` builds it, reading the access
+token from `document.cookie`. The API sets both session cookies itself - it is on the same
+domain, under `/api` - so sign-in, refresh and sign-out call `/api/auth/*` directly. The execution page splits into a
 stream hook, a pure fold (`lib/run-timeline.ts`) and a dumb component, so replayed history and
 live events go through the same function. Theme is dark-only, violet accent, no toggle.
 
@@ -305,10 +310,10 @@ live events go through the same function. Theme is dark-only, violet accent, no 
   `backend/app` in at build time so both stacks share one definition of every model. A
   checked-in copy is a second definition, and the day it drifts is the day the console
   reports numbers the product disagrees with. It is in that directory's `.gitignore`.
-- **On the console's domain, `/api/*` is the API, not Next.** CloudFront sends it to
-  API Gateway; the console's own route handlers (sign-in, refresh, downloads) live in
-  `frontend/src/app/bff/`. A new Next route handler under `src/app/api/` would be
-  unreachable in production. Server-side, `API_URL` reads `API_INTERNAL_URL`.
+- **The console has no server, so no route handlers, server actions, `cookies()` or proxy.**
+  Anything that needs one belongs in the API, which the console reaches at `/api/*` on its
+  own domain. `next build` fails on most of them; a route handler would build and then
+  never be reachable.
 - **On Lambda the database engine has no pool** (`app/core/database.py`). Aurora
   Serverless pauses only when no connection is open; a pooled connection in a frozen
   container would keep it awake and billing around the clock.

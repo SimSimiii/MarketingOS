@@ -19,10 +19,10 @@ and the optional worker - is in [iac/](../iac/README.md), which also carries
 the request path, the per-service cost breakdown and **the ordered runbook.
 Follow that one**; this page explains the constraints behind it.
 
-Everything that runs is serverless and a zip package: Python Lambdas behind
-API Gateway for both APIs, a Node.js Lambda for the console's server-rendered
-pages, S3 for everything static, Aurora Serverless v2 that pauses to zero,
-secrets in SSM Parameter Store. Each product is one CloudFront domain with
+Everything that runs is a Python Lambda behind API Gateway; everything the
+browser loads - both consoles and the landing page - is static on S3; Aurora
+Serverless v2 pauses to zero; secrets are in SSM Parameter Store. Deploys are
+CodeBuild builds started by hand, on the branch chosen at start. Each product is one CloudFront domain with
 `/api/*` routed to its API Gateway, so browsers never make a cross-origin call.
 
 ---
@@ -91,12 +91,13 @@ vendor API keys to prevent an accidental switch to API-key billing.
   are generated independently; the back-office buildspec fails if they match.
   The back-office does receive the platform's `PASSWORD_PEPPER` - under the
   name `PLATFORM_PASSWORD_PEPPER`, and only to create test accounts.
-- **The console renders on the server**, which is why it is a Lambda and not a
-  bucket like the back-office. Its build bakes `NEXT_PUBLIC_API_URL=/api`
-  (relative, so a domain change needs no rebuild); its server side reads
-  `API_INTERNAL_URL`, set by the stack. Its own route handlers - sign-in,
-  refresh, downloads - live under `/bff/*`, because `/api/*` on the same domain
-  is the API's.
+- **The console is a static export**, like the back-office. Its build bakes
+  `NEXT_PUBLIC_API_URL=/api` (relative, so a domain change needs no rebuild).
+  The API sets the session cookies itself - the access token readable by the
+  console's script, the refresh token httpOnly and scoped to `/api/auth` - and
+  a CloudFront function serves the one page exported per dynamic route for
+  every real id, redirecting slash-less paths to the slashed form the export
+  was built in.
 - **CloudFront error pages apply to every behavior**, API included. The
   back-office maps only 404 to its error page, so an API 403 stays JSON.
 

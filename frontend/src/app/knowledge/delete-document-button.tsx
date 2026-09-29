@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api-client";
+import { refreshPage } from "@/lib/page-data";
 
 export function DeleteDocumentButton({ documentId }: { documentId: string }) {
-  const router = useRouter();
   const [deleting, setDeleting] = useState(false);
 
   async function handleClick() {
@@ -16,7 +15,7 @@ export function DeleteDocumentButton({ documentId }: { documentId: string }) {
     try {
       await api.deleteKnowledgeDocument(documentId);
       toast.success("Document deleted");
-      router.refresh();
+      refreshPage();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to delete document");
     } finally {

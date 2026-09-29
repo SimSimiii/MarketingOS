@@ -5,8 +5,9 @@ import ts from 'typescript';
 
 async function loadRefresh() {
   const source = await readFile(new URL('../src/lib/renew-session.ts', import.meta.url), 'utf8');
-  const js = ts.transpileModule(source.replace(/import .*auth-cookies.*;/,
-    'const ACCESS_TOKEN_COOKIE = "mos_access_token";'), {
+  const js = ts.transpileModule(source
+    .replace(/import .*auth-cookies.*;/, 'const ACCESS_TOKEN_COOKIE = "mos_access_token";')
+    .replace(/import .*config.*;/, 'const API_URL = "/api";'), {
     compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022 },
   }).outputText;
   return import(`data:text/javascript;base64,${Buffer.from(js).toString('base64')}#${Math.random()}`);
@@ -32,8 +33,10 @@ function browser(t, fetcher) {
 
 test('expired access cookie: concurrent requests and tabs rotate the refresh token once', async t => {
   let calls = 0;
-  browser(t, async (_url, init) => {
+  browser(t, async (url, init) => {
     calls++;
+    // The API itself, on this origin: CloudFront routes /api/* to it.
+    assert.equal(url, '/api/auth/refresh');
     assert.equal(init.credentials, 'same-origin');
     document.cookie = 'mos_access_token=renewed';
     return new Response(null, { status: 200 });

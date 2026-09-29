@@ -243,18 +243,13 @@ export function createApi(auth: AuthSource) {
      * `afterEventId` resumes where the timeline left off, so the handover from
      * HTTP to the stream neither skips events nor repeats them. */
     executionStreamUrl: (executionId: string, afterEventId?: number) => {
-      // The token rides in the query string here, and only here (plus the CSV
-      // export below). `EventSource` cannot set an Authorization header and
-      // the API is a different origin, so the cookie the app holds is never
-      // sent with it. The cost is a token that can appear in an access log,
-      // which is why access tokens are short-lived; the alternative was
-      // hand-rolling SSE over fetch and losing the browser's own reconnection
-      // with Last-Event-ID, which is what makes a dropped connection resume
-      // in the right place.
+      // A plain URL on this origin: `EventSource` and a download link cannot
+      // set an Authorization header, so these rely on the access token cookie,
+      // which the API accepts for safe reads (app.auth.dependencies).
       const query = new URLSearchParams();
       if (afterEventId) query.set("after_event_id", String(afterEventId));
       const suffix = query.toString() ? `?${query}` : "";
-      return `/bff/download/executions/${executionId}/stream${suffix}`;
+      return `${API_URL}/executions/${executionId}/stream${suffix}`;
     },
 
     listKnowledgeDocuments: (scope: { campaignId?: string; brandId?: string } = {}, page?: { limit: number; offset: number }) => {
@@ -485,11 +480,11 @@ export function createApi(auth: AuthSource) {
      * from. Kept rows only: a file that quietly included unreviewed ones would
      * defeat the review it came from. */
     prospectsCsvUrl: (brandId: string, segment?: string) => {
-      // A plain link, so no header - same reasoning as the stream URL above.
+      // A plain link, so no header - the cookie, as for the stream URL above.
       const query = new URLSearchParams();
       if (segment) query.set("segment", segment);
       const suffix = query.toString() ? `?${query}` : "";
-      return `/bff/download/market/${brandId}/prospects.csv${suffix}`;
+      return `${API_URL}/market/${brandId}/prospects.csv${suffix}`;
     },
 
     listRadar: (brandId: string, limit = 50) =>

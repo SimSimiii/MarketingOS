@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/lib/api-client";
 import type { Brand } from "@/lib/types";
+import { refreshPage } from "@/lib/page-data";
 
 const DEFAULT_ACCENT = "#1a56db";
 
@@ -26,7 +26,6 @@ const DEFAULT_ACCENT = "#1a56db";
  * form for them every email the system produced came out plain because there
  * was nothing to brand it with. */
 export function BrandStyleForm({ brand }: { brand: Brand }) {
-  const router = useRouter();
   const [logoUrl, setLogoUrl] = useState(brand.logo_url ?? "");
   const [color, setColor] = useState(brand.primary_color ?? DEFAULT_ACCENT);
   const [footer, setFooter] = useState((brand.footer_lines ?? []).join("\n"));
@@ -46,7 +45,7 @@ export function BrandStyleForm({ brand }: { brand: Brand }) {
         unsubscribe_url: unsubscribe.trim() || null,
       });
       toast.success("Saved. Branded emails for this brand will use it from the next run.");
-      router.refresh();
+      refreshPage();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not save that");
     } finally {
