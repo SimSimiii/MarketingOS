@@ -18,9 +18,11 @@ import { Label } from "@/components/ui/label";
 import { api } from "@/lib/api-client";
 import { refreshPage } from "@/lib/page-data";
 
-export function NewBrandDialog() {
+/** `primary` for the page's own call to action; `autoOpen` for arriving from
+ * the command palette's "New brand". */
+export function NewBrandDialog({ primary = false, autoOpen = false }: { primary?: boolean; autoOpen?: boolean } = {}) {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(autoOpen);
   const [submitting, setSubmitting] = useState(false);
   const [name, setName] = useState("");
   const [websiteUrl, setWebsiteUrl] = useState("");
@@ -48,7 +50,7 @@ export function NewBrandDialog() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button variant="outline">New brand</Button>} />
+      <DialogTrigger render={<Button variant={primary ? "default" : "outline"}>New brand</Button>} />
       <DialogContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <DialogHeader>

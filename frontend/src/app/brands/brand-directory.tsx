@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { BellRing, Building2, Megaphone, Search, SearchX } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import type { BrandOverview } from "@/lib/types";
@@ -25,12 +26,13 @@ import { timeAgo } from "@/lib/format";
 export function BrandDirectory({ brands }: { brands: BrandOverview[] }) {
   const [query, setQuery] = useState("");
   const [attention, setAttention] = useState(false);
+  const arrivedToCreate = useSearchParams().get("new") === "1";
   const visible = brands.filter((brand) => `${brand.name} ${brand.website_url ?? ""}`.toLowerCase().includes(query.trim().toLowerCase()) && (!attention || brand.unseen_alerts > 0 || brand.pending_proof > 0));
   const needingAttention = brands.filter((brand) => brand.unseen_alerts > 0 || brand.pending_proof > 0).length;
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Your businesses" title="Brand workspaces" description="The knowledge, market context and proof behind every campaign. A dedicated home for each business." actions={<NewBrandDialog />} />
+      <PageHeader eyebrow="Your businesses" title="Brand workspaces" description="The knowledge, market context and proof behind every campaign. A dedicated home for each business." actions={<NewBrandDialog primary autoOpen={arrivedToCreate} />} />
 
       <div className="rise-stagger grid gap-3 sm:grid-cols-3">
         <StatTile label="Workspaces" value={brands.length} icon={Building2} hint="Businesses you write for" />

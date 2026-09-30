@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Activity, AudioLines, BookOpen, Building2, LayoutDashboard, Mail, Search, Settings2, Sparkles } from "lucide-react";
-import { openCommandPalette } from "@/components/command-palette";
+import { openCommandPalette, useShortcutLabel } from "@/components/command-palette";
 import { cn } from "@/lib/utils";
 import { AccountMenu } from "@/components/layout/account-menu";
 import { normalizePath } from "@/lib/paths";
@@ -21,6 +21,7 @@ const NAV_ITEMS = [
 
 export function Sidebar() {
   const pathname = normalizePath(usePathname());
+  const shortcut = useShortcutLabel();
   const activeHref = NAV_ITEMS.find((item) => item.href === "/" ? pathname === "/" : pathname === item.href || pathname.startsWith(`${item.href}/`))?.href;
 
   return (
@@ -49,7 +50,7 @@ export function Sidebar() {
         >
           <Search className="size-4" aria-hidden="true" />
           <span className="flex-1 text-left">Jump to…</span>
-          <kbd className="rounded border border-border px-1.5 py-0.5 font-sans text-[10px]">Ctrl K</kbd>
+          <kbd className="rounded border border-border px-1.5 py-0.5 font-sans text-[10px]">{shortcut}</kbd>
         </button>
       </div>
       <p className="hidden px-6 pb-3 text-[10px] font-medium tracking-[0.2em] text-muted-foreground lg:block">WORKSPACE</p>

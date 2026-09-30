@@ -90,7 +90,7 @@ export function CampaignsView() {
           </Link>
           <NewCampaignDialog
             prefill={linkedinPrefill}
-            autoOpen={Boolean(linkedinPrefill)}
+            autoOpen={Boolean(linkedinPrefill) || search.get("new") === "1"}
             defaultBrandId={brandId}
           />
         </>}

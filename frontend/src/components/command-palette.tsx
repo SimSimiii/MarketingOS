@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type ComponentType } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ComponentType } from "react";
 import { useRouter } from "next/navigation";
 import {
   Activity,
@@ -10,6 +10,7 @@ import {
   CornerDownLeft,
   LayoutDashboard,
   Mail,
+  Plus,
   Search,
   Settings2,
 } from "lucide-react";
@@ -23,12 +24,17 @@ interface Entry {
   id: string;
   label: string;
   hint: string;
-  group: "Go to" | "Campaigns" | "Brands";
+  group: "Actions" | "Go to" | "Campaigns" | "Brands";
   href: string;
   icon: ComponentType<{ className?: string }>;
   /** Extra words the entry answers to without showing them. */
   keywords?: string;
 }
+
+const ACTIONS: Entry[] = [
+  { id: "a-campaign", label: "New campaign", hint: "Write a brief", group: "Actions", href: "/campaigns?new=1", icon: Plus, keywords: "create write email" },
+  { id: "a-brand", label: "New brand", hint: "Register a business", group: "Actions", href: "/brands?new=1", icon: Plus, keywords: "create business workspace" },
+];
 
 const PAGES: Entry[] = [
   { id: "p-home", label: "Overview", hint: "What is waiting on you", group: "Go to", href: "/", icon: LayoutDashboard },
@@ -41,6 +47,18 @@ const PAGES: Entry[] = [
 ];
 
 const OPEN_EVENT = "marketingos:command-palette";
+
+const noSubscription = () => () => {};
+
+/** "⌘K" on a Mac, "Ctrl K" elsewhere - and "Ctrl K" while the static HTML
+ * is built, when there is no platform to ask. */
+export function useShortcutLabel(): string {
+  return useSyncExternalStore(
+    noSubscription,
+    () => (/Mac|iPhone|iPad/.test(navigator.platform) ? "⌘K" : "Ctrl K"),
+    () => "Ctrl K",
+  );
+}
 
 /** Open the palette from anywhere - a button in the sidebar, say. */
 export function openCommandPalette() {
@@ -120,6 +138,7 @@ export function CommandPalette() {
   const entries = useMemo(() => {
     const brandNames = new Map((data?.brands ?? []).map((brand) => [brand.id, brand.name]));
     const all: Entry[] = [
+      ...ACTIONS,
       ...PAGES,
       ...(data?.campaigns ?? []).map((campaign) => ({
         id: `c-${campaign.id}`,
@@ -144,6 +163,7 @@ export function CommandPalette() {
     // scroll through every campaign ever written.
     if (!query.trim()) {
       return [
+        ...found.filter((entry) => entry.group === "Actions"),
         ...found.filter((entry) => entry.group === "Go to"),
         ...found.filter((entry) => entry.group === "Campaigns").slice(0, 5),
         ...found.filter((entry) => entry.group === "Brands").slice(0, 5),
