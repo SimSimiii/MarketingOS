@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { positioningSentence } from "./market/positioning-map";
 import { BookOpen, Files, Megaphone, Users } from "lucide-react";
 
 import { BrandKnowledgeDialog } from "./brand-knowledge-dialog";
 import { BrandSectionHeader } from "../brand-ui";
-import { ExpandableText } from "@/components/expandable-text";
 import { StatusBadge } from "@/components/status-badge";
 import { StatFigure, StatTile } from "@/components/stat-tile";
 import { Badge } from "@/components/ui/badge";
@@ -120,7 +120,7 @@ export function BrandOverviewView() {
           <CardContent className="space-y-3 text-sm">
             {market?.positioning ? (
               <>
-                <ExpandableText text={market.positioning.summary} />
+                <p>{positioningSentence(market.positioning)}</p>
                 <div className="grid grid-cols-3 gap-3 rounded-xl border border-hairline bg-background/40 p-4">
                   <StatFigure label="Competitors" value={rivals.length} />
                   <StatFigure label="Proof waiting" value={market.pending_proof} />

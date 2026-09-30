@@ -41,13 +41,14 @@ import {
   SkeletonStats,
   SkeletonTable,
 } from "@/components/skeleton";
-import { UnauthorizedError } from "@/lib/api-client";
+import { UnauthorizedError, api } from "@/lib/api-client";
 import { normalizePath } from "@/lib/paths";
 
 const reloaders = new Set<() => void>();
 
 /** Load the data of every mounted page again. What `router.refresh()` did. */
 export function refreshPage(): void {
+  api.invalidate();
   for (const reload of reloaders) reload();
 }
 

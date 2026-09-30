@@ -52,14 +52,6 @@ import type {
   UserSettingsUpdate,
 } from "@/lib/types";
 
-/** The readable half of a FastAPI error.
- *
- * FastAPI puts the message a human should read in `detail`, and raising the
- * raw body instead surfaces `API error 422: {"detail":"GPT-5.6 Sol cannot run
- * ..."}` in a toast - the one sentence that would have helped, wrapped in
- * punctuation. Falls back to the body when it is not JSON, which is what a
- * proxy or a crash returns. */
-
 /** Where the bearer token comes from.
  *
  * The two callers answer this differently and cannot share an answer: a
@@ -111,8 +103,41 @@ export class UnauthorizedError extends Error {
   }
 }
 
+/** How long a GET answer is reused. Long enough to cover a layout and the
+ * page inside it asking for the same thing one after the other; short enough
+ * that nobody ever reads it as stale. */
+const GET_REUSE_MS = 4000;
+
 export function createApi(auth: AuthSource) {
-  async function request<T>(path: string, init?: RequestInit, retry = true): Promise<T> {
+  /**
+   * GET answers from the last few seconds, and the ones still in flight.
+   *
+   * A brand's layout loads the brand, its knowledge base and its market for
+   * the header and the tab counts; the tab inside it then loads the same three
+   * again - 280KB, fetched twice, one round after the other, because the page
+   * only mounts once the layout has its data. Sharing the answer halves that
+   * page's load. Any write empties the cache, so nothing a mutation changed is
+   * ever served from it, and `invalidate()` empties it for an explicit
+   * refresh.
+   */
+  const recent = new Map<string, { at: number; answer: Promise<unknown> }>();
+
+  function request<T>(path: string, init?: RequestInit, retry = true): Promise<T> {
+    const method = (init?.method ?? "GET").toUpperCase();
+    if (method !== "GET") {
+      recent.clear();
+      return send<T>(path, init, retry);
+    }
+    const hit = recent.get(path);
+    if (hit && Date.now() - hit.at < GET_REUSE_MS) return hit.answer as Promise<T>;
+    const answer = send<T>(path, init, retry);
+    recent.set(path, { at: Date.now(), answer });
+    // A failure is not an answer worth sharing: the next caller asks again.
+    answer.catch(() => recent.delete(path));
+    return answer;
+  }
+
+  async function send<T>(path: string, init?: RequestInit, retry = true): Promise<T> {
     const response = await fetch(`${API_URL}${path}`, {
       cache: "no-store",
       ...init,
@@ -124,7 +149,7 @@ export function createApi(auth: AuthSource) {
     });
 
     if (response.status === 401) {
-      if (retry && await auth.refresh?.()) return request<T>(path, init, false);
+      if (retry && await auth.refresh?.()) return send<T>(path, init, false);
       throw new UnauthorizedError(await errorMessage(response));
     }
     if (!response.ok) {
@@ -140,6 +165,7 @@ export function createApi(auth: AuthSource) {
   /** Multipart upload - the browser sets its own Content-Type boundary, so
    * this one does not spread the JSON headers over it. */
   async function upload<T>(path: string, body: FormData, retry = true): Promise<T> {
+    recent.clear();
     const response = await fetch(`${API_URL}${path}`, {
       method: "POST",
       body,
@@ -167,6 +193,10 @@ export function createApi(auth: AuthSource) {
   }
 
   return {
+    /** Forget every reused GET answer - for a Refresh button, which means
+     * "ask the server", not "show me what you had". */
+    invalidate: () => recent.clear(),
+
     listRecentLinkedInRuns: () => request<LinkedInRun[]>("/linkedin/runs"),
     listLinkedInRuns: (brandId: string) => request<LinkedInRun[]>(`/market/${brandId}/linkedin/runs`),
     proposeLinkedInCriteria: (brandId: string, data: LinkedInCriteriaRequest) => request<LinkedInRun>(`/market/${brandId}/linkedin/criteria`, { method: "POST", body: JSON.stringify(data) }),

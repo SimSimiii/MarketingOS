@@ -18,6 +18,7 @@ export function CompileButton({ brandId, compiled }: { brandId: string; compiled
 
   const [refreshing, setRefreshing] = useState(true);
   const refreshStatus = useCallback(async () => {
+    api.invalidate();
     try {
       const status = await api.getKnowledgeCompilation(brandId);
       setJob(status);

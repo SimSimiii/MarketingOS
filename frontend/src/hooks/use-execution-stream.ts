@@ -36,6 +36,7 @@ export function useExecutionStream(executionId: string) {
   }, [executionId]);
   const refresh = useCallback(async () => {
     setPhase("loading");
+    api.invalidate();
     await load();
   }, [load]);
   return { events, phase, refresh, updatedAt };

@@ -39,6 +39,7 @@ export function LiveRuns({
   const [refreshing, setRefreshing] = useState(false);
   async function refresh() {
     setRefreshing(true);
+    api.invalidate();
     const [runResult, jobResult, compilationResult, linkedinResult] = await Promise.allSettled([
       api.listRunningExecutions(), api.listMarketJobs(), api.listKnowledgeJobs(), api.listRecentLinkedInRuns(),
     ]);

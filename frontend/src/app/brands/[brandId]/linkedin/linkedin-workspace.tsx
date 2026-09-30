@@ -121,6 +121,7 @@ export function LinkedInWorkspace({
 
   async function refresh() {
     setRefreshing(true);
+    api.invalidate();
     try {
       const latest = await api.listLinkedInRuns(brandId);
       setRuns(latest);

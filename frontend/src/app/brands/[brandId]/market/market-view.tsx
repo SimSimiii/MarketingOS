@@ -6,10 +6,9 @@ import { toast } from "sonner";
 
 import { Crosshair, Users, ShieldCheck, Radar, Swords, RefreshCw, ScanSearch } from "lucide-react";
 import { BrandDisclosure, BrandSectionHeader } from "../../brand-ui";
-import { ExpandableText } from "@/components/expandable-text";
 
 import { AudiencePanel } from "./audience-panel";
-import { PositioningMap } from "./positioning-map";
+import { PositioningMap, positioningSentence } from "./positioning-map";
 import { ProofInbox } from "./proof-inbox";
 import { RadarFeed } from "./radar-feed";
 import { RivalsPanel } from "./rivals-panel";
@@ -65,6 +64,7 @@ export function MarketView({
   const [refreshing, setRefreshing] = useState(false);
   async function refreshStatus() {
     setRefreshing(true);
+    api.invalidate();
     try {
       setJob(await api.getMarketJob(brand.id));
       setNow(Date.now());
@@ -187,7 +187,7 @@ export function MarketView({
         </div>}
         <TabsContent value="positioning">
           {positioning ? (
-            <div className="space-y-5"><div className="rounded-xl border border-violet-400/20 bg-violet-500/5 p-5"><h3 className="mb-2 text-sm font-semibold text-violet-300">Market snapshot</h3><ExpandableText text={positioning.summary} /></div><PositioningMap positioning={positioning} /></div>
+            <div className="space-y-5"><div className="rounded-xl border border-violet-400/20 bg-violet-500/5 p-5"><h3 className="mb-2 text-sm font-semibold text-violet-300">Market snapshot</h3><p className="text-sm">{positioningSentence(positioning)}</p></div><PositioningMap positioning={positioning} /></div>
           ) : (
             <Card>
               <CardContent className="p-6 text-sm text-muted-foreground">

@@ -183,6 +183,30 @@ function TerritoryColumn({
   );
 }
 
+/**
+ * The positioning in one sentence, for the reader.
+ *
+ * The API's own `summary` is the line the strategist is briefed with -
+ * "8 competitor(s) read - open ground on other" - which is written for a
+ * model and reads to a person like a log line; "other" is a bucket name, not
+ * ground anybody could stand on. This says the same thing from the same
+ * readings, in the axis names the map below uses.
+ */
+export function positioningSentence(positioning: Positioning): string {
+  const n = positioning.rivals_profiled;
+  if (n === 0) return "No competitors read yet, so the copy is written blind to the field.";
+  const open = positioning.readings
+    .filter((reading) => reading.territory === "open")
+    .map((reading) => (reading.axis === "other" ? "claims outside the usual categories" : axisLabel(reading.axis).toLowerCase()));
+  const ground = open.length > 0
+    ? `Ground only you claim: ${open.length === 1 ? open[0] : `${open.slice(0, -1).join(", ")} and ${open[open.length - 1]}`}.`
+    : "Nothing you claim is yours alone yet.";
+  const proof = positioning.proof_deficit
+    ? ` ${positioning.rivals_with_proof} of them name a customer; you name none.`
+    : "";
+  return `Read ${n} competitor${n === 1 ? "" : "s"}. ${ground}${proof}`;
+}
+
 export function PositioningMap({ positioning }: { positioning: Positioning }) {
   const byTerritory = (territory: Territory) =>
     positioning.readings.filter((reading) => reading.territory === territory);
