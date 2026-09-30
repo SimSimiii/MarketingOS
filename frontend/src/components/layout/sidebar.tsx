@@ -25,10 +25,22 @@ export function Sidebar() {
 
   return (
     <aside className="border-b border-sidebar-border bg-sidebar text-sidebar-foreground lg:sticky lg:top-0 lg:flex lg:h-dvh lg:w-60 lg:shrink-0 lg:flex-col lg:border-r lg:border-b-0">
-      <Link href="/" className="flex items-center gap-3 px-5 py-5 lg:px-6 lg:pb-6 lg:pt-8" aria-label="MarketingOS home">
+      <div className="flex items-center justify-between gap-3 pr-4 lg:block lg:pr-0">
+        <Link href="/" className="flex items-center gap-3 px-5 py-5 lg:px-6 lg:pb-6 lg:pt-8" aria-label="MarketingOS home">
         <span className="flex size-9 items-center justify-center rounded-xl border border-violet-400/30 bg-violet-500/15 text-violet-300 shadow-[0_0_20px_-6px_oklch(0.62_0.22_292/0.6)]"><Sparkles className="size-5" aria-hidden="true" /></span>
         <span className="text-lg font-semibold tracking-tight">Marketing<span className="text-violet-300">OS</span></span>
       </Link>
+        {/* The palette on a phone: there is no keyboard shortcut to press, and
+            the sidebar's search field is desktop-only. */}
+        <button
+          type="button"
+          onClick={openCommandPalette}
+          aria-label="Jump to a campaign, brand or page"
+          className="flex size-9 items-center justify-center rounded-lg border border-border bg-background/40 text-muted-foreground transition-colors hover:text-foreground lg:hidden"
+        >
+          <Search className="size-4" aria-hidden="true" />
+        </button>
+      </div>
       <div className="hidden px-3 pb-4 lg:block">
         <button
           type="button"

@@ -248,7 +248,7 @@ export function DashboardView() {
                 ) : (
                   <ul className="rise-stagger grid gap-3 lg:grid-cols-2">
                     {tasks.slice(0, 6).map((task) => (
-                      <li key={task.key}>
+                      <li key={task.key} className="min-w-0">
                         <Link
                           href={task.href}
                           className="group flex h-full items-start gap-4 rounded-xl border border-border bg-card p-4 transition-colors hover:border-violet-400/35 hover:bg-accent/15"
@@ -265,7 +265,7 @@ export function DashboardView() {
                             <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">{task.detail}</span>
                           </span>
                           <span className="inline-flex shrink-0 items-center gap-1 self-center text-xs font-medium text-violet-300">
-                            {task.cta}
+                            <span className="hidden sm:inline">{task.cta}</span>
                             <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                           </span>
                         </Link>

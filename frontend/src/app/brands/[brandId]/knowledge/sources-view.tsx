@@ -114,11 +114,21 @@ export function BrandSourcesView() {
           )}
         </CardContent>
       </Card>
-      <nav aria-label="Source pages" className="flex justify-between text-sm">
-        {page > 1 ? <Link href={`?page=${page - 1}`}>Previous</Link> : <span />}
-        <span>Page {page}</span>
-        {rows.length > 50 ? <Link href={`?page=${page + 1}`}>Next</Link> : <span />}
-      </nav>
+      {(page > 1 || rows.length > 50) && (
+        <nav aria-label="Source pages" className="flex items-center justify-between gap-3 text-sm">
+          {page > 1 ? (
+            <Link href={`?page=${page - 1}`} className={buttonVariants({ variant: "outline", size: "sm" })}>
+              Previous
+            </Link>
+          ) : <span />}
+          <span className="text-xs text-muted-foreground tabular-nums">Page {page}</span>
+          {rows.length > 50 ? (
+            <Link href={`?page=${page + 1}`} className={buttonVariants({ variant: "outline", size: "sm" })}>
+              Next
+            </Link>
+          ) : <span />}
+        </nav>
+      )}
     </div>
   );
       }}

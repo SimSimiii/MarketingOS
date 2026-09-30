@@ -155,11 +155,7 @@ export function KnowledgeBaseExplorer({ base }: { base: KnowledgeBase }) {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="grid gap-3 lg:grid-cols-2">
-                  {shelf.entries.map((entry) => (
-                    <EntryCard key={entry.id} entry={entry} />
-                  ))}
-                </div>
+                <ShelfEntries entries={shelf.entries} expanded={category === shelf.category} />
               )}
             </section>
           ))}
@@ -169,7 +165,44 @@ export function KnowledgeBaseExplorer({ base }: { base: KnowledgeBase }) {
   );
 }
 
+/** How many facts a shelf shows before it is asked for the rest. */
+const SHELF_PREVIEW = 4;
+
+/**
+ * One shelf's facts, strongest first, the rest behind a button.
+ *
+ * Every fact of every shelf used to render at once - 237 cards, a page
+ * thirty thousand pixels tall - so the shelf headings that make the base
+ * navigable were a screen apart. The best few answer "what do we have here";
+ * the rest are one click away, and a shelf picked from the filter above opens
+ * in full.
+ */
+function ShelfEntries({ entries, expanded }: { entries: KnowledgeEntry[]; expanded: boolean }) {
+  const [showAll, setShowAll] = useState(false);
+  const ranked = useMemo(() => [...entries].sort((a, b) => b.value - a.value), [entries]);
+  const all = expanded || showAll;
+  const shown = all ? ranked : ranked.slice(0, SHELF_PREVIEW);
+  return (
+    <div className="space-y-3">
+      <div className="grid gap-3 lg:grid-cols-2">
+        {shown.map((entry) => (
+          <EntryCard key={entry.id} entry={entry} />
+        ))}
+      </div>
+      {!expanded && ranked.length > SHELF_PREVIEW && (
+        <Button size="sm" variant="ghost" onClick={() => setShowAll(!showAll)}>
+          {showAll ? "Show the strongest only" : `Show all ${ranked.length}`}
+        </Button>
+      )}
+    </div>
+  );
+}
+
+/** Search results arrive in pages of this size. */
+const RESULT_PAGE = 40;
+
 function FlatResults({ entries }: { entries: KnowledgeEntry[] }) {
+  const [limit, setLimit] = useState(RESULT_PAGE);
   if (entries.length === 0) {
     return (
       <Card>
@@ -181,10 +214,20 @@ function FlatResults({ entries }: { entries: KnowledgeEntry[] }) {
     );
   }
   return (
-    <div className="grid gap-3 lg:grid-cols-2">
-      {entries.map((entry) => (
-        <EntryCard key={entry.id} entry={entry} />
-      ))}
+    <div className="space-y-3">
+      <p role="status" className="text-xs text-muted-foreground">
+        {entries.length} fact{entries.length === 1 ? "" : "s"} match
+      </p>
+      <div className="grid gap-3 lg:grid-cols-2">
+        {entries.slice(0, limit).map((entry) => (
+          <EntryCard key={entry.id} entry={entry} />
+        ))}
+      </div>
+      {entries.length > limit && (
+        <Button size="sm" variant="outline" onClick={() => setLimit(limit + RESULT_PAGE)}>
+          Show {Math.min(RESULT_PAGE, entries.length - limit)} more
+        </Button>
+      )}
     </div>
   );
 }

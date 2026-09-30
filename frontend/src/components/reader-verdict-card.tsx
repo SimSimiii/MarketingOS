@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { ExpandableText } from "@/components/expandable-text";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Disclosure } from "@/components/disclosure";
 import { cn } from "@/lib/utils";
 
 /** What one cold reader said about the version that shipped. Mirrors
@@ -184,21 +184,21 @@ export function ReaderVerdictCard({ emails }: { emails: ScoredEmail[] }) {
   );
   if (withVerdicts.length === 0) return null;
 
+  const struggled = withVerdicts.some((email) => email.landed === false);
+  // Folded like the rest of the run's diagnostics - on a phone the open
+  // verdicts were four screens between the email and anything after it - but
+  // open when an email did not land, because then this is the answer.
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-base">Why it scored what it scored</CardTitle>
-        <p className="mt-1 text-sm text-muted-foreground">
-          A stranger who had never heard of you read each of these and reported what happened.
-          They were never shown your brief, your website or what the email was trying to do —
-          only the email.
-        </p>
-      </CardHeader>
-      <CardContent className="space-y-2">
+    <Disclosure
+      title="Why it scored what it scored"
+      summary="A stranger read each email cold - never shown your brief, your site or the goal - and said what happened."
+      defaultOpen={struggled}
+    >
+      <div className="space-y-2">
         {withVerdicts.map((email) => (
           <EmailVerdicts key={email.position} email={email} />
         ))}
-      </CardContent>
-    </Card>
+      </div>
+    </Disclosure>
   );
 }

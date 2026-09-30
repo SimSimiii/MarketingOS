@@ -17,6 +17,8 @@ import type {
   MappedSegment,
 } from "@/lib/types";
 import { formatAbsolute } from "@/lib/format";
+import { Disclosure } from "@/components/disclosure";
+import { ExpandableText } from "@/components/expandable-text";
 
 const selectClass = "h-9 rounded-md border border-input bg-background px-3 text-sm";
 
@@ -230,9 +232,11 @@ export function LinkedInWorkspace({
             ))}
           </div>
           {criteria.rationale && (
-            <p className="text-xs text-muted-foreground">
-              Proposed from {criteria.basis || "your material"}: {criteria.rationale}
-            </p>
+            <ExpandableText
+              text={`Proposed from ${criteria.basis || "your material"}: ${criteria.rationale}`}
+              limit={200}
+              className="text-xs text-muted-foreground"
+            />
           )}
           <div className="space-y-2">
             <Label htmlFor="linkedin-query">Extra words for this search (optional)</Label>
@@ -256,7 +260,10 @@ export function LinkedInWorkspace({
 
     <h2 className="text-lg font-medium">Searches and proposals</h2>
     {runs.length === 0 && <p className="text-sm text-muted-foreground">No LinkedIn work yet. Propose criteria, or type who you are looking for.</p>}
-    {runs.map((run) => <RunCard key={run.id} run={run} brandId={brandId} onReuse={setCriteria} />)}
+    {/* Newest open, the rest folded to one line each: every past run used
+        to print its whole criteria and rationale, and five runs in the page
+        was five screens of the same fields. */}
+    {runs.map((run, index) => <RunCard key={run.id} run={run} brandId={brandId} onReuse={setCriteria} defaultOpen={index === 0} />)}
   </div>;
 }
 
@@ -264,10 +271,12 @@ function RunCard({
   run,
   brandId,
   onReuse,
+  defaultOpen,
 }: {
   run: LinkedInRun;
   brandId: string;
   onReuse: (criteria: LinkedInCriteria) => void;
+  defaultOpen: boolean;
 }) {
   const criteria = criteriaOf(run);
   const title = run.kind === "criteria"
@@ -275,24 +284,44 @@ function RunCard({
     : run.kind === "search"
       ? run.request.query || "Search on the proposed criteria"
       : `Message to ${run.request.recipient_name}`;
-  return <Card><CardHeader><CardTitle className="text-base">{title}</CardTitle>
-    <p className="text-xs text-muted-foreground">{run.state} · {formatAbsolute(run.created_at)} · {run.calls} model calls · {run.input_tokens + run.output_tokens} tokens</p>
-  </CardHeader><CardContent className="space-y-4">
-    {run.error && <p role="alert" className="text-sm text-destructive">{run.error}</p>}
-    {run.state === "running" && <p className="text-sm text-muted-foreground">In progress at last refresh.</p>}
-    {run.result.note && <p className="text-sm text-muted-foreground">{run.result.note}</p>}
-
-    {criteria && (
+  const found = run.result.candidates?.length ?? 0;
+  const outcome = run.state !== "completed"
+    ? run.state
+    : run.kind === "search"
+      ? `${found} candidate${found === 1 ? "" : "s"}`
+      : run.kind === "criteria"
+        ? "criteria proposed"
+        : "message written";
+  const criteriaBlock = criteria && (
       <div className="space-y-2 rounded-lg border border-border p-4">
         {CRITERIA_FIELDS.filter(({ key }) => (criteria[key] ?? []).length > 0).map(({ key, label }) => (
           <p key={key} className="text-sm"><span className="text-muted-foreground">{label}:</span> {(criteria[key] ?? []).join(", ")}</p>
         ))}
-        {criteria.rationale && <p className="text-xs text-muted-foreground">{criteria.rationale}</p>}
+        {criteria.rationale && <ExpandableText text={criteria.rationale} limit={220} className="text-xs text-muted-foreground" />}
         {run.kind === "criteria" && run.state === "completed" && (
           <Button size="sm" variant="outline" onClick={() => onReuse(criteria)}>Use these criteria</Button>
         )}
       </div>
-    )}
+  );
+  return <Disclosure
+    defaultOpen={defaultOpen}
+    title={title}
+    summary={`${outcome} · ${formatAbsolute(run.created_at)} · ${run.calls} model call${run.calls === 1 ? "" : "s"}`}
+    tone={run.error ? "attention" : "default"}
+  >
+    <div className="space-y-4">
+    {run.error && <p role="alert" className="text-sm text-destructive">{run.error}</p>}
+    {run.state === "running" && <p className="text-sm text-muted-foreground">In progress at last refresh.</p>}
+    {run.result.note && <ExpandableText text={run.result.note} limit={260} className="text-muted-foreground" />}
+
+    {criteriaBlock && (run.kind === "search" ? (
+      <details className="group/criteria">
+        <summary className="cursor-pointer text-xs font-medium text-muted-foreground hover:text-foreground">
+          Criteria this search used
+        </summary>
+        <div className="mt-2">{criteriaBlock}</div>
+      </details>
+    ) : criteriaBlock)}
 
     {run.kind === "search" && run.state === "completed" && !run.result.candidates?.length && (
       <div className="space-y-1">
@@ -317,7 +346,8 @@ function RunCard({
       <p className="whitespace-pre-wrap rounded-lg border border-border p-4 text-sm">{run.result.body}</p>
       <p className="text-xs text-muted-foreground">{run.result.characters} / {run.result.limit} characters</p>
     </>}
-  </CardContent></Card>;
+    </div>
+  </Disclosure>;
 }
 
 function CandidateCard({ candidate, brandId }: { candidate: LinkedInCandidate; brandId: string }) {
