@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Check, Copy } from "lucide-react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { splitEmail } from "@/lib/email-parts";
 import type { AssetType, GeneratedAsset } from "@/lib/types";
 
 const ASSET_LABELS: Record<AssetType, string> = {
@@ -46,6 +48,7 @@ export function AssetCard({ asset }: { asset: GeneratedAsset }) {
   }
 
   const role = typeof asset.asset_metadata?.role === "string" ? asset.asset_metadata.role : null;
+  const parts = asset.asset_type === "email" ? splitEmail(asset.content) : null;
 
   return (
     <Card className="transition-colors hover:ring-violet-400/25">
@@ -95,7 +98,7 @@ export function AssetCard({ asset }: { asset: GeneratedAsset }) {
             </div>
           )}
           <Button variant="outline" size="sm" onClick={() => copy(view)}>
-            {copied === view ? "Copied" : view === "html" ? "Copy HTML" : "Copy"}
+            {copied === view ? "Copied" : view === "html" ? "Copy HTML" : parts ? "Copy all" : "Copy"}
           </Button>
           <span role="status" className="sr-only">{copied ? "Copied to clipboard" : ""}</span>
         </div>
@@ -112,6 +115,25 @@ export function AssetCard({ asset }: { asset: GeneratedAsset }) {
             sandbox=""
             className="h-[32rem] w-full rounded-md border bg-white"
           />
+        ) : parts ? (
+          /* Subject and preview are shown the way an inbox shows them, each
+             with its own copy button, because every sending tool has a field
+             for each - copying the whole block meant cutting two lines back
+             out of the body after pasting it. */
+          <div className="max-w-prose overflow-hidden rounded-lg border border-hairline bg-background/40">
+            <div className="space-y-2 border-b border-hairline p-4 sm:px-5">
+              <CopyField label="Subject" value={parts.subject} emphasis />
+              {parts.preview && <CopyField label="Preview" value={parts.preview} />}
+            </div>
+            <div className="group/body relative">
+              <pre className="whitespace-pre-wrap break-words p-5 font-sans text-[0.9375rem] leading-7">
+                {parts.body}
+              </pre>
+              <div className="absolute right-2 top-2">
+                <CopyIconButton value={parts.body} label="Copy the body" />
+              </div>
+            </div>
+          </div>
         ) : (
           /* The one thing on the page the reader is going to send. Set on its
              own surface at a measure a person reads at, rather than as a run
@@ -122,5 +144,53 @@ export function AssetCard({ asset }: { asset: GeneratedAsset }) {
         )}
       </CardContent>
     </Card>
+  );
+}
+
+/** One labelled line of the email - subject, preview - and a way to copy it
+ * alone. */
+function CopyField({ label, value, emphasis = false }: { label: string; value: string; emphasis?: boolean }) {
+  return (
+    <div className="flex items-start gap-3">
+      <span className="w-16 shrink-0 pt-0.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+        {label}
+      </span>
+      <p className={emphasis ? "min-w-0 flex-1 font-medium" : "min-w-0 flex-1 text-sm text-muted-foreground"}>
+        {value}
+      </p>
+      <CopyIconButton value={value} label={`Copy the ${label.toLowerCase()}`} />
+    </div>
+  );
+}
+
+function CopyIconButton({ value, label }: { value: string; label: string }) {
+  const [copied, setCopied] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (timer.current !== null) clearTimeout(timer.current);
+  }, []);
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      if (timer.current !== null) clearTimeout(timer.current);
+      timer.current = setTimeout(() => setCopied(false), 1500);
+    } catch {
+      toast.error("Could not copy - select the text and copy it manually");
+    }
+  }
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon-xs"
+      onClick={copy}
+      aria-label={copied ? "Copied" : label}
+      title={label}
+      className="shrink-0 text-muted-foreground hover:text-foreground"
+    >
+      {copied ? <Check className="text-emerald-400" aria-hidden="true" /> : <Copy aria-hidden="true" />}
+    </Button>
   );
 }
