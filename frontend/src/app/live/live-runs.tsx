@@ -13,7 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { api } from "@/lib/api-client";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { formatDuration, formatTime } from "@/lib/format";
+import { formatDuration, formatTime, timeAgo } from "@/lib/format";
 import type { CompilationJob, LinkedInRun, MarketJob, RunningExecution } from "@/lib/types";
 
 export function LiveRuns({
@@ -53,14 +53,15 @@ export function LiveRuns({
   }
 
   const running = jobs.filter((job) => job.state === "running");
-  // A finished job is kept on the board rather than dropped: five minutes
-  // after a scan lands, "what happened" is still the question, and the answer
-  // includes what it cost. Two is enough to answer it without becoming a
-  // history page - that is what each brand's own market tab is for.
   const recent = jobs.filter((job) => job.state !== "running").slice(0, 2);
 
   const compiling = compilations.filter((job) => job.state === "running");
   const recentlyCompiled = compilations.filter((job) => job.state !== "running").slice(0, 2);
+  const linkedinRunning = linkedin.filter((run) => run.state === "running");
+  const linkedinFinished = linkedin.filter((run) => run.state !== "running").slice(0, 3);
+  const nothingRunning =
+    runs.length === 0 && running.length === 0 && compiling.length === 0 && linkedinRunning.length === 0;
+  const finishedCount = recent.length + recentlyCompiled.length + linkedinFinished.length;
 
   return (
     <div className="space-y-4">
@@ -81,11 +82,11 @@ export function LiveRuns({
           Cards show the last known state. Use Refresh runs to retry.
         </Notice>
       )}
-      {runs.length === 0 && jobs.length === 0 && compilations.length === 0 && linkedin.length === 0 && !unavailable && (
+      {nothingRunning && !unavailable && (
         <EmptyState
           icon={AudioLines}
           title="All quiet in the studio"
-          description="Your campaigns, knowledge compilation and market research will appear here as they run."
+          description="Nothing is running. Campaigns, knowledge compilation and market research appear here while they work."
           action={
             <Link href="/campaigns" className={buttonVariants({ variant: "outline", size: "sm" })}>
               Open campaigns
@@ -93,55 +94,96 @@ export function LiveRuns({
           }
         />
       )}
-      {[...running, ...recent].map((job) => (
-        <MarketJobCard key={`${job.brand_id}-${job.started_at}`} job={job} now={now} />
-      ))}
-      {[...compiling, ...recentlyCompiled].map((job) => (
-        <CompilationJobCard key={`${job.brand_id}-${job.started_at}`} job={job} now={now} />
-      ))}
-      {linkedin.map((run) => (
-        <Link key={run.id} href={`/brands/${run.brand_id}/linkedin`} className="block">
-          <Card className="transition-colors hover:ring-violet-400/40">
-            <CardContent className="flex items-start gap-4">
-              <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg border border-hairline bg-background/40 text-violet-300">
-                <ContactRound className="size-4" aria-hidden="true" />
-              </span>
-              <div className="min-w-0 flex-1 space-y-1">
-                <p className="truncate font-medium">{linkedInLabel(run)}</p>
-                <p className="text-sm text-muted-foreground">
-                  LinkedIn · {run.state} · {run.calls} model calls
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </Link>
-      ))}
-      {runs.map((run) => (
-        <Link
-          key={run.id}
-          href={`/campaigns/${run.campaign_id}/executions/${run.id}`}
-          className="block"
-        >
-          <Card className="transition-colors hover:ring-violet-400/40">
-            <CardContent className="flex items-start gap-4">
-              <span className="mt-1.5 size-2 shrink-0 motion-safe:animate-pulse rounded-full bg-primary" />
-              <div className="min-w-0 flex-1 space-y-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-medium">{run.campaign_name}</span>
-                  <StatusBadge status={run.status} />
-                </div>
-                <p className="truncate text-sm text-muted-foreground">{run.campaign_request}</p>
-              </div>
-              <span className="shrink-0 text-sm text-muted-foreground tabular-nums">
-                {run.started_at
-                  ? formatDuration(now - new Date(run.started_at).getTime())
-                  : "starting"}
-              </span>
-            </CardContent>
-          </Card>
-        </Link>
-      ))}
+
+      {/* Running first, and campaign runs first among them: they are what a
+          reader opens this page to watch. They used to render last, under
+          every finished LinkedIn search, on a page whose eyebrow said "in
+          progress". */}
+      {!nothingRunning && (
+        <section aria-labelledby="running-title" className="space-y-3">
+          <h2 id="running-title" className="flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-muted-foreground">
+            <span className="size-1.5 rounded-full bg-violet-400 motion-safe:animate-pulse" aria-hidden="true" />
+            Running now
+          </h2>
+          {runs.map((run) => (
+            <Link
+              key={run.id}
+              href={`/campaigns/${run.campaign_id}/executions/${run.id}`}
+              className="block"
+            >
+              <Card className="transition-colors hover:ring-violet-400/40">
+                <CardContent className="flex items-start gap-4">
+                  <span className="mt-1.5 size-2 shrink-0 motion-safe:animate-pulse rounded-full bg-primary" />
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-medium">{run.campaign_name}</span>
+                      <StatusBadge status={run.status} />
+                    </div>
+                    <p className="truncate text-sm text-muted-foreground">{run.campaign_request}</p>
+                  </div>
+                  <span className="shrink-0 text-sm text-muted-foreground tabular-nums">
+                    {run.started_at
+                      ? formatDuration(now - new Date(run.started_at).getTime())
+                      : "starting"}
+                  </span>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+          {running.map((job) => (
+            <MarketJobCard key={`${job.brand_id}-${job.started_at}`} job={job} now={now} />
+          ))}
+          {compiling.map((job) => (
+            <CompilationJobCard key={`${job.brand_id}-${job.started_at}`} job={job} now={now} />
+          ))}
+          {linkedinRunning.map((run) => (
+            <LinkedInRunCard key={run.id} run={run} />
+          ))}
+        </section>
+      )}
+
+      {/* A finished job is kept on the board rather than dropped: five minutes
+          after a scan lands, "what happened" is still the question, and the
+          answer includes what it cost. A few are enough to answer it without
+          becoming a history page - that is what each brand's own tabs are for. */}
+      {finishedCount > 0 && (
+        <section aria-labelledby="finished-title" className="space-y-3 pt-2">
+          <h2 id="finished-title" className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+            Recently finished
+          </h2>
+          {recent.map((job) => (
+            <MarketJobCard key={`${job.brand_id}-${job.started_at}`} job={job} now={now} />
+          ))}
+          {recentlyCompiled.map((job) => (
+            <CompilationJobCard key={`${job.brand_id}-${job.started_at}`} job={job} now={now} />
+          ))}
+          {linkedinFinished.map((run) => (
+            <LinkedInRunCard key={run.id} run={run} />
+          ))}
+        </section>
+      )}
     </div>
+  );
+}
+
+function LinkedInRunCard({ run }: { run: LinkedInRun }) {
+  return (
+    <Link href={`/brands/${run.brand_id}/linkedin`} className="block">
+      <Card className="transition-colors hover:ring-violet-400/40">
+        <CardContent className="flex items-start gap-4">
+          <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg border border-hairline bg-background/40 text-violet-300">
+            <ContactRound className="size-4" aria-hidden="true" />
+          </span>
+          <div className="min-w-0 flex-1 space-y-1">
+            <p className="truncate font-medium">{linkedInLabel(run)}</p>
+            <p className="text-sm text-muted-foreground">
+              LinkedIn · {run.state} · {run.calls} model call{run.calls === 1 ? "" : "s"}
+              {run.completed_at ? ` · ${timeAgo(run.completed_at)}` : ""}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
 
