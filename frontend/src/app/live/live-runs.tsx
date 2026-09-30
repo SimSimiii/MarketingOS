@@ -13,7 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { api } from "@/lib/api-client";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { formatDuration } from "@/lib/format";
+import { formatDuration, formatTime } from "@/lib/format";
 import type { CompilationJob, LinkedInRun, MarketJob, RunningExecution } from "@/lib/types";
 
 export function LiveRuns({
@@ -72,7 +72,7 @@ export function LiveRuns({
           {refreshing ? "Refreshing…" : "Refresh runs"}
         </Button>
         <p className="text-xs text-muted-foreground tabular-nums">
-          Snapshot from {new Date(now).toLocaleTimeString()}
+          Snapshot from {formatTime(now)}
         </p>
       </div>
       {unavailable && (

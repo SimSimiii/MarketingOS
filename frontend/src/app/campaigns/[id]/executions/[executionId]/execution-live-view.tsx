@@ -10,15 +10,17 @@ import { AnswerQuestionsCard } from "@/components/answer-questions-card";
 import { AssetCard } from "@/components/asset-card";
 import { ConfirmDialog, useConfirm } from "@/components/confirm-dialog";
 import { CopyAllButton } from "@/components/copy-all-button";
+import { Disclosure } from "@/components/disclosure";
 import { Notice } from "@/components/notice";
 import { PageHeader } from "@/components/page-header";
 import { RunTimeline } from "@/components/run-timeline";
+import { useRunLauncher } from "@/components/run-launcher";
 import { StatusBadge } from "@/components/status-badge";
 import { ReaderVerdictCard } from "@/components/reader-verdict-card";
 import type { ReaderVerdict } from "@/components/reader-verdict-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useExecutionStream } from "@/hooks/use-execution-stream";
 import { api } from "@/lib/api-client";
 import { formatCost, formatDuration, formatTokens } from "@/lib/format";
@@ -117,6 +119,7 @@ export function ExecutionLiveView({
   executionId,
   campaignId,
   brandId,
+  campaignName,
   initialStatus,
   initialAssets,
   initialResult,
@@ -128,6 +131,8 @@ export function ExecutionLiveView({
   executionId: string;
   campaignId: string;
   brandId: string | null;
+  /** Null when the campaign could not be read - the run still renders. */
+  campaignName: string | null;
   initialStatus: ExecutionStatus;
   initialAssets: GeneratedAsset[];
   initialResult: Record<string, unknown> | null;
@@ -141,6 +146,7 @@ export function ExecutionLiveView({
   const [errorMessage, setErrorMessage] = useState(initialErrorMessage);
   const [cancelling, setCancelling] = useState(false);
   const confirmStop = useConfirm();
+  const restart = useRunLauncher(campaignId, "restart");
   const [now, setNow] = useState(() => Date.now());
 
   const { events, phase, refresh, updatedAt } = useExecutionStream(executionId);
@@ -187,29 +193,6 @@ export function ExecutionLiveView({
     }
   }
 
-  async function handleRestart() {
-    try {
-      const advice = await api.getCampaignGenerationAdvice(campaignId);
-      if (
-        advice.override_required &&
-        !window.confirm(
-          [
-            `${advice.recommendation?.state.replaceAll("_", " ") ?? advice.readiness}: ${advice.user_message}`,
-            ...advice.reasons.map((reason) => `• ${reason}`),
-            "",
-            "Generate anyway? This override will be recorded with the new run.",
-          ].join("\n"),
-        )
-      ) {
-        return;
-      }
-      const execution = await api.restartCampaign(campaignId, advice.override_required);
-      router.push(`/campaigns/${campaignId}/executions/${execution.id}`);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not restart");
-    }
-  }
-
   const totalTokens = run.inputTokens + run.outputTokens;
   const liveCost = estimateCost(run.steps);
   const cost = isLive ? liveCost : finalCostUsd || liveCost;
@@ -217,12 +200,73 @@ export function ExecutionLiveView({
     ? (isLive ? now : new Date(completedAt ?? startedAt).getTime()) - new Date(startedAt).getTime()
     : 0;
 
+  const verdictsBelow = report ? belowFloor(report) : [];
+  const unargued = report ? argueFromNothing(report) : [];
+  const needsAttention =
+    report !== null && (report.contract_violations.length > 0 || verdictsBelow.length > 0);
+  const toLookAt = verdictsBelow.length + (report?.contract_violations.length ?? 0);
+
+  const deliverables = (
+    <section aria-labelledby="deliverables-title" className="space-y-4">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 id="deliverables-title" className="text-lg font-semibold tracking-tight">
+            {assets.length === 0
+              ? "Your emails"
+              : `Your ${assets.length === 1 ? "email" : `${assets.length} emails`}`}
+          </h2>
+          <p className="mt-0.5 text-sm text-muted-foreground">
+            {isLive
+              ? "Each one appears here once it has passed a cold read."
+              : "Ready to copy into the tool you send from."}
+          </p>
+        </div>
+        <CopyAllButton assets={assets} />
+      </div>
+      {assets.length === 0 ? (
+        <p className="rounded-xl border border-dashed border-border/80 bg-card/30 px-5 py-8 text-center text-sm text-muted-foreground">
+          {isLive
+            ? "Nothing has landed yet - each email appears once it has passed a cold read."
+            : "Nothing was produced in this run."}
+        </p>
+      ) : (
+        assets.map((asset) => <AssetCard key={asset.id} asset={asset} />)
+      )}
+    </section>
+  );
+
+  const behindTheScenes = (
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
+      <div className="min-w-0 space-y-3">
+        <div className="flex items-center justify-between gap-4">
+          <h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            What your team is doing{isLive ? " right now" : ""}
+          </h3>
+          <Link
+            href={`/logs?execution=${executionId}`}
+            className="text-xs text-muted-foreground hover:text-foreground"
+          >
+            Full log
+          </Link>
+        </div>
+        <RunTimeline steps={run.steps} events={events} now={now} />
+      </div>
+      <div className="space-y-2 lg:sticky lg:top-6 lg:self-start">
+        <h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          The team
+        </h3>
+        <Roster steps={run.steps} />
+      </div>
+    </div>
+  );
+
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="Run"
-        title="Your material"
-        backTo={{ href: `/campaigns/${campaignId}`, label: "Back to campaign" }}
+        title={campaignName ?? "Your material"}
+        documentTitle={campaignName ? `Run · ${campaignName}` : "Run"}
+        backTo={{ href: `/campaigns/${campaignId}`, label: campaignName ?? "Back to campaign" }}
         meta={<>
           {/* A run that stopped to ask a question lands on FAILED because the
               lifecycle has no status for "asked a question" - see
@@ -236,16 +280,14 @@ export function ExecutionLiveView({
           ) : (
             <StatusBadge status={status} />
           )}
-          <span className="tabular-nums">
+          <span className="tabular-nums" title="Wall-clock time">
             {isLive ? "Running for" : "Took"} {formatDuration(elapsedMs)}
           </span>
-          <span className="tabular-nums">{formatTokens(totalTokens)} tokens</span>
-          <span className="tabular-nums">{formatCost(cost)}</span>
-          <span className="tabular-nums">
-            {run.steps.length} step{run.steps.length === 1 ? "" : "s"}
+          <span className="tabular-nums" title={`${formatTokens(totalTokens)} tokens`}>
+            {formatCost(cost)}
           </span>
           <span className="tabular-nums">
-            {assets.length} deliverable{assets.length === 1 ? "" : "s"}
+            {run.steps.length} step{run.steps.length === 1 ? "" : "s"}
           </span>
           <ConnectionIndicator phase={phase} updatedAt={updatedAt} />
         </>}
@@ -266,7 +308,6 @@ export function ExecutionLiveView({
             />
             {phase === "loading" ? "Refreshing…" : "Refresh"}
           </Button>
-          <CopyAllButton assets={assets} />
           {isLive && (
             <>
               <Button variant="outline" size="sm" onClick={confirmStop.ask}>
@@ -284,9 +325,12 @@ export function ExecutionLiveView({
             </>
           )}
           {(status === "failed" || status === "cancelled") && (
-            <Button variant="outline" size="sm" onClick={handleRestart}>
-              Restart
-            </Button>
+            <>
+              <Button variant="outline" size="sm" disabled={restart.busy} onClick={restart.run}>
+                {restart.busy ? "Restarting…" : "Restart"}
+              </Button>
+              {restart.dialog}
+            </>
           )}
         </>}
       />
@@ -308,85 +352,72 @@ export function ExecutionLiveView({
         )
       )}
 
-      {run.knowledge && (
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base">What we know about your business</CardTitle>
-            <Badge variant="outline">
-              {run.knowledge.evidenceCount} fact
-              {run.knowledge.evidenceCount === 1 ? "" : "s"} the copy may claim
-            </Badge>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            {run.reader ? (
-              <p className="text-muted-foreground">
-                Writing to: {run.reader.description}
-                {run.reader.segment ? ` (read cold by: ${run.reader.segment})` : ""}
+      {/* The verdict in one strip: how many were delivered and how they read.
+          The detail - every reader's words, every flag - is below the emails,
+          because the emails are what the reader came to this page for. */}
+      {report && (
+        <div
+          className={cn(
+            "flex flex-wrap items-center gap-x-6 gap-y-3 rounded-xl border p-4 sm:px-5",
+            needsAttention
+              ? "border-amber-400/25 bg-amber-400/5"
+              : "border-emerald-400/20 bg-emerald-400/5",
+          )}
+        >
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-medium">
+              Delivered {report.delivered} of {report.promised}{" "}
+              {report.reads_expected === false ? "LinkedIn message" : "email"}
+              {report.promised === 1 ? "" : "s"}
+            </p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              {report.reads_expected === false
+                ? "Every claim passed the evidence gate; no cold-reader panel grades this channel."
+                : needsAttention
+                  ? `${toLookAt} thing${toLookAt === 1 ? "" : "s"} to look at before you send - see “How the copy tested” below.`
+                  : "Every email passed its checks and its cold read."}
+            </p>
+          </div>
+          {/* A channel no cold reader has ever read has no score, and a 0.0
+              here would be read as one. */}
+          {report.reads_expected !== false && (
+            <div className="text-right">
+              <p className="text-2xl font-semibold tracking-tight tabular-nums">
+                {averagePull(report).toFixed(1)}
+                <span className="text-sm font-normal text-muted-foreground">/10</span>
               </p>
-            ) : (
-              run.knowledge.segments.length > 0 && (
-                <p className="text-muted-foreground">
-                  Who could be written to: {run.knowledge.segments.join("; ")}
-                </p>
-              )
-            )}
-            {run.knowledge.notes.map((note, index) => (
-              <p key={index} className="text-amber-400">
-                {note}
+              <p className="text-[11px] text-muted-foreground">
+                cold-read score · AI simulation, uncalibrated
               </p>
-            ))}
-            {!run.knowledge.voiceLearned && (
-              <p className="text-muted-foreground">
-                No existing copy to learn your voice from - the emails will sound competent, but
-                not like you.
-              </p>
-            )}
-            {run.knowledge.gaps.length > 0 && (
-              <>
-                <p className="font-medium">What is missing, and what it costs:</p>
-                <ul className="list-disc space-y-1 pl-5 text-muted-foreground">
-                  {run.knowledge.gaps.map((gap, index) => (
-                    <li key={index}>{gap}</li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </CardContent>
-        </Card>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* While a run is going, watching it work is the point and the emails
+          arrive one by one underneath. Once it has finished, the emails are
+          the point and the working is history - folded away below. */}
+      {isLive ? (
+        <>
+          {behindTheScenes}
+          {deliverables}
+        </>
+      ) : (
+        deliverables
       )}
 
       {report && (
-        <Card
-          className={
-            report.contract_violations.length > 0 || belowFloor(report).length > 0
-              ? "ring-amber-500/40"
-              : "ring-emerald-500/40"
+        <Disclosure
+          title="How the copy tested"
+          summary={
+            needsAttention
+              ? `${toLookAt} thing${toLookAt === 1 ? "" : "s"} to look at before you send`
+              : "Scores, rewrites and checks for each email"
           }
+          tone={needsAttention ? "attention" : "default"}
+          defaultOpen={needsAttention}
         >
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base">How the copy tested</CardTitle>
-            <Badge
-              variant={
-                report.contract_violations.length > 0 || belowFloor(report).length > 0
-                  ? "outline"
-                  : "default"
-              }
-            >
-              {/* A channel no cold reader has ever read has no score, and a
-                  0.0/10 in this badge would be read as one. */}
-              {report.reads_expected === false
-                ? "Checked, not scored"
-                : `${averagePull(report).toFixed(1)}/10 · AI simulation, uncalibrated`}
-            </Badge>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            <p className="text-muted-foreground">
-              Delivered {report.delivered} of {report.promised}{" "}
-              {report.reads_expected === false ? "LinkedIn message" : "email"}
-              {report.promised === 1 ? "" : "s"}.
-              {report.reads_expected === false &&
-                " Every claim passed the evidence gate; no cold-reader panel grades this channel."}
-            </p>
+          <div className="space-y-2 text-sm">
             <ul className="space-y-1 text-muted-foreground">
               {report.emails.map((line) => (
                 <li key={line.position} className="tabular-nums">
@@ -400,9 +431,9 @@ export function ExecutionLiveView({
                 </li>
               ))}
             </ul>
-            {belowFloor(report).length > 0 && (
+            {verdictsBelow.length > 0 && (
               <p className="text-amber-400">
-                Email{belowFloor(report).length === 1 ? "" : "s"} {belowFloor(report).join(", ")}{" "}
+                Email{verdictsBelow.length === 1 ? "" : "s"} {verdictsBelow.join(", ")}{" "}
                 did not satisfy the simulated assessment criteria. The loop stopped rewriting them; it did not decide
                 these were ready to send.
                 {/* Only the emails actually below the floor may speak here: one
@@ -419,12 +450,12 @@ export function ExecutionLiveView({
                     " helped, but different material might."}
               </p>
             )}
-            {argueFromNothing(report).length > 0 && (
+            {unargued.length > 0 && (
               <p className="text-amber-400">
-                Email{argueFromNothing(report).length === 1 ? "" : "s"}{" "}
-                {argueFromNothing(report).join(", ")} made no use of the evidence they were built
-                on. Nothing in them is invented - but nothing in them is checkable either, and a
-                stranger has no reason to believe a company describing itself.
+                Email{unargued.length === 1 ? "" : "s"} {unargued.join(", ")} made no use of the
+                evidence they were built on. Nothing in them is invented - but nothing in them is
+                checkable either, and a stranger has no reason to believe a company describing
+                itself.
               </p>
             )}
             {report.contract_violations.length > 0 && (
@@ -436,56 +467,82 @@ export function ExecutionLiveView({
               </p>
             ))}
             {report.what_would_help_most && (
-              <p className="text-muted-foreground">
-                What would help most next time: {report.what_would_help_most}
+              <p className="rounded-lg border border-violet-400/20 bg-violet-500/5 p-3 text-violet-100">
+                <span className="font-medium">What would help most next time: </span>
+                {report.what_would_help_most}
               </p>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </Disclosure>
       )}
 
       {/* The number above says something is wrong; this says what. Both come
           from the same already-paid-for cold read. */}
       {report && <ReaderVerdictCard emails={report.emails} />}
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-4">
-            <h2 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              What your team is doing{isLive ? " right now" : ""}
-            </h2>
-            <Link
-              href={`/logs?execution=${executionId}`}
-              className="text-xs text-muted-foreground hover:text-foreground"
-            >
-              Full log
-            </Link>
-          </div>
-          <RunTimeline steps={run.steps} events={events} now={now} />
-
-          <div className="space-y-4 pt-4">
-            <h2 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Deliverables
-            </h2>
-            {assets.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                {isLive
-                  ? "Nothing has landed yet - each email appears once it has passed a cold read."
-                  : "Nothing was produced in this run."}
+      {run.knowledge && (
+        <Disclosure
+          title="What we know about your business"
+          summary={[
+            `${run.knowledge.evidenceCount} fact${run.knowledge.evidenceCount === 1 ? "" : "s"} the copy may claim`,
+            run.knowledge.gaps.length > 0 &&
+              `${run.knowledge.gaps.length} gap${run.knowledge.gaps.length === 1 ? "" : "s"}`,
+            run.knowledge.notes.length > 0 &&
+              `${run.knowledge.notes.length} note${run.knowledge.notes.length === 1 ? "" : "s"} from compiling it`,
+          ]
+            .filter(Boolean)
+            .join(" · ")}
+        >
+          <div className="space-y-2 text-sm">
+            {run.reader ? (
+              <p className="text-muted-foreground">
+                Writing to: {run.reader.description}
+                {run.reader.segment ? ` (read cold by: ${run.reader.segment})` : ""}
               </p>
             ) : (
-              assets.map((asset) => <AssetCard key={asset.id} asset={asset} />)
+              run.knowledge.segments.length > 0 && (
+                <p className="text-muted-foreground">
+                  Who could be written to: {run.knowledge.segments.join("; ")}
+                </p>
+              )
+            )}
+            {!run.knowledge.voiceLearned && (
+              <p className="text-muted-foreground">
+                No existing copy to learn your voice from - the emails will sound competent, but
+                not like you.
+              </p>
+            )}
+            {run.knowledge.gaps.length > 0 && (
+              <>
+                <p className="font-medium">What is missing, and what it costs:</p>
+                <ul className="list-disc space-y-1 pl-5 text-muted-foreground">
+                  {run.knowledge.gaps.map((gap, index) => (
+                    <li key={index}>{gap}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+            {run.knowledge.notes.length > 0 && (
+              <ul className="space-y-1.5 border-t border-hairline pt-3">
+                {run.knowledge.notes.map((note, index) => (
+                  <li key={index} className="text-amber-300/90">
+                    {note}
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
-        </div>
+        </Disclosure>
+      )}
 
-        <div className="space-y-2 lg:sticky lg:top-6 lg:self-start">
-          <h2 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            The team
-          </h2>
-          <Roster steps={run.steps} />
-        </div>
-      </div>
+      {!isLive && (
+        <Disclosure
+          title="Behind the scenes"
+          summary={`Every step the team took - ${run.steps.length} step${run.steps.length === 1 ? "" : "s"}, ${formatTokens(totalTokens)} tokens`}
+        >
+          {behindTheScenes}
+        </Disclosure>
+      )}
     </div>
   );
 }

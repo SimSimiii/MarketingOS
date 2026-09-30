@@ -16,6 +16,7 @@ import type {
   LinkedInSearchRequest,
   MappedSegment,
 } from "@/lib/types";
+import { formatAbsolute } from "@/lib/format";
 
 const selectClass = "h-9 rounded-md border border-input bg-background px-3 text-sm";
 
@@ -275,7 +276,7 @@ function RunCard({
       ? run.request.query || "Search on the proposed criteria"
       : `Message to ${run.request.recipient_name}`;
   return <Card><CardHeader><CardTitle className="text-base">{title}</CardTitle>
-    <p className="text-xs text-muted-foreground">{run.state} · {new Date(run.created_at).toLocaleString()} · {run.calls} model calls · {run.input_tokens + run.output_tokens} tokens</p>
+    <p className="text-xs text-muted-foreground">{run.state} · {formatAbsolute(run.created_at)} · {run.calls} model calls · {run.input_tokens + run.output_tokens} tokens</p>
   </CardHeader><CardContent className="space-y-4">
     {run.error && <p role="alert" className="text-sm text-destructive">{run.error}</p>}
     {run.state === "running" && <p className="text-sm text-muted-foreground">In progress at last refresh.</p>}

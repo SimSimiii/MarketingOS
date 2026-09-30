@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { ExpandableText } from "@/components/expandable-text";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -40,7 +41,7 @@ export interface ScoredEmail {
  *
  * This exists because the system's most expensive judgment used to reach the
  * user as a single digit. A run that scored 4/10 persisted exactly `{"pull":
- * 4}` â€” and the same model call had already said what it thought the email
+ * 4}` — and the same model call had already said what it thought the email
  * was selling, where it stopped reading, what was really stopping it
  * clicking, and the one thing the email would have had to say for it to
  * click. All of it was thrown away.
@@ -51,8 +52,13 @@ export interface ScoredEmail {
 function VerdictBlock({ verdict }: { verdict: ReaderVerdict }) {
   return (
     <div className="space-y-2 text-sm">
+      {/* The persona is the whole researched brief the reader was handed -
+          often longer than the email. The first lines say who it was; the
+          rest is one click away rather than a wall before the verdict. */}
       {verdict.persona && (
-        <p className="text-xs text-muted-foreground">Read as: {verdict.persona}</p>
+        <div className="text-xs text-muted-foreground">
+          <ExpandableText text={`Read as: ${verdict.persona}`} limit={180} className="text-xs" />
+        </div>
       )}
 
       {/* The single most diagnostic line here. An answer that does not match
@@ -75,7 +81,7 @@ function VerdictBlock({ verdict }: { verdict: ReaderVerdict }) {
       {verdict.to_click_it_would_have_to && (
         <div className="rounded-md bg-emerald-500/10 p-2.5">
           <p className="text-xs text-emerald-300/80">
-            &ldquo;I would have clicked if this email had told meâ€¦&rdquo;
+            &ldquo;I would have clicked if this email had told me…&rdquo;
           </p>
           <p className="mt-0.5 text-emerald-100">{verdict.to_click_it_would_have_to}</p>
         </div>
@@ -102,7 +108,7 @@ function VerdictBlock({ verdict }: { verdict: ReaderVerdict }) {
           <ul className="mt-0.5 space-y-0.5">
             {verdict.fixes.map((fix) => (
               <li key={fix} className="text-foreground/80">
-                â€” {fix}
+                — {fix}
               </li>
             ))}
           </ul>
@@ -161,7 +167,7 @@ function EmailVerdicts({ email }: { email: ScoredEmail }) {
               </p>
               <ul className="mt-1 space-y-1 text-amber-100/90">
                 {email.sameness?.map((issue) => (
-                  <li key={issue}>â€” {issue}</li>
+                  <li key={issue}>— {issue}</li>
                 ))}
               </ul>
             </div>
@@ -184,7 +190,7 @@ export function ReaderVerdictCard({ emails }: { emails: ScoredEmail[] }) {
         <CardTitle className="text-base">Why it scored what it scored</CardTitle>
         <p className="mt-1 text-sm text-muted-foreground">
           A stranger who had never heard of you read each of these and reported what happened.
-          They were never shown your brief, your website or what the email was trying to do â€”
+          They were never shown your brief, your website or what the email was trying to do —
           only the email.
         </p>
       </CardHeader>

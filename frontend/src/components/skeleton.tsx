@@ -78,3 +78,53 @@ export function SkeletonTable({ rows = 5 }: { rows?: number }) {
     </div>
   );
 }
+
+/** One section inside a layout that already drew its own chrome - a brand
+ * tab, say. The layout's hero is on screen; drawing a second, page-sized
+ * skeleton inside it reads as the page loading twice. */
+export function SkeletonSection() {
+  return (
+    <SkeletonPage label="Loading…">
+      <div className="space-y-2">
+        <Skeleton className="h-5 w-48" />
+        <Skeleton className="h-4 w-80 max-w-full" />
+      </div>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Skeleton className="h-52 rounded-xl" />
+        <Skeleton className="h-52 rounded-xl" />
+      </div>
+    </SkeletonPage>
+  );
+}
+
+/** A campaign: header, the quoted brief, its facts beside the preset, runs. */
+export function SkeletonCampaign() {
+  return (
+    <SkeletonPage label="Loading this campaign…">
+      <SkeletonHeader />
+      <Skeleton className="h-36 rounded-2xl" />
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
+        <Skeleton className="h-28 rounded-xl" />
+        <Skeleton className="h-40 rounded-xl" />
+      </div>
+      <SkeletonTable rows={3} />
+    </SkeletonPage>
+  );
+}
+
+/** A run: header, the scorecard, then the emails themselves. */
+export function SkeletonRun() {
+  return (
+    <SkeletonPage label="Loading this run…">
+      <SkeletonHeader />
+      <Skeleton className="h-24 rounded-xl" />
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="space-y-4">
+          <Skeleton className="h-96 rounded-xl" />
+          <Skeleton className="h-48 rounded-xl" />
+        </div>
+        <Skeleton className="h-72 rounded-xl" />
+      </div>
+    </SkeletonPage>
+  );
+}

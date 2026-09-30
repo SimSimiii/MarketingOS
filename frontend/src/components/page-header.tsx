@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
+import { DocumentTitle } from "@/components/document-title";
+
 /**
  * The top of every page in the workspace.
  *
@@ -21,6 +23,7 @@ export function PageHeader({
   actions,
   backTo,
   meta,
+  documentTitle,
 }: {
   eyebrow?: string;
   title: ReactNode;
@@ -29,9 +32,12 @@ export function PageHeader({
   backTo?: { href: string; label: string };
   /** Badges, counts, timings - the line that qualifies the title. */
   meta?: ReactNode;
+  /** The browser tab's name, when `title` is not a plain string. */
+  documentTitle?: string;
 }) {
   return (
     <header className="space-y-4">
+      <DocumentTitle title={documentTitle ?? (typeof title === "string" ? title : null)} />
       {backTo && (
         <Link
           href={backTo.href}

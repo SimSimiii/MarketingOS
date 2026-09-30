@@ -6,21 +6,9 @@ import { Archive, ChevronLeft, ChevronRight, Mail } from "lucide-react";
 import { NewCampaignDialog } from "@/app/campaigns/new-campaign-dialog";
 import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
-import { CampaignActions } from "@/components/campaign-actions";
-import { StatusBadge } from "@/components/status-badge";
-import { Badge } from "@/components/ui/badge";
+import { CampaignTable } from "@/app/campaigns/campaign-table";
 import { buttonVariants } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { api } from "@/lib/api-client";
-import { formatAbsolute, timeAgo } from "@/lib/format";
 import { PageData, usePageData } from "@/lib/page-data";
 import { useSearchParams } from "next/navigation";
 
@@ -100,105 +88,32 @@ export function CampaignsView() {
             <Archive className="size-3.5" aria-hidden="true" />
             {includeArchived ? "Hide archived" : "Show archived"}
           </Link>
-          <NewCampaignDialog prefill={linkedinPrefill} autoOpen={Boolean(linkedinPrefill)} />
+          <NewCampaignDialog
+            prefill={linkedinPrefill}
+            autoOpen={Boolean(linkedinPrefill)}
+            defaultBrandId={brandId}
+          />
         </>}
       />
 
-      <Card className="gap-0 py-0">
-        <CardContent className="p-0">
-          {campaigns.length === 0 ? (
-            <EmptyState
-              variant="inline"
-              icon={Mail}
-              title={includeArchived ? "Nothing here yet" : "No campaigns yet"}
-              description={<>
-                Describe your product once, then ask in your own words — “write me 3 emails
-                that make people buy”. You get finished copy, reviewed for conversion before you
-                see it.
-              </>}
-              action={<NewCampaignDialog />}
-            />
-          ) : (
-            <Table className="campaign-table">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Brand</TableHead>
-                  <TableHead>What was asked</TableHead>
-                  <TableHead>Last run</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead><span className="sr-only">Actions</span></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {campaigns.map((campaign) => (
-                  <TableRow key={campaign.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Link
-                          href={`/campaigns/${campaign.id}`}
-                          className="font-medium text-violet-300 underline-offset-4 hover:underline"
-                        >
-                          {campaign.name}
-                        </Link>
-                        {campaign.status === "archived" && (
-                          <Badge variant="secondary">archived</Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell data-label="Brand" className="text-muted-foreground">
-                      {campaign.brand_id ? (
-                        <Link
-                          href={`/brands/${campaign.brand_id}`}
-                          className="hover:text-foreground hover:underline"
-                        >
-                          {brandNames.get(campaign.brand_id) ?? "Unknown brand"}
-                        </Link>
-                      ) : (
-                        <span title="Knowledge for this run was read once, then kept to the campaign">
-                          One-off
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell data-label="Brief" className="max-w-xs truncate text-muted-foreground lg:max-w-sm">
-                      {campaign.request}
-                    </TableCell>
-                    <TableCell data-label="Last run">
-                      {campaign.last_run_status ? (
-                        <span
-                          className="flex items-center gap-2"
-                          title={
-                            campaign.last_run_at ? formatAbsolute(campaign.last_run_at) : undefined
-                          }
-                        >
-                          <StatusBadge status={campaign.last_run_status} />
-                          {campaign.last_run_at && (
-                            <span className="text-xs text-muted-foreground">
-                              {timeAgo(campaign.last_run_at)}
-                            </span>
-                          )}
-                        </span>
-                      ) : (
-                        <span className="text-sm text-muted-foreground">Never run</span>
-                      )}
-                    </TableCell>
-                    <TableCell
-                      data-label="Created"
-                      className="text-muted-foreground"
-                      title={formatAbsolute(campaign.created_at)}
-                    >
-                      {timeAgo(campaign.created_at)}
-                    </TableCell>
-                    <TableCell>
-                      <CampaignActions campaign={campaign} />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+      <CampaignTable
+        campaigns={campaigns}
+        brandNames={brandNames}
+        paged={page > 1 || all.length > pageSize}
+        empty={
+          <EmptyState
+            variant="inline"
+            icon={Mail}
+            title={includeArchived ? "Nothing here yet" : "No campaigns yet"}
+            description={<>
+              Describe your product once, then ask in your own words — “write me 3 emails
+              that make people buy”. You get finished copy, reviewed for conversion before you
+              see it.
+            </>}
+            action={<NewCampaignDialog />}
+          />
+        }
+      />
       {(page > 1 || all.length > pageSize) && (
         <nav
           aria-label="Campaign pages"

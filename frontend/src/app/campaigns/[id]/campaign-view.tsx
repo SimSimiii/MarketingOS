@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowRight, ExternalLink, PlayCircle, Quote } from "lucide-react";
+import { ArrowRight, ExternalLink, MailCheck, PlayCircle, Quote } from "lucide-react";
 
 import { StartCampaignButton } from "@/app/campaigns/[id]/start-campaign-button";
 import { NewCampaignDialog } from "@/app/campaigns/new-campaign-dialog";
@@ -12,8 +12,8 @@ import { Notice } from "@/components/notice";
 import { PageHeader } from "@/components/page-header";
 import { CampaignPolicySelect } from "@/components/campaign-policy-select";
 import { ExecutionRowActions } from "@/components/execution-row-actions";
+import { adviceHeadline } from "@/components/run-launcher";
 import { StatusBadge } from "@/components/status-badge";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -59,6 +59,10 @@ export function CampaignDetailView() {
       {({ campaign, executions, campaignKnowledge, brandKnowledge, generationAdvice }) => {
 
   const knowledge = [...campaignKnowledge, ...brandKnowledge];
+  // Runs arrive newest first. The one a returning reader wants is the newest
+  // that produced something - or the one still going.
+  const live = executions.find((run) => run.status === "running" || run.status === "pending");
+  const latest = executions.find((run) => run.status === "completed");
 
   return (
     <div className="space-y-6">
@@ -91,12 +95,12 @@ export function CampaignDetailView() {
         <Notice
           tone={generationAdvice.override_required ? "warning" : "info"}
           title={<span className="flex flex-wrap items-baseline gap-2">
-            <span className="capitalize">
-              {generationAdvice.recommendation.state.replaceAll("_", " ")}
-            </span>
-            <span className="text-xs font-normal opacity-70">
-              {generationAdvice.readiness.replaceAll("_", " ")}
-            </span>
+            <span className="capitalize">{adviceHeadline(generationAdvice).state}</span>
+            {adviceHeadline(generationAdvice).readiness && (
+              <span className="text-xs font-normal opacity-70">
+                {adviceHeadline(generationAdvice).readiness}
+              </span>
+            )}
           </span>}
         >
           <p>{generationAdvice.user_message}</p>
@@ -116,6 +120,37 @@ export function CampaignDetailView() {
         </Notice>
       )}
 
+      {(live ?? latest) && (
+        <Link
+          href={`/campaigns/${campaign.id}/executions/${(live ?? latest)!.id}`}
+          className="group rise flex flex-wrap items-center gap-4 rounded-xl border border-violet-400/25 bg-violet-500/[0.07] p-4 transition-colors hover:border-violet-400/50 hover:bg-violet-500/10 sm:p-5"
+        >
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-violet-500/15 text-violet-300">
+            {live ? (
+              <span className="size-2.5 rounded-full bg-violet-400 motion-safe:animate-pulse" aria-hidden="true" />
+            ) : (
+              <MailCheck className="size-5" aria-hidden="true" />
+            )}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-medium">
+              {live ? "A run is in progress" : "Your latest emails are ready"}
+            </span>
+            <span className="mt-0.5 block text-xs text-muted-foreground">
+              {live
+                ? `Started ${live.started_at ? timeAgo(live.started_at) : "just now"} — follow it as it writes.`
+                : `Finished ${latest!.completed_at ? timeAgo(latest!.completed_at) : ""}${
+                    latest!.estimated_cost_usd > 0 ? ` · ${formatCost(latest!.estimated_cost_usd)}` : ""
+                  } — read them, copy them, send them.`}
+            </span>
+          </span>
+          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-violet-200">
+            {live ? "Watch the run" : "Open the emails"}
+            <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+          </span>
+        </Link>
+      )}
+
       {/* The brief is what every other panel on this page is downstream of, so
           it is quoted rather than filed in a card the same size as "Website". */}
       <section className="studio-hero relative overflow-hidden rounded-2xl border border-violet-400/15 p-6 sm:p-7">
@@ -128,8 +163,12 @@ export function CampaignDetailView() {
       {/* Four short answers about one campaign, in one panel. As four cards
           they took a screenful apiece and claimed the same weight as the brief
           above and the runs below, neither of which is a one-line fact. */}
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
-        <dl className="grid gap-x-6 gap-y-5 self-start rounded-xl border border-border bg-card p-5 sm:grid-cols-3">
+      {/* Runs sit under the facts rather than below the whole grid: the preset
+          column is tall, and beside a two-line fact panel it left a screen of
+          empty space above the one table this page exists to show. */}
+      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
+        <div className="min-w-0 space-y-4">
+        <dl className="grid gap-x-6 gap-y-5 rounded-xl border border-border bg-card p-5 sm:grid-cols-3">
           <Fact label="Website">
             {campaign.product_url ? (
               <a
@@ -167,7 +206,99 @@ export function CampaignDetailView() {
             )}
           </Fact>
         </dl>
-        <div className="rounded-xl border border-border bg-card p-5">
+        <Card className="gap-0 py-0">
+          <CardHeader className="border-b p-5">
+            <CardTitle>Runs</CardTitle>
+            <CardDescription>
+              Every time this brief was sent through the pipeline, and what it produced.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            {executions.length === 0 ? (
+              <EmptyState
+                variant="inline"
+                icon={PlayCircle}
+                title="Nothing produced yet"
+                description={<>
+                  Hit &ldquo;Run campaign&rdquo; and the Marketing Director will research, write and
+                  review your material.
+                </>}
+              />
+            ) : (
+              <Table className="stacked-table">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Started</TableHead>
+                    <TableHead>Completed</TableHead>
+                    <TableHead>Cost</TableHead>
+                    <TableHead />
+                    <TableHead />
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {executions.map((execution, index) => (
+                    <TableRow key={execution.id} className="relative">
+                      <TableCell>
+                        <span className="flex flex-wrap items-center gap-2">
+                          <span className="w-7 text-xs text-muted-foreground tabular-nums">
+                            #{executions.length - index}
+                          </span>
+                          <StatusBadge status={execution.status} />
+                          {/* Once per run it is a note, not an alarm - an amber
+                              badge on every row turned the table orange. */}
+                          {execution.generated_despite_recommendation && (
+                            <span
+                              className="text-xs text-amber-300/80"
+                              title="Run with “Generate anyway”, against the recommendation"
+                            >
+                              overridden
+                            </span>
+                          )}
+                        </span>
+                      </TableCell>
+                      <TableCell
+                        data-label="Started"
+                        className="text-muted-foreground"
+                        title={
+                          execution.started_at ? formatAbsolute(execution.started_at) : undefined
+                        }
+                      >
+                        {execution.started_at ? timeAgo(execution.started_at) : "—"}
+                      </TableCell>
+                      <TableCell
+                        data-label="Completed"
+                        className="text-muted-foreground"
+                        title={
+                          execution.completed_at ? formatAbsolute(execution.completed_at) : undefined
+                        }
+                      >
+                        {execution.completed_at ? timeAgo(execution.completed_at) : "—"}
+                      </TableCell>
+                      <TableCell data-label="Cost" className="text-muted-foreground tabular-nums">
+                        {formatCost(execution.estimated_cost_usd)}
+                      </TableCell>
+                      <TableCell className="relative z-10">
+                        <ExecutionRowActions execution={execution} campaignId={campaign.id} />
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Link
+                          href={`/campaigns/${campaign.id}/executions/${execution.id}`}
+                          className="inline-flex items-center gap-1 text-sm font-medium text-violet-300 after:absolute after:inset-0 hover:underline"
+                        >
+                          Open
+                          <ArrowRight className="size-3.5" aria-hidden="true" />
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+        </div>
+        <div className="rounded-xl border border-border bg-card p-5 lg:sticky lg:top-6">
           <p className="mb-2.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
             Execution preset
           </p>
@@ -175,87 +306,6 @@ export function CampaignDetailView() {
         </div>
       </div>
 
-      <Card className="gap-0 py-0">
-        <CardHeader className="border-b p-5">
-          <CardTitle>Runs</CardTitle>
-          <CardDescription>
-            Every time this brief was sent through the pipeline, and what it produced.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="p-0">
-          {executions.length === 0 ? (
-            <EmptyState
-              variant="inline"
-              icon={PlayCircle}
-              title="Nothing produced yet"
-              description={<>
-                Hit &ldquo;Run campaign&rdquo; and the Marketing Director will research, write and
-                review your material.
-              </>}
-            />
-          ) : (
-            <Table className="stacked-table">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Started</TableHead>
-                  <TableHead>Completed</TableHead>
-                  <TableHead>Cost</TableHead>
-                  <TableHead />
-                  <TableHead />
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {executions.map((execution) => (
-                  <TableRow key={execution.id}>
-                    <TableCell>
-                      <StatusBadge status={execution.status} />
-                      {execution.generated_despite_recommendation && (
-                        <Badge variant="outline" className="ml-2 border-amber-500/50 text-amber-300">
-                          recommendation overridden
-                        </Badge>
-                      )}
-                    </TableCell>
-                    <TableCell
-                      data-label="Started"
-                      className="text-muted-foreground"
-                      title={
-                        execution.started_at ? formatAbsolute(execution.started_at) : undefined
-                      }
-                    >
-                      {execution.started_at ? timeAgo(execution.started_at) : "—"}
-                    </TableCell>
-                    <TableCell
-                      data-label="Completed"
-                      className="text-muted-foreground"
-                      title={
-                        execution.completed_at ? formatAbsolute(execution.completed_at) : undefined
-                      }
-                    >
-                      {execution.completed_at ? timeAgo(execution.completed_at) : "—"}
-                    </TableCell>
-                    <TableCell data-label="Cost" className="text-muted-foreground tabular-nums">
-                      {formatCost(execution.estimated_cost_usd)}
-                    </TableCell>
-                    <TableCell>
-                      <ExecutionRowActions execution={execution} campaignId={campaign.id} />
-                    </TableCell>
-                    <TableCell>
-                      <Link
-                        href={`/campaigns/${campaign.id}/executions/${execution.id}`}
-                        className="inline-flex items-center gap-1 text-sm font-medium text-violet-300 hover:underline"
-                      >
-                        View material
-                        <ArrowRight className="size-3.5" aria-hidden="true" />
-                      </Link>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
     </div>
   );
       }}

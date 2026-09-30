@@ -28,6 +28,7 @@ import type {
   RadarEvent,
 } from "@/lib/types";
 import { refreshPage } from "@/lib/page-data";
+import { formatDate } from "@/lib/format";
 
 /** The same card the live board uses.
  *
@@ -181,7 +182,7 @@ export function MarketView({
 
         {job && (running || job.state === "failed") && <JobBanner job={job} now={now} />}
         {(activeTab === "positioning" || activeTab === "rivals" || activeTab === "radar") && <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card/50 p-4">
-          <div><p className="text-sm font-medium">Market research</p><p className="mt-1 text-xs text-muted-foreground">{initialMarket.scanned_at ? `Last scanned ${new Date(initialMarket.scanned_at).toLocaleDateString()}` : "Start a scan to discover your competitive landscape."}</p></div>
+          <div><p className="text-sm font-medium">Market research</p><p className="mt-1 text-xs text-muted-foreground">{initialMarket.scanned_at ? `Last scanned ${formatDate(initialMarket.scanned_at)}` : "Start a scan to discover your competitive landscape."}</p></div>
           <div className="flex flex-wrap gap-2"><Button variant="outline" size="sm" disabled={starting || running || rivals.length === 0} onClick={() => start("rescan")} title="Re-read existing competitors without finding new ones">Update competitors</Button><Button size="sm" disabled={starting || running} onClick={() => start("scan")}><ScanSearch className="size-4" />{running && (job?.kind === "scan" || job?.kind === "rescan") ? "Scanning…" : positioning ? "New market scan" : "Scan this market"}</Button></div>
         </div>}
         <TabsContent value="positioning">

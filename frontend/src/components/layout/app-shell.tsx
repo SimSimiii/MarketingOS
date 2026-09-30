@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 
+import { CommandPalette } from "@/components/command-palette";
 import { Sidebar } from "@/components/layout/sidebar";
 import { normalizePath } from "@/lib/paths";
 
@@ -28,6 +29,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <main id="main-content" tabIndex={-1} className="min-w-0 flex-1 px-5 py-8 outline-none sm:px-8 lg:px-10 lg:py-10">
         <div className="mx-auto w-full max-w-7xl">{children}</div>
       </main>
+      <CommandPalette />
     </div>
   );
 }

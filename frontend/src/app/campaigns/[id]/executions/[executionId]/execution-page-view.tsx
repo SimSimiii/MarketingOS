@@ -34,6 +34,7 @@ export function ExecutionResultView() {
       executionId={executionId}
       campaignId={id}
       brandId={campaign?.brand_id ?? null}
+      campaignName={campaign?.name ?? null}
       initialStatus={result.status}
       initialAssets={result.assets}
       initialResult={result.result}

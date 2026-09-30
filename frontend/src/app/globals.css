@@ -231,8 +231,8 @@
    column that mattered. Below `md` every table marked `stacked-table` becomes
    one labelled card per row instead - the header row is what the labels come
    from, so it is hidden from sight but kept for screen readers.
-   `.campaign-table` is the same treatment plus the one rule that keeps a long
-   brief from turning a row into a paragraph. */
+   `.campaign-table` is the same treatment; its brief is already one truncated
+   line under the name. */
 @media (width < 48rem) {
   .stacked-table,
   .stacked-table tbody,
@@ -274,15 +274,30 @@
     text-transform: uppercase;
     color: var(--muted-foreground);
   }
-  .campaign-table td[data-label="Brief"] {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  .stacked-table td:last-child,
-  .campaign-table td:last-child {
+  .stacked-table td:last-child {
     padding-top: 0.5rem;
+  }
+  /* A campaign is a name and two short facts. One per line made every card a
+     screenful; two columns, with the menu in the corner where a phone's thumb
+     expects it, fits four campaigns where there was one. The creation date is
+     dropped here - the last run's age already says how fresh it is. */
+  .campaign-table tbody tr {
+    position: relative;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem 1rem;
+    padding: 1rem;
+  }
+  .campaign-table td:first-child {
+    grid-column: 1 / -1;
+    padding-right: 2.5rem;
+  }
+  .campaign-table td[data-label="Created"] {
+    display: none;
+  }
+  .campaign-table td:last-child {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
   }
 }
 

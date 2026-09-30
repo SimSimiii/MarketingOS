@@ -1,13 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { Play } from "lucide-react";
 
+import { useRunLauncher } from "@/components/run-launcher";
 import { Button } from "@/components/ui/button";
-import { api } from "@/lib/api-client";
 import type { CampaignGenerationAdvice } from "@/lib/types";
 
+/** The campaign page's primary action. The run happens in the background
+ * (see execution_manager on the backend) - /start returns at once with a
+ * RUNNING execution, so this goes straight to the run's own page. When the
+ * page already knows the recommendation says not to run, the button is
+ * labelled "Generate anyway" under a notice saying why - pressing it is the
+ * override, so it is not asked a second time. */
 export function StartCampaignButton({
   campaignId,
   advice,
@@ -15,30 +19,22 @@ export function StartCampaignButton({
   campaignId: string;
   advice: CampaignGenerationAdvice | null;
 }) {
-  const router = useRouter();
-  const [submitting, setSubmitting] = useState(false);
-
-  async function handleClick() {
-    setSubmitting(true);
-    try {
-      // The run happens in the background now (see execution_manager on the
-      // backend) - /start returns immediately with a RUNNING execution, not
-      // a finished one. Go straight to the live view instead of waiting here.
-      const execution = await api.startCampaign(campaignId, advice?.override_required ?? false);
-      router.push(`/campaigns/${campaignId}/executions/${execution.id}`);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to start campaign");
-      setSubmitting(false);
-    }
-  }
+  const launcher = useRunLauncher(campaignId, "start");
 
   return (
-    <Button onClick={handleClick} disabled={submitting}>
-      {submitting
-        ? "Starting..."
-        : advice?.override_required
-          ? "Generate anyway"
-          : "Run campaign"}
-    </Button>
+    <>
+      <Button
+        onClick={() => (advice?.override_required ? launcher.launch(true) : launcher.run())}
+        disabled={launcher.busy}
+      >
+        <Play aria-hidden="true" />
+        {launcher.busy
+          ? "Starting…"
+          : advice?.override_required
+            ? "Generate anyway"
+            : "Run campaign"}
+      </Button>
+      {launcher.dialog}
+    </>
   );
 }

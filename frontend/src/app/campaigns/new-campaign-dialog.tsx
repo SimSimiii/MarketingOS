@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -37,6 +36,7 @@ import type {
   PolicyPreset,
   Prospect,
 } from "@/lib/types";
+import { formatDate } from "@/lib/format";
 
 const NO_BRAND = "__none__";
 const NEW_BRAND = "__new__";
@@ -182,9 +182,12 @@ interface NewCampaignDialogProps {
   /** Pre-fills brand and product context so re-launching a new deliverable
    * type for a brand that already exists doesn't mean retyping everything. */
   prefill?: NewCampaignDialogPrefill;
+  /** The brand the page the dialog opened from is about, if any. Chosen for
+   * the reader unless they already chose something else. */
+  defaultBrandId?: string;
 }
 
-export function NewCampaignDialog({ trigger, prefill, autoOpen }: NewCampaignDialogProps = {}) {
+export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }: NewCampaignDialogProps = {}) {
   const router = useRouter();
   const fileInput = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
@@ -222,6 +225,9 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen }: NewCampaignDia
 
   const [brands, setBrands] = useState<Brand[]>([]);
   const [brandChoice, setBrandChoice] = useState<string>(NO_BRAND);
+  //: Whether the reader has picked a brand themselves this time the dialog
+  //: is open - once they have, nothing chooses for them.
+  const brandTouched = useRef(false);
   const [newBrandName, setNewBrandName] = useState("");
   const [existingKnowledgeCount, setExistingKnowledgeCount] = useState<number | null>(null);
   //: Which sources this brand already holds, so a product URL that is already
@@ -273,10 +279,30 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen }: NewCampaignDia
     let cancelled = false;
     api
       .listBrands()
-      .then((result) => { if (!cancelled) setBrands(result); })
+      .then((result) => {
+        if (cancelled) return;
+        setBrands(result);
+        // "One-off" throws the knowledge away after the run. With one brand,
+        // or opened from a brand's own page, that is almost never what the
+        // reader meant - it was simply the first item in the list. The brand
+        // is preselected; one-off stays a click away.
+        const auto = autoBrand.current;
+        if (!auto.enabled || brandTouched.current) return;
+        const preferred =
+          result.find((brand) => brand.id === auto.brandId) ??
+          (result.length === 1 ? result[0] : undefined);
+        if (preferred) auto.pick(preferred.id);
+      })
       .catch(() => { if (!cancelled) setBrands([]); });
     return () => { cancelled = true; };
   }, [open]);
+
+  //: What the brand fetch may choose on the reader's behalf, kept current
+  //: without making the fetch depend on props that change every render.
+  const autoBrand = useRef({ enabled: false, brandId: undefined as string | undefined, pick: (() => {}) as (id: string) => void });
+  useEffect(() => {
+    autoBrand.current = { enabled: !prefill, brandId: defaultBrandId, pick: handleBrandChange };
+  });
 
   function handleOpenChange(nextOpen: boolean) {
     setOpen(nextOpen);
@@ -391,6 +417,7 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen }: NewCampaignDia
     setMessageLanguage("English");
     setLinkedInOpen(false);
     setBrandChoice(NO_BRAND);
+    brandTouched.current = false;
     setNewBrandName("");
     setExistingKnowledgeCount(null);
     setExistingSources([]);
@@ -589,9 +616,20 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen }: NewCampaignDia
 
               <div className="space-y-2">
                 <Label htmlFor="brand">Brand</Label>
+                {/* `items` is what the trigger shows. Without it Base UI prints the
+                    raw value, which here is "__none__" or a brand's UUID. */}
                 <Select
                   value={brandChoice}
-                  onValueChange={(value) => value && handleBrandChange(value)}
+                  onValueChange={(value) => {
+                    if (!value) return;
+                    brandTouched.current = true;
+                    handleBrandChange(value);
+                  }}
+                  items={[
+                    { value: NO_BRAND, label: "One-off - don't save this knowledge" },
+                    ...brands.map((brand) => ({ value: brand.id, label: brand.name })),
+                    { value: NEW_BRAND, label: "+ New brand" },
+                  ]}
                 >
                   <SelectTrigger id="brand" className="w-full">
                     <SelectValue />
@@ -695,6 +733,13 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen }: NewCampaignDia
                   <Select
                     value={prospectChoice}
                     onValueChange={(value) => value && setProspectChoice(value)}
+                    items={[
+                      { value: NO_PROSPECT, label: "Audience-level campaign" },
+                      ...selectedProspects.map((prospect) => ({
+                        value: prospect.id,
+                        label: `${prospect.name} — ${prospect.qualification?.classification ?? "UNVERIFIED"}`,
+                      })),
+                    ]}
                   >
                     <SelectTrigger id="prospect" className="w-full">
                       <SelectValue />
@@ -867,6 +912,7 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen }: NewCampaignDia
                     value={forceRecompile ? "regenerate" : "reuse"}
                     onValueChange={(value) => value && setForceRecompile(value === "regenerate")}
                     disabled={brandKnowledge === undefined}
+                    items={{ reuse: "Reuse what's already compiled", regenerate: "Regenerate from scratch" }}
                   >
                     <SelectTrigger id="recompile" className="w-full">
                       <SelectValue />
@@ -883,8 +929,8 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen }: NewCampaignDia
                       ? "Checking whether this brand has a compiled knowledge base..."
                       : brandKnowledge
                         ? forceRecompile
-                          ? `Every source will be re-read, replacing the v${brandKnowledge.version} knowledge base compiled ${new Date(brandKnowledge.compiled_at).toLocaleDateString()}.`
-                          : `Reusing the v${brandKnowledge.version} knowledge base compiled ${new Date(brandKnowledge.compiled_at).toLocaleDateString()} - the cheaper, default path.`
+                          ? `Every source will be re-read, replacing the v${brandKnowledge.version} knowledge base compiled ${formatDate(brandKnowledge.compiled_at)}.`
+                          : `Reusing the v${brandKnowledge.version} knowledge base compiled ${formatDate(brandKnowledge.compiled_at)} - the cheaper, default path.`
                         : "This brand has never been compiled - it will be generated fresh on this run."}
                   </p>
                 </div>
@@ -972,7 +1018,7 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen }: NewCampaignDia
 
               <div className="space-y-2">
                 <Label htmlFor="tone">Brand tone</Label>
-                <Select value={tone} onValueChange={(value) => value && setTone(value as Tone)}>
+                <Select value={tone} onValueChange={(value) => value && setTone(value as Tone)} items={TONE_LABELS}>
                   <SelectTrigger id="tone" className="w-full">
                     <SelectValue />
                   </SelectTrigger>
@@ -1063,6 +1109,7 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen }: NewCampaignDia
                 <Select
                   value={policyPreset}
                   onValueChange={(value) => value && setPolicyPreset(value as PolicyPreset)}
+                  items={PRESET_LABELS}
                 >
                   <SelectTrigger id="policy_preset" className="w-full">
                     <SelectValue />
@@ -1133,60 +1180,54 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen }: NewCampaignDia
               Manage knowledge base
             </Button>
           </div>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Three real choices in three columns. A fourth, disabled tile for a
+              channel that does not exist squeezed every label until "Abandoned
+              Cart Sequence" was cut off and its badge hung past the dialog's
+              edge; what is coming is one line of text instead. */}
+          <div className="grid grid-cols-3 gap-2">
             <Button
               type="button"
               size="lg"
-              className="h-auto flex-col items-start gap-0.5 py-3 text-left"
+              className="h-auto min-w-0 flex-col items-start gap-0.5 whitespace-normal px-2.5 py-2 text-left text-xs sm:px-3 sm:py-3 sm:text-sm"
               disabled={submitting}
               onClick={() => handleGenerate("cart_recovery")}
             >
               <span className="font-semibold">
                 {requiresOverride ? "Generate anyway: Cart Sequence" : "Abandoned Cart Sequence"}
               </span>
-              <span className="text-xs font-normal opacity-80">3 emails</span>
+              <span className="text-[11px] font-normal opacity-80 sm:text-xs">3 emails</span>
             </Button>
             <Button
               type="button"
               size="lg"
-              className="h-auto flex-col items-start gap-0.5 py-3 text-left"
+              className="h-auto min-w-0 flex-col items-start gap-0.5 whitespace-normal px-2.5 py-2 text-left text-xs sm:px-3 sm:py-3 sm:text-sm"
               disabled={submitting}
               onClick={() => handleGenerate("launch_email")}
             >
               <span className="font-semibold">
                 {requiresOverride ? "Generate anyway: Launch Email" : "Launch Email"}
               </span>
-              <span className="text-xs font-normal opacity-80">1 email</span>
+              <span className="text-[11px] font-normal opacity-80 sm:text-xs">1 email</span>
             </Button>
             <Button
               type="button"
               size="lg"
-              className="h-auto flex-col items-start gap-0.5 py-3 text-left"
+              className="h-auto min-w-0 flex-col items-start gap-0.5 whitespace-normal px-2.5 py-2 text-left text-xs sm:px-3 sm:py-3 sm:text-sm"
               disabled={submitting}
               onClick={() => handleGenerate("linkedin_message")}
             >
               <span className="font-semibold">
                 {requiresOverride ? "Generate anyway: LinkedIn Message" : "LinkedIn Message"}
               </span>
-              <span className="text-xs font-normal opacity-80">
+              <span className="text-[11px] font-normal opacity-80 sm:text-xs">
                 1 message{recipientName ? ` to ${recipientName}` : " - needs a recipient"}
               </span>
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="lg"
-              className="h-auto flex-col items-start gap-0.5 py-3 text-left"
-              disabled
-              title="Not built yet - the pipeline only knows how to write emails and LinkedIn messages today."
-            >
-              <span className="flex items-center gap-2 font-semibold">
-                3 Facebook Ad Posts
-                <Badge variant="secondary">Coming soon</Badge>
-              </span>
-              <span className="text-xs font-normal opacity-80">Not available yet</span>
-            </Button>
           </div>
+          <p className="hidden text-xs text-muted-foreground sm:block">
+            Facebook ad posts are coming soon - the pipeline writes emails and LinkedIn messages
+            today.
+          </p>
         </DialogFooter>
       </DialogContent>
     </Dialog>

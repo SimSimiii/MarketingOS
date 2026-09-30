@@ -5,9 +5,10 @@ import { ArrowLeft, ArrowUpRight, Building2, Megaphone } from "lucide-react";
 
 import { BrandNav } from "./brand-nav";
 import { BrandSwitcher } from "./brand-switcher";
+import { DocumentTitle } from "@/components/document-title";
 import { buttonVariants } from "@/components/ui/button";
 import { api } from "@/lib/api-client";
-import { PageData, notFound, usePageData, useRouteIds } from "@/lib/page-data";
+import { NestedPageProvider, PageData, notFound, usePageData, useRouteIds } from "@/lib/page-data";
 
 /** One business, and everything the system knows about it.
  *
@@ -43,6 +44,7 @@ export function BrandLayoutView({ children }: { children: React.ReactNode }) {
     <PageData state={state}>
       {({ brand, brands, documents, base, market }) => (
     <div className="brand-workspace min-w-0 space-y-6">
+      <DocumentTitle title={brand.name} />
       <header className="studio-hero rounded-2xl border border-border p-5 sm:p-6">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
           <Link href="/brands" className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground"><ArrowLeft className="size-3.5" /> All brands</Link>
@@ -71,7 +73,7 @@ export function BrandLayoutView({ children }: { children: React.ReactNode }) {
         }}
       />
 
-      {children}
+      <NestedPageProvider>{children}</NestedPageProvider>
     </div>
       )}
     </PageData>

@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatDuration } from "@/lib/format";
+import { formatDuration, formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { MarketJob } from "@/lib/types";
 
@@ -87,9 +87,9 @@ export function MarketJobCard({ job, now }: { job: MarketJob; now: number }) {
         {job.calls > 0 && (
           <p className="text-xs text-muted-foreground tabular-nums">
             {job.calls} call{job.calls === 1 ? "" : "s"} ·{" "}
-            {job.input_tokens.toLocaleString()} in / {job.output_tokens.toLocaleString()} out
+            {formatNumber(job.input_tokens)} in / {formatNumber(job.output_tokens)} out
             {job.cache_read_tokens > 0 && (
-              <> · {job.cache_read_tokens.toLocaleString()} of the input was cached</>
+              <> · {formatNumber(job.cache_read_tokens)} of the input was cached</>
             )}
             {job.cost_usd > 0 && <> · ${job.cost_usd.toFixed(4)}</>}
           </p>

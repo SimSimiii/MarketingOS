@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { api } from "@/lib/api-client";
 import type { LiveExecutionEvent } from "@/lib/types";
+import { formatTime } from "@/lib/format";
 /** Persisted snapshots only: no open connection and no automatic polling. */
 export function useExecutionStream(executionId: string) {
   const [events, setEvents] = useState<LiveExecutionEvent[]>([]);
@@ -14,7 +15,7 @@ export function useExecutionStream(executionId: string) {
       const timeline = await api.getExecutionTimeline(executionId);
       if (current !== generation.current) return;
       setEvents(timeline.events);
-      setUpdatedAt(new Date().toLocaleTimeString());
+      setUpdatedAt(formatTime(Date.now()));
       setPhase("ready");
     } catch {
       if (current === generation.current) setPhase("error");
@@ -26,7 +27,7 @@ export function useExecutionStream(executionId: string) {
     api.getExecutionTimeline(executionId).then((timeline) => {
       if (cancelled || current !== generation.current) return;
       setEvents(timeline.events);
-      setUpdatedAt(new Date().toLocaleTimeString());
+      setUpdatedAt(formatTime(Date.now()));
       setPhase("ready");
     }).catch(() => {
       if (!cancelled && current === generation.current) setPhase("error");

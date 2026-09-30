@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { api } from "@/lib/api-client";
 import { cn } from "@/lib/utils";
 import type { RadarEvent, RadarSeverity } from "@/lib/types";
+import { formatDate } from "@/lib/format";
 
 /** Three levels, and the top one is rare on purpose: a feed where everything
  * is urgent is a feed nobody reads. */
@@ -28,7 +29,7 @@ function when(iso: string) {
   if (days === 0) return "today";
   if (days === 1) return "yesterday";
   if (days < 30) return `${days} days ago`;
-  return date.toLocaleDateString();
+  return formatDate(iso);
 }
 
 export function RadarFeed({

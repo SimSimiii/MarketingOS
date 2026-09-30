@@ -79,6 +79,7 @@ export function CampaignPolicySelect({ campaign }: { campaign: Campaign }) {
           value && save({ preset: value as PolicyPreset }, "Execution preset updated")
         }
         disabled={saving}
+        items={PRESET_LABELS}
       >
         <SelectTrigger className="w-full">
           <SelectValue />
@@ -104,6 +105,7 @@ export function CampaignPolicySelect({ campaign }: { campaign: Campaign }) {
             value && save({ email_tier: value as EmailTier }, "Look updated")
           }
           disabled={saving}
+          items={TIER_LABELS}
         >
           <SelectTrigger className="w-full">
             <SelectValue />

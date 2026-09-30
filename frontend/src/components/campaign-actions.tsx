@@ -2,10 +2,18 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Archive, ArchiveRestore, Copy, MoreHorizontal, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { ConfirmDialog, useConfirm } from "@/components/confirm-dialog";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { api } from "@/lib/api-client";
 import type { Campaign } from "@/lib/types";
 import { refreshPage } from "@/lib/page-data";
@@ -13,7 +21,13 @@ import { refreshPage } from "@/lib/page-data";
 type Action = "archive" | "unarchive" | "duplicate" | "delete";
 
 /** Archive/unarchive/duplicate/delete for one campaign - used on both the
- * campaigns list (compact) and a campaign's own detail page. */
+ * campaigns list and a campaign's own detail page.
+ *
+ * One menu rather than three text buttons. As buttons they were the widest
+ * column in the campaigns table, which pushed the table past the edge of a
+ * 1440px screen and hid them - the actions were on the page and nobody could
+ * see them. Beside the detail page's primary action they were three more
+ * things of equal weight to "Run campaign". */
 export function CampaignActions({
   campaign,
   redirectOnDeleteTo,
@@ -69,29 +83,39 @@ export function CampaignActions({
     }
   }
 
+  const archiving = campaign.status === "active";
+
   return (
-    <div className="flex items-center gap-1.5">
-      <Button variant="ghost" size="sm" disabled={busy !== null} onClick={handleArchiveToggle}>
-        {campaign.status === "active"
-          ? busy === "archive"
-            ? "Archiving..."
-            : "Archive"
-          : busy === "unarchive"
-            ? "Restoring..."
-            : "Unarchive"}
-      </Button>
-      <Button variant="ghost" size="sm" disabled={busy !== null} onClick={handleDuplicate}>
-        {busy === "duplicate" ? "Duplicating..." : "Duplicate"}
-      </Button>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="text-destructive hover:text-destructive"
-        disabled={busy !== null}
-        onClick={confirmDelete.ask}
-      >
-        Delete
-      </Button>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label={`Actions for ${campaign.name}`}
+              disabled={busy !== null}
+            />
+          }
+        >
+          <MoreHorizontal aria-hidden="true" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem onClick={handleDuplicate}>
+            <Copy aria-hidden="true" />
+            {busy === "duplicate" ? "Duplicating…" : "Duplicate"}
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleArchiveToggle}>
+            {archiving ? <Archive aria-hidden="true" /> : <ArchiveRestore aria-hidden="true" />}
+            {archiving ? "Archive" : "Restore from archive"}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="destructive" onClick={confirmDelete.ask}>
+            <Trash2 aria-hidden="true" />
+            Delete…
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <ConfirmDialog
         open={confirmDelete.open}
@@ -102,6 +126,6 @@ export function CampaignActions({
         pending={busy === "delete"}
         onConfirm={handleDelete}
       />
-    </div>
+    </>
   );
 }

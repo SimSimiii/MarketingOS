@@ -34,6 +34,7 @@ import type {
   UserAudienceInput,
 } from "@/lib/types";
 import { refreshPage } from "@/lib/page-data";
+import { formatAbsolute, formatDate } from "@/lib/format";
 
 /** What each kind of segment is, in one phrase.
  *
@@ -109,7 +110,7 @@ function ResearchResult({ research }: { research: AudienceResearch }) {
       </summary>
       <div className="mt-3 space-y-3 text-muted-foreground">
         <p>
-          Researched {new Date(research.researched_at).toLocaleDateString()} ·{" "}
+          Researched {formatDate(research.researched_at)} ·{" "}
           {research.dropped_claims} unverifiable item
           {research.dropped_claims === 1 ? "" : "s"} dropped
         </p>
@@ -861,7 +862,7 @@ function DossierResult({
             <p>Qualification set · {dossier.qualification_fingerprint}</p>
           )}
           <p className="font-sans">
-            Built {new Date(dossier.built_at).toLocaleString()}
+            Built {formatAbsolute(dossier.built_at)}
           </p>
         </div>
 
@@ -1616,7 +1617,7 @@ function SegmentCard({
                     )}
                     <blockquote className="border-l-2 pl-2 text-muted-foreground">{evidence.quote}</blockquote>
                     <a className="break-all text-primary underline" href={evidence.url} target="_blank" rel="noopener noreferrer">{evidence.url}</a>
-                    {evidence.fetched_at && <p className="text-muted-foreground">Fetched {new Date(evidence.fetched_at).toLocaleDateString()}</p>}
+                    {evidence.fetched_at && <p className="text-muted-foreground">Fetched {formatDate(evidence.fetched_at)}</p>}
                   </div>
                 ))}
               </details>

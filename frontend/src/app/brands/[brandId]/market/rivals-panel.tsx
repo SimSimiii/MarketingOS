@@ -254,7 +254,11 @@ export function RivalsPanel({
             </div>
             <div className="w-56 space-y-1.5">
               <Label htmlFor="rival-kind">How the buyer meets them</Label>
-              <Select value={kind} onValueChange={(value) => setKind(value as RivalKind)}>
+              <Select
+                value={kind}
+                onValueChange={(value) => setKind(value as RivalKind)}
+                items={Object.fromEntries(Object.entries(KIND).map(([key, option]) => [key, option.label]))}
+              >
                 <SelectTrigger id="rival-kind">
                   <SelectValue />
                 </SelectTrigger>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -24,14 +24,19 @@ export function ConfirmDialog({
   title,
   description,
   confirmLabel = "Delete",
+  tone = "destructive",
   pending = false,
   onConfirm,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
-  description: string;
+  description: ReactNode;
   confirmLabel?: string;
+  /** `default` for a confirmation that is a decision rather than a loss -
+   * spending quota against a recommendation, say. Red there reads as danger
+   * the reader is not in. */
+  tone?: "destructive" | "default";
   pending?: boolean;
   onConfirm: () => void;
 }) {
@@ -40,13 +45,13 @@ export function ConfirmDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+          <DialogDescription render={<div />}>{description}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={pending}>
             Cancel
           </Button>
-          <Button variant="destructive" onClick={onConfirm} disabled={pending}>
+          <Button variant={tone === "destructive" ? "destructive" : "default"} onClick={onConfirm} disabled={pending}>
             {pending ? "Working..." : confirmLabel}
           </Button>
         </DialogFooter>

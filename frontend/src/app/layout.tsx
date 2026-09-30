@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "MarketingOS",
-  description: "AI-powered multi-agent marketing platform",
+  description: "Email copy written from your own material, read cold before you ever see it.",
 };
 
 export default function RootLayout({

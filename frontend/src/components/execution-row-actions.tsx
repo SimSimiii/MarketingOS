@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { ConfirmDialog, useConfirm } from "@/components/confirm-dialog";
+import { useRunLauncher } from "@/components/run-launcher";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api-client";
 import type { CampaignExecution } from "@/lib/types";
@@ -19,8 +19,8 @@ export function ExecutionRowActions({
   execution: CampaignExecution;
   campaignId: string;
 }) {
-  const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const restart = useRunLauncher(campaignId, "restart");
   const confirmStop = useConfirm();
 
   async function handleCancel() {
@@ -33,32 +33,6 @@ export function ExecutionRowActions({
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not cancel");
     } finally {
-      setBusy(false);
-    }
-  }
-
-  async function handleRestart() {
-    setBusy(true);
-    try {
-      const advice = await api.getCampaignGenerationAdvice(campaignId);
-      if (
-        advice.override_required &&
-        !window.confirm(
-          [
-            `${advice.recommendation?.state.replaceAll("_", " ") ?? advice.readiness}: ${advice.user_message}`,
-            ...advice.reasons.map((reason) => `• ${reason}`),
-            "",
-            "Generate anyway? This override will be recorded with the new run.",
-          ].join("\n"),
-        )
-      ) {
-        setBusy(false);
-        return;
-      }
-      const restarted = await api.restartCampaign(campaignId, advice.override_required);
-      router.push(`/campaigns/${campaignId}/executions/${restarted.id}`);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not restart");
       setBusy(false);
     }
   }
@@ -83,9 +57,12 @@ export function ExecutionRowActions({
   }
   if (execution.status === "failed" || execution.status === "cancelled") {
     return (
-      <Button variant="ghost" size="sm" disabled={busy} onClick={handleRestart}>
-        {busy ? "Restarting..." : "Restart"}
-      </Button>
+      <>
+        <Button variant="ghost" size="sm" disabled={restart.busy} onClick={restart.run}>
+          {restart.busy ? "Restarting…" : "Restart"}
+        </Button>
+        {restart.dialog}
+      </>
     );
   }
   return null;

@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { formatTokens } from "@/lib/format";
+import { formatTime, formatTokens } from "@/lib/format";
 import type { StepState, TimelineStep } from "@/lib/run-timeline";
 import type { LiveExecutionEvent } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -201,7 +201,7 @@ function StepLog({ lines }: { lines: LiveExecutionEvent[] }) {
                     onClick={detailed ? () => toggle(index) : undefined}
                   >
                     <span className="shrink-0 text-muted-foreground/60 tabular-nums">
-                      {new Date(line.at).toLocaleTimeString()}
+                      {formatTime(line.at)}
                     </span>
                     <span className={cn("min-w-0 flex-1", LEVEL_TEXT[line.level])}>
                       {line.message}

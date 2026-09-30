@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { StatusBadge } from "@/components/status-badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatDuration } from "@/lib/format";
+import { formatDuration, formatNumber } from "@/lib/format";
 import type { CompilationJob } from "@/lib/types";
 
 export function CompilationJobCard({ job, now }: { job: CompilationJob; now: number }) {
@@ -26,7 +26,7 @@ export function CompilationJobCard({ job, now }: { job: CompilationJob; now: num
         </div>
         {job.calls > 0 && (
           <p className="text-xs tabular-nums text-muted-foreground">
-            {job.calls} model calls · {job.input_tokens.toLocaleString()} in / {job.output_tokens.toLocaleString()} out
+            {job.calls} model calls · {formatNumber(job.input_tokens)} in / {formatNumber(job.output_tokens)} out
           </p>
         )}
         <ul className="space-y-1 text-xs text-muted-foreground">
