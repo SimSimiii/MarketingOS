@@ -410,7 +410,11 @@ def personas_for(audience: AudienceModel, chosen: Segment | None, panel: bool) -
     segment = chosen or audience.primary()
     person = (
         f"Selected audience (explicit constraints): {segment.name}.\n"
-        f"Context ({segment.situation_grounding}; applicability must be checked): {segment.situation}\n"
+        "The context and problem reports below describe observed members of this market, "
+        "not established experiences or installed tools of this recipient. The campaign "
+        "request controls which job this email addresses; do not require a link to an "
+        "unrequested integration in your doubts or click requirements.\n"
+        f"Observed context ({segment.situation_grounding}; applicability must be checked): {segment.situation}\n"
         + "\n".join(f"Source: {p.source}; quote: {p.quote}" for p in segment.situation_provenance)
         + "\n"
         + "\n".join(

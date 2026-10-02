@@ -255,7 +255,7 @@ export function ExecutionLiveView({
         <h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
           The team
         </h3>
-        <Roster steps={run.steps} />
+        <Roster steps={run.steps} finished={!isLive} />
       </div>
     </div>
   );
@@ -581,7 +581,16 @@ function ConnectionIndicator({
 /** One card per reasoning role, showing how many turns it has taken. Unlike
  * the steps above, this answers "who has been involved at all" - the roster is
  * the cast, the timeline is the plot. */
-function Roster({ steps }: { steps: ReturnType<typeof reduceRun>["steps"] }) {
+function Roster({
+  steps,
+  finished,
+}: {
+  steps: ReturnType<typeof reduceRun>["steps"];
+  /** Once the run is over, a role that never ran was not needed - material
+   * already compiled, one email with no sequence to review - and "not
+   * started" read as a role that was still waiting, or had hung. */
+  finished: boolean;
+}) {
   const runs = runsPerRole(steps);
   const latest = new Map(
     steps.filter((step) => step.agentId).map((step) => [step.agentId as string, step]),
@@ -612,7 +621,7 @@ function Roster({ steps }: { steps: ReturnType<typeof reduceRun>["steps"] }) {
                   </Badge>
                 ) : (
                   <Badge variant="outline" className="border-transparent bg-muted text-muted-foreground">
-                    not started
+                    {finished ? "not needed" : "not started"}
                   </Badge>
                 )}
               </div>

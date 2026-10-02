@@ -77,6 +77,8 @@ def test_profiles_preserve_source_and_uncertainty_without_sales_context():
     assert all("https://example.test" in p for p in profiles)
     assert "Reading emphasis" in profiles[1]
     assert "Reading emphasis" in profiles[2]
+    assert all("not established experiences or installed tools" in p for p in profiles)
+    assert all("do not require a link to an unrequested integration" in p for p in profiles)
     assert not any("they already use" in p or "they have been promised" in p for p in profiles)
     assert not any("orientation" in p or "objection answer" in p for p in profiles)
 

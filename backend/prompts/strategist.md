@@ -248,6 +248,15 @@ nowhere else — those ids are checked, and an id you invent is dropped, leaving
 nothing to prove its claim with. At most three per email: a fourth is not more proof, it is a second argument, and
 the email will be written as a list because you wrote the brief as one.
 
+For a test or evaluation proposition, prefer evidence with a concrete input and observable
+result over an overlapping capability summary. Put that small example and the useful question
+it answers in `mechanism`; a list of feature names or inspection surfaces is not an example.
+When recovered material answers a setup objection, keep the strongest still-relevant mechanism
+evidence in the three-fact selection. Replace redundant summaries, not the reason to try the
+product. Use the other facts for necessary prerequisites and the destination's payoff. Do not
+let all three slots become setup requirements or limitations. If those requirements dominate,
+narrow the proposed evaluation to one useful supported check instead of implying they vanish.
+
 **Decide what each email does not say.** `must_not_say` is the hard half of this job. You know
 things about this business that are true, checkable and genuinely persuasive — the pricing, the
 security posture, the integration list — and most of them do not belong in the email you are
@@ -371,6 +380,10 @@ be the wrong action for this argument, so complete its decision bridge:
 Read those four fields as one sentence: “By taking [CTA], this reader gets [value], supported by
 [ids], which helps decide [decision], but does not establish [limit].” If that sentence does not
 connect the selected audience's situation to the action, discard the proposition before writing.
+For a cold prospect, when an official page lets them inspect the promised behaviour without
+creating an account, verifying a domain or deploying an endpoint, make that read-only page the
+first ask. A list of prerequisites is not a useful substitute for seeing the capability. Ask for
+implementation only after the argument gives a concrete reason that effort is worthwhile.
 Testing one interface does not validate another: an API-only simulation cannot be the first test
 of an SMTP route, a sandbox cannot prove production behavior, and a generic product trial cannot
 answer a platform-specific compatibility question unless the evidence explicitly builds that

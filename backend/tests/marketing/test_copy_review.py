@@ -203,6 +203,7 @@ async def test_missing_material_stops_before_a_futile_rewrite(provider, artifact
     assert outcome.unresolved_strategy == (
         "A verified setup guide is absent from the campaign material."
     )
+    assert outcome.unresolved_failure_mode == "missing_material"
     assert provider.calls_by_role["email_writer"] == 1
     assert provider.calls_by_role["blind_reader"] == 1
     assert provider.calls_by_role["conversion_critic"] == 1

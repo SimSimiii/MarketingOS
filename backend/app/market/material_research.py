@@ -126,6 +126,10 @@ def existing_recovery(
     *, gap: str, artifacts: KnowledgeArtifacts, limit: int = 3
 ) -> MaterialRecovery | None:
     """Reuse strong official facts recovered by an earlier campaign first."""
+    # A setup fact can share many words with a request for a sample while
+    # leaving the first-click obstacle untouched. Do not let lexical reuse
+    # suppress the official search for an actual example.
+    wants_example = bool(re.search(r"\b(sample|example|preview)\b", fold(gap)))
     probe = {
         word
         for word in re.findall(r"[a-z0-9]{4,}", fold(gap))
@@ -139,6 +143,10 @@ def existing_recovery(
             not re.fullmatch(r"R\d+", entry.id)
             or entry.strength is not EvidenceStrength.STRONG
             or not entry.source.startswith(("https://", "http://"))
+        ):
+            continue
+        if wants_example and not re.search(
+            r"\b(sample|example|preview)\b", fold(f"{entry.claim} {entry.verbatim}")
         ):
             continue
         words = set(

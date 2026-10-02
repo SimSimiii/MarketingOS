@@ -190,6 +190,14 @@ only the verified payoff and preserve the stated limit. If an API experiment doe
 the production SMTP path, do not turn “try the API” into “test your auth-email integration”, even
 when that wording would connect the CTA more neatly to the audience.
 
+When the ask is to read documentation or inspect an example, lead with the useful question
+the documented mechanism helps the reader answer. Show one supplied detail that makes that
+question concrete, then explain what the linked resource adds. Permission to browse without
+setup is a friction answer, not the main benefit. Do not hide every useful detail to manufacture
+a reason to click, or reduce a test to abstract “states”, “paths” or “logic” without saying what
+the reader can check. Separate inspecting the example from running it, keep the supported
+prerequisites and limits, and never invent a reading time or setup estimate.
+
 Read the ending as the recipient receives it: BODY/callout, then the separate CTA link,
 sign-off and optional P.S. Do not accidentally repeat the same test or offer in all three.
 Repeat an ask only when the reinforcement has a purpose; leave PS empty when it adds nothing.

@@ -59,3 +59,35 @@ def test_pending_capture_prevents_duplicate_launch(runner):
     with pytest.raises(RuntimeError, match="use resume"):
         module.main()
     assert not any(method == "POST" for method, _ in calls)
+
+
+def test_summary_reads_latest_snapshot_without_api_or_generation(runner, monkeypatch, capsys):
+    import sys
+
+    module, calls, directory = runner
+    run_dir = directory / "runs" / "3"
+    module.save(run_dir / "result.json", {
+        "status": "completed", "estimated_cost_usd": 3.5,
+        "agent_executions": [{"id": "a"}, {"id": "b"}],
+        "assets": [{"title": "Email 1", "content": "Full email body"}],
+        "result": {"report": {
+            "delivered": 1, "promised": 1,
+            "emails": [{"position": 1, "subject": "Subject", "pull": 7,
+                        "evidence_spent": ["E1"],
+                        "reader_verdicts": [{"biggest_doubt": "Setup effort is unclear."}]}],
+        }},
+    })
+    module.save(run_dir / "logs.json", [
+        {"level": "info", "message": "normal"},
+        {"level": "error", "step": "writer", "message": "failed once"},
+    ])
+    monkeypatch.setattr(sys, "argv", [sys.argv[0], "summary", "--case", str(directory / "case.json")])
+
+    assert module.main() == 0
+    summary = json.loads(capsys.readouterr().out)
+    assert summary["execution_id"] == "3"
+    assert summary["agent_calls"] == 2
+    assert summary["emails"][0]["reader_doubts"] == ["Setup effort is unclear."]
+    assert summary["error_logs"] == [{"step": "writer", "message": "failed once"}]
+    assert "Full email body" not in json.dumps(summary)
+    assert calls == []

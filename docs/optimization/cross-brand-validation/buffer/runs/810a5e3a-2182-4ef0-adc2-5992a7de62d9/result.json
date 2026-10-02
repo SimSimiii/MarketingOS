@@ -1,0 +1,639 @@
+{
+  "id": "810a5e3a-2182-4ef0-adc2-5992a7de62d9",
+  "campaign_id": "387e2c54-93b9-46bc-ae13-1c9a5525d58d",
+  "status": "completed",
+  "error_message": null,
+  "started_at": "2026-09-30T15:42:24.544234Z",
+  "completed_at": "2026-09-30T15:52:42.054842Z",
+  "created_at": "2026-09-30T15:42:24.544234Z",
+  "total_input_tokens": 665515,
+  "total_output_tokens": 34196,
+  "total_cache_read_tokens": 455168,
+  "estimated_cost_usd": 6.4027,
+  "recommendation_snapshot": {
+    "campaign_id": "387e2c54-93b9-46bc-ae13-1c9a5525d58d",
+    "readiness": "DISCOVERY_ONLY",
+    "recommendation": {
+      "state": "DISCOVERY_ONLY",
+      "readiness": "DISCOVERY_ONLY",
+      "reasons": [
+        "No current V2 recommendation establishes product-to-audience fit."
+      ],
+      "eligible_subsegment": "",
+      "qualified_companies": [],
+      "adjacent_companies": [],
+      "excluded_companies": [],
+      "unverified_companies": [],
+      "allowed_claims": [],
+      "allowed_evidence_ids": [],
+      "forbidden_claims": [],
+      "forbidden_capability_ids": [],
+      "forbidden_evidence_ids": [],
+      "unresolved_objections": [],
+      "recommended_next_action": "Build or rebuild the Relevance Dossier V2, or generate explicitly as an audience-level hypothesis.",
+      "override_risk": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+      "claim_contract": null
+    },
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No current V2 recommendation establishes product-to-audience fit."
+    ],
+    "override_required": true,
+    "can_generate": true,
+    "user_message": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+    "override_explicit": true
+  },
+  "generated_despite_recommendation": true,
+  "agent_executions": [
+    {
+      "id": "df0bdcd1-44bf-46e3-afcf-da61c898f1c1",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 At the start of the week, the reader can queue a few posts across connected channels; after they publish, the reader can return to Insights and inspect recent engagement, impressions, and post performance. The Free plan supports this loop for up to three channels, with no more than 10 posts scheduled per channel at one time and 30 days of Insights history."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:42:24.608107Z",
+      "completed_at": "2026-09-30T15:43:36.272948Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 34086,
+      "output_tokens": 1831,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 12288,
+      "cost_usd": 0.667047,
+      "duration_ms": 71544.99320010655,
+      "attempt": 1
+    },
+    {
+      "id": "0d39e405-b56c-4376-877c-1eb30283e0a8",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "At the start of the week, the reader can queue a few posts across connected channels; after they publish, the reader can return to Insights and inspect recent engagement, impressions, and post performance. The Free plan supports this loop for up to three channels, with no more than 10 posts scheduled per channel at one time and 30 days of Insights history.",
+          "At the start of the week, the reader can queue a few posts across connected channels; after they publish, the reader can return to Insights and inspect recent engagement, impressions, and post performance. The Free plan supports this loop for up to three channels, with no more than 10 posts scheduled per channel at one time and 30 days of Insights history."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Queue next week, review performance",
+          "Queue first, review after publishing"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:43:36.451435Z",
+      "completed_at": "2026-09-30T15:44:40.025697Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 21582,
+      "output_tokens": 4224,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 27520,
+      "cost_usd": 0.68181,
+      "duration_ms": 120317.71219999064,
+      "attempt": 1
+    },
+    {
+      "id": "a63f5002-2bda-4613-83ac-92777d97571a",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s) read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 5,
+        "scores": [
+          5,
+          4
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:44:40.131356Z",
+      "completed_at": "2026-09-30T15:45:35.632098Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 28258,
+      "output_tokens": 7592,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 84864,
+      "cost_usd": 1.120566,
+      "duration_ms": 281566.076099989,
+      "attempt": 1
+    },
+    {
+      "id": "177a0e87-b276-41bd-9565-15f8f68d14a6",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · the two best candidates, read side by side",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "challenger_won": false
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:45:35.639247Z",
+      "completed_at": "2026-09-30T15:45:48.783305Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11375,
+      "output_tokens": 458,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 57984,
+      "cost_usd": 0.291951,
+      "duration_ms": 38994.371599983424,
+      "attempt": 1
+    },
+    {
+      "id": "ccd19854-94d6-4dc3-922b-6df0ed205ea4",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "missing_material",
+        "strategy_gap": "No supplied evidence or destination states which channels are supported or the time and steps required to connect one and schedule a first post, so the email cannot answer the repeated cold-reader question of whether trying this workflow is worth the setup effort."
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:45:48.800095Z",
+      "completed_at": "2026-09-30T15:47:08.452012Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 8301,
+      "output_tokens": 2882,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15232,
+      "cost_usd": 0.363513,
+      "duration_ms": 79591.87749994453,
+      "attempt": 1
+    },
+    {
+      "id": "52f743c9-659c-411e-9fea-f14970281b7c",
+      "agent_id": "material_researcher",
+      "agent_name": "Official Material Researcher",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Finding and verifying official material for 1 gap(s)"
+      },
+      "output_data": {
+        "recovered": false,
+        "evidence": [],
+        "sources": [],
+        "dropped_claims": 0
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:47:08.479507Z",
+      "completed_at": "2026-09-30T15:48:00.966596Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 14760,
+      "output_tokens": 1234,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 46976,
+      "cost_usd": 0.384414,
+      "duration_ms": 51392.758000059985,
+      "attempt": 1
+    },
+    {
+      "id": "b4e428a4-3d63-4a2e-ad9f-f3a2ac75e900",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 At the start of the week, queue a few posts across connected channels; after they publish, use Insights to inspect recent engagement, impressions, and post performance before planning the next batch. Free supports this routine within explicit limits: up to three channels, ten scheduled posts per channel at one time, and thirty days of Insights history."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:48:00.982883Z",
+      "completed_at": "2026-09-30T15:49:50.044908Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 31327,
+      "output_tokens": 3433,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15232,
+      "cost_usd": 0.750228,
+      "duration_ms": 108953.28120002523,
+      "attempt": 2
+    },
+    {
+      "id": "186bb503-8f10-4994-9f49-22b9ca2462a2",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 8,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "At the start of the week, queue a few posts across connected channels; after they publish, use Insights to inspect recent engagement, impressions, and post performance before planning the next batch. Free supports this routine within explicit limits: up to three channels, ten scheduled posts per channel at one time, and thirty days of Insights history.",
+          "At the start of the week, queue a few posts across connected channels; after they publish, use Insights to inspect recent engagement, impressions, and post performance before planning the next batch. Free supports this routine within explicit limits: up to three channels, ten scheduled posts per channel at one time, and thirty days of Insights history."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Queue posts, then review performance",
+          "Queue this week, review later"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:49:50.163107Z",
+      "completed_at": "2026-09-30T15:50:35.105473Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 19192,
+      "output_tokens": 2634,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 30464,
+      "cost_usd": 0.531126,
+      "duration_ms": 82928.66489989683,
+      "attempt": 2
+    },
+    {
+      "id": "5028663e-ad05-4dee-8ab4-d00472c610e2",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 9,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s) read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 6,
+        "scores": [
+          6,
+          5
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:50:35.172767Z",
+      "completed_at": "2026-09-30T15:51:23.563682Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 21721,
+      "output_tokens": 6992,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 91392,
+      "cost_usd": 0.987303,
+      "duration_ms": 261753.99969995487,
+      "attempt": 2
+    },
+    {
+      "id": "55094ff2-c129-473d-826c-b83c922359ae",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 10,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · the two best candidates, read side by side",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "challenger_won": false
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:51:23.571771Z",
+      "completed_at": "2026-09-30T15:51:36.605821Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11363,
+      "output_tokens": 660,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 57984,
+      "cost_usd": 0.306921,
+      "duration_ms": 39451.40080014244,
+      "attempt": 2
+    },
+    {
+      "id": "d5fc95dd-1a46-4e9a-bab1-3fd60663f94d",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 11,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "missing_material",
+        "strategy_gap": "The supplied material does not identify which social channels or account types support the promised scheduling and Insights workflow, so the reader cannot determine whether the Free plan applies to the channels they actually use; provide a verified compatibility answer or a destination that answers it."
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:51:36.617438Z",
+      "completed_at": "2026-09-30T15:52:42.025612Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 8382,
+      "output_tokens": 2256,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15232,
+      "cost_usd": 0.317778,
+      "duration_ms": 65367.84790002275,
+      "attempt": 2
+    }
+  ],
+  "assets": [
+    {
+      "id": "729f1445-c6d7-49ff-990e-c2db5cdba12f",
+      "asset_type": "email",
+      "title": "Queue posts, then review performance",
+      "content": "Subject: Queue posts, then review performance\nPreview text: See whether Buffer Free has enough capacity for your weekly routine.\n\nQueue this week’s posts, then review their performance\n\nHi there,\n\nBuffer lets you queue a few posts across connected social channels, then review their performance in Insights. It’s social media management software for scheduling posts and inspecting the results in one place.\n\nAt the start of the week, add posts to each channel’s queue. After they publish, check recent engagement, impressions, and post performance before planning your next batch.\n\nThe Free forever plan supports up to three channels and 10 scheduled posts per channel at one time. Insights includes 30 days of history, so you can compare those limits with the routine you have in mind.\n\nCheck Buffer’s official plans to decide whether the Free entry fits your week.\n\nCheck Buffer’s official plans →\n\n- the Buffer team",
+      "content_html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n<meta name=\"x-apple-disable-message-reformatting\" />\n<meta name=\"color-scheme\" content=\"light\" />\n<meta name=\"supported-color-schemes\" content=\"light\" />\n<title>Queue posts, then review performance</title>\n</head>\n<body style=\"margin:0;padding:0;background-color:#eceef3;-webkit-text-size-adjust:100%;\">\n<div style=\"display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;\">See whether Buffer Free has enough capacity for your weekly routine.&#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; </div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#eceef3;\">\n<tr><td align=\"center\" style=\"padding:24px 12px;\">\n<table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;background-color:#ffffff;border-radius:12px;\">\n<tr><td style=\"background-color:#1a56db;height:4px;font-size:0;line-height:0;\">&nbsp;</td></tr>\n<tr><td style=\"padding:26px 36px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;font-weight:700;letter-spacing:0.2px;color:#14161a;\">Buffer</td></tr>\n<tr><td style=\"padding:26px 36px 10px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#1a56db;\">Buffer Free</p></td></tr>\n<tr><td style=\"padding:0 36px 20px;\"><h1 style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:29px;line-height:1.2;font-weight:800;letter-spacing:-0.5px;color:#14161a;\">Queue this week’s posts, then review their performance</h1></td></tr>\n<tr><td style=\"padding:10px 36px 16px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Hi there,</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:17px;line-height:1.6;color:#3d434d;\">Buffer lets you queue a few posts across connected social channels, then review their performance in Insights. It’s social media management software for scheduling posts and inspecting the results in one place.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">At the start of the week, add posts to each channel’s queue. After they publish, check recent engagement, impressions, and post performance before planning your next batch.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">The Free forever plan supports <strong style=\"font-weight:700;color:#14161a;\">up to three channels</strong> and <strong style=\"font-weight:700;color:#14161a;\">10 scheduled posts per channel at one time</strong>. Insights includes 30 days of history, so you can compare those limits with the routine you have in mind.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Check Buffer’s official plans to decide whether the Free entry fits your week.</p></td></tr>\n<tr><td style=\"padding:6px 36px 22px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td style=\"border-top:1px solid #e6e9ef;font-size:0;line-height:0;\">&nbsp;</td></tr></table></td></tr>\n<tr><td align=\"center\" style=\"padding:4px 36px 8px;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"center\" style=\"background-color:#1a56db;border-radius:8px;\"><a href=\"https://buffer.com/pricing\" style=\"display:inline-block;padding:16px 40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;\">Check Buffer’s official plans</a></td></tr></table></td></tr>\n<tr><td style=\"padding:22px 36px 20px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6;color:#767d89;\">- the Buffer team</p></td></tr>\n<tr><td align=\"center\" style=\"padding:22px 36px 28px;background-color:#fafbfc;border-top:1px solid #e6e9ef;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:12px;line-height:1.7;color:#767d89;\">Buffer</td></tr>\n</table>\n</td></tr>\n</table>\n</body>\n</html>\n",
+      "position": 1,
+      "asset_metadata": {
+        "position": 1,
+        "role": "Help the reader assess Buffer’s Free plan",
+        "subject": "Queue posts, then review performance",
+        "preview_text": "See whether Buffer Free has enough capacity for your weekly routine.",
+        "eyebrow": "Buffer Free",
+        "headline": "Queue this week’s posts, then review their performance",
+        "greeting": "Hi there,",
+        "body": "Buffer lets you queue a few posts across connected social channels, then review their performance in Insights. It’s social media management software for scheduling posts and inspecting the results in one place.\n\nAt the start of the week, add posts to each channel’s queue. After they publish, check recent engagement, impressions, and post performance before planning your next batch.\n\nThe Free forever plan supports **up to three channels** and **10 scheduled posts per channel at one time**. Insights includes 30 days of history, so you can compare those limits with the routine you have in mind.\n\nCheck Buffer’s official plans to decide whether the Free entry fits your week.",
+        "call_to_action": "Check Buffer’s official plans",
+        "sign_off": "- the Buffer team",
+        "postscript": "",
+        "pull": 6,
+        "revisions": 0,
+        "single_idea": "At the start of the week, queue a few posts across connected channels; after they publish, use Insights to inspect recent engagement, impressions, and post performance before planning the next batch. Free supports this routine within explicit limits: up to three channels, ten scheduled posts per channel at one time, and thirty days of Insights history.",
+        "evidence_ids": [
+          "E24",
+          "E117",
+          "E135"
+        ],
+        "tier": "branded"
+      },
+      "created_at": "2026-09-30T15:52:42.039534Z"
+    }
+  ],
+  "result": {
+    "run_status": "degraded",
+    "report": {
+      "request": "Write exactly one concise marketing email in English introducing Buffer to an owner or marketer at a small local business who plans social posts. Show a specific weekly workflow: queue a few posts across channels, then inspect basic post performance. Invite the reader to check the official plans and free entry. Do not presume their current tool, promise follower growth, or hide the free plan scheduling limits.",
+      "delivered": 1,
+      "promised": 1,
+      "contract_violations": [],
+      "emails": [
+        {
+          "position": 1,
+          "subject": "Queue posts, then review performance",
+          "single_idea": "At the start of the week, queue a few posts across connected channels; after they publish, use Insights to inspect recent engagement, impressions, and post performance before planning the next batch. Free supports this routine within explicit limits: up to three channels, ten scheduled posts per channel at one time, and thirty days of Insights history.",
+          "pull": 6.0,
+          "revisions": 0,
+          "clean": false,
+          "landed": false,
+          "rewrites_stopped_helping": false,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E24",
+            "E117",
+            "E135"
+          ],
+          "evidence_spent": [
+            "E117",
+            "E135"
+          ],
+          "attributions": 1,
+          "unresolved": [
+            "\"30 days\" - no evidence entry or source document contains this figure - use a number from the evidence or drop the claim",
+            "Unresolved strategy/material gap: The supplied material does not identify which social channels or account types support the promised scheduling and Insights workflow, so the reader cannot determine whether the Free plan applies to the channels they actually use; provide a verified compatibility answer or a destination that answers it."
+          ],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "Buffer offers social media software that would let me schedule a week’s posts across up to three channels and review recent performance in one place.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile explicitly establishes that I am an independent local business planning social posts, so the weekly queuing premise is relevant. The email additionally presupposes that I want to schedule across connected channels and review engagement afterward; that workflow is plausible but not established, and my channels, posting volume, current process, and need for analytics are unknown.",
+              "assumed_experiences": [
+                "Profile-supported: I plan social posts for an independent local business.",
+                "Email-only: I have or want multiple social channels connected to a scheduling service.",
+                "Email-only: I organize posts in weekly batches.",
+                "Email-only: I review engagement, impressions, and post performance before planning the next batch.",
+                "Email-only: three channels and 10 queued posts per channel may fit my routine."
+              ],
+              "problem_now": "Planning social posts is documented as relevant, but no immediate scheduling or reporting problem, deadline, or dissatisfaction with my current process is established. On this rushed morning, checking plan details is not urgent.",
+              "stopped_at": "",
+              "biggest_doubt": "I cannot tell whether the Free plan includes the described Insights features for the social channels I use, so clicking through to research the plan feels like work I can postpone.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me which social channels are supported and explicitly confirmed that engagement, impressions, and 30-day Insights are included on the Free plan.",
+              "fixes": [
+                "Rewrite “Buffer lets you queue a few posts across connected social channels, then review their performance in Insights.” to name the supported channels and state whether Insights is included in Free.",
+                "Rewrite “Insights includes 30 days of history” to “The Free plan includes 30 days of Insights history,” if that is accurate.",
+                "Replace “Check Buffer’s official plans to decide whether the Free entry fits your week.” with a smaller, concrete next step that says what I will see after clicking."
+              ],
+              "opens_in_100": 24,
+              "clicks_in_100": 4,
+              "persona": "Selected audience (explicit constraints): Independent local business planning social posts.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): \n\n",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "Buffer offers social media software that would let me schedule a week’s posts across up to three channels and review their results in one place.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile explicitly says I am an independent local business planning social posts, so scheduling and reviewing those posts is relevant. The email appropriately asks me to compare its limits with my own routine rather than claiming I already use a weekly queue. My posting volume, number of channels, current process, and need for analytics remain unknown.",
+              "assumed_experiences": [
+                "Profile-supported: I plan social posts for an independent local business.",
+                "Email-only: I have or want up to three social channels connected to scheduling software.",
+                "Email-only: I might organize posts into a weekly batch and queue.",
+                "Email-only: engagement, impressions, and post-level performance would influence my next batch."
+              ],
+              "problem_now": "Planning social posts is established, but inefficient scheduling or inadequate performance reporting is not. The offer addresses a plausible recurring task, not a documented urgent problem this Tuesday morning.",
+              "stopped_at": "At the start of the week, add posts to each channel’s queue.",
+              "biggest_doubt": "I cannot tell whether the time required to create an account, connect channels, and queue posts would save enough effort for my actual posting volume.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me how long it typically takes to connect one channel and schedule the first post.",
+              "fixes": [
+                "Cut \"At the start of the week, add posts to each channel’s queue. After they publish, check recent engagement, impressions, and post performance before planning your next batch.\" because it repeats the headline and opening paragraph.",
+                "Rewrite \"Check Buffer’s official plans to decide whether the Free entry fits your week.\" as \"See the Free plan limits and what setup requires before connecting a channel.\"",
+                "Clarify \"Insights includes 30 days of history\" to say explicitly whether that feature is included in the Free plan."
+              ],
+              "opens_in_100": 24,
+              "clicks_in_100": 3,
+              "persona": "Selected audience (explicit constraints): Independent local business planning social posts.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): \n\n\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 5
+            },
+            {
+              "what_it_sells": "Buffer offers software that would let me schedule a week’s social posts across up to three channels and then review recent performance in one place.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile explicitly establishes that I am an independent local business planning social posts, so weekly queuing and performance review are relevant. The email additionally assumes I want to connect multiple channels and inspect metrics; whether I use three channels, need 10 queued posts per channel, or want analytics is unknown.",
+              "assumed_experiences": [
+                "Profile-supported: I plan social posts for an independent local business.",
+                "Email-only: I manage multiple social channels that can be connected to Buffer.",
+                "Email-only: I batch a week’s posts at the start of the week.",
+                "Email-only: I review engagement, impressions, and post performance before planning the next batch."
+              ],
+              "problem_now": "Planning social posts is an established activity, so reducing weekly scheduling effort could matter. The need for three channels, this queue capacity, and 30 days of performance history is not established as urgent today.",
+              "stopped_at": "",
+              "biggest_doubt": "I cannot tell whether the Free plan supports the particular social channels I use, so checking a general plans page feels like work rather than a clear next step.",
+              "to_click_it_would_have_to": "I would have clicked if this email had named the social channels supported by the Free plan.",
+              "fixes": [
+                "Rewrite “Buffer lets you queue a few posts across connected social channels, then review their performance in Insights.” to name the supported channels instead of saying only “connected social channels.”",
+                "Rewrite “Check Buffer’s official plans to decide whether the Free entry fits your week.” to state what the plans page will clarify, such as supported channels and which Insights features are included."
+              ],
+              "opens_in_100": 27,
+              "clicks_in_100": 4,
+              "persona": "Selected audience (explicit constraints): Independent local business planning social posts.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): \n\n\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 6
+            }
+          ],
+          "sameness": []
+        }
+      ],
+      "limiting_gaps": [],
+      "what_would_help_most": "Resolve this simulated next-step obstacle: I would have clicked if this email had told me which social channels are supported and explicitly confirmed that engagement, impressions, and 30-day Insights are included on the Free plan. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "Treat this as a single acquisition email introducing Buffer to a problem-aware owner or marketer at a small local business, not as onboarding for an existing user.",
+      "reader": "Selected audience: Independent local business planning social posts.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): not established",
+      "reader_segment": "Independent local business planning social posts",
+      "promise": "Buffer lets a small local business queue a few posts across connected channels, then inspect recent post performance in Insights, with a clearly bounded Free starting point.",
+      "orientation": "Buffer is social media management software for scheduling posts across connected channels and reviewing their performance.",
+      "arc": "Introduce Buffer through one concrete weekly rhythm: queue a few posts, review basic results, then check whether the official Free plan limits fit that routine.",
+      "sequence_rationale": "One concise email is enough because the requested workflow, product introduction, Free-plan qualification, and next decision form one argument. The brief avoids an unsupported setup-effort claim and makes the smaller, documented decision: whether Free can accommodate the reader's weekly posting rhythm.",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Help the reader decide whether Buffer's Free plan is a suitable way to try a weekly queue-and-review workflow.",
+          "single_idea": "At the start of the week, queue a few posts across connected channels; after they publish, use Insights to inspect recent engagement, impressions, and post performance before planning the next batch. Free supports this routine within explicit limits: up to three channels, ten scheduled posts per channel at one time, and thirty days of Insights history.",
+          "felt_need": "Plan a manageable week of social posts, then see which posts performed best.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "Buffer combines a per-channel post queue with Insights beside the content it measures, so the reader can move from scheduling this week's posts to reviewing their recent performance in the same product.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: Buffer is an abstract social media tool whose Free offer may be too vague to assess. After: it is a specific weekly queue-and-review workflow whose Free limits can be checked against the reader's needs.",
+          "evidence_ids": [
+            "E24",
+            "E117",
+            "E135"
+          ],
+          "must_not_say": [
+            "Do not presume the reader currently uses another scheduling tool, spreadsheets, or manual posting.",
+            "Do not promise follower growth, audience growth, more engagement, time savings, or any guaranteed business result.",
+            "Do not claim or imply how quickly or easily a channel can be connected or a first post scheduled; setup time is not established.",
+            "Do not hide or soften the Free plan limits: up to 3 channels, 10 scheduled posts per channel at one time, and 30 days of Insights history.",
+            "Do not imply Free includes paid performance overviews, custom analytics, reports, unlimited history, or unlimited scheduled posts.",
+            "Do not imply every channel or account type supports identical publishing or analytics capabilities.",
+            "Do not turn the email into a broad feature list or introduce collaboration, AI, comments, integrations, or paid-plan pricing."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "Will the Free plan actually cover a small weekly posting routine? Answer with the exact three-channel, ten-scheduled-posts-per-channel, and thirty-day Insights limits, leaving the reader to compare them with their needs.",
+          "tone": "Warm, practical, and matter-of-fact.",
+          "call_to_action": "Check Buffer's official plans at https://buffer.com/pricing and consider the Free forever entry if its stated limits fit your week.",
+          "next_step_decision": "Whether Buffer Free has enough channel, queue, and Insights capacity for the reader's intended weekly routine.",
+          "next_step_value": "The official plans let the reader verify that Free supports up to three channels, ten scheduled posts per channel at one time, and thirty days of Insights history before choosing it.",
+          "next_step_evidence_ids": [
+            "E24",
+            "E117",
+            "E135"
+          ],
+          "next_step_limit": "Reviewing the plans does not establish setup time or confirm publishing and analytics behavior for the reader's specific social account types.",
+          "subject_strategy": "Make the recognizable weekly rhythm—queue first, review later—the reason to open, without hype, a growth promise, or a vague productivity claim.",
+          "must_not_reuse": []
+        }
+      ],
+      "voice_notes": "Use short, direct sentences centered on “you” and concrete actions. Keep the product name and the queue-to-Insights workflow unmistakable; describe the limits plainly rather than burying them in a footnote.",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "one concise marketing email"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "387e2c54-93b9-46bc-ae13-1c9a5525d58d",
+      "readiness": "DISCOVERY_ONLY",
+      "recommendation": {
+        "state": "DISCOVERY_ONLY",
+        "readiness": "DISCOVERY_ONLY",
+        "reasons": [
+          "No current V2 recommendation establishes product-to-audience fit."
+        ],
+        "eligible_subsegment": "",
+        "qualified_companies": [],
+        "adjacent_companies": [],
+        "excluded_companies": [],
+        "unverified_companies": [],
+        "allowed_claims": [],
+        "allowed_evidence_ids": [],
+        "forbidden_claims": [],
+        "forbidden_capability_ids": [],
+        "forbidden_evidence_ids": [],
+        "unresolved_objections": [],
+        "recommended_next_action": "Build or rebuild the Relevance Dossier V2, or generate explicitly as an audience-level hypothesis.",
+        "override_risk": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+        "claim_contract": null
+      },
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No current V2 recommendation establishes product-to-audience fit."
+      ],
+      "override_required": true,
+      "can_generate": true,
+      "user_message": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+      "override_explicit": true
+    },
+    "generated_despite_recommendation": true,
+    "intelligence": {
+      "selected_audience": "Independent local business planning social posts",
+      "audience_resolution_status": "audience_research_missing",
+      "audience_research_id": null,
+      "audience_research_version": null,
+      "dossier_status": "missing",
+      "dossier_id": null,
+      "dossier_version": null,
+      "dossier_schema_version": 1,
+      "stale_reasons": [],
+      "legacy_fallback_used": true,
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [],
+      "validation_warnings": []
+    }
+  }
+}

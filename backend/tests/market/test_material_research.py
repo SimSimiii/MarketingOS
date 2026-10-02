@@ -135,3 +135,22 @@ def test_one_matching_word_does_not_hide_a_different_material_gap():
         gap="Explain the SMTP pricing and monthly overage policy.",
         artifacts=artifacts,
     ) is None
+
+
+def test_prerequisites_do_not_replace_a_requested_sample():
+    artifacts = artifacts_fixture()
+    artifacts.evidence.entries.append(
+        Evidence(
+            id="R1",
+            kind=EvidenceKind.INTEGRATION,
+            claim="A verified domain and API key are needed before webhook setup.",
+            verbatim="Create an API key and verify a domain before webhook setup.",
+            source="https://docs.example.com/webhooks/setup",
+            strength=EvidenceStrength.STRONG,
+        )
+    )
+
+    assert existing_recovery(
+        gap="Show a sample webhook event before domain and API key setup.",
+        artifacts=artifacts,
+    ) is None

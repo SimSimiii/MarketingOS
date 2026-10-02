@@ -152,7 +152,9 @@ async def test_candidates_that_all_broke_a_check_are_still_read(
     result = await pipeline.run(one_email(request_fixture))
 
     assert provider.calls_by_role["blind_reader"] == 3
-    assert result.outcomes[0].best.gates.blocking
+    assert result.outcomes == []
+    assert result.status == "failed"
+    assert "act now" in (result.abort_reason or "")
 
 
 @pytest.mark.asyncio

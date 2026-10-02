@@ -398,7 +398,7 @@ def repeated_call_to_action_gate(email: Email) -> GateReport:
         (
             block.strip()
             for block in re.split(r"\n\s*\n", strip_markup(email.body))
-            if _normalized(block) == asked
+            if _normalized(re.sub(r"\s*(?:→|->)\s*$", "", block)) == asked
         ),
         "",
     )
@@ -413,6 +413,18 @@ def repeated_call_to_action_gate(email: Email) -> GateReport:
                 "single linked action carry the ask"
             )
         ],
+        GateSeverity.BLOCKING,
+    )
+
+
+def repeated_sign_off_gate(email: Email) -> GateReport:
+    """A copied closing in BODY is duplicated by the separately rendered field."""
+    blocks = [block.strip() for block in re.split(r"\n\s*\n", strip_markup(email.body))]
+    if not blocks or _normalized(blocks[-1]) != _normalized(strip_markup(email.sign_off)):
+        return GateReport()
+    return _report(
+        "duplicate-sign-off",
+        ["the body ends with the sign-off, which is rendered separately; remove it from BODY"],
         GateSeverity.BLOCKING,
     )
 
@@ -803,6 +815,7 @@ def run_all(
         spam_gate(email),
         overlap_gate(email, previous or []),
         repeated_call_to_action_gate(email),
+        repeated_sign_off_gate(email),
         call_to_action_gate(email, offer),
         clarity_gate(email, business or BusinessProfile()),
         substantiation_gate(substantiation),

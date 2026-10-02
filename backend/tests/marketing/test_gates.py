@@ -15,6 +15,7 @@ from app.marketing.gates import (
     placeholder_gate,
     planned_call_to_action_gate,
     repeated_call_to_action_gate,
+    repeated_sign_off_gate,
     spam_gate,
     stock_phrase_gate,
 )
@@ -274,3 +275,13 @@ def test_a_cta_phrase_inside_a_real_sentence_is_not_a_duplicate_block():
     )
 
     assert report.passed
+
+
+def test_trailing_cta_arrow_and_sign_off_are_blocked_before_assembly():
+    draft = email(
+        "Plan this week's posts.\n\nCompare plans →\n\n- The team",
+        call_to_action="Compare plans",
+    )
+
+    assert repeated_call_to_action_gate(draft).blocking[0].gate == "duplicate-call-to-action"
+    assert repeated_sign_off_gate(draft).blocking[0].gate == "duplicate-sign-off"

@@ -140,27 +140,24 @@ async def test_an_interchangeable_opening_is_sent_back_to_the_writer(
     pipeline, _ = build(provider, refine_only())
     result = await pipeline.run(request_fixture)
 
-    blocked = result.outcomes[0].versions[0].gates.blocking
-    assert [issue.gate for issue in blocked] == ["sameness"]
-    assert "own week" in blocked[0].detail, "the writer is told what to write instead"
+    assert result.outcomes == []
+    assert "own week" in (result.abort_reason or "")
 
 
 @pytest.mark.asyncio
 async def test_the_receipt_names_copy_a_competitor_could_have_sent(
     provider: RoleScriptedProvider, request_fixture: CampaignRequest
 ) -> None:
-    """When the writer will not fix it and the run ships anyway, the finding
-    reaches the receipt - it is the cheapest thing a user can fix by hand."""
+    """When the writer will not fix it, the finding reaches the failed run."""
     provider.set_default("strategist", campaign_brief(1))
     provider.set_default("email_writer", _CLICHE_DRAFT)
 
     pipeline, _ = build(provider, refine_only())
     result = await pipeline.run(request_fixture)
 
-    line = result.report.emails[0]
-    assert not line.clean, "an email shipped over a blocking check is not clean"
-    assert line.sameness, "an interchangeable subject line must reach the receipt"
-    assert any("competitor" in issue for issue in line.sameness)
+    assert result.status == "failed"
+    assert result.report.delivered == 0
+    assert "competitor" in (result.abort_reason or "")
 
 
 def test_a_verdict_is_built_only_from_readers_who_reported() -> None:

@@ -715,6 +715,11 @@ def build_campaign_intelligence(
     trace.legacy_fallback_used = trace.dossier_status is not DossierPosture.CURRENT
     dossier = dossier_status.dossier
     trace.dossier_schema_version = dossier.schema_version
+    if "knowledge_changed" in trace.stale_reasons:
+        # Recompilation can renumber every ledger id. A dossier's old claim
+        # contract would then license or reject entirely different facts.
+        trace.warn("Ignored stale dossier claims and rankings after knowledge changed.")
+        return context
     _add_dossier(context, dossier, ledger)
     context.admit_automatically_recovered(ledger)
     return context

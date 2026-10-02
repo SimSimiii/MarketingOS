@@ -70,6 +70,28 @@ def _render_recovery(
         for entry in artifacts.evidence.entries
         if re.fullmatch(r"R\d+", entry.id)
     ]
+    if recovery is not None and not recovery.recovered:
+        lines = [
+            "The previous draft exposed this exact decision gap:",
+            recovery.gap,
+            "",
+            "Official-source research could not verify the missing fact:",
+            recovery.note or "No verified official fact closed the gap.",
+            "",
+            (
+                "Rebuild the campaign around a smaller decision supported by existing "
+                "evidence. Do not repeat the unavailable payoff, imply that the missing "
+                "fact is known, or make the reader's next step depend on it. Choose a "
+                "documented action and state its exact limitation."
+            ),
+        ]
+        if persisted:
+            lines.append("Earlier verified official facts remain available when relevant:")
+            lines.extend(
+                f"- [{entry.id}] {entry.claim} (official source: {entry.source})"
+                for entry in persisted
+            )
+        return "\n".join(lines)
     if recovery is None or not recovery.recovered:
         if not persisted:
             return ""
@@ -133,24 +155,26 @@ def _recovered_next_step(
 ) -> tuple[str, str]:
     """Tie an automatically recovered payoff to its exact official page."""
     ordered = list(dict.fromkeys([*next_step_evidence_ids, *evidence_ids]))
-    entry = next(
-        (
-            found
-            for evidence_id in ordered
-            if evidence_id.startswith("R")
-            and (found := artifacts.evidence.get(evidence_id)) is not None
-            and found.source.startswith(("https://", "http://"))
-        ),
-        None,
-    )
-    if entry is None:
+    entries = [
+        found
+        for evidence_id in ordered
+        if evidence_id.startswith("R")
+        and (found := artifacts.evidence.get(evidence_id)) is not None
+        and found.source.startswith(("https://", "http://"))
+    ]
+    if not entries:
         return call_to_action, next_step_value
     urls = {
         url.rstrip(".,;:)")
         for url in re.findall(r'https?://[^\s<>"\]]+', call_to_action)
     }
-    if urls == {entry.source}:
+    supported_sources = {
+        entry.source for entry in entries
+        if not next_step_evidence_ids or entry.id in next_step_evidence_ids
+    }
+    if len(urls) == 1 and urls.issubset(supported_sources):
         return call_to_action, next_step_value
+    entry = entries[0]
     return (
         f"Review the official documentation: {entry.source}",
         f"The official page documents this verified fact: {entry.claim}",
@@ -159,8 +183,9 @@ def _recovered_next_step(
 
 _SOURCE_TOKEN_NOISE = frozenset(
     {
-        "api", "auth", "changelog", "docs", "email", "emails", "feature",
+        "api", "auth", "changelog", "console", "dashboard", "docs", "email", "emails", "feature",
         "guide", "guides", "https", "integration", "knowledge", "pricing",
+        "introduction", "logs", "overview",
         "reference", "send", "sending", "settings", "smtp", "test", "with",
     }
 )
@@ -369,7 +394,13 @@ class Strategist:
                 tier=ModelTier.DEEP,
                 template="strategist",
                 variables=variables,
-                task="Rebuild the brief before drafting. " + " ".join(corrections),
+                task=(
+                    "Repair this prior brief before drafting. Keep its supported argument "
+                    "and change only what the listed defects require. Prior normalized brief: "
+                    + brief.model_dump_json()
+                    + " Defects: "
+                    + " ".join(corrections)
+                ),
                 schema=CampaignBrief,
             )
             brief = self._normalize(
@@ -433,7 +464,10 @@ class Strategist:
         if segment is not None:
             brief.reader = (
                 f"Selected audience: {segment.name}.\n"
-                f"Situation context ({segment.situation_grounding}; check applicability): "
+                "Research context describes some members of this market, not this "
+                "recipient's installed tools or experiences. Follow the campaign request "
+                "when it scopes the job.\n"
+                f"Observed situation ({segment.situation_grounding}; check applicability): "
                 f"{segment.situation or 'not established'}"
             )
         else:
@@ -495,10 +529,16 @@ class Strategist:
         spent: list[str] = []
         spent_evidence: set[str] = set()
         for position, email in enumerate(emails, start=1):
-            unknown = [id_ for id_ in email.evidence_ids if id_ not in known_evidence]
+            # The payoff proof is part of this argument. Models sometimes name
+            # it in the dedicated field but forget to repeat it in the broad
+            # evidence list; preserve that valid ID before enforcing the cap.
+            requested_ids = list(dict.fromkeys([
+                *email.next_step_evidence_ids, *email.evidence_ids,
+            ]))
+            unknown = [id_ for id_ in requested_ids if id_ not in known_evidence]
             if unknown:
                 logger.info("strategist: dropped unknown evidence ids %s", unknown)
-            assigned = [id_ for id_ in email.evidence_ids if id_ in known_evidence]
+            assigned = [id_ for id_ in requested_ids if id_ in known_evidence]
             forbidden_evidence: list[str] = []
             if intelligence is not None and intelligence.v2_claim_boundary:
                 allowed = set(intelligence.allowed_evidence_ids)

@@ -1,0 +1,263 @@
+{
+  "id": "5ddbc730-ab8f-4f82-bc52-f16ca48f4f8a",
+  "campaign_id": "387e2c54-93b9-46bc-ae13-1c9a5525d58d",
+  "status": "failed",
+  "error_message": "The model stopped answering and did not come back after several attempts. Everything finished before that point is below.",
+  "started_at": "2026-09-30T16:07:06.687328Z",
+  "completed_at": "2026-09-30T16:26:02.476950Z",
+  "created_at": "2026-09-30T16:07:06.687328Z",
+  "total_input_tokens": 358958,
+  "total_output_tokens": 76924,
+  "total_cache_read_tokens": 192128,
+  "estimated_cost_usd": 8.5599,
+  "recommendation_snapshot": {
+    "campaign_id": "387e2c54-93b9-46bc-ae13-1c9a5525d58d",
+    "readiness": "DISCOVERY_ONLY",
+    "recommendation": {
+      "state": "DISCOVERY_ONLY",
+      "readiness": "DISCOVERY_ONLY",
+      "reasons": [
+        "No current V2 recommendation establishes product-to-audience fit."
+      ],
+      "eligible_subsegment": "",
+      "qualified_companies": [],
+      "adjacent_companies": [],
+      "excluded_companies": [],
+      "unverified_companies": [],
+      "allowed_claims": [],
+      "allowed_evidence_ids": [],
+      "forbidden_claims": [],
+      "forbidden_capability_ids": [],
+      "forbidden_evidence_ids": [],
+      "unresolved_objections": [],
+      "recommended_next_action": "Build or rebuild the Relevance Dossier V2, or generate explicitly as an audience-level hypothesis.",
+      "override_risk": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+      "claim_contract": null
+    },
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No current V2 recommendation establishes product-to-audience fit."
+    ],
+    "override_required": true,
+    "can_generate": true,
+    "user_message": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+    "override_explicit": true
+  },
+  "generated_despite_recommendation": true,
+  "agent_executions": [
+    {
+      "id": "eaa4719e-4939-4b56-93ef-b8cf6801f381",
+      "agent_id": "knowledge_compiler",
+      "agent_name": "Knowledge Compiler",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Reading 6 document(s)",
+        "documents": 6
+      },
+      "output_data": {
+        "version": 2,
+        "evidence": 602
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T16:07:06.749501Z",
+      "completed_at": "2026-09-30T16:24:40.662252Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 113238,
+      "output_tokens": 74996,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 176896,
+      "cost_usd": 7.588614,
+      "duration_ms": 3298755.518199876,
+      "attempt": 1
+    },
+    {
+      "id": "78c2d8d9-ff59-4d79-999f-bbcdcd316e1e",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 At the start of the week, queue a few posts across connected channels; after they publish, check each post's engagement, impressions, and other available performance data in Buffer before planning the next week."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T16:24:40.696773Z",
+      "completed_at": "2026-09-30T16:25:54.060269Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 53592,
+      "output_tokens": 1928,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15232,
+      "cost_usd": 0.971328,
+      "duration_ms": 73264.94490006007,
+      "attempt": 1
+    },
+    {
+      "id": "961c894a-9ff8-45a6-9654-2e511617276c",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 3,
+      "status": "failed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "At the start of the week, queue a few posts across connected channels; after they publish, check each post's engagement, impressions, and other available performance data in Buffer before planning the next week.",
+          "At the start of the week, queue a few posts across connected channels; after they publish, check each post's engagement, impressions, and other available performance data in Buffer before planning the next week."
+        ]
+      },
+      "output_data": null,
+      "error_message": "RoutingProvider call failed after 3 attempt(s): codex exec reported a failed turn: You’ve hit your usage limit. Upgrade to Pro (https://chatgpt.com/explore/pro), visit https://chatgpt.com/codex/settings/usage to purchase more credits or try again at 10:02 PM.",
+      "started_at": "2026-09-30T16:25:54.259261Z",
+      "completed_at": "2026-09-30T16:26:02.458363Z",
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.0,
+      "duration_ms": 0.0,
+      "attempt": 1
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "provider_unavailable",
+    "report": {
+      "request": "Write exactly one concise marketing email in English introducing Buffer to an owner or marketer at a small local business who plans social posts. Show a specific weekly workflow: queue a few posts across channels, then inspect basic post performance. Invite the reader to check the official plans and free entry. Do not presume their current tool, promise follower growth, or hide the free plan scheduling limits.",
+      "delivered": 0,
+      "promised": 1,
+      "contract_violations": [
+        "the user asked for 1 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [],
+      "what_would_help_most": "",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 2,
+      "notes": [
+        "The model stopped answering and did not come back after several attempts. Everything finished before that point is below."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "A single introductory sales email for a problem-aware small local business owner or marketer, centered on a practical weekly workflow rather than onboarding an existing user.",
+      "reader": "Selected audience: Independent local business planning social posts.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): not established",
+      "reader_segment": "Independent local business planning social posts",
+      "promise": "Buffer can support a simple weekly rhythm: schedule a few posts across connected social channels, then use basic post-performance data to inform the next batch.",
+      "orientation": "Buffer is a social media workspace where a small local business can schedule posts across connected channels and check basic results in the same dashboard.",
+      "arc": "In one compact email, move from a recognizable weekly task to the queue-and-review workflow, then make the Free plan's boundaries visible before inviting a plan comparison.",
+      "sequence_rationale": "Because the deliverable is exactly one concise email, it must introduce the product, demonstrate the workflow, disclose the relevant Free-plan limits, and provide a low-friction official next step without adding unrelated features or unsupported audience assumptions.",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Get the reader to compare Buffer's official plans after understanding one concrete weekly scheduling-and-review workflow and the Free plan's boundaries.",
+          "single_idea": "At the start of the week, queue a few posts across connected channels; after they publish, check each post's engagement, impressions, and other available performance data in Buffer before planning the next week.",
+          "felt_need": "If keeping several social channels supplied each week is part of the job, the reader needs a repeatable way to plan a small batch and learn from what was published.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "Buffer combines scheduled posts per connected channel with Insights beside the content being measured. The Free plan can support this workflow with up to three connected channels and no more than 10 scheduled posts waiting per channel at one time; each published post frees a slot.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: Buffer may sound like a broad social media tool with unclear relevance or limits. After: it is a concrete weekly queue-and-review workflow the reader can assess against transparent Free-plan boundaries.",
+          "evidence_ids": [
+            "E349",
+            "E525",
+            "E455"
+          ],
+          "must_not_say": [
+            "Do not presume the reader currently uses native posting, another tool, a spreadsheet, or any particular workflow.",
+            "Do not promise follower, reach, engagement, revenue, or time-saving growth.",
+            "Do not describe the Free plan as unlimited: it allows up to three connected channels and 10 scheduled posts per channel at one time, with slots refilling after publication.",
+            "Do not imply every metric is available for every social network.",
+            "Do not add AI, comment management, collaboration, customer proof, paid-plan pricing, or a long channel list; they distract from the weekly workflow.",
+            "Do not frame this as onboarding for an existing Buffer user."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "The reader may reasonably wonder whether the free entry is useful for a real weekly routine or conceals restrictive scheduling limits.",
+          "tone": "Plainspoken, practical, and lightly encouraging; concise rather than promotional.",
+          "call_to_action": "Compare plans — https://buffer.com/pricing#compare-plans",
+          "next_step_decision": "Decide whether Buffer's Free plan can accommodate the business's number of channels and typical weekly queue, or whether a paid plan is worth considering.",
+          "next_step_value": "The official comparison shows Buffer's plan options and lets the reader assess the Free entry against its limit of up to three connected channels and 10 scheduled posts per channel at one time.",
+          "next_step_evidence_ids": [
+            "E349",
+            "E525"
+          ],
+          "next_step_limit": "The pricing comparison does not establish which performance metrics will be available for the reader's specific social account types.",
+          "subject_strategy": "Signal the concrete weekly outcome—queue this week's posts, then review what worked—without hype, a growth promise, or a vague product introduction.",
+          "must_not_reuse": []
+        }
+      ],
+      "voice_notes": "Use Buffer's short, conversational cadence and second-person language. Prefer concrete verbs such as queue, publish, and check. State the Free-plan limits in the body, not in fine print.",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "one concise marketing email"
+      }
+    },
+    "knowledge_version": 2,
+    "recommendation_at_generation": {
+      "campaign_id": "387e2c54-93b9-46bc-ae13-1c9a5525d58d",
+      "readiness": "DISCOVERY_ONLY",
+      "recommendation": {
+        "state": "DISCOVERY_ONLY",
+        "readiness": "DISCOVERY_ONLY",
+        "reasons": [
+          "No current V2 recommendation establishes product-to-audience fit."
+        ],
+        "eligible_subsegment": "",
+        "qualified_companies": [],
+        "adjacent_companies": [],
+        "excluded_companies": [],
+        "unverified_companies": [],
+        "allowed_claims": [],
+        "allowed_evidence_ids": [],
+        "forbidden_claims": [],
+        "forbidden_capability_ids": [],
+        "forbidden_evidence_ids": [],
+        "unresolved_objections": [],
+        "recommended_next_action": "Build or rebuild the Relevance Dossier V2, or generate explicitly as an audience-level hypothesis.",
+        "override_risk": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+        "claim_contract": null
+      },
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No current V2 recommendation establishes product-to-audience fit."
+      ],
+      "override_required": true,
+      "can_generate": true,
+      "user_message": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+      "override_explicit": true
+    },
+    "generated_despite_recommendation": true,
+    "intelligence": {
+      "selected_audience": "Independent local business planning social posts",
+      "audience_resolution_status": "audience_research_missing",
+      "audience_research_id": null,
+      "audience_research_version": null,
+      "dossier_status": "missing",
+      "dossier_id": null,
+      "dossier_version": null,
+      "dossier_schema_version": 1,
+      "stale_reasons": [],
+      "legacy_fallback_used": true,
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [],
+      "validation_warnings": []
+    }
+  }
+}

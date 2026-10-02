@@ -43,8 +43,8 @@ _PIVOTS = (
     "with", "before", "after", "via", "using", "into", "and", "or",
 )
 
-#: At most two describing words may sit between the number and what it counts:
-#: "3 onboarding emails", "5 short sales emails", "a 3 part email series".
+#: At most three describing words may sit between the number and what it counts:
+#: "3 onboarding emails", "one concise English marketing email", "a 3 part email series".
 #: Bounded and pivot-free rather than unlimited, because the whole job of this
 #: pattern is to tell "three emails" from "three reasons to send an email".
 #:
@@ -52,7 +52,7 @@ _PIVOTS = (
 #: wrong number: "a five-email campaign" would match at "a", read the article
 #: as one and swallow "five-" as a describing word.
 _NOT_FILLER = "|".join((*_PIVOTS, *_NUMBER_WORDS))
-_FILLER = rf"(?:(?!(?:{_NOT_FILLER})\b)[a-z]+(?:-[a-z]+)?[\s-]+){{0,2}}"
+_FILLER = rf"(?:(?!(?:{_NOT_FILLER})\b)[a-z]+(?:-[a-z]+)?[\s-]+){{0,3}}"
 
 #: "5 emails", "five-email sequence", "3 onboarding emails", "a 3 part email
 #: series".

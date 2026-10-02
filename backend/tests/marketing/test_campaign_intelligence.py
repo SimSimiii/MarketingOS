@@ -31,6 +31,7 @@ from app.market.demand import AudienceSegment, DemandMap
 from app.market.radar import MarketSnapshot
 from app.market.relevance import (
     CampaignReadiness,
+    CampaignRecommendation,
     ClaimContract,
     DossierSilence,
     DossierState,
@@ -288,6 +289,67 @@ def test_strong_official_recovery_extends_the_stale_dossier_boundary():
     assert "The documented SMTP route uses port 587." in intelligence.allowed_claims
     assert intelligence.claim_contract is not None
     assert "R1" in intelligence.claim_contract.allowed_evidence_ids
+
+
+def test_knowledge_change_discards_old_claim_ids_before_strategy():
+    row = research_row()
+    status = dossier_status(
+        row, state=DossierState.STALE, stale_reasons=["knowledge_changed"],
+    )
+    status.dossier.schema_version = 2
+    status.dossier.recommendation = CampaignRecommendation(
+        state=RecommendationState.RECOMMENDED_NARROW,
+        readiness=CampaignReadiness.GO_NARROW,
+        allowed_claims=["An old claim now mapped to another ledger entry."],
+        allowed_evidence_ids=["E1"],
+    )
+
+    intelligence = build_campaign_intelligence(
+        selected_audience=row.audience_name,
+        match=resolve_audience_research(row.audience_name, [row]),
+        dossier_status=status,
+        ledger=ledger(),
+    )
+
+    assert intelligence.trace.dossier_status is DossierPosture.STALE
+    assert "knowledge_changed" in intelligence.render_for_strategy()
+    assert not intelligence.v2_claim_boundary
+    assert intelligence.allowed_evidence_ids == []
+    assert intelligence.allowed_claims == []
+    assert intelligence.ranked_evidence == []
+    assert intelligence.problem_fits == []
+
+
+@pytest.mark.asyncio
+async def test_strategy_can_use_new_ledger_id_after_knowledge_change():
+    row = research_row()
+    status = dossier_status(
+        row, state=DossierState.STALE, stale_reasons=["knowledge_changed"],
+    )
+    status.dossier.schema_version = 2
+    status.dossier.recommendation = CampaignRecommendation(
+        state=RecommendationState.RECOMMENDED_NARROW,
+        readiness=CampaignReadiness.GO_NARROW,
+        allowed_evidence_ids=["E1"],
+    )
+    intelligence = build_campaign_intelligence(
+        selected_audience=row.audience_name,
+        match=resolve_audience_research(row.audience_name, [row]),
+        dossier_status=status,
+        ledger=ledger(),
+    )
+    provider = RoleScriptedProvider({"strategist": strategist_answer(evidence=["E2"])})
+
+    brief = await Strategist(make_session(provider)).build(
+        request=request(),
+        artifacts=adapt_researched_audience(artifacts(), research(), intelligence),
+        corpus=SourceCorpus(),
+        contract=parse_contract(request().request),
+        intelligence=intelligence,
+    )
+
+    assert brief.emails[0].evidence_ids == ["E2"]
+    assert provider.calls_by_role == {"strategist": 1}
 
 
 def artifacts() -> KnowledgeArtifacts:

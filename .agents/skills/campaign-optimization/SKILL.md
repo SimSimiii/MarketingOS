@@ -33,6 +33,39 @@ configured provider's CLI subscription login are prerequisites. API base is
 process environment; never save the token. Use `Authorization: Bearer <token>`.
 All paths below are under `/api`. Check `GET /health` for `{"status":"ok"}`.
 
+## Model allocation for the optimization work
+
+Use the strongest available Codex model for the coordinating agent (currently
+`gpt-6-astra`) when diagnosing campaign defects, choosing a correction, reviewing
+the delivered copy against source evidence, scoring quality, and deciding whether
+to continue. Select that model for the chat before invoking the skill; the skill
+cannot change an existing chat's model. These decisions depend on the full case
+history and should remain with one accountable agent.
+
+Run deterministic commands directly: `pytest`, Ruff and `optimize_campaign.py`
+need no model. After a generation, call the runner's read-only `summary` action;
+use its compact output to locate the full saved assets, report and source evidence.
+The summary is a factual index, not a quality score or sellable-result verdict.
+
+Use a cheaper model (currently `gpt-6-luna` with low reasoning) only for bounded
+work that would otherwise consume substantial coordinator context, such as
+extracting exact failure names from a long log. Choose available equivalents if
+these model names change. Give the worker the exact command or file, working
+directory, case path and expected report format. Require a compact factual
+handoff: command, exit code, test counts or failure names, saved paths and any
+uncertainty. The coordinator reads relevant failures and campaign assets itself
+before drawing conclusions. Keep dependent diagnosis, correction and stop
+decisions with the same coordinator.
+
+Keep ownership of shared files explicit. Only one worker may run or resume a
+generation for a case at a time, and the coordinator must not edit that case's
+`state.json` or `journal.md` concurrently. A mechanical worker must not change
+code, interpret copy quality, choose another campaign, rerun a failed generation,
+or start billed evaluation without a new, bounded assignment from the
+coordinator. The coordinator decides the next step after each result. This model
+allocation changes Codex's optimization work; it does not change the models or
+subscription quota used inside a MarketingOS campaign.
+
 ## Operational interfaces
 
 | Operation | Request | Key response |
@@ -55,6 +88,7 @@ Use the case runner for durable launch and collection:
 backend/.venv/Scripts/python.exe scripts/optimize_campaign.py inspect --case docs/optimization/orqagent/case.json
 backend/.venv/Scripts/python.exe scripts/optimize_campaign.py run --case docs/optimization/orqagent/case.json
 backend/.venv/Scripts/python.exe scripts/optimize_campaign.py resume --case docs/optimization/orqagent/case.json
+backend/.venv/Scripts/python.exe scripts/optimize_campaign.py summary --case docs/optimization/orqagent/case.json
 backend/.venv/Scripts/python.exe scripts/optimize_campaign.py compare --case docs/optimization/orqagent/case.json --before <execution-id> --after <execution-id>
 ```
 
@@ -66,6 +100,11 @@ then saves `runs/<execution_id>/{campaign,forecast,result,logs,timeline}.json`.
 responses appear as `.error.json`. Defaults: 2700-second wait, 10-second polls,
 no total generation cap; flags configure polling, timeout and an optional user cap.
 Each invocation launches only one generation, allowing diagnosis before the next.
+`summary` reads the latest recorded run, or `--execution-id <id>`, entirely from
+saved files. It reports status, paths, calls, estimated cost, report counts,
+reader doubts and capture errors without another API or model call. Use it after
+`run` or `resume`, then open `result.json` and the relevant source evidence to
+judge the actual copy.
 A timeout requests cooperative
 cancellation. If the server died, restart it first; startup marks orphaned runs
 failed. Never start another run while an entry lacks `result_dir`.

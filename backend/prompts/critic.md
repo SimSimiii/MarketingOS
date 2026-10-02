@@ -82,6 +82,13 @@ demand a four-beat argument or a novel insight when a direct explanation already
 Flag unsupported attacks on alternatives and a product that shares the limitation it claims
 to solve. Also flag long problem descriptions that crowd out what the product actually does.
 
+For a documentation or example CTA, distinguish a practical reason to inspect it from mere
+permission to read without committing. Does a supplied concrete detail show what useful
+question the mechanism answers? Low setup friction alone does not carry the argument. If the
+same proposition and supplied evidence can make that utility explicit, diagnose `copy` and
+identify the missing connection; do not request invented urgency, reading times or setup
+estimates, or a new source solely because the draft omitted an available example.
+
 **Check the brief itself.** The brief is a plan, not evidence. Compare its central promise
 with the supplied evidence, including scope and conditions. If the draft faithfully repeats an
 unsupported promise, diagnose that overclaim and ask for a supported benefit or concrete test.

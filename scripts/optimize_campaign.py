@@ -52,9 +52,75 @@ def snapshot(base, token, directory, campaign_id, execution_id):
             save(directory / f"{name}.error.json", {"error": str(exc)})
 
 
+def run_summary(directory, entry):
+    """Return a factual handoff from saved files without making API or model calls."""
+    execution_id = entry["execution_id"]
+    run_dir = directory / "runs" / execution_id
+    result_path = run_dir / "result.json"
+    summary = {
+        "execution_id": execution_id,
+        "status": entry.get("status"),
+        "result_dir": str(run_dir) if run_dir.exists() else None,
+        "pending_capture": not bool(entry.get("result_dir")),
+    }
+    if not result_path.exists():
+        summary["result_available"] = False
+        error_path = run_dir / "result.error.json"
+        if error_path.exists():
+            summary["capture_error"] = json.loads(error_path.read_text(encoding="utf-8")).get("error")
+        return summary
+
+    result = json.loads(result_path.read_text(encoding="utf-8"))
+    report = (result.get("result") or {}).get("report") or {}
+    summary.update({
+        "result_available": True,
+        "status": result.get("status", summary["status"]),
+        "error_message": result.get("error_message"),
+        "estimated_cost_usd": result.get("estimated_cost_usd"),
+        "agent_calls": len(result.get("agent_executions") or []),
+        "total_input_tokens": result.get("total_input_tokens"),
+        "total_output_tokens": result.get("total_output_tokens"),
+        "delivered": report.get("delivered"),
+        "promised": report.get("promised"),
+        "contract_violations": report.get("contract_violations") or [],
+        "limiting_gaps": report.get("limiting_gaps") or [],
+        "what_would_help_most": report.get("what_would_help_most"),
+        "assets": [
+            {"title": asset.get("title"), "result_path": str(result_path)}
+            for asset in result.get("assets") or []
+        ],
+        "emails": [
+            {
+                "position": email.get("position"),
+                "subject": email.get("subject"),
+                "pull": email.get("pull"),
+                "clean": email.get("clean"),
+                "understood": email.get("understood"),
+                "relevant": email.get("relevant"),
+                "evidence_assigned": email.get("evidence_assigned") or [],
+                "evidence_spent": email.get("evidence_spent") or [],
+                "unresolved": email.get("unresolved") or [],
+                "reader_doubts": [
+                    verdict["biggest_doubt"] for verdict in email.get("reader_verdicts") or []
+                    if verdict.get("biggest_doubt")
+                ],
+            }
+            for email in report.get("emails") or []
+        ],
+    })
+    logs_path = run_dir / "logs.json"
+    if logs_path.exists():
+        logs = json.loads(logs_path.read_text(encoding="utf-8"))
+        summary["error_logs"] = [
+            {"step": log.get("step"), "message": log.get("message")}
+            for log in logs if log.get("level") == "error"
+        ][-5:]
+    return summary
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=["inspect", "run", "resume", "compare"])
+    parser.add_argument("action", choices=["inspect", "run", "resume", "compare", "summary"])
     parser.add_argument("--case", type=Path, default=DEFAULT_CASE)
     parser.add_argument("--base-url", default="http://127.0.0.1:8000")
     parser.add_argument("--max-runs", type=int, default=None,
@@ -63,6 +129,7 @@ def main():
     parser.add_argument("--poll-seconds", type=int, default=10)
     parser.add_argument("--before", help="First execution ID for compare")
     parser.add_argument("--after", help="Second execution ID for compare")
+    parser.add_argument("--execution-id", help="Run to summarize; defaults to the latest recorded run")
     args = parser.parse_args()
     args.case = args.case.resolve()
     if (args.max_runs is not None and args.max_runs < 1) or args.timeout_seconds < 30 or args.poll_seconds < 1:
@@ -78,6 +145,13 @@ def main():
     # Older/manual case state may predate durable run capture. Preserve every
     # quality field it contains and add only the runner's missing collection.
     state.setdefault("runs", [])
+
+    if args.action == "summary":
+        matches = [run for run in state["runs"] if run["execution_id"] == args.execution_id] if args.execution_id else state["runs"][-1:]
+        if len(matches) != 1:
+            raise RuntimeError("Expected one recorded run to summarize")
+        print(json.dumps(run_summary(directory, matches[0]), indent=2, ensure_ascii=False))
+        return 0
 
     if args.action == "compare":
         if not args.before or not args.after:

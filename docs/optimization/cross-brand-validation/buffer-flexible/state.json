@@ -1,0 +1,60 @@
+{
+  "case": "buffer-flexible",
+  "status": "below_sellable_bar",
+  "runs": [
+    {
+      "execution_id": "7154f03d-39a2-40d3-805e-4db052b8a2ae",
+      "campaign_id": "15e3838a-320c-4e53-ab08-ece0aa4cf2a6",
+      "status": "completed",
+      "launched_at": "2026-10-01T00:13:12.071182+00:00",
+      "code_revision": "working-tree",
+      "last_checked_at": "2026-10-01T00:17:53.591177+00:00",
+      "result_dir": "docs\\optimization\\cross-brand-validation\\buffer-flexible\\runs\\7154f03d-39a2-40d3-805e-4db052b8a2ae",
+      "estimated_cost_usd": 6.5748,
+      "completed_at": "2026-10-01T00:17:46.647130Z"
+    },
+    {
+      "execution_id": "57c29c46-5f8f-434d-a925-4cbe4f57383d",
+      "campaign_id": "15e3838a-320c-4e53-ab08-ece0aa4cf2a6",
+      "status": "failed",
+      "launched_at": "2026-10-01T09:58:50.361104+00:00",
+      "code_revision": "working-tree",
+      "last_checked_at": "2026-10-01T10:10:23.266990+00:00",
+      "result_dir": "docs\\optimization\\cross-brand-validation\\buffer-flexible\\runs\\57c29c46-5f8f-434d-a925-4cbe4f57383d",
+      "estimated_cost_usd": 16.5051,
+      "completed_at": "2026-10-01T10:10:13.696735Z"
+    }
+  ],
+  "quality_history": [
+    {
+      "iteration": 1,
+      "execution_id": "7154f03d-39a2-40d3-805e-4db052b8a2ae",
+      "score": 70,
+      "comparable": true,
+      "track": "scheduling_only_v1",
+      "strengths": [
+        "A concise local-business scheduling scenario and one clear CTA.",
+        "Free-plan limits are visible; text and 375px mobile HTML are readable without duplication or overflow."
+      ],
+      "remaining_defect": "The central drag-to-reorder mechanism was not in the compiled brand evidence and the email omits the official limitation for custom scheduled posts.",
+      "evidence": "1/1 delivered, clean gates, simulated pull 6/10, unresolved strategy/material gap, $6.5748 estimated; source found later in official Buffer queue guide.",
+      "next_action": "Add the official queue-reordering source, preserve its custom-schedule caveat, rebuild knowledge and rerun only with sufficient quota."
+    },
+    {
+      "iteration": 2,
+      "execution_id": "57c29c46-5f8f-434d-a925-4cbe4f57383d",
+      "score": null,
+      "comparable": false,
+      "track": "scheduling_only_v1",
+      "strengths": [],
+      "remaining_defect": "Knowledge v4 made the V2 relevance dossier stale, but its old evidence-ID contract still filtered the new ledger, a plausible cause of the strategy failure. The strategist could not assign proof to the CTA and no email was written.",
+      "evidence": "Failed before craft; 0/1 delivered, no copy score, $16.5051 estimated. Knowledge v4 contains the official queue guide as E1-E15.",
+      "next_action": "Use the stale-dossier fix, refresh the relevance dossier if quota permits, rerun once with sufficient quota, and score only a delivered email."
+    }
+  ],
+  "quality_best": {
+    "iteration": 1,
+    "execution_id": "7154f03d-39a2-40d3-805e-4db052b8a2ae",
+    "score": 70
+  }
+}

@@ -25,6 +25,7 @@ from app.marketing.contract import (
         # anywhere recorded that as a broken promise.
         ("Write me 3 onboarding emails for people who started a trial", 3),
         ("Write me 4 short sales emails", 4),
+        ("Write exactly one concise English marketing email for a local shop", 1),
         ("give me three cold outreach emails", 3),
         ("I want 5 re-engagement emails", 5),
     ],

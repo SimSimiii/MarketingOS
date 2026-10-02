@@ -103,6 +103,26 @@ def bake_off_only(**overrides) -> ExecutionPolicy:
 
 
 @pytest.mark.asyncio
+async def test_final_gate_failure_is_not_delivered(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    provider.set_default(
+        "email_writer",
+        varied_draft(1).replace("nine seconds", "987 seconds"),
+    )
+    pipeline, _ = build(
+        provider, refine_only(max_revisions=0, critic_enabled=False),
+    )
+
+    result = await pipeline.run(replace(request_fixture, request="Write one launch email"))
+
+    assert result.status == "failed"
+    assert result.outcomes == []
+    assert result.report is not None and result.report.delivered == 0
+    assert "987" in (result.abort_reason or "")
+
+
+@pytest.mark.asyncio
 async def test_missing_material_is_researched_added_and_replanned_automatically(
     provider: RoleScriptedProvider, request_fixture: CampaignRequest
 ):
@@ -182,6 +202,91 @@ async def test_missing_material_is_researched_added_and_replanned_automatically(
 
 
 @pytest.mark.asyncio
+async def test_unverified_material_replans_to_a_smaller_supported_decision(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    gap = "The proposed volume ceiling has no verified source."
+    provider.push("conversion_critic", json.dumps({
+        "verdict": "revise", "failure_mode": "missing_material",
+        "strategy_gap": gap, "edits": [], "summary": "Narrow the decision.",
+    }), CRITIQUE_SHIP)
+    revised = json.loads(campaign_brief(1))
+    revised["emails"][0].update({
+        "next_step_decision": "Inspect the documented setup path.",
+        "next_step_value": "Read the documented setup steps.",
+        "next_step_evidence_ids": ["E1"],
+    })
+    provider.push("strategist", campaign_brief(1), json.dumps(revised))
+
+    class UnsuccessfulResearcher:
+        calls = 0
+
+        async def recover(self, **_kwargs):
+            self.calls += 1
+            return MaterialRecovery(gap=gap, note="No official ceiling was found.")
+
+    researcher = UnsuccessfulResearcher()
+    pipeline, _ = build(
+        provider, refine_only(max_revisions=0), material_researcher=researcher,
+    )
+    result = await pipeline.run(replace(request_fixture, request="Write one launch email"))
+
+    assert researcher.calls == 1
+    assert provider.calls_by_role["strategist"] == 2
+    assert provider.calls_by_role["email_writer"] == 2
+    assert "No official ceiling was found" in provider.requests_for("strategist")[1].system_prompt
+    assert result.brief is not None
+    assert result.brief.emails[0].next_step_decision == "Inspect the documented setup path."
+    assert len(result.outcomes) == 1
+    assert not result.outcomes[0].unresolved_strategy
+
+
+@pytest.mark.asyncio
+async def test_persistent_missing_material_is_not_delivered(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    gap = "The promised queue reordering has no verified product source."
+    provider.set_default("conversion_critic", json.dumps({
+        "verdict": "revise", "failure_mode": "missing_material",
+        "strategy_gap": gap, "edits": [], "summary": gap,
+    }))
+
+    class UnsuccessfulResearcher:
+        async def recover(self, **_kwargs):
+            return MaterialRecovery(gap=gap, note="No official source found.")
+
+    pipeline, _ = build(
+        provider, refine_only(max_revisions=0),
+        material_researcher=UnsuccessfulResearcher(),
+    )
+
+    result = await pipeline.run(replace(request_fixture, request="Write one launch email"))
+
+    assert provider.calls_by_role["strategist"] == 2
+    assert result.status == "needs_input"
+    assert result.outcomes == []
+    assert result.report.delivered == 0
+    assert gap in (result.abort_reason or "")
+
+
+@pytest.mark.asyncio
+async def test_argument_gap_without_missing_material_remains_advisory(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    provider.set_default("conversion_critic", json.dumps({
+        "verdict": "revise", "failure_mode": "argument",
+        "strategy_gap": "The CTA could make the decision clearer.", "edits": [],
+        "summary": "Improve the argument.",
+    }))
+    pipeline, _ = build(provider, refine_only(max_revisions=0))
+
+    result = await pipeline.run(replace(request_fixture, request="Write one launch email"))
+
+    assert len(result.outcomes) == 1
+    assert result.outcomes[0].unresolved_failure_mode == "argument"
+
+
+@pytest.mark.asyncio
 async def test_argument_gap_citing_verified_fact_replans_without_web_search(
     provider: RoleScriptedProvider, request_fixture: CampaignRequest
 ):
@@ -245,9 +350,31 @@ async def test_unproved_next_step_is_corrected_before_writing(
 
     assert provider.calls_by_role["strategist"] == 2
     assert "generic account creation" in provider.requests_for("strategist")[1].messages[0].content
+    assert "The account reveals whether the test works" in provider.requests_for("strategist")[1].messages[0].content
     assert result.brief is not None
     assert result.brief.emails[0].next_step_evidence_ids == ["E1"]
     assert provider.calls_by_role["email_writer"] > 0
+
+
+@pytest.mark.asyncio
+async def test_next_step_proof_is_kept_when_omitted_from_general_evidence(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    planned = json.loads(campaign_brief(1))
+    planned["emails"][0].update({
+        "evidence_ids": ["E1"],
+        "next_step_evidence_ids": ["E2"],
+        "next_step_value": "Inspect the supported second fact.",
+    })
+    provider.push("strategist", json.dumps(planned))
+    pipeline, _ = build(provider, refine_only(max_revisions=0))
+
+    result = await pipeline.run(replace(request_fixture, request="Write one launch email"))
+
+    assert provider.calls_by_role["strategist"] == 1
+    assert result.brief is not None
+    assert result.brief.emails[0].next_step_evidence_ids == ["E2"]
+    assert result.brief.emails[0].evidence_ids == ["E2", "E1"]
 
 
 @pytest.mark.asyncio
@@ -905,21 +1032,21 @@ _BODY_A = (
     "You wrote the same release note three times last month.\n\n"
     "Each one started as a changelog nobody read, and ended as a paragraph you rewrote twice\n"
     "before shipping it, on an afternoon that was supposed to belong to something else.\n\n"
-    "Point it at the branch and read what comes back. You edit that, or you send it.\n\n"
+    "Point Notewright at the branch and read what comes back. You edit that, or you send it.\n\n"
     "Most people ask first whether it sounds like them. It reads your older notes, so it does."
 )
 _BODY_B = (
     "Friday afternoon is where your shipping week goes to die.\n\n"
     "The work was done on Tuesday. What is left is describing it, and describing it is the\n"
     "part nobody ever scheduled time for, so it lands on whoever is still online.\n\n"
-    "Give it the entries you already published and it writes like those did.\n\n"
+    "Give Notewright the entries you already published and it writes like those did.\n\n"
     "Teams tell us the draft is close enough that arguing with it beats an empty editor."
 )
 _BODY_C = (
     "Your changelog has a tone, and it is not the one you would use out loud.\n\n"
     "That happens when writing gets squeezed into whatever minutes are left before a deploy\n"
     "window closes, which is every week, which is why it reads the way it reads.\n\n"
-    "Nothing to configure. Paste a branch name, then decide whether to keep the paragraph.\n\n"
+    "With Notewright, paste a branch name, then decide whether to keep the paragraph.\n\n"
     "Nobody has to change how they work for this, and that is most of why it survives."
 )
 

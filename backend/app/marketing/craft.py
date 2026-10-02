@@ -392,6 +392,8 @@ class EmailOutcome:
     #: A strategy or evidence gap the writer cannot repair. Kept separately
     #: from a stalled rewrite: this loop stopped before wasting that rewrite.
     unresolved_strategy: str = ""
+    #: Keep the typed cause: only an unresolved missing fact may veto delivery.
+    unresolved_failure_mode: str = ""
 
     @property
     def best(self) -> EmailVersion:
@@ -603,6 +605,7 @@ class CraftLoop:
                     or version.critique.summary
                     or "The selected argument needs material the campaign does not contain."
                 )
+                outcome.unresolved_failure_mode = version.critique.failure_mode
                 self._observer.on_phase(
                     "craft",
                     f"Email {brief.position}: another writing pass cannot resolve "
@@ -654,7 +657,8 @@ class CraftLoop:
             # draft as unopposed when nobody opposed it is a lie of omission.
             for version in outcome.versions:
                 version.critic_skipped = version.critique is None
-        self._observer.on_email_accepted(brief.position, outcome.best)
+        if not outcome.best.gates.blocking and outcome.unresolved_failure_mode != "missing_material":
+            self._observer.on_email_accepted(brief.position, outcome.best)
         return outcome
 
     async def rework(
@@ -686,7 +690,8 @@ class CraftLoop:
         outcome.versions.append(version)
         if await self._prefers(version, champion, outcome.brief):
             outcome.champion_attempt = version.attempt
-        self._observer.on_email_accepted(outcome.brief.position, outcome.best)
+        if not outcome.best.gates.blocking and outcome.unresolved_failure_mode != "missing_material":
+            self._observer.on_email_accepted(outcome.brief.position, outcome.best)
         return outcome
 
     # ------------------------------------------------------------- internals
@@ -1236,6 +1241,7 @@ class CraftLoop:
                 or best.critique.summary
                 or "The selected argument needs material the campaign does not contain."
             )
+            outcome.unresolved_failure_mode = best.critique.failure_mode
 
     async def _polish_subject(
         self, outcome: EmailOutcome, brief: EmailBrief, previous: list[Email],

@@ -364,7 +364,11 @@ class EmailCampaignPipeline:
                     if guard is not None:
                         return self._stopped(request, contract, result, guard)
 
+                if stopped := self._stop_for_unresolved_material(request, contract, result):
+                    return stopped
                 await self._phase_sequence(request, brief, artifacts, corpus, result)
+                if stopped := self._stop_for_unresolved_material(request, contract, result):
+                    return stopped
         except _RunStopped as stop:
             # A deliberate stop - cancelled, out of time, or nothing to argue
             # from. Already a finished result; it is not a failure.
@@ -623,9 +627,16 @@ class EmailCampaignPipeline:
         loop = self._craft_loop(
             context.artifacts, context.corpus, brief, context.positioning
         )
-        return await loop.craft(
+        outcome = await loop.craft(
             brief=email_brief, campaign=brief, request=request, previous=previous
         )
+        if outcome.unresolved_failure_mode == "missing_material":
+            raise CraftError(
+                f"Email {position} still needs verified material: {outcome.unresolved_strategy}",
+                role="conversion_critic",
+                position=position,
+            )
+        return outcome
 
     async def conclude(
         self,
@@ -811,6 +822,13 @@ class EmailCampaignPipeline:
             outcome = await loop.craft(
                 brief=email_brief, campaign=brief, request=request, previous=accepted
             )
+            if outcome.best.gates.blocking:
+                details = "; ".join(issue.detail for issue in outcome.best.gates.blocking)
+                raise CraftError(
+                    f"Email {email_brief.position} failed automatic checks after repair: {details}",
+                    role="email_writer",
+                    position=email_brief.position,
+                )
             result.outcomes.append(outcome)
             accepted.append(outcome.email)
         return None
@@ -947,10 +965,10 @@ class EmailCampaignPipeline:
         if not recovery.recovered:
             self._observer.on_phase(
                 "material_recovery",
-                "No fetched official source verified the missing fact; the gap remains explicit",
+                "No official source verified the missing fact; rebuilding a narrower strategy once",
                 {"gaps": gaps, "recovered": False},
             )
-            return None
+            return artifacts, corpus, recovery
 
         enriched, enlarged_corpus = apply_recovery(artifacts, corpus, recovery)
         stored = self._knowledge.commit_recovered_material(recovery, enriched)
@@ -1126,6 +1144,37 @@ class EmailCampaignPipeline:
         if budget is not None and self._session.usage.total_tokens >= budget:
             return "budget_exhausted"
         return None
+
+    def _stop_for_unresolved_material(
+        self,
+        request: CampaignRequest,
+        contract: DeliverableContract,
+        result: CampaignRunResult,
+    ) -> CampaignRunResult | None:
+        """Keep verified emails, but do not deliver a typed missing-material gap."""
+        blocked = [
+            outcome for outcome in result.outcomes
+            if outcome.unresolved_failure_mode == "missing_material"
+            and outcome.unresolved_strategy
+        ]
+        if not blocked:
+            return None
+        blocked_ids = {id(outcome) for outcome in blocked}
+        result.outcomes = [
+            outcome for outcome in result.outcomes if id(outcome) not in blocked_ids
+        ]
+        result.status = "degraded" if result.outcomes else "needs_input"
+        result.abort_reason = "; ".join(
+            f"Email {outcome.brief.position} still needs verified material: "
+            f"{outcome.unresolved_strategy}"
+            for outcome in blocked
+        )
+        result.report = self._build_report(request, contract, result)
+        self._observer.on_report(result.report)
+        self._observer.on_phase(
+            "stopped", result.abort_reason, {"status": result.status}
+        )
+        return result
 
     def _stopped(
         self,

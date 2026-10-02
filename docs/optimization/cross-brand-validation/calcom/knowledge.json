@@ -1,0 +1,2859 @@
+{
+  "version": 1,
+  "compiled_at": "2026-09-30T15:18:07.940133Z",
+  "evidence_count": 194,
+  "segments": [
+    "The dev-tool founder whose Calendly link is the worst-designed surface he ships",
+    "The partner in a small consulting or coaching practice where every enquiry lands on whoever answers email first",
+    "The ops or security lead at a regulated company who has just discovered half the team booking client calls on personal free accounts"
+  ],
+  "gaps": [],
+  "voice_learned": true,
+  "artifacts": {
+    "business": {
+      "company_name": "Cal.com",
+      "what_it_does": "Scheduling infrastructure that lets an individual or a team create bookable event types, capture client info through routing forms that assign the right consultant or coach automatically, and manage bookings, workflows and calendars via a self-serve product or a public API — deployable cloud, self-hosted, or open-source.",
+      "category": "Online scheduling and meeting-booking software",
+      "business_model": "Freemium subscription: a free individual tier, paid per-user/month plans for Teams and Organizations (billed yearly with a stated 25% discount), and custom enterprise pricing sold through sales; smaller add-on subscriptions (e.g. premium usernames) exist alongside it.",
+      "facts": [
+        {
+          "statement": "The Free plan is free forever, capped at 1 user, with no usage limits on event types and calendars.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "Pricing | Cal.com",
+            "quote": "Start scheduling for free, with no usage limits.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "The Teams plan is listed at $12 per user/month on yearly billing, described as a 25% saving over monthly.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "Pricing | Cal.com",
+            "quote": "### Teams\nYEARLY\n\n### $12\nper user/month\n\nSave 25%",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "The FAQ page separately states a team account costs $15 per month for each team member — this does not match the $12/user/month figure shown on the pricing page (likely the un-discounted monthly rate vs. the yearly rate), and the two should not be silently merged.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "FAQ | Cal.com",
+            "quote": "A team account costs $15 per month for each team member.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "The Organizations plan is listed at $28 per user/month on yearly billing, also described as a 25% saving.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "Pricing | Cal.com",
+            "quote": "### Organizations\nYEARLY\n\n### $28\nper user/month\n\nSave 25%",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "Both Teams and Organizations plans are sold with a 14-day free trial.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "Pricing | Cal.com",
+            "quote": "*14 day free trial",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "The top (Custom/Enterprise) plan has no published price and is sold via sales conversation.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "Pricing | Cal.com",
+            "quote": "### Custom\nThe most advanced scheduling for enterprise without limits.\n\n[Talk to sales]",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "The API supports three authentication methods: OAuth, API key, and a deprecated Platform method.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "Introduction to API v2 - Cal.com Docs",
+            "quote": "The Cal.com API has 3 authentication methods:\n\n1. OAuth\n2. API key\n3. Platform (Deprecated)",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "The default/API-key rate limit is 120 requests per minute, with higher limits available and, above a point, extra charges.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "Introduction to API v2 - Cal.com Docs",
+            "quote": "API Key - 120 requests per minute. This can be increased to a reasonable amount, such as 200 requests per minute. If you require a higher rate limit, such as 800 requests per minute, it is possible, but it may involve extra charges.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "As of 15 December 2025, Cal.com stopped accepting new signups for its 'Platform' offering, continuing support only for existing customers.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "Introduction to API v2 - Cal.com Docs",
+            "quote": "As of 15th December 2025, we're currently undergoing a restructuring of our \"Platform\"-offering... we continue to provide enterprise support for existing customers but no longer offer new signups for any \"Platform\" plan.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "The product carries ISO 27001, SOC 2 Type II, CCPA and GDPR compliance, plus EU-US Data Privacy Framework and HIPAA certifications.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "FAQ | Cal.com",
+            "quote": "Our product is ISO 27001, SOC 2 Type II, CCPA, and GDPR compliant. In addition, we also have EU-US Data Privacy Framework and HIPAA certifications.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "A premium/reserved username can be rented as a $29/month add-on subscription.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "FAQ | Cal.com",
+            "quote": "you will be prompted to upgrade to premium for $29 a month.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "Cal.com positions itself against Calendly by noting Calendly paywalls features (monetization, analytics, advanced customization) that Cal.com gives away free to individuals.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "FAQ | Cal.com",
+            "quote": "Calendly's paid plan is comparable to what Cal.com offers for free to individuals. Our free plan includes essential features like unlimited event types and calendars, plus powerful capabilities—such as monetization, analytics, and advanced customization—that Calendly places behind a paywall.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "The product can be deployed open-source, self-hosted, or cloud-hosted, and this flexibility is marketed specifically to consulting and coaching teams for compliance and customization reasons.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "Effortless Scheduling And Smart Routing For Consulting And Coaching Teams | Cal.com",
+            "quote": "Choose open-source, self-hosted, or cloud deployment to meet your organization's unique security and customization needs.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "A live booking page (e.g. Lucas Chu's) shows the product's core unit is the named, duration-based 'event type' (examples seen: Secret Meeting 15m, 25 Min Meeting, 15 Min Meeting via Zoom) that visitors book directly.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "Lucas Chu | Cal.com",
+            "quote": "## Secret Meeting\n\n- 15m\n\n## 25 Min Meeting\n\n- 25m\n\n## 15 Min Meeting\n\n- 15m",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "Cal.com is used by consulting and coaching businesses specifically to qualify prospective clients before a call and route them to the best-fit consultant or coach automatically.",
+          "grounding": "inferred",
+          "provenance": null
+        },
+        {
+          "statement": "Because pricing, trials, and 'Get started' signup links are shown directly on the marketing site, the product is primarily self-serve for individuals and small teams, with sales conversations reserved for the top (Custom) tier.",
+          "grounding": "inferred",
+          "provenance": null
+        }
+      ],
+      "vocabulary": [
+        "event types",
+        "routing forms",
+        "round-robin scheduling",
+        "managed users",
+        "collective events",
+        "booking analytics",
+        "atoms",
+        "workflows",
+        "instant meetings",
+        "dynamic group links",
+        "Cal.ai",
+        "domain-wide-delegation",
+        "Out Of Office",
+        "managed & collective event types",
+        "recurring events"
+      ]
+    },
+    "offer": {
+      "plans": [
+        {
+          "name": "Free",
+          "price": "",
+          "includes": [
+            "1 user",
+            "Unlimited event types & calendars",
+            "Email & SMS notifications",
+            "Integrate with 100+ apps",
+            "Mobile App",
+            "Browser Extension",
+            "Accept Stripe & PayPal payments",
+            "Two-way Salesforce & HubSpot sync",
+            "1-click import Calendly events"
+          ]
+        },
+        {
+          "name": "Teams",
+          "price": "$12 per user/month (yearly billing, save 25%)",
+          "includes": [
+            "Free plan features, plus:",
+            "1 team, shared availability",
+            "Round-robin scheduling",
+            "Managed & collective event types",
+            "Recurring events",
+            "Customizable email & SMS notifications",
+            "Remove Cal.com branding",
+            "Routing forms",
+            "Booking analytics",
+            "Custom APIs"
+          ]
+        },
+        {
+          "name": "Organizations",
+          "price": "$28 per user/month (yearly billing, save 25%)",
+          "includes": [
+            "Teams plan features, plus:",
+            "Unlimited sub-teams",
+            "Route by custom variables",
+            "Company subdomain (yourcompany.cal.com)",
+            "SAML SSO and SCIM",
+            "SOC 2, HIPAA, ISO 27001 compliant",
+            "Instant meetings",
+            "Domain-wide-delegation",
+            "Role-based permissions",
+            "Additional APIs"
+          ]
+        },
+        {
+          "name": "Custom",
+          "price": "custom",
+          "includes": [
+            "Organizations plan features, plus:",
+            "Dedicated onboarding and engineering support",
+            "SLA & uptime guarantees",
+            "HRIS & directory integrations",
+            "Priority Slack & account support",
+            "Dedicated database"
+          ]
+        }
+      ],
+      "free_entry": "Free forever — 1 user, unlimited event types & calendars, no usage limits",
+      "guarantees": [
+        "14 day free trial (Teams and Organizations plans)",
+        "ISO 27001, SOC 2 Type II, CCPA and GDPR compliant, plus EU-US Data Privacy Framework and HIPAA certifications"
+      ],
+      "calls_to_action": [
+        {
+          "label": "Use for free",
+          "intent": "start on the Free plan",
+          "url": "https://app.cal.com/signup"
+        },
+        {
+          "label": "Get started",
+          "intent": "sign up",
+          "url": "https://app.cal.com/signup"
+        },
+        {
+          "label": "Try for free",
+          "intent": "start the Teams 14-day trial",
+          "url": "https://app.cal.com/signup?redirect=https://app.cal.com/settings/teams/new?bp=a"
+        },
+        {
+          "label": "Try for free",
+          "intent": "start the Organizations 14-day trial",
+          "url": "https://app.cal.com/signup?redirect=https://app.cal.com/onboarding/organization/details?migrate=true&bp=a"
+        },
+        {
+          "label": "Talk to sales",
+          "intent": "discuss Custom/Enterprise plan",
+          "url": "https://cal.com/talk-to-sales"
+        },
+        {
+          "label": "Contact sales",
+          "intent": "ask about white-labeling",
+          "url": "https://cal.com/sales"
+        },
+        {
+          "label": "See feature breakdown",
+          "intent": "compare plan features",
+          "url": "https://cal.com/pricing#feature-breakdown"
+        },
+        {
+          "label": "Sign in",
+          "intent": "log into an existing account",
+          "url": "https://app.cal.com/auth/login"
+        }
+      ],
+      "purchase_motion": "Self-serve signup and trial for Free, Teams and Organizations plans; sales-led ('Talk to sales' / 'Contact sales') for the Custom/Enterprise plan and for white-labeling."
+    },
+    "evidence": {
+      "entries": [
+        {
+          "id": "E1",
+          "kind": "integration",
+          "claim": "Cal.com connects to Slack, Salesforce, and 100+ more tools, with bookings showing up where your team already works",
+          "verbatim": "Connects to Slack, Salesforce, and 100+ more. Bookings show up where your team already works.",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E2",
+          "kind": "feature",
+          "claim": "Users can choose open-source, self-hosted, or cloud deployment to meet their organization's unique security and customization needs",
+          "verbatim": "Choose open-source, self-hosted, or cloud deployment to meet your organization's unique security and customization needs.",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E3",
+          "kind": "feature",
+          "claim": "Cal.com offers self-hosting and open-source deployment, giving users full control over client data and infrastructure",
+          "verbatim": "Absolutely. Cal.com offers self-hosting and open-source deployment, giving you full control over client data and infrastructure.",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E4",
+          "kind": "testimonial",
+          "claim": "Flo Merian, Product Marketing at Mintlify, said Cal.com is more elegant than Calendly, more open than SavvyCal, and works and feels just right",
+          "verbatim": "\"More elegant than Calendly, more open than SavvyCal, Cal.com works and it feels just right.\"",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E5",
+          "kind": "customer",
+          "claim": "Flo Merian, Product Marketing at Mintlify, is a named Cal.com customer/user",
+          "verbatim": "Flo Merian Product Marketing, Mintlify",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E6",
+          "kind": "testimonial",
+          "claim": "A user said Cal.com has a very good chance of creating a new category around being both great and well designed",
+          "verbatim": "I think Cal.com has a very good chance of creating a new category around being both great and well designed.\"",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E7",
+          "kind": "integration",
+          "claim": "Cal.com integrates with popular CRMs and allows custom integrations via API, keeping client records and scheduling activities in sync",
+          "verbatim": "Cal.com integrates with popular CRMs and allows for custom integrations via API, so you can keep client records and scheduling activities in sync.",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E8",
+          "kind": "feature",
+          "claim": "Users can configure booking types for individual or group sessions and set routing logic to assign the right coach or consultant for each format",
+          "verbatim": "You can configure booking types for individual or group sessions and set routing logic to assign the right coach or consultant for each format.",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E9",
+          "kind": "feature",
+          "claim": "Cal.com supports attribute-based routing so clients are assigned to the right expert based on responses such as industry, challenge, or language preference",
+          "verbatim": "Yes, you can set up attribute-based routing so clients are assigned to the right expert based on their responses, such as industry, challenge, or language preference.",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E10",
+          "kind": "feature",
+          "claim": "Cal.com's no-code form builder lets users quickly adjust questions, options, and routing logic as their consulting or coaching offerings change",
+          "verbatim": "Yes, Cal.com's no-code form builder lets you quickly adjust questions, options, and routing logic as your consulting or coaching offerings change.",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E11",
+          "kind": "feature",
+          "claim": "Intelligent client routing assigns clients to consultants or coaches automatically based on expertise, language, location, or availability using custom routing forms",
+          "verbatim": "Assign clients to consultants or coaches automatically based on expertise, language, location, or availability using custom routing forms.",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E12",
+          "kind": "feature",
+          "claim": "No-code form customization lets teams easily build and update intake forms to collect relevant information, qualifying leads and guiding them to the right service",
+          "verbatim": "Easily build and update intake forms to collect relevant information, qualifying leads and guiding them to the right service.",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E13",
+          "kind": "integration",
+          "claim": "Seamless CRM integration syncs client data and scheduling activity with the CRM for a unified view of every engagement",
+          "verbatim": "Sync client data and scheduling activity with your CRM for a unified view of every engagement.",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E14",
+          "kind": "feature",
+          "claim": "Multi-step booking workflows guide clients through a multi-stage booking journey from intake to confirmation, improving conversion and satisfaction",
+          "verbatim": "Guide clients through an effortless multi-stage booking journey, from intake to confirmation, improving conversion and satisfaction.",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E15",
+          "kind": "feature",
+          "claim": "Flexible deployment options let teams choose between open-source, self-hosted, or cloud deployments to meet compliance, branding, and integration requirements",
+          "verbatim": "Choose between open-source, self-hosted, or cloud deployments to meet compliance, branding, and integration requirements.",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E16",
+          "kind": "feature",
+          "claim": "Actionable analytics track booking, routing, and team performance metrics to optimize a consulting or coaching business",
+          "verbatim": "Track booking, routing, and team performance metrics to optimize your consulting or coaching business.",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E17",
+          "kind": "testimonial",
+          "claim": "Guillermo Rauch, CEO of Vercel, said he thinks Cal.com has a very good chance of creating a new category around being both great and well designed.",
+          "verbatim": "I think Cal.com has a very good chance of creating a new category around being both great and well designed.\"",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E18",
+          "kind": "testimonial",
+          "claim": "Kent C. Dodds, Founder of EpicWeb.dev, said he just migrated from Calendly to Cal.com.",
+          "verbatim": "\"I just migrated from Calendly to Cal.com.\"",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E19",
+          "kind": "testimonial",
+          "claim": "Aria Minaei, CEO of Theatre.JS, said it's definitely the easiest meeting she's ever scheduled.",
+          "verbatim": "\"Just gave it a go and it's definitely the easiest meeting I've ever scheduled!\"",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E20",
+          "kind": "testimonial",
+          "claim": "Ant Wilson, Co-Founder & CTO of Supabase, said he finally made the move to Cal.com after he couldn't find how to edit events in the Calendly dashboard.",
+          "verbatim": "\"I finally made the move to Cal.com after I couldn't find how to edit events in the Calendly dashboard.\"",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E21",
+          "kind": "testimonial",
+          "claim": "Micah Friedland, CEO & Founder of Navi, said that at Navi, protecting personal health information is a non-negotiable, so choosing Cal.com for scheduling just makes sense.",
+          "verbatim": "\"At Navi, protecting personal health information is a non-negotiable, so choosing Cal.com for scheduling just makes sense.\"",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E22",
+          "kind": "testimonial",
+          "claim": "Flo Merian, Product Marketing at Mintlify, said Cal.com is more elegant than Calendly, more open than SavvyCal, and works and feels just right.",
+          "verbatim": "\"More elegant than Calendly, more open than SavvyCal, Cal.com works and it feels just right.\"",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E23",
+          "kind": "testimonial",
+          "claim": "Ant Wilson, Co-Founder & CTO of Supabase, said: \"I finally made the move to Cal.com after I couldn't find how to edit events in the Calendly dashboard.\"",
+          "verbatim": "\"I finally made the move to Cal.com after I couldn't find how to edit events in the Calendly dashboard.\"",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E24",
+          "kind": "customer",
+          "claim": "Supabase is a customer of Cal.com, represented by Ant Wilson, Co-Founder & CTO.",
+          "verbatim": "Ant Wilson Co-Founder & CTO, Supabase",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E25",
+          "kind": "testimonial",
+          "claim": "Micah Friedland, CEO & Founder of Navi, said: \"At Navi, protecting personal health information is a non-negotiable, so choosing Cal.com for scheduling just makes sense.\"",
+          "verbatim": "\"At Navi, protecting personal health information is a non-negotiable, so choosing Cal.com for scheduling just makes sense.\"",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E26",
+          "kind": "customer",
+          "claim": "Navi is a customer of Cal.com, represented by Micah Friedland, CEO & Founder.",
+          "verbatim": "Micah Friedland CEO & Founder, Navi",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E27",
+          "kind": "testimonial",
+          "claim": "Flo Merian, Product Marketing at Mintlify, said: \"More elegant than Calendly, more open than SavvyCal, Cal.com works and it feels just right.\"",
+          "verbatim": "\"More elegant than Calendly, more open than SavvyCal, Cal.com works and it feels just right.\"",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E28",
+          "kind": "customer",
+          "claim": "Mintlify is a customer of Cal.com, represented by Flo Merian, Product Marketing.",
+          "verbatim": "Flo Merian Product Marketing, Mintlify",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E29",
+          "kind": "testimonial",
+          "claim": "Guillermo Rauch, CEO of Vercel, said: \"I think Cal.com has a very good chance of creating a new category around being both great and well designed.\"",
+          "verbatim": "I think Cal.com has a very good chance of creating a new category around being both great and well designed.\"",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E30",
+          "kind": "customer",
+          "claim": "Vercel is a customer of Cal.com, represented by Guillermo Rauch, CEO.",
+          "verbatim": "Guillermo Rauch CEO, Vercel",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E31",
+          "kind": "testimonial",
+          "claim": "Kent C. Dodds, Founder of EpicWeb.dev, said: \"I just migrated from Calendly to Cal.com.\"",
+          "verbatim": "\"I just migrated from Calendly to Cal.com.\"",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E32",
+          "kind": "customer",
+          "claim": "Kent C. Dodds, Founder of EpicWeb.dev, is a customer of Cal.com.",
+          "verbatim": "Kent C. Dodds Founder of EpicWeb.dev",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E33",
+          "kind": "testimonial",
+          "claim": "Aria Minaei, CEO of Theatre.JS, said: \"Just gave it a go and it's definitely the easiest meeting I've ever scheduled!\"",
+          "verbatim": "\"Just gave it a go and it's definitely the easiest meeting I've ever scheduled!\"",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E34",
+          "kind": "customer",
+          "claim": "Theatre.JS is a customer of Cal.com, represented by Aria Minaei, CEO.",
+          "verbatim": "Aria Minaei CEO, Theatre.JS",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof"
+        },
+        {
+          "id": "E35",
+          "kind": "feature",
+          "claim": "Cal.com's mission is to connect a billion people by 2031 through calendar scheduling.",
+          "verbatim": "Our mission is to connect a billion people by 2031 through calendar scheduling.",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "company"
+        },
+        {
+          "id": "E36",
+          "kind": "certification",
+          "claim": "Cal.com and Cal are registered trademarks of Cal.com, Inc.",
+          "verbatim": "Cal.com® and Cal® are registered trademarks of Cal.com, Inc. All rights reserved.",
+          "source": "https://cal.com/routing/routing-for-consulting-coaching",
+          "document_id": "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "company"
+        },
+        {
+          "id": "E37",
+          "kind": "feature",
+          "claim": "Cal.com's free plan includes unlimited event types and calendars, plus monetization, analytics, and advanced customization that Calendly places behind a paywall",
+          "verbatim": "Our free plan includes essential features like unlimited event types and calendars, plus powerful capabilities—such as monetization, analytics, and advanced customization—that Calendly places behind a paywall.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "market"
+        },
+        {
+          "id": "E38",
+          "kind": "feature",
+          "claim": "For teams and organizations, Cal.com offers enterprise-ready features like full admin controls, org-wide scheduling, advanced routing, and deeper branding and compliance support",
+          "verbatim": "For teams and organizations, Cal.com also goes further with enterprise-ready features like full admin controls, org-wide scheduling, advanced routing, and deeper branding and compliance support.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E39",
+          "kind": "price",
+          "claim": "Individual accounts on Cal.com are free",
+          "verbatim": "The first thing you need to know is that while individual accounts are free, team accounts are not.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E40",
+          "kind": "price",
+          "claim": "A team account costs $15 per month per team member",
+          "verbatim": "A team account costs $15 per month for each team member.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E41",
+          "kind": "feature",
+          "claim": "Team accounts include managed meeting templates, collective events, and round-robin scheduling",
+          "verbatim": "These features include things like managed meeting templates, collective events, and round-robin scheduling.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E42",
+          "kind": "price",
+          "claim": "Upgrading to a premium username costs $29 a month",
+          "verbatim": "Once you enter the premium name in the username field and click update, you will be prompted to upgrade to premium for $29 a month.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E43",
+          "kind": "certification",
+          "claim": "Cal.com's product is ISO 27001, SOC 2 Type II, CCPA, and GDPR compliant",
+          "verbatim": "Our product is ISO 27001, SOC 2 Type II, CCPA, and GDPR compliant.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E44",
+          "kind": "certification",
+          "claim": "Cal.com has EU-US Data Privacy Framework and HIPAA certifications",
+          "verbatim": "In addition, we also have EU-US Data Privacy Framework and HIPAA certifications.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E45",
+          "kind": "feature",
+          "claim": "Cal.com offers white-labeling options",
+          "verbatim": "Yes, Cal.com does offer white-labeling options.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E46",
+          "kind": "feature",
+          "claim": "Cal.com users can have as many calendar connections as they want, with no limit imposed",
+          "verbatim": "Cal.com users can have as many calendar connections as they would like. If you want to have one calendar connection, that's fine, but you can also have twelve if that's what works for you.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E47",
+          "kind": "feature",
+          "claim": "Cal.com supports date overrides, letting users specify one-off schedule changes such as different working days for a set period without creating a new schedule",
+          "verbatim": "Date overrides are a feature that lets you add one-off adjustments to an availability schedule. This is useful when you know that your schedule might be different for a week or two but you don't want to create a brand new schedule just because of that.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E48",
+          "kind": "feature",
+          "claim": "Cal.com's routing forms ask visitors questions and direct them to the bookable event that most closely matches their needs",
+          "verbatim": "Routing forms will ask the visitor a series of questions and then, based on their answers, direct them to the bookable event that most closely matches their needs.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E49",
+          "kind": "feature",
+          "claim": "Organizations with 30 or more members are recommended to use an enterprise plan rather than a team subscription",
+          "verbatim": "If you're an organization with 30 or more members and value customization as well as white labeling, then you're probably going to need an enterprise license as opposed to a team subscription.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "market"
+        },
+        {
+          "id": "E50",
+          "kind": "feature",
+          "claim": "Enterprise licenses come with advanced options for security and are typically chosen by organizations in human resources, healthcare, education, legal, and government-adjacent fields",
+          "verbatim": "Enterprise licenses come with advanced options for security and are typically chosen by professionals and organizations working within human resources, healthcare, education, legal, and government adjacent fields.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "market"
+        },
+        {
+          "id": "E51",
+          "kind": "feature",
+          "claim": "Cal.com offers multiple payment options including credit card and bank transfer, and absorbs the associated fees",
+          "verbatim": "We have multiple payment options, credit card, bank transfer, etc. We absorb the fees.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E52",
+          "kind": "feature",
+          "claim": "Free Cal.com users have access to over 90% of all the platform's features",
+          "verbatim": "Free Cal.com users have access to over 90% of all our features.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E53",
+          "kind": "feature",
+          "claim": "Free accounts include unlimited events, opt-in meetings, multiple availability schedules, unlimited calendar integrations, recurring events, monetization, analytics, third-party integrations, webhooks, automated workflows, and routing forms",
+          "verbatim": "These include things like unlimited events, opt-in meetings, multiple availability schedules, unlimited calendars integration, recurring events, monetization, analytics, third-party integrations, webhooks, automated workflows, routing forms, and a whole lot more.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E54",
+          "kind": "feature",
+          "claim": "Removing Cal.com's branding from the booking interface requires signing up for a team plan, which can consist of a single individual",
+          "verbatim": "If you'd like to remove Cal.com's logo and related branding from your booking interface, you'll want to sign up for a team plan. Luckily, a team doesn't have to be more than a single individual.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E55",
+          "kind": "guarantee",
+          "claim": "Products built with Cal.com's open-source code must themselves remain open source under the GNU Affero General Public License (AGPL) Version 3",
+          "verbatim": "This is because Cal.com is published under the GNU Affero General Public License (AGPL), Version 3.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E56",
+          "kind": "guarantee",
+          "claim": "Users cannot rebrand and republish the enterprise edition (/ee/) of Cal.com without purchasing a license and permission",
+          "verbatim": "One limitation is, that you cannot rebrand and republish the enterprise edition (/ee/) without purchasing a license and permission.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E57",
+          "kind": "feature",
+          "claim": "Cal.com cross-references your calendars in order to understand when you are available for bookings",
+          "verbatim": "Cal.com acts as a hub and a point of coordination for your connected calendars. This means that Cal.com cross-references your calendars in order to understand when you are available for bookings.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E58",
+          "kind": "feature",
+          "claim": "Cancelling an event on a connected calendar does not automatically remove the appointment from the booking section of your Cal.com dashboard",
+          "verbatim": "If you cancel an event that’s been added to your calendar, that will not automatically remove the appointment from the booking section of your Cal.com dashboard.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E59",
+          "kind": "feature",
+          "claim": "Cal Video offers real-time transcription, screen recording sent to your email, instant meetings, and dial-in support",
+          "verbatim": "Cal Video offers high-quality service with features such as real-time transcription, screen recording sent to your email, instant meetings, and dial-in support for seamless communication.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E60",
+          "kind": "feature",
+          "claim": "Cal.ai is Cal.com's AI voice assistant used for outbound calls to schedule meetings, follow up on missing documents, or send reminders about upcoming appointments",
+          "verbatim": "Cal.ai is our AI voice assistant used for outbound calls to schedule meetings, follow up on missing documents, or send reminders about upcoming appointments.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E61",
+          "kind": "feature",
+          "claim": "Cal.com users can have as many calendar connections as they would like, with no limit",
+          "verbatim": "Cal.com users can have as many calendar connections as they would like. If you want to have one calendar connection, that's fine, but you can also have twelve if that's what works for you.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E62",
+          "kind": "integration",
+          "claim": "Cal.com offers a pre-made Apple Calendar integration available in the Cal.com App Store",
+          "verbatim": "You have a variety of options when adding calendars, however the easiest way to add an Apple calendar is probably just to use our pre-made integration which can be found in the Cal.com App Store.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E63",
+          "kind": "feature",
+          "claim": "Users can create paid events such as one-on-one coaching and consulting sessions, as well as mentor check-ins",
+          "verbatim": "For example, you can create paid events like one-on-one coaching and consulting sessions, as well as check-ins with a mentor.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E64",
+          "kind": "feature",
+          "claim": "Users can create group events like open houses, masterclasses, workshops, or webinars",
+          "verbatim": "You can also create group events like open houses, masterclasses, workshops, or webinars.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E65",
+          "kind": "feature",
+          "claim": "Events can happen in-person, remote, or over the phone",
+          "verbatim": "The events you create can happen in-person, remote, or over the phone.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E66",
+          "kind": "feature",
+          "claim": "Users can create hidden events that require a shared link to book",
+          "verbatim": "You can create hidden events that people need you to send them a link to if they'd like to book it.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E67",
+          "kind": "feature",
+          "claim": "Users can create events with private single-use booking links",
+          "verbatim": "You can also create events with private single-use booking links.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E68",
+          "kind": "feature",
+          "claim": "Users can create opt-in events where the host must confirm each booking request before it is finalized",
+          "verbatim": "You can create opt-in events, meaning that when someone requests to attend that event, you have to confirm that you accept that request before the event is finalized.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E69",
+          "kind": "feature",
+          "claim": "Every Cal.com user has a profile link in the format Cal.com/your username that lets others book based on availability without a fixed date or time",
+          "verbatim": "However, every Cal.com user has a profile link in addition to individual event links. Your profile link is Cal.com/your username.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E70",
+          "kind": "feature",
+          "claim": "Events can be toggled between public (shown on the public profile) and private (bookable only via direct link)",
+          "verbatim": "All Cal.com users have the ability to create private events. The only difference between a private event and a regular event is that a private event isn't going to be displayed on your public profile.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E71",
+          "kind": "feature",
+          "claim": "Private links anonymize the user's Cal.com information and are single-use, regenerating after each use",
+          "verbatim": "Private links work by anonymizing your Cal.com user information. All private links are single-use and regenerate after they are used.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E72",
+          "kind": "feature",
+          "claim": "Cal.com offers a seats feature that allows multiple bookings for a single time slot, useful for group classes, open houses, and orientation sessions",
+          "verbatim": "You can offer multiple bookings for a single event in a single time slot by using our seats feature. This is great if you want to offer things like group classes, open houses, and orientation sessions.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E73",
+          "kind": "feature",
+          "claim": "There is no limit to the number of availability schedules a user can create",
+          "verbatim": "There are no limits to the number of availability schedules you can have. You can create 10, 20, or 100 - it's up to you.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E74",
+          "kind": "feature",
+          "claim": "A user can only have one default availability schedule at any given time, though it can be changed anytime",
+          "verbatim": "Just so you know, you can only have one default availability schedule at any given time, however, you can also change it whenever you want.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E75",
+          "kind": "feature",
+          "claim": "Cal.com supports a wide variety of in-person and virtual locations, including office, phone, teleconferencing platforms, Telegram, and Signal",
+          "verbatim": "Cal.com supports a wide variety of in-person and virtual locations. This means that a meeting location can be set to be at a specific venue like an office, over the phone, via a teleconferencing platform, or it could happen on Telegram or Signal.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E76",
+          "kind": "feature",
+          "claim": "An event can have more than one location, and the attendee chooses which location to use when booking",
+          "verbatim": "The plus button right below the location drop-down menu lets you add additional locations to your Cal.com event. One thing you have to remember, though, is that when you have more than one location, it means that the attendee is ultimately choosing where the meeting is going to happen.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E77",
+          "kind": "feature",
+          "claim": "Users can add an additional email to their Cal.com profile and designate it as the email shown in booking confirmations, either as primary or at the event level",
+          "verbatim": "You will notice that there is a button marked [+ add email]. Clicking on this will let you add an additional email to your Cal.com profile. This email can then be made your primary email and you can also designate it as the email that information is sent to within your event-level settings.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E78",
+          "kind": "feature",
+          "claim": "Cal.com places no limit on the number of workflows you can create or the number of events you can connect them to.",
+          "verbatim": "There is no limit on the number of workflows you can create or the number of events you can connect them to.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E79",
+          "kind": "feature",
+          "claim": "Cal.com's buffer time setting ensures 5 to 10 minutes between meetings.",
+          "verbatim": "A buffer time helps ensure that you always have 5 to 10 minutes between meetings.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E80",
+          "kind": "integration",
+          "claim": "Cal.com integrates with Stripe to let users monetize their meetings.",
+          "verbatim": "You can monetize your meetings thanks to our integration with Stripe.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E81",
+          "kind": "integration",
+          "claim": "Cal.com integrates with Zoom to host meetings, but meetings longer than 45 minutes require a paid Zoom account.",
+          "verbatim": "A great example of this is Zoom. Once you install our integration for Zoom, you can use the platform to host your meetings. However, if you want a meeting that's longer than 45 minutes, then Zoom will require you to have a paid Zoom account.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E82",
+          "kind": "feature",
+          "claim": "Cal.com does not currently have a mobile app for Android or iPhone; it can be used on mobile through a browser.",
+          "verbatim": "At the moment we do not have a mobile app. If you would like to use cal.com on your mobile, you can do this through your browser.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E83",
+          "kind": "feature",
+          "claim": "Cal.com offers a desktop app, though it does not provide the exact same experience as the browser-based product and is updated less frequently.",
+          "verbatim": "However, we do have a desktop app as well. It should be noted that the desktop app does not provide the exact same experience as what you may be used to when using Cal.com via your browser.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E84",
+          "kind": "integration",
+          "claim": "CalVideo, Cal.com's in-house video conferencing platform, is powered by Daily.co.",
+          "verbatim": "CalVideo is our in-house video conferencing platform powered by Daily.co.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E85",
+          "kind": "feature",
+          "claim": "CalVideo supports 1-on-1 meetings and group events, is low latency, white-label-friendly, and offers optional features like screen recording depending on subscription type.",
+          "verbatim": "You can use CalVideo to host 1-on-1 meetings as well as group events. CalVideo is also low latency, white label-friendly, and, depending on your subscription type, comes with optional features like screen recording.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E86",
+          "kind": "integration",
+          "claim": "Cal.com offers a WordPress plugin as the easiest way to add a booking page to a WordPress site.",
+          "verbatim": "For many people, however, the easiest way to add a Cal.com booking page to the WordPress site is by using our plugin for WordPress.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E87",
+          "kind": "price",
+          "claim": "The majority of apps in Cal.com's app store are free to install, though some require a paid account with the third-party service to access all features.",
+          "verbatim": "The majority of the apps in the store can be installed for free. However, some of them do require a paid account with another service to access all their features.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E88",
+          "kind": "price",
+          "claim": "Signing up for a Teams subscription starts with creating a free Cal.com account.",
+          "verbatim": "You can sign up for a Teams account by first signing up for a free Cal.com account.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E89",
+          "kind": "feature",
+          "claim": "Declining a Cal.com invite via Gmail's Yes/No/Maybe buttons does not cancel or change the underlying Cal.com booking.",
+          "verbatim": "If someone receives an invitation to a Cal.com event and they decline it using Gmail's Yes, No, or Maybe buttons, you will be able to see that via your Gmail interface and the attendance information on your connected Google Calendar. However, that will not cancel or change the Cal.com booking itself.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E90",
+          "kind": "feature",
+          "claim": "Cal.com's routing forms ask visitors a series of questions and route them to the bookable event that best matches their answers.",
+          "verbatim": "Routing forms will ask the visitor a series of questions and then, based on their answers, direct them to the bookable event that most closely matches their needs.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E91",
+          "kind": "feature",
+          "claim": "Cal.com's dynamic booking links only show time slots when all parties are mutually available.",
+          "verbatim": "The great thing about this page is that all the time slots that appear are only those in which all parties are mutually available.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E92",
+          "kind": "feature",
+          "claim": "Enabling opt-in bookings requires host approval before a meeting is finalized, and the host receives an email notification whenever a meeting is requested.",
+          "verbatim": "Turning this setting on means that you get to approve prospective meetings before they're added to your calendar. After you've enabled this option, you’ll receive an email at your registered email address whenever a meeting is requested.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E93",
+          "kind": "feature",
+          "claim": "Cal.com's booking limits include buffer times, duration limits, and frequency limits, among others.",
+          "verbatim": "These limits include things like buffer times, as well as duration, frequency, and more.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E94",
+          "kind": "feature",
+          "claim": "Cal.com's inline embed matches the booking interface's spacing and margins to the rest of the website.",
+          "verbatim": "An inline embed is the ideal option if you want to ensure that your booking interface utilizes the same spacing and margins as the rest of the items on your website.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E95",
+          "kind": "feature",
+          "claim": "Cal.com's popup embed generates a customizable booking button that opens a calendar when clicked.",
+          "verbatim": "Cal.com's popup embed generates a booking button that, when clicked, opens up a calendar that guests can use to book appointments.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E96",
+          "kind": "feature",
+          "claim": "Cal.com's popup via element click embed opens a booking calendar when a user clicks anywhere on the website page.",
+          "verbatim": "This option is a combination of the inline embed and the popup button. Once a user clicks somewhere on your website page, a booking calendar will appear.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E97",
+          "kind": "feature",
+          "claim": "Cal.com offers an email embed option that simplifies sharing a calendar link via a graphic element with links and text.",
+          "verbatim": "The final embed option that we offer is made for emails. Basically, it simplifies sharing/explaining how a calendar link works.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E98",
+          "kind": "integration",
+          "claim": "Cal.com's app store is a repository of third-party integrations covering analytics, teleconferencing platforms, payment gateways, and more.",
+          "verbatim": "Cal.com's app store is a repository for all of our third-party integrations. You can use the app store to add everything from analytics to teleconferencing platforms, payment gateways, and more.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E99",
+          "kind": "feature",
+          "claim": "Cal.com's booking form (booking questions) asks bookers for information such as name, phone number, and meeting purpose.",
+          "verbatim": "Whenever someone books an appointment with you, there's a little form they have to fill out. It'll ask them questions like their name, their phone number, or what the meeting's about.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E100",
+          "kind": "feature",
+          "claim": "CalVideo meetings don't automatically end or time out after 45 minutes and can be as long or short as needed",
+          "verbatim": "One of the benefits of using CalVideo is that you don't have to worry about your meeting automatically ending or timing out after 45 minutes. Meetings conducted via CalVideo can be as long or short as you'd like.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E101",
+          "kind": "feature",
+          "claim": "All subscription tiers except the free tier support CalVideo recording",
+          "verbatim": "All of our subscription tiers, other than our free one, support CalVideo recording.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E102",
+          "kind": "feature",
+          "claim": "Users can press a record button at any time during a CalVideo meeting to start capturing content, and receive an email when the recording is ready to download",
+          "verbatim": "You can press the record button at any time during a meeting that is being conducted via CalVideo to start capturing content. Once the meeting has ended, you'll receive an email letting you know that your recording is ready to download.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E103",
+          "kind": "feature",
+          "claim": "Recorded meetings can be accessed via the account's bookings tab under the Past category, with a download button for those with recordings",
+          "verbatim": "All recorded meetings can be accessed via your account's bookings tab. Just select the \"Past\" category to see a list of previously conducted meetings, and those with recordings will have a button that you can press to download them.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E104",
+          "kind": "feature",
+          "claim": "Cal.ai is an AI voice assistant used for outbound calls to schedule meetings, follow up on missing documents, or send reminders about upcoming appointments",
+          "verbatim": "Cal.ai is our AI voice assistant used for outbound calls to schedule meetings, follow up on missing documents or send reminders about upcoming appointments.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E105",
+          "kind": "feature",
+          "claim": "Cal.com's platform product is ideal for building time-based marketplaces, businesses, and powering large-scale public bookings, with options for advanced customization, enhanced security, and white labeling",
+          "verbatim": "Cal.com’s platform product is ideal for building time-based marketplaces, businesses, and powering large-scale public bookings. The platform subscription comes with options for advanced customization, enhanced security, and white labeling.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E106",
+          "kind": "feature",
+          "claim": "An enterprise license for self-hosting is obtained by contacting the sales team, who help review options and verify Cal.com can meet the company's needs",
+          "verbatim": "If you're interested in getting an enterprise license for self-hosting, then you should reach out to our sales team. They'll help you review your options and verify that Cal.com is capable of executing everything that your company needs.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "operations"
+        },
+        {
+          "id": "E107",
+          "kind": "feature",
+          "claim": "Cal.com branding can be removed from booking pages by upgrading to a Teams level account",
+          "verbatim": "If you would simply like to remove Cal.com branding from your booking pages, that can be done by upgrading your account. The easiest way to do that is by clicking this link: https://app.cal.com/settings/teams/new Doing this will open up a window which will walk you through the steps of upgrading to a Teams level account.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E108",
+          "kind": "feature",
+          "claim": "Upgrading to a Teams account provides access to collective events, round-robin meetings, and CalVideo recordings, in addition to removing the Cal.com logo from booking pages",
+          "verbatim": "Upgrading to this account type will provide you with access to features like collective events, round-robin meetings, and CalVideo recordings, in addition to letting you remove Cal.com’s logo from your booking pages.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E109",
+          "kind": "feature",
+          "claim": "The bookingUID functions like a non-guessable, non-iterable secret key that lets attendees without a Cal.com account access booking information via the v2 API",
+          "verbatim": "The bookingUID is like a password. It's non-guessable and non-iterable. The attendees might not have the Cal.com account and yet they would need access to this information and UID functions like a secret key for everyone in this case.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E110",
+          "kind": "feature",
+          "claim": "Cal.com's mission is to connect a billion people by 2031 through calendar scheduling",
+          "verbatim": "Our mission is to connect a billion people by 2031 through calendar scheduling.",
+          "source": "https://cal.com/scheduling/frequently-asked-questions",
+          "document_id": "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "company"
+        },
+        {
+          "id": "E111",
+          "kind": "feature",
+          "claim": "The Cal.com API supports 3 authentication methods: OAuth, API key, and Platform (Deprecated).",
+          "verbatim": "The Cal.com API has 3 authentication methods: 1. OAuth 2. API key 3. Platform (Deprecated)",
+          "source": "https://cal.com/docs",
+          "document_id": "a2665066-37b4-416e-8676-bccd02695d8b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E112",
+          "kind": "feature",
+          "claim": "API keys can be viewed and managed in the Cal.com settings page under the security tab.",
+          "verbatim": "You can view and manage your API keys in your settings page under the security tab in Cal.com.",
+          "source": "https://cal.com/docs",
+          "document_id": "a2665066-37b4-416e-8676-bccd02695d8b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E113",
+          "kind": "feature",
+          "claim": "Test mode secret API keys use the prefix cal_ and live mode secret API keys use the prefix cal_live_.",
+          "verbatim": "Test mode secret keys have the prefix `cal_` and live mode secret keys have the prefix `cal_live_`.",
+          "source": "https://cal.com/docs",
+          "document_id": "a2665066-37b4-416e-8676-bccd02695d8b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E114",
+          "kind": "metric",
+          "claim": "API Key authentication has a rate limit of 120 requests per minute.",
+          "verbatim": "API Key - 120 requests per minute.",
+          "source": "https://cal.com/docs",
+          "document_id": "a2665066-37b4-416e-8676-bccd02695d8b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E115",
+          "kind": "metric",
+          "claim": "The API rate limit can be increased to a reasonable amount, such as 200 requests per minute.",
+          "verbatim": "This can be increased to a reasonable amount, such as 200 requests per minute.",
+          "source": "https://cal.com/docs",
+          "document_id": "a2665066-37b4-416e-8676-bccd02695d8b",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E116",
+          "kind": "price",
+          "claim": "A higher API rate limit, such as 800 requests per minute, is possible but may involve extra charges.",
+          "verbatim": "If you require a higher rate limit, such as 800 requests per minute, it is possible, but it may involve extra charges.",
+          "source": "https://cal.com/docs",
+          "document_id": "a2665066-37b4-416e-8676-bccd02695d8b",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E117",
+          "kind": "metric",
+          "claim": "If no authentication method is provided, the default API rate limit is 120 requests per minute.",
+          "verbatim": "If no authentication method is provided, the default rate limit is 120 requests per minute.",
+          "source": "https://cal.com/docs",
+          "document_id": "a2665066-37b4-416e-8676-bccd02695d8b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E118",
+          "kind": "feature",
+          "claim": "As of 15th December 2025, Cal.com no longer offers new signups for any Platform plan, though it continues to provide enterprise support for existing Platform customers.",
+          "verbatim": "As of 15th December 2025, we’re currently undergoing a restructuring of our “Platform”-offering. Until further we continue to provide enterprise support for existing customers but no longer offer new signups for any “Platform” plan.",
+          "source": "https://cal.com/docs",
+          "document_id": "a2665066-37b4-416e-8676-bccd02695d8b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E119",
+          "kind": "feature",
+          "claim": "Teams customers have access to all API endpoints except those prefixed with 'Platform' and 'Orgs'.",
+          "verbatim": "Teams customers have all the endpoints except the ones prefixed with “Platform” and “Orgs”.",
+          "source": "https://cal.com/docs",
+          "document_id": "a2665066-37b4-416e-8676-bccd02695d8b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E120",
+          "kind": "feature",
+          "claim": "Organizations customers have access to all API endpoints except those prefixed with 'Platform', 'Teams', and 'Orgs / Orgs', since child organizations are only allowed on the platform plan.",
+          "verbatim": "Organizations customers have all the endpoints except the ones prefixed with “Platform” and “Teams” and “Orgs / Orgs” because children organizations are only allowed in the platform plan right now.",
+          "source": "https://cal.com/docs",
+          "document_id": "a2665066-37b4-416e-8676-bccd02695d8b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E121",
+          "kind": "feature",
+          "claim": "Platform customers get access to Platform-prefixed endpoints, unprefixed endpoints like Bookings and Event Types, and, on at least the ESSENTIALS plan, Orgs-prefixed endpoints except Orgs/Attributes, Orgs/Attributes/Options, and Orgs/Teams/Routing forms/Responses.",
+          "verbatim": "Platform customers have the following endpoints available: 1. Endpoints prefixed with “Platform”. 2. Endpoints with no prefix e.g “Bookings”, “Event Types”. 3. If you are at least on the ESSENTIALS plan, then all endpoints prefixed with “Orgs” except “Orgs / Attributes”, “Orgs / Attributes / Options” and “Orgs / Teams / Routing forms / Responses”.",
+          "source": "https://cal.com/docs",
+          "document_id": "a2665066-37b4-416e-8676-bccd02695d8b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E122",
+          "kind": "metric",
+          "claim": "Managed user access tokens are valid for 60 minutes and refresh tokens are valid for 1 year.",
+          "verbatim": "Validity period: access tokens are valid for 60 minutes and refresh tokens for 1 year, and tokens can be refreshed using the refresh endpoint",
+          "source": "https://cal.com/docs",
+          "document_id": "a2665066-37b4-416e-8676-bccd02695d8b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E123",
+          "kind": "feature",
+          "claim": "OAuth credentials are required for managing managed users, creating OAuth client webhooks, refreshing a managed user's tokens, and team-related endpoints such as managing organization teams, adding managed users as team members, and creating team event types.",
+          "verbatim": "1. Managing managed users [API reference](https://cal.com/docs/api-reference/v2/platform-managed-users/create-a-managed-user) 2. Creating OAuth client webhooks [API reference](https://cal.com/docs/api-reference/v2/platform-webhooks/create-a-webhook) 3. Refreshing tokens of a managed user [API reference](https://cal.com/docs/api-reference/v2/platform-managed-users/refresh-managed-user-tokens) 4. Te…",
+          "source": "https://cal.com/docs",
+          "document_id": "a2665066-37b4-416e-8676-bccd02695d8b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E124",
+          "kind": "feature",
+          "claim": "A managed user's access token is required to manage their Schedules and Event types, and for some Bookings endpoints, such as retrieving all of a managed user's bookings, while creating a booking is public.",
+          "verbatim": "1. Schedules [API reference](https://cal.com/docs/api-reference/v2/schedules/create-a-schedule) 2. Event types [API reference](https://cal.com/docs/api-reference/v2/event-types/create-an-event-type) 3. Bookings - some endpoints like creating a booking is public, but some like getting all managed user’s bookings require managed user’s access token [API reference](https://cal.com/docs/api-reference/…",
+          "source": "https://cal.com/docs",
+          "document_id": "a2665066-37b4-416e-8676-bccd02695d8b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E125",
+          "kind": "feature",
+          "claim": "If a managed user's access or refresh tokens are lost, they can be force-refreshed using the OAuth client credentials.",
+          "verbatim": "Recovering tokens: if you ever lose managed user’s access or refresh tokens, you can force refresh them using the OAuth client credentials and store them in your database",
+          "source": "https://cal.com/docs",
+          "document_id": "a2665066-37b4-416e-8676-bccd02695d8b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E126",
+          "kind": "feature",
+          "claim": "The Free plan offers unlimited event types & calendars",
+          "verbatim": "Unlimited event types & calendars",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E127",
+          "kind": "feature",
+          "claim": "The Free plan includes email & SMS notifications",
+          "verbatim": "Email & SMS notifications",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E128",
+          "kind": "integration",
+          "claim": "The Free plan integrates with over 100 apps",
+          "verbatim": "Integrate with 100+ apps",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E129",
+          "kind": "feature",
+          "claim": "Cal.com offers a Browser Extension",
+          "verbatim": "Browser Extension",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E130",
+          "kind": "integration",
+          "claim": "Cal.com accepts Stripe & PayPal payments",
+          "verbatim": "Accept Stripe & PayPal payments",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E131",
+          "kind": "integration",
+          "claim": "Cal.com offers two-way Salesforce & HubSpot sync",
+          "verbatim": "Two-way Salesforce & HubSpot sync",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E132",
+          "kind": "feature",
+          "claim": "Cal.com allows 1-click import of Calendly events",
+          "verbatim": "1-click import Calendly events",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E133",
+          "kind": "price",
+          "claim": "The Teams plan costs $12 per user/month billed yearly",
+          "verbatim": "### $12 per user/month",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E134",
+          "kind": "guarantee",
+          "claim": "The Teams plan comes with a 14 day free trial",
+          "verbatim": "\\*14 day free trial",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E135",
+          "kind": "feature",
+          "claim": "The Teams plan includes 1 team with shared availability",
+          "verbatim": "1 team, shared availability",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E136",
+          "kind": "feature",
+          "claim": "The Teams plan includes round-robin scheduling",
+          "verbatim": "Round-robin scheduling",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E137",
+          "kind": "feature",
+          "claim": "The Teams plan includes managed & collective event types",
+          "verbatim": "Managed & collective event types",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E138",
+          "kind": "feature",
+          "claim": "The Teams plan includes recurring events",
+          "verbatim": "Recurring events",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E139",
+          "kind": "feature",
+          "claim": "The Teams plan includes customizable email & SMS notifications",
+          "verbatim": "Customizable email & SMS notifications",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E140",
+          "kind": "feature",
+          "claim": "The Teams plan allows removing Cal.com branding",
+          "verbatim": "Remove Cal.com branding",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E141",
+          "kind": "feature",
+          "claim": "The Teams plan includes routing forms",
+          "verbatim": "Routing forms",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E142",
+          "kind": "feature",
+          "claim": "The Teams plan includes booking analytics",
+          "verbatim": "Booking analytics",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E143",
+          "kind": "price",
+          "claim": "The Organizations plan costs $28 per user/month billed yearly",
+          "verbatim": "### $28 per user/month",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E144",
+          "kind": "guarantee",
+          "claim": "The Organizations plan comes with a 14 day free trial",
+          "verbatim": "\\*14 day free trial",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E145",
+          "kind": "feature",
+          "claim": "The Organizations plan includes unlimited sub-teams",
+          "verbatim": "Unlimited sub-teams",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E146",
+          "kind": "feature",
+          "claim": "The Organizations plan allows routing by custom variables",
+          "verbatim": "Route by custom variables",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E147",
+          "kind": "feature",
+          "claim": "The Organizations plan offers a company subdomain (yourcompany.cal.com)",
+          "verbatim": "Company subdomain (yourcompany.cal.com)",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E148",
+          "kind": "feature",
+          "claim": "The Organizations plan includes SAML SSO and SCIM",
+          "verbatim": "SAML SSO and SCIM",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E149",
+          "kind": "certification",
+          "claim": "The Organizations plan is SOC 2, HIPAA, ISO 27001 compliant",
+          "verbatim": "SOC 2, HIPAA, ISO 27001 compliant",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E150",
+          "kind": "feature",
+          "claim": "The Organizations plan includes instant meetings",
+          "verbatim": "Instant meetings",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E151",
+          "kind": "feature",
+          "claim": "The Organizations plan includes domain-wide-delegation",
+          "verbatim": "Domain-wide-delegation",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E152",
+          "kind": "feature",
+          "claim": "The Organizations plan includes role-based permissions",
+          "verbatim": "Role-based permissions",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E153",
+          "kind": "feature",
+          "claim": "The Organizations plan includes additional APIs",
+          "verbatim": "Additional APIs",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E154",
+          "kind": "feature",
+          "claim": "The Custom/Enterprise plan includes dedicated onboarding and engineering support",
+          "verbatim": "Dedicated onboarding and engineering support",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "operations"
+        },
+        {
+          "id": "E155",
+          "kind": "guarantee",
+          "claim": "The Custom/Enterprise plan includes SLA & uptime guarantees",
+          "verbatim": "SLA & uptime guarantees",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E156",
+          "kind": "integration",
+          "claim": "The Custom/Enterprise plan includes HRIS & directory integrations",
+          "verbatim": "HRIS & directory integrations",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E157",
+          "kind": "feature",
+          "claim": "The Custom/Enterprise plan includes priority Slack & account support",
+          "verbatim": "Priority Slack & account support",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "operations"
+        },
+        {
+          "id": "E158",
+          "kind": "feature",
+          "claim": "The Custom/Enterprise plan includes a dedicated database",
+          "verbatim": "Dedicated database",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E159",
+          "kind": "feature",
+          "claim": "Round-robin scheduling distributes bookings across a team automatically based on availability, weights and/or priority rules",
+          "verbatim": "Distribute bookings across a team automatically based on availability, weights and/or priority rules.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E160",
+          "kind": "feature",
+          "claim": "Round-robin groups create booking pools of teammates and distribute meetings automatically, e.g. pairing a sales rep and engineer for the same call",
+          "verbatim": "Create booking pools of teammates and distribute meetings automatically (e.g. pairing a sales rep and engineer for the same call).",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E161",
+          "kind": "feature",
+          "claim": "Dynamic group links create a shared booking link by combining usernames, e.g. cal.com/john+jane, to generate a collective meeting with shared availability",
+          "verbatim": "Create a shared booking link on the fly by combining usernames (e.g. cal.com/john+jane) to generate a collective meeting with shared availability.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E162",
+          "kind": "feature",
+          "claim": "Webhooks send booking data instantly to systems when meetings are created, updated, canceled, or choose from other triggers",
+          "verbatim": "Send booking data instantly to your systems when meetings are created, updated, canceled or choose from our other triggers.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E163",
+          "kind": "feature",
+          "claim": "Time-slot intervals control which time increments are available for bookings, e.g. event length or every 15, 30, or 60 minutes",
+          "verbatim": "Control which time increments are available for bookings (e.g. event length or every 15, 30, or 60 minutes).",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E164",
+          "kind": "feature",
+          "claim": "Multiple duration options let a company offer different meeting lengths for the same event type, e.g. 15, 30, or 60 mins",
+          "verbatim": "Offer different meeting lengths for the same event type (e.g. 15, 30, or 60 mins)",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E165",
+          "kind": "feature",
+          "claim": "Cal.com can control how many future meetings a single person can have scheduled at once.",
+          "verbatim": "Control how many future meetings a single person can have scheduled at once.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E166",
+          "kind": "feature",
+          "claim": "The Limit future bookings feature lets users set how far in advance people can book meetings.",
+          "verbatim": "Set how far in advance people can book meetings.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E167",
+          "kind": "feature",
+          "claim": "The 'Only show the first slot of each day as available' feature limits availability for an event type to one slot per day, scheduled at the earliest available time.",
+          "verbatim": "This will limit your availability for an event type to one slot per day, scheduled at the earliest available time.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E168",
+          "kind": "feature",
+          "claim": "Booking pages and event details can be offered in multiple languages.",
+          "verbatim": "Offer booking pages and event details in multiple languages.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E169",
+          "kind": "feature",
+          "claim": "Users can customize brand color, add their logo, and choose between light and dark mode on booking pages to match their brand.",
+          "verbatim": "Customize brand color, add your logo, and choose between light and dark mode to match your brand.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "brand"
+        },
+        {
+          "id": "E170",
+          "kind": "feature",
+          "claim": "Cal.com logos and references can be removed from booking pages.",
+          "verbatim": "Remove Cal.com logos and references from your booking pages.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "brand"
+        },
+        {
+          "id": "E171",
+          "kind": "feature",
+          "claim": "Users can display their company logo on booking pages.",
+          "verbatim": "Display your company logo on booking pages.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "brand"
+        },
+        {
+          "id": "E172",
+          "kind": "feature",
+          "claim": "Booking pages can be hosted on a custom Cal.com sub-domain, such as yourcompany.cal.com.",
+          "verbatim": "Host your booking pages on your Cal.com sub-domain (yourcompany.cal.com.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "product"
+        },
+        {
+          "id": "E173",
+          "kind": "certification",
+          "claim": "Cal.com supports HIPAA requirements for handling protected health information (PHI).",
+          "verbatim": "Support HIPAA requirements for handling protected health information (PHI).",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E174",
+          "kind": "feature",
+          "claim": "Roles & permissions let organizations control who can create, manage, and edit scheduling settings across the organization.",
+          "verbatim": "Control who can create, manage, and edit scheduling settings across your organization.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E175",
+          "kind": "integration",
+          "claim": "Cal.com supports SAML Single Sign-On for secure login through identity providers such as Okta and Azure AD.",
+          "verbatim": "Allow secure login through your identity provider (e.g. Okta, Azure AD).",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E176",
+          "kind": "integration",
+          "claim": "User accounts can be automatically created, updated, and removed through the identity provider via SCIM user provisioning.",
+          "verbatim": "Automatically create, update, and remove user accounts through your identity provider.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E177",
+          "kind": "feature",
+          "claim": "Domain wide delegation lets administrators manage scheduling settings across all users in the company domain.",
+          "verbatim": "Let administrators manage scheduling settings across all users in your company domain.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E178",
+          "kind": "certification",
+          "claim": "Cal.com undergoes SOC 2, ISO 27001, GDPR, and CCPA compliance checks.",
+          "verbatim": "SOC 2, ISO 27001, GDRP & CCPA compliance check",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E179",
+          "kind": "feature",
+          "claim": "Cal.com offers US and EU hosting options to meet regional data residency requirements.",
+          "verbatim": "US & EU hosting",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E180",
+          "kind": "feature",
+          "claim": "Organization data can be isolated in a dedicated database environment for enhanced security and performance.",
+          "verbatim": "Isolate your organization’s data in a dedicated database environment for enhanced security and performance.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "trust"
+        },
+        {
+          "id": "E181",
+          "kind": "integration",
+          "claim": "Cal.com integrates with Google Meet, Microsoft Teams, Zoom, Cal Video, and 20+ other conferencing tools.",
+          "verbatim": "Google Meet, Microsoft Teams, Zoom, Cal Video and 20+ other conferencing tools",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E182",
+          "kind": "feature",
+          "claim": "Video meeting links can be automatically added to bookings using the user's preferred conferencing platform.",
+          "verbatim": "Automatically add video meeting links to bookings using your preferred conferencing platform.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E183",
+          "kind": "integration",
+          "claim": "Cal.com syncs with Google Calendar, Outlook, Apple Calendar, Zoho Calendar, and more.",
+          "verbatim": "Google Calendar, Outlook, Apple Calendar, Zoho Calendar + more",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E184",
+          "kind": "feature",
+          "claim": "Connected calendars sync availability and events across them in real time.",
+          "verbatim": "Sync availability and events across all your connected calendars in real time.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E185",
+          "kind": "integration",
+          "claim": "Webhooks send booking data instantly to a user's systems when meetings are created, updated, or canceled, with additional trigger options available.",
+          "verbatim": "Send booking data instantly to your systems when meetings are created, updated, canceled or choose from our other triggers.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E186",
+          "kind": "integration",
+          "claim": "Cal.com two-way syncs meetings and contacts with Salesforce and routes bookings based on CRM data and ownership.",
+          "verbatim": "Two-way sync meetings and contacts with Salesforce, and route bookings based on CRM data and ownership.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E187",
+          "kind": "integration",
+          "claim": "Cal.com two-way syncs with HubSpot and automatically routes meetings to the right rep based on account ownership.",
+          "verbatim": "Two-way sync with HubSpot and automatically route meetings to the right rep based on account ownership.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E188",
+          "kind": "integration",
+          "claim": "Cal.com integrates with Stripe and PayPal for booking payments.",
+          "verbatim": "Stripe & Paypal for booking payments",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E189",
+          "kind": "feature",
+          "claim": "Payment can be requested upfront before someone can complete a booking.",
+          "verbatim": "Request payment upfront before someone can complete a booking with you.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "commercial"
+        },
+        {
+          "id": "E190",
+          "kind": "feature",
+          "claim": "Bookings can be managed on the go and scheduled faster directly from a browser or phone via the mobile app and browser extensions.",
+          "verbatim": "Manage bookings on the go and schedule faster directly from your browser or phone.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E191",
+          "kind": "integration",
+          "claim": "Cal.com integrates with Zapier & Make.",
+          "verbatim": "Zapier & Make",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E192",
+          "kind": "feature",
+          "claim": "Cal.com can connect to thousands of apps and automate workflows without writing code.",
+          "verbatim": "Connect Cal.com to thousands of apps and automate workflows without writing code.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E193",
+          "kind": "integration",
+          "claim": "Cal.com offers 100+ other direct integrations.",
+          "verbatim": "100+ other direct integrations",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical"
+        },
+        {
+          "id": "E194",
+          "kind": "feature",
+          "claim": "Cal.com's mission is to connect a billion people by 2031 through calendar scheduling.",
+          "verbatim": "Our mission is to connect a billion people by 2031 through calendar scheduling.",
+          "source": "https://cal.com/pricing",
+          "document_id": "9e129112-16af-4226-a70d-1812fa3014ed",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "brand"
+        }
+      ]
+    },
+    "voice": {
+      "learned": true,
+      "tone": "Plain and pragmatic, with quiet confidence rather than hype; comfortable naming the competitor directly and being specific about numbers, limits, and trade-offs instead of hiding them.",
+      "rhythm": "Short declarative sentences stacked two to four per paragraph; each sentence adds one concrete fact or instruction rather than building up with clauses.",
+      "person": "Mostly \"we/our\" as the company, with the product referred to by name (\"Cal.com offers...\") in marketing copy; documentation slips into direct address (\"you can view...\").",
+      "greetings": [],
+      "sign_offs": [],
+      "exemplars": [
+        "Start scheduling for free, with no usage limits. For collaborative features, choose one of our premium plans that fits your company size.",
+        "One of the biggest differences between Cal.com and Calendly is the value Cal.com provides right from the start. Calendly’s paid plan is comparable to what Cal.com offers for free to individuals. Our free plan includes essential features like unlimited event types and calendars, plus powerful capabilities—such as monetization, analytics, and advanced customization—that Calendly places behind a paywall.",
+        "Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.",
+        "API Key - 120 requests per minute. This can be increased to a reasonable amount, such as 200 requests per minute. If you require a higher rate limit, such as 800 requests per minute, it is possible, but it may involve extra charges. To request this, please contact support."
+      ],
+      "prefer_words": [
+        "seamless",
+        "effortless",
+        "powerful",
+        "unlimited",
+        "reasonable"
+      ],
+      "avoid_words": []
+    },
+    "audience": {
+      "segments": [
+        {
+          "name": "The dev-tool founder whose Calendly link is the worst-designed surface he ships",
+          "situation": "He runs or co-founds a small technical company, or sells his own expertise as a named individual, and his booking link is public infrastructure: email signature, site footer, conference bio, DM replies. Every other surface he ships he controls down to the font; the booking page is the one place a competitor's logo sits on his brand. He is already paying for a scheduling tool and uses a small fraction of it. When he last tried to change something — a duration, an event's details — he went looking in the dashboard and could not find it; Ant Wilson of Supabase says publicly that this is exactly what finally moved him. His peer group has already gone: Kent C. Dodds migrated, Guillermo Rauch at Vercel, Aria Minaei at Theatre.JS, Flo Merian at Mintlify all use it and say so by name. He is not researching a category. He is deciding whether this week is the week he changes the link.",
+          "situation_grounding": "inferred",
+          "situation_provenance": [
+            {
+              "source": "Cal.com testimonial — Ant Wilson, Co-Founder & CTO, Supabase",
+              "quote": "I finally made the move to Cal.com after I couldn't find how to edit events in the Calendly dashboard.",
+              "document_id": null,
+              "evidence_id": "E23",
+              "source_kind": "customer_voice"
+            },
+            {
+              "source": "Cal.com testimonial — Kent C. Dodds, Founder of EpicWeb.dev",
+              "quote": "I just migrated from Calendly to Cal.com.",
+              "document_id": null,
+              "evidence_id": "E31",
+              "source_kind": "customer_voice"
+            },
+            {
+              "source": "Cal.com testimonial — Flo Merian, Product Marketing, Mintlify",
+              "quote": "More elegant than Calendly, more open than SavvyCal, Cal.com works and it feels just right.",
+              "document_id": null,
+              "evidence_id": "E27",
+              "source_kind": "customer_voice"
+            }
+          ],
+          "job_to_be_done": "Own the whole impression he makes on someone who wants to talk to him — including the fifteen seconds between clicking his link and picking a time — without that being a project he has to schedule.",
+          "trigger": "He went into the incumbent's dashboard to change one thing about one event, could not find where to do it, and closed the tab; or a peer he respects posted that they had just migrated.",
+          "sophistication": "product_aware",
+          "pains": [
+            {
+              "statement": "A buyer reports he could not find how to edit events in the Calendly dashboard, and that this is what finally made him switch.",
+              "grounding": "inferred",
+              "provenance": {
+                "source": "Cal.com testimonial — Ant Wilson, Co-Founder & CTO, Supabase",
+                "quote": "I finally made the move to Cal.com after I couldn't find how to edit events in the Calendly dashboard.",
+                "document_id": null,
+                "evidence_id": "E23",
+                "source_kind": "customer_voice"
+              }
+            },
+            {
+              "statement": "A buyer frames the alternatives as less elegant than one competitor and less open than another — the complaint is about taste and openness, not missing features.",
+              "grounding": "inferred",
+              "provenance": {
+                "source": "Cal.com testimonial — Flo Merian, Product Marketing, Mintlify",
+                "quote": "More elegant than Calendly, more open than SavvyCal, Cal.com works and it feels just right.",
+                "document_id": null,
+                "evidence_id": "E27",
+                "source_kind": "customer_voice"
+              }
+            },
+            {
+              "statement": "Cal.com asserts that capabilities this buyer would want as an individual — monetization, analytics, advanced customization — sit behind a paywall at Calendly.",
+              "grounding": "inferred",
+              "provenance": {
+                "source": "Cal.com FAQ, 'What's the difference between Cal.com and Calendly?'",
+                "quote": "Our free plan includes essential features like unlimited event types and calendars, plus powerful capabilities—such as monetization, analytics, and advanced customization—that Calendly places behind a paywall.",
+                "document_id": null,
+                "evidence_id": "E37",
+                "source_kind": "vendor_copy"
+              }
+            },
+            {
+              "statement": "He is paying a monthly subscription for what is, in his actual usage, three event types and a calendar check — and the bill renews whether or not he opened the dashboard that month.",
+              "grounding": "inferred",
+              "provenance": null
+            },
+            {
+              "statement": "Someone else's brand appears on the page where his clients and candidates decide what kind of operation he runs.",
+              "grounding": "inferred",
+              "provenance": null
+            }
+          ]
+        },
+        {
+          "name": "The partner in a small consulting or coaching practice where every enquiry lands on whoever answers email first",
+          "situation": "Two to six practitioners share the client list and the specialisms are not interchangeable — one does the regulated-industry work, one coaches founders, one works in a second language. The booking link is generic, so a client picks a slot and the practice finds out what the session is actually about when the call starts. The first ten minutes of paid or pre-sales time go on questions that could have been asked in a form, and sometimes the call ends with 'you should really speak to my colleague', which means rebooking and a client who has now told their story twice. Intake currently happens as email back-and-forth before a time is agreed, or not at all. Cal.com markets to exactly this practice: it says teams like this use routing forms to qualify leads, guide them to the right service, and assign clients by expertise, language, location or availability. Whether these practices actually behave this way is the vendor's assertion, not something observed here.",
+          "situation_grounding": "inferred",
+          "situation_provenance": [
+            {
+              "source": "Cal.com — Routing for consulting & coaching page",
+              "quote": "Assign clients to consultants or coaches automatically based on expertise, language, location, or availability using custom routing forms.",
+              "document_id": null,
+              "evidence_id": "E11",
+              "source_kind": "vendor_copy"
+            },
+            {
+              "source": "Cal.com — Routing for consulting & coaching page",
+              "quote": "Easily build and update intake forms to collect relevant information, qualifying leads and guiding them to the right service.",
+              "document_id": null,
+              "evidence_id": "E12",
+              "source_kind": "vendor_copy"
+            }
+          ],
+          "job_to_be_done": "Walk into every client call already knowing who this person is and what they need, and stop being the practice that makes a paying client explain themselves twice.",
+          "trigger": "A booking landed with the wrong practitioner and had to be handed off mid-call; or they brought in a third person with a different specialism and the single shared link stopped making sense the day she started.",
+          "sophistication": "solution_aware",
+          "pains": [
+            {
+              "statement": "Cal.com claims practices in this position need intake forms that qualify leads and guide them to the right service, implying that today they do neither.",
+              "grounding": "inferred",
+              "provenance": {
+                "source": "Cal.com — Routing for consulting & coaching page",
+                "quote": "Easily build and update intake forms to collect relevant information, qualifying leads and guiding them to the right service.",
+                "document_id": null,
+                "evidence_id": "E12",
+                "source_kind": "vendor_copy"
+              }
+            },
+            {
+              "statement": "Cal.com claims clients need assigning to the right expert based on answers such as industry, challenge or language preference — the mismatch it is selling against.",
+              "grounding": "inferred",
+              "provenance": {
+                "source": "Cal.com FAQ — consulting & coaching routing",
+                "quote": "Yes, you can set up attribute-based routing so clients are assigned to the right expert based on their responses, such as industry, challenge, or language preference.",
+                "document_id": null,
+                "evidence_id": "E9",
+                "source_kind": "vendor_copy"
+              }
+            },
+            {
+              "statement": "Cal.com claims these teams lack visibility into booking, routing and team performance metrics.",
+              "grounding": "inferred",
+              "provenance": {
+                "source": "Cal.com — Routing for consulting & coaching page",
+                "quote": "Track booking, routing, and team performance metrics to optimize your consulting or coaching business.",
+                "document_id": null,
+                "evidence_id": "E16",
+                "source_kind": "vendor_copy"
+              }
+            },
+            {
+              "statement": "Offerings change — a new package, a dropped one, a partner on leave — and whoever set up the booking links is the bottleneck for every change, because nobody else knows how they were wired.",
+              "grounding": "inferred",
+              "provenance": null
+            },
+            {
+              "statement": "Client records live in the CRM and scheduling lives somewhere else, so nobody can see the whole engagement in one place without opening two tools.",
+              "grounding": "inferred",
+              "provenance": null
+            }
+          ]
+        },
+        {
+          "name": "The ops or security lead at a regulated company who has just discovered half the team booking client calls on personal free accounts",
+          "situation": "She works somewhere where client data is the compliance exposure — health, legal, HR, education, finance-adjacent. Cal.com's own materials say enterprise licences are typically bought by exactly these fields. Scheduling was never procured; it arrived one free personal account at a time, and the booking pages carry consumer branding, live outside SSO, and cannot be revoked when someone leaves. She has a security questionnaire, an audit, or a customer's vendor review in front of her asking which third parties touch client information, and scheduling is on the list with no owner. A named buyer in her position — Navi's founder — states flatly that protecting personal health information is non-negotiable and that this is why they chose their scheduling vendor. She is not looking for a nicer booking page; she is looking for something she can put a name to in a compliance register and hand to IT to provision.",
+          "situation_grounding": "inferred",
+          "situation_provenance": [
+            {
+              "source": "Cal.com testimonial — Micah Friedland, CEO & Founder, Navi",
+              "quote": "At Navi, protecting personal health information is a non-negotiable, so choosing Cal.com for scheduling just makes sense.",
+              "document_id": null,
+              "evidence_id": "E25",
+              "source_kind": "customer_voice"
+            },
+            {
+              "source": "Cal.com help documentation — enterprise licensing",
+              "quote": "Enterprise licenses come with advanced options for security and are typically chosen by professionals and organizations working within human resources, healthcare, education, legal, and government adjacent fields.",
+              "document_id": null,
+              "evidence_id": "E50",
+              "source_kind": "vendor_copy"
+            }
+          ],
+          "job_to_be_done": "Get one more piece of shadow IT under a contract, a login policy and a certificate, so the next security review is a link she sends rather than a week she loses.",
+          "trigger": "A customer security questionnaire or an audit asked which vendors process client data; or an employee left and nobody could take down the booking page that still had his name and their clients on it.",
+          "sophistication": "solution_aware",
+          "pains": [
+            {
+              "statement": "A buyer in a health context states that protecting personal health information is non-negotiable and that it drove the scheduling vendor choice.",
+              "grounding": "inferred",
+              "provenance": {
+                "source": "Cal.com testimonial — Micah Friedland, CEO & Founder, Navi",
+                "quote": "At Navi, protecting personal health information is a non-negotiable, so choosing Cal.com for scheduling just makes sense.",
+                "document_id": null,
+                "evidence_id": "E25",
+                "source_kind": "customer_voice"
+              }
+            },
+            {
+              "statement": "Cal.com asserts that organisations in HR, healthcare, education, legal and government-adjacent fields need advanced security options beyond a standard team subscription.",
+              "grounding": "inferred",
+              "provenance": {
+                "source": "Cal.com help documentation — enterprise licensing",
+                "quote": "Enterprise licenses come with advanced options for security and are typically chosen by professionals and organizations working within human resources, healthcare, education, legal, and government adjacent fields.",
+                "document_id": null,
+                "evidence_id": "E50",
+                "source_kind": "vendor_copy"
+              }
+            },
+            {
+              "statement": "Cal.com asserts that organisations have regional data residency requirements its US and EU hosting options exist to meet.",
+              "grounding": "inferred",
+              "provenance": {
+                "source": "Cal.com features — security & compliance",
+                "quote": "US & EU hosting",
+                "document_id": null,
+                "evidence_id": "E179",
+                "source_kind": "vendor_copy"
+              }
+            },
+            {
+              "statement": "Accounts created outside IT cannot be provisioned or de-provisioned with everything else, so joiners and leavers are handled by remembering to.",
+              "grounding": "inferred",
+              "provenance": null
+            },
+            {
+              "statement": "Anything that requires her to administer individual users' calendars by hand is worse than the problem, because it makes her the scheduling department.",
+              "grounding": "inferred",
+              "provenance": null
+            }
+          ]
+        }
+      ],
+      "objections": [
+        {
+          "objection": "We already run on Calendly. The link is in email signatures, on the website, in job posts and in people's bios — switching means chasing every place it lives and breaking any of them I miss.",
+          "severity": "strong",
+          "answer": "Cal.com offers 1-click import of Calendly events (E132), so the event types themselves do not have to be rebuilt, and the free plan is free forever with no usage limits (E39, E126), so the migration can be run in parallel before anything is cut over. A named peer states publicly that he simply migrated (E31). Note the limit: the evidence covers importing events into Cal.com, not finding and rewriting the existing links, embeds and signatures — nothing in the ledger addresses that part of the work.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E132",
+            "E39",
+            "E126",
+            "E31"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "Your pricing page says $12 per user/month and your own FAQ says a team account costs $15 per member. If I cannot trust the price on the page, what else on it is stale?",
+          "severity": "strong",
+          "answer": "Nothing in the supplied evidence reconciles these. The pricing page states $12 per user/month on yearly billing described as a 25% saving (E133), and the FAQ separately states $15 per month per team member (E40). The likely explanation is monthly versus discounted-yearly, but no supplied source says so, and the copy must not assert it. This objection cannot be answered with what we currently know; the safe move is to quote one figure with its billing term attached and never present the two as one price.",
+          "grounding": "inferred",
+          "evidence_ids": [],
+          "provenance": []
+        },
+        {
+          "objection": "I am one person. Paying a per-user 'team' price so that your logo comes off my booking page reads as a hostage fee, not a plan.",
+          "severity": "mild",
+          "answer": "Cal.com's own help docs state that a team does not have to be more than a single individual (E54, E107), and that the upgrade also brings collective events, round-robin and CalVideo recording rather than only branding removal (E108, E101). The free tier is otherwise unusually complete — Cal.com claims free users get over 90% of all features (E52, E53). What the evidence does not do is make the logo removal itself feel worth a recurring per-user bill; the honest framing is that branding is a side-effect of the team tier, not its pitch.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E54",
+            "E107",
+            "E108",
+            "E101",
+            "E52",
+            "E53"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "You stopped taking new signups for the Platform product in December 2025. Why would I build my product's booking layer on a company that just closed the thing I would be buying?",
+          "severity": "blocking",
+          "answer": "Only partially answerable. Cal.com states that as of 15 December 2025 it no longer offers new signups for any Platform plan and continues enterprise support for existing customers only (E118) — there is no replacement path in the evidence for a new platform customer, and that is the finding. What survives for a builder is the ordinary API: Teams customers get every endpoint except Platform- and Orgs-prefixed ones (E119), Organizations customers get everything except Platform, Teams and Orgs/Orgs (E120), with OAuth and API-key auth (E111) and Custom APIs listed in the Teams plan. Anyone needing managed users specifically should not be written to as a prospect.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E118",
+            "E119",
+            "E120",
+            "E111"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "'Open source' means AGPL. If we self-host and touch the code, our own product has to be open too — that is a legal problem, not a feature.",
+          "severity": "strong",
+          "answer": "The concern is correct as stated and the evidence confirms it: Cal.com is published under AGPL v3 and products built with its code must themselves remain open source (E55), and the enterprise edition cannot be rebranded and republished without a purchased licence (E56). The resolutions in the evidence are commercial, not legal reassurance: an enterprise self-hosting licence is obtained through sales (E106), and cloud deployment avoids the question entirely while keeping the same product (E2, E15). Do not sell 'open source' to a buyer who has not asked for it.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E55",
+            "E56",
+            "E106",
+            "E2",
+            "E15"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "We handle patient or client data. Adding a scheduling vendor adds a place that data can leak, and I will have to defend that choice to an auditor.",
+          "severity": "blocking",
+          "answer": "This is the best-evidenced objection in the set. The product is ISO 27001, SOC 2 Type II, CCPA and GDPR compliant (E43, E178) with EU-US Data Privacy Framework and HIPAA certifications (E44), supports HIPAA requirements for handling PHI (E173), offers US and EU hosting (E179), a dedicated database environment on the top tier (E180, E158), SAML SSO and SCIM for provisioning (E148, E175, E176), role-based permissions (E152, E174), and — if hosting the vendor at all is the objection — self-hosted or open-source deployment giving full control over client data and infrastructure (E3, E2). A named buyer in health has already made this argument publicly (E25).",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E43",
+            "E178",
+            "E44",
+            "E173",
+            "E179",
+            "E180",
+            "E148",
+            "E175",
+            "E176",
+            "E152",
+            "E3",
+            "E2"
+          ],
+          "provenance": [
+            {
+              "source": "Cal.com testimonial — Micah Friedland, CEO & Founder, Navi",
+              "quote": "At Navi, protecting personal health information is a non-negotiable, so choosing Cal.com for scheduling just makes sense.",
+              "document_id": null,
+              "evidence_id": "E25",
+              "source_kind": "customer_voice"
+            }
+          ]
+        },
+        {
+          "objection": "It is open source and the free tier does almost everything. We can self-host it, or wire up a booking page ourselves, and pay nothing.",
+          "severity": "strong",
+          "answer": "Nothing in the evidence closes this, and Cal.com's own claims arguably open it: free users are said to have access to over 90% of all features (E52, E53) and self-hosting is offered outright (E3). There is no case study, no maintenance cost and no customer statement in the ledger about anyone who self-hosted and regretted it. The only counterweights available are that a self-build inherits none of the certifications (E43, E44, E178), none of the 100+ direct integrations and calendar/conferencing sync (E193, E181, E183, E131), and none of the routing and round-robin logic (E159, E11) — and that the paid tiers exist for collaboration features a single-user build does not have (E135, E137). Treat this as unbeaten for technically capable buyers.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E52",
+            "E53",
+            "E3",
+            "E43",
+            "E44",
+            "E178",
+            "E193",
+            "E181",
+            "E183",
+            "E159"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "Routing forms and round-robin are for sales floors with a pool of reps. There are three of us and we know who takes what.",
+          "severity": "mild",
+          "answer": "Partly answerable, and the evidence is inconsistent here, which is worth knowing. Cal.com's help docs list routing forms among free-account features (E53) while the pricing page lists routing forms under the Teams plan (E141) — do not assert either as the reader's entitlement. What is safe: a team can be a single individual (E54), the no-code form builder is pitched at small practices whose offerings change (E10), and the value framed for them is qualification before the call rather than distribution across a rep pool (E12, E8). The 14-day trial (E134) lets them test it without an argument about size.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E54",
+            "E10",
+            "E12",
+            "E8",
+            "E134"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "Your pricing page sells a Mobile App and your own help docs say you do not have one. Which is it?",
+          "severity": "mild",
+          "answer": "Unresolved in the evidence. The Free plan feature list includes 'Mobile App' and browser extensions for managing bookings on the go (E129, E190), while the help documentation states there is currently no mobile app for Android or iPhone and directs users to a browser (E82), adding that a desktop app exists but does not provide the same experience and is updated less often (E83). Do not promise a mobile app in copy.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E82",
+            "E83"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "120 requests a minute will not carry our booking volume, and you have already told me more costs extra without telling me how much.",
+          "severity": "strong",
+          "answer": "Only partly answerable. The documented default and API-key limit is 120 requests per minute (E114, E117), which can be raised to a reasonable amount such as 200 (E115); a higher limit such as 800 is possible but may involve extra charges (E116) and no price is published for it. Anything beyond that is a sales conversation on the Custom tier (E154, E155). For a reader whose objection is volume economics, the evidence gives a number and a shrug — say so rather than implying the ceiling is negotiable.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E114",
+            "E117",
+            "E115",
+            "E116",
+            "E155"
+          ],
+          "provenance": []
+        }
+      ]
+    },
+    "gaps": {
+      "gaps": []
+    },
+    "version": 1,
+    "compiled_at": "2026-09-30T15:18:07.940133Z",
+    "source_document_ids": [
+      "07351f32-ce60-4b4e-a2b7-37f263f7aec5",
+      "7ff4383a-c9ff-463f-abb0-6a60dd955172",
+      "962475a2-a24d-460c-8c27-15db92dcad7c",
+      "a2665066-37b4-416e-8676-bccd02695d8b",
+      "9e129112-16af-4226-a70d-1812fa3014ed"
+    ],
+    "notes": [
+      "6 of 200 candidate fact(s) were discarded because the quote supporting them could not be found in the source."
+    ]
+  }
+}

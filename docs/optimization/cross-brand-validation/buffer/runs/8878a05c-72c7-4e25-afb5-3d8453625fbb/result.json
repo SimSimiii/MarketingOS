@@ -1,0 +1,702 @@
+{
+  "id": "8878a05c-72c7-4e25-afb5-3d8453625fbb",
+  "campaign_id": "387e2c54-93b9-46bc-ae13-1c9a5525d58d",
+  "status": "completed",
+  "error_message": null,
+  "started_at": "2026-09-30T23:40:13.763352Z",
+  "completed_at": "2026-09-30T23:45:54.165052Z",
+  "created_at": "2026-09-30T23:40:13.763352Z",
+  "total_input_tokens": 730674,
+  "total_output_tokens": 35090,
+  "total_cache_read_tokens": 457856,
+  "estimated_cost_usd": 7.4108,
+  "recommendation_snapshot": {
+    "campaign_id": "387e2c54-93b9-46bc-ae13-1c9a5525d58d",
+    "readiness": "DISCOVERY_ONLY",
+    "recommendation": {
+      "state": "DISCOVERY_ONLY",
+      "readiness": "DISCOVERY_ONLY",
+      "reasons": [
+        "No current V2 recommendation establishes product-to-audience fit."
+      ],
+      "eligible_subsegment": "",
+      "qualified_companies": [],
+      "adjacent_companies": [],
+      "excluded_companies": [],
+      "unverified_companies": [],
+      "allowed_claims": [],
+      "allowed_evidence_ids": [],
+      "forbidden_claims": [],
+      "forbidden_capability_ids": [],
+      "forbidden_evidence_ids": [],
+      "unresolved_objections": [],
+      "recommended_next_action": "Build or rebuild the Relevance Dossier V2, or generate explicitly as an audience-level hypothesis.",
+      "override_risk": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+      "claim_contract": null
+    },
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No current V2 recommendation establishes product-to-audience fit."
+    ],
+    "override_required": true,
+    "can_generate": true,
+    "user_message": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+    "override_explicit": true
+  },
+  "generated_despite_recommendation": true,
+  "agent_executions": [
+    {
+      "id": "db5b847f-b5c4-4d47-9027-0a0178b612cd",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 At the start of the week, queue a few posts for your connected social channels; after they publish, check engagement, impressions, and individual post performance in Buffer before planning the next week. The Free plan supports up to 10 scheduled posts per channel at one time, so present it as a practical entry point with a clear limit—not as unlimited scheduling."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T23:40:14.055398Z",
+      "completed_at": "2026-09-30T23:41:16.433397Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 56396,
+      "output_tokens": 5182,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 12288,
+      "cost_usd": 1.253022,
+      "duration_ms": 62172.52889997326,
+      "attempt": 1
+    },
+    {
+      "id": "2176d79d-ab03-452b-8fa6-09bcb661e2bf",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "At the start of the week, queue a few posts for your connected social channels; after they publish, check engagement, impressions, and individual post performance in Buffer before planning the next week. The Free plan supports up to 10 scheduled posts per channel at one time, so present it as a practical entry point with a clear limit—not as unlimited scheduling.",
+          "Planning social posts ahead in Buffer does not have to make a local business calendar rigid: Foster Coffee Company found a two-week schedule workable while still moving posts and inserting timely shop content."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Queue this week, review the results",
+          "Plan posts, keep room to move"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T23:41:17.311881Z",
+      "completed_at": "2026-09-30T23:41:37.342052Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 24775,
+      "output_tokens": 2282,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 24576,
+      "cost_usd": 0.579639,
+      "duration_ms": 34964.97059997637,
+      "attempt": 1
+    },
+    {
+      "id": "14a75a5c-4221-4da2-ba9a-45689e078d8a",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s) read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 5,
+        "scores": [
+          5,
+          5
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T23:41:38.120882Z",
+      "completed_at": "2026-09-30T23:42:04.603393Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 42631,
+      "output_tokens": 6653,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 72576,
+      "cost_usd": 1.247304,
+      "duration_ms": 131151.83649992105,
+      "attempt": 1
+    },
+    {
+      "id": "6b7eeb00-e9e0-4a35-be8b-71830787dd7c",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · the two best candidates, read side by side",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "challenger_won": true
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T23:42:04.654366Z",
+      "completed_at": "2026-09-30T23:42:13.454149Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 18459,
+      "output_tokens": 386,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 52352,
+      "cost_usd": 0.384363,
+      "duration_ms": 30501.787399989553,
+      "attempt": 1
+    },
+    {
+      "id": "5a325722-f9f3-4701-b8be-070d39fd2f91",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "copy",
+        "strategy_gap": ""
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T23:42:13.503457Z",
+      "completed_at": "2026-09-30T23:42:43.393105Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11385,
+      "output_tokens": 2546,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 12288,
+      "cost_usd": 0.380157,
+      "duration_ms": 29682.27900005877,
+      "attempt": 1
+    },
+    {
+      "id": "4660d0bc-bf9a-456c-8e59-5531ce436e79",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "Flexible social scheduling with Buffer"
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T23:42:43.418521Z",
+      "completed_at": "2026-09-30T23:43:13.038713Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 15125,
+      "output_tokens": 2571,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 12288,
+      "cost_usd": 0.438132,
+      "duration_ms": 29424.58950006403,
+      "attempt": 2
+    },
+    {
+      "id": "ff0401a5-d7e3-4c41-a8cd-8b9532a73c8f",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 4
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T23:43:13.567373Z",
+      "completed_at": "2026-09-30T23:43:34.355034Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 14421,
+      "output_tokens": 3130,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 42880,
+      "cost_usd": 0.515385,
+      "duration_ms": 57444.98000002932,
+      "attempt": 2
+    },
+    {
+      "id": "038609de-2b51-44fb-97b7-7610872dea77",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 8,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1 read against the version it would replace",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "challenger_won": true
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T23:43:34.381083Z",
+      "completed_at": "2026-09-30T23:43:44.093996Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 14599,
+      "output_tokens": 815,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 55552,
+      "cost_usd": 0.363438,
+      "duration_ms": 30051.233800011687,
+      "attempt": 2
+    },
+    {
+      "id": "7e177bb6-254e-4880-890d-865e65f02233",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 9,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "copy",
+        "strategy_gap": ""
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T23:43:44.117691Z",
+      "completed_at": "2026-09-30T23:44:23.743176Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11193,
+      "output_tokens": 3507,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 12288,
+      "cost_usd": 0.449352,
+      "duration_ms": 39425.097699975595,
+      "attempt": 2
+    },
+    {
+      "id": "f6eb95f1-5b91-4e32-8be3-ee75136f17c5",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 10,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 2",
+        "position": 1,
+        "attempt": 3
+      },
+      "output_data": {
+        "subject": "When local plans change"
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T23:44:23.772337Z",
+      "completed_at": "2026-09-30T23:44:43.907761Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 12292,
+      "output_tokens": 1531,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.321861,
+      "duration_ms": 19923.420100007206,
+      "attempt": 3
+    },
+    {
+      "id": "9fbaeba0-f99d-4983-b128-079e14c2d53e",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 11,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 3
+      },
+      "output_data": {
+        "pull": 5
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T23:44:44.375102Z",
+      "completed_at": "2026-09-30T23:45:07.751218Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 17558,
+      "output_tokens": 3727,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 39680,
+      "cost_usd": 0.602415,
+      "duration_ms": 62574.51310008764,
+      "attempt": 3
+    },
+    {
+      "id": "75d933b0-5787-4ba3-b5ad-d8bac8ef3f3c",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 12,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 2 read against the version it would replace",
+        "position": 1,
+        "attempt": 3
+      },
+      "output_data": {
+        "challenger_won": false
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T23:45:07.777108Z",
+      "completed_at": "2026-09-30T23:45:17.944345Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 18619,
+      "output_tokens": 693,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 52352,
+      "cost_usd": 0.409788,
+      "duration_ms": 33008.56789993122,
+      "attempt": 3
+    },
+    {
+      "id": "c9e21839-a1fc-4fc6-9f08-d36ec6d6deae",
+      "agent_id": "subject_writer",
+      "agent_name": "Subject Lines",
+      "sequence_order": 13,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 4 alternative subject lines",
+        "position": 1,
+        "variants": 4
+      },
+      "output_data": {
+        "subject": "Two weeks ahead, with room to move posts"
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T23:45:17.978790Z",
+      "completed_at": "2026-09-30T23:45:54.075787Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 15365,
+      "output_tokens": 2067,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 53632,
+      "cost_usd": 0.465948,
+      "duration_ms": 52808.69750014972,
+      "attempt": 1
+    }
+  ],
+  "assets": [
+    {
+      "id": "7429e808-f2ef-414d-8ed1-2d2b8a1d4a7f",
+      "asset_type": "email",
+      "title": "Two weeks ahead, with room to move posts",
+      "content": "Subject: Two weeks ahead, with room to move posts\nPreview text: See how Foster Coffee Company planned ahead while still adding timely shop content.\n\nHi there,\n\nPlanning ahead can still leave room for what happens locally.\n\nBuffer is a social media workspace for scheduling posts across connected channels and checking how they performed. Queue a few posts at the start of the week, then drag any post to a new slot when a timely update belongs there.\n\nAfter they publish, check available engagement, impressions, and individual post performance before planning the next batch. Foster Coffee Company found that two weeks ahead was its sweet spot while still moving posts and adding timely shop content.\n\nFree supports up to three connected channels and 10 scheduled posts per channel at one time. Essentials starts at $5/month for one channel when billed yearly. Paid scheduling is described as unlimited, with a fair-use cap of 5,000 posts per channel.\n\nThe official comparison lets you weigh those allowances against your planned posting volume.\n\nCompare plans →\n\n- the Buffer Customer Advocacy team\n\nCompare plans →\n\n- the Buffer Customer Advocacy team",
+      "content_html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n<meta name=\"x-apple-disable-message-reformatting\" />\n<meta name=\"color-scheme\" content=\"light\" />\n<meta name=\"supported-color-schemes\" content=\"light\" />\n<title>Two weeks ahead, with room to move posts</title>\n</head>\n<body style=\"margin:0;padding:0;background-color:#eceef3;-webkit-text-size-adjust:100%;\">\n<div style=\"display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;\">See how Foster Coffee Company planned ahead while still adding timely shop content.&#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; </div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#eceef3;\">\n<tr><td align=\"center\" style=\"padding:24px 12px;\">\n<table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;background-color:#ffffff;border-radius:12px;\">\n<tr><td style=\"background-color:#1a56db;height:4px;font-size:0;line-height:0;\">&nbsp;</td></tr>\n<tr><td style=\"padding:26px 36px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;font-weight:700;letter-spacing:0.2px;color:#14161a;\">Buffer</td></tr>\n<tr><td style=\"padding:32px 36px 16px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Hi there,</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:17px;line-height:1.6;color:#3d434d;\">Planning ahead can still leave room for what happens locally.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Buffer is a social media workspace for scheduling posts across connected channels and checking how they performed. Queue a few posts at the start of the week, then drag any post to a new slot when a timely update belongs there.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">After they publish, check available engagement, impressions, and individual post performance before planning the next batch. Foster Coffee Company found that two weeks ahead was its sweet spot while still moving posts and adding timely shop content.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Free supports up to three connected channels and <strong style=\"font-weight:700;color:#14161a;\">10 scheduled posts per channel</strong> at one time. Essentials starts at $5/month for one channel when billed yearly. Paid scheduling is described as unlimited, with a fair-use cap of 5,000 posts per channel.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">The official comparison lets you weigh those allowances against your planned posting volume.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Compare plans →</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><!-- bullets --><tr><td valign=\"top\" style=\"padding:0 10px 10px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1a56db;font-weight:700;\">&#9656;</td><td valign=\"top\" style=\"padding:0 0 10px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">the Buffer Customer Advocacy team</td></tr></table></td></tr>\n<tr><td style=\"padding:6px 36px 22px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td style=\"border-top:1px solid #e6e9ef;font-size:0;line-height:0;\">&nbsp;</td></tr></table></td></tr>\n<tr><td align=\"center\" style=\"padding:4px 36px 8px;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"center\" style=\"background-color:#1a56db;border-radius:8px;\"><a href=\"https://buffer.com/pricing\" style=\"display:inline-block;padding:16px 40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;\">Compare plans</a></td></tr></table></td></tr>\n<tr><td style=\"padding:22px 36px 20px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6;color:#767d89;\">- the Buffer Customer Advocacy team</p></td></tr>\n<tr><td align=\"center\" style=\"padding:22px 36px 28px;background-color:#fafbfc;border-top:1px solid #e6e9ef;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:12px;line-height:1.7;color:#767d89;\">Buffer</td></tr>\n</table>\n</td></tr>\n</table>\n</body>\n</html>\n",
+      "position": 1,
+      "asset_metadata": {
+        "position": 1,
+        "role": "Introduce a flexible weekly workflow and prompt a plan comparison",
+        "subject": "Two weeks ahead, with room to move posts",
+        "preview_text": "See how Foster Coffee Company planned ahead while still adding timely shop content.",
+        "eyebrow": "",
+        "headline": "",
+        "greeting": "Hi there,",
+        "body": "Planning ahead can still leave room for what happens locally.\n\nBuffer is a social media workspace for scheduling posts across connected channels and checking how they performed. Queue a few posts at the start of the week, then drag any post to a new slot when a timely update belongs there.\n\nAfter they publish, check available engagement, impressions, and individual post performance before planning the next batch. Foster Coffee Company found that two weeks ahead was its sweet spot while still moving posts and adding timely shop content.\n\nFree supports up to three connected channels and **10 scheduled posts per channel** at one time. Essentials starts at $5/month for one channel when billed yearly. Paid scheduling is described as unlimited, with a fair-use cap of 5,000 posts per channel.\n\nThe official comparison lets you weigh those allowances against your planned posting volume.\n\nCompare plans →\n\n- the Buffer Customer Advocacy team",
+        "call_to_action": "Compare plans",
+        "sign_off": "- the Buffer Customer Advocacy team",
+        "postscript": "",
+        "pull": 4,
+        "revisions": 2,
+        "single_idea": "Planning social posts ahead in Buffer does not have to make a local business calendar rigid: Foster Coffee Company found a two-week schedule workable while still moving posts and inserting timely shop content.",
+        "evidence_ids": [
+          "E287",
+          "E288",
+          "E361"
+        ],
+        "tier": "branded"
+      },
+      "created_at": "2026-09-30T23:45:54.147878Z"
+    }
+  ],
+  "result": {
+    "run_status": "degraded",
+    "report": {
+      "request": "Write exactly one concise marketing email in English introducing Buffer to an owner or marketer at a small local business who plans social posts. Show a specific weekly workflow: queue a few posts across channels, then inspect basic post performance. Invite the reader to check the official plans and free entry. Do not presume their current tool, promise follower growth, or hide the free plan scheduling limits.",
+      "delivered": 1,
+      "promised": 1,
+      "contract_violations": [],
+      "emails": [
+        {
+          "position": 1,
+          "subject": "Two weeks ahead, with room to move posts",
+          "single_idea": "Planning social posts ahead in Buffer does not have to make a local business calendar rigid: Foster Coffee Company found a two-week schedule workable while still moving posts and inserting timely shop content.",
+          "pull": 4.0,
+          "revisions": 2,
+          "clean": true,
+          "landed": false,
+          "rewrites_stopped_helping": true,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E287",
+            "E288",
+            "E361"
+          ],
+          "evidence_spent": [
+            "E287",
+            "E361"
+          ],
+          "attributions": 11,
+          "unresolved": [],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "Buffer offers software to schedule and rearrange social posts across multiple channels, then review performance when planning the next batch.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile explicitly says I am an independent local business planning social posts, so scheduling and adjusting local updates directly fit that activity. The email additionally assumes I manage connected channels, plan in batches, and want performance data; those details and their urgency are unknown.",
+              "assumed_experiences": [
+                "Profile-supported: I plan social posts for an independent local business.",
+                "Email-only: I have multiple social channels that could be connected to one workspace.",
+                "Email-only: I queue posts at the start of the week and sometimes need to move them for timely local updates.",
+                "Email-only: engagement, impressions, and individual-post results influence my next batch of posts."
+              ],
+              "problem_now": "Planning social posts is established as relevant, and unexpected local updates are a plausible scheduling problem. Whether rearranging posts or reviewing performance is difficult or urgent for me this Tuesday is unknown.",
+              "stopped_at": "Foster Coffee Company found that two weeks ahead was its sweet spot while still moving posts and adding timely shop content.",
+              "biggest_doubt": "I cannot tell whether the free plan supports the social channels I actually use, so comparing allowances feels premature.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me which social networks are supported on the free plan.",
+              "fixes": [
+                "Rewrite \"Flexible social scheduling with Buffer\" to name the local-business use case, such as \"Schedule this week's local posts—and move them when plans change.\"",
+                "Cut \"Foster Coffee Company found that two weeks ahead was its sweet spot while still moving posts and adding timely shop content.\" because the anecdote does not tell me whether Buffer fits my channels or workflow.",
+                "Rewrite \"The official comparison lets you weigh those allowances against your planned posting volume.\" to state which social networks the free plan supports before asking me to compare plans.",
+                "Delete the duplicated \"Compare plans →\\n\\n- the Buffer Customer Advocacy team\" block."
+              ],
+              "opens_in_100": 18,
+              "clicks_in_100": 2,
+              "persona": "Selected audience (explicit constraints): Independent local business planning social posts.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): \n\n",
+              "pull": 4
+            },
+            {
+              "what_it_sells": "Buffer offers software to schedule and rearrange social posts across connected channels, then review their performance when planning the next batch.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile explicitly establishes that I am an independent local business planning social posts, so advance scheduling with room for timely local updates is relevant. The email additionally assumes I manage multiple channels, want performance reporting, and post enough to compare plan allowances; none of those details is established, but the core premise is appropriately aligned.",
+              "assumed_experiences": [
+                "Profile-supported: I plan social posts for an independent local business.",
+                "Email-only: I manage more than one social channel.",
+                "Email-only: I currently need to move scheduled posts when timely local updates arise.",
+                "Email-only: engagement, impressions, and post-level results influence my next batch of posts.",
+                "Email-only: my posting volume makes the plan limits and paid tier worth comparing."
+              ],
+              "problem_now": "Planning social posts is a documented current activity, and flexible scheduling could be useful. Whether rescheduling, performance review, or plan capacity is an important problem this Tuesday is unknown.",
+              "stopped_at": "Foster Coffee Company found that two weeks ahead was its sweet spot while still moving posts and adding timely shop content.",
+              "biggest_doubt": "I cannot tell whether the free plan includes the performance reporting described, so comparing plans feels like more work than the likely immediate benefit.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me whether the free plan includes engagement, impression, and individual-post reporting.",
+              "fixes": [
+                "Rewrite \"After they publish, check available engagement, impressions, and individual post performance before planning the next batch.\" to specify which of those reports are included in the free plan.",
+                "Cut \"Foster Coffee Company found that two weeks ahead was its sweet spot while still moving posts and adding timely shop content.\" because the anecdote adds reading time without showing a concrete result.",
+                "Remove the duplicated \"Compare plans →\" and \"- the Buffer Customer Advocacy team\" at the end."
+              ],
+              "opens_in_100": 22,
+              "clicks_in_100": 3,
+              "persona": "Selected audience (explicit constraints): Independent local business planning social posts.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): \n\n\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 5
+            },
+            {
+              "what_it_sells": "Buffer is a social media scheduling workspace that would let me queue and rearrange posts, then review their performance when planning the next batch.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile explicitly says I am an independent local business planning social posts, so scheduling posts while preserving room for timely local updates directly fits. The email additionally assumes I manage connected social channels, plan in batches, and want performance data; those details are plausible but not established by the profile.",
+              "assumed_experiences": [
+                "Profile-supported: I plan social posts for an independent local business.",
+                "Email-only: I manage multiple social channels that could be connected to one workspace.",
+                "Email-only: I queue posts at the beginning of the week and sometimes need to move them for timely local updates.",
+                "Email-only: engagement and impression data would influence my next batch of posts."
+              ],
+              "problem_now": "Planning social posts is established, and accommodating timely local updates is a credible concern, but the profile does not establish that scheduling flexibility or performance review is an urgent problem this Tuesday.",
+              "stopped_at": "",
+              "biggest_doubt": "I cannot tell whether trying Buffer would save enough planning time to justify setting up another workspace, and a plan-comparison page feels like more evaluation than I can do before my meeting.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me how long it takes to schedule my first week of posts on the free plan and whether I could try it without entering payment details.",
+              "fixes": [
+                "Rewrite \"The official comparison lets you weigh those allowances against your planned posting volume.\" as \"See exactly what the free plan includes and whether you can start without a card.\"",
+                "Cut the duplicated closing block: \"Compare plans →\\n\\n- the Buffer Customer Advocacy team\"."
+              ],
+              "opens_in_100": 18,
+              "clicks_in_100": 2,
+              "persona": "Selected audience (explicit constraints): Independent local business planning social posts.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): \n\n\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 4
+            }
+          ],
+          "sameness": []
+        }
+      ],
+      "limiting_gaps": [],
+      "what_would_help_most": "Resolve this simulated next-step obstacle: I would have clicked if this email had told me which social networks are supported on the free plan. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 2,
+      "notes": [],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "A single cold introductory marketing email—not onboarding—for an owner or marketer at a small local business, centered on one practical weekly Buffer workflow and a low-friction invitation to review the official plans, including Free.",
+      "reader": "Selected audience: Independent local business planning social posts.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): not established",
+      "reader_segment": "Independent local business planning social posts",
+      "promise": "Buffer can support a repeatable weekly loop: queue a few posts across connected social channels, then use basic post-performance data to inform the next batch.",
+      "orientation": "Buffer is a social media workspace for scheduling posts across connected channels and checking how those posts performed.",
+      "arc": "Show one concrete weekly routine, clarify exactly what the Free plan permits, then invite the reader to decide whether Free or a paid plan fits that routine.",
+      "sequence_rationale": "Because the contract calls for one concise introductory email, the email must complete the argument in one pass: useful workflow, relevant product mechanism, transparent Free-plan scheduling limit, and official plan comparison. No recipient-specific incumbent workflow or objection is established, so the brief does not manufacture one.",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Help the reader picture using Buffer for one ordinary week and get them to compare the official plans against that workload.",
+          "single_idea": "At the start of the week, queue a few posts for your connected social channels; after they publish, check engagement, impressions, and individual post performance in Buffer before planning the next week. The Free plan supports up to 10 scheduled posts per channel at one time, so present it as a practical entry point with a clear limit—not as unlimited scheduling.",
+          "felt_need": "Keep the week’s social posts organized and use basic results to make the next round less guesswork-driven.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "Buffer combines a post queue with Insights alongside the publishing workflow: schedule a small weekly batch across connected channels, then review basic post-performance signals in the same product.",
+          "alternative_ideas": [],
+          "alternative_arguments": [
+            {
+              "single_idea": "Planning social posts ahead in Buffer does not have to make a local business calendar rigid: Foster Coffee Company found a two-week schedule workable while still moving posts and inserting timely shop content.",
+              "felt_need": "Plan enough content to avoid scrambling while leaving room for local events, customer moments, or unexpected shop news.",
+              "status_quo": "",
+              "why_it_fails": "",
+              "mechanism": "Buffer’s schedule can be rearranged by dragging posts, allowing planned content to move when a timely update needs the slot.",
+              "belief_shift": "Before: scheduling ahead may feel too rigid for a local business. After: Buffer can hold a plan while still allowing last-minute rearrangement.",
+              "evidence_ids": [
+                "E287",
+                "E288",
+                "E361"
+              ],
+              "must_not_say": [
+                "Do not imply every local business currently scrambles for content.",
+                "Do not promise that scheduling will increase followers, engagement, sales, or foot traffic.",
+                "Do not describe the Free plan as unlimited; it permits 10 scheduled posts per channel at one time.",
+                "Do not imply Foster Coffee Company’s experience guarantees the reader’s outcome."
+              ],
+              "objection": "Scheduling ahead could make it harder to react to timely local moments.",
+              "call_to_action": "Compare plans: https://buffer.com/pricing#compare-plans",
+              "next_step_decision": "Decide whether the Free plan’s scheduling allowance is enough or whether unlimited paid scheduling better fits the planned volume.",
+              "next_step_value": "The official comparison shows the Free plan’s 10-scheduled-posts-per-channel limit alongside the paid plans’ scheduling allowance.",
+              "next_step_evidence_ids": [
+                "E361"
+              ],
+              "next_step_limit": "The pricing page does not demonstrate the drag-and-drop workflow or establish how well Buffer will fit the reader’s particular channels and posting habits.",
+              "subject_strategy": "Use the tension between planning ahead and staying flexible; avoid hype, urgency, or a promised business result."
+            }
+          ],
+          "belief_shift": "Before: Buffer may sound like another broad social media tool. After: the reader can see a specific weekly queue-and-review workflow and knows the Free plan’s scheduling boundary.",
+          "evidence_ids": [
+            "E363",
+            "E361",
+            "E455"
+          ],
+          "must_not_say": [
+            "Do not presume the reader currently posts natively, uses another tool, relies on a spreadsheet, or follows a manual process.",
+            "Do not promise follower growth, engagement growth, time savings, sales, or foot traffic.",
+            "Do not hide or soften the Free plan limit: it permits 10 scheduled posts per channel at one time.",
+            "Do not call Free scheduling unlimited; paid plans provide unlimited scheduled posts per channel.",
+            "Do not expand into comment management, AI features, collaboration, reports, integrations, or the full supported-channel list.",
+            "Do not imply every connected channel supplies identical analytics or metrics.",
+            "Do not imply Google Business Profile performance can be inspected in Insights.",
+            "Do not present the workflow as a rigid prescription; it is a concrete example the reader can adapt."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "",
+          "tone": "Practical, encouraging, and matter-of-fact.",
+          "call_to_action": "Compare plans, including Free: https://buffer.com/pricing#compare-plans",
+          "next_step_decision": "Decide whether the Free plan can support this small weekly queue or whether a paid plan is appropriate for a larger schedule.",
+          "next_step_value": "The official comparison lets the reader verify that the queue is available and compare the Free plan’s 10-scheduled-posts-per-channel limit with paid scheduling.",
+          "next_step_evidence_ids": [
+            "E363",
+            "E361"
+          ],
+          "next_step_limit": "The plan comparison does not confirm channel-specific analytics availability or prove that Buffer will improve the reader’s business results.",
+          "subject_strategy": "Preview the concrete weekly routine—queue posts, then check what landed—without promising growth or using a generic productivity claim.",
+          "must_not_reuse": []
+        }
+      ],
+      "voice_notes": "Match Buffer’s plainspoken, lightly encouraging style. Address the reader as “you,” use short sentences, and keep the workflow more prominent than the feature names.",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "one concise marketing email"
+      }
+    },
+    "knowledge_version": 2,
+    "recommendation_at_generation": {
+      "campaign_id": "387e2c54-93b9-46bc-ae13-1c9a5525d58d",
+      "readiness": "DISCOVERY_ONLY",
+      "recommendation": {
+        "state": "DISCOVERY_ONLY",
+        "readiness": "DISCOVERY_ONLY",
+        "reasons": [
+          "No current V2 recommendation establishes product-to-audience fit."
+        ],
+        "eligible_subsegment": "",
+        "qualified_companies": [],
+        "adjacent_companies": [],
+        "excluded_companies": [],
+        "unverified_companies": [],
+        "allowed_claims": [],
+        "allowed_evidence_ids": [],
+        "forbidden_claims": [],
+        "forbidden_capability_ids": [],
+        "forbidden_evidence_ids": [],
+        "unresolved_objections": [],
+        "recommended_next_action": "Build or rebuild the Relevance Dossier V2, or generate explicitly as an audience-level hypothesis.",
+        "override_risk": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+        "claim_contract": null
+      },
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No current V2 recommendation establishes product-to-audience fit."
+      ],
+      "override_required": true,
+      "can_generate": true,
+      "user_message": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+      "override_explicit": true
+    },
+    "generated_despite_recommendation": true,
+    "intelligence": {
+      "selected_audience": "Independent local business planning social posts",
+      "audience_resolution_status": "audience_research_missing",
+      "audience_research_id": null,
+      "audience_research_version": null,
+      "dossier_status": "missing",
+      "dossier_id": null,
+      "dossier_version": null,
+      "dossier_schema_version": 1,
+      "stale_reasons": [],
+      "legacy_fallback_used": true,
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [],
+      "validation_warnings": []
+    }
+  }
+}

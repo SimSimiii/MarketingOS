@@ -1,0 +1,18 @@
+Subject: A delivered test is only one path
+Preview text: Compare it with Resend’s bounce and spam-complaint simulations before an integration test.
+
+Hi there,
+
+A useful evaluation starts with a narrower question: can you clearly distinguish the outcomes your application may need to handle?
+
+Resend is an email API for sending transactional messages and inspecting their lifecycle through its Dashboard, API, and webhooks.
+
+Its documentation provides test addresses for delivered, bounced, and spam-complaint outcomes. Send one minimal payload to each address, changing only the recipient, then compare the associated events in the Emails Dashboard.
+
+That comparison helps you decide whether Resend exposes the three simulated outcomes clearly enough to proceed with a small integration test and define your event handling.
+
+The sends do not affect domain reputation, but count against your account quota. They do not establish production deliverability or inbox placement, and Dashboard inspection alone does not validate an application webhook path.
+
+Review the documented test →
+
+- the Resend team

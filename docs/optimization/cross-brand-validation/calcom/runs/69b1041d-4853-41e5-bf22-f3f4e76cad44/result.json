@@ -1,0 +1,620 @@
+{
+  "id": "69b1041d-4853-41e5-bf22-f3f4e76cad44",
+  "campaign_id": "81ec2a0a-0f3a-4b32-a696-49a947fdfa7d",
+  "status": "completed",
+  "error_message": null,
+  "started_at": "2026-09-30T15:35:57.507541Z",
+  "completed_at": "2026-09-30T15:45:24.488956Z",
+  "created_at": "2026-09-30T15:35:57.507541Z",
+  "total_input_tokens": 567921,
+  "total_output_tokens": 28505,
+  "total_cache_read_tokens": 376320,
+  "estimated_cost_usd": 5.5764,
+  "recommendation_snapshot": {
+    "campaign_id": "81ec2a0a-0f3a-4b32-a696-49a947fdfa7d",
+    "readiness": "DISCOVERY_ONLY",
+    "recommendation": {
+      "state": "DISCOVERY_ONLY",
+      "readiness": "DISCOVERY_ONLY",
+      "reasons": [
+        "No current V2 recommendation establishes product-to-audience fit."
+      ],
+      "eligible_subsegment": "",
+      "qualified_companies": [],
+      "adjacent_companies": [],
+      "excluded_companies": [],
+      "unverified_companies": [],
+      "allowed_claims": [],
+      "allowed_evidence_ids": [],
+      "forbidden_claims": [],
+      "forbidden_capability_ids": [],
+      "forbidden_evidence_ids": [],
+      "unresolved_objections": [],
+      "recommended_next_action": "Build or rebuild the Relevance Dossier V2, or generate explicitly as an audience-level hypothesis.",
+      "override_risk": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+      "claim_contract": null
+    },
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No current V2 recommendation establishes product-to-audience fit."
+    ],
+    "override_required": true,
+    "can_generate": true,
+    "user_message": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+    "override_explicit": true
+  },
+  "generated_despite_recommendation": true,
+  "agent_executions": [
+    {
+      "id": "bc017ce8-4ae9-40eb-aa96-f8106726ff7b",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 A team can ask a prospective client about a need such as industry, challenge, or language preference before scheduling, then use the response to route the booking to a suitable consultant."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:35:57.616375Z",
+      "completed_at": "2026-09-30T15:37:12.121038Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 35035,
+      "output_tokens": 1943,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 12288,
+      "cost_usd": 0.689682,
+      "duration_ms": 74375.34349993803,
+      "attempt": 1
+    },
+    {
+      "id": "7982a228-6861-4bb9-a6bf-a2211cb396c0",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "A team can ask a prospective client about a need such as industry, challenge, or language preference before scheduling, then use the response to route the booking to a suitable consultant.",
+          "A team can ask a prospective client about a need such as industry, challenge, or language preference before scheduling, then use the response to route the booking to a suitable consultant."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Route discovery calls by client need",
+          "Ask first, then route discovery calls"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:37:12.468615Z",
+      "completed_at": "2026-09-30T15:37:51.980680Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 19848,
+      "output_tokens": 2390,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 30464,
+      "cost_usd": 0.522666,
+      "duration_ms": 78232.63320012484,
+      "attempt": 1
+    },
+    {
+      "id": "2b0237fd-174a-40ea-867c-df2635924858",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s) read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 6,
+        "scores": [
+          6,
+          6
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:37:52.076957Z",
+      "completed_at": "2026-09-30T15:38:38.412241Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 38505,
+      "output_tokens": 6262,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 77056,
+      "cost_usd": 1.162809,
+      "duration_ms": 248102.07689995877,
+      "attempt": 1
+    },
+    {
+      "id": "342f321b-e212-40f3-8bdc-b0699107b683",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · the two best candidates, read side by side",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "challenger_won": false
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:38:38.428164Z",
+      "completed_at": "2026-09-30T15:38:52.846615Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 17363,
+      "output_tokens": 730,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 52096,
+      "cost_usd": 0.393339,
+      "duration_ms": 44021.95160032716,
+      "attempt": 1
+    },
+    {
+      "id": "301c523c-02cb-492f-84cc-e4a75379a756",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "copy",
+        "strategy_gap": ""
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:38:52.878387Z",
+      "completed_at": "2026-09-30T15:40:06.622529Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 8529,
+      "output_tokens": 2603,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15232,
+      "cost_usd": 0.346008,
+      "duration_ms": 73669.5219000103,
+      "attempt": 1
+    },
+    {
+      "id": "7f41d1bd-295c-4a78-8998-7132ac85c2d1",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "Match client needs to consultants"
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:40:06.632844Z",
+      "completed_at": "2026-09-30T15:40:40.433968Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 15474,
+      "output_tokens": 1000,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 12288,
+      "cost_usd": 0.325542,
+      "duration_ms": 33741.43729999196,
+      "attempt": 2
+    },
+    {
+      "id": "24ea1be1-2bc9-4fe4-b494-468543df370e",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 6
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:40:40.517737Z",
+      "completed_at": "2026-09-30T15:41:29.960207Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 13848,
+      "output_tokens": 3246,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 42752,
+      "cost_usd": 0.515298,
+      "duration_ms": 130738.61430003308,
+      "attempt": 2
+    },
+    {
+      "id": "e11f892d-8344-4646-8257-0171850304ac",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 8,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "copy",
+        "strategy_gap": ""
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:41:29.970586Z",
+      "completed_at": "2026-09-30T15:42:26.830136Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 8663,
+      "output_tokens": 1822,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15232,
+      "cost_usd": 0.289443,
+      "duration_ms": 56813.34590003826,
+      "attempt": 2
+    },
+    {
+      "id": "2e3ef3bd-b192-4e2a-8de9-2a55f34e22d3",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 9,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 2",
+        "position": 1,
+        "attempt": 3
+      },
+      "output_data": {
+        "subject": "From client question to consultant"
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:42:26.838607Z",
+      "completed_at": "2026-09-30T15:43:29.542967Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 12860,
+      "output_tokens": 2223,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15232,
+      "cost_usd": 0.382473,
+      "duration_ms": 62665.47270002775,
+      "attempt": 3
+    },
+    {
+      "id": "b4d9f733-970e-405f-a3a0-63aa9f3804af",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 10,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 3
+      },
+      "output_data": {
+        "pull": 6
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:43:29.594587Z",
+      "completed_at": "2026-09-30T15:44:14.106523Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 13785,
+      "output_tokens": 3261,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 42752,
+      "cost_usd": 0.515478,
+      "duration_ms": 125954.56069998909,
+      "attempt": 3
+    },
+    {
+      "id": "2e2a3e4e-bcdb-4b07-a30c-a252edf618d2",
+      "agent_id": "subject_writer",
+      "agent_name": "Subject Lines",
+      "sequence_order": 11,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 4 alternative subject lines",
+        "position": 1,
+        "variants": 4
+      },
+      "output_data": {
+        "subject": "Route a discovery call from one intake answer"
+      },
+      "error_message": null,
+      "started_at": "2026-09-30T15:44:14.124496Z",
+      "completed_at": "2026-09-30T15:45:24.452285Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 7691,
+      "output_tokens": 3025,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 60928,
+      "cost_usd": 0.433632,
+      "duration_ms": 108208.47090007737,
+      "attempt": 1
+    }
+  ],
+  "assets": [
+    {
+      "id": "b5eaa2cd-72de-4d5f-ab64-13f8c0d654b9",
+      "asset_type": "email",
+      "title": "Route a discovery call from one intake answer",
+      "content": "Subject: Route a discovery call from one intake answer\nPreview text: Ask about industry, challenge, or language, then assign the consultant for that need.\n\nHi there,\n\nA discovery-call path can begin with one relevant question. The answer can determine which consultant receives the booking.\n\nCal.com is scheduling software that combines client-intake questions with consultant-routing rules. A routing form could ask about the prospect’s challenge, industry, or language preference, then use that response to assign the consultant responsible for that need.\n\nQuestions, answer options, and routing logic can be adjusted with the no-code form builder as offerings change.\n\nThe official consulting and coaching routing guide demonstrates the full path: capture a need before booking, apply an attribute-based rule, and route the discovery call to the relevant consultant. It provides a concrete way to assess whether that mechanism represents one of your team’s call paths.\n\nRead the consulting routing guide →\n\n- Cal.com Product Marketing",
+      "content_html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n<meta name=\"x-apple-disable-message-reformatting\" />\n<meta name=\"color-scheme\" content=\"light\" />\n<meta name=\"supported-color-schemes\" content=\"light\" />\n<title>Route a discovery call from one intake answer</title>\n</head>\n<body style=\"margin:0;padding:0;background-color:#eceef3;-webkit-text-size-adjust:100%;\">\n<div style=\"display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;\">Ask about industry, challenge, or language, then assign the consultant for that need.&#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; </div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#eceef3;\">\n<tr><td align=\"center\" style=\"padding:24px 12px;\">\n<table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;background-color:#ffffff;border-radius:12px;\">\n<tr><td style=\"background-color:#1a56db;height:4px;font-size:0;line-height:0;\">&nbsp;</td></tr>\n<tr><td style=\"padding:26px 36px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;font-weight:700;letter-spacing:0.2px;color:#14161a;\">Cal.com</td></tr>\n<tr><td style=\"padding:32px 36px 16px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Hi there,</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:17px;line-height:1.6;color:#3d434d;\">A discovery-call path can begin with one relevant question. The answer can determine which consultant receives the booking.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Cal.com is scheduling software that combines client-intake questions with consultant-routing rules. A routing form could ask about the prospect’s challenge, industry, or language preference, then use that response to assign the consultant responsible for that need.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Questions, answer options, and routing logic can be adjusted with the no-code form builder as offerings change.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">The official consulting and coaching routing guide demonstrates the full path: capture a need before booking, apply an attribute-based rule, and route the discovery call to the relevant consultant. It provides a concrete way to assess whether that mechanism represents one of your team’s call paths.</p></td></tr>\n<tr><td style=\"padding:6px 36px 22px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td style=\"border-top:1px solid #e6e9ef;font-size:0;line-height:0;\">&nbsp;</td></tr></table></td></tr>\n<tr><td align=\"center\" style=\"padding:4px 36px 8px;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"center\" style=\"background-color:#1a56db;border-radius:8px;\"><a href=\"https://cal.com/routing/routing-for-consulting-coaching\" style=\"display:inline-block;padding:16px 40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;\">Read the consulting routing guide</a></td></tr></table></td></tr>\n<tr><td style=\"padding:22px 36px 20px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6;color:#767d89;\">- Cal.com Product Marketing</p></td></tr>\n<tr><td align=\"center\" style=\"padding:22px 36px 28px;background-color:#fafbfc;border-top:1px solid #e6e9ef;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:12px;line-height:1.7;color:#767d89;\">Cal.com</td></tr>\n</table>\n</td></tr>\n</table>\n</body>\n</html>\n",
+      "position": 1,
+      "asset_metadata": {
+        "position": 1,
+        "role": "Introduce one discovery-call routing workflow",
+        "subject": "Route a discovery call from one intake answer",
+        "preview_text": "Ask about industry, challenge, or language, then assign the consultant for that need.",
+        "eyebrow": "",
+        "headline": "",
+        "greeting": "Hi there,",
+        "body": "A discovery-call path can begin with one relevant question. The answer can determine which consultant receives the booking.\n\nCal.com is scheduling software that combines client-intake questions with consultant-routing rules. A routing form could ask about the prospect’s challenge, industry, or language preference, then use that response to assign the consultant responsible for that need.\n\nQuestions, answer options, and routing logic can be adjusted with the no-code form builder as offerings change.\n\nThe official consulting and coaching routing guide demonstrates the full path: capture a need before booking, apply an attribute-based rule, and route the discovery call to the relevant consultant. It provides a concrete way to assess whether that mechanism represents one of your team’s call paths.",
+        "call_to_action": "Read the consulting routing guide",
+        "sign_off": "- Cal.com Product Marketing",
+        "postscript": "",
+        "pull": 6,
+        "revisions": 2,
+        "single_idea": "A team can ask a prospective client about a need such as industry, challenge, or language preference before scheduling, then use the response to route the booking to a suitable consultant.",
+        "evidence_ids": [
+          "E9",
+          "E10",
+          "E12"
+        ],
+        "tier": "branded"
+      },
+      "created_at": "2026-09-30T15:45:24.482329Z"
+    }
+  ],
+  "result": {
+    "run_status": "degraded",
+    "report": {
+      "request": "Write exactly one concise marketing email in English introducing Cal.com to a small consulting or coaching team that handles discovery calls. Show a concrete, supported way to collect a client need and route a booking to a suitable consultant. Make the official consulting-routing guide the first step. Do not presume a current scheduling tool, team size, missed calls, or proven time savings.",
+      "delivered": 1,
+      "promised": 1,
+      "contract_violations": [],
+      "emails": [
+        {
+          "position": 1,
+          "subject": "Route a discovery call from one intake answer",
+          "single_idea": "A team can ask a prospective client about a need such as industry, challenge, or language preference before scheduling, then use the response to route the booking to a suitable consultant.",
+          "pull": 6.0,
+          "revisions": 2,
+          "clean": true,
+          "landed": false,
+          "rewrites_stopped_helping": true,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E9",
+            "E10",
+            "E12"
+          ],
+          "evidence_spent": [
+            "E10"
+          ],
+          "attributions": 13,
+          "unresolved": [],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "Cal.com offers scheduling software that uses intake answers and configurable rules to send discovery calls to the appropriate consultant, potentially reducing manual call assignment.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile explicitly establishes a small consulting team that routes discovery calls, so the proposed intake-based routing mechanism is relevant. The email additionally assumes that routing by challenge, industry, or language would improve this team's process; whether those criteria fit, whether routing is currently manual, and whether there is an active problem are unknown.",
+              "assumed_experiences": [
+                "Profile-supported: the team routes discovery calls among consultants.",
+                "Email-only: prospects can be usefully assigned according to an intake answer such as challenge, industry, or language.",
+                "Email-only: the team's offerings change often enough for editable routing logic to matter.",
+                "Email-only: the current discovery-call path would benefit from this routing mechanism."
+              ],
+              "problem_now": "Routing discovery calls is part of the team's documented activity, but the profile does not establish that the current process is painful, inaccurate, or urgent. The email presents a plausible improvement rather than a demonstrated problem that matters this Tuesday morning.",
+              "stopped_at": "The official consulting and coaching routing guide demonstrates the full path: capture a need before booking, apply an attribute-based rule, and route the discovery call to the relevant consultant.",
+              "biggest_doubt": "I do not know whether this would materially improve our current routing or how much setup the example requires for a small team, so the guide is not worth opening with four hundred unread messages and a meeting in three minutes.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me how long it takes a small consulting team to build and test one routing path.",
+              "fixes": [
+                "Rewrite \"A discovery-call path can begin with one relevant question. The answer can determine which consultant receives the booking.\" as \"Ask one question before booking, then automatically send the discovery call to the consultant who handles that need.\"",
+                "Cut \"It provides a concrete way to assess whether that mechanism represents one of your team’s call paths.\"",
+                "Rewrite \"The official consulting and coaching routing guide demonstrates the full path: capture a need before booking, apply an attribute-based rule, and route the discovery call to the relevant consultant.\" as \"The guide shows one complete example and how long it takes to set up.\""
+              ],
+              "opens_in_100": 26,
+              "clicks_in_100": 4,
+              "persona": "Selected audience (explicit constraints): Small consulting team routing discovery calls.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): \n\n",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "Cal.com sells scheduling software that uses intake answers to route discovery calls to the appropriate consultant, potentially reducing manual assignment work.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile explicitly establishes a small consulting team that routes discovery calls, so assigning calls by client need is relevant. The email only presupposes that intake-based routing would improve this team's process; whether calls require this kind of differentiation, or whether routing is currently burdensome, remains unknown.",
+              "assumed_experiences": [
+                "Profile-supported: the team routes discovery calls among consultants.",
+                "Email-only: prospects can be usefully assigned according to challenge, industry, or language preference.",
+                "Email-only: the team would benefit from changing routing rules as its offerings change.",
+                "Unknown: the team currently performs any manual assignment or has a routing problem requiring new software."
+              ],
+              "problem_now": "Routing discovery calls is part of the documented job, but the profile does not establish that inaccurate or labor-intensive routing is a current problem. The proposed mechanism is plausibly useful, but its urgency is unknown.",
+              "stopped_at": "The official consulting and coaching routing guide demonstrates the full path: capture a need before booking, apply an attribute-based rule, and route the discovery call to the relevant consultant.",
+              "biggest_doubt": "With three minutes before a meeting, I cannot tell whether the guide is a quick, concrete example or a longer product explainer worth returning to later.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me how long the guide takes to scan.",
+              "fixes": [
+                "Rewrite \"A discovery-call path can begin with one relevant question. The answer can determine which consultant receives the booking.\" as \"Ask prospects one question before they book, then send the call to the consultant who handles that need.\"",
+                "Cut \"It provides a concrete way to assess whether that mechanism represents one of your team’s call paths.\"",
+                "Rewrite \"The official consulting and coaching routing guide demonstrates the full path: capture a need before booking, apply an attribute-based rule, and route the discovery call to the relevant consultant.\" as \"See a short example of a consulting team routing a discovery call from one intake answer.\"",
+                "Rewrite \"Read the consulting routing guide →\" to state the expected effort, such as \"See the routing example (2-minute read) →\", if that timing is accurate."
+              ],
+              "opens_in_100": 27,
+              "clicks_in_100": 3,
+              "persona": "Selected audience (explicit constraints): Small consulting team routing discovery calls.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): \n\n\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 5
+            },
+            {
+              "what_it_sells": "Cal.com offers scheduling software that uses intake answers and configurable rules to send discovery-call bookings to the appropriate consultant, potentially reducing manual routing during my week.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile explicitly establishes a small consulting team that routes discovery calls, so matching client needs to consultants is directly relevant. The email additionally assumes that intake answers such as challenge, industry, or language are suitable routing criteria for our team; that applicability and any current routing difficulty are unknown.",
+              "assumed_experiences": [
+                "Profile-supported: the team routes discovery calls among consultants.",
+                "Email-only: one intake answer may be sufficient to determine the appropriate consultant.",
+                "Email-only: challenge, industry, or language preference maps cleanly to consultant responsibility.",
+                "Email-only: the team would benefit from changing questions and routing logic as its offerings change."
+              ],
+              "problem_now": "Routing discovery calls is an established activity for this audience, but the profile does not establish that the current process is burdensome, inaccurate, or urgent. The email presents a plausible improvement rather than a documented problem that needs solving this Tuesday morning.",
+              "stopped_at": "The official consulting and coaching routing guide demonstrates the full path: capture a need before booking, apply an attribute-based rule, and route the discovery call to the relevant consultant.",
+              "biggest_doubt": "I cannot tell whether the guide will quickly show a real small-team setup or make me work through a broad product tutorial, and the email gives no indication of reading time, setup effort, or what happens when more than one consultant matches.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me the guide takes two minutes and shows one complete example for a small consulting team, including how ties or overlapping specialties are handled.",
+              "fixes": [
+                "Rewrite \"A discovery-call path can begin with one relevant question. The answer can determine which consultant receives the booking.\" as \"Ask prospects one question before they book, then route the call to the consultant responsible for that answer.\"",
+                "Cut \"It provides a concrete way to assess whether that mechanism represents one of your team’s call paths.\" It is abstract and makes the guide sound like work; replace it with the guide's expected reading time and the specific example it contains.",
+                "Rewrite \"The official consulting and coaching routing guide demonstrates the full path: capture a need before booking, apply an attribute-based rule, and route the discovery call to the relevant consultant.\" in shorter language and state whether the guide shows an actual configured example rather than only describing the mechanism."
+              ],
+              "opens_in_100": 27,
+              "clicks_in_100": 4,
+              "persona": "Selected audience (explicit constraints): Small consulting team routing discovery calls.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): \n\n\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 6
+            }
+          ],
+          "sameness": []
+        }
+      ],
+      "limiting_gaps": [],
+      "what_would_help_most": "Resolve this simulated next-step obstacle: I would have clicked if this email had told me how long it takes a small consulting team to build and test one routing path. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "A single cold-introduction email for small consulting or coaching teams handling discovery calls. It will invite the reader to inspect Cal.com’s official consulting-routing guide before considering signup, without assuming their current process or tools.",
+      "reader": "Selected audience: Small consulting team routing discovery calls.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): not established",
+      "reader_segment": "Small consulting team routing discovery calls",
+      "promise": "Cal.com can collect a prospective client’s stated need before booking and use that answer to route the booking to a suitable consultant.",
+      "orientation": "Cal.com is scheduling software that lets consulting and coaching teams combine client-intake questions with consultant-routing rules.",
+      "arc": "One concise email moves from a concrete routing example to a low-friction invitation to inspect the official guide.",
+      "sequence_rationale": "The audience is problem-aware, but its current workflow and pain are unverified. The email should therefore demonstrate one supported mechanism—asking about a need such as industry, challenge, or language preference and routing by the answer—then make the official consulting-routing guide the first step. Signup, pricing, migration, integrations, and broader feature claims would distract from that single testable proposition.",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Introduce Cal.com through one concrete discovery-call routing workflow and earn a visit to the official consulting-routing guide.",
+          "single_idea": "A team can ask a prospective client about a need such as industry, challenge, or language preference before scheduling, then use the response to route the booking to a suitable consultant.",
+          "felt_need": "The person booking a discovery call should be able to state what they need before choosing a time, so the team can direct the enquiry appropriately.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "Cal.com routing forms collect client answers before booking; attribute-based rules then assign the client to an expert based on those answers. The no-code form builder lets the team adjust questions, options, and routing logic as its services change.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: routing may sound like generic lead distribution for a large sales team. After: it is a practical way to ask one relevant discovery question and use the answer to select an appropriate consultant.",
+          "evidence_ids": [
+            "E9",
+            "E10",
+            "E12"
+          ],
+          "must_not_say": [
+            "Do not presume the reader uses any current scheduling tool or describe a migration.",
+            "Do not state or imply a particular team size.",
+            "Do not claim the team misses calls, mishandles enquiries, routes by whoever answers first, or has previously booked a client with the wrong consultant.",
+            "Do not claim proven time savings, higher conversion, better client satisfaction, or guaranteed matching accuracy.",
+            "Do not say routing forms are included in the Free or Teams plan; the supplied evidence conflicts on entitlement.",
+            "Do not introduce pricing, trials, CRM integrations, analytics, security, compliance, mobile apps, APIs, round-robin scheduling, self-hosting, or open-source deployment.",
+            "Do not present industry, challenge, or language preference as information the reader already collects; use them only as supported examples of questions they could ask."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "Routing can sound designed for a large sales pool rather than a small practice with distinct consultant specialties.",
+          "tone": "Plain, concise, and practical; confident without hype.",
+          "call_to_action": "Read Cal.com’s official consulting and coaching routing guide.",
+          "next_step_decision": "Decide whether a routing form could represent one real discovery-call path used by the team.",
+          "next_step_value": "The guide shows how Cal.com can capture needs and preferences before booking, then route by answers such as industry, challenge, or language preference.",
+          "next_step_evidence_ids": [
+            "E9",
+            "E10",
+            "E12"
+          ],
+          "next_step_limit": "Reading the guide does not establish plan entitlement, configuration fit, or routing performance for the team’s actual services.",
+          "subject_strategy": "Signal the concrete intake-to-consultant routing workflow in plain language; avoid generic scheduling claims, pain assumptions, and promised outcomes.",
+          "must_not_reuse": []
+        }
+      ],
+      "voice_notes": "Use short declarative sentences. Name Cal.com and explain the intake-to-routing mechanism quickly. Keep the official guide as the only ask.",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "one concise marketing email"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "81ec2a0a-0f3a-4b32-a696-49a947fdfa7d",
+      "readiness": "DISCOVERY_ONLY",
+      "recommendation": {
+        "state": "DISCOVERY_ONLY",
+        "readiness": "DISCOVERY_ONLY",
+        "reasons": [
+          "No current V2 recommendation establishes product-to-audience fit."
+        ],
+        "eligible_subsegment": "",
+        "qualified_companies": [],
+        "adjacent_companies": [],
+        "excluded_companies": [],
+        "unverified_companies": [],
+        "allowed_claims": [],
+        "allowed_evidence_ids": [],
+        "forbidden_claims": [],
+        "forbidden_capability_ids": [],
+        "forbidden_evidence_ids": [],
+        "unresolved_objections": [],
+        "recommended_next_action": "Build or rebuild the Relevance Dossier V2, or generate explicitly as an audience-level hypothesis.",
+        "override_risk": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+        "claim_contract": null
+      },
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No current V2 recommendation establishes product-to-audience fit."
+      ],
+      "override_required": true,
+      "can_generate": true,
+      "user_message": "The campaign may be weak because product fit has not been qualified. Copy remains limited to licensed product claims.",
+      "override_explicit": true
+    },
+    "generated_despite_recommendation": true,
+    "intelligence": {
+      "selected_audience": "Small consulting team routing discovery calls",
+      "audience_resolution_status": "audience_research_missing",
+      "audience_research_id": null,
+      "audience_research_version": null,
+      "dossier_status": "missing",
+      "dossier_id": null,
+      "dossier_version": null,
+      "dossier_schema_version": 1,
+      "stale_reasons": [],
+      "legacy_fallback_used": true,
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [],
+      "validation_warnings": []
+    }
+  }
+}
