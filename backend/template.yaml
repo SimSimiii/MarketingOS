@@ -255,6 +255,7 @@ Resources:
       Description: Runs `alembic upgrade head`. Invoke manually after deploying.
       CodeUri: ./
       Handler: migrate.handler
+      ReservedConcurrentExecutions: 1
       MemorySize: 512
       Timeout: 300
       VpcConfig: !If

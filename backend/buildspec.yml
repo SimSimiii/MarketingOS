@@ -106,7 +106,10 @@ phases:
           --query "Stacks[0].Outputs[?OutputKey=='MigrateFunctionName'].OutputValue" \
           --output text)
         echo "Running migrations via ${MIGRATOR}"
-        aws lambda invoke --function-name "${MIGRATOR}" --payload '{}' /tmp/migrate.json >/dev/null
+        # The first Aurora resume can exceed the CLI's default 60s read
+        # timeout. Retrying Invoke would run a second migration concurrently.
+        AWS_MAX_ATTEMPTS=1 aws lambda invoke --cli-read-timeout 360 \
+          --function-name "${MIGRATOR}" --payload '{}' /tmp/migrate.json >/dev/null
         cat /tmp/migrate.json
         python -c "import json,sys; sys.exit(0 if json.load(open('/tmp/migrate.json')).get('ok') else 1)"
       - |
