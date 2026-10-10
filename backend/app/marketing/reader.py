@@ -388,7 +388,9 @@ class BlindReader:
 _FALLBACK_PERSONA = "a busy professional who has never heard of this company"
 
 
-def personas_for(audience: AudienceModel, chosen: Segment | None, panel: bool) -> list[str]:
+def personas_for(
+    audience: AudienceModel, chosen: Segment | None, panel: bool, explicit_audience: str = "",
+) -> list[str]:
     """Who reads the draft cold.
 
     Never the brief's reader description - that sentence was written to help a
@@ -425,6 +427,13 @@ def personas_for(audience: AudienceModel, chosen: Segment | None, panel: bool) -
         if segment is not None and segment.name
         else _FALLBACK_PERSONA
     )
+    if explicit_audience.strip():
+        person = (
+            f"Selected audience (user-stated constraints): {explicit_audience.strip()}.\n"
+            "Only these audience facts are established. Do not substitute a compiled "
+            "market segment, invent an installed tool or experience, or infer the "
+            "campaign's desired reaction. Read the email cold as this person."
+        )
     if not panel:
         return [person]
     # The variants are dispositions the same person turns up in. The hard one

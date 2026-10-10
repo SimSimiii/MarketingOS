@@ -675,6 +675,17 @@ class _PersistenceObserver(RunObserver):
         )
 
     def on_email_accepted(self, position: int, version: EmailVersion) -> None:
+        agent_id = self.writer_rows.get(position)
+        if agent_id is not None and not version.gates.blocking:
+            stored = dict(self._execution.result or {})
+            checkpoints = dict(stored.get("accepted_checkpoints", {}))
+            checkpoints[str(position)] = {
+                "email": version.email.model_dump(mode="json"),
+                "agent_execution_id": str(agent_id),
+                "pull": version.read.pull,
+            }
+            self._execution.result = {**stored, "accepted_checkpoints": checkpoints}
+            self._orchestrator._campaign_executions.update(self._execution)
         self._emitter.emit(
             "email_ready",
             f'Email {position} ready: "{version.email.subject}" ({version.describe()})',
@@ -868,6 +879,7 @@ class CampaignOrchestrator:
             goals=campaign.goals,
             sender_name=campaign.sender_name or "",
             sender_role=campaign.sender_role or "",
+            cta_url=campaign.cta_url,
             # Validated here rather than trusted: the column is JSON, and a
             # channel the pipeline cannot read would fix the contract to a
             # deliverable nothing knows how to write.
@@ -877,17 +889,29 @@ class CampaignOrchestrator:
         try:
             result = await pipeline.run(request)
         except Exception as exc:
+            from app.orchestration.checkpoints import recover_accepted_emails
+
             logger.exception("campaign run crashed")
             emitter.current_step = None
-            execution.status = ExecutionStatus.FAILED
+            delivered = recover_accepted_emails(self._session, execution)
+            execution.status = ExecutionStatus.COMPLETED if delivered else ExecutionStatus.FAILED
+            execution.result = {
+                **(execution.result or {}),
+                "run_status": "degraded" if delivered else "failed",
+            }
             execution.error_message = str(exc)
+            execution.total_input_tokens = session.usage.billable_input_tokens
+            execution.total_output_tokens = session.usage.output_tokens
+            execution.total_cache_read_tokens = session.usage.cache_read_input_tokens
+            execution.estimated_cost_usd = round(session.usage.cost_usd, 4)
             execution.completed_at = datetime.now(UTC)
             self._campaign_executions.update(execution)
             emitter.emit(
                 "execution_finished",
-                f"Campaign run failed: {exc}",
+                f"Campaign run interrupted: {exc}",
                 level=LogLevel.ERROR,
-                data={"status": "failed", "error": str(exc)},
+                data={"status": execution.status.value, "run_status": execution.result["run_status"],
+                      "delivered": delivered, "error": str(exc)},
             )
             broker.close(execution.id)
             return self._usable_after_close(execution)
@@ -960,6 +984,7 @@ class CampaignOrchestrator:
                         "single_idea": outcome.selected_brief.single_idea,
                         "evidence_ids": outcome.selected_brief.evidence_ids,
                         "tier": tier.value,
+                        "sequence_review_pending": result.sequence is None and bool(result.abort_reason),
                     },
                 )
             )
@@ -1244,6 +1269,7 @@ def build_stepped_pipeline(
         goals=campaign.goals,
         sender_name=campaign.sender_name or "",
         sender_role=campaign.sender_role or "",
+        cta_url=campaign.cta_url,
         channel=LinkedInChannel.model_validate(campaign.channel) if campaign.channel else None,
     )
     return pipeline, request, observer

@@ -24,7 +24,7 @@ from typing import Literal
 from pydantic import BaseModel, Field, model_validator
 
 from app.knowledge.corpus import fold
-from app.knowledge.ledger import EvidenceKind, EvidenceLedger
+from app.knowledge.ledger import MAX_EVIDENCE_IN_PROMPT, EvidenceKind, EvidenceLedger
 
 
 class Grounding(StrEnum):
@@ -528,6 +528,71 @@ class KnowledgeArtifacts(BaseModel):
             f"## Evidence available (cite these ids)\n{self.evidence.render()}\n\n"
             f"## How they sound\n{self.voice.render()}\n\n"
             f"## What we could not establish\n{self.gaps.render()}"
+        )
+
+    def evidence_for_writing(
+        self,
+        assigned_ids: list[str],
+        objection: str = "",
+        *,
+        offering: str = "",
+        excluded_ids: set[str] | frozenset[str] = frozenset(),
+    ) -> EvidenceLedger:
+        """Keep licensed decision context and related warranty limits available.
+
+        Prices are shared decision context, not another email's core argument.
+        The offer sheet identifies the product; only a matching ledger quotation
+        can supply the price. A broad catalogue or an unmatched offer adds nothing.
+        """
+        assigned = list(dict.fromkeys(
+            id_ for id_ in assigned_ids
+            if id_ not in excluded_ids and self.evidence.get(id_) is not None
+        ))
+        sources = {
+            entry.source for id_ in assigned
+            if (entry := self.evidence.get(id_)) is not None and entry.source
+        }
+        entries = sorted(self.evidence.entries, key=lambda entry: entry.source not in sources)
+        context: list[str] = []
+        # A selected warranty example is not the complete list of exclusions.
+        # Keep limits from that same source ahead of loosely matched objections;
+        # otherwise a general policy plus one example can imply blanket coverage.
+        if any(self.evidence.get(id_).kind is EvidenceKind.GUARANTEE for id_ in assigned):
+            for entry in entries:
+                text = fold(f"{entry.claim} {entry.verbatim}")
+                if (
+                    entry.source in sources
+                    and entry.kind is EvidenceKind.GUARANTEE
+                    and entry.id not in assigned
+                    and entry.id not in excluded_ids
+                    and re.search(r"\b(?:consumable\w*|exclu\w*|not covered|won.t|does not|do not)\b", text)
+                ):
+                    context.append(entry.id)
+        price_context: list[str] = []
+        for plan in sorted(self.offer.plans, key=lambda item: -len(item.name)):
+            name = fold(plan.name)
+            price = fold(plan.price)
+            if not name or not price or not re.search(
+                rf"(?<!\w){re.escape(name)}(?!\w)", fold(offering)
+            ):
+                continue
+            for entry in entries:
+                if (
+                    entry.kind is EvidenceKind.PRICE
+                    and entry.id not in excluded_ids
+                    and entry.id not in assigned
+                    and entry.id not in price_context
+                    and re.search(rf"(?<!\w){re.escape(name)}(?!\w)", fold(entry.claim))
+                    and re.search(rf"(?<!\w){re.escape(price)}(?!\w)", fold(entry.verbatim))
+                ):
+                    price_context.append(entry.id)
+                    break
+            if len(price_context) >= min(2, max(0, MAX_EVIDENCE_IN_PROMPT - len(assigned))):
+                break
+        room = max(0, MAX_EVIDENCE_IN_PROMPT - len(assigned))
+        return self.evidence.slice_for(
+            [*assigned, *context[:room], *price_context[:max(0, room - len(context))]],
+            objection, excluded_ids=excluded_ids
         )
 
     def render_for_writing(self, evidence: EvidenceLedger | None = None) -> str:

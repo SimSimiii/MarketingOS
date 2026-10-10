@@ -93,6 +93,8 @@ phases:
 
   post_build:
     commands:
+      # CodeBuild runs post_build even after a failed build phase.
+      - test "$CODEBUILD_BUILD_SUCCEEDING" = "1" || exit 1
       # Migrations run as their own function, inside the VPC, after the deploy.
       # Failing the build when they fail is deliberate: a deployed API against
       # an un-migrated database is worse than a build that went red.

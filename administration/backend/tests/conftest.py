@@ -23,10 +23,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import pytest
 from app.core.config import get_settings
+from app.core.database import create_app_engine
 from app.models.admin import AdminUser
 from app.models.enums import AdminRole
 from fastapi.testclient import TestClient
-from sqlmodel import Session, SQLModel, create_engine
+from sqlmodel import Session, SQLModel
 
 from admin.auth import hash_password
 from admin.db import get_session
@@ -42,12 +43,10 @@ def engine(tmp_path):
     """A real SQLite file, one connection per session - the same reasoning as
     the product's API suite: an in-memory StaticPool would hand every session
     the same connection and make two transactions into one."""
-    engine = create_engine(
-        f"sqlite:///{tmp_path / 'admin-test.db'}",
-        connect_args={"check_same_thread": False, "timeout": 30},
-    )
+    engine = create_app_engine(f"sqlite:///{tmp_path / 'admin-test.db'}")
     SQLModel.metadata.create_all(engine)
-    return engine
+    yield engine
+    engine.dispose()
 
 
 @pytest.fixture

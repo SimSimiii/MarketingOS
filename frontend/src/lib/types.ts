@@ -1,4 +1,10 @@
 export type ExecutionStatus = "pending" | "running" | "completed" | "failed" | "cancelled";
+export interface CreditBalance {
+  balance: number;
+  unit: string;
+  billing_active: boolean;
+  movements: { amount: number; balance_after: number; kind: string; created_at: string }[];
+}
 export type CampaignStatus = "active" | "archived";
 export type PolicyPreset = "fast" | "balanced" | "maximum";
 /** How designed a finished email looks.
@@ -326,6 +332,18 @@ export interface CampaignPolicyUpdate {
   /** Per-agent model pins, `{role_id: model}`. Omit to leave the stored pins
    * alone; send `{}` to clear them and hand every agent back to the preset. */
   model_overrides?: Record<string, string> | null;
+}
+
+export interface CampaignBriefUpdate {
+  name: string;
+  request: string;
+  product_description: string;
+  product_url: string | null;
+  target_market: string | null;
+  goals: string | null;
+  sender_name: string | null;
+  sender_role: string | null;
+  cta_url: string | null;
 }
 
 export type ModelVendor = "anthropic" | "openai";

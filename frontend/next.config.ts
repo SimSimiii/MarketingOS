@@ -22,5 +22,13 @@ export default function config(phase: string): NextConfig {
     // what the CloudFront rewrite assumes.
     trailingSlash: true,
     images: { unoptimized: true },
+    // Session cookies stay on the console origin in development as in
+    // production. Rewrites are intentionally absent from the static export.
+    ...(phase === PHASE_DEVELOPMENT_SERVER ? {
+      async rewrites() {
+        const target = (process.env.API_PROXY_TARGET ?? "http://localhost:8000").replace(/\/$/, "");
+        return [{ source: "/api/:path*", destination: `${target}/api/:path*` }];
+      },
+    } : {}),
   };
 }

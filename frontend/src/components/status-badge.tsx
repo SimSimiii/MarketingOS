@@ -10,10 +10,10 @@ const STATUS_STYLES: Record<ExecutionStatus, string> = {
   cancelled: "bg-amber-500/15 text-amber-400",
 };
 
-export function StatusBadge({ status }: { status: ExecutionStatus }) {
+export function StatusBadge({ status, warning, label }: { status: ExecutionStatus; warning?: boolean; label?: string }) {
   return (
-    <Badge variant="outline" className={cn("border-transparent capitalize", STATUS_STYLES[status])}>
-      {status}
+    <Badge variant="outline" className={cn("border-transparent capitalize", warning ? STATUS_STYLES.cancelled : STATUS_STYLES[status])}>
+      {label ?? (warning ? "Needs review" : status)}
     </Badge>
   );
 }

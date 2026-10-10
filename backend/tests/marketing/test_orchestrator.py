@@ -18,6 +18,7 @@ from app.market.material_research import MaterialRecovery
 from app.models.agent_execution import AgentExecution
 from app.models.brand import Brand
 from app.models.campaign import Campaign
+from app.models.campaign_execution import CampaignExecution
 from app.models.enums import AssetType, ExecutionStatus
 from app.models.execution_log import ExecutionLog
 from app.models.generated_asset import GeneratedAsset
@@ -381,3 +382,50 @@ async def test_a_failed_run_is_persisted_as_a_failure_rather_than_swallowed(
     assert execution.status == ExecutionStatus.FAILED
     assert execution.error_message
     assert session.exec(select(GeneratedAsset)).all() == []
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("failure", ["exception", "restart"])
+async def test_accepted_emails_survive_a_failure_before_sequence_review(session, provider, monkeypatch, failure):
+    from app.core import database
+    from app.marketing.pipeline import EmailCampaignPipeline
+    from app.orchestration.execution_manager import reap_orphaned_executions
+
+    class ProcessStopped(BaseException):
+        pass
+
+    async def stop(*args, **kwargs):
+        if failure == "exception":
+            raise RuntimeError("Sequence step crashed")
+        raise ProcessStopped("Process terminated")
+
+    monkeypatch.setattr(EmailCampaignPipeline, "_phase_sequence", stop)
+    campaign = make_campaign(session)
+    orchestrator = CampaignOrchestrator(session, provider)
+    if failure == "exception":
+        execution = await orchestrator.run(campaign)
+    else:
+        with pytest.raises(ProcessStopped):
+            await orchestrator.run(campaign)
+        monkeypatch.setattr(database, "engine", session.get_bind())
+        assert reap_orphaned_executions() == 1
+        assert reap_orphaned_executions() == 0
+        session.expire_all()
+        execution = session.exec(select(CampaignExecution)).one()
+    assert execution.status == ExecutionStatus.COMPLETED
+    assert execution.result["run_status"] == "degraded"
+    assert execution.error_message
+    assets = session.exec(select(GeneratedAsset)).all()
+    assert len(assets) == 3
+    assert {asset.position for asset in assets} == {1, 2, 3}
+    assert all(asset.asset_metadata["sequence_review_pending"] for asset in assets)
+    assert all(asset.content.startswith("Subject:") for asset in assets)
+
+
+@pytest.mark.asyncio
+async def test_normal_completion_discards_checkpoints_and_produces_only_final_assets(session, provider):
+    execution = await CampaignOrchestrator(session, provider).run(make_campaign(session))
+    assets = session.exec(select(GeneratedAsset)).all()
+    assert len(assets) == 3
+    assert "accepted_checkpoints" not in execution.result
+    assert all(not asset.asset_metadata.get("checkpoint") for asset in assets)

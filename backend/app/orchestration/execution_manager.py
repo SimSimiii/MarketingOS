@@ -97,7 +97,13 @@ def reap_orphaned_executions() -> int:
             select(CampaignExecution).where(CampaignExecution.status == ExecutionStatus.RUNNING)
         ).all()
         for execution in orphans:
-            execution.status = ExecutionStatus.FAILED
+            from app.orchestration.checkpoints import recover_accepted_emails
+
+            delivered = recover_accepted_emails(session, execution)
+            execution.status = ExecutionStatus.COMPLETED if delivered else ExecutionStatus.FAILED
+            execution.result = {
+                **(execution.result or {}), "run_status": "degraded" if delivered else "failed",
+            }
             execution.error_message = "Interrupted by a server restart."
             execution.completed_at = datetime.now(UTC)
             session.add(execution)

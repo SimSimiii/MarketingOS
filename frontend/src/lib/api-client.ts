@@ -14,7 +14,7 @@ import { createApi, type AuthSource } from "@/lib/api-core";
 import { ACCESS_TOKEN_COOKIE } from "@/lib/auth-cookies";
 import { renewSession } from "@/lib/renew-session";
 
-export { UnauthorizedError } from "@/lib/api-core";
+export { ApiError, UnauthorizedError, nullIfMissing } from "@/lib/api-core";
 
 export function readAccessToken(): string | undefined {
   if (typeof document === "undefined") return undefined;

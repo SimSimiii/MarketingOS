@@ -13,7 +13,7 @@ from app.knowledge.store import ArtifactScope, ArtifactStore
 from app.market.audience_research import AudienceProblem, AudienceResearch
 from app.market.capabilities import CapabilityProfileDraft, ScopeBoundary
 from app.market.claims import ClaimAxis
-from app.market.positioning import AxisReading, PositioningMap, Territory
+from app.market.positioning import AxisReading, PositioningMap, Territory, axis_for_evidence
 from app.market.radar import MarketSnapshot
 from app.market.relevance import (
     DossierState,
@@ -27,6 +27,7 @@ from app.market.relevance import (
     RelevanceValidationError,
     SilenceProposal,
     normalize_dossier,
+    withheld_evidence_ids,
 )
 from app.market.store import MarketStore
 from app.models.brand import Brand
@@ -154,6 +155,50 @@ def test_unknown_and_duplicate_rankings_are_normalized_without_touching_the_ledg
     assert dossier.validation_counts.dropped_items == 2
     assert dossier.validation_counts.normalized_items >= 1
     assert complete.ids == {"E1", "E2", "E3"}, "WITHHOLD is not a licensing mutation"
+
+
+def test_an_unclassified_fact_takes_no_territory_from_the_catch_all_axis():
+    """`OTHER` is what the classifier could not place. Rivals making some
+    other unclassified claim says nothing about this fact, so it must not be
+    withheld as contested territory."""
+    complete = EvidenceLedger(
+        entries=[
+            Evidence(
+                id="E9",
+                kind=EvidenceKind.FEATURE,
+                claim="Queued posts can be reordered by dragging one onto another",
+                verbatim="Drag a post on top of another to swap their order.",
+                source="help centre",
+            )
+        ]
+    )
+    assert axis_for_evidence(complete.entries[0]) is ClaimAxis.OTHER
+    contested_other = PositioningMap(
+        readings=[AxisReading(axis=ClaimAxis.OTHER, territory=Territory.CONTESTED)],
+        rivals_profiled=2,
+    )
+
+    dossier = normalize_dossier(
+        RelevanceProposal(
+            ranked_relevance=[
+                RankedRelevanceProposal(
+                    evidence_id="E9", band=RelevanceBand.SUPPORT, why="Explains the queue"
+                )
+            ]
+        ),
+        ledger=complete,
+        research=research(),
+        positioning=contested_other,
+        knowledge_id=uuid4(),
+        knowledge_version=1,
+        research_id=uuid4(),
+        research_version=1,
+        market_scan_id=uuid4(),
+        market_scan_version=1,
+    )
+
+    assert dossier.ranked_relevance[0].territory is None
+    assert "E9" not in withheld_evidence_ids(dossier.ranked_relevance)
 
 
 def test_fit_verdicts_are_mechanical_not_persuasive():

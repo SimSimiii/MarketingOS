@@ -35,10 +35,11 @@ import os
 from typing import Any
 from uuid import UUID
 
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from app.ai.factory import get_ai_provider
 from app.core.database import engine
+from app.models.campaign_run_state import CampaignRunState
 from app.orchestration import stepped_runner
 
 logging.getLogger("marketingos").setLevel(os.environ.get("LOG_LEVEL", "INFO"))
@@ -59,7 +60,7 @@ def _execution_id(event: dict[str, Any]) -> UUID:
     return UUID(str(raw))
 
 
-def _run(step, event: dict[str, Any]) -> dict[str, Any]:
+def _run(step, event: dict[str, Any], *, failed_step: bool = False) -> dict[str, Any]:
     """Run one async step in its own session and return its JSON result.
 
     A session per invocation rather than a module-level one: a Lambda
@@ -71,6 +72,14 @@ def _run(step, event: dict[str, Any]) -> dict[str, Any]:
     execution_id = _execution_id(event)
     provider = get_ai_provider()
     with Session(engine) as session:
+        if failed_step and event.get("step_error"):
+            state = session.exec(select(CampaignRunState).where(
+                CampaignRunState.execution_id == execution_id
+            )).first()
+            if state is not None and not state.abort_reason:
+                state.abort_reason = "A campaign step failed. Previously accepted emails were kept."
+                session.add(state)
+                session.commit()
         result = asyncio.run(step(session, execution_id, provider))
     logger.info("%s → %s", step.__name__, result.detail)
     return result.as_dict()
@@ -93,4 +102,4 @@ def craft(event: dict[str, Any], context: Any = None) -> dict[str, Any]:
 
 def finish(event: dict[str, Any], context: Any = None) -> dict[str, Any]:
     """Read the emails as one sequence, report, and persist the deliverables."""
-    return _run(stepped_runner.finish, event)
+    return _run(stepped_runner.finish, event, failed_step=True)

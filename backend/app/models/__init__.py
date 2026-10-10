@@ -6,10 +6,17 @@ SQLModel.metadata before `init_db()` / Alembic autogenerate run.
 
 from app.models.admin import AdminAuditLog, AdminUser
 from app.models.agent_execution import AgentExecution
+from app.models.auth_rate_limit import AuthRateLimit
 from app.models.brand import Brand
 from app.models.campaign import Campaign
 from app.models.campaign_execution import CampaignExecution
 from app.models.campaign_run_state import CampaignRunState
+from app.models.credit import (
+    CreditAccount,
+    CreditCheckout,
+    CreditTransaction,
+    ReversedStripePayment,
+)
 from app.models.enums import (
     AdminRole,
     AssetType,
@@ -47,10 +54,14 @@ __all__ = [
     "AssetType",
     "AudienceMapRow",
     "AudienceResearchRow",
+    "AuthRateLimit",
     "Brand",
     "Campaign",
     "CampaignExecution",
     "CampaignRunState",
+    "CreditAccount",
+    "CreditCheckout",
+    "CreditTransaction",
     "ExecutionLog",
     "ExecutionStatus",
     "GeneratedAsset",
@@ -64,6 +75,7 @@ __all__ = [
     "ProspectRow",
     "RadarEventRow",
     "RelevanceDossierRow",
+    "ReversedStripePayment",
     "Rival",
     "User",
     "UserAudienceRow",

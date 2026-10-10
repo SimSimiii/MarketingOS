@@ -389,6 +389,8 @@ class EmailCampaignPipeline:
         except CampaignError as exc:
             logger.warning("pipeline: run failed - %s", exc)
             self._observer.on_role_failed(exc.details.get("role", "pipeline"), str(exc))
+            if stopped := self._stop_for_unresolved_material(request, contract, result):
+                return stopped
             # A failure that arrives with finished emails behind it is a
             # degraded run, not a failed one. Three good emails out of five
             # are three good emails, and reporting them under a red banner is
@@ -781,15 +783,18 @@ class EmailCampaignPipeline:
             "strategy",
             "Drafts will be read cold by: "
             + (
-                segment.name
+                brief.reader_profile_override
+                if brief.reader_profile_override
+                else segment.name
                 if segment is not None
                 else f"{fallback.name} (the brief named no segment we know)"
                 if fallback is not None
                 else "a busy professional - the material named no audience at all"
             ),
             {
-                "segment": segment.name if segment is not None else "",
-                "matched": segment is not None,
+                "segment": brief.reader_profile_override or (segment.name if segment is not None else ""),
+                "matched": not brief.reader_profile_override and segment is not None,
+                "audience_source": "user" if brief.reader_profile_override else "compiled",
             },
         )
         return brief
@@ -978,7 +983,9 @@ class EmailCampaignPipeline:
         result.artifacts = enriched
         self._observer.on_phase(
             "material_recovery",
-            f"Added {len(recovery.evidence)} verified fact(s); rebuilding the strategy once",
+            f"Recovered {len(recovery.evidence)} verified fact(s) "
+            f"({len(enriched.evidence.entries) - len(artifacts.evidence.entries)} new); "
+            "rebuilding the strategy once",
             {
                 "gaps": gaps,
                 "recovered": True,
@@ -1126,6 +1133,7 @@ class EmailCampaignPipeline:
                 artifacts.audience,
                 artifacts.audience.match(brief.reader_segment, brief.reader),
                 panel=self._policy.reader_panel,
+                explicit_audience=brief.reader_profile_override,
             ),
             merge_fields=self._policy.merge_fields,
             max_revisions=self._policy.max_revisions,
@@ -1145,6 +1153,19 @@ class EmailCampaignPipeline:
             return "budget_exhausted"
         return None
 
+    @staticmethod
+    def _withhold_unresolved_material(result: CampaignRunResult) -> list[EmailOutcome]:
+        blocked = [
+            outcome for outcome in result.outcomes
+            if outcome.unresolved_failure_mode == "missing_material"
+            and outcome.unresolved_strategy
+        ]
+        blocked_ids = {id(outcome) for outcome in blocked}
+        result.outcomes = [
+            outcome for outcome in result.outcomes if id(outcome) not in blocked_ids
+        ]
+        return blocked
+
     def _stop_for_unresolved_material(
         self,
         request: CampaignRequest,
@@ -1152,17 +1173,9 @@ class EmailCampaignPipeline:
         result: CampaignRunResult,
     ) -> CampaignRunResult | None:
         """Keep verified emails, but do not deliver a typed missing-material gap."""
-        blocked = [
-            outcome for outcome in result.outcomes
-            if outcome.unresolved_failure_mode == "missing_material"
-            and outcome.unresolved_strategy
-        ]
+        blocked = self._withhold_unresolved_material(result)
         if not blocked:
             return None
-        blocked_ids = {id(outcome) for outcome in blocked}
-        result.outcomes = [
-            outcome for outcome in result.outcomes if id(outcome) not in blocked_ids
-        ]
         result.status = "degraded" if result.outcomes else "needs_input"
         result.abort_reason = "; ".join(
             f"Email {outcome.brief.position} still needs verified material: "
@@ -1170,6 +1183,12 @@ class EmailCampaignPipeline:
             for outcome in blocked
         )
         result.report = self._build_report(request, contract, result)
+        material_questions = list(dict.fromkeys(
+            f"Provide verified material to resolve: {outcome.unresolved_strategy}"
+            for outcome in blocked
+        ))
+        result.report.questions = material_questions
+        result.report.what_would_help_most = material_questions[0]
         self._observer.on_report(result.report)
         self._observer.on_phase(
             "stopped", result.abort_reason, {"status": result.status}
@@ -1187,9 +1206,20 @@ class EmailCampaignPipeline:
         whatever is finished. Degrading to "here are three of the five, and
         here is why" beats failing a campaign that has minutes of good work
         in it."""
+        blocked = self._withhold_unresolved_material(result)
         result.status = guard  # type: ignore[assignment]
         result.abort_reason = _GUARD_MESSAGES.get(guard, guard)
         result.report = self._build_report(request, contract, result)
+        if blocked:
+            result.report.questions = list(dict.fromkeys(
+                f"Provide verified material to resolve: {outcome.unresolved_strategy}"
+                for outcome in blocked
+            ))
+            result.report.what_would_help_most = result.report.questions[0]
+            result.report.notes.append(
+                "Withheld emails needing verified material: "
+                + ", ".join(str(outcome.brief.position) for outcome in blocked)
+            )
         self._observer.on_report(result.report)
         self._observer.on_phase("stopped", result.abort_reason, {"status": guard})
         return result

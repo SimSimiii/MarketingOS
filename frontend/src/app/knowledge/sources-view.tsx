@@ -33,7 +33,7 @@ export function CampaignSourcesView() {
   const state = usePageData(async () => {
   const [documents, campaigns] = await Promise.all([
     api.listKnowledgeDocuments(),
-    api.listCampaigns().catch(() => []),
+    api.listCampaigns(),
   ]);
   return { documents, campaigns };
   }, []);

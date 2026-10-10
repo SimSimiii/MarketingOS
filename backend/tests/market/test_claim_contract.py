@@ -339,6 +339,23 @@ def test_irrelevant_product_truth_is_not_bulk_added():
     assert "There is a dark mode" in texts(result.verified_product_claims)
 
 
+def test_an_unused_duplicate_does_not_withhold_the_same_sentence_that_was_used():
+    """The profile states one fact once per source page. The copy licensed by
+    evidence nobody ranked is unused, not disqualified, and must not take the
+    ranked copy down with it."""
+    duplicate = ProductClaim(
+        text="Cuts warranty triage from 40 minutes to 9 seconds",
+        visibility=ClaimVisibility.CUSTOMER,
+        evidence_ids=["E-unranked"],
+        reason="Licensed by the current Evidence Ledger.",
+    )
+    result = contract(product_claims=[*claims(), duplicate])
+
+    assert "Cuts warranty triage from 40 minutes to 9 seconds" in texts(
+        result.campaign_allowed_claims
+    )
+
+
 def test_evidence_without_a_customer_copy_licence_cannot_be_campaign_safe():
     internal = [
         ProductClaim(

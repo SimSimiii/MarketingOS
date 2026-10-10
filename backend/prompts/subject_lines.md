@@ -45,7 +45,9 @@ your lines could be swapped without changing what the reader expects to find ins
 written one option twice. Bets worth taking, one each:
 
 - **the specific thing in the body**, stated flat — a number, a limit, a mechanism
-- **the moment it lands in**, named the way the reader would name it themselves
+- **the moment it lands in**, named the way the reader would name it themselves - as a
+  situation they recognise, never as news. "Something happened in the shop today" from a
+  company they have never heard of is not a moment, it is a stranger pretending to know them
 - **the thing they believe that this email is about to contradict**
 - **the question they are already asking**, asked back
 - **the plain description of what is inside**, with no attempt to be interesting at all — this
@@ -64,6 +66,9 @@ Rules that are checked mechanically, so breaking one only costs you the option:
   brackets, no ALL CAPS, no exclamation marks, no emoji
 - never promise something the body does not deliver. A tap the email cannot pay for costs more
   than the tap was worth
+- never write a line that reads as news about the reader's own business, or as a note from someone
+  they know. The sender is a company writing to a stranger; a subject that hides that is a
+  disguised ad, and the reader who opens it finds out in one line
 
 Write the way this company writes. A subject line in a different register from the email under it
 reads as a line someone else wrote, because it is.

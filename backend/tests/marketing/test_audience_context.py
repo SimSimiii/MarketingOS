@@ -23,6 +23,7 @@ from app.knowledge.ledger import (
     EvidenceLedger,
 )
 from app.market.demand import AudienceSegment, DemandMap, SegmentKind
+from app.marketing.observer import RunObserver
 from app.marketing.policy import PRESETS
 from app.marketing.request import CampaignRequest
 from app.marketing.strategist import MAX_EVIDENCE_PER_EMAIL
@@ -91,6 +92,34 @@ async def test_the_writer_is_told_who_it_is_writing_to(
     assert "tell customers what changed without losing the afternoon" in prompt
     assert "a customer heard about a breaking change from support first" in prompt
     assert "the note goes out late or goes out thin" in prompt
+
+
+@pytest.mark.asyncio
+async def test_the_custom_audience_reaches_the_cold_panel_even_if_strategy_picks_another_segment(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest,
+):
+    custom = "Opted-in electronics hobbyists considering their first repair toolkit"
+    phases = []
+
+    class Watch(RunObserver):
+        def on_phase(self, phase, message, data=None):
+            if phase == "strategy":
+                phases.append((message, data))
+
+    provider.set_default("strategist", campaign_brief(1))
+    pipeline, _ = build(
+        provider,
+        PRESETS["balanced"].model_copy(update={"draft_candidates": 1, "max_revisions": 0}),
+        artifacts=_rich_artifacts(),
+        observer=Watch(),
+    )
+    await pipeline.run(replace(_one_email(request_fixture), target_market=custom))
+    readers = provider.requests_for("blind_reader")
+    assert readers
+    assert all(custom in (call.system_prompt or "") for call in readers)
+    assert all("writes the note on Friday afternoon" not in (call.system_prompt or "") for call in readers)
+    assert phases and custom in phases[0][0]
+    assert phases[0][1]["audience_source"] == "user"
 
 
 @pytest.mark.asyncio

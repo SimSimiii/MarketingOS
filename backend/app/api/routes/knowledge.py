@@ -111,6 +111,11 @@ async def add_source(
         raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, str(exc)) from exc
     except IngestionError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(exc)) from exc
+    if not documents:
+        raise HTTPException(
+            status.HTTP_422_UNPROCESSABLE_CONTENT,
+            "No readable content was found. Try a single page, paste the text, or upload a document.",
+        )
     return [KnowledgeDocumentRead.model_validate(document) for document in documents]
 
 
@@ -145,6 +150,11 @@ async def upload_file(
         raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, str(exc)) from exc
     except IngestionError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(exc)) from exc
+    if not documents:
+        raise HTTPException(
+            status.HTTP_422_UNPROCESSABLE_CONTENT,
+            "No readable content was found in this file. Try another document or paste the text.",
+        )
     return [KnowledgeDocumentRead.model_validate(document) for document in documents]
 
 

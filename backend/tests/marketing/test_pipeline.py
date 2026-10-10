@@ -17,6 +17,7 @@ from app.market.audience_research import FetchedSource, SourceTier
 from app.market.material_research import MaterialRecovery
 from app.marketing.cancellation import CancellationToken
 from app.marketing.contract import parse_contract
+from app.marketing.exceptions import StrategyError
 from app.marketing.observer import RunObserver
 from app.marketing.pipeline import EmailCampaignPipeline
 from app.marketing.policy import PRESETS, ExecutionPolicy
@@ -267,6 +268,35 @@ async def test_persistent_missing_material_is_not_delivered(
     assert result.outcomes == []
     assert result.report.delivered == 0
     assert gap in (result.abort_reason or "")
+    assert gap in result.report.what_would_help_most
+    assert result.report.questions == [f"Provide verified material to resolve: {gap}"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("count", [1, 2])
+async def test_failed_recovery_keeps_only_emails_without_missing_material(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest, count: int,
+):
+    gap = "The guarantee exclusions are not verified."
+    provider.set_default("strategist", campaign_brief(count))
+    provider.push("conversion_critic", json.dumps({
+        "verdict": "revise", "failure_mode": "missing_material",
+        "strategy_gap": gap, "edits": [], "summary": gap,
+    }), CRITIQUE_SHIP)
+
+    class FailedRecovery:
+        async def recover(self, **_kwargs):
+            raise StrategyError("The recovery plan has no assigned payoff proof.")
+
+    pipeline, _ = build(
+        provider, refine_only(max_revisions=0), material_researcher=FailedRecovery(),
+    )
+    result = await pipeline.run(replace(request_fixture, request=f"Write exactly {count} emails"))
+
+    assert result.status == ("needs_input" if count == 1 else "degraded")
+    assert [outcome.brief.position for outcome in result.outcomes] == ([] if count == 1 else [2])
+    assert result.report.delivered == count - 1
+    assert gap in result.report.what_would_help_most
 
 
 @pytest.mark.asyncio
@@ -778,6 +808,38 @@ async def test_cancelling_stops_between_emails_and_keeps_what_is_finished(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("blocked_position", [1, 2])
+async def test_cancellation_withholds_missing_material_but_keeps_unaffected_emails(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest, blocked_position: int,
+):
+    gap = "The stated coverage exclusions are unverified."
+    missing = json.dumps({
+        "verdict": "revise", "failure_mode": "missing_material",
+        "strategy_gap": gap, "edits": [], "summary": gap,
+    })
+    provider.set_default("strategist", campaign_brief(3))
+    provider.push("conversion_critic", *([CRITIQUE_SHIP] * (blocked_position - 1)), missing)
+    token = CancellationToken()
+
+    class CancelAfterBlockedDraft(RunObserver):
+        def on_critique(self, position, attempt, critique):
+            if position == blocked_position and critique.failure_mode == "missing_material":
+                token.cancel()
+
+    pipeline, _ = build(
+        provider, refine_only(max_revisions=0), cancel_token=token,
+        observer=CancelAfterBlockedDraft(),
+    )
+    result = await pipeline.run(replace(request_fixture, request="Write exactly 3 emails"))
+
+    assert result.status == "cancelled"
+    assert len(result.outcomes) == blocked_position - 1
+    assert result.report.delivered == blocked_position - 1
+    assert gap in result.report.what_would_help_most
+    assert "Withheld emails" in result.report.notes[-1]
+
+
+@pytest.mark.asyncio
 async def test_cancelling_mid_email_skips_the_rest_of_its_own_revision_loop(
     provider: RoleScriptedProvider, request_fixture: CampaignRequest
 ):
@@ -1079,7 +1141,8 @@ async def test_the_draft_is_read_by_the_segment_the_brief_chose(
     provider.set_default("strategist", campaign_brief(1, reader_segment=SUPPORT_LEAD))
 
     pipeline, _ = build(provider, refine_only(), artifacts=two_segments())
-    result = await pipeline.run(request_fixture)
+    # No user-defined audience: this test exercises the strategy's selection.
+    result = await pipeline.run(replace(request_fixture, target_market=None))
 
     assert result.brief is not None
     assert result.brief.reader_segment == SUPPORT_LEAD
@@ -1135,7 +1198,7 @@ async def test_a_brief_that_names_nobody_we_know_falls_back_and_says_so(
                 seen.append(message)
 
     pipeline, _ = build(provider, refine_only(), artifacts=two_segments(), observer=Watch())
-    result = await pipeline.run(request_fixture)
+    result = await pipeline.run(replace(request_fixture, target_market=None))
 
     assert result.brief is not None
     assert result.brief.reader_segment == ""

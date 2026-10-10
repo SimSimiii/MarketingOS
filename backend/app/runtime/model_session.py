@@ -200,6 +200,13 @@ class ModelSession:
         self._router = model_router
         self._execution_id = execution_id
         self._on_call = on_call
+        from app.core.config import get_settings
+
+        self._credit_meter = None
+        if get_settings().credit_billing_enabled:
+            from app.services.credit_meter import CreditMeter
+
+            self._credit_meter = CreditMeter(execution_id)
         self.usage = Usage()
 
     def render(self, template: str, variables: dict[str, Any]) -> str:
@@ -314,21 +321,30 @@ class ModelSession:
         """
         last: Exception | None = None
         attempts = 0
-        for attempt in range(1, _PROVIDER_ATTEMPTS + 1):
+        # An ambiguous transport failure may still have consumed paid tokens.
+        # Never resend it automatically from a prepaid customer balance.
+        max_attempts = 1 if self._credit_meter else _PROVIDER_ATTEMPTS
+        for attempt in range(1, max_attempts + 1):
             attempts = attempt
-            try:
-                from app.runtime.work_limits import WorkLimitError, current_work
+            from app.runtime.work_limits import WorkLimitError, current_work
 
-                permit = current_work.get()
-                if permit is not None:
+            permit = current_work.get()
+            if permit is not None:
+                try:
                     permit.attempt()
+                except WorkLimitError as exc:
+                    raise ProviderError(
+                        str(exc), provider=type(self._provider).__name__, role=role,
+                        cause=type(exc).__name__, attempts=0, request_sent=False,
+                    ) from exc
+            try:
                 response = await self._provider.generate(request)
                 if permit is not None:
                     permit.tokens += response.usage.total_tokens
                 return response
             except Exception as exc:  # noqa: BLE001 - re-raised as ProviderError below
                 last = exc
-                if attempt == _PROVIDER_ATTEMPTS or (
+                if attempt == max_attempts or (
                     isinstance(exc, ProviderCallError) and not exc.retryable
                 ) or isinstance(exc, WorkLimitError):
                     break
@@ -337,7 +353,7 @@ class ModelSession:
                     "model_session: %s call %d/%d failed in transport (%s) - resending",
                     role,
                     attempt,
-                    _PROVIDER_ATTEMPTS,
+                    max_attempts,
                     detail,
                 )
                 self._events.publish(
@@ -402,18 +418,47 @@ class ModelSession:
             tools=wanted,
             image=image,
         )
-        self._events.publish(
-            ModelCallStarted(
-                agent_id=role,
-                execution_id=self._execution_id,
-                model=model,
-                prompt_chars=len(system) + len(task),
+        hold = None
+        if self._credit_meter is not None:
+            try:
+                hold = self._credit_meter.reserve(request)
+            except (ValueError, RuntimeError) as exc:
+                raise ProviderError(str(exc), role=role, provider="credits") from exc
+        try:
+            self._events.publish(
+                ModelCallStarted(
+                    agent_id=role,
+                    execution_id=self._execution_id,
+                    model=model,
+                    prompt_chars=len(system) + len(task),
+                )
             )
-        )
+        except Exception as exc:
+            if hold is None:
+                raise
+            self._credit_meter.release_unsent(hold)
+            raise ProviderError(
+                "Could not record the model call before sending it. No request was sent.",
+                role=role, provider="credits", cause=type(exc).__name__,
+                attempts=0, request_sent=False,
+            ) from exc
         started = time.perf_counter()
-        response = await self._send(request, role, model)
+        try:
+            response = await self._send(request, role, model)
+        except ProviderError as exc:
+            if hold is not None and exc.details.get("request_sent") is False:
+                self._credit_meter.release_unsent(hold)
+            raise
         duration_ms = (time.perf_counter() - started) * 1000
         resolved_model = response.model or model
+        try:
+            cost_usd = (
+                self._credit_meter.measured_cost(resolved_model, response.usage)
+                if self._credit_meter is not None
+                else usage_cost_usd(resolved_model, response.usage)
+            )
+        except ValueError as exc:
+            raise ProviderError(str(exc), role=role, provider="credits") from exc
         call = RoleCall(
             role=role,
             model=resolved_model,
@@ -423,9 +468,11 @@ class ModelSession:
             duration_ms=duration_ms,
             cache_creation_input_tokens=response.usage.cache_creation_input_tokens,
             cache_read_input_tokens=response.usage.cache_read_input_tokens,
-            cost_usd=usage_cost_usd(resolved_model, response.usage),
+            cost_usd=cost_usd,
         )
         self.usage.record(call)
+        if hold is not None:
+            self._credit_meter.settle(hold, call.cost_usd)
         if self._on_call is not None:
             self._on_call(call)
         self._events.publish(

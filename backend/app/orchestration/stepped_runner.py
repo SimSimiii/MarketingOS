@@ -169,6 +169,18 @@ async def plan(session: Session, execution_id: UUID, ai_provider: AIProvider) ->
     from app.orchestration.campaign_orchestrator import build_stepped_pipeline
 
     execution, campaign = _load(session, execution_id)
+    existing = session.exec(select(CampaignRunState).where(
+        CampaignRunState.execution_id == execution_id
+    )).first()
+    if existing is not None and existing.brief is not None:
+        return StepResult(
+            execution_id=str(execution_id), next_position=existing.next_position,
+            total_positions=existing.total_positions,
+            more=(execution.completed_at is None and not existing.abort_reason
+                  and existing.next_position <= existing.total_positions),
+            status=(execution.result or {}).get("run_status", "running"),
+            detail="Reusing the saved plan",
+        )
     pipeline, request, _ = build_stepped_pipeline(session, campaign, execution, ai_provider)
 
     if request.channel is not None:
@@ -213,7 +225,7 @@ async def craft(session: Session, execution_id: UUID, ai_provider: AIProvider) -
     execution, campaign = _load(session, execution_id)
     state = _state(session, execution_id)
 
-    if state.next_position > state.total_positions:
+    if execution.completed_at is not None or state.abort_reason or state.next_position > state.total_positions:
         # Already finished. Reached by a retry of a step that succeeded and
         # then timed out reporting it; answering "no more" is correct and
         # writes nothing.
@@ -230,11 +242,11 @@ async def craft(session: Session, execution_id: UUID, ai_provider: AIProvider) -
     result = CampaignRunResult(usage=pipeline.session_usage)
     result.outcomes = _OUTCOMES.validate_python(state.outcomes)
 
-    context = await pipeline.rebuild_context(request, result)
     previous = _EMAILS.validate_python(state.accepted)
     position = state.next_position
 
     with _admitted(session, campaign, resume=True):
+        context = await pipeline.rebuild_context(request, result)
         outcome = await pipeline.craft_position(
             request=request,
             brief=brief,
@@ -284,6 +296,13 @@ async def finish(session: Session, execution_id: UUID, ai_provider: AIProvider) 
     execution, campaign = _load(session, execution_id)
     state = _state(session, execution_id)
 
+    if execution.completed_at is not None:
+        return StepResult(
+            execution_id=str(execution_id), next_position=state.next_position,
+            total_positions=state.total_positions, more=False,
+            status=(execution.result or {}).get("run_status", str(execution.status)),
+            detail="Already finalized",
+        )
     pipeline, request, observer = build_stepped_pipeline(session, campaign, execution, ai_provider)
     brief = CampaignBrief.model_validate(state.brief)
     contract = pipeline.read_contract(request)
@@ -292,12 +311,18 @@ async def finish(session: Session, execution_id: UUID, ai_provider: AIProvider) 
     result.outcomes = _OUTCOMES.validate_python(state.outcomes)
     result.abort_reason = state.abort_reason
 
-    context = await pipeline.rebuild_context(request, result)
-    result.artifacts = context.artifacts
-    with _admitted(session, campaign, resume=True):
-        await pipeline.conclude(
-            request=request, contract=contract, brief=brief, context=context, result=result
-        )
+    if state.abort_reason:
+        # Failure recovery must not buy more model calls or recompile sources.
+        result.status = "degraded" if result.delivered else "failed"
+        result.report = pipeline._build_report(request, contract, result)
+        observer.on_report(result.report)
+    else:
+        with _admitted(session, campaign, resume=True):
+            context = await pipeline.rebuild_context(request, result)
+            result.artifacts = context.artifacts
+            await pipeline.conclude(
+                request=request, contract=contract, brief=brief, context=context, result=result
+            )
 
     # The writer rows were created by the craft steps, in processes this one
     # never shared. Without rebuilding the index every asset would be

@@ -76,7 +76,7 @@ npm run lint && npx tsc --noEmit
 Both are clean as of writing, so anything either one reports is yours.
 
 CodeBuild specs run lint and tests. The frontend also has `npm run typecheck` and `npm test`.
-Run the checks yourself before calling a change done. `.Codex/launch.json` defines `backend` and `frontend` for the preview tools —
+Run the checks yourself before calling a change done. `.claude/launch.json` defines `backend` and `frontend` for the preview tools —
 use those rather than starting servers by hand.
 
 ### Evaluation
@@ -185,14 +185,17 @@ because Codex has no `web_fetch` equivalent.
 
 ### Frontend
 
-Pages are server components calling the API directly; mutations are small colocated
-`"use client"` components. Everything scoped to a business lives under
+The frontend is a static Next.js export. Page data loads in browser client components
+through `usePageData` and `/api` on the same origin; `refreshPage()` reloads mounted
+loaders after mutations. Development uses the Next.js API proxy. Everything scoped to a business lives under
 `src/app/brands/[brandId]/` (knowledge, market, proof) — `/market` and
 `/knowledge/base?brand=` redirect there for old bookmarks, and what remains at `/knowledge` is
 sources attached to a one-off campaign. `src/lib/types.ts` mirrors the backend's Pydantic
-schemas by hand, so a schema change means changing both. The execution page splits into a
-stream hook, a pure fold (`lib/run-timeline.ts`) and a dumb component, so replayed history and
-live events go through the same function. Theme is dark-only, violet accent, no toggle.
+schemas by hand, with generated contract assertions in `api-contracts.ts`, so a schema change
+means changing both and regenerating `api-schema.ts`. The execution page splits into a
+snapshot hook, a pure fold (`lib/run-timeline.ts`) and a dumb component. The current UI uses
+manual refresh, without SSE or automatic polling; persisted events go through the fold.
+Theme is dark-only, violet accent, no toggle.
 
 **This is Next.js 16, newer than training data.** Read the relevant guide in
 `frontend/node_modules/next/dist/docs/` before writing Next-specific code — see

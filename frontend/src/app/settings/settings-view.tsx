@@ -1,7 +1,7 @@
 "use client";
 
 import { AccountPanel } from "@/app/settings/account-panel";
-import { ModelGuide } from "@/app/settings/model-guide";
+import { CreditPanel } from "@/app/settings/credit-panel";
 import { PageHeader } from "@/components/page-header";
 import { api } from "@/lib/api-client";
 import { AUTH_REQUIRED } from "@/lib/config";
@@ -11,7 +11,7 @@ export function SettingsView() {
   const state = usePageData(
     // Only where there are accounts. In single-user mode there is nothing to
     // describe: no password, no sessions, no plan.
-    () => (AUTH_REQUIRED ? api.getCurrentUser().catch(() => null) : Promise.resolve(null)),
+    () => (AUTH_REQUIRED ? api.getCurrentUser() : Promise.resolve(null)),
     [],
   );
 
@@ -24,12 +24,12 @@ export function SettingsView() {
             title="Settings"
             description={
               account
-                ? "Your account, and how a campaign decides which models write it."
-                : "How a campaign decides which models write it. This install runs as a single workspace."
+                ? "Manage your account and campaign preferences."
+                : "This install runs as a single workspace."
             }
           />
           {account && <AccountPanel account={account} />}
-          <ModelGuide />
+          {account && <CreditPanel />}
         </div>
       )}
     </PageData>

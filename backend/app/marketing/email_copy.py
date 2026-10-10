@@ -221,6 +221,7 @@ def parse_email(text: str, position: int) -> Email:
             "Re-send the email with every label on its own line and BODY last."
         )
 
+    body = _strip_repeated_closing(body, fields)
     laid_out = reflow(body)
     if laid_out != body:
         logger.info(
@@ -245,6 +246,20 @@ def parse_email(text: str, position: int) -> Email:
     if issues:
         raise EmailCopyError("; ".join(issues))
     return email
+
+
+def _strip_repeated_closing(body: str, fields: dict[str, str]) -> str:
+    """Keep exact closing copies in their envelope fields, rendered once.
+
+    Only trailing, standalone, identical copies are mechanical duplicates.
+    A sentence that develops the ask, a variant, or an ask inside the argument
+    stays in BODY and is still examined by the gates.
+    """
+    blocks = _PARAGRAPH_SPLIT_RE.split(body.strip())
+    for field in ("SIGNOFF", "CTA"):
+        if len(blocks) > 1 and blocks[-1].strip() == fields[field].strip():
+            blocks.pop()
+    return "\n\n".join(blocks)
 
 
 def reflow(body: str) -> str:

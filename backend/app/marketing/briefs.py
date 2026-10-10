@@ -315,6 +315,10 @@ class CampaignBrief(BaseModel):
     #: mid-market product manager, fails on a premise the reader does not
     #: have, and every rewrite after that answers the wrong person's doubts.
     reader_segment: str = ""
+    #: Set in code from the user's custom audience, never from model biography.
+    reader_profile_override: str = ""
+    #: Set from the user request in code; evidence sources cannot replace it.
+    fixed_cta_url: str = ""
     #: The one promise the whole campaign makes.
     promise: str = ""
     #: What this company sells, in one plain sentence a stranger could repeat

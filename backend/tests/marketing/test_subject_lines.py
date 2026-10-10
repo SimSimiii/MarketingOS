@@ -94,6 +94,21 @@ async def test_a_line_more_people_would_open_replaces_it():
 
 
 @pytest.mark.asyncio
+async def test_a_near_tie_keeps_the_line_written_with_the_body():
+    """The alternative is judged without the body; one more open in a hundred
+    is the scanners' noise, and losing it costs the subject its tie to what the
+    email is actually selling."""
+    provider = RoleScriptedProvider(
+        {"subject_lines": subject_options(4), "inbox_scanner": inbox_verdict(23, 15, 19, 24, 14)}
+    )
+
+    improved, summary = await improve(provider)
+
+    assert improved.subject == "The line it already had"
+    assert 'kept "The line it already had"' in summary
+
+
+@pytest.mark.asyncio
 async def test_the_body_is_never_touched():
     provider = RoleScriptedProvider(
         {"subject_lines": subject_options(4), "inbox_scanner": inbox_verdict(10, 40, 9, 9, 9)}

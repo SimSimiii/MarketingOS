@@ -39,6 +39,11 @@ class CampaignRequest:
     #: for decides the contract, and a contract read out of prose is a
     #: contract a sentence about LinkedIn can change by accident.
     channel: LinkedInChannel | None = None
+    #: Where the button goes, when the user fixed it. The renderer always
+    #: honours it, so the plan has to as well: a strategy that never saw it
+    #: chose "View live demo" from the offer sheet while the button it labelled
+    #: opened the goal-conversions guide the user had picked.
+    cta_url: str | None = None
 
     @property
     def sender(self) -> str:
@@ -56,6 +61,12 @@ class CampaignRequest:
             lines.append(f"What the user wants out of it: {self.goals}")
         if self.sender:
             lines.append(f"Who it comes from: {self.sender}")
+        if self.cta_url:
+            lines.append(
+                f"Where the call to action links, fixed by the user: {self.cta_url}. Every "
+                "email's ask must describe what the reader finds at that page; any other "
+                "action has no button to land on."
+            )
         if self.channel is not None:
             lines.append(
                 f"Channel: one LinkedIn {self.channel.kind} to {self.channel.recipient_name} "

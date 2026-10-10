@@ -22,6 +22,46 @@ HOMEPAGE = "https://example.test/"
 OFFER = OfferSheet(calls_to_action=[CallToAction(label="Start free", url=SIGNUP)])
 
 
+def test_recovered_sources_do_not_replace_the_users_fixed_product_destination():
+    product = "https://example.test/product"
+    guide = "https://example.test/care-guide"
+    artifacts = KnowledgeArtifacts(evidence=EvidenceLedger(entries=[
+        Evidence(id="R1", kind=EvidenceKind.FEATURE, claim="The kit has a flex extension.",
+                 verbatim="The kit has a flex extension.", source=guide),
+        Evidence(id="R2", kind=EvidenceKind.FEATURE, claim="The kit has a sorting tray.",
+                 verbatim="The kit has a sorting tray.", source=guide),
+    ]))
+    primary = EmailBrief(
+        position=1, single_idea="The kit has a flex extension.", evidence_ids=["R1"],
+        call_to_action=f"Inspect the toolkit: {product}",
+        next_step_value="Compare the included tools with your planned repair.",
+        next_step_evidence_ids=["R1"],
+        alternative_arguments=[ArgumentOption(
+            single_idea="The kit has a sorting tray.", evidence_ids=["R2"],
+            call_to_action=f"Inspect the toolkit: {product}",
+            next_step_value="Inspect the case layout.", next_step_evidence_ids=["R2"],
+        )],
+    )
+    normalized = Strategist(None)._normalize(
+        CampaignBrief(emails=[primary], fixed_cta_url="https://invented.test/"),
+        parse_contract("Write exactly 1 email"), artifacts, fixed_cta_url=product,
+    )
+    assert normalized.fixed_cta_url == product
+    selected = normalized.emails[0]
+    assert selected.call_to_action == primary.call_to_action
+    assert selected.next_step_value == primary.next_step_value
+    assert selected.alternative_arguments[0].call_to_action == primary.call_to_action
+    assert selected.alternative_arguments[0].next_step_value == "Inspect the case layout."
+
+
+def test_an_unspecified_user_destination_cannot_be_invented_by_the_strategist():
+    normalized = Strategist(None)._normalize(
+        CampaignBrief(fixed_cta_url="https://invented.test/"),
+        parse_contract("Write exactly 1 email"), KnowledgeArtifacts(),
+    )
+    assert normalized.fixed_cta_url == ""
+
+
 @pytest.mark.parametrize("proof_order", [["R1", "R2"], ["R2", "R1"]])
 def test_selected_cta_keeps_any_cited_official_destination(proof_order):
     overview = "https://docs.vendor.test/overview"

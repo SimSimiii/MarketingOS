@@ -1,22 +1,27 @@
 # MarketingOS Frontend
 
-Next.js 15 (App Router) + TypeScript + Tailwind + shadcn/ui dashboard for the MarketingOS API.
+Next.js 16 (App Router) + TypeScript + Tailwind + shadcn/ui dashboard for the MarketingOS API.
 
 ## Setup
 
 ```bash
 npm install
-cp .env.local.example .env.local   # point NEXT_PUBLIC_API_URL at the backend
+cp .env.local.example .env.local
 npm run dev
 ```
 
-Runs on http://localhost:3000, expects the backend at http://localhost:8000/api by default.
+Runs on http://localhost:3000. Browser requests use `/api` on that origin; the development
+server proxies them to `API_PROXY_TARGET` (default `http://localhost:8000`). Keep
+`NEXT_PUBLIC_API_URL=/api` for cookie authentication. If accounts are enabled, set
+`NEXT_PUBLIC_AUTH_REQUIRED=true` to match the backend. The static production export needs
+an HTTPS reverse proxy routing `/api/*` to the backend on the console's domain.
 
 ## Structure
 
 - `src/app/*` — one route per page (Dashboard, Campaigns, Campaign Details, Live, Brands,
-  Campaign sources, Settings, Activity). Pages are server components that call the API
-  directly; forms that mutate data are small colocated client components (`"use client"`).
+  Campaign sources, Settings, Activity). The production site is a static export. Client
+  loaders use `usePageData` and `PageData` for loading, errors and navigation;
+  `refreshPage()` reloads mounted loaders after mutations.
 - `src/lib/api-client.ts` — typed fetch wrapper over the backend REST API.
 - `src/lib/types.ts` — TypeScript types mirroring the backend's Pydantic schemas.
 - `src/components/ui/*` — shadcn/ui primitives.
@@ -35,7 +40,7 @@ Everything scoped to a business therefore lives under `src/app/brands/[brandId]/
 - `knowledge/` — its sources, and `knowledge/base/` the compiled knowledge base built from them.
 - `market/` — its competitors, positioning map, proof queue and radar.
 
-`layout.tsx` fetches the brand once and renders the header, the brand switcher and the section
+The brand layout loads the brand and renders the header, the brand switcher and the section
 nav around all of them. `/market` and `/knowledge/base?brand=` redirect here rather than 404,
 because bookmarks to the old account-wide pages exist. What is left at `/knowledge` is the one
 thing that has no brand to move into: sources attached to a one-off campaign, read once and
@@ -43,17 +48,16 @@ kept to it.
 
 ## Watching a run
 
-The execution page is the one genuinely live surface, and it is built out of three pieces that
-stay deliberately separate:
+The execution page uses persisted snapshots and a manual Refresh action. Its three pieces are:
 
-- `hooks/use-execution-stream.ts` — loads the run's history over HTTP first, then opens the SSE
-  stream from the position it ended at. A page opened late, or simply reloaded mid-run, shows
-  the whole story rather than starting blank; the browser's own reconnection carries
-  `Last-Event-ID`, so a dropped connection costs nothing either.
-- `lib/run-timeline.ts` — a pure fold of the event list into steps. Replayed history and live
-  events go through the same function, which is what makes the handover seamless.
+- `hooks/use-execution-stream.ts` — loads the persisted timeline over HTTP and exposes
+  refresh, error and last-updated state. It opens no SSE connection and does not poll.
+- `lib/run-timeline.ts` — a pure fold of the persisted event list into steps.
 - `components/run-timeline.tsx` — one row per director step, each opening onto that agent's own
   log lines. A specialist that gets reworked appears as several steps rather than one collapsed
   card, because the rework loop is the product, not an implementation detail.
 
 Theme is dark-only with a violet accent (see `globals.css`); there is no light/dark toggle.
+
+After an API schema change, run `backend/scripts/export_api_types.py`, then lint, typecheck,
+tests and build. The backend generator's `--check` also runs in CI.

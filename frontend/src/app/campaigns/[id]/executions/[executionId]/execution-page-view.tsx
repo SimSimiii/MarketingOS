@@ -2,7 +2,7 @@
 
 
 import { ExecutionLiveView } from "@/app/campaigns/[id]/executions/[executionId]/execution-live-view";
-import { api } from "@/lib/api-client";
+import { api, nullIfMissing } from "@/lib/api-client";
 import { PageData, notFound, usePageData, useRouteIds } from "@/lib/page-data";
 
 export function ExecutionResultView() {
@@ -15,8 +15,8 @@ export function ExecutionResultView() {
   // Fetched beside the result rather than behind it: the campaign id comes from
   // the route, so nothing here needs the result to know what to ask for.
   const [result, campaign] = await Promise.all([
-    api.getExecutionResult(executionId).catch(() => null),
-    api.getCampaign(id).catch(() => null),
+    api.getExecutionResult(executionId).catch(nullIfMissing),
+    api.getCampaign(id).catch(nullIfMissing),
   ]);
   if (!result) {
     notFound();
@@ -41,7 +41,6 @@ export function ExecutionResultView() {
       initialErrorMessage={result.error_message}
       startedAt={result.started_at}
       completedAt={result.completed_at}
-      finalCostUsd={result.estimated_cost_usd}
     />
   );
       }}

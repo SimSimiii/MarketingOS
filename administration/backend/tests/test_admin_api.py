@@ -38,6 +38,42 @@ def customer(session: Session) -> User:
 # ── Sign-in ──────────────────────────────────────────────────────────────────
 
 
+def test_operator_login_attempts_are_limited_across_requests(client, monkeypatch):
+    from app.auth import rate_limits
+
+    monkeypatch.setattr(rate_limits, "PASSWORD_ATTEMPTS", 2)
+    for email in ("operator@example.com", "OPERATOR@example.com"):
+        assert client.post("/api/auth/login", json={
+            "email": email, "password": "wrong",
+        }).status_code == 401
+    response = client.post("/api/auth/login", json={
+        "email": "operator@example.com", "password": "wrong",
+    })
+    assert response.status_code == 429
+    assert int(response.headers["Retry-After"]) > 0
+    assert client.post("/api/auth/login", json={
+        "email": "other@example.com", "password": "wrong",
+    }).status_code == 401
+
+
+def test_unknown_operator_also_runs_password_verification(client, session, monkeypatch):
+    import admin.routers.auth as routes
+
+    operator = make_admin(session, "verify@example.com", AdminRole.ADMIN)
+    verified = []
+
+    def reject(password, reference):
+        verified.append(reference)
+        return False
+
+    monkeypatch.setattr(routes, "verify_password", reject)
+    for email in (operator.email, "unknown@example.com"):
+        response = client.post("/api/auth/login", json={"email": email, "password": "wrong"})
+        assert response.status_code == 401
+    assert len(verified) == 2
+    assert all(reference.startswith("$2b$12$") for reference in verified)
+
+
 def test_the_console_is_closed_without_a_token(client):
     for path in ("/api/overview", "/api/users", "/api/admins", "/api/audit"):
         assert client.get(path).status_code == 401, path
@@ -250,6 +286,43 @@ def test_deleting_an_account_keeps_its_work_and_unowns_it(client, session, sign_
     orphan = session.get(Brand, brand_id)
     assert orphan is not None, "closing an account should not destroy the work in it"
     assert orphan.owner_id is None
+
+
+def test_deleting_account_removes_empty_credit_account(client, session, sign_in, customer):
+    from app.models.credit import CreditAccount
+
+    user_id = customer.id
+    session.add(CreditAccount(user_id=user_id))
+    session.commit()
+    response = client.delete(f"/api/users/{user_id}", headers=sign_in(AdminRole.SUPERADMIN))
+    assert response.status_code == 200
+    session.expunge_all()
+    assert session.get(CreditAccount, user_id) is None
+
+
+@pytest.mark.parametrize("record", ["balance", "checkout", "transaction"])
+def test_deletion_preserves_financial_records_and_ownership(client, session, sign_in, customer, record):
+    from app.models.credit import CreditAccount, CreditCheckout, CreditTransaction
+
+    user_id = customer.id
+    brand_id = session.exec(select(Brand).where(Brand.owner_id == user_id)).one().id
+    if record == "balance":
+        row = CreditAccount(user_id=user_id, balance=1)
+    elif record == "checkout":
+        row = CreditCheckout(stripe_session_id="cs_test_keep", user_id=user_id,
+                             credits=1000, amount_cents=1000)
+    else:
+        row = CreditTransaction(user_id=user_id, amount=0, balance_after=0,
+                                kind="hold", reference="retain-ledger")
+    session.add(row)
+    session.commit()
+    response = client.delete(f"/api/users/{user_id}", headers=sign_in(AdminRole.SUPERADMIN))
+    assert response.status_code == 409
+    assert "Suspend" in response.json()["detail"]
+    session.expunge_all()
+    assert session.get(User, user_id) is not None
+    assert session.get(Brand, brand_id).owner_id == user_id
+    assert session.exec(select(type(row))).first() is not None
 
 
 # ── Operators ────────────────────────────────────────────────────────────────

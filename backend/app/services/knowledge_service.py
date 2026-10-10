@@ -87,7 +87,10 @@ class KnowledgeService:
             analyzers={
                 SourceType.IMAGE: ImageAnalyzer(
                     ocr=TesseractOCRProvider(),
-                    vision=ClaudeVisionProvider(model=get_settings().anthropic_model),
+                    vision=ClaudeVisionProvider(
+                        model=get_settings().anthropic_model,
+                        owner_id=self._principal.owner_id if self._principal else None,
+                    ),
                 )
             },
             store=self._store,

@@ -1,0 +1,228 @@
+{
+  "updated_on": "2026-10-09",
+  "timezone": "Europe/Paris",
+  "branch": "master",
+  "head_short": "6d36612",
+  "working_tree": "Includes pre-existing product changes and this correction batch; not a committed release candidate.",
+  "evidence_type": "Summary of observed command results, with explicit scope; not raw transcripts or deployment certification.",
+  "checks": [
+    {
+      "cwd": "backend",
+      "command": ".venv/Scripts/python.exe -m pytest tests -q",
+      "result": "passed",
+      "passed": 1457,
+      "warnings": 2,
+      "duration_seconds": 126.27,
+      "scope": "Installed development hash lock, scripted providers, temporary databases"
+    },
+    {
+      "cwd": "backend",
+      "command": ".venv/Scripts/python.exe -m ruff check app tests scripts",
+      "result": "passed"
+    },
+    {
+      "cwd": "backend",
+      "command": ".venv/Scripts/python.exe scripts/export_api_types.py --check",
+      "result": "passed"
+    },
+    {
+      "cwd": "backend",
+      "command": ".venv/Scripts/python.exe scripts/check_migrations.py",
+      "result": "passed",
+      "head": "b7a109c4e2f8",
+      "scope": "Disposable SQLite, upgrade/downgrade/re-upgrade and metadata parity"
+    },
+    {
+      "cwd": "backend",
+      "command": ".venv/Scripts/python.exe -m pip install --require-hashes -r requirements.lock",
+      "result": "passed"
+    },
+    {
+      "cwd": "backend",
+      "command": ".venv/Scripts/python.exe -m pip check",
+      "result": "passed"
+    },
+    {
+      "cwd": "administration/backend",
+      "command": "../../backend/.venv/Scripts/python.exe -m pytest tests -o addopts='' -q",
+      "result": "passed",
+      "passed": 42,
+      "warnings": 2,
+      "duration_seconds": 44.78,
+      "scope": "SQLite with foreign keys enabled and updated Python dependencies"
+    },
+    {
+      "cwd": "administration/backend",
+      "command": "../../backend/.venv/Scripts/python.exe -m ruff check admin tests",
+      "result": "passed"
+    },
+    {
+      "cwd": "frontend",
+      "command": "npm run lint",
+      "result": "passed"
+    },
+    {
+      "cwd": "frontend",
+      "command": "npm run typecheck",
+      "result": "passed"
+    },
+    {
+      "cwd": "frontend",
+      "command": "npm test",
+      "result": "passed",
+      "passed": 17
+    },
+    {
+      "cwd": "frontend",
+      "command": "npm run build",
+      "result": "passed",
+      "next_version": "16.3.8",
+      "static_pages": 23
+    },
+    {
+      "cwd": "administration/frontend",
+      "command": "npm run lint",
+      "result": "passed"
+    },
+    {
+      "cwd": "administration/frontend",
+      "command": "npm run typecheck",
+      "result": "passed"
+    },
+    {
+      "cwd": "administration/frontend",
+      "command": "npm run build",
+      "result": "passed",
+      "next_version": "16.3.8",
+      "static_pages": 8
+    },
+    {
+      "cwd": "frontend",
+      "command": "npm audit --omit=dev",
+      "result": "passed",
+      "vulnerabilities": 0
+    },
+    {
+      "cwd": "administration/frontend",
+      "command": "npm audit --omit=dev",
+      "result": "passed",
+      "vulnerabilities": 0
+    },
+    {
+      "cwd": ".",
+      "command": "backend/.venv/Scripts/python.exe docs/audits/2026-10-07/audit_python_locks.py",
+      "result": "passed",
+      "checked_releases": 84,
+      "flagged": [],
+      "unverified": [],
+      "scope": "Known active release advisories in PyPI JSON, including platform-specific packages"
+    },
+    {
+      "cwd": ".",
+      "command": "backend/.venv/Scripts/python.exe docs/audits/2026-10-07/validate_api_lock.py",
+      "result": "passed",
+      "scope": "Disposable venv; exact API hash lock, editable app without added dependencies, pip check, API import/provider construction with prepaid false/true and dummy credentials; no lifespan or provider request"
+    },
+    {
+      "cwd": ".",
+      "command": "git -c core.safecrlf=false diff --check",
+      "result": "passed"
+    }
+  ],
+  "offline_reproduction": {
+    "nested_model_override_status": 422,
+    "campaign_with_run_state_delete": "deleted",
+    "credited_user_delete": 409,
+    "finish_accepts_preserved_id_with_step_error": true,
+    "craft_catch_preserves_payload_in_template": true,
+    "stripe_in_requirements.txt": true,
+    "stripe_in_requirements.lock": true,
+    "stripe_in_requirements-worker.txt": true
+  },
+  "dependency_versions": {
+    "next": "16.3.8",
+    "eslint_config_next": "16.3.8",
+    "sharp_override": "0.35.5",
+    "source_map_js_override": "1.2.2",
+    "pyjwt": "2.15.1",
+    "pypdf": "6.19.0",
+    "psycopg": "3.3.6",
+    "lock_resolver": "uv 0.12.24, universal, Python 3.12"
+  },
+  "remaining_dev_dependency_advisory": {
+    "package": "braces",
+    "version": "3.0.3",
+    "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+    "frontend_high_package_reports": 8,
+    "admin_high_package_reports": 5,
+    "qualification": "Transitive development-tool dependency chain; latest published braces version remained affected at review. No major downgrade forced."
+  },
+  "python_advisories_corrected": {
+    "pyjwt_before": "2.14.0",
+    "pypdf_before": "6.18.1",
+    "pyjwt_advisories": [
+      "GHSA-42vr-xj54-vc7v",
+      "GHSA-x33g-cr3x-6449"
+    ],
+    "pypdf_advisories": [
+      "GHSA-w23x-9jrw-r45c",
+      "GHSA-php9-fj8v-98fj",
+      "GHSA-v247-6f48-mgcj"
+    ]
+  },
+  "database_changes": {
+    "new_revision": "b7a109c4e2f8",
+    "previous_revision": "a4e92f6b17c0",
+    "purpose": "Shared password-attempt counters",
+    "development_database_modified": false,
+    "deployment_requires_migration": true
+  },
+  "not_performed": [
+    "Real campaign or paid model call",
+    "Payment or Stripe end-to-end test",
+    "Cloud deployment",
+    "PostgreSQL/Aurora integration",
+    "Docker/Linux image build: Docker daemon unavailable",
+    "Current authenticated browser journey: no listeners on documented app ports and no preview launch tool exposed",
+    "Current visual/mobile/accessibility or email-client certification",
+    "Exhaustive penetration or supply-chain audit"
+  ],
+  "launch_status": {
+    "remote_autonomous_pilot": "not_qualified",
+    "paid_self_service": "blocked_pending_remaining_audit_items"
+  },
+  "source_fingerprints_sha256": {
+    "backend/pyproject.toml": "8a4d36f9ed1fa2166a3b914dae943c67083f467701c583a2d1c4fd95cfe40067",
+    "backend/requirements.txt": "50ac14fc3547e298473e4bbb5b4d9ec08d0b13ddb0a7b125c97eb1c85d993c42",
+    "backend/requirements.lock": "25fb3a3ba89f1be17c45eb4c04b076d86e1121f1c2f5ec28f27dbafd3df4804b",
+    "backend/requirements-worker.txt": "25a48f860e96b5b6876184920888ae7a1edb69c72a53c12d22b773649a2e2360",
+    "backend/app/runtime/model_session.py": "1c325db45cc2f295f259a7e895d8e5d4ee1b071da576445f4b8ec8a5ad4e3eac",
+    "backend/app/services/credit_meter.py": "d1fd9bfb638127c45f2dc8b54eaed90ec0e985dfdef3ca720571d935a23aab38",
+    "backend/app/services/campaign_service.py": "92df0911c7532b4a5f63ed8b1e4d82bc51ab0ed568bf06efd0b77d2ace1f6895",
+    "backend/app/auth/rate_limits.py": "c415b42041a2be3b20efcb26ef7bfffb8f97449ca454a3a3670a98fc97e8210d",
+    "backend/app/models/auth_rate_limit.py": "35a4b47a0a0ce8dc2d031a0232a51cc9437557517711591f8da7ebb9ff8a28ae",
+    "backend/alembic/versions/b7a109c4e2f8_auth_attempt_limits.py": "5d89f1cf10c1eca5b6c2716bed50df2fb3f9986c76a777efcab9cb5bcb42fb45",
+    "backend/app/orchestration/checkpoints.py": "432283736cd1b07393d50ef4a11384834b521bbb473c933e0413e7ca47f9e2ac",
+    "backend/app/orchestration/campaign_orchestrator.py": "7267fc88814e2850c524192fce72c797f70ccb97847b20349abe98ee979f0f5e",
+    "backend/app/orchestration/execution_manager.py": "139c4c6db769e5c091127ccee6b3752e00c457fb9eaf5868cc58c04a881c3168",
+    "backend/app/orchestration/stepped_runner.py": "424e9b732daf6eb9f4857b92f0891e2ee008dd84f3a2b168039045f1c983b6a8",
+    "backend/app/api/routes/auth.py": "017d9bae6b65618f5181f55287a8e0ca17382b539a6f0f3533eef198e0f6f1d8",
+    "backend/app/api/routes/health.py": "88476ecd0df39ac7acc08a6597b9248083fbb74bed9247fcf22d5213d9bb79c1",
+    "backend/app/api/routes/credits.py": "06022713de660379f93e988310d1803f5a51b644ec99309ef199d354730a02ea",
+    "backend/app/api/routes/campaigns.py": "8b7b0c034bdca4a3157dcc59c0ee05789f2d83a6e13156b8a229e7e093391320",
+    "backend/step_handlers.py": "6a1b4306fad5d80bbe3319755aec95085d9971a91ffea89ffd6157e01772a6f0",
+    "backend/template.yaml": "6c3bcc42b3df317c6e7024adaca3b192a8a050996ce514146cebd0073ca4d8d9",
+    "frontend/package.json": "391cb3bacbf4c95f36b5047f7fbb0d04886e1aae8beb244f5bfd053b54df8ce3",
+    "frontend/package-lock.json": "829c051534b7845a6abe2d57824bac8d49f966be86281c3cfdf72a8f3cee5aa1",
+    "frontend/next.config.ts": "2d3a6d03847af7d59ee4cfbdcb0f3f3f640de8cf3bba2bd089504f7c087f6f98",
+    "frontend/src/lib/api-core.ts": "c6416909e79f7cb894fc4043e167f13e5fe467d43f84d5ce6aedf29cbc7f9371",
+    "frontend/src/lib/api-schema.ts": "8edd8c0b25268d620294a469e118fa56d2f3699cf80b39d3310514d861ef6048",
+    "frontend/src/app/campaigns/[id]/edit-brief-dialog.tsx": "6e7722b21d4598f7de56067e24c0732278a053022731582f2901d8e2c2ccbb3e",
+    "frontend/src/components/export-all-button.tsx": "6e12e66bea424449bed5173a8a06c234f6e55450652a476702216124be14a077",
+    "frontend/src/app/settings/credit-panel.tsx": "d2797ef3eb133a67324a34b1c8db61baf7fdc005af8fb5e13ec998db808870bf",
+    "administration/frontend/package.json": "bdaf243d2fb296253ff209a75a2e643fdc2327ff2b1a5c00a9667b7c4b202620",
+    "administration/frontend/package-lock.json": "d238dc6c8945a23af36686537f5e282fc48842463a537d5ec23b09c3d160e553",
+    "administration/backend/admin/routers/auth.py": "ad49425a6df3e6f327299d2fb1a22b861ac3ba8a5a9341a479f8882ad350f1c7",
+    "administration/backend/admin/service.py": "22a1905fbd28477e2ec4a545a0f44458de5a6463dc6d6374704e6f9a9f099554"
+  }
+}

@@ -9,8 +9,9 @@ make the page's shape depend on how claims happen to be stored.
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_serializer, field_validator
 
+from app.core.config import get_settings
 from app.knowledge.artifacts import Sophistication
 from app.market.audience_research import AudienceResearch
 from app.market.capabilities import CapabilityProfileDraft, ProductCapabilityProfile
@@ -278,6 +279,14 @@ class JobStatusRead(BaseModel):
     output_tokens: int = 0
     cache_read_tokens: int = 0
     cost_usd: float = 0.0
+
+    @field_serializer("input_tokens", "output_tokens", "cache_read_tokens")
+    def hide_tokens(self, value: int) -> int:
+        return 0 if get_settings().credit_billing_enabled else value
+
+    @field_serializer("cost_usd")
+    def hide_internal_cost(self, value: float) -> float:
+        return 0.0 if get_settings().credit_billing_enabled else value
 
 
 class ScanRequest(BaseModel):

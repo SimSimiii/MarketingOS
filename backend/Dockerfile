@@ -25,14 +25,13 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
-COPY requirements.txt ./
+COPY requirements-worker.txt ./
 
-# requirements.txt rather than requirements.lock: the lock carries the dev
-# extra (pytest, ruff, the evaluation harness) and this image does not run
-# tests. --require-hashes is what makes a deploy reproduce the build that was
-# tested rather than whatever PyPI resolves today.
+# This persistent worker includes the CLI Python SDK and PostgreSQL driver,
+# while the smaller Lambda requirements exclude the CLI's bundled binary.
+# Dev tools are excluded from both runtime locks.
 RUN pip install --no-cache-dir --upgrade pip \
- && pip install --no-cache-dir --require-hashes --prefix=/install -r requirements.txt
+ && pip install --no-cache-dir --require-hashes --prefix=/install -r requirements-worker.txt
 
 # ── Runtime ──────────────────────────────────────────────────────────────────
 FROM public.ecr.aws/docker/library/python:3.12-slim AS runtime

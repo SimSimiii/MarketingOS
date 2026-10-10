@@ -1,7 +1,8 @@
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_serializer
 
+from app.api.public_output import public_message
 from app.models.enums import LogLevel
 from app.schemas.types import UtcDatetime
 
@@ -21,6 +22,10 @@ class ExecutionLogRead(BaseModel):
     level: LogLevel
     message: str
     created_at: UtcDatetime
+
+    @field_serializer("message")
+    def hide_internal_call_message(self, value: str) -> str:
+        return public_message(self.event_type, value)
 
 
 class ExecutionTimeline(BaseModel):

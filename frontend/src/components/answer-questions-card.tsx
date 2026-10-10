@@ -100,9 +100,9 @@ export function AnswerQuestionsCard({
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm text-muted-foreground">
-          Nothing was spent on this run. The material we have contains nothing a stranger has any
-          reason to believe, and no rewrite has ever added a proof that was not there - so it
-          stopped before the first model call rather than writing five emails nobody would act on.
+          The run stopped before generating drafts because the available material needs more
+          evidence. Preparing your sources may already have used part of the run budget.
+          Answer the questions below or add supporting material before running again.
         </p>
         {questions.map((question, index) => (
           <div key={question} className="space-y-1.5">

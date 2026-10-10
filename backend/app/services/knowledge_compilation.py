@@ -6,13 +6,13 @@ from datetime import UTC, datetime
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_serializer
 from sqlalchemy import Engine
 from sqlmodel import Session
 
 from app.ai.base import AIProvider
 from app.ai.model_router import ModelRouter
-from app.core.config import PROMPTS_DIR
+from app.core.config import PROMPTS_DIR, get_settings
 from app.knowledge.compiler import KnowledgeCompiler
 from app.knowledge.store import ArtifactScope, ArtifactStore, build_corpus, fingerprint_documents
 from app.models.brand import Brand
@@ -39,6 +39,10 @@ class CompilationJob(CompilationStatus):
     input_tokens: int = 0
     output_tokens: int = 0
 
+    @field_serializer("input_tokens", "output_tokens")
+    def hide_tokens(self, value: int) -> int:
+        return 0 if get_settings().credit_billing_enabled else value
+
     def say(self, message: str) -> None:
         self.message = message
         self.log.append(message)
@@ -47,6 +51,9 @@ class CompilationJob(CompilationStatus):
         self.calls += 1
         self.input_tokens += call.billable_input_tokens
         self.output_tokens += call.output_tokens
+        if get_settings().credit_billing_enabled:
+            self.log.append("Knowledge compiler · step completed")
+            return
         self.log.append(
             f"Knowledge compiler · {call.model} · {call.duration_ms / 1000:.1f}s · "
             f"{call.billable_input_tokens:,} in / {call.output_tokens:,} out"

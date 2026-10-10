@@ -324,6 +324,11 @@ def test_one_account_cannot_see_another_accounts_campaign_or_its_runs(locked_cli
     assert locked_client.get(f"/api/campaigns/{campaign_id}", headers=bob).status_code == 404
     assert locked_client.delete(f"/api/campaigns/{campaign_id}", headers=bob).status_code == 404
     assert locked_client.get(f"/api/campaigns/{campaign_id}/executions", headers=bob).status_code == 404
+    assert locked_client.put(
+        f"/api/campaigns/{campaign_id}/brief",
+        json={"name": "Hijacked", "request": "Write one email."}, headers=bob,
+    ).status_code == 404
+    assert locked_client.get(f"/api/campaigns/{campaign_id}", headers=alice).json()["name"] == "Launch"
 
 
 def test_a_duplicated_campaign_still_belongs_to_the_account_that_made_it(

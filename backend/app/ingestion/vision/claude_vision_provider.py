@@ -1,4 +1,5 @@
 from dataclasses import asdict
+from uuid import UUID
 
 from app.ai.factory import anthropic_backend
 from app.ai.model_router import ModelRouter
@@ -29,10 +30,11 @@ from app.runtime.prompt_engine import get_prompt_engine
 
 
 class ClaudeVisionProvider(VisionProvider):
-    def __init__(self, model: str) -> None:
+    def __init__(self, model: str, owner_id: UUID | None = None) -> None:
         self._session = ModelSession(
             anthropic_backend(model), get_prompt_engine(PROMPTS_DIR), EventBus(),
-            ModelRouter(overrides={"image_reader": model}), "image-ingestion",
+            ModelRouter(overrides={"image_reader": model}),
+            f"vision:{owner_id}" if owner_id else "image-ingestion",
         )
 
     @property

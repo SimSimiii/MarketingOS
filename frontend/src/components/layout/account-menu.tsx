@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
+import { toast } from "sonner";
 
 import { api } from "@/lib/api-client";
 import { AUTH_REQUIRED } from "@/lib/config";
@@ -43,11 +44,17 @@ export function AccountMenu() {
 
   async function signOut() {
     setBusy(true);
-    await fetch(`${API_URL}/auth/logout`, { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: "{}" }).catch(() => undefined);
-    // `refresh` as well: every page is server-rendered from the cookie that
-    // was just deleted, and the router cache still holds the signed-in render.
-    router.replace("/login/");
-    refreshPage();
+    try {
+      const response = await fetch(`${API_URL}/auth/logout`, { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: "{}" });
+      if (!response.ok) throw new Error("Could not sign out. Please retry.");
+      api.invalidate();
+      router.replace("/login/");
+      refreshPage();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not sign out. Please retry.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (

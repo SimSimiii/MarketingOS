@@ -9,6 +9,7 @@ type Payload<T> = T extends readonly (infer Item)[] ? Payload<Item>[]
   : T extends object ? { [K in keyof T]-?: Payload<T[K]> } : T;
 
 export type RequestContracts = [
+  Assert<Fits<UI.CampaignBriefUpdate, ApiSchemas["CampaignBriefUpdate"]>>,
   Assert<Fits<UI.CampaignCreateRequest, ApiSchemas["CampaignCreateRequest"]>>,
   Assert<Fits<ApiSchemas["CampaignCreateRequest"], UI.CampaignCreateRequest>>,
   Assert<Fits<UI.KnowledgeSourceCreate, ApiSchemas["KnowledgeSourceCreate"]>>,
@@ -17,6 +18,9 @@ export type RequestContracts = [
   Assert<Fits<UI.CampaignPolicyUpdate, ApiSchemas["CampaignPolicyUpdate"]>>,
 ];
 export type ResponseContracts = [
+  Assert<Fits<Payload<ApiSchemas["CreditBalance"]>, UI.CreditBalance>>,
+  Assert<Fits<Payload<ApiSchemas["RunForecast"]>, UI.RunForecast>>,
+  Assert<Fits<Payload<ApiSchemas["CampaignExecutionRead"]>, UI.CampaignExecution>>,
   Assert<Fits<Payload<ApiSchemas["CampaignRead"]>, UI.Campaign>>,
   Assert<Fits<Payload<ApiSchemas["BrandRead"]>, UI.Brand>>,
   Assert<Fits<Payload<ApiSchemas["KnowledgeDocumentSummary"]>, UI.KnowledgeDocument>>,

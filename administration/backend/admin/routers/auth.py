@@ -12,12 +12,14 @@ import logging
 from datetime import UTC, datetime
 from typing import Annotated
 
+from app.auth.rate_limits import AuthThrottledError, password_attempt
 from app.models.admin import AdminUser
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlmodel import Session, col, func, select
 
 from .. import service
 from ..auth import CurrentAdminDep, create_admin_token, verify_password
+from ..config import get_admin_settings
 from ..db import get_session
 from ..schemas import AdminRead, LoginRequest, TokenResponse
 
@@ -32,13 +34,22 @@ def login(
     request: Request,
     session: Annotated[Session, Depends(get_session)],
 ) -> TokenResponse:
+    try:
+        password_attempt(
+            session, email=str(data.email), namespace="admin.login",
+            pepper=get_admin_settings().admin_pwd_pepper,
+        )
+    except AuthThrottledError as exc:
+        raise HTTPException(429, str(exc), headers={"Retry-After": str(exc.retry_after)}) from exc
     admin = session.exec(
         select(AdminUser).where(func.lower(col(AdminUser.email)) == data.email.lower())
     ).first()
 
     # One message for both halves. Telling an unknown address apart from a
     # wrong password turns this form into a list of who operates the platform.
-    if admin is None or not verify_password(data.password, admin.password_hash):
+    reference = admin.password_hash if admin else "$2b$12$" + "." * 53
+    password_valid = verify_password(data.password, reference)
+    if admin is None or not password_valid:
         logger.warning(
             "admin_login_failed email=%s ip=%s", data.email, service.client_ip(request)
         )

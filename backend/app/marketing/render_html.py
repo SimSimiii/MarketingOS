@@ -40,6 +40,7 @@ import re
 from collections.abc import Iterable
 from dataclasses import dataclass, replace
 from enum import StrEnum
+from urllib.parse import urlsplit
 
 from app.knowledge.artifacts import OfferSheet
 from app.marketing.email_copy import CALLOUT_PREFIX, Email
@@ -141,6 +142,22 @@ _BOLD_RE = re.compile(r"\*\*(.+?)\*\*", re.DOTALL)
 #: this end can fix. The colour is carried by the rule down the left edge and
 #: by the hero figure, where it cannot hurt anything.
 _CALLOUT_FILL = "#f6f8fb"
+
+
+def _safe_url(value: str, *, allow_mailto: bool = False) -> str:
+    """Only make a clickable email URL from an explicit, usable destination."""
+    value = value.strip()
+    if not value or any(char.isspace() for char in value):
+        return ""
+    try:
+        parsed = urlsplit(value)
+    except ValueError:
+        return ""
+    if parsed.scheme.lower() in {"http", "https"} and parsed.hostname:
+        return html.escape(value, quote=True)
+    if allow_mailto and parsed.scheme.lower() == "mailto" and parsed.path:
+        return html.escape(value, quote=True)
+    return ""
 
 
 @dataclass(frozen=True)
@@ -559,8 +576,8 @@ def _cta(label: str, style: BrandStyle, tier: EmailTier, scale: _Scale) -> str:
     The writer never supplies the href - it is told it does not know the URL
     behind any button, because inventing one sends a real reader to a page
     that does not exist. It comes from the campaign or a licensed offer URL,
-    with the brand's website as fallback. With neither, the anchor stays a marked slot
-    for the user to fill rather than a dead link pretending to work.
+    with the brand's website as fallback. With neither, the action is visible
+    as text for review, without a link that pretends to work.
 
     A dead button is worse than a link, which is why the branded tier falls
     back to the plain tier's styled link when no URL is known: a reader who
@@ -568,12 +585,18 @@ def _cta(label: str, style: BrandStyle, tier: EmailTier, scale: _Scale) -> str:
     sender that no amount of copy recovers.
     """
     text = html.escape(label.strip())
-    href = html.escape(style.cta_url, quote=True) if style.cta_url else ""
-    if tier is EmailTier.PLAIN or not href:
+    href = _safe_url(style.cta_url)
+    if not href:
+        return scale.row(
+            f'<span style="font-family:{_SANS};font-size:{scale.body_size}px;'
+            f'color:{scale.ink};font-weight:600;">{text}</span>',
+            padding=f"8px {scale.pad}px 24px",
+        )
+    if tier is EmailTier.PLAIN:
         # A styled text link, not a button: in a person-to-person email a
         # button is the tell that it came from a marketing tool.
         return scale.row(
-            f'<a href="{href or "#"}" style="font-family:{_SANS};'
+            f'<a href="{href}" style="font-family:{_SANS};'
             f'font-size:{scale.body_size}px;color:{style.accent};font-weight:600;'
             f'text-decoration:underline;">{text} &rarr;</a>',
             padding=f"8px {scale.pad}px 24px",
@@ -636,12 +659,13 @@ def _header(style: BrandStyle, scale: _Scale) -> str:
         f'<tr><td style="background-color:{style.accent};height:4px;font-size:0;'
         'line-height:0;">&nbsp;</td></tr>\n'
     )
-    if not style.logo_url and not style.name:
+    logo_url = _safe_url(style.logo_url)
+    if not logo_url and not style.name:
         return rule
     inner = html.escape(style.name)
-    if style.logo_url:
+    if logo_url:
         inner = (
-            f'<img src="{html.escape(style.logo_url, quote=True)}" '
+            f'<img src="{logo_url}" '
             f'alt="{html.escape(style.name, quote=True)}" height="30" '
             'style="display:block;border:0;height:30px;max-height:30px;width:auto;" />'
         )
@@ -660,13 +684,13 @@ def _footer(style: BrandStyle, scale: _Scale) -> str:
     thing they press is the spam button.
     """
     lines = list(style.footer_lines) or ([style.name] if style.name else [])
-    if not lines and not style.unsubscribe_url:
+    unsubscribe_url = _safe_url(style.unsubscribe_url, allow_mailto=True)
+    if not lines and not unsubscribe_url:
         return ""
     body = "<br />".join(html.escape(line) for line in lines)
-    if style.unsubscribe_url:
-        href = html.escape(style.unsubscribe_url, quote=True)
+    if unsubscribe_url:
         body += (
-            f'<br /><br /><a href="{href}" style="color:{scale.muted};'
+            f'<br /><br /><a href="{unsubscribe_url}" style="color:{scale.muted};'
             'text-decoration:underline;">Unsubscribe</a>'
         )
     return (

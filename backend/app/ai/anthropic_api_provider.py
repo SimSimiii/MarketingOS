@@ -63,7 +63,7 @@ _ACCEPTS_TEMPERATURE: frozenset[str] = frozenset({"claude-haiku-4-5"})
 #: final text, so there is no client tool loop here. The `_20260209` variants
 #: carry dynamic filtering and are what the models in the catalog support.
 _SERVER_TOOLS: dict[ResearchTool, dict[str, Any]] = {
-    ResearchTool.WEB_SEARCH: {"type": "web_search_20260209", "name": "web_search"},
+    ResearchTool.WEB_SEARCH: {"type": "web_search_20260209", "name": "web_search", "max_uses": 5},
     ResearchTool.WEB_FETCH: {"type": "web_fetch_20260209", "name": "web_fetch"},
 }
 

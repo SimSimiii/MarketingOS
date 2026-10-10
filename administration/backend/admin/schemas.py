@@ -24,7 +24,7 @@ class _PasswordRules:
 
 class LoginRequest(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(max_length=4096)
 
 
 class AdminRead(BaseModel):

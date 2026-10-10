@@ -258,13 +258,20 @@ let all three slots become setup requirements or limitations. If those requireme
 narrow the proposed evaluation to one useful supported check instead of implying they vanish.
 
 **Decide what each email does not say.** `must_not_say` is the hard half of this job. You know
-things about this business that are true, checkable and genuinely persuasive — the pricing, the
-security posture, the integration list — and most of them do not belong in the email you are
-briefing. Name them: "the security and uptime claims — this reader is not evaluating a vendor
-yet", "the full model list — email 3 owns it". Every other field here is a reason to put
+things about this business that are true, checkable and genuinely persuasive — its security
+posture and integration list, for example — and many do not belong in the email you are
+briefing. Name the irrelevant topics: "the security and uptime claims — this reader is not
+evaluating a vendor yet", "the full model list — this decision does not need it". Every other field here is a reason to put
 something on the page, so if nobody decides what stays off it, the copy accumulates until it
 argues nothing. An email that says one thing and gets read beats an email that says six and gets
 archived, and the second one is what you get by default.
+
+Do not reserve a necessary decision input for a later email. Each email stands alone.
+If evaluating a toolkit's breadth against a smaller option needs its verified price, give
+that slot the price rather than forbid pricing because another slot handles buying concerns.
+Keep the main arguments distinct; concise licensed offer context may recur when necessary.
+Mention the commercial question in `objection` so the writer can retrieve its verified answer.
+Do not require a price that the ledger does not establish, or fill missing terms by inference.
 
 **Build the argument, not just the claim.** `single_idea` says what an email asserts. Four more
 fields say why anybody should care, and they are the ones that decide whether the copy converts
@@ -294,6 +301,10 @@ change. Leave irrelevant fields empty rather than manufacturing a failing altern
   just named. Not the benefit: "so you save time" is a mechanism thrown away and replaced by the
   adjective it had just earned. Where the evidence carries the mechanism, the two reinforce; where
   it does not, use a supported mechanism or leave the field empty.
+  Describe the mechanism no more precisely than the facts you may assign describe it. What moves,
+  what stays put, what happens to the rest of a list: each is a claim, and a customer saying it is
+  easy ("we just click and drag stuff around") establishes that it is easy, not what it does. If
+  no assignable fact states the behaviour, say what the fact says and stop there.
 
 When using these four beats, read the need, status quo and failure through this email's own
 `single_idea`. Do not repeat an argument across emails just to fill the same fields.
@@ -376,6 +387,13 @@ be the wrong action for this argument, so complete its decision bridge:
   this proposition's `evidence_ids`; an empty list means the proposed payoff is not verified.
 - **`next_step_limit`** — the adjacent decision the step does **not** answer. Name the interface,
   environment or production boundary when it matters.
+
+When the request introduces the product to someone who does not use it yet, a payoff that only
+exists inside the product ("no code changes", "already collected", "in your dashboard") has a
+prerequisite. Write the documented adoption step into `mechanism` as the condition the payoff
+holds under - "once its script is on your site, a signup page becomes a goal with no further
+code" - so the email states it as part of how the product works. Not in `next_step_limit`: a
+prerequisite is not something the next step fails to deliver.
 
 Read those four fields as one sentence: “By taking [CTA], this reader gets [value], supported by
 [ids], which helps decide [decision], but does not establish [limit].” If that sentence does not

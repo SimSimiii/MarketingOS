@@ -1,5 +1,19 @@
 # Deploying MarketingOS
 
+> **Launch status after the October 2026 audit:** the Lambda campaign workflow is not
+> connected to the user launch endpoint and is not qualified for autonomous testers.
+> The first remote pilot should use one persistent API instance, same-origin HTTPS,
+> a backed-up database and explicit provider configuration; qualify that route before
+> opening accounts. Corrections to step replay and failure recovery do not complete
+> Lambda dispatch, durable budgets, distributed admission or network/secrets wiring.
+> See [corrections and remaining blockers](audits/2026-10-07/corrections.md).
+>
+> Apply migrations through `b7a109c4e2f8` to the shared, backed-up database before deploying
+> the product and admin APIs: password-attempt limits require their new counter table.
+> Reconcile an unversioned `create_all` development database using
+> [the migration procedure](review-implementation.md); do not stamp it directly at head.
+> Prepaid activation and its remaining qualification work are in [billing.md](billing.md).
+
 Five stacks, deployed in this order, each consuming the previous one's outputs.
 
 | # | What | Where | Deployed by |
@@ -186,16 +200,18 @@ and the account shows up in the back-office at <http://localhost:3011>.
 
 ## What is deliberately missing
 
-- **No payment processing.** `UserPlan` and the quota counters exist, the
-  back-office can read and grant against them, and nothing charges anybody. The
+- **Prepaid payments remain disabled in this deployment.** Stripe checkout and
+  credit accounting exist in code but still require the qualification in
+  `docs/billing.md` before activation. The
   MRR figure on the overview is the plan mix times a price map in
   `ADMIN_PLAN_PRICES` — an estimate, and labelled one.
 - **No email.** No verification, no password reset by mail. `UserStatus.PENDING`
   and `email_verified_at` exist so turning verification on later is a policy
   change rather than a migration; a forgotten password is currently a support
   request and `scripts/create_user --reset-password`.
-- **No rate limiting beyond API Gateway's.** The throttles in the templates are
-  per-stage, not per-account.
+- **Password attempts are limited per identity and endpoint in the database.**
+  API Gateway also throttles per stage; a distributed attack across many
+  identities still needs a separate edge policy.
 - **A single worker.** The SSE broker and the execution registry are in-memory
   and process-local. Correct for one worker, and the first thing a second one
   would have to move to Redis.

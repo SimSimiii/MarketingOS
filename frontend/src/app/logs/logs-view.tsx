@@ -38,8 +38,7 @@ export function LogsView() {
     const logs: ExecutionLog[] = execution
       ? await api
           .getExecutionLogs(execution, { agentId: agent, includeDebug: true })
-          .catch(() => [])
-      : await api.listLogs(200).catch(() => []);
+      : await api.listLogs(200);
     return { logs };
   }, [execution, agent]);
 

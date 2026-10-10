@@ -8,7 +8,8 @@ PDF or a screenshot, and ask for what you need in your own words:
 MarketingOS reads your material into a set of facts it is allowed to claim, decides what
 the campaign says and in what order, writes each email, has every draft read by someone
 who knows nothing about your product, rewrites what did not land, and hands you finished
-text you can copy and paste. Not drafts. Not a chatbot. Not a workflow builder.
+reviewed email text you can copy and paste after checking the facts, links and brand voice.
+Incomplete runs retain their delivery count and the reason they need attention.
 
 It also reads the market you are being compared in — who the buyer is really deciding
 between, what each of them promises, which of your claims are yours alone and which make you
@@ -45,7 +46,7 @@ send messages. See [LinkedIn and manual run refresh](docs/linkedin-and-run-refre
   [backend/README.md](backend/README.md)
 - **Frontend**: Next.js (App Router) / TypeScript / Tailwind / shadcn/ui — see
   [frontend/README.md](frontend/README.md)
-- **AI**: vendor-agnostic `AIProvider` interface; only Claude is implemented today
+- **AI**: OpenAI and Claude providers; local default OpenAI through the subscription CLI.
 
 ## Quick start
 

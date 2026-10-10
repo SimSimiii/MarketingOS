@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { formatTime, formatTokens } from "@/lib/format";
+import { formatTime } from "@/lib/format";
 import type { StepState, TimelineStep } from "@/lib/run-timeline";
 import type { LiveExecutionEvent } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -73,7 +73,6 @@ function StepRow({
 }) {
   const style = STEP_STYLES[step.state];
   const lines = events.filter((event) => event.step === step.step);
-  const tokens = step.inputTokens + step.outputTokens;
   // A finished step reports what it took; a running one has to keep moving,
   // or the page reads as frozen through a 40-second model call.
   const elapsedMs =
@@ -121,8 +120,6 @@ function StepRow({
           )}
 
           <span className="flex flex-wrap gap-x-3 text-xs text-muted-foreground tabular-nums">
-            {step.model && <span>{step.model}</span>}
-            {tokens > 0 && <span>{formatTokens(tokens)} tokens</span>}
             {elapsedMs > 0 && <span>{(elapsedMs / 1000).toFixed(1)}s</span>}
             <span className="text-muted-foreground/70">
               {lines.length} log line{lines.length === 1 ? "" : "s"}

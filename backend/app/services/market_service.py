@@ -37,7 +37,7 @@ from sqlmodel import Session
 from app.ai.base import AIProvider, ResearchTool
 from app.ai.model_router import ModelRouter
 from app.ai.roles import ROLE_CATALOG
-from app.core.config import PROMPTS_DIR
+from app.core.config import PROMPTS_DIR, get_settings
 from app.knowledge.artifacts import KnowledgeArtifacts
 from app.knowledge.store import ArtifactScope, ArtifactStore
 from app.market.audience_research import (
@@ -178,6 +178,9 @@ class JobStatus:
         self.cache_read_tokens += call.cache_read_input_tokens
         self.cost_usd += call.cost_usd
         label = spec.label if (spec := ROLE_CATALOG.get(call.role)) else call.role
+        if get_settings().credit_billing_enabled:
+            self.log.append(f"{label} · step completed")
+            return
         self.log.append(
             f"{label} · {call.model} · {call.duration_ms / 1000:.1f}s · "
             f"{call.billable_input_tokens:,} in / {call.output_tokens:,} out"

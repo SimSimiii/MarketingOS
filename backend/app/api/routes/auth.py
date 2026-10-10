@@ -17,6 +17,7 @@ from sqlmodel import Session, col, select
 from app.api.deps import SessionDep
 from app.auth import service
 from app.auth.dependencies import ACCESS_TOKEN_COOKIE, CurrentUserDep
+from app.auth.rate_limits import AuthThrottledError, password_attempt
 from app.core.config import get_settings
 from app.models.user import User, UserSession
 from app.schemas.auth import (
@@ -99,6 +100,15 @@ def _issue(
     return _token_response(tokens)
 
 
+def _password_attempt(session: Session, email: str, namespace: str) -> None:
+    try:
+        password_attempt(
+            session, email=email, namespace=namespace, pepper=get_settings().password_pepper,
+        )
+    except AuthThrottledError as exc:
+        raise HTTPException(429, str(exc), headers={"Retry-After": str(exc.retry_after)}) from exc
+
+
 @router.get("/config", response_model=AuthConfigRead)
 def auth_config() -> AuthConfigRead:
     """Unauthenticated on purpose: the sign-in page has to render before
@@ -118,6 +128,7 @@ def register(
     response: Response,
     user_agent: Annotated[str | None, Header()] = None,
 ) -> TokenResponse:
+    _password_attempt(session, str(data.email), "customer.register")
     try:
         user = service.register(
             session,
@@ -141,6 +152,7 @@ def login(
     response: Response,
     user_agent: Annotated[str | None, Header()] = None,
 ) -> TokenResponse:
+    _password_attempt(session, str(data.email), "customer.login")
     try:
         user = service.authenticate(session, email=data.email, password=data.password)
     except service.AccountSuspendedError as exc:

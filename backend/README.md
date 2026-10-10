@@ -15,6 +15,38 @@ uvicorn app.main:app --reload
 
 API docs at http://localhost:8000/docs once running.
 
+### Reproducible dependency sets
+
+`requirements.txt` locks the HTTP API dependencies including PostgreSQL and Stripe.
+`requirements.lock` adds developer/test dependencies. `requirements-worker.txt` adds
+PostgreSQL and the subscription CLI SDK for the Docker worker. Each is hash locked;
+install with `python -m pip install --require-hashes -r <file>`, then
+`python -m pip install --no-deps -e .`. The worker image installs its own dependency set.
+
+Refresh these locks with a universal resolver from this directory, so Windows generation
+keeps Linux-only dependencies and platform markers. The audit used `uv 0.12.24`:
+
+```bash
+uv pip compile pyproject.toml --extra dev --extra postgres --universal --python-version 3.12 --generate-hashes --constraint requirements.lock --output-file requirements.lock
+uv pip compile pyproject.toml --extra postgres --universal --python-version 3.12 --generate-hashes --constraint requirements.lock --output-file requirements.txt
+uv pip compile pyproject.toml --extra cli --extra postgres --universal --python-version 3.12 --generate-hashes --constraint requirements.lock --output-file requirements-worker.txt
+```
+
+Subscription mode still requires authenticated vendor CLIs; a dependency installation does
+not log them in. HTTP API billing and prepaid credits have separate activation requirements
+in [billing.md](../docs/billing.md). `/api/health` is liveness; `/api/ready` also probes the DB
+without calling a model. Deployment and payment qualification remain tracked in the
+[audit corrections](../docs/audits/2026-10-07/corrections.md).
+
+Password login and registration attempts use an atomic database counter: 12 attempts
+per normalized identity and endpoint in a fixed five-minute window. Operator logins have
+their own namespace. A blocked request returns HTTP 429 with `Retry-After` before bcrypt.
+Only an HMAC identity key is retained; stale counters are pruned. This requires migration
+`b7a109c4e2f8` in both services' shared database. Apply it to a backed-up, correctly
+versioned database before deploying the APIs; `scripts/check_migrations.py` validates
+the chain without touching development data. Trusted edge/IP traffic limits are still
+required for attacks spanning many identities.
+
 ## Structure
 
 ```

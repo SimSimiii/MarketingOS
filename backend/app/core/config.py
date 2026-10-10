@@ -1,3 +1,4 @@
+from datetime import UTC, date, datetime, timedelta
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
@@ -14,6 +15,12 @@ PROMPTS_DIR = Path(__file__).resolve().parents[2] / "prompts"
 #: `get_settings` refuses to boot a production process that still has these.
 DEV_JWT_SECRET = "dev-only-jwt-secret-change-me-before-you-deploy-anything"
 DEV_PASSWORD_PEPPER = "dev-only-password-pepper-change-me-before-you-deploy"
+PREPAID_PRICES_REVIEWED_ON = date(2026, 10, 7)
+
+
+def assert_prepaid_prices_current() -> None:
+    if datetime.now(UTC).date() - PREPAID_PRICES_REVIEWED_ON > timedelta(days=30):
+        raise RuntimeError("Prepaid model prices need operator review before billing can continue.")
 
 
 class Settings(BaseSettings):
@@ -31,7 +38,7 @@ class Settings(BaseSettings):
     #: The vendor a call falls back to when its model does not name one. Both
     #: backends are always built - see app.ai.factory - so this is a default,
     #: not a switch that turns the other vendor off.
-    ai_provider: Literal["claude", "openai", "gemini", "local"] = "claude"
+    ai_provider: Literal["claude", "openai", "gemini", "local"] = "openai"
     #: Who pays for a model call, and therefore which pair of backends is
     #: built. Never inferred from whether an API key happens to be in the
     #: environment: the two cost wildly different amounts - a `balanced`
@@ -79,6 +86,13 @@ class Settings(BaseSettings):
     #: product that spends model quota per run is a bill, not a funnel.
     allow_public_signup: bool = False
 
+    # Checkout is configured independently of model metering. A key alone
+    # cannot enable billing: Stripe must also sign events for THIS endpoint.
+    stripe_secret_key: str | None = None
+    stripe_webhook_secret: str | None = None
+    public_app_url: str = "http://localhost:3000"
+    credit_billing_enabled: bool = False
+
     @property
     def cors_origins_list(self) -> list[str]:
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
@@ -113,4 +127,16 @@ def get_settings() -> Settings:
                 + ". Generate one each with `python -c \"import secrets;"
                 " print(secrets.token_hex(32))\"`."
             )
+    if settings.credit_billing_enabled and (
+        not settings.auth_required or settings.ai_billing != "api"
+    ):
+        raise RuntimeError(
+            "Credit billing requires authenticated accounts and metered API providers."
+        )
+    if settings.credit_billing_enabled and (
+        not settings.stripe_secret_key or not settings.stripe_webhook_secret
+    ):
+        raise RuntimeError("Credit billing requires Stripe checkout and webhook secrets.")
+    if settings.credit_billing_enabled and settings.is_production and not settings.public_app_url.startswith("https://"):
+        raise RuntimeError("Credit billing requires an HTTPS public app URL in production.")
     return settings

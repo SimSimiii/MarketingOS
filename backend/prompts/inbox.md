@@ -32,6 +32,9 @@ the profile explicitly establishes a different relationship:
   it says about it
 - **above 50** — does not happen to a sender you do not recognise, whatever the line says
 
+A line that reads like news about your own business or a personal note, from a sender you do not
+recognise, is a disguised ad. You have seen enough of them to know: score it with the ads.
+
 The same line does not score the same everywhere. Judge them against each other: they are sitting
 in one list, and the one that gets tapped is the one that stands out from the ones around it. It
 is normal for four of five options to land within a few points of each other and for one to be

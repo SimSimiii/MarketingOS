@@ -42,3 +42,15 @@ def test_every_line_the_form_collects_survives_into_the_context() -> None:
     assert "Who the user says they are targeting: independent repair shops" in context
     assert "What the user wants out of it: trial signups" in context
     assert "Who it comes from: Marco, founder" in context
+
+
+def test_the_user_fixed_destination_reaches_the_strategist() -> None:
+    """The renderer always sends the button to the user's URL. A plan that
+    never saw it labelled that button for a different page."""
+    context = _request(cta_url="https://example.com/docs/goals").render_context()
+    assert "https://example.com/docs/goals" in context
+    assert "must describe what the reader finds at that page" in context
+
+
+def test_no_fixed_destination_says_nothing_about_one() -> None:
+    assert "Where the call to action links" not in _request().render_context()

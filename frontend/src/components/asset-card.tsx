@@ -57,6 +57,7 @@ export function AssetCard({ asset }: { asset: GeneratedAsset }) {
           <CardTitle className="text-base leading-snug">{asset.title}</CardTitle>
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="secondary">{ASSET_LABELS[asset.asset_type] ?? asset.asset_type}</Badge>
+            {asset.asset_metadata?.sequence_review_pending === true && <Badge variant="secondary">{asset.asset_metadata?.checkpoint === true ? "Recovered draft · " : ""}Sequence review pending</Badge>}
             {asset.position > 0 && (
               <span className="rounded-md border border-hairline bg-background/40 px-1.5 py-0.5 text-xs text-muted-foreground tabular-nums">
                 #{asset.position}

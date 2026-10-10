@@ -24,9 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ModelOverridePanel } from "@/components/model-override-panel";
-import { api } from "@/lib/api-client";
-import { useModelCatalog } from "@/lib/use-model-catalog";
+import { ApiError, api } from "@/lib/api-client";
 import type {
   AudienceRead,
   Brand,
@@ -37,6 +35,7 @@ import type {
   Prospect,
 } from "@/lib/types";
 import { formatDate } from "@/lib/format";
+import { customEmailRequest } from "@/lib/campaign-brief";
 
 const NO_BRAND = "__none__";
 const NEW_BRAND = "__new__";
@@ -77,7 +76,7 @@ const TONE_INSTRUCTIONS: Record<Tone, string> = {
   urgent: "Urgent and aggressive - direct, high-stakes, creates real pressure to act now.",
 };
 
-type ContentType = "cart_recovery" | "launch_email" | "linkedin_message";
+type ContentType = "cart_recovery" | "launch_email" | "linkedin_message" | "custom_email";
 
 const TIER_LABELS: Record<EmailTier, string> = {
   plain: "Plain - typography only, looks like a person wrote it",
@@ -94,6 +93,7 @@ const TIER_LABELS: Record<EmailTier, string> = {
 //: converts worse. So the choice follows the thing being made, and the user
 //: can still override it.
 const TIER_FOR_TYPE: Record<ContentType, EmailTier> = {
+  custom_email: "plain",
   cart_recovery: "branded",
   launch_email: "branded",
   //: Never rendered - a LinkedIn message is pasted into a message box, where
@@ -105,7 +105,7 @@ const TIER_FOR_TYPE: Record<ContentType, EmailTier> = {
 //: exact email count out of (see app.marketing.contract.parse_contract) -
 //: "exactly 3 emails" / "exactly 1 email" are not decorative, they are what
 //: makes the run produce the right number of deliverables.
-const CONTENT_TEMPLATES: Record<ContentType, string> = {
+const CONTENT_TEMPLATES: Record<Exclude<ContentType, "custom_email">, string> = {
   cart_recovery:
     "Write exactly 3 emails for an abandoned cart recovery sequence: a friendly reminder " +
     "sent shortly after checkout was left incomplete, a follow-up that handles the most " +
@@ -123,11 +123,6 @@ const CONTENT_TEMPLATES: Record<ContentType, string> = {
     "specific to what they do, and short enough to be read in the notification.",
 };
 
-const MESSAGE_KIND_LABELS: Record<"connection" | "message", string> = {
-  connection: "Connection note - 200 characters",
-  message: "Direct message - 1,200 characters",
-};
-
 //: Whether two URLs point at the same page as far as knowledge goes. The
 //: crawler stores what it fetched ("https://www.acme.com/"); the user types
 //: what they remember ("acme.com"). Comparing those two strings literally is
@@ -143,8 +138,9 @@ function normalizeSource(value: string): string {
   return withoutScheme.replace(/\/+$/, "");
 }
 
-function buildRequest(type: ContentType, tone: Tone): string {
-  return `${CONTENT_TEMPLATES[type]}\n\nTone of voice: ${TONE_INSTRUCTIONS[tone]}`;
+function buildRequest(type: ContentType, tone: Tone, count: number, brief: string): string {
+  const request = type === "custom_email" ? customEmailRequest(count, brief) : CONTENT_TEMPLATES[type];
+  return `${request}\n\nTone of voice: ${TONE_INSTRUCTIONS[tone]}`;
 }
 
 function audienceKey(value: string): string {
@@ -193,6 +189,8 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [name, setName] = useState("");
+  const [customBrief, setCustomBrief] = useState("");
+  const [emailCount, setEmailCount] = useState(1);
   const [productDescription, setProductDescription] = useState("");
   const [productUrl, setProductUrl] = useState("");
   const [targetMarket, setTargetMarket] = useState("");
@@ -202,11 +200,6 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
   const [files, setFiles] = useState<File[]>([]);
   const [policyPreset, setPolicyPreset] = useState<PolicyPreset>("balanced");
   const [tone, setTone] = useState<Tone>("professional");
-  //: Per-agent model pins, empty until the operator opens the panel. Sent
-  //: as null when empty so a campaign created without touching it stores
-  //: nothing rather than an empty object.
-  const [modelOverrides, setModelOverrides] = useState<Record<string, string>>({});
-  const [customModelsOpen, setCustomModelsOpen] = useState(false);
   //: Who this campaign writes to on LinkedIn. Empty until the user opens the
   //: LinkedIn half of the form or arrives from a search result - an email
   //: campaign never fills any of it in.
@@ -217,11 +210,8 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
   //: from the user. It decides which warning sits under it: a suggestion and
   //: a checked fact are not the same thing, and the whole field's rule is
   //: that only the second may be argued from.
-  const [contextFromSearch, setContextFromSearch] = useState(false);
   const [messageKind, setMessageKind] = useState<"connection" | "message">("message");
   const [messageLanguage, setMessageLanguage] = useState("English");
-  const [linkedInOpen, setLinkedInOpen] = useState(false);
-  const modelCatalog = useModelCatalog(open);
 
   const [brands, setBrands] = useState<Brand[]>([]);
   const [brandChoice, setBrandChoice] = useState<string>(NO_BRAND);
@@ -293,7 +283,12 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
           (result.length === 1 ? result[0] : undefined);
         if (preferred) auto.pick(preferred.id);
       })
-      .catch(() => { if (!cancelled) setBrands([]); });
+      .catch(() => {
+        if (!cancelled) {
+          setBrands([]);
+          toast.error("Could not load your businesses. Close and reopen this draft before choosing a business.");
+        }
+      });
     return () => { cancelled = true; };
   }, [open]);
 
@@ -325,9 +320,7 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
         //: else has only the product to write about, and writes about it.
         if (prefill.linkedinHeadline) {
           setRecipientContext(`Their LinkedIn headline: ${prefill.linkedinHeadline}`);
-          setContextFromSearch(true);
         }
-        setLinkedInOpen(true);
       }
     }
   }
@@ -363,6 +356,7 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
         if (knowledgeRequestId.current !== requestId) return;
         setExistingKnowledgeCount(null);
         setExistingSources([]);
+        toast.error("Could not load this brand's sources. Check Sources before starting the campaign.");
       });
     //: A one-off has nowhere to keep a map between runs, so this only ever
     //: runs for a saved brand. A failure is silent on purpose: an unmapped
@@ -388,34 +382,37 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
         // of attaching a brand instead of paying to recompile every run.
         setForceRecompile(false);
       })
-      .catch(() => {
+      .catch((error) => {
         if (knowledgeRequestId.current !== requestId) return;
         setBrandKnowledge(null);
-        // Never compiled for this brand - there is nothing to reuse yet.
-        setForceRecompile(true);
+        // Missing compilation and a failed read both defer to fingerprint
+        // checks in the pipeline; neither authorizes a forced paid rebuild.
+        setForceRecompile(false);
+        if (!(error instanceof ApiError && error.status === 404)) {
+          toast.error("Could not check prepared knowledge. Reuse remains the default.");
+        }
       });
   }
 
   function reset() {
+    setCustomBrief("");
+    setEmailCount(1);
     ++knowledgeRequestId.current;
     setName("");
     setProductDescription("");
     setProductUrl("");
     setTargetMarket("");
+    setGoals("");
     setSenderName("");
     setSenderRole("");
     setFiles([]);
     setPolicyPreset("balanced");
     setTone("professional");
-    setModelOverrides({});
-    setCustomModelsOpen(false);
     setRecipientName("");
     setRecipientUrl("");
     setRecipientContext("");
-    setContextFromSearch(false);
     setMessageKind("message");
     setMessageLanguage("English");
-    setLinkedInOpen(false);
     setBrandChoice(NO_BRAND);
     brandTouched.current = false;
     setNewBrandName("");
@@ -435,6 +432,10 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
   function validate(type: ContentType): string | null {
     if (!name.trim()) return "Give the campaign a name.";
     if (brandChoice === NEW_BRAND && !newBrandName.trim()) return "Name the new brand.";
+    if (type === "custom_email") {
+      try { customEmailRequest(emailCount, customBrief); }
+      catch (error) { return error instanceof Error ? error.message : "Check your email brief."; }
+    }
     if (type === "linkedin_message") {
       // Checked here as well as by the API: a message is written to one named
       // person, and the writer is never allowed to invent who that is.
@@ -449,7 +450,6 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
     const error = validate(type);
     if (error) {
       // A form that rejects a field it is hiding is a form nobody can fix.
-      if (type === "linkedin_message") setLinkedInOpen(true);
       toast.error(error);
       return;
     }
@@ -458,7 +458,7 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
       let brandId: string | null = null;
       if (brandChoice === NEW_BRAND) {
         const brand = await api.createBrand({
-          name: newBrandName || name,
+          name: newBrandName.trim() || name.trim(),
           website_url: productUrl || null,
         });
         brandId = brand.id;
@@ -467,8 +467,8 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
       }
 
       const campaign = await api.createCampaign({
-        name,
-        request: buildRequest(type, tone),
+        name: name.trim(),
+        request: buildRequest(type, tone, emailCount, customBrief),
         product_description: productDescription.trim(),
         product_url: productUrl || null,
         // One question, one answer: whichever half of the control was used
@@ -505,7 +505,7 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
               }
             : null,
         policy_preset: policyPreset,
-        model_overrides: Object.keys(modelOverrides).length > 0 ? modelOverrides : null,
+        model_overrides: null,
         force_recompile: brandId ? forceRecompile : null,
       });
 
@@ -532,10 +532,10 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
         toast.warning(`Campaign created, but we could not read: ${failures.join(", ")}`);
       }
 
-      const execution = await api.startCampaign(campaign.id, requiresOverride);
+      toast.success("Brief saved. Review the estimate before running your campaign.");
       setOpen(false);
       reset();
-      router.push(`/campaigns/${campaign.id}/executions/${execution.id}`);
+      router.push(`/campaigns/${campaign.id}`);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to create campaign");
     } finally {
@@ -544,8 +544,8 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
   }
 
   function handleManageKnowledge() {
-    setOpen(false);
-    router.push("/knowledge");
+    const selectedBrand = brandChoice !== NO_BRAND && brandChoice !== NEW_BRAND;
+    window.open(selectedBrand ? `/brands/${brandChoice}/knowledge` : "/knowledge", "_blank", "noopener,noreferrer");
   }
 
   const usingExistingBrand = brandChoice !== NO_BRAND && brandChoice !== NEW_BRAND;
@@ -663,6 +663,23 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
                       : "Knowledge you add below is used for this campaign only, then discarded."}
                 </p>
               </div>
+            </div>
+          </FormSection>
+
+          <FormSection title="Your own email campaign (optional)">
+            <div className="space-y-2">
+              <Label htmlFor="custom_brief">What should the emails do?</Label>
+              <Textarea id="custom_brief" rows={3} value={customBrief}
+                onChange={(event) => setCustomBrief(event.target.value)}
+                placeholder="For example: help opted-in readers decide whether our membership suits their visits. Explain the benefits, then answer a buying concern."
+                aria-describedby="custom_brief_hint" />
+              <p id="custom_brief_hint" className="text-xs text-muted-foreground">
+                Describe the purpose, language and constraints. Use Custom emails below to follow this brief.
+                The other buttons use their own launch, cart or LinkedIn brief.
+              </p>
+              <Label htmlFor="email_count">Number of emails</Label>
+              <Input id="email_count" type="number" min={1} max={12} step={1}
+                value={emailCount} onChange={(event) => setEmailCount(Number(event.target.value))} />
             </div>
           </FormSection>
 
@@ -786,8 +803,8 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
                   </p>
                   {requiresOverride && (
                     <p className="mt-1">
-                      Generation remains available, but the action below changes to “Generate
-                      anyway” and the override is recorded with the run.
+                      Save the brief to review the generation advice. If an override is needed,
+                      you will confirm “Generate anyway” on the campaign page before starting.
                     </p>
                   )}
                 </div>
@@ -798,110 +815,7 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
           {/* Its own band, and collapsed until it is wanted: an email
               campaign never answers any of this, and a LinkedIn one cannot
               run without the first two fields. */}
-          <FormSection title="LinkedIn message">
-            <div className="rounded-lg border border-border">
-              <button
-                type="button"
-                onClick={() => setLinkedInOpen((open) => !open)}
-                aria-expanded={linkedInOpen}
-                className="flex w-full items-center justify-between gap-2 p-3 text-left"
-              >
-                <span className="min-w-0">
-                  <span className="block text-sm font-medium">Write to one person on LinkedIn</span>
-                  <span className="block text-xs text-muted-foreground">
-                    {recipientName
-                      ? `To ${recipientName} - ${MESSAGE_KIND_LABELS[messageKind].toLowerCase()}`
-                      : "Only for the LinkedIn deliverable below. Everything above still applies - same knowledge, same audience, same Strategist."}
-                  </span>
-                </span>
-                <span className="shrink-0 text-xs text-muted-foreground">
-                  {linkedInOpen ? "Hide" : "Show"}
-                </span>
-              </button>
-              {linkedInOpen && (
-                <div className="grid gap-4 border-t border-border p-3 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="recipient_name">Who is it to?</Label>
-                    <Input
-                      id="recipient_name"
-                      placeholder="Alice Martin"
-                      value={recipientName}
-                      onChange={(e) => setRecipientName(e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="recipient_url">Their LinkedIn URL</Label>
-                    <Input
-                      id="recipient_url"
-                      type="url"
-                      placeholder="https://www.linkedin.com/in/..."
-                      value={recipientUrl}
-                      onChange={(e) => setRecipientUrl(e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2 sm:col-span-2">
-                    <Label htmlFor="recipient_context">Facts you have checked about them (optional)</Label>
-                    <Textarea
-                      id="recipient_context"
-                      rows={2}
-                      placeholder="Only what you can confirm - a search suggestion is not evidence."
-                      value={recipientContext}
-                      onChange={(e) => {
-                        setRecipientContext(e.target.value);
-                        setContextFromSearch(false);
-                      }}
-                    />
-                    {contextFromSearch ? (
-                      /* It came off a search result, so it is a lead and not a
-                         fact yet. Said in the same words the search result
-                         itself used, and in the same colour, because it is the
-                         same warning: open their profile, correct the line,
-                         cut anything you cannot see there. */
-                      <p className="text-xs text-amber-300">
-                        Prefilled from the search result and not checked by anyone. Open their
-                        profile, fix what is wrong and cut what you cannot see - the writer argues
-                        from this line as though you had confirmed it.
-                      </p>
-                    ) : (
-                      <p className="text-xs text-muted-foreground">
-                        The only recipient-specific thing the writer may argue from, and what
-                        separates a message from a broadcast. Left empty, it introduces itself
-                        honestly instead of guessing what they need.
-                      </p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="message_kind">Format</Label>
-                    <Select
-                      value={messageKind}
-                      onValueChange={(value) => value && setMessageKind(value as "connection" | "message")}
-                    >
-                      <SelectTrigger id="message_kind" className="w-full">
-                        <SelectValue>
-                          {(value: string) => MESSAGE_KIND_LABELS[value as "connection" | "message"]}
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="connection">{MESSAGE_KIND_LABELS.connection}</SelectItem>
-                        <SelectItem value="message">{MESSAGE_KIND_LABELS.message}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <p className="text-xs text-muted-foreground">
-                      Our editorial limits, not a claim about what LinkedIn accepts.
-                    </p>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="message_language">Language</Label>
-                    <Input
-                      id="message_language"
-                      value={messageLanguage}
-                      onChange={(e) => setMessageLanguage(e.target.value)}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </FormSection>
+
 
           <FormSection title="What it reads">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -1124,50 +1038,13 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
                 </Select>
               </div>
 
-              {/* Separate from the preset on purpose: the preset decides the shape
-                  of a run (how many drafts, which judges, what budget), this
-                  decides which model does each job. Folding them together would
-                  mean picking a model silently changed how many drafts get
-                  written. */}
-              {modelCatalog && (
-                <div className="rounded-lg border border-border">
-                  <button
-                    type="button"
-                    onClick={() => setCustomModelsOpen((open) => !open)}
-                    aria-expanded={customModelsOpen}
-                    className="flex w-full items-center justify-between gap-2 p-3 text-left"
-                  >
-                    <span className="min-w-0">
-                      <span className="block text-sm font-medium">Custom models</span>
-                      <span className="block text-xs text-muted-foreground">
-                        {Object.keys(modelOverrides).length > 0
-                          ? `${Object.keys(modelOverrides).length} pinned - Claude and GPT can be mixed in one run`
-                          : "Optional. Choose the model behind each agent, from Claude or GPT."}
-                      </span>
-                    </span>
-                    <span className="shrink-0 text-xs text-muted-foreground">
-                      {customModelsOpen ? "Hide" : "Show"}
-                    </span>
-                  </button>
-                  {customModelsOpen && (
-                    <div className="border-t border-border p-3">
-                      <ModelOverridePanel
-                        catalog={modelCatalog}
-                        value={modelOverrides}
-                        onChange={setModelOverrides}
-                        disabled={submitting}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
           </FormSection>
         </div>
 
         <DialogFooter className="mx-0 mb-0 flex-col items-stretch gap-3 px-5 py-4 sm:flex-col sm:items-stretch">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-sm font-medium">What do you want to create?</p>
+            <p className="text-sm font-medium">Save a brief, then review the run estimate</p>
             {/* Not a deliverable - it leaves the form - so it does not sit in the
                 same row as the buttons that start a run. */}
             <Button
@@ -1177,14 +1054,16 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
               disabled={submitting}
               onClick={handleManageKnowledge}
             >
-              Manage knowledge base
+              Manage sources in a new tab
             </Button>
           </div>
-          {/* Three real choices in three columns. A fourth, disabled tile for a
-              channel that does not exist squeezed every label until "Abandoned
-              Cart Sequence" was cut off and its badge hung past the dialog's
-              edge; what is coming is one line of text instead. */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <Button type="button" size="lg"
+              className="h-auto min-w-0 flex-col items-start gap-0.5 whitespace-normal px-2.5 py-2 text-left text-xs sm:px-3 sm:py-3 sm:text-sm"
+              disabled={submitting} onClick={() => handleGenerate("custom_email")}>
+              <span className="font-semibold">Custom emails</span>
+              <span className="text-[11px] font-normal opacity-80 sm:text-xs">{emailCount} email{emailCount === 1 ? "" : "s"} · your brief</span>
+            </Button>
             <Button
               type="button"
               size="lg"
@@ -1193,7 +1072,7 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
               onClick={() => handleGenerate("cart_recovery")}
             >
               <span className="font-semibold">
-                {requiresOverride ? "Generate anyway: Cart Sequence" : "Abandoned Cart Sequence"}
+                Abandoned Cart Sequence
               </span>
               <span className="text-[11px] font-normal opacity-80 sm:text-xs">3 emails</span>
             </Button>
@@ -1205,29 +1084,12 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
               onClick={() => handleGenerate("launch_email")}
             >
               <span className="font-semibold">
-                {requiresOverride ? "Generate anyway: Launch Email" : "Launch Email"}
+                Launch Email
               </span>
               <span className="text-[11px] font-normal opacity-80 sm:text-xs">1 email</span>
             </Button>
-            <Button
-              type="button"
-              size="lg"
-              className="h-auto min-w-0 flex-col items-start gap-0.5 whitespace-normal px-2.5 py-2 text-left text-xs sm:px-3 sm:py-3 sm:text-sm"
-              disabled={submitting}
-              onClick={() => handleGenerate("linkedin_message")}
-            >
-              <span className="font-semibold">
-                {requiresOverride ? "Generate anyway: LinkedIn Message" : "LinkedIn Message"}
-              </span>
-              <span className="text-[11px] font-normal opacity-80 sm:text-xs">
-                1 message{recipientName ? ` to ${recipientName}` : " - needs a recipient"}
-              </span>
-            </Button>
+
           </div>
-          <p className="hidden text-xs text-muted-foreground sm:block">
-            Facebook ad posts are coming soon - the pipeline writes emails and LinkedIn messages
-            today.
-          </p>
         </DialogFooter>
       </DialogContent>
     </Dialog>

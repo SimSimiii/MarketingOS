@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, Request, status
 from fastapi.responses import StreamingResponse
 
 from app.api.deps import CampaignServiceDep
+from app.api.public_output import public_output
 from app.models.enums import LogLevel
 from app.orchestration.live_broker import CLOSE, broker
 from app.schemas.campaign import (
@@ -83,7 +84,7 @@ def get_execution_result(execution_id: UUID, service: CampaignServiceDep) -> Cam
             AgentExecutionRead.model_validate(a) for a in service.get_agent_executions(execution_id)
         ],
         assets=_assets(service, execution_id),
-        result=execution.result,
+        result=public_output(execution.result),
     )
 
 
@@ -153,7 +154,7 @@ def get_execution_timeline(execution_id: UUID, service: CampaignServiceDep) -> E
     events, last_event_id = service.get_execution_timeline(execution_id)
     return ExecutionTimeline(
         execution_id=execution_id,
-        events=events,
+        events=public_output(events),
         last_event_id=last_event_id,
         is_running=service.is_execution_running(execution_id),
     )
@@ -244,4 +245,4 @@ def _resume_point(request: Request) -> int | None:
 
 def _sse(payload: dict, event_id: int | None = None) -> str:
     prefix = f"id: {event_id}\n" if event_id else ""
-    return f"{prefix}data: {json.dumps(payload)}\n\n"
+    return f"{prefix}data: {json.dumps(public_output(payload))}\n\n"

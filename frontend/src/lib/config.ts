@@ -1,8 +1,8 @@
 /** Where the API is. On AWS, "/api": the console's own domain, which
  * CloudFront routes to API Gateway - so the bundle names no domain and the
- * browser needs no CORS. On a laptop, the API's own address. */
+ * browser needs no CORS. Locally, next dev proxies this same path to the API. */
 export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "http://localhost:8000/api";
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "/api";
 
 /** Whether this deployment has accounts at all.
  *

@@ -84,6 +84,8 @@ phases:
 
   post_build:
     commands:
+      # CodeBuild runs post_build even after a failed build phase.
+      - test "$CODEBUILD_BUILD_SUCCEEDING" = "1" || exit 1
       # No migration step here on purpose: the back-office shares the
       # platform's schema and the platform's stack owns it. Two stacks running
       # `alembic upgrade head` against one database is a race with a corrupted

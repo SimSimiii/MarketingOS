@@ -234,6 +234,14 @@ def test_a_panel_is_the_same_person_in_three_moods():
     assert all(SEGMENT.name in persona for persona in personas)
 
 
+def test_a_custom_audience_controls_every_reader_without_compiled_biography():
+    custom = "Opted-in electronics hobbyists considering their first repair toolkit"
+    personas = personas_for(AudienceModel(segments=[SEGMENT]), SEGMENT, True, custom)
+    assert len(personas) == 3
+    assert all(custom in persona for persona in personas)
+    assert all(SEGMENT.name not in persona and SEGMENT.situation not in persona for persona in personas)
+
+
 def test_no_reader_is_defined_by_rejecting_the_medium():
     """A reader skeptical of cold email is answering a question no rewrite can
     move. They reject the envelope, so their score is a constant that drags

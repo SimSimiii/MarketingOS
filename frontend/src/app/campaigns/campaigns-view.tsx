@@ -17,16 +17,13 @@ export function CampaignsView() {
   const archived = search.get("archived") ?? undefined;
   const requestedPage = search.get("page") ?? undefined;
   const brandId = search.get("brand") ?? undefined;
-  const linkedinName = search.get("linkedin_name") ?? undefined;
-  const linkedinUrl = search.get("linkedin_url") ?? undefined;
-  const linkedinHeadline = search.get("linkedin_headline") ?? undefined;
   const includeArchived = archived === "1";
   const page = Math.max(1, Math.min(100000, Number.parseInt(requestedPage ?? "1", 10) || 1));
   const pageSize = 50;
   const state = usePageData(async () => {
   const [all, brands] = await Promise.all([
     api.listCampaigns(includeArchived, { limit: pageSize + 1, offset: (page - 1) * pageSize, brandId }),
-    api.listBrands().catch(() => []),
+    api.listBrands(),
   ]);
   return { all, brands };
   }, [includeArchived, page, brandId]);
@@ -38,7 +35,7 @@ export function CampaignsView() {
   // A campaign belongs to a business, so this list can be read as one
   // business's work rather than as everything the account has ever run.
   const brand = brands.find((item) => item.id === brandId) ?? null;
-  const campaigns = all.slice(0, pageSize);
+  const campaigns = all.filter((campaign) => !campaign.channel).slice(0, pageSize);
   const pageHref = (target: number) => {
     const query = new URLSearchParams({ page: String(target) });
     if (includeArchived) query.set("archived", "1");
@@ -46,20 +43,6 @@ export function CampaignsView() {
     return `/campaigns?${query}`;
   };
   const brandNames = new Map(brands.map((item) => [item.id, item.name]));
-  //: Arriving from a LinkedIn search result: the campaign form opens on the
-  //: profile they just read, so the one thing they would have retyped is
-  //: already in it. A recipient without a brand is not a campaign this
-  //: product can plan, so the brand has to come along too.
-  const linkedinPrefill =
-    brandId && linkedinUrl
-      ? {
-          brandId,
-          linkedinName: linkedinName ?? "",
-          linkedinUrl,
-          linkedinHeadline: linkedinHeadline ?? "",
-        }
-      : undefined;
-
   return (
     <div className="space-y-6">
       <PageHeader
@@ -89,8 +72,7 @@ export function CampaignsView() {
             {includeArchived ? "Hide archived" : "Show archived"}
           </Link>
           <NewCampaignDialog
-            prefill={linkedinPrefill}
-            autoOpen={Boolean(linkedinPrefill) || search.get("new") === "1"}
+            autoOpen={search.get("new") === "1"}
             defaultBrandId={brandId}
           />
         </>}

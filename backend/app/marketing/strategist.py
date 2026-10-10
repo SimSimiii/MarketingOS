@@ -152,8 +152,11 @@ def _recovered_next_step(
     next_step_evidence_ids: list[str],
     call_to_action: str,
     next_step_value: str,
+    fixed_cta_url: str = "",
 ) -> tuple[str, str]:
     """Tie an automatically recovered payoff to its exact official page."""
+    if fixed_cta_url:
+        return call_to_action, next_step_value
     ordered = list(dict.fromkeys([*next_step_evidence_ids, *evidence_ids]))
     entries = [
         found
@@ -360,7 +363,8 @@ class Strategist:
         )
         audience_context = f"{request.request}\n{request.render_context()}"
         brief = self._normalize(
-            brief, contract, artifacts, intelligence, audience_context
+            brief, contract, artifacts, intelligence, audience_context,
+            fixed_cta_url=request.cta_url or "",
         )
 
         count_wrong = contract.count_is_explicit and len(brief.emails) != contract.count
@@ -404,7 +408,8 @@ class Strategist:
                 schema=CampaignBrief,
             )
             brief = self._normalize(
-                brief, contract, artifacts, intelligence, audience_context
+                brief, contract, artifacts, intelligence, audience_context,
+                fixed_cta_url=request.cta_url or "",
             )
             if any(
                 email.call_to_action and email.next_step_value
@@ -438,7 +443,8 @@ class Strategist:
                 schema=CampaignBrief,
             )
             brief = self._normalize(
-                brief, contract, artifacts, intelligence, audience_context
+                brief, contract, artifacts, intelligence, audience_context,
+                fixed_cta_url=request.cta_url or "",
             )
             if not _spends_any(brief, recovered_ids):
                 raise StrategyError(
@@ -453,6 +459,9 @@ class Strategist:
             )
         if chosen_segment:
             brief.reader_segment = chosen_segment
+        brief.reader_profile_override = (
+            (request.target_market or "").strip() if not chosen_segment else ""
+        )
         # The strategist chooses an argument, not a new biography. Passing its
         # expanded persona on as audience context lets invented tools, delays
         # and team ownership become facts in every subsequent writing call.
@@ -477,6 +486,12 @@ class Strategist:
             )
         if request.target_market:
             brief.reader += f"\nUser-specified audience: {request.target_market}"
+        if brief.reader_profile_override:
+            brief.reader = (
+                f"Selected audience (user-stated constraints): {brief.reader_profile_override}.\n"
+                "No further recipient situation is established. Compiled market context "
+                "is research to check for applicability, not a replacement biography."
+            )
         if request.channel is not None and request.channel.confirmed_context:
             brief.reader += f"\nUser-confirmed recipient context: {request.channel.confirmed_context}"
         brief.contract = contract
@@ -491,6 +506,8 @@ class Strategist:
         artifacts: KnowledgeArtifacts,
         intelligence: CampaignIntelligence | None = None,
         audience_context: str = "",
+        *,
+        fixed_cta_url: str = "",
     ) -> CampaignBrief:
         """Fix in code everything about a brief that has a correct answer.
 
@@ -500,6 +517,7 @@ class Strategist:
         model to keep those consistent is asking it to do bookkeeping instead
         of thinking.
         """
+        brief.fixed_cta_url = fixed_cta_url
         if intelligence is not None:
             intelligence.validate_against(artifacts.evidence)
             if intelligence.dossier_current and intelligence.orientation:
@@ -611,6 +629,7 @@ class Strategist:
                 next_step_evidence_ids=next_step_evidence,
                 call_to_action=email.call_to_action,
                 next_step_value=email.next_step_value,
+                fixed_cta_url=fixed_cta_url,
             )
             constraints = _distinct_constraints(
                 [
@@ -708,6 +727,7 @@ class Strategist:
                     next_step_evidence_ids=alternative_next_step_evidence,
                     call_to_action=alternative.call_to_action,
                     next_step_value=alternative.next_step_value,
+                    fixed_cta_url=fixed_cta_url,
                 )
                 alternative_constraints = _distinct_constraints(
                     [

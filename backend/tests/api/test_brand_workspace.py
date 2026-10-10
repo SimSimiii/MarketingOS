@@ -30,6 +30,28 @@ def test_a_brand_is_readable_on_its_own(client: TestClient):
     assert response.json()["name"] == "Notewright"
 
 
+def test_blank_workspace_and_campaign_names_are_rejected(client: TestClient):
+    assert client.post("/api/brands", json={"name": "   "}).status_code == 422
+    assert client.post("/api/campaigns", json={
+        "name": " \n ", "request": "Write exactly 1 email.",
+    }).status_code == 422
+    assert client.post("/api/campaigns", json={
+        "name": "Valid", "request": " " * 20,
+    }).status_code == 422
+
+
+def test_new_names_are_trimmed_at_the_api_boundary(client: TestClient):
+    brand = make_brand(client, "  Notewright  ")
+    assert brand["name"] == "Notewright"
+    response = client.post("/api/campaigns", json={
+        "name": "  Welcome  ", "request": "  Write exactly 1 email.  ",
+        "brand_id": brand["id"],
+    })
+    assert response.status_code == 201, response.text
+    assert response.json()["name"] == "Welcome"
+    assert response.json()["request"] == "Write exactly 1 email."
+
+
 def test_an_unknown_brand_is_a_404_rather_than_the_first_one(client: TestClient):
     make_brand(client, "Notewright")
 

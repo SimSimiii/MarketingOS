@@ -33,7 +33,7 @@
       "runtimeExecutable": "cmd",
       "runtimeArgs": [
         "/c",
-        "set NEXT_PUBLIC_AUTH_REQUIRED=true&& set NEXT_PUBLIC_API_URL=http://localhost:8010/api&& npm --prefix frontend run dev -- --port 3010"
+        "set NEXT_PUBLIC_AUTH_REQUIRED=true&& set NEXT_PUBLIC_API_URL=/api&& set API_PROXY_TARGET=http://localhost:8010&& npm --prefix frontend run dev -- --port 3010"
       ],
       "port": 3010
     },

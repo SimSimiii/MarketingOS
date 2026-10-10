@@ -45,6 +45,15 @@ logger = logging.getLogger("marketingos.marketing")
 WRITER_ROLE_ID = "subject_writer"
 SCANNER_ROLE_ID = "inbox_scanner"
 
+#: How many more opens in a hundred an alternative needs before it evicts the
+#: line the email already has. The incumbent was written with the body and has
+#: already been read with it; an alternative was written afterwards and is
+#: judged without the body at all, so a near-tie is the scanners' noise, not a
+#: better line. A measured Buffer run swapped a subject that carried the
+#: email's idea for one that led with a plan limit on a 24-to-23 median, and
+#: the delivered subject no longer matched what the body was selling.
+MIN_SUBJECT_GAIN = 3
+
 
 class SubjectOption(BaseModel):
     """One subject line and the preview text that extends it."""
@@ -160,6 +169,8 @@ class SubjectBakeOff:
             return email, "nobody could judge the subject lines"
 
         best = max(range(len(field)), key=lambda index: (opens[index], -index))
+        if opens[best] - opens[0] < MIN_SUBJECT_GAIN:
+            best = 0
         summary = (
             "subject lines scored "
             + ", ".join(f"{opens[index]:.0f}/100" for index in range(len(field)))

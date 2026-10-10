@@ -6,13 +6,20 @@ from sqlmodel import col, select
 from app.api.deps import AIProviderDep, PrincipalDep, SessionDep
 from app.api.routes.market import _guard_brand
 from app.auth.scope import owned
+from app.core.config import get_settings
 from app.models.brand import Brand
 from app.models.linkedin import LinkedInRun
 from app.schemas.linkedin import CriteriaRequest, LinkedInRunRead, MessageRequest, SearchRequest
 from app.services.linkedin_service import LinkedInError, launch
 
+
+def _feature_available() -> None:
+    if get_settings().credit_billing_enabled:
+        raise HTTPException(404, "This feature is unavailable.")
+
+
 router = APIRouter(tags=["linkedin"],
-                   dependencies=[Depends(_guard_brand)])
+                   dependencies=[Depends(_feature_available), Depends(_guard_brand)])
 
 
 @router.get("/market/{brand_id}/linkedin/runs", response_model=list[LinkedInRunRead])

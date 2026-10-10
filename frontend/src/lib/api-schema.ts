@@ -19,6 +19,7 @@ export interface ApiSchemas {
   "BrandStyleUpdate": { "logo_url"?: (string | null); "primary_color"?: (string | null); "footer_lines"?: (Array<string> | null); "unsubscribe_url"?: (string | null); };
   "BuyerPhrase": { "text": string; "kind"?: ApiSchemas["BuyerPhraseKind"]; "evidence": ApiSchemas["EvidenceReference"]; };
   "BuyerPhraseKind": "names_the_problem" | "names_a_tool" | "complaint" | "avoided";
+  "CampaignBriefUpdate": { "name": string; "request": string; "product_description"?: string; "product_url"?: (string | null); "target_market"?: (string | null); "goals"?: (string | null); "sender_name"?: (string | null); "sender_role"?: (string | null); "cta_url"?: (string | null); };
   "CampaignCreateRequest": { "name": string; "request": string; "product_description"?: string; "product_url"?: (string | null); "target_market"?: (string | null); "goals"?: (string | null); "sender_name"?: (string | null); "sender_role"?: (string | null); "brand_id"?: (string | null); "audience_segment"?: (string | null); "prospect_id"?: (string | null); "cta_url"?: (string | null); "email_tier"?: (ApiSchemas["EmailTier"] | null); "policy_preset"?: ("fast" | "balanced" | "maximum" | null); "model_overrides"?: ({ [key: string]: string; } | null); "force_recompile"?: (boolean | null); "channel"?: (ApiSchemas["LinkedInChannel"] | null); };
   "CampaignExecutionDetail": { "id": string; "campaign_id": string; "status": ApiSchemas["ExecutionStatus"]; "error_message": (string | null); "started_at": (string | null); "completed_at": (string | null); "created_at": string; "total_input_tokens": number; "total_output_tokens": number; "total_cache_read_tokens"?: number; "estimated_cost_usd": number; "recommendation_snapshot"?: ({ [key: string]: unknown; } | null); "generated_despite_recommendation"?: boolean; "agent_executions"?: Array<ApiSchemas["AgentExecutionRead"]>; "assets"?: Array<ApiSchemas["GeneratedAssetRead"]>; };
   "CampaignExecutionRead": { "id": string; "campaign_id": string; "status": ApiSchemas["ExecutionStatus"]; "error_message": (string | null); "started_at": (string | null); "completed_at": (string | null); "created_at": string; "total_input_tokens": number; "total_output_tokens": number; "total_cache_read_tokens"?: number; "estimated_cost_usd": number; "recommendation_snapshot"?: ({ [key: string]: unknown; } | null); "generated_despite_recommendation"?: boolean; };
@@ -36,6 +37,8 @@ export interface ApiSchemas {
   "CapabilityRequirementMatch": { "capability_id": string; "display_name": string; "company_evidence_state": ApiSchemas["SignalGrounding"]; "quote": string; "source_url": string; "reasoning"?: string; "product_capability_state": ApiSchemas["CapabilityState"]; "reason_code": string; };
   "CapabilityState": "verified" | "unsupported" | "unknown";
   "ChangePasswordRequest": { "current_password": string; "password": string; };
+  "CheckoutRequest": { "package": string; };
+  "CheckoutResponse": { "url": string; };
   "ClaimContract": { "contract_version"?: number; "verified_product_claims"?: Array<ApiSchemas["ContractClaim"]>; "campaign_allowed_claims"?: Array<ApiSchemas["ContractClaim"]>; "forbidden_claims"?: Array<ApiSchemas["ContractClaim"]>; "withheld_claims"?: Array<ApiSchemas["ContractClaim"]>; "warnings"?: Array<string>; };
   "ClaimRead": { "text": string; "verbatim"?: string; "source"?: string; "axis": string; "specific": boolean; };
   "ClaimVisibility": "customer" | "internal";
@@ -47,6 +50,8 @@ export interface ApiSchemas {
   "CompilationStatus": { "state"?: "idle" | "running" | "completed" | "failed"; "message"?: string; };
   "ContactRead": { "kind": string; "value": string; "label": string; "source": string; "verified": boolean; };
   "ContractClaim": { "id": string; "text": string; "evidence_ids"?: Array<string>; "reason"?: string; };
+  "CreditBalance": { "balance": number; "unit"?: string; "billing_active": boolean; "movements": Array<ApiSchemas["CreditMovement"]>; };
+  "CreditMovement": { "amount": number; "balance_after": number; "kind": string; "created_at": string; };
   "CriteriaRequest": { "segment_name"?: string; "hint"?: string; "target"?: "people" | "companies"; };
   "DemandMapRead": { "summary": string; "options"?: ApiSchemas["MapOptions"]; "validation_note"?: string; "reading"?: string; "note"?: string; "searched"?: Array<string>; "mapped_at": string; "segments"?: Array<ApiSchemas["AudienceSegmentRead"]>; };
   "DossierEvidence": { "id": string; "kind": ApiSchemas["EvidenceKind"]; "claim": string; "verbatim": string; "source"?: string; "strength": string; "category": string; "value_band": string; };

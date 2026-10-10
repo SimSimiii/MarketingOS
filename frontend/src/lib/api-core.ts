@@ -10,6 +10,7 @@ import type {
   ChangePasswordRequest,
   CompilationStatus,
   CompilationJob,
+  CreditBalance,
   AudienceRead,
   AudienceResearch,
   RelevanceStatus,
@@ -19,6 +20,7 @@ import type {
   BrandKnowledge,
   BrandOverview,
   Campaign,
+  CampaignBriefUpdate,
   CampaignCreateRequest,
   CampaignExecution,
   CampaignGenerationAdvice,
@@ -96,11 +98,24 @@ async function errorMessage(response: Response): Promise<string> {
  * The distinction matters at exactly one place - the sign-in redirect - and
  * nowhere else, which is why it is a subclass rather than a second error
  * channel every call site has to handle. */
-export class UnauthorizedError extends Error {
-  constructor(message: string) {
+export class ApiError extends Error {
+  constructor(message: string, readonly status: number) {
     super(message);
+    this.name = "ApiError";
+  }
+}
+
+export class UnauthorizedError extends ApiError {
+  constructor(message: string) {
+    super(message, 401);
     this.name = "UnauthorizedError";
   }
+}
+
+/** Optional resources may be absent; outages and expired sessions must stay visible. */
+export function nullIfMissing(error: unknown): null {
+  if (error instanceof ApiError && error.status === 404) return null;
+  throw error;
 }
 
 /** How long a GET answer is reused. Long enough to cover a layout and the
@@ -153,7 +168,7 @@ export function createApi(auth: AuthSource) {
       throw new UnauthorizedError(await errorMessage(response));
     }
     if (!response.ok) {
-      throw new Error(await errorMessage(response));
+      throw new ApiError(await errorMessage(response), response.status);
     }
 
     if (response.status === 204) {
@@ -177,7 +192,7 @@ export function createApi(auth: AuthSource) {
       throw new UnauthorizedError(await errorMessage(response));
     }
     if (!response.ok) {
-      throw new Error(await errorMessage(response));
+      throw new ApiError(await errorMessage(response), response.status);
     }
     return (await response.json()) as T;
   }
@@ -217,6 +232,8 @@ export function createApi(auth: AuthSource) {
     getCampaign: (id: string) => request<Campaign>(`/campaigns/${id}`),
     createCampaign: (data: CampaignCreateRequest) =>
       request<Campaign>("/campaigns", { method: "POST", body: JSON.stringify(data) }),
+    updateCampaignBrief: (id: string, data: CampaignBriefUpdate) =>
+      request<Campaign>(`/campaigns/${id}/brief`, { method: "PUT", body: JSON.stringify(data) }),
     deleteCampaign: (id: string) => request<void>(`/campaigns/${id}`, { method: "DELETE" }),
     archiveCampaign: (id: string) =>
       request<Campaign>(`/campaigns/${id}/archive`, { method: "POST" }),
@@ -346,6 +363,10 @@ export function createApi(auth: AuthSource) {
     /** What the sign-in page needs before anybody has a token. */
     getAuthConfig: () => request<AuthConfig>("/auth/config"),
     getCurrentUser: () => request<Account>("/auth/me"),
+    getCredits: () => request<CreditBalance>("/credits"),
+    createCreditCheckout: (packageId: string) => request<{ url: string }>("/credits/checkout", {
+      method: "POST", body: JSON.stringify({ package: packageId }),
+    }),
     listAuthSessions: () => request<AuthSession[]>("/auth/sessions"),
     changePassword: (data: ChangePasswordRequest) =>
       request<void>("/auth/password", { method: "POST", body: JSON.stringify(data) }),

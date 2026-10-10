@@ -7,7 +7,7 @@ import { BrandNav } from "./brand-nav";
 import { BrandSwitcher } from "./brand-switcher";
 import { DocumentTitle } from "@/components/document-title";
 import { buttonVariants } from "@/components/ui/button";
-import { api } from "@/lib/api-client";
+import { ApiError, api } from "@/lib/api-client";
 import { NestedPageProvider, PageData, notFound, usePageData, useRouteIds } from "@/lib/page-data";
 
 /** One business, and everything the system knows about it.
@@ -28,11 +28,17 @@ export function BrandLayoutView({ children }: { children: React.ReactNode }) {
   // nothing else was already in flight to hide it.
   const state = usePageData(async () => {
     const [brand, allBrands, documents, base, market] = await Promise.all([
-      api.getBrand(brandId).catch(() => null),
-      api.listBrands().catch(() => null),
-      api.listKnowledgeDocuments({ brandId }).catch(() => []),
-      api.getKnowledgeBase({ brandId }).catch(() => null),
-      api.getMarket(brandId).catch(() => null),
+      api.getBrand(brandId).catch((error) => {
+        if (error instanceof ApiError && error.status === 404) notFound();
+        throw error;
+      }),
+      api.listBrands(),
+      api.listKnowledgeDocuments({ brandId }),
+      api.getKnowledgeBase({ brandId }).catch((error) => {
+        if (error instanceof ApiError && error.status === 404) return null;
+        throw error;
+      }),
+      api.getMarket(brandId),
     ]);
     if (!brand) {
       notFound();

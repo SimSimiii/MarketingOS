@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatDuration, formatNumber } from "@/lib/format";
+import { formatDuration } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { MarketJob } from "@/lib/types";
 
@@ -80,20 +80,6 @@ export function MarketJobCard({ job, now }: { job: MarketJob; now: number }) {
             {formatDuration(elapsed)}
           </span>
         </div>
-
-        {/* The spend, whether or not the trace is open. It is the one thing a
-            user watching a job they started cannot get from the progress
-            line, and the reason this card exists rather than a spinner. */}
-        {job.calls > 0 && (
-          <p className="text-xs text-muted-foreground tabular-nums">
-            {job.calls} call{job.calls === 1 ? "" : "s"} ·{" "}
-            {formatNumber(job.input_tokens)} in / {formatNumber(job.output_tokens)} out
-            {job.cache_read_tokens > 0 && (
-              <> · {formatNumber(job.cache_read_tokens)} of the input was cached</>
-            )}
-            {job.cost_usd > 0 && <> · ${job.cost_usd.toFixed(4)}</>}
-          </p>
-        )}
 
         {job.log.length > 0 && (
           <div className="space-y-1">

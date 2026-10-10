@@ -11,6 +11,7 @@ import { AssetCard } from "@/components/asset-card";
 import { ConfirmDialog, useConfirm } from "@/components/confirm-dialog";
 import { CopyAllButton } from "@/components/copy-all-button";
 import { Disclosure } from "@/components/disclosure";
+import { ExportAllButton } from "@/components/export-all-button";
 import { Notice } from "@/components/notice";
 import { PageHeader } from "@/components/page-header";
 import { RunTimeline } from "@/components/run-timeline";
@@ -23,8 +24,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useExecutionStream } from "@/hooks/use-execution-stream";
 import { api } from "@/lib/api-client";
-import { formatCost, formatDuration, formatTokens } from "@/lib/format";
-import { estimateCost, reduceRun, runsPerRole } from "@/lib/run-timeline";
+import { formatDuration } from "@/lib/format";
+import { reduceRun, runsPerRole } from "@/lib/run-timeline";
 import { ROLE_CATALOG } from "@/lib/specialists";
 import { cn } from "@/lib/utils";
 import type { ExecutionStatus, GeneratedAsset } from "@/lib/types";
@@ -126,7 +127,6 @@ export function ExecutionLiveView({
   initialErrorMessage,
   startedAt,
   completedAt,
-  finalCostUsd,
 }: {
   executionId: string;
   campaignId: string;
@@ -139,7 +139,6 @@ export function ExecutionLiveView({
   initialErrorMessage: string | null;
   startedAt: string | null;
   completedAt: string | null;
-  finalCostUsd: number;
 }) {
   const router = useRouter();
   const [assets, setAssets] = useState<GeneratedAsset[]>(initialAssets);
@@ -193,9 +192,6 @@ export function ExecutionLiveView({
     }
   }
 
-  const totalTokens = run.inputTokens + run.outputTokens;
-  const liveCost = estimateCost(run.steps);
-  const cost = isLive ? liveCost : finalCostUsd || liveCost;
   const elapsedMs = startedAt
     ? (isLive ? now : new Date(completedAt ?? startedAt).getTime()) - new Date(startedAt).getTime()
     : 0;
@@ -217,16 +213,19 @@ export function ExecutionLiveView({
           </h2>
           <p className="mt-0.5 text-sm text-muted-foreground">
             {isLive
-              ? "Each one appears here once it has passed a cold read."
-              : "Ready to copy into the tool you send from."}
+              ? "Reviewed drafts appear here. Check their feedback before using them."
+              : "Review the drafts, facts and links before copying them into your email tool."}
           </p>
         </div>
-        <CopyAllButton assets={assets} />
+        <div className="flex flex-wrap gap-2">
+          <CopyAllButton assets={assets} />
+          <ExportAllButton assets={assets} />
+        </div>
       </div>
       {assets.length === 0 ? (
         <p className="rounded-xl border border-dashed border-border/80 bg-card/30 px-5 py-8 text-center text-sm text-muted-foreground">
           {isLive
-            ? "Nothing has landed yet - each email appears once it has passed a cold read."
+            ? "No drafts yet - each email appears after its review."
             : "Nothing was produced in this run."}
         </p>
       ) : (
@@ -278,13 +277,11 @@ export function ExecutionLiveView({
               needs your answers
             </Badge>
           ) : (
-            <StatusBadge status={status} />
+            <StatusBadge status={status} warning={status === "completed" && Boolean(errorMessage)}
+              label={status === "completed" && report && report.delivered < report.promised ? "Partial delivery" : undefined} />
           )}
           <span className="tabular-nums" title="Wall-clock time">
             {isLive ? "Running for" : "Took"} {formatDuration(elapsedMs)}
-          </span>
-          <span className="tabular-nums" title={`${formatTokens(totalTokens)} tokens`}>
-            {formatCost(cost)}
           </span>
           <span className="tabular-nums">
             {run.steps.length} step{run.steps.length === 1 ? "" : "s"}
@@ -358,7 +355,7 @@ export function ExecutionLiveView({
       {report && (
         <div
           className={cn(
-            "flex flex-wrap items-center gap-x-6 gap-y-3 rounded-xl border p-4 sm:px-5",
+            "flex flex-col items-stretch gap-x-6 gap-y-3 rounded-xl border p-4 sm:flex-row sm:items-center sm:px-5",
             needsAttention
               ? "border-amber-400/25 bg-amber-400/5"
               : "border-emerald-400/20 bg-emerald-400/5",
@@ -381,7 +378,7 @@ export function ExecutionLiveView({
           {/* A channel no cold reader has ever read has no score, and a 0.0
               here would be read as one. */}
           {report.reads_expected !== false && (
-            <div className="text-right">
+            <div className="text-left sm:shrink-0 sm:text-right">
               <p className="text-2xl font-semibold tracking-tight tabular-nums">
                 {averagePull(report).toFixed(1)}
                 <span className="text-sm font-normal text-muted-foreground">/10</span>
@@ -538,7 +535,7 @@ export function ExecutionLiveView({
       {!isLive && (
         <Disclosure
           title="Behind the scenes"
-          summary={`Every step the team took - ${run.steps.length} step${run.steps.length === 1 ? "" : "s"}, ${formatTokens(totalTokens)} tokens`}
+          summary={`Every step the team took - ${run.steps.length} step${run.steps.length === 1 ? "" : "s"}`}
         >
           {behindTheScenes}
         </Disclosure>
@@ -629,7 +626,6 @@ function Roster({
               {dispatches > 0 && (
                 <p className="text-xs text-muted-foreground tabular-nums">
                   {dispatches} turn{dispatches === 1 ? "" : "s"}
-                  {step?.model ? ` - ${step.model}` : ""}
                 </p>
               )}
             </CardContent>

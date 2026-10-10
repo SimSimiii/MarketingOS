@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { api } from "@/lib/api-client";
+import { api, nullIfMissing } from "@/lib/api-client";
 import { formatAbsolute, timeAgo } from "@/lib/format";
 
 /** The raw material one business is written from.
@@ -37,7 +37,7 @@ export function BrandSourcesView() {
   const [rows, brand, base] = await Promise.all([
     api.listKnowledgeDocuments({ brandId }, { limit: 51, offset: (page - 1) * 50 }),
     api.getBrand(brandId),
-    api.getKnowledgeBase({ brandId }).catch(() => null),
+    api.getKnowledgeBase({ brandId }).catch(nullIfMissing),
   ]);
   return { rows, brand, base };
   }, [brandId, page]);

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { AudioLines, ContactRound, RefreshCw } from "lucide-react";
+import { AudioLines, RefreshCw } from "lucide-react";
 
 import { EmptyState } from "@/components/empty-state";
 import { MarketJobCard } from "@/components/market-job-card";
@@ -13,23 +13,20 @@ import { Card, CardContent } from "@/components/ui/card";
 import { api } from "@/lib/api-client";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { formatDuration, formatTime, timeAgo } from "@/lib/format";
-import type { CompilationJob, LinkedInRun, MarketJob, RunningExecution } from "@/lib/types";
+import { formatDuration, formatTime } from "@/lib/format";
+import type { CompilationJob, MarketJob, RunningExecution } from "@/lib/types";
 
 export function LiveRuns({
   initialRuns,
-  initialLinkedIn,
   initialJobs,
   initialCompilations,
   initiallyUnavailable = false,
 }: {
   initialRuns: RunningExecution[];
-  initialLinkedIn: LinkedInRun[];
   initialJobs: MarketJob[];
   initialCompilations: CompilationJob[];
   initiallyUnavailable?: boolean;
 }) {
-  const [linkedin, setLinkedIn] = useState(initialLinkedIn);
   const [runs, setRuns] = useState(initialRuns);
   const [jobs, setJobs] = useState(initialJobs);
   const [compilations, setCompilations] = useState(initialCompilations);
@@ -40,14 +37,13 @@ export function LiveRuns({
   async function refresh() {
     setRefreshing(true);
     api.invalidate();
-    const [runResult, jobResult, compilationResult, linkedinResult] = await Promise.allSettled([
-      api.listRunningExecutions(), api.listMarketJobs(), api.listKnowledgeJobs(), api.listRecentLinkedInRuns(),
+    const [runResult, jobResult, compilationResult] = await Promise.allSettled([
+      api.listRunningExecutions(), api.listMarketJobs(), api.listKnowledgeJobs(),
     ]);
     if (runResult.status === "fulfilled") setRuns(runResult.value);
     if (jobResult.status === "fulfilled") setJobs(jobResult.value);
     if (compilationResult.status === "fulfilled") setCompilations(compilationResult.value);
-    setUnavailable([runResult, jobResult, compilationResult, linkedinResult].some((result) => result.status === "rejected"));
-    if (linkedinResult.status === "fulfilled") setLinkedIn(linkedinResult.value);
+    setUnavailable([runResult, jobResult, compilationResult].some((result) => result.status === "rejected"));
     setNow(Date.now());
     setRefreshing(false);
   }
@@ -57,11 +53,9 @@ export function LiveRuns({
 
   const compiling = compilations.filter((job) => job.state === "running");
   const recentlyCompiled = compilations.filter((job) => job.state !== "running").slice(0, 2);
-  const linkedinRunning = linkedin.filter((run) => run.state === "running");
-  const linkedinFinished = linkedin.filter((run) => run.state !== "running").slice(0, 3);
   const nothingRunning =
-    runs.length === 0 && running.length === 0 && compiling.length === 0 && linkedinRunning.length === 0;
-  const finishedCount = recent.length + recentlyCompiled.length + linkedinFinished.length;
+    runs.length === 0 && running.length === 0 && compiling.length === 0;
+  const finishedCount = recent.length + recentlyCompiled.length;
 
   return (
     <div className="space-y-4">
@@ -136,9 +130,6 @@ export function LiveRuns({
           {compiling.map((job) => (
             <CompilationJobCard key={`${job.brand_id}-${job.started_at}`} job={job} now={now} />
           ))}
-          {linkedinRunning.map((run) => (
-            <LinkedInRunCard key={run.id} run={run} />
-          ))}
         </section>
       )}
 
@@ -157,50 +148,8 @@ export function LiveRuns({
           {recentlyCompiled.map((job) => (
             <CompilationJobCard key={`${job.brand_id}-${job.started_at}`} job={job} now={now} />
           ))}
-          {linkedinFinished.map((run) => (
-            <LinkedInRunCard key={run.id} run={run} />
-          ))}
         </section>
       )}
     </div>
   );
-}
-
-function LinkedInRunCard({ run }: { run: LinkedInRun }) {
-  return (
-    <Link href={`/brands/${run.brand_id}/linkedin`} className="block">
-      <Card className="transition-colors hover:ring-violet-400/40">
-        <CardContent className="flex items-start gap-4">
-          <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg border border-hairline bg-background/40 text-violet-300">
-            <ContactRound className="size-4" aria-hidden="true" />
-          </span>
-          <div className="min-w-0 flex-1 space-y-1">
-            <p className="truncate font-medium">{linkedInLabel(run)}</p>
-            <p className="text-sm text-muted-foreground">
-              LinkedIn · {run.state} · {run.calls} model call{run.calls === 1 ? "" : "s"}
-              {run.completed_at ? ` · ${timeAgo(run.completed_at)}` : ""}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
-  );
-}
-
-/** What a LinkedIn run is called on the board.
- *
- * `request` is a `Partial`, and there is a third kind - `criteria` - that the
- * board used to fold into the message branch, so a run with no recipient read
- * as "Message to undefined" and a search with no stored query as nothing at
- * all. Naming the kind is always possible; naming its subject is not. */
-function linkedInLabel(run: LinkedInRun): string {
-  if (run.kind === "search") {
-    return run.request.query ? `Search: ${run.request.query}` : "LinkedIn search";
-  }
-  if (run.kind === "criteria") {
-    return "Working out who to look for";
-  }
-  return run.request.recipient_name
-    ? `Message to ${run.request.recipient_name}`
-    : "LinkedIn message";
 }

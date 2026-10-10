@@ -74,7 +74,7 @@ function tasksFrom(
         ? `Running for ${formatDuration(now - new Date(run.started_at).getTime())}`
         : "Starting",
       href: `/campaigns/${run.campaign_id}/executions/${run.id}`,
-      cta: "Watch",
+      cta: "Open run",
     });
   }
   for (const brand of brands) {

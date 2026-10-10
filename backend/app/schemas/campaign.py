@@ -1,7 +1,10 @@
+from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_serializer
 
+from app.api.public_output import public_output
+from app.core.config import get_settings
 from app.market.qualification import CompanyQualification
 from app.market.relevance import CampaignReadiness, CampaignRecommendation
 from app.marketing.policy import PolicyPreset
@@ -14,9 +17,10 @@ from app.schemas.types import UtcDatetime
 class CampaignCreateRequest(BaseModel):
     """What the user fills in: their ask, in their own words, plus context."""
 
-    name: str
-    request: str = Field(
+    name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=256)]
+    request: Annotated[str, StringConstraints(strip_whitespace=True)] = Field(
         min_length=10,
+        max_length=100_000,
         description="What you want, in your own words - e.g. 'write me 3 emails "
         "that convince people to buy my product'",
     )
@@ -68,6 +72,21 @@ class CampaignCreateRequest(BaseModel):
     channel: LinkedInChannel | None = None
 
 
+class CampaignBriefUpdate(BaseModel):
+    """Replace a draft brief while keeping brand, channel and execution policy."""
+
+    model_config = ConfigDict(extra="forbid")
+    name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=256)]
+    request: Annotated[str, StringConstraints(strip_whitespace=True, min_length=10, max_length=100_000)]
+    product_description: str = Field(default="", max_length=100_000)
+    product_url: str | None = Field(default=None, max_length=2048)
+    target_market: str | None = Field(default=None, max_length=20_000)
+    goals: str | None = Field(default=None, max_length=20_000)
+    sender_name: str | None = Field(default=None, max_length=256)
+    sender_role: str | None = Field(default=None, max_length=256)
+    cta_url: str | None = Field(default=None, max_length=2048)
+
+
 class CampaignRead(BaseModel):
     # validate_assignment so the last-run fields, which the list route fills
     # in after construction, still get the UtcDatetime treatment - a plain
@@ -99,6 +118,14 @@ class CampaignRead(BaseModel):
     #: progress without a request per row. None = never run.
     last_run_status: ExecutionStatus | None = None
     last_run_at: UtcDatetime | None = None
+
+    @field_serializer("model_overrides")
+    def hide_model_overrides(self, value: dict[str, str] | None) -> dict[str, str] | None:
+        return None if get_settings().credit_billing_enabled else value
+
+    @field_serializer("policy")
+    def hide_policy_details(self, value: dict | None) -> dict | None:
+        return public_output(value)
 
 
 class CampaignPolicyUpdate(BaseModel):
@@ -177,6 +204,22 @@ class AgentExecutionRead(BaseModel):
     duration_ms: float
     attempt: int
 
+    @field_serializer("model")
+    def hide_model(self, value: str | None) -> str | None:
+        return None if get_settings().credit_billing_enabled else value
+
+    @field_serializer("input_tokens", "output_tokens", "cache_creation_input_tokens", "cache_read_input_tokens")
+    def hide_tokens(self, value: int) -> int:
+        return 0 if get_settings().credit_billing_enabled else value
+
+    @field_serializer("cost_usd")
+    def hide_cost(self, value: float) -> float:
+        return 0.0 if get_settings().credit_billing_enabled else value
+
+    @field_serializer("input_data", "output_data")
+    def hide_payload_details(self, value: dict | None) -> dict | None:
+        return public_output(value)
+
 
 class RunForecast(BaseModel):
     """What running this campaign will cost, before anything is spent.
@@ -221,6 +264,15 @@ class RunForecast(BaseModel):
     observed_runs: int = 0
     observed_cost_per_email: float = 0.0
 
+    @field_serializer("observed_runs")
+    def hide_internal_history(self, value: int) -> int:
+        # A redacted cost of zero must not be displayed as a free run.
+        return 0 if get_settings().credit_billing_enabled else value
+
+    @field_serializer("observed_cost_per_email")
+    def hide_internal_cost(self, value: float) -> float:
+        return 0.0 if get_settings().credit_billing_enabled else value
+
 
 class CampaignExecutionRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -241,6 +293,14 @@ class CampaignExecutionRead(BaseModel):
     recommendation_snapshot: dict | None = None
     generated_despite_recommendation: bool = False
 
+    @field_serializer("total_input_tokens", "total_output_tokens", "total_cache_read_tokens")
+    def hide_tokens(self, value: int) -> int:
+        return 0 if get_settings().credit_billing_enabled else value
+
+    @field_serializer("estimated_cost_usd")
+    def hide_internal_cost(self, value: float) -> float:
+        return 0.0 if get_settings().credit_billing_enabled else value
+
 
 class RunningExecutionRead(CampaignExecutionRead):
     """A run in flight, named. The live dashboard lists these, so it carries
@@ -258,3 +318,7 @@ class CampaignExecutionDetail(CampaignExecutionRead):
 
 class CampaignResultRead(CampaignExecutionDetail):
     result: dict | None = None
+
+    @field_serializer("result")
+    def hide_result_details(self, value: dict | None) -> dict | None:
+        return public_output(value)

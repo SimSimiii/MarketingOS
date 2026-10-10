@@ -34,6 +34,7 @@ from app.market.capabilities import (
     ClaimVisibility,
     ProductCapabilityProfile,
 )
+from app.market.claims import ClaimAxis
 from app.market.positioning import PositioningMap, Territory, axis_for_evidence
 from app.market.qualification import CompanyQualification, QualificationClass
 from app.runtime.model_session import ModelSession
@@ -808,6 +809,9 @@ def _unusable_reason(
     return _withhold_reason(evidence_id, ranked)
 
 
+_UNUSED = "No addressed or partial problem for this audience uses it."
+
+
 def build_claim_contract(
     *,
     profile: ProductCapabilityProfile,
@@ -870,7 +874,7 @@ def build_claim_contract(
                 )
             )
         elif not set(ids) & relevant:
-            held = "No addressed or partial problem for this audience uses it."
+            held = _UNUSED
 
         target = withheld if held else allowed
         target.append(
@@ -935,8 +939,14 @@ def build_claim_contract(
             )
             continue
         withheld_rows.append(claim)
+    # Text identity blocks a reworded copy of a claim held back for what it
+    # *says* - contested, unlicensed, resting on unusable evidence. A row held
+    # back only because nobody here used its evidence says nothing about the
+    # same sentence licensed by evidence that *was* used: the profile states
+    # "The Free plan connects up to 3 channels" once per source page, and the
+    # unranked duplicate was withholding the ranked one.
     withheld_keys = {item.id for item in withheld_rows} | {
-        claim_identity(item.text) for item in withheld_rows
+        claim_identity(item.text) for item in withheld_rows if item.reason != _UNUSED
     }
     allowed_rows: list[ContractClaim] = []
     for claim in _dedupe_claims(allowed):
@@ -1202,6 +1212,14 @@ def _territory_for(
     evidence: Evidence, positioning: PositioningMap
 ) -> Territory | None:
     axis = axis_for_evidence(evidence)
+    # `OTHER` is where the classifier puts what it could not place, not a
+    # territory anybody competes on: its members have nothing structural in
+    # common (see `claims.same_claim`). Reading a territory off it withheld every
+    # unclassified fact whenever rivals also made some unclassified claim - on a
+    # measured Buffer run, the official queue-reordering facts the campaign was
+    # asked to explain, which left the writer paraphrasing a testimonial.
+    if axis is ClaimAxis.OTHER:
+        return None
     reading = next((item for item in positioning.readings if item.axis is axis), None)
     return reading.territory if reading is not None else None
 

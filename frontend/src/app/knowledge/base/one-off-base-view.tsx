@@ -7,7 +7,7 @@ import { EmptyState } from "@/components/empty-state";
 import { Notice } from "@/components/notice";
 import { PageHeader } from "@/components/page-header";
 import { StatTile } from "@/components/stat-tile";
-import { api } from "@/lib/api-client";
+import { api, nullIfMissing } from "@/lib/api-client";
 import { formatAbsolute } from "@/lib/format";
 
 /** A one-off campaign's knowledge base.
@@ -33,8 +33,8 @@ export function KnowledgeBaseView() {
   }
 
   const [base, campaign] = await Promise.all([
-    api.getKnowledgeBase({ campaignId }).catch(() => null),
-    api.getCampaign(campaignId).catch(() => null),
+    api.getKnowledgeBase({ campaignId }).catch(nullIfMissing),
+    api.getCampaign(campaignId).catch(nullIfMissing),
   ]);
   return { base, campaign };
   }, [brandId, campaignId]);
@@ -61,7 +61,7 @@ export function KnowledgeBaseView() {
         <EmptyState
           icon={BookOpen}
           title="Nothing compiled here yet"
-          description="Knowledge is compiled on the first run — reading the material costs a model call, so it is not paid for until something needs it."
+          description="Your material is prepared on the first run, then reused while it stays the same."
         />
       ) : (
         <>

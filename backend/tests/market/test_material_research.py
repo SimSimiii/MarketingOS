@@ -5,6 +5,7 @@ from app.knowledge.ledger import Evidence, EvidenceKind, EvidenceStrength
 from app.market.audience_research import FetchedSource, SourceTier
 from app.market.material_research import (
     MaterialClaim,
+    MaterialRecovery,
     _MaterialDraft,
     apply_recovery,
     existing_recovery,
@@ -82,6 +83,29 @@ def test_verified_material_extends_both_the_ledger_and_the_gate_corpus():
     assert enriched.evidence.get("R1") is not None
     assert "fills the SMTP settings automatically" in corpus.text
     assert any(item.startswith("auto:") for item in enriched.source_document_ids)
+
+
+def test_a_recovered_duplicate_uses_the_retained_id_in_the_next_brief():
+    artifacts = artifacts_fixture()
+    known = artifacts.evidence.entries[0]
+    duplicate = known.model_copy(update={"id": "R1"})
+    fresh = Evidence(
+        id="R2", kind=EvidenceKind.GUARANTEE,
+        claim="Replacement shipping depends on the region.",
+        verbatim="Replacement shipping depends on the region.",
+        source="https://docs.example.com/guarantee",
+        strength=EvidenceStrength.STRONG,
+    )
+    recovery = MaterialRecovery(gap="Price and replacement terms", evidence=[duplicate, fresh])
+    before = artifacts.evidence.ids.copy()
+
+    enriched, _ = apply_recovery(artifacts, SourceCorpus(), recovery)
+
+    assert artifacts.evidence.ids == before
+    assert enriched.evidence.ids == before | {"R2"}
+    assert [entry.id for entry in recovery.evidence] == [known.id, "R2"]
+    assert all(enriched.evidence.get(entry.id) is not None for entry in recovery.evidence)
+    assert "(1 new)" in enriched.notes[-1]
 
 
 def test_a_matching_verified_recovery_is_reused_before_new_research():

@@ -374,17 +374,28 @@ def apply_recovery(
     corpus: SourceCorpus,
     recovery: MaterialRecovery,
 ) -> tuple[KnowledgeArtifacts, SourceCorpus]:
-    """Extend the run's closed world with verified evidence and source text."""
+    """Extend the closed world and align recovery references to retained facts.
+
+    The recovery brief must use the existing id when an exact quotation was
+    already licensed, rather than advertise a new id discarded by deduplication.
+    """
 
     if not recovery.recovered:
         return artifacts, corpus
     enriched = artifacts.model_copy(deep=True)
-    existing = {(entry.source.rstrip("/").lower(), fold(entry.verbatim)) for entry in enriched.evidence.entries}
+    existing = {
+        (entry.source.rstrip("/").lower(), fold(entry.verbatim)): entry
+        for entry in enriched.evidence.entries
+    }
+    aligned: dict[str, Evidence] = {}
     for entry in recovery.evidence:
         key = (entry.source.rstrip("/").lower(), fold(entry.verbatim))
         if key not in existing:
             enriched.evidence.entries.append(entry)
-            existing.add(key)
+            existing[key] = entry
+        canonical = existing[key]
+        aligned[canonical.id] = canonical
+    recovery.evidence = list(aligned.values())
 
     documents = list(corpus.documents)
     contents = {fold(document.content) for document in documents}
@@ -404,7 +415,8 @@ def apply_recovery(
         enriched.source_document_ids.append(document_id)
         contents.add(fold(source.content))
     enriched.notes.append(
-        f"Automatically recovered {len(recovery.evidence)} verified fact(s) for: {recovery.gap}"
+        f"Automatically recovered {len(recovery.evidence)} verified fact(s) "
+        f"({len(enriched.evidence.entries) - len(artifacts.evidence.entries)} new) for: {recovery.gap}"
     )
     return enriched, SourceCorpus.from_documents(documents)
 

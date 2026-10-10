@@ -8,7 +8,7 @@ import { KnowledgeBaseExplorer } from "./knowledge-base-explorer";
 import { CompileButton } from "./compile-button";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { api } from "@/lib/api-client";
+import { api, nullIfMissing } from "@/lib/api-client";
 import { formatAbsolute } from "@/lib/format";
 
 /** The knowledge base for one business: every fact the compiler established,
@@ -23,7 +23,7 @@ import { PageData, usePageData, useRouteIds } from "@/lib/page-data";
 export function BrandKnowledgeBaseView() {
   const { brandId } = useRouteIds();
   const state = usePageData(async () => {
-  const base = await api.getKnowledgeBase({ brandId }).catch(() => null);
+  const base = await api.getKnowledgeBase({ brandId }).catch(nullIfMissing);
   return { base };
   }, [brandId]);
 

@@ -447,6 +447,7 @@ Resources:
                 # Finish, not Failed. Emails already written are worth keeping,
                 # and the report says degraded rather than losing them.
                 # Degrade, never deadlock.
+                ResultPath: $.step_error
                 Next: Finish
             Next: MoreEmails
 

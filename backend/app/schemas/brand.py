@@ -1,12 +1,13 @@
+from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, StringConstraints
 
 from app.schemas.types import UtcDatetime
 
 
 class BrandCreateRequest(BaseModel):
-    name: str
+    name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
     website_url: str | None = None
 
 

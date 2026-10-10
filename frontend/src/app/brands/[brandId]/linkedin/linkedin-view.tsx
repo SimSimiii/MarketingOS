@@ -1,6 +1,6 @@
 "use client";
 
-import { api } from "@/lib/api-client";
+import { api, nullIfMissing } from "@/lib/api-client";
 import { PageData, usePageData, useRouteIds } from "@/lib/page-data";
 import { BrandSectionHeader } from "../../brand-ui";
 import { LinkedInWorkspace } from "./linkedin-workspace";
@@ -12,7 +12,7 @@ export function LinkedInView() {
   //: brand's own marketing. A brand nobody has mapped still works: the
   //: proposal falls back to the knowledge base.
   const state = usePageData(
-    () => Promise.all([api.listLinkedInRuns(brandId), api.getAudience(brandId).catch(() => null)]),
+    () => Promise.all([api.listLinkedInRuns(brandId), api.getAudience(brandId).catch(nullIfMissing)]),
     [brandId],
   );
   return (

@@ -71,6 +71,8 @@ phases:
 
   post_build:
     commands:
+      # CodeBuild runs post_build even after a failed build phase.
+      - test "$CODEBUILD_BUILD_SUCCEEDING" = "1" || exit 1
       - cd $CODEBUILD_SRC_DIR/frontend
       - |
         BUCKET=$(aws cloudformation describe-stacks --stack-name "${CONSOLE_STACK_NAME}" \

@@ -23,6 +23,13 @@ writer merely because the sentences are editable.
 
 # The email
 
+Check warranty scope against all supplied exclusions, including those beyond the brief's
+assigned example. Treat "everything else remains covered" or an implied complete list
+as an overclaim when further consumables are documented or completeness is unestablished.
+A general non-consumables policy does not identify which pieces are non-consumables.
+If existing evidence supplies the boundary, diagnose a copy defect that can be narrowed;
+do not ask for new material merely to correct that overclaim.
+
 {{ email }}
 
 # The brief it was supposed to execute
@@ -88,6 +95,21 @@ question the mechanism answers? Low setup friction alone does not carry the argu
 same proposition and supplied evidence can make that utility explicit, diagnose `copy` and
 identify the missing connection; do not request invented urgency, reading times or setup
 estimates, or a new source solely because the draft omitted an available example.
+
+Judge the decision asked for now. An invitation to inspect documented tools or guarantee
+terms is not an assertion that the reader can already decide to buy. Name a material gap
+only when the draft's actual promise or next-step payoff depends on the missing fact.
+Do not demand every eligibility rule, claim procedure and possible fee before a useful
+inspection click. Keep relevant exclusions explicit when they qualify the claim, and reject
+promises of unrestricted coverage or a complete cost comparison without their evidence.
+
+A reader wanting a repair-to-tool decision aid or a smaller-kit comparison does not
+establish that the email must supply one before inviting inspection of published contents.
+Require that material when the email promises the aid, makes that comparison, or claims a
+specific repair needs these tools. Otherwise, dissatisfaction with the value argument is
+`copy` or `argument`: make the supported use and the limited next step more persuasive.
+Do not diagnose `missing_material` merely because the reader wants a complete purchasing
+decision before opening a product page. Never invent the comparison or repair claim.
 
 **Check the brief itself.** The brief is a plan, not evidence. Compare its central promise
 with the supplied evidence, including scope and conditions. If the draft faithfully repeats an
@@ -170,6 +192,15 @@ For each issue, reuse `edits`: quote the passage in `line`, explain the precise 
 `problem`, specify the supported scope or correction in `fix`, and rank its `severity`.
 Gate advisories are questions to check against evidence, not proof of falsity. Do not invent
 a capability to answer a reader's doubt. Editorial advice must not become a factual veto.
+
+# The actual button destination
+
+{{ cta_destination }}
+When the user fixed this URL, it outranks another destination proposed by the brief.
+Check the ask and promised payoff against that page, not just the fact's source.
+A button to a product page must not promise to open a separate guide or claim form.
+If the same supported proposition can use the actual page, diagnose copy; if its
+payoff needs a different destination, diagnose argument. Do not invent page contents.
 
 # The evidence that exists
 

@@ -18,8 +18,8 @@ export default function ErrorPage({ reset }: { error: Error & { digest?: string 
       </span>
       <h1 className="text-xl font-semibold tracking-tight">We couldn&rsquo;t load this page</h1>
       <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
-        Your workspace may be temporarily unavailable. Nothing has been lost &mdash; try loading it
-        again.
+        Your workspace may be temporarily unavailable. Try loading this page again, then check
+        whether your latest changes were saved before repeating an action.
       </p>
       <div className="mt-7 flex flex-wrap justify-center gap-2">
         <Button

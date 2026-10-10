@@ -4,12 +4,14 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from sqlmodel import Session
 
 from app.api.routes import api_router
 from app.core.config import get_settings
 from app.core.database import engine, init_db
 from app.orchestration.execution_manager import reap_orphaned_executions
 from app.runtime.work_limits import WorkLimitError
+from app.services.credit_service import assert_payment_mode_safe
 from app.services.linkedin_service import reap_linkedin_runs
 
 settings = get_settings()
@@ -19,6 +21,11 @@ logger = logging.getLogger("marketingos.main")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
+    if settings.credit_billing_enabled:
+        with Session(engine) as session:
+            assert_payment_mode_safe(
+                session, live=settings.stripe_secret_key.startswith("sk_live_")
+            )
     reap_linkedin_runs(engine)
     # A run left RUNNING can only mean the previous process died mid-campaign
     # (crash, restart) - there is no in-memory registry entry for it in this

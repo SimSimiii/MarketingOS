@@ -218,3 +218,48 @@ async def test_a_linkedin_campaign_is_refused_by_the_stepped_path(session, provi
     with pytest.raises(stepped_runner.SteppedRunError) as caught:
         await stepped_runner.plan(session, execution.id, provider)
     assert "single process" in str(caught.value)
+
+
+@pytest.mark.asyncio
+async def test_plan_replay_keeps_accepted_emails_and_does_not_call_models(session, provider):
+    execution = CampaignOrchestrator(session, provider).create_execution(_campaign(session))
+    await stepped_runner.plan(session, execution.id, provider)
+    await stepped_runner.craft(session, execution.id, provider)
+    state = session.exec(select(CampaignRunState)).one()
+    accepted = list(state.accepted)
+    calls = len(provider.requests)
+    result = await stepped_runner.plan(session, execution.id, provider)
+    session.refresh(state)
+    assert state.next_position == 2
+    assert state.accepted == accepted
+    assert result.next_position == 2
+    assert len(provider.requests) == calls
+
+
+@pytest.mark.asyncio
+async def test_finish_replay_does_not_duplicate_assets_or_model_calls(session, provider):
+    execution, _ = await _run_stepped(session, provider)
+    assets = [asset.id for asset in session.exec(select(GeneratedAsset)).all()]
+    calls = len(provider.requests)
+    result = await stepped_runner.finish(session, execution.id, provider)
+    assert result.more is False
+    assert len(provider.requests) == calls
+    assert [asset.id for asset in session.exec(select(GeneratedAsset)).all()] == assets
+
+
+@pytest.mark.asyncio
+async def test_finish_after_failed_step_keeps_output_without_further_spend(session, provider):
+    execution = CampaignOrchestrator(session, provider).create_execution(_campaign(session))
+    await stepped_runner.plan(session, execution.id, provider)
+    await stepped_runner.craft(session, execution.id, provider)
+    state = session.exec(select(CampaignRunState)).one()
+    state.abort_reason = "Craft step timed out"
+    session.add(state)
+    session.commit()
+    calls = len(provider.requests)
+    result = await stepped_runner.finish(session, execution.id, provider)
+    assert result.status == "degraded"
+    assert len(provider.requests) == calls
+    assert len(session.exec(select(GeneratedAsset)).all()) == 1
+    session.refresh(execution)
+    assert execution.error_message == "Craft step timed out"

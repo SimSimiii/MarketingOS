@@ -16,6 +16,7 @@ from app.marketing.policy import resolve_policy
 from app.models.agent_execution import AgentExecution
 from app.models.campaign import Campaign
 from app.models.campaign_execution import CampaignExecution
+from app.models.campaign_run_state import CampaignRunState
 from app.models.enums import CampaignStatus, ExecutionStatus, LogLevel
 from app.models.execution_log import ExecutionLog
 from app.models.generated_asset import GeneratedAsset
@@ -32,6 +33,7 @@ from app.repositories.execution_log_repository import ExecutionLogRepository
 from app.repositories.generated_asset_repository import GeneratedAssetRepository
 from app.repositories.knowledge_repository import KnowledgeDocumentRepository
 from app.schemas.campaign import (
+    CampaignBriefUpdate,
     CampaignCreateRequest,
     CampaignGenerationAdvice,
     CampaignPolicyUpdate,
@@ -175,6 +177,9 @@ class CampaignService:
             execution.id for execution in self._executions.list_by_campaign(campaign.id)
         ]
         if execution_ids:
+            self._session.execute(
+                delete(CampaignRunState).where(col(CampaignRunState.execution_id).in_(execution_ids))
+            )
             for model in (GeneratedAsset, ExecutionLog, AgentExecution):
                 self._session.execute(
                     delete(model).where(col(model.campaign_execution_id).in_(execution_ids))
@@ -198,6 +203,16 @@ class CampaignService:
     def archive_campaign(self, campaign: Campaign) -> Campaign:
         campaign.status = CampaignStatus.ARCHIVED
         campaign.archived_at = datetime.now(UTC)
+        campaign.updated_at = datetime.now(UTC)
+        return self._campaigns.update(campaign)
+
+    def update_brief(self, campaign: Campaign, data: CampaignBriefUpdate) -> Campaign:
+        if registry.is_campaign_running(campaign.id) or self._executions.list_by_campaign(campaign.id):
+            raise CampaignAlreadyRunningError(
+                "This campaign has execution history. Duplicate it before editing its brief."
+            )
+        for field, value in data.model_dump().items():
+            setattr(campaign, field, value)
         campaign.updated_at = datetime.now(UTC)
         return self._campaigns.update(campaign)
 
@@ -251,6 +266,12 @@ class CampaignService:
         return clone
 
     def update_policy(self, campaign: Campaign, data: CampaignPolicyUpdate) -> Campaign:
+        from app.core.config import get_settings
+
+        if get_settings().credit_billing_enabled and (
+            data.model_overrides or (data.overrides or {}).get("model_overrides")
+        ):
+            raise ValueError("Model selection is managed by the service.")
         # Validated eagerly so a bad preset/override never reaches a running
         # campaign - the router only sees good data.
         resolve_policy(data.preset, data.overrides)
@@ -489,6 +510,14 @@ class CampaignService:
     async def start_execution(
         self, campaign: Campaign, *, generate_anyway: bool = False
     ) -> CampaignExecution:
+        from app.core.config import get_settings
+
+        if get_settings().credit_billing_enabled and (
+            campaign.model_overrides or (campaign.policy or {}).get("model_overrides")
+        ):
+            raise CampaignTargetError(
+                "Remove saved model overrides before starting a prepaid campaign."
+            )
         if registry.is_campaign_running(campaign.id):
             raise CampaignAlreadyRunningError(
                 "This campaign already has a run in progress."

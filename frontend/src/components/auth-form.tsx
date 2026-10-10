@@ -37,6 +37,7 @@ export function AuthForm({ mode, allowSignup }: { mode: Mode; allowSignup: boole
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
+    if (signingUp && !allowSignup) return;
     setBusy(true);
     setError("");
     try {
@@ -108,9 +109,8 @@ export function AuthForm({ mode, allowSignup }: { mode: Mode; allowSignup: boole
 
       {signingUp && !allowSignup && (
         <p className="mt-4 rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
-          This deployment is invite-only, so creating an account here will be refused. Ask
-          for one, or run <code className="text-foreground">python -m scripts.create_user</code>{" "}
-          if it is yours.
+          Access is currently by invitation. Ask the person who invited you to create your
+          account, then return to Sign in.
         </p>
       )}
 
@@ -182,7 +182,7 @@ export function AuthForm({ mode, allowSignup }: { mode: Mode; allowSignup: boole
           </p>
         )}
 
-        <Button type="submit" size="lg" disabled={busy} className="w-full">
+        <Button type="submit" size="lg" disabled={busy || (signingUp && !allowSignup)} className="w-full">
           {busy
             ? signingUp
               ? "Creating…"

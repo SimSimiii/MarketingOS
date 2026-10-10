@@ -17,6 +17,10 @@ Hard boundaries:
   do not invent ids for it.
 - WITHHOLD means the fact remains true and licensed but is a poor choice for this audience.
 - SOLVED needs evidence that actually proves an outcome, not persuasive wording.
+- When a SOLVED or PARTIAL fit rests on a product mechanism, also rank as SUPPORT the
+  documentation facts that state how that mechanism behaves and its documented exceptions. A
+  customer saying it is easy is not a description of what it does, and copy can only describe
+  what you license here (CONTEXT does not license).
 - PARTIAL needs at least one product reference and a concrete caveat.
 - UNSUPPORTED must carry no positive product references.
 - IMMATERIAL needs product evidence and a materiality basis grounded in the audience's

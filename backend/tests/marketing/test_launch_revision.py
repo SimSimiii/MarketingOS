@@ -14,10 +14,18 @@ from app.knowledge.artifacts import (
     BusinessProfile,
     KnowledgeArtifacts,
     Objection,
+    OfferSheet,
+    Plan,
     Segment,
 )
 from app.knowledge.corpus import SourceCorpus
-from app.knowledge.ledger import Evidence, EvidenceIndex, EvidenceKind, EvidenceLedger
+from app.knowledge.ledger import (
+    MAX_EVIDENCE_IN_PROMPT,
+    Evidence,
+    EvidenceIndex,
+    EvidenceKind,
+    EvidenceLedger,
+)
 from app.marketing.briefs import CampaignBrief, EmailBrief
 from app.marketing.contract import parse_contract
 from app.marketing.craft import CraftLoop
@@ -42,6 +50,139 @@ from tests.marketing.conftest import (
 def observed():
     path = Path(__file__).resolve().parents[2] / "eval/fixtures/campaign_quality/slack-launch-retest.json"
     return CampaignQualityCase.model_validate_json(path.read_text(encoding="utf-8"))
+
+
+def _price_context_material():
+    return KnowledgeArtifacts(
+        offer=OfferSheet(plans=[
+            Plan(name="Pro Tech Go Toolkit", price="$49.95"),
+            Plan(name="Pro Tech Toolkit", price="$79.95"),
+        ]),
+        evidence=EvidenceLedger(entries=[
+            *[
+                Evidence(id=f"F{i}", kind=EvidenceKind.TESTIMONIAL,
+                         claim=f"Customer {i} recommends it",
+                         verbatim=f"Customer {i}: We recommend it.")
+                for i in range(20)
+            ],
+            Evidence(id="OTHER", kind=EvidenceKind.PRICE,
+                     claim="Pro Tech Go Toolkit costs $49.95", verbatim="$49.95"),
+            Evidence(id="PRICE", kind=EvidenceKind.PRICE,
+                     claim="Pro Tech Toolkit costs $79.95", verbatim="$79.95"),
+        ]),
+    )
+
+
+def test_named_offer_price_survives_a_large_ledger_without_assigning_other_products():
+    material = _price_context_material()
+    assert "PRICE" not in material.evidence.slice_for(["F0"], "customer recommends").ids
+    sliced = material.evidence_for_writing(
+        ["F0"], "customer recommends", offering="Pro Tech Toolkit repair tools"
+    )
+    assert [entry.id for entry in sliced.entries][:2] == ["F0", "PRICE"]
+    assert "OTHER" not in sliced.ids
+    assert len(sliced.entries) == MAX_EVIDENCE_IN_PROMPT
+
+
+@pytest.mark.parametrize("excluded,offering,price", [
+    (frozenset({"PRICE"}), "Pro Tech Toolkit", "$79.95"),
+    (frozenset(), "Unrelated repair tools", "$79.95"),
+    (frozenset(), "Pro Tech Toolkit", "$179.95"),
+])
+def test_price_context_requires_matching_licensed_material(excluded, offering, price):
+    material = _price_context_material()
+    material.offer.plans[1].price = price
+    sliced = material.evidence_for_writing(
+        ["F0"], "customer recommends", offering=offering, excluded_ids=excluded
+    )
+    assert "PRICE" not in sliced.ids
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("role", ["email_writer", "conversion_critic"])
+async def test_writer_and_critic_receive_the_same_named_offer_price(observed, role):
+    material = _price_context_material()
+    provider = RoleScriptedProvider({
+        "email_writer": envelope(observed.drafts[0].email),
+        "conversion_critic": Critique(verdict="ship", failure_mode="none").model_dump_json(),
+    })
+    session = make_session(provider)
+    brief = EmailBrief(evidence_ids=["F0"], objection="customer recommends")
+    destination = "https://example.test/product-page"
+    campaign = CampaignBrief(
+        orientation="Pro Tech Toolkit repair tools", fixed_cta_url=destination
+    )
+    if role == "email_writer":
+        await EmailWriter(session).draft(
+            brief=brief, campaign=campaign, artifacts=material, previous=[],
+            request=CampaignRequest(
+                name="Tools", request="Introduce the repair toolkit", cta_url=destination
+            ),
+        )
+    else:
+        await ConversionCritic(session).critique(
+            brief=brief, campaign=campaign, artifacts=material,
+            email=observed.drafts[0].email, read=PanelRead(), gates=GateReport(),
+        )
+    prompt = provider.requests_for(role)[0].system_prompt
+    assert '[PRICE]' in prompt
+    assert '[OTHER]' not in prompt
+    assert destination in prompt
+
+
+def _warranty_context_material():
+    source = "https://example.test/toolkit-care"
+    material = _price_context_material()
+    material.evidence.entries.extend([
+        Evidence(id="W", kind=EvidenceKind.GUARANTEE, source=source,
+                 claim="Opening tools are consumables", verbatim="Not covered under warranty."),
+        Evidence(id="LIMIT", kind=EvidenceKind.GUARANTEE, source=source,
+                 claim="Opening picks are consumables", verbatim="Not covered under warranty."),
+        Evidence(id="UNRELATED", kind=EvidenceKind.GUARANTEE,
+                 source="https://example.test/another-kit",
+                 claim="Other kit parts are consumables", verbatim="Not covered under warranty."),
+    ])
+    return material
+
+
+@pytest.mark.parametrize("excluded", [frozenset(), frozenset({"LIMIT"})])
+def test_warranty_limits_survive_objection_fill_without_crossing_sources(excluded):
+    material = _warranty_context_material()
+    sliced = material.evidence_for_writing(
+        ["W"], "customer recommends", offering="Pro Tech Toolkit", excluded_ids=excluded,
+    )
+    assert ("LIMIT" in sliced.ids) == ("LIMIT" not in excluded)
+    assert "UNRELATED" not in sliced.ids
+    assert "PRICE" in sliced.ids
+    assert len(sliced.entries) == MAX_EVIDENCE_IN_PROMPT
+    unrelated = material.evidence_for_writing(["F0"], offering="Pro Tech Toolkit")
+    assert "LIMIT" not in unrelated.ids
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("role", ["email_writer", "conversion_critic"])
+async def test_writer_and_critic_receive_other_documented_warranty_exceptions(observed, role):
+    material = _warranty_context_material()
+    provider = RoleScriptedProvider({
+        "email_writer": envelope(observed.drafts[0].email),
+        "conversion_critic": Critique(verdict="ship", failure_mode="none").model_dump_json(),
+    })
+    session = make_session(provider)
+    brief = EmailBrief(evidence_ids=["W"], objection="customer recommends")
+    campaign = CampaignBrief(orientation="Pro Tech Toolkit")
+    if role == "email_writer":
+        await EmailWriter(session).draft(
+            brief=brief, campaign=campaign, artifacts=material, previous=[],
+            request=CampaignRequest(name="Tools", request="Explain the warranty"),
+        )
+    else:
+        await ConversionCritic(session).critique(
+            brief=brief, campaign=campaign, artifacts=material,
+            email=observed.drafts[0].email, read=PanelRead(), gates=GateReport(),
+        )
+    prompt = provider.requests_for(role)[0].system_prompt
+    assert "[LIMIT]" in prompt
+    assert "[UNRELATED]" not in prompt
 
 
 @pytest.fixture

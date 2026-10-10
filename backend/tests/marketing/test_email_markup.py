@@ -171,7 +171,8 @@ def test_without_a_url_the_branded_tier_falls_back_to_a_link():
         email("One.\n\nTwo.\n\nThree."), EmailTier.BRANDED, BrandStyle(name="Acme")
     )
 
-    assert 'href="#"' in out
+    assert 'href="#"' not in out
+    assert "<span style=" in out
     assert "display:inline-block;padding:16px 40px" not in out
 
 
@@ -207,6 +208,19 @@ def test_a_cta_url_is_escaped_into_the_attribute():
     )
 
     assert "<script>" not in out
+
+
+def test_unsafe_destinations_are_not_clickable():
+    out = render_html(
+        email("One.\n\nTwo.\n\nThree."),
+        EmailTier.BRANDED,
+        BrandStyle(name="Acme", cta_url="javascript:alert(1)",
+                   logo_url="data:image/svg+xml,<svg/>",
+                   unsubscribe_url="javascript:alert(1)"),
+    )
+    assert 'href="javascript:' not in out
+    assert 'src="data:' not in out
+    assert "<span style=" in out
 
 
 def test_the_document_declares_itself_light():

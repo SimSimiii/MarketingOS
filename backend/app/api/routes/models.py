@@ -1,5 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
+from app.core.config import get_settings
 from app.schemas.model_catalog import ModelCatalogRead, build_catalog
 
 router = APIRouter(prefix="/models", tags=["models"])
@@ -13,4 +14,6 @@ def list_models() -> ModelCatalogRead:
     frontend must not carry its own copy of a list the router reads, or the two
     drift and the UI starts offering models that no longer route.
     """
+    if get_settings().credit_billing_enabled:
+        raise HTTPException(404, "Model catalog is not available.")
     return build_catalog()

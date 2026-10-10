@@ -62,7 +62,7 @@ export function CompileButton({ brandId, compiled }: { brandId: string; compiled
         {busy ? <Loader2 className="size-4 animate-spin" /> : <RefreshCw className="size-4" />}
         {busy ? "Compiling…" : compiled ? "Recompile knowledge sources" : "Compile knowledge sources"}
       </Button>
-      <p className="text-xs text-muted-foreground">Reads all attached sources using your model subscription.</p>
+      <p className="text-xs text-muted-foreground">Reads all attached sources to prepare your brand knowledge.</p>
       {job?.message && <p role="status" className="text-sm text-muted-foreground">{job.message}</p>}
       {job?.state === "running" && (
         <Link href="/live" className="inline-block text-sm text-violet-300 hover:underline">Follow in Runs →</Link>

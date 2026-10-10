@@ -50,15 +50,17 @@ phases:
 
   post_build:
     commands:
+      # CodeBuild runs post_build even after a failed build phase.
+      - test "$CODEBUILD_BUILD_SUCCEEDING" = "1" || exit 1
       # Hashed assets first, cached for a year.
       - |
         aws s3 sync out/ "s3://${FRONTEND_S3_BUCKET}/" \
-          --delete \
           --cache-control "public,max-age=31536000,immutable" \
           --exclude "*.html" --exclude "*.json" --exclude "*.txt" --exclude "*.xml"
       # Then the HTML, always revalidated, so a deploy is live immediately.
       - |
         aws s3 sync out/ "s3://${FRONTEND_S3_BUCKET}/" \
+          --delete \
           --cache-control "public,no-cache,must-revalidate" \
           --exclude "*" \
           --include "*.html" --include "*.json" --include "*.txt" --include "*.xml"

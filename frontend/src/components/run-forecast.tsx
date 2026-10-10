@@ -3,60 +3,46 @@
 import { useEffect, useState } from "react";
 
 import { api } from "@/lib/api-client";
-import { formatCost } from "@/lib/format";
 import type { RunForecast as Forecast } from "@/lib/types";
 
-/**
- * What this run will cost, before it is bought.
- *
- * Every call here is billed against the subscription for its routed model, and until
- * this existed the only description of the difference between the presets was
- * two adjectives - "fewer review passes", "most thorough review" - with the answer
- * arriving on the receipt. It is free to show: nothing in the pipeline spends
- * a model call deciding what happens next, so the number of calls a run makes
- * follows from the preset and from how many emails the request asked for.
- *
- * A range, and labelled as one. The low end is the run where every email
- * lands first time; the high end buys every rewrite and rework it is allowed.
- * Quoting the middle as though it were the answer would be the same kind of
- * lie as a score nobody gave.
- *
- * The money beside it is not a price list. It is what this user's own past
- * runs on this preset actually came to, so it is absent until there are some
- * and it gets better the more they run.
- */
+/** A brief estimate of the deliverables and reusable preparation. */
 export function RunForecast({ campaignId, refreshKey }: { campaignId: string; refreshKey?: string }) {
   const [forecast, setForecast] = useState<Forecast | null>(null);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     let live = true;
     api
       .getCampaignForecast(campaignId)
       .then((result) => {
-        if (live) setForecast(result);
+        if (live) { setForecast(result); setFailed(false); }
       })
-      .catch(() => undefined);
+      .catch(() => { if (live) { setForecast(null); setFailed(true); } });
     return () => {
       live = false;
     };
   }, [campaignId, refreshKey]);
 
-  if (!forecast) return null;
+  if (failed) return <p role="alert" className="text-sm text-amber-300">The run estimate is unavailable. Refresh this page before starting.</p>;
+  if (!forecast) return <p className="text-sm text-muted-foreground">Loading the run estimate…</p>;
 
   return (
     <div className="space-y-1 text-sm text-muted-foreground">
       <p className="tabular-nums">
-        <span className="text-foreground">
-          {forecast.low === forecast.high
-            ? `${forecast.low} model calls`
-            : `${forecast.low}–${forecast.high} model calls`}
-        </span>{" "}
-        for {forecast.emails} {forecast.deliverable ?? "email"}
+        Prepared for {forecast.emails} {forecast.deliverable ?? "email"}
         {forecast.emails === 1 ? "" : "s"}
         {forecast.count_is_explicit ? "" : " (you did not name a number, so this is the working assumption)"}
-        {" — "}
-        {forecast.low} if it lands first time, {forecast.high} if every rewrite is bought.
+        .
       </p>
+      <p className="tabular-nums">
+        Estimated model calls: {forecast.low}–{forecast.high}
+        {forecast.compile_high > 0 ? `, including ${forecast.compile_low}–${forecast.compile_high} for source preparation` : ""}.
+        This is a planning range; a run can stop early or use transport retries.
+      </p>
+      {forecast.observed_runs > 0 ? <p>
+        Historical processing estimate: ${(forecast.observed_cost_per_email * forecast.emails).toFixed(2)} for this quantity,
+        based on {forecast.observed_runs} completed {forecast.preset} runs. This is not a quoted credit charge or a spending cap.
+      </p> : <p>No processing-cost estimate is available here. The call range does not define a credit spending cap.</p>}
       {forecast.knowledge_reused ? (
         <p>
           Your material has already been read and has not changed, so this run reads none of it
@@ -65,22 +51,10 @@ export function RunForecast({ campaignId, refreshKey }: { campaignId: string; re
       ) : (
         forecast.compile_high > 0 && (
           <p>
-            {forecast.compile_high} of those read your material for the first time. Every later
-            campaign for this business skips them.
+            Your material will be prepared on the first run. Later campaigns for this business
+            can reuse it.
           </p>
         )
-      )}
-      {forecast.observed_runs > 0 && (
-        <p className="tabular-nums">
-          {/* Per delivered email, and left unmultiplied on purpose: past runs
-              were different lengths, and doing that arithmetic here would join
-              two real measurements with an assumption and present the result
-              as though the whole thing had been measured. */}
-          Across your {forecast.observed_runs} finished run
-          {forecast.observed_runs === 1 ? "" : "s"} on this preset, a delivered{" "}
-          {forecast.deliverable ?? "email"} has typically cost{" "}
-          {formatCost(forecast.observed_cost_per_email)}.
-        </p>
       )}
     </div>
   );

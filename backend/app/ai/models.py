@@ -257,10 +257,11 @@ MODEL_COST_PER_1K_TOKENS: dict[str, tuple[float, float]] = {
     ClaudeModel.HAIKU: (0.001, 0.005),
     ClaudeModel.SONNET: (0.003, 0.015),
     ClaudeModel.OPUS: (0.015, 0.075),
-    ClaudeModel.FABLE: (0.003, 0.015),
+    ClaudeModel.FABLE: (0.010, 0.050),
     OpenAIModel.LUNA: (0.001, 0.005),
     OpenAIModel.TERRA: (0.003, 0.015),
-    OpenAIModel.SOL: (0.015, 0.075),
+    # Long-context Sol rates: a conservative bound for every shorter call.
+    OpenAIModel.SOL: (0.008, 0.030),
     OpenAIModel.SPARK: (0.015, 0.075),
     OpenAIModel.GPT_5_5: (0.003, 0.015),
 }
@@ -287,8 +288,17 @@ def usage_cost_usd(model: str, usage: AIUsage) -> float:
     """
     if usage.reported_cost_usd is not None:
         return usage.reported_cost_usd
+    priced_model = model
+    if model.startswith("claude-haiku-"):
+        priced_model = ClaudeModel.HAIKU
+    elif model.startswith("claude-sonnet-"):
+        priced_model = ClaudeModel.SONNET
+    elif model.startswith("claude-opus-"):
+        priced_model = ClaudeModel.OPUS
+    elif model.startswith("claude-fable-"):
+        priced_model = ClaudeModel.FABLE
     input_rate, output_rate = MODEL_COST_PER_1K_TOKENS.get(
-        model, MODEL_COST_PER_1K_TOKENS[ClaudeModel.SONNET]
+        priced_model, MODEL_COST_PER_1K_TOKENS[ClaudeModel.SONNET]
     )
     return (
         (usage.input_tokens / 1000) * input_rate

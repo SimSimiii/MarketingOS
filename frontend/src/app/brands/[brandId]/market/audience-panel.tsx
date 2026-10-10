@@ -1935,7 +1935,7 @@ export function AudiencePanel({
   });
   const scopeControls = (
     <BrandDisclosure title="Search settings" description="Geography, language, exclusions and research budget">
-      <p className="mt-2 text-xs text-muted-foreground">Two model stages and up to ten source pages. Retries can add calls. Empty filters leave the search open. Changing the scope starts a new map.</p>
+      <p className="mt-2 text-xs text-muted-foreground">Reads up to ten source pages. Empty filters leave the search open. Changing the scope starts a new map.</p>
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         {([['geography', 'Countries or regions', 200], ['language', 'Audience language', 100], ['exclusions', 'Exclude industries or situations', 1000]] as const).map(([key, label, max]) => (
           <label key={key} className="space-y-1">

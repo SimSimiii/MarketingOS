@@ -11,7 +11,7 @@ import { StatFigure, StatTile } from "@/components/stat-tile";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { api } from "@/lib/api-client";
+import { api, nullIfMissing } from "@/lib/api-client";
 import { timeAgo } from "@/lib/format";
 
 /** What this business can prove, who it is up against, and what it has shipped.
@@ -26,10 +26,10 @@ export function BrandOverviewView() {
   const state = usePageData(async () => {
 
   const [documents, base, market, campaigns] = await Promise.all([
-    api.listKnowledgeDocuments({ brandId }).catch(() => []),
-    api.getKnowledgeBase({ brandId }).catch(() => null),
-    api.getMarket(brandId).catch(() => null),
-    api.listCampaigns().catch(() => []),
+    api.listKnowledgeDocuments({ brandId }),
+    api.getKnowledgeBase({ brandId }).catch(nullIfMissing),
+    api.getMarket(brandId).catch(nullIfMissing),
+    api.listCampaigns(),
   ]);
   return { documents, base, market, campaigns };
   }, [brandId]);
@@ -66,9 +66,8 @@ export function BrandOverviewView() {
           <CardContent className="space-y-3 text-sm">
             {base === null ? (
               <p className="text-muted-foreground">
-                Nothing compiled yet. Knowledge is compiled on the first campaign run for this
-                business &mdash; reading the material costs a model call, so it is not paid for
-                until something needs it.{" "}
+                Nothing compiled yet. Your material is prepared when you first run a campaign
+                for this business and reused until its sources change.{" "}
                 {documents.length === 0
                   ? "Add this brand's website first."
                   : `${documents.length} source${documents.length === 1 ? " is" : "s are"} waiting to be read.`}

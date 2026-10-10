@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 
 from app.api.deps import PrincipalDep, SessionDep
 from app.repositories.execution_log_repository import ExecutionLogRepository
@@ -9,7 +9,7 @@ router = APIRouter(prefix="/logs", tags=["logs"])
 
 @router.get("", response_model=list[ExecutionLogRead])
 def list_recent_logs(
-    session: SessionDep, principal: PrincipalDep, limit: int = 200
+    session: SessionDep, principal: PrincipalDep, limit: int = Query(200, ge=1, le=500)
 ) -> list[ExecutionLogRead]:
     repository = ExecutionLogRepository(session)
     return [

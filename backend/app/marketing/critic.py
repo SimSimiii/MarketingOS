@@ -196,6 +196,7 @@ class ConversionCritic:
                 "reader": campaign.reader,
                 "segment": segment.render_for_writing() if segment else "Not established.",
                 "campaign_intent": campaign.interpretation,
+                "cta_destination": campaign.fixed_cta_url or "No fixed destination; use the supported brief.",
                 "orientation": campaign.orientation,
                 "promise": campaign.promise,
                 # The same slice the writer wrote from. The critic's job here
@@ -204,9 +205,10 @@ class ConversionCritic:
                 # has a hundred answers, every one of them a reason to add
                 # another sentence. It is the additive ratchet with a budget
                 # line attached.
-                "evidence": artifacts.evidence.slice_for(
+                "evidence": artifacts.evidence_for_writing(
                     brief.evidence_ids,
                     brief.objection,
+                    offering=campaign.orientation,
                     excluded_ids=frozenset(brief.forbidden_evidence_ids),
                 ).render(),
                 "voice": artifacts.voice.render(),

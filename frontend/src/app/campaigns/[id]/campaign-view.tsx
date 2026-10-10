@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, ExternalLink, MailCheck, PlayCircle, Quote } from "lucide-react";
 
 import { StartCampaignButton } from "@/app/campaigns/[id]/start-campaign-button";
+import { EditBriefDialog } from "@/app/campaigns/[id]/edit-brief-dialog";
 import { NewCampaignDialog } from "@/app/campaigns/new-campaign-dialog";
 import { CampaignActions } from "@/components/campaign-actions";
 import { EmptyState } from "@/components/empty-state";
@@ -30,24 +31,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { api } from "@/lib/api-client";
-import { formatAbsolute, formatCost, timeAgo } from "@/lib/format";
+import { ApiError, api } from "@/lib/api-client";
+import { formatAbsolute, timeAgo } from "@/lib/format";
 import { PageData, notFound, usePageData, useRouteIds } from "@/lib/page-data";
 
 export function CampaignDetailView() {
   const { campaignId: id } = useRouteIds();
   const state = usePageData(async () => {
 
-  const campaign = await api.getCampaign(id).catch(() => null);
+  const campaign = await api.getCampaign(id).catch((error) => {
+    if (error instanceof ApiError && error.status === 404) notFound();
+    throw error;
+  });
   if (!campaign) {
     notFound();
   }
 
   const [executions, campaignKnowledge, brandKnowledge, generationAdvice] = await Promise.all([
     api.listCampaignExecutions(id),
-    api.listKnowledgeDocuments({ campaignId: id }).catch(() => []),
+    api.listKnowledgeDocuments({ campaignId: id }),
     campaign.brand_id
-      ? api.listKnowledgeDocuments({ brandId: campaign.brand_id }).catch(() => [])
+      ? api.listKnowledgeDocuments({ brandId: campaign.brand_id })
       : Promise.resolve([]),
     api.getCampaignGenerationAdvice(id).catch(() => null),
   ]);
@@ -73,6 +77,7 @@ export function CampaignDetailView() {
         backTo={{ href: "/campaigns", label: "Campaigns" }}
         actions={<>
           <CampaignActions campaign={campaign} redirectOnDeleteTo="/campaigns" />
+          {executions.length === 0 && <EditBriefDialog key={campaign.updated_at} campaign={campaign} />}
           {campaign.brand_id && (
             <NewCampaignDialog
               trigger={<Button variant="outline">Generate another type</Button>}
@@ -134,18 +139,16 @@ export function CampaignDetailView() {
           </span>
           <span className="min-w-0 flex-1">
             <span className="block text-sm font-medium">
-              {live ? "A run is in progress" : "Your latest emails are ready"}
+              {live ? "A run is in progress" : latest?.error_message ? "Your latest run needs review" : "Your latest drafts are ready for review"}
             </span>
             <span className="mt-0.5 block text-xs text-muted-foreground">
               {live
-                ? `Started ${live.started_at ? timeAgo(live.started_at) : "just now"} — follow it as it writes.`
-                : `Finished ${latest!.completed_at ? timeAgo(latest!.completed_at) : ""}${
-                    latest!.estimated_cost_usd > 0 ? ` · ${formatCost(latest!.estimated_cost_usd)}` : ""
-                  } — read them, copy them, send them.`}
+                ? `Started ${live.started_at ? timeAgo(live.started_at) : "just now"} — open the run and refresh to see its progress.`
+                : `Finished ${latest!.completed_at ? timeAgo(latest!.completed_at) : ""} — ${latest!.error_message ? "review the stop reason and any delivered drafts." : "read the drafts and review them before use."}`}
             </span>
           </span>
           <span className="inline-flex items-center gap-1.5 text-sm font-medium text-violet-200">
-            {live ? "Watch the run" : "Open the emails"}
+            {live ? "Open the run" : "Open the emails"}
             <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
           </span>
         </Link>
@@ -158,6 +161,7 @@ export function CampaignDetailView() {
           <Quote className="size-3.5" aria-hidden="true" /> What you asked for
         </p>
         <p className="max-w-3xl text-lg leading-relaxed">{campaign.request}</p>
+        {executions.length > 0 && <p className="text-sm text-muted-foreground">To change this brief, choose Duplicate in the campaign menu. Previous runs keep their original campaign context.</p>}
       </section>
 
       {/* Four short answers about one campaign, in one panel. As four cards
@@ -231,7 +235,6 @@ export function CampaignDetailView() {
                     <TableHead>Status</TableHead>
                     <TableHead>Started</TableHead>
                     <TableHead>Completed</TableHead>
-                    <TableHead>Cost</TableHead>
                     <TableHead />
                     <TableHead />
                   </TableRow>
@@ -244,7 +247,7 @@ export function CampaignDetailView() {
                           <span className="w-7 text-xs text-muted-foreground tabular-nums">
                             #{executions.length - index}
                           </span>
-                          <StatusBadge status={execution.status} />
+                          <StatusBadge status={execution.status} warning={execution.status === "completed" && Boolean(execution.error_message)} />
                           {/* Once per run it is a note, not an alarm - an amber
                               badge on every row turned the table orange. */}
                           {execution.generated_despite_recommendation && (
@@ -274,9 +277,6 @@ export function CampaignDetailView() {
                         }
                       >
                         {execution.completed_at ? timeAgo(execution.completed_at) : "—"}
-                      </TableCell>
-                      <TableCell data-label="Cost" className="text-muted-foreground tabular-nums">
-                        {formatCost(execution.estimated_cost_usd)}
                       </TableCell>
                       <TableCell className="relative z-10">
                         <ExecutionRowActions execution={execution} campaignId={campaign.id} />

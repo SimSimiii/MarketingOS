@@ -231,22 +231,6 @@ export function reduceRun(events: LiveExecutionEvent[]): RunState {
   };
 }
 
-/** Prices mirror backend/app/ai/models.py - an estimate for the user's own
- * budgeting while the run is live, not an invoice. */
-const COST_PER_1K: Record<string, [input: number, output: number]> = {
-  haiku: [0.001, 0.005],
-  sonnet: [0.003, 0.015],
-  opus: [0.015, 0.075],
-  fable5: [0.003, 0.015],
-};
-
-export function estimateCost(steps: TimelineStep[]): number {
-  return steps.reduce((total, step) => {
-    const [input, output] = COST_PER_1K[step.model ?? "sonnet"] ?? COST_PER_1K.sonnet;
-    return total + (step.inputTokens / 1000) * input + (step.outputTokens / 1000) * output;
-  }, 0);
-}
-
 /** How many turns each role has taken so far. Feeds the "attempt 2" line - a
  * rewrite is the normal path here, not an error. */
 export function runsPerRole(steps: TimelineStep[]): Map<string, number> {

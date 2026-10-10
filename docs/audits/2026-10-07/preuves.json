@@ -1,0 +1,173 @@
+{
+  "audit_date": "2026-10-07",
+  "timezone": "Europe/Paris",
+  "repository": "MarketingOS",
+  "branch": "master",
+  "head_short": "6d36612",
+  "working_tree": "Dirty before audit: tracked modifications and untracked product files included in review. HEAD alone does not reproduce this audited state.",
+  "evidence_type": "Structured summary of observed command results; not raw terminal transcripts.",
+  "checks": [
+    {
+      "cwd": "backend",
+      "command": ".venv/Scripts/python.exe -m pytest tests -q",
+      "result": "passed",
+      "passed": 1419,
+      "warnings": 2,
+      "duration_seconds": 125.17
+    },
+    {
+      "cwd": "backend",
+      "command": ".venv/Scripts/python.exe -m ruff check app tests",
+      "result": "passed"
+    },
+    {
+      "cwd": "backend",
+      "command": ".venv/Scripts/python.exe -m ruff check app tests scripts",
+      "result": "passed"
+    },
+    {
+      "cwd": "backend",
+      "command": ".venv/Scripts/python.exe -m pip check",
+      "result": "passed",
+      "scope": "Existing developer environment only"
+    },
+    {
+      "cwd": "backend",
+      "command": ".venv/Scripts/python.exe scripts/export_api_types.py --check",
+      "result": "failed",
+      "exit_code": 1,
+      "message": "API schema changed. Run python scripts/export_api_types.py and typecheck."
+    },
+    {
+      "cwd": "backend",
+      "command": ".venv/Scripts/python.exe scripts/check_migrations.py",
+      "result": "passed",
+      "scope": "Temporary SQLite database; upgrade, downgrade, re-upgrade and model parity; head a4e92f6b17c0"
+    },
+    {
+      "cwd": "frontend",
+      "command": "npm run lint",
+      "result": "passed"
+    },
+    {
+      "cwd": "frontend",
+      "command": "npm run typecheck",
+      "result": "passed"
+    },
+    {
+      "cwd": "frontend",
+      "command": "npm test",
+      "result": "passed",
+      "passed": 12
+    },
+    {
+      "cwd": "frontend",
+      "command": "npm run build",
+      "result": "passed",
+      "static_pages": 23
+    },
+    {
+      "cwd": "administration/backend",
+      "check": "Backend scripted tests and Ruff",
+      "result": "passed"
+    },
+    {
+      "cwd": "administration/frontend",
+      "command": "npm run lint",
+      "result": "passed"
+    },
+    {
+      "cwd": "administration/frontend",
+      "command": "npm run typecheck",
+      "result": "passed"
+    },
+    {
+      "cwd": "administration/frontend",
+      "command": "npm run build",
+      "result": "passed",
+      "static_pages": 8
+    },
+    {
+      "cwd": "frontend",
+      "command": "npm audit --omit=dev",
+      "result": "vulnerabilities_reported",
+      "critical": 1,
+      "high": 2
+    },
+    {
+      "cwd": "administration/frontend",
+      "command": "npm audit --omit=dev",
+      "result": "vulnerabilities_reported",
+      "critical": 1,
+      "high": 2
+    }
+  ],
+  "offline_reproduction": {
+    "command_from_repository_root": "backend/.venv/Scripts/python.exe docs/audits/2026-10-07/reproduce_checks.py",
+    "scope": "Temporary databases with foreign keys enabled, no external provider calls, no production data",
+    "observed": {
+      "nested_model_override_accepted_in_prepaid_mode": true,
+      "campaign_with_run_state_delete": "FOREIGN KEY constraint failed",
+      "credited_user_delete": "FOREIGN KEY constraint failed",
+      "finish_input_after_default_catch": "The event carries no execution_id.",
+      "stripe_in_requirements.txt": false,
+      "stripe_in_requirements.lock": false
+    }
+  },
+  "dependency_advisories": [
+    {
+      "package": "next",
+      "installed": "16.3.5",
+      "severity": "critical",
+      "advisory": "GHSA-vcvr-r3jv-pc5j",
+      "source": "https://github.com/vercel/next.js/security/advisories/GHSA-vcvr-r3jv-pc5j",
+      "qualification": "Specific ImageResponse SVG processing vulnerability. No use of next/og or ImageResponse found in reviewed application source; deployment uses static export. Exploitability of this product not demonstrated."
+    },
+    {
+      "package": "sharp",
+      "severity": "high",
+      "advisory": "GHSA-wq5f-xc86-pv6w",
+      "source": "https://github.com/advisories/GHSA-wq5f-xc86-pv6w"
+    },
+    {
+      "package": "source-map-js",
+      "severity": "high",
+      "advisory": "GHSA-68fv-2mgg-jv7q",
+      "source": "https://github.com/advisories/GHSA-68fv-2mgg-jv7q"
+    }
+  ],
+  "visual_review": {
+    "current_browser_attempt": "http://localhost:3000 refused connection; documented local ports had no listener",
+    "historical_images_inspected": [
+      "custom-campaign-mobile.jpg",
+      "ifixit-completed-mobile.jpg"
+    ],
+    "limitation": "Historical screenshots are not evidence of the current UI rendering. Current authenticated journeys, responsiveness, accessibility and actual email-client rendering remain to be qualified."
+  },
+  "historical_model_evidence": {
+    "case": "docs/optimization/pilot-readiness/ifixit/quality-8.md",
+    "full_run_id": "22f5e0eb-591f-40be-b453-a1369b1c23fd",
+    "delivered_emails": 3,
+    "duration": "23m32s",
+    "model_steps": 60,
+    "estimated_usd": 31.3811,
+    "qualification": "Historical estimate, not a charge verified in this audit. Complete output contained a warranty overclaim; targeted correction had regression tests and a three-call probe, not a full new sequence qualification."
+  },
+  "not_performed": [
+    "New real model campaign or paid model evaluation",
+    "Real payment, webhook delivery from Stripe or refund",
+    "Fresh full dependency installation",
+    "Cloud deployment or cloud-account inspection",
+    "PostgreSQL/Aurora execution",
+    "Current live UI end-to-end journey",
+    "Email sending or actual email-client rendering",
+    "Python dependency vulnerability database audit",
+    "Exhaustive penetration testing"
+  ],
+  "audit_changes_only": [
+    "docs/audits/2026-10-07/rapport-global.md",
+    "docs/audits/2026-10-07/recette-avant-testeurs.md",
+    "docs/audits/2026-10-07/preuves.json",
+    "docs/audits/2026-10-07/reproduce_checks.py"
+  ]
+}

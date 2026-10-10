@@ -4,6 +4,7 @@ from app.api.routes import (
     auth,
     brands,
     campaigns,
+    credits,
     executions,
     health,
     knowledge,
@@ -19,6 +20,7 @@ api_router.include_router(health.router)
 api_router.include_router(auth.router)
 api_router.include_router(brands.router)
 api_router.include_router(campaigns.router)
+api_router.include_router(credits.router)
 api_router.include_router(executions.router)
 api_router.include_router(knowledge.router)
 api_router.include_router(market.router)

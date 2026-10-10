@@ -23,6 +23,7 @@ from app.models.admin import AdminAuditLog, AdminUser
 from app.models.brand import Brand
 from app.models.campaign import Campaign
 from app.models.campaign_execution import CampaignExecution
+from app.models.credit import CreditAccount, CreditCheckout, CreditTransaction
 from app.models.enums import ExecutionStatus, UserPlan, UserRole, UserStatus
 from app.models.knowledge_document import KnowledgeDocument
 from app.models.user import User, UserSession
@@ -424,6 +425,20 @@ def delete_user(session: Session, admin: AdminUser, user: User, ip: str | None) 
     really should go, it can be deleted from the product with the account
     still alive.
     """
+    # Financial records must survive account closure. Until an anonymization
+    # workflow exists, reject destructive deletion and offer suspension.
+    for model in (CreditCheckout, CreditTransaction):
+        if session.exec(select(model).where(col(model.user_id) == user.id).limit(1)).first():
+            raise HTTPException(
+                status.HTTP_409_CONFLICT,
+                "This account has financial records. Suspend it instead of deleting it.",
+            )
+    account = session.get(CreditAccount, user.id)
+    if account is not None and account.balance:
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            "This account has a credit balance. Suspend it instead of deleting it.",
+        )
     email = user.email
     for model in (Brand, Campaign, KnowledgeDocument):
         for row in session.exec(select(model).where(col(model.owner_id) == user.id)):
@@ -431,6 +446,7 @@ def delete_user(session: Session, admin: AdminUser, user: User, ip: str | None) 
             session.add(row)
     session.exec(delete(UserSettings).where(col(UserSettings.user_id) == user.id))
     session.exec(delete(UserSession).where(col(UserSession.user_id) == user.id))
+    session.exec(delete(CreditAccount).where(col(CreditAccount.user_id) == user.id))
 
     log_action(
         session,

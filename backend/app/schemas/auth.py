@@ -23,25 +23,25 @@ class _PasswordRules:
 
 class RegisterRequest(_PasswordRules, BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(max_length=4096)
     full_name: str | None = Field(default=None, max_length=120)
     company_name: str | None = Field(default=None, max_length=120)
 
 
 class LoginRequest(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(max_length=4096)
 
 
 class RefreshRequest(BaseModel):
     """The refresh token, when the client cannot send it as a cookie."""
 
-    refresh_token: str | None = None
+    refresh_token: str | None = Field(default=None, max_length=2048)
 
 
 class ChangePasswordRequest(_PasswordRules, BaseModel):
-    current_password: str
-    password: str
+    current_password: str = Field(max_length=4096)
+    password: str = Field(max_length=4096)
 
 
 class UserRead(BaseModel):

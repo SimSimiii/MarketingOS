@@ -4,7 +4,9 @@ from fastapi import APIRouter, HTTPException, Query, status
 
 from app.ai.roles import InvalidOverrideError
 from app.api.deps import CampaignServiceDep
+from app.core.config import get_settings
 from app.schemas.campaign import (
+    CampaignBriefUpdate,
     CampaignCreateRequest,
     CampaignExecutionRead,
     CampaignGenerationAdvice,
@@ -24,6 +26,10 @@ router = APIRouter(prefix="/campaigns", tags=["campaigns"])
 
 @router.post("", response_model=CampaignRead, status_code=status.HTTP_201_CREATED)
 def create_campaign(data: CampaignCreateRequest, service: CampaignServiceDep) -> CampaignRead:
+    if get_settings().credit_billing_enabled and data.channel is not None:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Only email campaigns are available.")
+    if get_settings().credit_billing_enabled and data.model_overrides:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Model selection is managed by the service.")
     try:
         campaign = service.create_campaign(data)
     except (InvalidOverrideError, CampaignTargetError) as exc:
@@ -99,6 +105,8 @@ def duplicate_campaign(campaign_id: UUID, service: CampaignServiceDep) -> Campai
 def update_campaign_policy(
     campaign_id: UUID, data: CampaignPolicyUpdate, service: CampaignServiceDep
 ) -> CampaignRead:
+    if get_settings().credit_billing_enabled and data.model_overrides:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Model selection is managed by the service.")
     campaign = service.get_campaign(campaign_id)
     if campaign is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Campaign not found")
@@ -154,13 +162,30 @@ async def start_campaign(
     campaign = service.get_campaign(campaign_id)
     if campaign is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Campaign not found")
+    if get_settings().credit_billing_enabled and campaign.channel is not None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "This feature is unavailable.")
     try:
         execution = await service.start_execution(
             campaign, generate_anyway=data.generate_anyway if data else False
         )
     except CampaignAlreadyRunningError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
+    except CampaignTargetError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from exc
     return CampaignExecutionRead.model_validate(execution)
+
+
+@router.put("/{campaign_id}/brief", response_model=CampaignRead)
+def update_campaign_brief(
+    campaign_id: UUID, data: CampaignBriefUpdate, service: CampaignServiceDep
+) -> CampaignRead:
+    campaign = service.get_campaign(campaign_id)
+    if campaign is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Campaign not found")
+    try:
+        return CampaignRead.model_validate(service.update_brief(campaign, data))
+    except CampaignAlreadyRunningError as exc:
+        raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
 
 
 @router.post(
@@ -179,6 +204,8 @@ async def restart_campaign(
     campaign = service.get_campaign(campaign_id)
     if campaign is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Campaign not found")
+    if get_settings().credit_billing_enabled and campaign.channel is not None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "This feature is unavailable.")
     try:
         execution = await service.restart_execution(
             campaign, generate_anyway=data.generate_anyway if data else False
@@ -187,6 +214,8 @@ async def restart_campaign(
         raise HTTPException(status.HTTP_404_NOT_FOUND, str(exc)) from exc
     except CampaignAlreadyRunningError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
+    except CampaignTargetError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from exc
     return CampaignExecutionRead.model_validate(execution)
 
 

@@ -29,9 +29,13 @@ export function NewBrandDialog({ primary = false, autoOpen = false }: { primary?
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    if (!name.trim()) {
+      toast.error("Give the brand a name.");
+      return;
+    }
     setSubmitting(true);
     try {
-      const brand = await api.createBrand({ name, website_url: websiteUrl || null });
+      const brand = await api.createBrand({ name: name.trim(), website_url: websiteUrl.trim() || null });
       toast.success("Brand created");
       setOpen(false);
       setName("");
@@ -74,9 +78,10 @@ export function NewBrandDialog({ primary = false, autoOpen = false }: { primary?
               value={websiteUrl}
               onChange={(e) => setWebsiteUrl(e.target.value)}
             />
+            <p className="text-xs text-muted-foreground">This saves the website address. Add its pages as sources in the next step.</p>
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={submitting}>
+            <Button type="submit" disabled={submitting || !name.trim()}>
               {submitting ? "Creating..." : "Create brand"}
             </Button>
           </DialogFooter>

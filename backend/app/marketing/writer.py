@@ -182,9 +182,10 @@ class EmailWriter:
         # business. See EvidenceLedger.slice_for: the full ledger in a writing
         # prompt is both the largest cost in a run and the standing temptation
         # that the brief's `must_not_say` exists to resist.
-        slice_ = artifacts.evidence.slice_for(
+        slice_ = artifacts.evidence_for_writing(
             brief.evidence_ids,
             brief.objection,
+            offering=campaign.orientation,
             excluded_ids=frozenset(brief.forbidden_evidence_ids),
         )
         segment = artifacts.audience.match(campaign.reader_segment, campaign.reader)
@@ -193,6 +194,7 @@ class EmailWriter:
             {
                 "request": request.request,
                 "campaign_intent": campaign.interpretation,
+                "cta_destination": request.cta_url or "No fixed destination; use the supported brief.",
                 "reader": campaign.reader or "one person who has never heard of this company",
                 "segment": (
                     segment.render_for_writing()

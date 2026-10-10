@@ -332,9 +332,9 @@ class CampaignReport(BaseModel):
         if self.unsubstantiated:
             positions = ", ".join(str(line.position) for line in self.unsubstantiated)
             lines.append(
-                f"Email(s) {positions} made no use of the evidence they were built on. "
-                "Nothing in them is invented - but nothing in them is checkable either, and a "
-                "stranger has no reason to believe a company describing itself."
+                f"Email(s) {positions}: the automatic check did not match the copy to its "
+                "assigned evidence. Review its claims against the sources; this check can "
+                "miss paraphrases and does not establish whether a claim is true or invented."
             )
         if self.contract_violations:
             lines.append("Contract problems: " + "; ".join(self.contract_violations))

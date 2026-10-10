@@ -51,6 +51,28 @@ def email_with(**overrides) -> Email:
     return Email(**fields)
 
 
+def test_exact_trailing_envelope_copies_render_only_once():
+    draft = WELL_FORMED.rstrip() + "\n\nStart free\n\n- The team"
+    email = parse_email(draft, position=1)
+    assert email.body == parse_email(WELL_FORMED, position=1).body
+    rendered = render_email(email)
+    assert rendered.count("Start free") == 1
+    assert rendered.count("- The team") == 1
+
+
+def test_closing_cleanup_does_not_remove_argument_or_variant_asks():
+    draft = WELL_FORMED.rstrip() + "\n\nStart free to see what it writes."
+    assert parse_email(draft, position=1).body.endswith("Start free to see what it writes.")
+    interior = WELL_FORMED.replace("You wrote", "Start free\n\nYou wrote")
+    assert parse_email(interior, position=1).body.startswith("Start free\n\n")
+
+
+def test_duplicate_envelope_text_cannot_pad_a_too_short_body():
+    draft = WELL_FORMED.split("BODY:")[0] + "BODY:\nTiny argument.\n\nStart free\n\n- The team"
+    with pytest.raises(EmailCopyError):
+        parse_email(draft, position=1)
+
+
 def test_a_well_formed_draft_becomes_a_typed_email():
     email = parse_email(WELL_FORMED, position=2)
 
