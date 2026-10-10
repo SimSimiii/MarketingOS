@@ -69,6 +69,8 @@ phases:
       - env -i PATH="$PATH" HOME="$HOME" LANG=C.UTF-8 python -m pytest tests -q
       - python scripts/export_api_types.py --check
       - python scripts/check_migrations.py
+      # Verify the actual Lambda dependency set, without the dev CLI extra.
+      - env -i PATH="$PATH" HOME="$HOME" LANG=C.UTF-8 python ../docs/audits/2026-10-07/validate_api_lock.py
 
       # A restored .aws-sam is the classic way to ship a stale bundle: the
       # builder sees an artifact directory and never reinstalls requirements.

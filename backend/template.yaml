@@ -203,6 +203,12 @@ Resources:
       Description: MarketingOS platform API
       CodeUri: ./
       Handler: lambda_handler.handler
+      Environment:
+        Variables:
+          # The Lambda bundle excludes the subscription CLI. CRUD constructs
+          # providers but never calls them; JOB_HOST stays unset and no vendor
+          # keys are supplied to this HTTP function.
+          AI_BILLING: api
       MemorySize: !Ref ApiMemorySize
       Timeout: !Ref ApiTimeout
       VpcConfig: !If
