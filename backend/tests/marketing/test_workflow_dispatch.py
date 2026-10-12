@@ -45,9 +45,13 @@ def test_duplicate_campaign_is_refused_across_processes(session, provider, workf
 
 
 def test_actual_handlers_replay_same_position_without_spending_again(session, provider, workflow):  # noqa: F811
+    from app.models.agent_execution import AgentExecution
+    from app.models.execution_log import ExecutionLog
+    from app.orchestration.live_broker import broker
     _, run, _ = workflow
     planned = step_handlers.plan({"execution_id": str(run.id)})
     step_handlers.plan({"execution_id": str(run.id)})
+    broker._sequence.clear()  # The Craft Lambda has its own process-local broker.
     first = step_handlers.craft(planned)
     with Session(session.get_bind()) as db:
         before = db.exec(select(CampaignRunState)).one().model_calls
@@ -63,6 +67,10 @@ def test_actual_handlers_replay_same_position_without_spending_again(session, pr
     session.expire_all()
     assert session.get(CampaignExecution, run.id).completed_at is not None
     assert session.get(CampaignExecution, run.id).total_input_tokens > 0
+    logs = session.exec(select(ExecutionLog).where(ExecutionLog.campaign_execution_id == run.id)).all()
+    assert len({row.sequence for row in logs}) == len(logs)
+    roles = session.exec(select(AgentExecution).where(AgentExecution.campaign_execution_id == run.id)).all()
+    assert len({row.sequence_order for row in roles}) == len(roles)
 
 
 def test_interruption_keeps_accepted_emails_and_recovery_is_idempotent(session, workflow):  # noqa: F811

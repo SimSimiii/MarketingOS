@@ -96,6 +96,10 @@ class ExecutionEventBroker:
             queue.put_nowait(live_event)
         return live_event
 
+    def resume_sequence(self, execution_id: UUID, persisted: int) -> None:
+        """A serialized durable step continues the previous process's event ids."""
+        self._sequence[execution_id] = max(self._sequence.get(execution_id, 0), persisted)
+
     def close(self, execution_id: UUID) -> None:
         for queue in self._queues.get(execution_id, []):
             queue.put_nowait(CLOSE)

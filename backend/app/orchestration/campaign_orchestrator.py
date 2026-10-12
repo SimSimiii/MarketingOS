@@ -804,6 +804,13 @@ class CampaignOrchestrator:
         return execution
 
     def _emitter_for(self, execution_id: UUID) -> ExecutionEventEmitter:
+        from sqlalchemy import func
+
+        from app.models.execution_log import ExecutionLog
+        highest = self._session.exec(select(func.max(ExecutionLog.sequence)).where(
+            ExecutionLog.campaign_execution_id == execution_id
+        )).one()
+        broker.resume_sequence(execution_id, highest or 0)
         return ExecutionEventEmitter(self._logs, execution_id)
 
     def create_execution(
@@ -1244,6 +1251,10 @@ def build_stepped_pipeline(
     orchestrator = CampaignOrchestrator(session, ai_provider)
     emitter = orchestrator._emitter_for(execution.id)
     observer = _PersistenceObserver(orchestrator, execution, emitter)
+    from sqlalchemy import func
+    observer._step = session.exec(select(func.max(AgentExecution.sequence_order)).where(
+        AgentExecution.campaign_execution_id == execution.id
+    )).one() or 0
     policy = resolve_policy(
         (campaign.policy or {}).get("preset"),
         {k: v for k, v in (campaign.policy or {}).items() if k != "preset"} or None,
