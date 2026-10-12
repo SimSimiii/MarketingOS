@@ -312,6 +312,9 @@ async def finish(session: Session, execution_id: UUID, ai_provider: AIProvider) 
     contract = pipeline.read_contract(request)
     result = CampaignRunResult(usage=pipeline.session_usage)
     result.brief = brief
+    if state.intelligence:
+        from app.marketing.intelligence import CampaignIntelligence
+        result.intelligence = CampaignIntelligence.model_validate(state.intelligence)
     result.outcomes = _OUTCOMES.validate_python(state.outcomes)
     result.abort_reason = state.abort_reason
 

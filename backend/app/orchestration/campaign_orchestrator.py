@@ -1235,11 +1235,8 @@ def build_stepped_pipeline(
 ) -> tuple[EmailCampaignPipeline, CampaignRequest, "_PersistenceObserver"]:
     """The pipeline, the request and the observer for one step of a run.
 
-    No deadline is passed. A step is bounded by its own host - Lambda's 900
-    seconds - and the campaign-wide `max_duration_seconds` is meaningless to a
-    process that started thirty seconds ago and knows nothing of the four
-    invocations before it. Enforcing the campaign budget across steps is the
-    state machine's job, not this one's.
+    The handler's DurablePermit checks the persisted campaign deadline and
+    cancellation before every model call, across all Lambda invocations.
     """
     from app.models.campaign_run_state import CampaignRunState
 

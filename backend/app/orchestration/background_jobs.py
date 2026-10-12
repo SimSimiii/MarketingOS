@@ -76,7 +76,7 @@ def enqueue(function, arguments):
             raise WorkLimitError("The maximum number of running jobs has been reached.")
         now = datetime.now(UTC)
         period = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-        user = db.get(User, brand.owner_id) if brand.owner_id else None
+        user = db.exec(select(User).where(User.id == brand.owner_id).with_for_update()).first() if brand.owner_id else None
         if user:
             if user.status == UserStatus.SUSPENDED:
                 raise WorkLimitError("Account unavailable.", 403)

@@ -72,7 +72,7 @@ def launch(campaign, ai_provider, engine, **kwargs):
             raise WorkLimitError("The maximum number of running jobs has been reached.")
         now = datetime.now(UTC)
         period = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-        user = db.get(User, campaign.owner_id) if campaign.owner_id else None
+        user = db.exec(select(User).where(User.id == campaign.owner_id).with_for_update()).first() if campaign.owner_id else None
         if user:
             if user.status == UserStatus.SUSPENDED:
                 raise WorkLimitError("This account is unavailable.", 403)
@@ -211,7 +211,7 @@ def recover(db, execution_id, reason="A workflow step failed. Accepted emails we
     )}
     if state and state.model_calls == 0:
         campaign = db.get(Campaign, execution.campaign_id)
-        user = db.get(User, campaign.owner_id) if campaign and campaign.owner_id else None
+        user = db.exec(select(User).where(User.id == campaign.owner_id).with_for_update()).first() if campaign and campaign.owner_id else None
         period = state.created_at.replace(day=1, hour=0, minute=0, second=0, microsecond=0, tzinfo=UTC)
         if user and user.quota_reset_at and user.quota_reset_at.replace(tzinfo=UTC) == period:
             user.runs_used = max(0, user.runs_used - 1)
