@@ -323,7 +323,9 @@ class ModelSession:
         attempts = 0
         # An ambiguous transport failure may still have consumed paid tokens.
         # Never resend it automatically from a prepaid customer balance.
-        max_attempts = 1 if self._credit_meter else _PROVIDER_ATTEMPTS
+        from app.core.config import get_settings
+
+        max_attempts = 1 if self._credit_meter or get_settings().ai_billing == "api" else _PROVIDER_ATTEMPTS
         for attempt in range(1, max_attempts + 1):
             attempts = attempt
             from app.runtime.work_limits import WorkLimitError, current_work
@@ -340,7 +342,7 @@ class ModelSession:
             try:
                 response = await self._provider.generate(request)
                 if permit is not None:
-                    permit.tokens += response.usage.total_tokens
+                    permit.record_usage(response.usage.total_tokens)
                 return response
             except Exception as exc:  # noqa: BLE001 - re-raised as ProviderError below
                 last = exc

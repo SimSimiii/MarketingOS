@@ -12,7 +12,8 @@ from app.schemas.knowledge import (
     KnowledgeDocumentSummary,
     KnowledgeSourceCreate,
 )
-from app.services.knowledge_compilation import CompilationJob, jobs
+from app.services.knowledge_compilation import CompilationJob
+from app.services.knowledge_compilation import all_jobs as all_compilation_jobs
 from app.services.knowledge_service import UnsupportedSourceError
 
 router = APIRouter(prefix="/knowledge", tags=["knowledge"])
@@ -83,7 +84,7 @@ def _guard_scope(
 def list_compilation_jobs(session: SessionDep, principal: PrincipalDep) -> list[CompilationJob]:
     brand_ids = {brand.id for brand in BrandRepository(session, principal).list_all()}
     return sorted(
-        (job for job in jobs.values() if job.brand_id in brand_ids),
+        (job for job in all_compilation_jobs() if job.brand_id in brand_ids),
         key=lambda job: (job.state == "running", job.started_at),
         reverse=True,
     )

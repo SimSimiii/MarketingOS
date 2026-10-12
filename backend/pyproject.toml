@@ -17,6 +17,7 @@ dependencies = [
     "pyjwt>=2.15.0",
     # Lets the same ASGI app answer an API Gateway event without a change.
     "mangum>=0.19.0",
+    "boto3>=1.40.0",
     # The metered HTTP clients, and the reason `claude-agent-sdk` is no longer
     # here: it bundles a ~210 MB CLI binary, which is dead weight on any host
     # that bills per token and is on its own enough to push a Lambda bundle

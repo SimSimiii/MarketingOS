@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: MarketingOS private Lambda egress through one public NAT gateway
+Parameters:
+  Environment: {Type: String, Default: prod}
+  VpcId: {Type: 'AWS::EC2::VPC::Id'}
+  PrivateSubnetA: {Type: 'AWS::EC2::Subnet::Id'}
+  PrivateSubnetB: {Type: 'AWS::EC2::Subnet::Id'}
+Resources:
+  Gateway:
+    Type: AWS::EC2::InternetGateway
+  Attachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties: {VpcId: !Ref VpcId, InternetGatewayId: !Ref Gateway}
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      CidrBlock: 10.42.21.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      MapPublicIpOnLaunch: false
+  PublicRoutes:
+    Type: AWS::EC2::RouteTable
+    Properties: {VpcId: !Ref VpcId}
+  PublicAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: {SubnetId: !Ref PublicSubnet, RouteTableId: !Ref PublicRoutes}
+  InternetRoute:
+    Type: AWS::EC2::Route
+    DependsOn: Attachment
+    Properties:
+      RouteTableId: !Ref PublicRoutes
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref Gateway
+  Address:
+    Type: AWS::EC2::EIP
+    DependsOn: Attachment
+    Properties: {Domain: vpc}
+  Nat:
+    Type: AWS::EC2::NatGateway
+    DependsOn: InternetRoute
+    Properties:
+      AllocationId: !GetAtt Address.AllocationId
+      SubnetId: !Ref PublicSubnet
+      Tags: [{Key: Name, Value: !Sub 'marketingos-egress-${Environment}'}]
+  PrivateRoutes:
+    Type: AWS::EC2::RouteTable
+    Properties: {VpcId: !Ref VpcId}
+  NatRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRoutes
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref Nat
+  AssociationA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: {SubnetId: !Ref PrivateSubnetA, RouteTableId: !Ref PrivateRoutes}
+  AssociationB:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: {SubnetId: !Ref PrivateSubnetB, RouteTableId: !Ref PrivateRoutes}
+Outputs:
+  NatGatewayId: {Value: !Ref Nat}

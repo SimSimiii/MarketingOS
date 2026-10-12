@@ -49,9 +49,7 @@ _NEEDS_KNOWLEDGE = {
 }
 
 
-@admitted_job
-def launch(db: Session, brand_id: UUID, provider: AIProvider,
-           request: SearchRequest | MessageRequest | CriteriaRequest) -> LinkedInRun:
+def validate_request(db, brand_id, provider, request):
     kind = _KINDS[type(request)]
     if kind == "search" and ResearchTool.WEB_SEARCH not in provider.available_tools():
         raise LinkedInError("The configured model provider cannot search the public web.")
@@ -59,6 +57,13 @@ def launch(db: Session, brand_id: UUID, provider: AIProvider,
         stored = ArtifactStore(db).load(ArtifactScope(brand_id=brand_id))
         if stored is None or not stored.artifacts.business.what_it_does.strip():
             raise LinkedInError(missing)
+    return kind
+
+
+@admitted_job
+def launch(db: Session, brand_id: UUID, provider: AIProvider,
+           request: SearchRequest | MessageRequest | CriteriaRequest) -> LinkedInRun:
+    kind = validate_request(db, brand_id, provider, request)
     row = LinkedInRun(brand_id=brand_id, kind=kind, active_key=str(brand_id),
                       request=request.model_dump(mode="json"))
     db.add(row)

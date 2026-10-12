@@ -60,46 +60,144 @@ def _execution_id(event: dict[str, Any]) -> UUID:
     return UUID(str(raw))
 
 
-def _run(step, event: dict[str, Any], *, failed_step: bool = False) -> dict[str, Any]:
-    """Run one async step in its own session and return its JSON result.
+def _run(step, event: dict[str, Any], context=None) -> dict[str, Any]:
+    from app.models.campaign_execution import CampaignExecution
+    from app.orchestration.workflow_dispatch import DurablePermit, execution_lock, recover
+    from app.runtime.work_limits import current_work
 
-    A session per invocation rather than a module-level one: a Lambda
-    container is reused across invocations, and a SQLAlchemy session held
-    across them would serve a later request rows it read minutes earlier -
-    including an execution's status, which is the field the state machine
-    branches on.
-    """
     execution_id = _execution_id(event)
-    provider = get_ai_provider()
-    with Session(engine) as session:
-        if failed_step and event.get("step_error"):
-            state = session.exec(select(CampaignRunState).where(
-                CampaignRunState.execution_id == execution_id
-            )).first()
-            if state is not None and not state.abort_reason:
-                state.abort_reason = "A campaign step failed. Previously accepted emails were kept."
-                session.add(state)
-                session.commit()
-        result = asyncio.run(step(session, execution_id, provider))
-    logger.info("%s → %s", step.__name__, result.detail)
-    return result.as_dict()
+    with execution_lock(engine, execution_id), Session(engine) as session:
+        execution = session.get(CampaignExecution, execution_id)
+        if execution is None:
+            raise ValueError("Execution not found")
+        state = session.exec(select(CampaignRunState).where(
+            CampaignRunState.execution_id == execution_id
+        )).first()
+        if execution.completed_at is not None:
+            return {"execution_id": str(execution_id), "more": False, "status": str(execution.status)}
+        if state is None:
+            raise ValueError("Missing durable admission")
+        if event.get("step_error") or state.cancel_requested:
+            recover(session, execution_id)
+            return {"execution_id": str(execution_id), "more": False, "status": "stopped"}
+        position = int(event.get("next_position", 1))
+        if step is stepped_runner.craft and position < state.next_position:
+            return stepped_runner.StepResult(str(execution_id), state.next_position,
+                state.total_positions, state.next_position <= state.total_positions).as_dict()
+        if step is stepped_runner.craft and position != state.next_position:
+            raise ValueError("Out-of-order craft position")
+        if step is stepped_runner.plan and state.brief is not None:
+            return stepped_runner.StepResult(str(execution_id), state.next_position,
+                state.total_positions, state.next_position <= state.total_positions).as_dict()
+        # An interrupted call is ambiguous and must not be bought a second time.
+        if state.inflight_step:
+            recover(session, execution_id, "A previous invocation was interrupted. Accepted emails were kept.")
+            return {"execution_id": str(execution_id), "more": False, "status": "stopped"}
+        state.inflight_step = f"{step.__name__}:{position}"
+        session.add(state)
+        session.commit()
+        remaining = getattr(context, "get_remaining_time_in_millis", None)
+        permit = DurablePermit(engine, execution_id, remaining)
+        token = current_work.set(permit)
+        try:
+            result = asyncio.run(step(session, execution_id, get_ai_provider()))
+            session.refresh(state)
+            state.inflight_step = None
+            session.add(state)
+            session.commit()
+            return result.as_dict()
+        finally:
+            current_work.reset(token)
 
 
 def plan(event: dict[str, Any], context: Any = None) -> dict[str, Any]:
-    """Compile the knowledge, decide the campaign, write the brief down."""
-    return _run(stepped_runner.plan, event)
+    return _run(stepped_runner.plan, event, context)
 
 
 def craft(event: dict[str, Any], context: Any = None) -> dict[str, Any]:
-    """Write the next email. Called once per email by the state machine.
-
-    Idempotent on position: the cursor and the email advance in one commit, so
-    a retry of a step that succeeded and then timed out reporting writes the
-    *next* email rather than a second copy of the last one.
-    """
-    return _run(stepped_runner.craft, event)
+    return _run(stepped_runner.craft, event, context)
 
 
 def finish(event: dict[str, Any], context: Any = None) -> dict[str, Any]:
-    """Read the emails as one sequence, report, and persist the deliverables."""
-    return _run(stepped_runner.finish, event, failed_step=True)
+    return _run(stepped_runner.finish, event, context)
+
+
+def recover(event: dict[str, Any], context: Any = None) -> dict[str, Any]:
+    from app.orchestration.workflow_dispatch import execution_lock
+    from app.orchestration.workflow_dispatch import recover as finalize
+    payload = event.get("requestPayload", event)
+    if payload.get("job_id"):
+        from app.orchestration.background_jobs import fail
+        fail(engine, UUID(payload["job_id"]))
+        return {"status": "stopped"}
+    detail = event.get("detail", {})
+    if "executionArn" in detail:
+        event = {"execution_id": detail["executionArn"].rsplit(":", 1)[-1]}
+    execution_id = _execution_id(event)
+    with execution_lock(engine, execution_id), Session(engine) as session:
+        finalize(session, execution_id)
+    return {"execution_id": str(execution_id), "more": False, "status": "stopped"}
+
+
+def reconcile(event: dict[str, Any], context: Any = None) -> dict[str, Any]:
+    from datetime import UTC, datetime, timedelta
+
+    from botocore.exceptions import ClientError
+
+    from app.models.campaign_execution import CampaignExecution
+    from app.orchestration.background_jobs import reconcile as reconcile_background
+    from app.orchestration.workflow_dispatch import client
+    reconcile_background(engine)
+    recovered = 0
+    with Session(engine) as session:
+        states = session.exec(select(CampaignRunState).join(
+            CampaignExecution, CampaignRunState.execution_id == CampaignExecution.id
+        ).where(CampaignExecution.completed_at.is_(None),
+                CampaignRunState.created_at < datetime.now(UTC) - timedelta(minutes=2))).all()
+        for state in states:
+            if not state.workflow_arn:
+                continue
+            try:
+                status = client().describe_execution(executionArn=state.workflow_arn)["status"]
+            except ClientError as exc:
+                if exc.response["Error"]["Code"] != "ExecutionDoesNotExist":
+                    raise
+                status = "MISSING"
+            if status != "RUNNING":
+                recover({"execution_id": str(state.execution_id)})
+                recovered += 1
+    return {"recovered": recovered}
+
+
+def probe(event: dict[str, Any], context: Any = None) -> dict[str, Any]:
+    """IAM-only network/auth check. GET model catalogs; no generation or charges."""
+    import json
+    import urllib.error
+    import urllib.request
+
+    from app.ai.api_credentials import provider_key
+    results = {}
+    endpoints = {
+        "anthropic": ("https://api.anthropic.com/v1/models", {
+            "x-api-key": provider_key("anthropic-api-key", os.environ.get("ANTHROPIC_API_KEY", "")), "anthropic-version": "2023-06-01",
+        }),
+        "openai": ("https://api.openai.com/v1/models", {
+            "Authorization": "Bearer " + provider_key("openai-api-key", os.environ.get("OPENAI_API_KEY", "")),
+        }),
+    }
+    for vendor, (url, headers) in endpoints.items():
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=20) as response:
+                data = json.load(response)
+                results[vendor] = {"status": response.status, "models": [m["id"] for m in data.get("data", [])]}
+        except urllib.error.HTTPError as exc:
+            results[vendor] = {"status": exc.code}
+        except (OSError, ValueError) as exc:
+            results[vendor] = {"error": type(exc).__name__}
+    return results
+
+
+def background(event: dict[str, Any], context: Any = None) -> dict[str, Any]:
+    from app.orchestration.background_jobs import execute
+    asyncio.run(execute(engine, UUID(event["job_id"]), get_ai_provider(), context))
+    return {"job_id": event["job_id"]}

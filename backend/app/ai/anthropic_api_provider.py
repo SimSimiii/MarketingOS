@@ -91,6 +91,10 @@ class AnthropicAPIProvider(AIProvider):
         surfaces at the call that needed it naming what to install - the same
         contract `factory.get_ai_provider` documents for the CLI backends.
         """
+        from app.ai.api_credentials import provider_key
+        key = provider_key("anthropic-api-key", self._api_key)
+        if key != self._api_key:
+            self._api_key, self._client = key, None
         if self._client is not None:
             return self._client
         if not self._api_key:
@@ -111,7 +115,7 @@ class AnthropicAPIProvider(AIProvider):
         # Retries off: `ModelSession` already resends a call that failed in
         # transport, and two layers of backoff turn one slow failure into a
         # run that looks hung.
-        self._client = AsyncAnthropic(api_key=self._api_key, max_retries=0, timeout=600.0)
+        self._client = AsyncAnthropic(api_key=self._api_key, max_retries=0, timeout=float(os.environ.get("MODEL_TIMEOUT_SECONDS", "600")))
         return self._client
 
     # --------------------------------------------------------------- contract

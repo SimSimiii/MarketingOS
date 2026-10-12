@@ -237,6 +237,9 @@ def _spawn(coro: Coroutine[Any, Any, None]) -> None:
 
 
 def job_for(brand_id: UUID) -> JobStatus | None:
+    from app.orchestration import background_jobs
+    if background_jobs.enabled():
+        return background_jobs.latest("market", brand_id).get(brand_id)
     return _jobs.get(brand_id)
 
 
@@ -248,8 +251,10 @@ def all_jobs() -> list[JobStatus]:
     question, five minutes after a scan lands, is "that scan, and here is what
     it cost" - not an empty page.
     """
+    from app.orchestration import background_jobs
+    values = background_jobs.latest("market").values() if background_jobs.enabled() else _jobs.values()
     return sorted(
-        _jobs.values(),
+        values,
         key=lambda job: (job.state != "running", -job.started_at.timestamp()),
     )
 

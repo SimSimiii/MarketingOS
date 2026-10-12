@@ -1234,6 +1234,13 @@ def build_stepped_pipeline(
     invocations before it. Enforcing the campaign budget across steps is the
     state machine's job, not this one's.
     """
+    from app.models.campaign_run_state import CampaignRunState
+
+    state = session.exec(select(CampaignRunState).where(
+        CampaignRunState.execution_id == execution.id
+    )).first()
+    if state is not None and state.request_snapshot:
+        campaign = Campaign.model_validate(state.request_snapshot)
     orchestrator = CampaignOrchestrator(session, ai_provider)
     emitter = orchestrator._emitter_for(execution.id)
     observer = _PersistenceObserver(orchestrator, execution, emitter)
@@ -1244,14 +1251,31 @@ def build_stepped_pipeline(
     events = EventBus()
     _bridge_runtime_events(events, emitter)
 
+    def record_stepped_call(call):
+        observer.record_call(call)
+        if state is not None and state.request_snapshot:
+            from sqlalchemy import update
+            session.execute(update(CampaignExecution).where(CampaignExecution.id == execution.id).values(
+                total_input_tokens=CampaignExecution.total_input_tokens + call.billable_input_tokens,
+                total_output_tokens=CampaignExecution.total_output_tokens + call.output_tokens,
+                total_cache_read_tokens=CampaignExecution.total_cache_read_tokens + call.cache_read_input_tokens,
+                estimated_cost_usd=CampaignExecution.estimated_cost_usd + call.cost_usd,
+            ))
+            session.commit()
+
     model_session = ModelSession(
         provider=orchestrator._ai_provider,
         prompt_engine=get_prompt_engine(PROMPTS_DIR),
         events=events,
         model_router=ModelRouter(_resolve_overrides(policy, campaign)),
         execution_id=str(execution.id),
-        on_call=observer.record_call,
+        on_call=record_stepped_call,
     )
+    if state is not None and state.request_snapshot:
+        model_session.usage.input_tokens = execution.total_input_tokens - execution.total_cache_read_tokens
+        model_session.usage.cache_read_input_tokens = execution.total_cache_read_tokens
+        model_session.usage.output_tokens = execution.total_output_tokens
+        model_session.usage.cost_usd = execution.estimated_cost_usd
     pipeline = EmailCampaignPipeline(
         session=model_session,
         knowledge=_DbKnowledgeGateway(session, campaign),

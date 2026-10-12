@@ -79,3 +79,12 @@ class CampaignRunState(SQLModel, table=True):
 
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+    request_snapshot: dict | None = Field(default=None, sa_column=Column(JSON))
+    context_snapshot: dict | None = Field(default=None, sa_column=Column(JSON))
+    cancel_requested: bool = False
+    model_calls: int = 0
+    model_tokens: int = 0
+    deadline_at: datetime | None = None
+    inflight_step: str | None = None
+    workflow_arn: str | None = None

@@ -85,3 +85,5 @@ __all__ = [
     "UserSettings",
     "UserStatus",
 ]
+
+from app.models.background_job import BackgroundJob  # noqa: F401

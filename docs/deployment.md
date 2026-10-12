@@ -1,18 +1,14 @@
 # Deploying MarketingOS
 
-> **Launch status after the October 2026 audit:** the Lambda campaign workflow is not
-> connected to the user launch endpoint and is not qualified for autonomous testers.
-> The first remote pilot should use one persistent API instance, same-origin HTTPS,
-> a backed-up database and explicit provider configuration; qualify that route before
-> opening accounts. Corrections to step replay and failure recovery do not complete
-> Lambda dispatch, durable budgets, distributed admission or network/secrets wiring.
-> See [corrections and remaining blockers](audits/2026-10-07/corrections.md).
->
-> Apply migrations through `b7a109c4e2f8` to the shared, backed-up database before deploying
-> the product and admin APIs: password-attempt limits require their new counter table.
-> Reconcile an unversioned `create_all` development database using
-> [the migration procedure](review-implementation.md); do not stamp it directly at head.
-> Prepaid activation and its remaining qualification work are in [billing.md](billing.md).
+> **Lambda rollout, 12 October 2026:** email launch dispatches a Standard Step Functions
+> workflow (Plan, Craft per email, Finish), with durable admission, budgets,
+> cancellation and failure recovery. Knowledge compilation, LinkedIn tools and market jobs use an
+> asynchronous Lambda with persisted status. Production uses metered API providers,
+> private Aurora, and the NAT egress stack in `iac/egress.yaml`.
+> Provider keys must be valid in SSM before real generation is usable. Campaign-channel LinkedIn generation and
+> synchronous model-based image ingestion are not migrated by the email workflow.
+> Credit billing is refused on distributed jobs until integrated.
+> Apply migrations through `d91c382aa410`; see [rollout evidence](deployments/2026-10-12.md).
 
 Five stacks, deployed in this order, each consuming the previous one's outputs.
 
@@ -54,28 +50,26 @@ on entry and refresh only when the user presses Refresh. No browser opens an
 SSE connection or polls periodically. The legacy `/executions/{id}/stream`
 endpoint remains for compatibility; the console does not need it.
 
-This removes streaming from the hosting requirements, but **does not turn the
-current model runner into a Lambda job**. Campaigns, compilation, market
-research and LinkedIn work still launch tasks in the API process and invoke
-subscription-authenticated CLIs. Returning HTTP 202 does not transfer that work
-to a durable worker. Standard Lambda invocations have a maximum duration of
-900 seconds, and unfinished background work cannot be relied on after the
-handler returns. See [AWS timeout documentation](https://docs.aws.amazon.com/lambda/latest/dg/configuration-timeout.html)
-and [execution lifecycle](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtime-environment.html).
+With `CAMPAIGN_WORKFLOW_ARN` set, email generation is handed to Step Functions before
+returning to the browser. Model work executes in separate Lambda invocations and
+stores the request, context, cursor, usage and cancellation in PostgreSQL.
+Ambiguous model failures are not automatically retried; accepted emails are recovered.
+An individual step still has a 900-second ceiling, so a slow step can degrade a run.
+The 15-minute reconciler repairs stranded campaign and background admissions.
 
-For the current implementation, run the API as a single persistent process
-with the CLIs installed and authenticated. A container can provide this; an EC2
-machine dedicated to streaming is unnecessary. Do not split only campaign
-start and stream routes onto a worker: restart, cancellation, market job status
-and compilation also depend on process-local state. Startup recovery assumes
-one worker and must not run independently on multiple replicas sharing a DB.
+With `BACKGROUND_FUNCTION_NAME` set, market and knowledge launchers dispatch an
+asynchronous Lambda, with a durable claim preventing duplicate delivery from buying
+another run. These jobs have a single-invocation 900-second limit. Failure and timeout
+are visible through saved status. Their model budget stops new calls before timeout.
 
-A future deployment with no continuously running worker needs an explicit job
-handoff (for example a durable queue plus on-demand container tasks), shared
-Postgres storage, durable cancellation/status for every job type, CLI credential
-provisioning, and worker-aware recovery. None of that infrastructure is deployed
-by this feature. The Lambda stack remains suitable for reads/CRUD with lifespan
-startup recovery disabled, not for the existing in-process job launchers.
+Job Lambdas read `/marketingos/<environment>/anthropic-api-key` and `openai-api-key`
+from SSM with a 60-second cache. API usage is billed separately from CLI subscriptions.
+The private subnets need NAT egress for model APIs; `iac/egress.yaml` provisions a
+single NAT gateway. This incurs ongoing charges and is not a multi-AZ egress design.
+The scheduled reconciler can also prevent Aurora from remaining paused for long.
+
+Without these deployment variables, the local single-process CLI execution path stays
+available. Its in-memory admission and cancellation require a single persistent worker.
 
 LinkedIn search/message status, results, usage and errors are persisted in
 `linkedinrun`; an interrupted job is marked failed at single-worker startup so

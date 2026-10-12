@@ -530,7 +530,10 @@ class CampaignService:
         # launch without a confirmation handshake, and the receipt still says
         # the run happened despite a negative/narrow recommendation.
         snapshot["override_explicit"] = generate_anyway
-        return execution_manager.launch(
+        from app.orchestration import workflow_dispatch
+
+        launch = workflow_dispatch.launch if workflow_dispatch.enabled() else execution_manager.launch
+        return launch(
             campaign,
             self._ai_provider,
             self._engine,
@@ -547,6 +550,11 @@ class CampaignService:
         return await self.start_execution(campaign, generate_anyway=generate_anyway)
 
     def cancel_execution(self, execution: CampaignExecution) -> None:
+        from app.orchestration import workflow_dispatch
+
+        if workflow_dispatch.enabled():
+            workflow_dispatch.cancel(self._session, execution)
+            return
         if not registry.cancel(execution.id):
             raise ExecutionNotCancellableError("This execution isn't currently running.")
 
@@ -576,6 +584,11 @@ class CampaignService:
         return self._generated_assets.list_by_execution(execution_id)
 
     def is_execution_running(self, execution_id: UUID) -> bool:
+        from app.orchestration import workflow_dispatch
+
+        if workflow_dispatch.enabled():
+            execution = self._executions.get(execution_id)
+            return execution is not None and execution.completed_at is None
         return registry.get(execution_id) is not None
 
     # ------------------------------------------------------------- live view

@@ -8,11 +8,11 @@ Description: MarketingOS - platform API (Lambda + HTTP API Gateway)
 #  It serves authenticated reads and CRUD. The console now reads snapshots
 #  over HTTP on manual refresh; it does not open SSE connections.
 #
-#  Campaigns, market research, knowledge compilation and LinkedIn generation
-#  still launch in-process background tasks and authenticated CLI subprocesses.
-#  This Lambda stack cannot execute those jobs reliably after returning HTTP
-#  202. See docs/deployment.md for the single-worker requirement and the
-#  remaining durable queue / on-demand worker work. No stream worker is needed.
+#  Email campaigns run in Standard Step Functions: Plan, one Craft per email,
+#  then Finish. Market and knowledge jobs run in a separate async Lambda.
+#  Durable database admission and recovery protect against duplicate delivery.
+#  Job functions read metered API credentials from SSM at invocation time.
+#  LinkedIn tools use the background Lambda; campaign-channel LinkedIn is separate.
 #
 #  Secrets are CloudFormation parameters with NoEcho, fed from CodeBuild
 #  environment variables through envsubst (see samconfig.yaml). Nothing secret
@@ -209,6 +209,8 @@ Resources:
           # providers but never calls them; JOB_HOST stays unset and no vendor
           # keys are supplied to this HTTP function.
           AI_BILLING: api
+          CAMPAIGN_WORKFLOW_ARN: !Ref CampaignWorkflow
+          BACKGROUND_FUNCTION_NAME: !Ref BackgroundFunction
       MemorySize: !Ref ApiMemorySize
       Timeout: !Ref ApiTimeout
       VpcConfig: !If
@@ -219,6 +221,12 @@ Resources:
       Policies:
         - AWSLambdaBasicExecutionRole
         - AWSLambdaVPCAccessExecutionRole
+        - LambdaInvokePolicy:
+            FunctionName: !Sub 'marketingos-background-${Environment}'
+        - Statement:
+            Effect: Allow
+            Action: states:StartExecution
+            Resource: !Sub 'arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:marketingos-campaign-${Environment}'
       Events:
         Proxy:
           Type: HttpApi
@@ -310,12 +318,18 @@ Resources:
       Environment:
         Variables:
           JOB_HOST: "true"
+          MODEL_TIMEOUT_SECONDS: "180"
           AI_BILLING: api
-          ANTHROPIC_API_KEY: !Ref AnthropicApiKey
-          OPENAI_API_KEY: !Ref OpenAiApiKey
+          MODEL_KEYS_SSM_PREFIX: !Sub "/marketingos/${Environment}"
       Policies:
         - AWSLambdaBasicExecutionRole
         - AWSLambdaVPCAccessExecutionRole
+        - Statement:
+            Effect: Allow
+            Action: ssm:GetParameter
+            Resource:
+              - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/marketingos/${Environment}/anthropic-api-key'
+              - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/marketingos/${Environment}/openai-api-key'
 
   CraftFunction:
     Type: AWS::Serverless::Function
@@ -334,12 +348,18 @@ Resources:
       Environment:
         Variables:
           JOB_HOST: "true"
+          MODEL_TIMEOUT_SECONDS: "180"
           AI_BILLING: api
-          ANTHROPIC_API_KEY: !Ref AnthropicApiKey
-          OPENAI_API_KEY: !Ref OpenAiApiKey
+          MODEL_KEYS_SSM_PREFIX: !Sub "/marketingos/${Environment}"
       Policies:
         - AWSLambdaBasicExecutionRole
         - AWSLambdaVPCAccessExecutionRole
+        - Statement:
+            Effect: Allow
+            Action: ssm:GetParameter
+            Resource:
+              - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/marketingos/${Environment}/anthropic-api-key'
+              - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/marketingos/${Environment}/openai-api-key'
 
   FinishFunction:
     Type: AWS::Serverless::Function
@@ -358,12 +378,18 @@ Resources:
       Environment:
         Variables:
           JOB_HOST: "true"
+          MODEL_TIMEOUT_SECONDS: "180"
           AI_BILLING: api
-          ANTHROPIC_API_KEY: !Ref AnthropicApiKey
-          OPENAI_API_KEY: !Ref OpenAiApiKey
+          MODEL_KEYS_SSM_PREFIX: !Sub "/marketingos/${Environment}"
       Policies:
         - AWSLambdaBasicExecutionRole
         - AWSLambdaVPCAccessExecutionRole
+        - Statement:
+            Effect: Allow
+            Action: ssm:GetParameter
+            Resource:
+              - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/marketingos/${Environment}/anthropic-api-key'
+              - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/marketingos/${Environment}/openai-api-key'
 
   PlanLogGroup:
     Type: AWS::Logs::LogGroup
@@ -394,90 +420,12 @@ Resources:
     Properties:
       Name: !Sub 'marketingos-campaign-${Environment}'
       Type: STANDARD
-      Definition:
-        Comment: Plan once, craft once per email, finish once.
-        StartAt: Plan
-        States:
-          Plan:
-            Type: Task
-            Resource: !GetAtt PlanFunction.Arn
-            # Transient failures only. A ProviderCallError the provider
-            # classified as permanent - a bad key, a rejected parameter - fails
-            # identically every time, and retrying it spends the budget three
-            # times over to learn nothing.
-            Retry:
-              - ErrorEquals:
-                  - Lambda.ServiceException
-                  - Lambda.AWSLambdaException
-                  - Lambda.SdkClientException
-                  - Lambda.TooManyRequestsException
-                IntervalSeconds: 5
-                MaxAttempts: 3
-                BackoffRate: 2.0
-            Catch:
-              - ErrorEquals: [States.ALL]
-                Next: Failed
-            Next: MoreEmails
-
-          MoreEmails:
-            Type: Choice
-            # `more` comes from the run state's own cursor rather than a
-            # counter this state machine keeps, so a retried step that already
-            # advanced the cursor is read correctly instead of double-counted.
-            Choices:
-              - Variable: $.more
-                BooleanEquals: true
-                Next: CraftEmail
-            Default: Finish
-
-          CraftEmail:
-            Type: Task
-            Resource: !GetAtt CraftFunction.Arn
-            Retry:
-              - ErrorEquals:
-                  - Lambda.ServiceException
-                  - Lambda.AWSLambdaException
-                  - Lambda.SdkClientException
-                  - Lambda.TooManyRequestsException
-                IntervalSeconds: 5
-                MaxAttempts: 3
-                BackoffRate: 2.0
-              # A step that timed out may well have finished and failed to
-              # report it. Retrying is safe because `craft` is idempotent on
-              # position - it reads the cursor it already advanced.
-              - ErrorEquals: [States.Timeout]
-                IntervalSeconds: 10
-                MaxAttempts: 2
-                BackoffRate: 2.0
-            Catch:
-              - ErrorEquals: [States.ALL]
-                # Finish, not Failed. Emails already written are worth keeping,
-                # and the report says degraded rather than losing them.
-                # Degrade, never deadlock.
-                ResultPath: $.step_error
-                Next: Finish
-            Next: MoreEmails
-
-          Finish:
-            Type: Task
-            Resource: !GetAtt FinishFunction.Arn
-            Retry:
-              - ErrorEquals:
-                  - Lambda.ServiceException
-                  - Lambda.AWSLambdaException
-                  - Lambda.SdkClientException
-                  - Lambda.TooManyRequestsException
-                IntervalSeconds: 5
-                MaxAttempts: 3
-                BackoffRate: 2.0
-            Catch:
-              - ErrorEquals: [States.ALL]
-                Next: Failed
-            End: true
-
-          Failed:
-            Type: Fail
-            Cause: The campaign run could not be completed.
+      DefinitionUri: campaign.asl.json
+      DefinitionSubstitutions:
+        PlanArn: !GetAtt PlanFunction.Arn
+        CraftArn: !GetAtt CraftFunction.Arn
+        FinishArn: !GetAtt FinishFunction.Arn
+        RecoveryArn: !GetAtt RecoveryFunction.Arn
       Policies:
         - LambdaInvokePolicy:
             FunctionName: !Ref PlanFunction
@@ -485,11 +433,164 @@ Resources:
             FunctionName: !Ref CraftFunction
         - LambdaInvokePolicy:
             FunctionName: !Ref FinishFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref RecoveryFunction
 
   # ── Alarms ──────────────────────────────────────────────────────────────────
   # Two alarms, no dashboard. With no users yet the question worth answering is
   # "is it broken", not "how is it trending", and an alarm nobody has wired to
   # a notification is still visible in the console.
+  RecoveryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'marketingos-recover-${Environment}'
+      CodeUri: ./
+      Handler: step_handlers.recover
+      Timeout: 120
+      Environment:
+        Variables:
+          AI_BILLING: api
+      VpcConfig: !If
+        - HasVpcConfig
+        - SubnetIds: !Ref VpcSubnetIds
+          SecurityGroupIds: !Ref VpcSecurityGroupIds
+        - !Ref AWS::NoValue
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+      Events:
+        WorkflowFailure:
+          Type: EventBridgeRule
+          Properties:
+            Pattern:
+              source: [aws.states]
+              detail-type: [Step Functions Execution Status Change]
+              detail:
+                stateMachineArn: [!Sub 'arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:marketingos-campaign-${Environment}']
+                status: [FAILED, TIMED_OUT, ABORTED]
+
+  ReconcileFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'marketingos-reconcile-${Environment}'
+      CodeUri: ./
+      Handler: step_handlers.reconcile
+      Timeout: 120
+      Environment:
+        Variables:
+          AI_BILLING: api
+      VpcConfig: !If
+        - HasVpcConfig
+        - SubnetIds: !Ref VpcSubnetIds
+          SecurityGroupIds: !Ref VpcSecurityGroupIds
+        - !Ref AWS::NoValue
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+        - Statement:
+            Effect: Allow
+            Action: states:DescribeExecution
+            Resource: !Sub 'arn:aws:states:${AWS::Region}:${AWS::AccountId}:execution:marketingos-campaign-${Environment}:*'
+      Events:
+        Reconcile:
+          Type: Schedule
+          Properties:
+            Schedule: rate(15 minutes)
+
+  ProviderProbeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'marketingos-probe-${Environment}'
+      CodeUri: ./
+      Handler: step_handlers.probe
+      Timeout: 60
+      Environment:
+        Variables:
+          AI_BILLING: api
+          MODEL_KEYS_SSM_PREFIX: !Sub "/marketingos/${Environment}"
+      VpcConfig: !If
+        - HasVpcConfig
+        - SubnetIds: !Ref VpcSubnetIds
+          SecurityGroupIds: !Ref VpcSecurityGroupIds
+        - !Ref AWS::NoValue
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+        - Statement:
+            Effect: Allow
+            Action: ssm:GetParameter
+            Resource:
+              - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/marketingos/${Environment}/anthropic-api-key'
+              - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/marketingos/${Environment}/openai-api-key'
+
+  BackgroundFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'marketingos-background-${Environment}'
+      CodeUri: ./
+      Handler: step_handlers.background
+      Timeout: 900
+      MemorySize: !Ref JobMemorySize
+      Environment:
+        Variables:
+          AI_BILLING: api
+          JOB_HOST: "true"
+          MODEL_TIMEOUT_SECONDS: "180"
+          MODEL_KEYS_SSM_PREFIX: !Sub "/marketingos/${Environment}"
+      EventInvokeConfig:
+        MaximumRetryAttempts: 0
+        MaximumEventAgeInSeconds: 120
+        DestinationConfig:
+          OnFailure:
+            Type: Lambda
+            Destination: !GetAtt RecoveryFunction.Arn
+      VpcConfig: !If
+        - HasVpcConfig
+        - SubnetIds: !Ref VpcSubnetIds
+          SecurityGroupIds: !Ref VpcSecurityGroupIds
+        - !Ref AWS::NoValue
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaVPCAccessExecutionRole
+        - Statement:
+            Effect: Allow
+            Action: ssm:GetParameter
+            Resource:
+              - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/marketingos/${Environment}/anthropic-api-key'
+              - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/marketingos/${Environment}/openai-api-key'
+
+  RecoveryLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/marketingos-recover-${Environment}'
+      RetentionInDays: !Ref LogRetentionDays
+
+  ReconcileLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/marketingos-reconcile-${Environment}'
+      RetentionInDays: !Ref LogRetentionDays
+
+  ProviderProbeLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/marketingos-probe-${Environment}'
+      RetentionInDays: !Ref LogRetentionDays
+
+  BackgroundLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/marketingos-background-${Environment}'
+      RetentionInDays: !Ref LogRetentionDays
+
   ApiErrorAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:

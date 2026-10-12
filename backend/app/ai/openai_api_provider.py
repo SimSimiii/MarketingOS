@@ -57,6 +57,10 @@ class OpenAIAPIProvider(AIProvider):
         self._client: Any | None = None
 
     def _openai(self) -> Any:
+        from app.ai.api_credentials import provider_key
+        key = provider_key("openai-api-key", self._api_key)
+        if key != self._api_key:
+            self._api_key, self._client = key, None
         if self._client is not None:
             return self._client
         if not self._api_key:
@@ -76,7 +80,7 @@ class OpenAIAPIProvider(AIProvider):
             ) from exc
         # Retries off for the same reason as the Anthropic provider:
         # `ModelSession` owns resending.
-        self._client = AsyncOpenAI(api_key=self._api_key, max_retries=0, timeout=600.0)
+        self._client = AsyncOpenAI(api_key=self._api_key, max_retries=0, timeout=float(os.environ.get("MODEL_TIMEOUT_SECONDS", "600")))
         return self._client
 
     def available_tools(self, model: str | None = None) -> frozenset[ResearchTool]:

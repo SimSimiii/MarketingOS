@@ -440,7 +440,10 @@ def delete_user(session: Session, admin: AdminUser, user: User, ip: str | None) 
             "This account has a credit balance. Suspend it instead of deleting it.",
         )
     email = user.email
-    for model in (Brand, Campaign, KnowledgeDocument):
+    from app.models.background_job import BackgroundJob
+    if session.exec(select(BackgroundJob).where(BackgroundJob.owner_id == user.id, BackgroundJob.active)).first():
+        raise HTTPException(409, "Wait for this account's jobs to finish before deleting it.")
+    for model in (Brand, Campaign, KnowledgeDocument, BackgroundJob):
         for row in session.exec(select(model).where(col(model.owner_id) == user.id)):
             row.owner_id = None
             session.add(row)

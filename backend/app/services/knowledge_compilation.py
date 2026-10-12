@@ -130,3 +130,13 @@ async def _compile(
         job.say(str(exc))
     finally:
         job.finished_at = datetime.now(UTC)
+
+
+def all_jobs():
+    from app.orchestration import background_jobs
+    return list(background_jobs.latest("knowledge").values()) if background_jobs.enabled() else list(jobs.values())
+
+
+def job_for(brand_id):
+    from app.orchestration import background_jobs
+    return background_jobs.latest("knowledge", brand_id).get(brand_id) if background_jobs.enabled() else jobs.get(brand_id)

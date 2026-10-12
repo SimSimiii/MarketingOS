@@ -20,7 +20,8 @@ from app.schemas.brand import (
     BrandStyleUpdate,
     KnowledgeArtifactsRead,
 )
-from app.services.knowledge_compilation import CompilationStatus, jobs, start_compilation
+from app.services.knowledge_compilation import CompilationStatus, start_compilation
+from app.services.knowledge_compilation import job_for as compilation_job_for
 
 router = APIRouter(prefix="/brands", tags=["brands"])
 
@@ -31,7 +32,7 @@ def compilation_status(
 ) -> CompilationStatus:
     if BrandRepository(session, principal).get(brand_id) is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Brand not found")
-    return jobs.get(brand_id, CompilationStatus())
+    return compilation_job_for(brand_id) or CompilationStatus()
 
 
 @router.post("/{brand_id}/knowledge/compile", response_model=CompilationStatus, status_code=202)
@@ -206,13 +207,16 @@ def delete_brand(brand_id: UUID, session: SessionDep, principal: PrincipalDep) -
     from sqlalchemy.exc import IntegrityError
     from sqlmodel import SQLModel
 
-    from app.services.knowledge_compilation import jobs
     from app.services.market_service import all_jobs
 
-    if (brand_id in jobs and jobs[brand_id].state == "running") or any(
+    if (compilation_job_for(brand_id) is not None and compilation_job_for(brand_id).state == "running") or any(
         job.brand_id == brand_id and job.state == "running" for job in all_jobs()
     ):
         raise HTTPException(409, "Wait for this brand's jobs to finish before deleting it.")
+    from sqlalchemy import delete
+
+    from app.models.background_job import BackgroundJob
+    session.execute(delete(BackgroundJob).where(BackgroundJob.brand_id == brand_id, ~BackgroundJob.active))
     for table in SQLModel.metadata.tables.values():
         for foreign_key in table.foreign_keys:
             if foreign_key.target_fullname == "brand.id" and session.execute(select(foreign_key.parent).where(

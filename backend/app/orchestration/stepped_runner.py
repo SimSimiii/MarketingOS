@@ -147,6 +147,9 @@ def _admitted(session: Session, campaign: Campaign, *, resume: bool):
     """
     from app.runtime.work_limits import Reservation, current_work
 
+    if current_work.get() is not None:
+        yield current_work.get()
+        return
     permit = Reservation(session.get_bind(), campaign.owner_id, resume=resume)
     token = current_work.set(permit)
     try:
@@ -192,11 +195,12 @@ async def plan(session: Session, execution_id: UUID, ai_provider: AIProvider) ->
     result = CampaignRunResult(usage=pipeline.session_usage)
     contract = pipeline.read_contract(request)
     with _admitted(session, campaign, resume=False):
-        _, brief = await pipeline.plan(request, contract, result)
+        context, brief = await pipeline.plan(request, contract, result)
 
     state = session.exec(
         select(CampaignRunState).where(CampaignRunState.execution_id == execution_id)
     ).first() or CampaignRunState(execution_id=execution_id)
+    state.context_snapshot = dump_context(context)
     state.brief = brief.model_dump(mode="json")
     state.contract = contract.model_dump(mode="json")
     state.intelligence = (
@@ -246,7 +250,7 @@ async def craft(session: Session, execution_id: UUID, ai_provider: AIProvider) -
     position = state.next_position
 
     with _admitted(session, campaign, resume=True):
-        context = await pipeline.rebuild_context(request, result)
+        context = load_context(state.context_snapshot) if state.context_snapshot else await pipeline.rebuild_context(request, result)
         outcome = await pipeline.craft_position(
             request=request,
             brief=brief,
@@ -318,7 +322,7 @@ async def finish(session: Session, execution_id: UUID, ai_provider: AIProvider) 
         observer.on_report(result.report)
     else:
         with _admitted(session, campaign, resume=True):
-            context = await pipeline.rebuild_context(request, result)
+            context = load_context(state.context_snapshot) if state.context_snapshot else await pipeline.rebuild_context(request, result)
             result.artifacts = context.artifacts
             await pipeline.conclude(
                 request=request, contract=contract, brief=brief, context=context, result=result
@@ -349,3 +353,32 @@ def elapsed_budget(started: float, policy_seconds: int | None) -> float | None:
     if policy_seconds is None:
         return None
     return max(0.0, policy_seconds - (time.monotonic() - started))
+
+
+def dump_context(context):
+    from dataclasses import asdict
+    return {
+        "artifacts": context.artifacts.model_dump(mode="json"),
+        "documents": [asdict(document) for document in context.corpus.documents],
+        "positioning": context.positioning.model_dump(mode="json") if context.positioning else None,
+        "demand": context.demand.model_dump(mode="json") if context.demand else None,
+        "chosen": context.chosen,
+        "intelligence": context.intelligence.model_dump(mode="json") if context.intelligence else None,
+    }
+
+
+def load_context(data):
+    from app.knowledge.artifacts import KnowledgeArtifacts
+    from app.knowledge.corpus import Document, SourceCorpus
+    from app.market.demand import DemandMap
+    from app.market.positioning import PositioningMap
+    from app.marketing.intelligence import CampaignIntelligence
+    from app.marketing.pipeline import RunContext
+    return RunContext(
+        artifacts=KnowledgeArtifacts.model_validate(data["artifacts"]),
+        corpus=SourceCorpus.from_documents([Document(**item) for item in data["documents"]]),
+        positioning=PositioningMap.model_validate(data["positioning"]) if data["positioning"] else None,
+        demand=DemandMap.model_validate(data["demand"]) if data["demand"] else None,
+        chosen=data["chosen"],
+        intelligence=CampaignIntelligence.model_validate(data["intelligence"]) if data["intelligence"] else None,
+    )

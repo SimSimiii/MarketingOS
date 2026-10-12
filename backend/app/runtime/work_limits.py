@@ -92,6 +92,9 @@ class Reservation:
         self.started = True
         self.calls += 1
 
+    def record_usage(self, tokens):
+        self.tokens += tokens
+
     def finish(self):
         with _lock:
             if self.closed:
@@ -116,7 +119,12 @@ def admitted_job(function):
 
     @wraps(function)
     def wrapped(*args, **kwargs):
-        bound = signature.bind(*args, **kwargs).arguments
+        binding = signature.bind(*args, **kwargs)
+        binding.apply_defaults()
+        bound = binding.arguments
+        from app.orchestration import background_jobs
+        if background_jobs.enabled() and background_jobs.supports(function):
+            return background_jobs.enqueue(function, bound)
         engine = bound.get("engine") or bound["db"].get_bind()
         root = bound.get("brand") or bound.get("campaign")
         if root is None:
