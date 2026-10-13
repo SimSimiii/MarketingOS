@@ -402,8 +402,10 @@ _AXIS_WORDS: tuple[tuple[ClaimAxis, tuple[str, ...]], ...] = (
     # "Pro plan includes Teams & RBAC" is a coverage claim that happens to
     # mention a tier, and routing it here put twenty feature rows on the price
     # axis of a real business and buried the two claims that were about money.
+    # A trial *offer* belongs here; trial signup/conversion statistics do not.
     (ClaimAxis.PRICE, ("free", "price", "pricing", "costs", "cost ", "$", "€", "£",
-                       "per month", "per seat", "per user", "no card", "trial",
+                       "per month", "per seat", "per user", "no card",
+                       "day trial", "week trial", "month trial",
                        "credits on signup", "billing", "no seat fees", "hidden costs")),
     (ClaimAxis.CONTROL, ("open source", "open-source", "self-host", "self-hosted", "export",
                          "lock-in", "lock in", "on-premise", "on-prem", "portable", "byo")),

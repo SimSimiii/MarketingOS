@@ -5,10 +5,12 @@ rules rather than about a model's behaviour - which is the point of computing
 the map in code.
 """
 
+import pytest
+
 from app.knowledge.artifacts import KnowledgeArtifacts
 from app.knowledge.ledger import Evidence, EvidenceKind, EvidenceLedger
 from app.market.claims import Claim, ClaimAxis, ClaimSet, overlap, significant_words
-from app.market.positioning import Territory, build, claims_from_knowledge
+from app.market.positioning import Territory, axis_for_evidence, build, claims_from_knowledge
 from app.market.rivals import RivalProfile
 
 
@@ -205,6 +207,29 @@ def test_our_claims_come_from_the_ledger_without_a_second_model_call() -> None:
     # minutes is a speed claim, whatever it is filed as.
     assert axes["first API call in under 5 minutes"] is ClaimAxis.SPEED
     assert all(claim.verbatim for claim in ours.claims)
+
+
+@pytest.mark.parametrize("text", [
+    "Trial signups increased 84% from January to April 2026 among non-logged-in visitors",
+    "The visitor-to-trial conversion rate rose from 2.65% in January to 4.80% in April",
+])
+def test_trial_growth_is_not_a_pricing_claim(text: str) -> None:
+    entry = Evidence(id="E1", kind=EvidenceKind.FEATURE, claim=text, verbatim=text)
+    assert axis_for_evidence(entry) is ClaimAxis.OTHER
+
+
+@pytest.mark.parametrize("text", ["30-day trial", "2-week trial", "Free trial", "$9 per month"])
+def test_commercial_offers_still_compete_on_price(text: str) -> None:
+    entry = Evidence(id="E1", kind=EvidenceKind.FEATURE, claim=text, verbatim=text)
+    assert axis_for_evidence(entry) is ClaimAxis.PRICE
+
+
+def test_trial_customer_result_keeps_its_proof_classification() -> None:
+    entry = Evidence(
+        id="E1", kind=EvidenceKind.TESTIMONIAL,
+        claim="Trial signups increased 84%", verbatim="Trial signups increased 84%",
+    )
+    assert axis_for_evidence(entry) is ClaimAxis.PROOF
 
 
 def test_a_figure_makes_a_claim_specific_without_being_told() -> None:

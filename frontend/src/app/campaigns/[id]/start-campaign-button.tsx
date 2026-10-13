@@ -15,9 +15,11 @@ import type { CampaignGenerationAdvice } from "@/lib/types";
 export function StartCampaignButton({
   campaignId,
   advice,
+  hasActiveRun = false,
 }: {
   campaignId: string;
   advice: CampaignGenerationAdvice | null;
+  hasActiveRun?: boolean;
 }) {
   const launcher = useRunLauncher(campaignId, "start");
 
@@ -25,10 +27,12 @@ export function StartCampaignButton({
     <>
       <Button
         onClick={() => (advice?.override_required ? launcher.launch(true) : launcher.run())}
-        disabled={launcher.busy}
+        disabled={launcher.busy || hasActiveRun}
       >
         <Play aria-hidden="true" />
-        {launcher.busy
+        {hasActiveRun
+          ? "Campaign running"
+          : launcher.busy
           ? "Starting…"
           : advice?.override_required
             ? "Generate anyway"

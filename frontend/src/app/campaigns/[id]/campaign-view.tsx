@@ -92,7 +92,7 @@ export function CampaignDetailView() {
               }}
             />
           )}
-          <StartCampaignButton campaignId={campaign.id} advice={generationAdvice} />
+          <StartCampaignButton campaignId={campaign.id} advice={generationAdvice} hasActiveRun={Boolean(live)} />
         </>}
       />
 
