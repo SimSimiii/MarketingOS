@@ -32,6 +32,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
+from contextvars import copy_context
 from typing import Any
 from uuid import UUID
 
@@ -44,6 +45,13 @@ from app.orchestration import stepped_runner
 
 logging.getLogger("marketingos").setLevel(os.environ.get("LOG_LEVEL", "INFO"))
 logger = logging.getLogger("marketingos.step_handlers")
+_runner = asyncio.Runner()
+
+
+def _run_async(coroutine):
+    # Provider HTTP clients are cached in warm containers. Keep their loop
+    # alive, but copy the current invocation's permit/cancellation context.
+    return _runner.run(coroutine, context=copy_context())
 
 
 def _execution_id(event: dict[str, Any]) -> UUID:
@@ -100,7 +108,7 @@ def _run(step, event: dict[str, Any], context=None) -> dict[str, Any]:
         permit = DurablePermit(engine, execution_id, remaining)
         token = current_work.set(permit)
         try:
-            result = asyncio.run(step(session, execution_id, get_ai_provider()))
+            result = _run_async(step(session, execution_id, get_ai_provider()))
             session.refresh(state)
             state.inflight_step = None
             session.add(state)
@@ -199,5 +207,5 @@ def probe(event: dict[str, Any], context: Any = None) -> dict[str, Any]:
 
 def background(event: dict[str, Any], context: Any = None) -> dict[str, Any]:
     from app.orchestration.background_jobs import execute
-    asyncio.run(execute(engine, UUID(event["job_id"]), get_ai_provider(), context))
+    _run_async(execute(engine, UUID(event["job_id"]), get_ai_provider(), context))
     return {"job_id": event["job_id"]}

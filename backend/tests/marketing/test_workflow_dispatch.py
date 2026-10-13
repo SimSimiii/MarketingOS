@@ -15,6 +15,26 @@ from app.runtime.work_limits import WorkLimitError
 from tests.marketing.test_stepped_runner import _campaign, provider, session  # noqa: F401
 
 
+def test_warm_lambda_keeps_http_loop_but_uses_the_new_admission_context():
+    import asyncio
+    from contextvars import ContextVar
+    marker = ContextVar("invocation")
+
+    async def inspect():
+        return asyncio.get_running_loop(), marker.get()
+
+    token = marker.set("first")
+    try:
+        first_loop, first = step_handlers._run_async(inspect())
+        marker.set("second")
+        second_loop, second = step_handlers._run_async(inspect())
+        assert first_loop is second_loop
+        assert not first_loop.is_closed()
+        assert (first, second) == ("first", "second")
+    finally:
+        marker.reset(token)
+
+
 @pytest.fixture
 def workflow(session, provider, monkeypatch):  # noqa: F811
     fake = Mock()
