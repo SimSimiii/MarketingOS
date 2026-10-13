@@ -44,6 +44,31 @@ def test_duplicate_campaign_is_refused_across_processes(session, provider, workf
     assert fake.start_execution.call_count == 1
 
 
+def test_linkedin_campaign_completes_in_plan_and_replay_does_not_buy_again(session, provider, monkeypatch):  # noqa: F811
+    import json
+
+    from app.models.generated_asset import GeneratedAsset
+    from tests.api.test_linkedin_campaign import CHANNEL, DRAFT
+    monkeypatch.setenv("CAMPAIGN_WORKFLOW_ARN", "arn:aws:states:eu-west-3:123:stateMachine:campaign")
+    monkeypatch.setattr(dispatch, "client", Mock)
+    monkeypatch.setattr(step_handlers, "engine", session.get_bind())
+    monkeypatch.setattr(step_handlers, "get_ai_provider", lambda: provider)
+    campaign = _campaign(session)
+    campaign.channel = CHANNEL
+    campaign.request = "Write one LinkedIn message to Alice"
+    session.add(campaign)
+    session.commit()
+    provider.set_default("linkedin_writer", json.dumps({"body": DRAFT}))
+    run = dispatch.launch(campaign, provider, session.get_bind())
+    result = step_handlers.plan({"execution_id": str(run.id)})
+    step_handlers.plan({"execution_id": str(run.id)})
+    step_handlers.finish(result)
+    session.expire_all()
+    assert session.get(CampaignExecution, run.id).status == ExecutionStatus.COMPLETED
+    assert len(session.exec(select(GeneratedAsset)).all()) == 1
+    assert provider.calls_by_role["linkedin_writer"] == 1
+
+
 def test_actual_handlers_replay_same_position_without_spending_again(session, provider, workflow):  # noqa: F811
     from app.models.agent_execution import AgentExecution
     from app.models.execution_log import ExecutionLog

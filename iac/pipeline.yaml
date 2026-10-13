@@ -332,6 +332,20 @@ Resources:
                   - !Sub 'arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:marketingos-*'
                   - !Sub 'arn:aws:states:${AWS::Region}:${AWS::AccountId}:execution:marketingos-*'
 
+              - Sid: WorkflowRecoveryRules
+                Effect: Allow
+                Action:
+                  - events:DescribeRule
+                  - events:PutRule
+                  - events:DeleteRule
+                  - events:PutTargets
+                  - events:RemoveTargets
+                  - events:ListTargetsByRule
+                  - events:TagResource
+                  - events:UntagResource
+                  - events:ListTagsForResource
+                Resource: !Sub 'arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/marketingos-*'
+
               - Sid: DomainsAndEdge
                 Effect: Allow
                 # Alias records for the consoles, and the web ACL a Free-plan

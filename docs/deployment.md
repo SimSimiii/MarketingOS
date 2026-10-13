@@ -5,8 +5,8 @@
 > cancellation and failure recovery. Knowledge compilation, LinkedIn tools and market jobs use an
 > asynchronous Lambda with persisted status. Production uses metered API providers,
 > private Aurora, and the NAT egress stack in `iac/egress.yaml`.
-> Provider keys must be valid in SSM before real generation is usable. Campaign-channel LinkedIn generation and
-> synchronous model-based image ingestion are not migrated by the email workflow.
+> Provider keys must be valid in SSM before real generation is usable. LinkedIn campaigns finish in the planning Lambda.
+> Synchronous model-based image ingestion is not migrated by this workflow.
 > Credit billing is refused on distributed jobs until integrated.
 > Apply migrations through `d91c382aa410`; see [rollout evidence](deployments/2026-10-12.md).
 

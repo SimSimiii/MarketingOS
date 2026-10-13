@@ -200,9 +200,10 @@ async def test_a_craft_step_before_plan_is_refused(session, provider):
 
 
 @pytest.mark.asyncio
-async def test_a_linkedin_campaign_is_refused_by_the_stepped_path(session, provider):
-    """One call and one message - it fits in a single invocation and gains
-    nothing from a state machine."""
+async def test_a_linkedin_campaign_finishes_inside_the_plan_invocation(session, provider):
+    """The single message does not enter the email crafting loop."""
+    import json
+    provider.set_default("linkedin_writer", json.dumps({"body": "Hi Ada, how do you write release notes today?"}))
     campaign = _campaign(session)
     campaign.channel = {
         "kind": "connection",
@@ -215,9 +216,10 @@ async def test_a_linkedin_campaign_is_refused_by_the_stepped_path(session, provi
     orchestrator = CampaignOrchestrator(session, provider)
     execution = orchestrator.create_execution(campaign)
 
-    with pytest.raises(stepped_runner.SteppedRunError) as caught:
-        await stepped_runner.plan(session, execution.id, provider)
-    assert "single process" in str(caught.value)
+    result = await stepped_runner.plan(session, execution.id, provider)
+    assert not result.more
+    assert session.get(type(execution), execution.id).completed_at is not None
+    assert provider.calls_by_role["linkedin_writer"] == 1
 
 
 @pytest.mark.asyncio

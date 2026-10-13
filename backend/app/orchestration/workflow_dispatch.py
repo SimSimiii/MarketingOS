@@ -54,8 +54,6 @@ def admission_lock(engine):
 def launch(campaign, ai_provider, engine, **kwargs):
     from app.services.campaign_service import CampaignAlreadyRunningError
 
-    if campaign.channel:
-        raise WorkLimitError("The distributed workflow currently accepts email campaigns only.", 422)
     settings = get_settings()
     if settings.credit_billing_enabled:
         raise WorkLimitError("Credit billing is not enabled for distributed jobs.", 503)

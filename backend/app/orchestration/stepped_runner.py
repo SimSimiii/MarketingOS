@@ -184,13 +184,16 @@ async def plan(session: Session, execution_id: UUID, ai_provider: AIProvider) ->
             status=(execution.result or {}).get("run_status", "running"),
             detail="Reusing the saved plan",
         )
-    pipeline, request, _ = build_stepped_pipeline(session, campaign, execution, ai_provider)
+    pipeline, request, observer = build_stepped_pipeline(session, campaign, execution, ai_provider)
 
     if request.channel is not None:
-        raise SteppedRunError(
-            "The LinkedIn channel is one call and one message; run it in a single "
-            "process rather than a state machine."
-        )
+        from app.orchestration.campaign_orchestrator import persist_stepped_result
+        # One message fits in the planning invocation. DurablePermit still
+        # enforces cancellation, quota and the remaining Lambda time budget.
+        with _admitted(session, campaign, resume=False):
+            result = await pipeline.run(request)
+        persist_stepped_result(session, campaign, execution, result, observer, ai_provider)
+        return StepResult(str(execution_id), 1, 1, False, result.status)
 
     result = CampaignRunResult(usage=pipeline.session_usage)
     contract = pipeline.read_contract(request)

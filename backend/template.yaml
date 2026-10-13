@@ -12,7 +12,7 @@ Description: MarketingOS - platform API (Lambda + HTTP API Gateway)
 #  then Finish. Market and knowledge jobs run in a separate async Lambda.
 #  Durable database admission and recovery protect against duplicate delivery.
 #  Job functions read metered API credentials from SSM at invocation time.
-#  LinkedIn tools use the background Lambda; campaign-channel LinkedIn is separate.
+#  LinkedIn tools use the background Lambda; LinkedIn campaigns finish in Plan.
 #
 #  Secrets are CloudFormation parameters with NoEcho, fed from CodeBuild
 #  environment variables through envsubst (see samconfig.yaml). Nothing secret
