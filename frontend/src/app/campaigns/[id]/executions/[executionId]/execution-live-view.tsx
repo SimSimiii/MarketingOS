@@ -142,6 +142,9 @@ export function ExecutionLiveView({
 }) {
   const router = useRouter();
   const [assets, setAssets] = useState<GeneratedAsset[]>(initialAssets);
+  const [finalSnapshot, setFinalSnapshot] = useState<
+    Awaited<ReturnType<typeof api.getExecutionResult>> | null
+  >(null);
   const [errorMessage, setErrorMessage] = useState(initialErrorMessage);
   const [cancelling, setCancelling] = useState(false);
   const confirmStop = useConfirm();
@@ -153,7 +156,8 @@ export function ExecutionLiveView({
 
   const status = run.finalStatus ?? initialStatus;
   const isLive = !TERMINAL.includes(status);
-  const report = reportFromResult(initialResult);
+  const currentFinal = finalSnapshot?.id === executionId ? finalSnapshot : null;
+  const report = reportFromResult(currentFinal?.result ?? initialResult);
   const questions = report?.questions ?? [];
 
   // Deliverables land mid-run: refetch whenever another email is accepted, and
@@ -172,6 +176,7 @@ export function ExecutionLiveView({
     api
       .getExecutionResult(executionId)
       .then((result) => {
+        setFinalSnapshot(result);
         setAssets(result.assets);
         setErrorMessage(result.error_message);
       })
@@ -193,7 +198,7 @@ export function ExecutionLiveView({
   }
 
   const elapsedMs = startedAt
-    ? (isLive ? now : new Date(completedAt ?? startedAt).getTime()) - new Date(startedAt).getTime()
+    ? (isLive ? now : new Date(currentFinal?.completed_at ?? completedAt ?? startedAt).getTime()) - new Date(startedAt).getTime()
     : 0;
 
   const verdictsBelow = report ? belowFloor(report) : [];
@@ -294,6 +299,7 @@ export function ExecutionLiveView({
             setNow(Date.now());
             try {
               const result = await api.getExecutionResult(executionId);
+              setFinalSnapshot(result);
               setAssets(result.assets);
               setErrorMessage(result.error_message);
             } catch (error) { toast.error(error instanceof Error ? error.message : "Could not refresh results"); }
