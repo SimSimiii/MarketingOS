@@ -111,6 +111,12 @@ specific repair needs these tools. Otherwise, dissatisfaction with the value arg
 Do not diagnose `missing_material` merely because the reader wants a complete purchasing
 decision before opening a product page. Never invent the comparison or repair claim.
 
+The same distinction applies to invitations to test an application. A reader wishing to know
+the hands-on setup time does not make a measured duration necessary when the draft promises
+no duration, ease or time saving. Explain the supported test steps and the question the test
+answers; diagnose an unconvincing explanation as `copy` or `argument`. Require timing evidence
+when the actual promise depends on a timing claim, not merely to satisfy a reader preference.
+
 **Check the brief itself.** The brief is a plan, not evidence. Compare its central promise
 with the supplied evidence, including scope and conditions. If the draft faithfully repeats an
 unsupported promise, diagnose that overclaim and ask for a supported benefit or concrete test.
@@ -201,6 +207,14 @@ Check the ask and promised payoff against that page, not just the fact's source.
 A button to a product page must not promise to open a separate guide or claim form.
 If the same supported proposition can use the actual page, diagnose copy; if its
 payoff needs a different destination, diagnose argument. Do not invent page contents.
+
+For an existing user's authenticated application, the login page is a gateway to the supplied
+capabilities, not a claim that the login page itself displays their results. Check the promised
+capability against evidence. Do not assume that the recipient has completed a run: if the ask
+presumes a ready result, diagnose `copy` and require conditional wording or the supported
+creation steps before review. Missing evidence of this recipient's account state does not
+require researching public sources. Still diagnose `missing_material` when the promised
+review capability itself is unsupported; do not invent a report, interface or completed run.
 
 # The evidence that exists
 

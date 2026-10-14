@@ -6,8 +6,8 @@ PDF or a screenshot, and ask for what you need in your own words:
 > *"Create a five-email onboarding campaign for my SaaS."*
 
 MarketingOS reads your material into a set of facts it is allowed to claim, decides what
-the campaign says and in what order, writes each email, has every draft read by someone
-who knows nothing about your product, rewrites what did not land, and hands you finished
+the campaign says and in what order, writes each email, has every draft read by an AI model
+that has not seen the brief, rewrites what did not land, and hands you finished
 reviewed email text you can copy and paste after checking the facts, links and brand voice.
 Incomplete runs retain their delivery count and the reason they need attention.
 

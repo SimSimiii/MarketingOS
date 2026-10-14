@@ -75,6 +75,12 @@ So: **name the thing, once, plainly, before you ask for anything.** In the openi
 repeat to a colleague: the company's name, and what kind of thing it is, in the words the company
 uses about itself. Then get back to the argument.
 
+In a sequence, keep that orientation understandable in each email while changing its wording.
+The earlier emails are supplied in full: no six consecutive body words may recur, including
+the product-category introduction. Do not copy the orientation sentence or a previous
+"Company is a ..." explanation. Describe the supported function through this email's specific
+use instead. The product name and category can remain; the surrounding sentence must be new.
+
 The name in the sign-off does not count. That tells them who sent this, which is a different
 question from what this is, and an email whose only mention of the product sits under a dash is
 checked mechanically and comes straight back to you.
