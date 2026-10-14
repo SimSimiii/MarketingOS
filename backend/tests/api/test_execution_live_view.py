@@ -11,6 +11,18 @@ from fastapi.testclient import TestClient
 from tests.api.conftest import run_campaign
 
 
+def test_finished_assets_preserve_the_action_link_in_text_and_html(client: TestClient):
+    url = "https://example.com/product?source=email&offer=kit"
+    execution_id = run_campaign(client, cta_url=url)
+    response = client.get(f"/api/executions/{execution_id}/assets")
+    assert response.status_code == 200, response.text
+    assets = response.json()
+    assert assets
+    for asset in assets:
+        assert url in asset["content"]
+        assert url.replace("&", "&amp;") in asset["content_html"]
+
+
 def test_every_step_of_the_run_is_readable_afterwards(client: TestClient):
     execution_id = run_campaign(client)
 

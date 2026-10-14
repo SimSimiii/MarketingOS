@@ -28,7 +28,7 @@ from app.marketing.briefs import CampaignBrief
 from app.marketing.cancellation import CancellationToken
 from app.marketing.craft import EmailVersion
 from app.marketing.critic import Critique
-from app.marketing.email_copy import Email, render_email
+from app.marketing.email_copy import Email
 from app.marketing.gates import GateReport
 from app.marketing.intelligence import (
     CampaignIntelligenceBundle,
@@ -51,6 +51,7 @@ from app.marketing.render_html import (
     EmailTier,
     render_html,
     style_for_action,
+    text_alternative,
 )
 from app.marketing.report import CampaignReport
 from app.marketing.request import CampaignRequest
@@ -967,22 +968,23 @@ class CampaignOrchestrator:
             if agent_execution_id is None:
                 logger.warning("no agent execution row to attach email %d to", email.position)
                 continue
+            style = style_for_action(
+                brand, explicit_url=campaign.cta_url,
+                planned_action=outcome.selected_brief.call_to_action,
+                offer=result.artifacts.offer if result.artifacts else None,
+                licensed_urls=(
+                    [entry.source for entry in result.artifacts.evidence.entries]
+                    if result.artifacts else []
+                ),
+            )
             self._generated_assets.create(
                 GeneratedAsset(
                     campaign_execution_id=execution.id,
                     agent_execution_id=agent_execution_id,
                     asset_type=AssetType.EMAIL,
                     title=email.subject,
-                    content=render_email(email),
-                    content_html=_html_or_none(email, tier, style_for_action(
-                        brand, explicit_url=campaign.cta_url,
-                        planned_action=outcome.selected_brief.call_to_action,
-                        offer=result.artifacts.offer if result.artifacts else None,
-                        licensed_urls=(
-                            [entry.source for entry in result.artifacts.evidence.entries]
-                            if result.artifacts else []
-                        ),
-                    )),
+                    content=text_alternative(email, style),
+                    content_html=_html_or_none(email, tier, style),
                     position=email.position,
                     asset_metadata={
                         **email.model_dump(mode="json"),

@@ -472,7 +472,7 @@ def structural_issues(email: Email) -> list[str]:
     return issues
 
 
-def render_email(email: Email, *, include_eyebrow: bool = False) -> str:
+def render_email(email: Email, *, include_eyebrow: bool = False, cta_url: str = "") -> str:
     """The deliverable: what the user pastes into their email tool and sends.
 
     The subject and preview are labelled at the top because they go in their
@@ -503,7 +503,7 @@ def render_email(email: Email, *, include_eyebrow: bool = False) -> str:
         "",
         strip_markup(email.body).strip(),
         "",
-        f"{strip_markup(email.call_to_action)} →",
+        f"{strip_markup(email.call_to_action)} → {cta_url}".rstrip(),
         "",
         strip_markup(email.sign_off),
     ]

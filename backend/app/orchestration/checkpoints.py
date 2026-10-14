@@ -5,8 +5,10 @@ from uuid import UUID
 
 from sqlmodel import Session, select
 
-from app.marketing.email_copy import Email, render_email
+from app.marketing.email_copy import Email
+from app.marketing.render_html import BrandStyle, text_alternative
 from app.models.agent_execution import AgentExecution
+from app.models.campaign import Campaign
 from app.models.campaign_execution import CampaignExecution
 from app.models.enums import AssetType
 from app.models.generated_asset import GeneratedAsset
@@ -25,6 +27,10 @@ def recover_accepted_emails(session: Session, execution: CampaignExecution) -> i
         GeneratedAsset.campaign_execution_id == execution.id
     )).all()
     existing_positions = {asset.position for asset in assets}
+    campaign = session.get(Campaign, execution.campaign_id)
+    # A recovered checkpoint has no final brief. Preserve only the user's
+    # explicit destination rather than guessing the strategy's selected URL.
+    style = BrandStyle(cta_url=(campaign.cta_url or "") if campaign else "")
     recovered = 0
     checkpoints = (execution.result or {}).get("accepted_checkpoints", {})
     if not isinstance(checkpoints, dict):
@@ -43,7 +49,7 @@ def recover_accepted_emails(session: Session, execution: CampaignExecution) -> i
                 agent_execution_id=agent.id,
                 asset_type=AssetType.EMAIL,
                 title=email.subject,
-                content=render_email(email),
+                content=text_alternative(email, style),
                 position=email.position,
                 asset_metadata={
                     **email.model_dump(mode="json"),

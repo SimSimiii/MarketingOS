@@ -400,7 +400,7 @@ async def test_accepted_emails_survive_a_failure_before_sequence_review(session,
         raise ProcessStopped("Process terminated")
 
     monkeypatch.setattr(EmailCampaignPipeline, "_phase_sequence", stop)
-    campaign = make_campaign(session)
+    campaign = make_campaign(session, cta_url="https://example.com/product")
     orchestrator = CampaignOrchestrator(session, provider)
     if failure == "exception":
         execution = await orchestrator.run(campaign)
@@ -420,6 +420,7 @@ async def test_accepted_emails_survive_a_failure_before_sequence_review(session,
     assert {asset.position for asset in assets} == {1, 2, 3}
     assert all(asset.asset_metadata["sequence_review_pending"] for asset in assets)
     assert all(asset.content.startswith("Subject:") for asset in assets)
+    assert all("https://example.com/product" in asset.content for asset in assets)
 
 
 @pytest.mark.asyncio

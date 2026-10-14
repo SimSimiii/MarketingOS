@@ -293,16 +293,17 @@ def render_html(
     )
 
 
-def text_alternative(email: Email) -> str:
+def text_alternative(email: Email, style: BrandStyle | None = None) -> str:
     """The plain-text part that travels beside the HTML.
 
     Every HTML email should carry one: some clients prefer it, some readers
     force it, and a message with no text part scores worse with spam filters
-    than one with. `render_email` already produces exactly this.
+    than one with. The CTA destination must survive copying the text too.
     """
     from app.marketing.email_copy import render_email
 
-    return render_email(email)
+    url = html.unescape(_safe_url(style.cta_url)) if style is not None else ""
+    return render_email(email, cta_url=url)
 
 
 # ------------------------------------------------------------------ internals

@@ -293,3 +293,18 @@ def test_the_html_says_nothing_the_text_does_not():
     for sentence in ("The work shipped Tuesday", "Point it at a branch"):
         assert sentence in stripped
         assert sentence in text_alternative(email)
+
+
+def test_text_export_keeps_the_html_action_destination_without_html_escaping():
+    url = "https://example.com/product?source=email&offer=kit"
+    email = _email()
+    style = BrandStyle(cta_url=url)
+    text = text_alternative(email, style)
+    assert f"Point it at a branch → {url}" in text
+    assert "&amp;" not in text
+    assert url.replace("&", "&amp;") in render_html(email, EmailTier.PLAIN, style)
+
+
+@pytest.mark.parametrize("url", ["javascript:alert(1)", "https://example.com/a\nb", ""])
+def test_text_export_does_not_add_an_invalid_or_missing_destination(url):
+    assert text_alternative(_email(), BrandStyle(cta_url=url)) == text_alternative(_email())
