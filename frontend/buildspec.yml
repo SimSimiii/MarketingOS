@@ -35,13 +35,12 @@ phases:
             echo "ERROR - $VAR is not set on this CodeBuild project." && exit 1
           fi
         done
-      # The client calls `${NEXT_PUBLIC_API_URL}/brands`, so a URL that does
-      # not end in /api produces a bundle whose every request 404s.
+      # Session cookies belong to the console origin. Calling API Gateway
+      # directly makes login return 200 without storing the console cookies.
       - |
-        case "$NEXT_PUBLIC_API_URL" in
-          */api) : ;;
-          *) echo "ERROR - NEXT_PUBLIC_API_URL must end with /api." && exit 1 ;;
-        esac
+        if [ "$NEXT_PUBLIC_API_URL" != "/api" ]; then
+          echo "ERROR - NEXT_PUBLIC_API_URL must be /api for same-origin session cookies." && exit 1
+        fi
       - cd $CODEBUILD_SRC_DIR/frontend
       - npm ci
       # Typecheck and lint before the build: a type error should fail in
