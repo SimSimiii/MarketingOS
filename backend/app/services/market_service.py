@@ -596,7 +596,7 @@ class MarketService:
         self._require_idle(brand.id)
         self._require_knowledge(brand.id)
         if discover:
-            _require_web(provider)
+            _require_web(provider, "rival_scout")
         status = JobStatus(kind="scan", brand_id=brand.id, brand_name=brand.name)
         status.say("Starting")
         _jobs[brand.id] = status
@@ -609,7 +609,7 @@ class MarketService:
     ) -> JobStatus:
         self._require_idle(brand.id)
         self._require_knowledge(brand.id)
-        _require_web(provider)
+        _require_web(provider, "proof_hunter")
         status = JobStatus(kind="proof", brand_id=brand.id, brand_name=brand.name)
         status.say("Searching for anyone who has vouched for this company")
         _jobs[brand.id] = status
@@ -622,7 +622,7 @@ class MarketService:
     ) -> JobStatus:
         self._require_idle(brand.id)
         self._require_knowledge(brand.id)
-        _require_web(provider)
+        _require_web(provider, "audience_cartographer")
         status = JobStatus(kind="audience", brand_id=brand.id, brand_name=brand.name)
         status.say("Working out who would actually buy this")
         _jobs[brand.id] = status
@@ -668,7 +668,7 @@ class MarketService:
                 f"'{found.name}' is not researchable, so no prospect search was started. "
                 + " ".join(admission.reasons)
             )
-        _require_web(provider)
+        _require_web(provider, "prospect_finder")
         status = JobStatus(kind="prospects", brand_id=brand.id, brand_name=brand.name)
         status.say(f"Looking for organisations that match {found.name}")
         _jobs[brand.id] = status
@@ -709,7 +709,7 @@ class MarketService:
                 f"'{found.name}' did not pass audience research admission. "
                 + " ".join(admission.reasons)
             )
-        _require_search(provider)
+        _require_search(provider, "audience_researcher")
         status = JobStatus(
             kind="audience_research", brand_id=brand.id, brand_name=brand.name
         )
@@ -890,17 +890,18 @@ def _missing_relevance_prerequisites(
     return missing
 
 
-def _require_web(provider: AIProvider) -> None:
+def _require_web(provider: AIProvider, role_id: str) -> None:
     """Refuse before spending anything, rather than after answering wrongly.
 
     See `CapabilityUnavailableError`: a scan without web access does not fail,
     it returns competitors the model remembered, and nothing downstream can
     tell that from a real scan.
     """
+    model = ModelRouter().resolve(role_id, ROLE_CATALOG[role_id].tier)
     missing = [
         tool
         for tool in (ResearchTool.WEB_SEARCH, ResearchTool.WEB_FETCH)
-        if tool not in provider.available_tools()
+        if tool not in provider.available_tools(model)
     ]
     if missing:
         raise MarketError(
@@ -909,8 +910,9 @@ def _require_web(provider: AIProvider) -> None:
         )
 
 
-def _require_search(provider: AIProvider) -> None:
-    if ResearchTool.WEB_SEARCH not in provider.available_tools():
+def _require_search(provider: AIProvider, role_id: str) -> None:
+    model = ModelRouter().resolve(role_id, ROLE_CATALOG[role_id].tier)
+    if ResearchTool.WEB_SEARCH not in provider.available_tools(model):
         raise MarketError(
             "The configured AI provider cannot search the web, so audience research "
             "cannot locate sources."
