@@ -51,6 +51,7 @@ from app.market.demand import (
     ProspectStatus,
     audience_fingerprint,
 )
+from app.market.positioning import rebuild
 from app.market.proof import ProofCandidate, ProofKind, ProofStatus, next_evidence_id
 from app.market.qualification import CompanyQualification
 from app.market.radar import MarketSnapshot, RadarEvent, RadarSeverity
@@ -151,7 +152,11 @@ class MarketStore:
 
     def latest_scan(self, brand_id: UUID) -> MarketSnapshot | None:
         row = self._latest_scan_row(brand_id)
-        return MarketSnapshot.model_validate(row.payload) if row and row.payload else None
+        if not row or not row.payload:
+            return None
+        snapshot = MarketSnapshot.model_validate(row.payload)
+        snapshot.positioning = rebuild(snapshot.positioning, snapshot.rivals)
+        return snapshot
 
     def latest_scan_row(self, brand_id: UUID) -> MarketScan | None:
         """The persisted identity/version behind :meth:`latest_scan`."""

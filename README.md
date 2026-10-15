@@ -12,8 +12,9 @@ reviewed email text you can copy and paste after checking the facts, links and b
 Incomplete runs retain their delivery count and the reason they need attention.
 
 It also reads the market you are being compared in — who the buyer is really deciding
-between, what each of them promises, which of your claims are yours alone and which make you
-invisible, and whether anybody on the open web has ever vouched for you. That half is not a
+between, what each of them promises, which captured claims are shared and which differences
+need checking, and whether anybody on the open web has vouched for you. A missing claim is
+not proof that a competitor lacks a capability. That half is not a
 side feature: copy can be true, well-shaped and grounded in your own material and still be
 interchangeable with everybody else's, and nothing a company publishes about itself can tell
 it which of its claims the whole category is also making.

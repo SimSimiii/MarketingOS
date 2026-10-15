@@ -19,8 +19,8 @@ const TERRITORY: Record<
   { label: string; advice: string; tone: string; accent: string }
 > = {
   open: {
-    label: "Yours alone",
-    advice: "Lead an email here. A claim nobody else makes beats a stronger claim everybody makes.",
+    label: "Potential differences",
+    advice: "Verify these before using them. Captured claims do not establish exclusivity.",
     tone: "border-emerald-500/40 bg-emerald-500/5",
     accent: "text-emerald-400",
   },
@@ -33,13 +33,13 @@ const TERRITORY: Record<
   table_stakes: {
     label: "Table stakes",
     advice:
-      "True, and worth nothing as an argument. An email leading on one of these is an email they have already had.",
+      "Common among the profiles read. Explain a supported detail rather than claiming uniqueness.",
     tone: "border-amber-500/30 bg-amber-500/5",
     accent: "text-amber-400",
   },
   exposed: {
-    label: "Where they are ahead",
-    advice: "Do not raise these — an email that invites this comparison loses it.",
+    label: "Claims to investigate",
+    advice: "Their material supports these; ours does not yet. Avoid unsupported comparisons.",
     tone: "border-rose-500/30 bg-rose-500/5",
     accent: "text-rose-400",
   },
@@ -73,7 +73,7 @@ function ClaimLine({ claim }: { claim: Claim }) {
           "mt-1.5 size-1.5 shrink-0 rounded-full",
           claim.specific ? "bg-foreground/60" : "bg-foreground/20",
         )}
-        title={claim.specific ? "carries a checkable figure" : "an assertion, no figure"}
+        title={claim.specific ? "carries a checkable detail" : "a broad assertion"}
       />
       <span className="text-muted-foreground">{claim.text}</span>
     </li>
@@ -97,7 +97,7 @@ function AxisCard({ reading }: { reading: AxisReading }) {
           <p className="text-sm font-medium">{axisLabel(reading.axis)}</p>
           <p className="text-xs text-muted-foreground">
             {rivals.length === 0
-              ? "nobody else claims it"
+              ? "no competing claim captured"
               : `${rivals.length} competitor${rivals.length === 1 ? "" : "s"} claim${
                   rivals.length === 1 ? "s" : ""
                 } it too`}
@@ -105,7 +105,7 @@ function AxisCard({ reading }: { reading: AxisReading }) {
         </div>
         {reading.only_specific && (
           <Badge variant="outline" className={cn("shrink-0", territory.accent)}>
-            only one with a number
+            only captured specific claim
           </Badge>
         )}
       </button>
@@ -199,10 +199,10 @@ export function positioningSentence(positioning: Positioning): string {
     .filter((reading) => reading.territory === "open")
     .map((reading) => (reading.axis === "other" ? "claims outside the usual categories" : axisLabel(reading.axis).toLowerCase()));
   const ground = open.length > 0
-    ? `Ground only you claim: ${open.length === 1 ? open[0] : `${open.slice(0, -1).join(", ")} and ${open[open.length - 1]}`}.`
-    : "Nothing you claim is yours alone yet.";
+    ? `Potential differences to verify: ${open.length === 1 ? open[0] : `${open.slice(0, -1).join(", ")} and ${open[open.length - 1]}`}.`
+    : "No potential open ground identified in the captured claims.";
   const proof = positioning.proof_deficit
-    ? ` ${positioning.rivals_with_proof} of them name a customer; you name none.`
+    ? ` ${positioning.rivals_with_proof} show customer proof; none was captured in your material.`
     : "";
   return `Read ${n} competitor${n === 1 ? "" : "s"}. ${ground}${proof}`;
 }
@@ -213,19 +213,21 @@ export function PositioningMap({ positioning }: { positioning: Positioning }) {
 
   return (
     <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">
+        This compares claims captured from the pages we could read. Unread pages and missed
+        claims remain unknown. A missing claim does not prove that a competitor lacks a feature.
+      </p>
       {positioning.proof_deficit && (
         <Card className="ring-amber-500/40">
           <CardHeader>
             <CardTitle className="text-base">
               {positioning.rivals_with_proof} of {positioning.rivals_profiled} competitors name a
-              customer. You name none.
+              customer. No matching proof was captured in your material.
             </CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            A reader comparing you is not comparing two sets of claims — they are comparing a
-            claim to a claim with somebody&rsquo;s name under it. Three customer names and one
-            sentence each is an afternoon&rsquo;s work, and it is the largest single gap between
-            your copy and theirs.
+            Review the customer evidence they publish. If you have relevant, authorised customer
+            quotes or results, add their sources. Do not invent proof to fill this gap.
           </CardContent>
         </Card>
       )}

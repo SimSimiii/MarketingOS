@@ -1,4 +1,4 @@
-"""The positioning map: what we can say that nobody else can.
+"""The positioning map: differences among captured, verified claims.
 
 This is the artifact the whole package exists to produce, and it is computed
 in code from claims that were extracted and quote-checked elsewhere. No model
@@ -10,8 +10,8 @@ The map sorts every axis of competition into four territories, and the
 distinction between them is the only strategic input a copywriter actually
 needs:
 
-- **Open ground** - nobody else claims this. This is where an email should
-  lead, and it is usually not the claim the company is proudest of.
+- **Open ground** - no equivalent was captured, or ours is more specific.
+  This is a difference to investigate, not proof of an exclusive capability.
 - **Contested** - a few others claim it. Usable, but it has to be argued
   rather than asserted, because the reader has heard it.
 - **Table stakes** - everybody claims it, us included. These sentences are not
@@ -29,12 +29,14 @@ around it. So specificity is scored, not just presence, and an axis where we
 are alone in carrying a figure comes back as open ground.
 """
 
+import re
 from collections import Counter
 from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
 from app.knowledge.artifacts import KnowledgeArtifacts
+from app.knowledge.corpus import fold
 from app.knowledge.ledger import Evidence, value_of
 from app.market.claims import Claim, ClaimAxis, ClaimSet, overlap, significant_words
 from app.market.rivals import RivalProfile
@@ -82,10 +84,10 @@ class AxisReading(BaseModel):
         crowd = (
             f" ({self.rivals_claiming} competitor(s) also claim it)"
             if self.rivals_claiming
-            else " (nobody else claims it)"
+            else " (no competing claim captured on the pages read)"
         )
         specific = (
-            " We are the only one here carrying a number a reader can check."
+            " Only our captured claims are marked specific on this axis."
             if self.only_specific
             else ""
         )
@@ -93,7 +95,7 @@ class AxisReading(BaseModel):
 
 
 _EXPOSED_ADVICE = (
-    "Do not invite the comparison: an email that raises this axis loses on it."
+    "Our captured material does not support a matching promise; avoid unsupported comparisons."
 )
 
 
@@ -149,7 +151,7 @@ class PositioningMap(BaseModel):
         open_axes = ", ".join(str(reading.axis) for reading in self.open_ground)
         return (
             f"{self.rivals_profiled} competitor(s) read - "
-            + (f"open ground on {open_axes}" if open_axes else "no open ground found")
+            + (f"potential open ground on {open_axes}" if open_axes else "no open ground found")
             + (
                 f"; {self.rivals_with_proof} of them show a named customer and we show none"
                 if self.proof_deficit
@@ -173,13 +175,20 @@ class PositioningMap(BaseModel):
                 "to be interchangeable."
             )
 
-        blocks: list[str] = [self.summary() + "."]
+        blocks: list[str] = [
+            self.summary() + ".",
+            (
+                "This map compares captured claims from the pages read, not complete product "
+                "capabilities. Unread pages and extraction omissions remain unknown. Open ground "
+                "is a hypothesis to verify, never proof of exclusivity or of a rival's inability."
+            ),
+        ]
 
         if open_ground := self.open_ground:
             blocks.append(
-                "\n**Open ground - lead here.** Nothing else in this list differentiates "
-                "this company, and a claim nobody else makes is worth more than a stronger "
-                "claim everybody makes:\n"
+                "\n**Potential open ground - verify before using.** These captured claims "
+                "have no captured equivalent, or carry a more specific figure. Explain the "
+                "supported benefit without claiming that competitors cannot provide it:\n"
                 + "\n".join(reading.render() for reading in open_ground)
             )
         elif not self.readings:
@@ -187,11 +196,9 @@ class PositioningMap(BaseModel):
             # a field that sells on logos and adjectives. Silence here is a
             # finding, and it is not the same as not having looked.
             blocks.append(
-                "\n**Nobody in this field makes a checkable claim.** Their pages were read "
-                "and none of them carried a figure, a limit or a named result worth "
-                "comparing. That is open ground of a different kind: in a category that "
-                "argues entirely in adjectives, one email with a number in it is the only "
-                "one the reader can check."
+                "\n**No comparable claims were captured.** The profiles may be incomplete. "
+                "Do not infer that competitors lack specific claims or capabilities. "
+                "Prefer a supported detail the reader can inspect in our own material."
             )
         else:
             blocks.append(
@@ -210,9 +217,8 @@ class PositioningMap(BaseModel):
 
         if stakes := self.of(Territory.TABLE_STAKES):
             blocks.append(
-                "\n**Table stakes - true, and worth nothing as an argument.** Every "
-                "competitor says these. An email that leads on one of them is an email the "
-                "reader has already received:\n"
+                "\n**Common among the profiles read.** Several competitors claim these. "
+                "Use supported specifics rather than presenting the broad claim as unique:\n"
                 + "\n".join(reading.render() for reading in stakes)
             )
 
@@ -229,8 +235,8 @@ class PositioningMap(BaseModel):
                 "quotation on their own site, and this company displays none. A reader "
                 "comparing them is not comparing two sets of claims - they are comparing a "
                 "claim to a claim with somebody's name under it. Plan an email that does not "
-                "need to be believed on trust: something they can check, or test, in a "
-                "minute."
+                "need to be believed on trust: something they can inspect or test. "
+                "Do not invent a duration for that test."
             )
 
         if self.crowd_words:
@@ -264,11 +270,11 @@ def build(
     readings: list[AxisReading] = []
 
     for axis in ClaimAxis:
-        mine = ours.on(axis)
+        mine = _claims_on(ours, axis)
         theirs = {
             rival.name: claims
             for rival in profiled
-            if (claims := rival.claims.on(axis))
+            if (claims := _claims_on(rival.claims, axis))
         }
         if not mine and not theirs:
             continue
@@ -345,6 +351,8 @@ def claims_from_knowledge(artifacts: KnowledgeArtifacts) -> ClaimSet:
     ranked = sorted(artifacts.evidence.entries, key=lambda entry: -value_of(entry).score)
     claims: list[Claim] = []
     for entry in ranked:
+        if _is_limitation(f"{entry.claim} {entry.verbatim}"):
+            continue
         claim = Claim(
             text=entry.claim,
             verbatim=entry.verbatim,
@@ -367,6 +375,81 @@ def claims_from_knowledge(artifacts: KnowledgeArtifacts) -> ClaimSet:
         if len(claims) >= MAX_OUR_CLAIMS:
             break
     return ClaimSet(claims=claims)
+
+
+# Limits and missing evidence belong in the knowledge gaps, not in a list of
+# positive competitive promises. Keep this narrow: "no monthly fees" and
+# "no data leaves your VPC" are supported benefits, not missing capabilities.
+_LIMITATION = re.compile(
+    r"\b(?:does not|do not|cannot|can't|doesn't) guarantee\b"
+    r"|\b(?:does not|do not|cannot|can't|doesn't)\b[^.!?;\n]{0,100}"
+    r"\b(?:or|nor) guarantee\b"
+    r"|\b(?:cannot|can't) export\b"
+    r"|\b(?:does not|do not|doesn't) (?:support|allow) exports?\b"
+    r"|\b(?:quality|performance|results)\b.{0,90}"
+    r"\b(?:has not|is not|not yet|hasn't|isn't)\b.{0,40}"
+    r"\b(?:established|validated|verified|measured)\b"
+    r"|\b(?:generation|run|request|compilation)\b.{0,35}"
+    r"\b(?:can|may|could) take several (?:minutes|hours|days)\b"
+    r"|\bno (?:public )?(?:subscription price|customer testimonials?|"
+    r"customer names|measurable results)\b"
+)
+
+
+def _is_limitation(text: str) -> bool:
+    return bool(_LIMITATION.search(fold(text)))
+
+
+def _claims_on(claims: ClaimSet, axis: ClaimAxis) -> list[Claim]:
+    """Count explicit portability even when extraction filed it under effort.
+
+    One verified sentence can support more than one dimension. Preserve its
+    quotation and source; never infer a capability from a model's paraphrase.
+    """
+    matches: list[Claim] = []
+    for claim in claims.claims:
+        if _is_limitation(f"{claim.text} {claim.verbatim}"):
+            continue
+        if claim.axis is axis:
+            candidate = claim
+        elif axis is ClaimAxis.CONTROL and _explicit_portability(claim.verbatim):
+            candidate = claim.model_copy(update={"axis": axis})
+        else:
+            continue
+        if not any((item.text, item.source, item.verbatim) ==
+                   (candidate.text, candidate.source, candidate.verbatim) for item in matches):
+            matches.append(candidate)
+    return matches
+
+
+def rebuild(positioning: PositioningMap, rivals: list[RivalProfile]) -> PositioningMap:
+    """Recompute arithmetic from saved claims without changing scan history.
+
+    No current knowledge or new pages are mixed into the historical corpus.
+    Legacy snapshots without profiles cannot be reconstructed and stay intact.
+    """
+    if not rivals:
+        return positioning
+    ours = ClaimSet(claims=[claim for reading in positioning.readings for claim in reading.ours])
+    updated = build(ours, rivals, we_have_proof=positioning.we_have_proof)
+    updated.notes = list(dict.fromkeys([*positioning.notes, *updated.notes]))
+    return updated
+
+
+def _explicit_portability(quote: str) -> bool:
+    text = re.sub(r"[\"'\u2018\u2019\u201c\u201d]", "", fold(quote))
+    if re.search(r"\b(?:cannot|cant|can not|does not|do not|doesnt|dont|no)\b"
+                 r".{0,45}\b(?:export|copy)\b", text):
+        return False
+    return bool(re.search(
+        r"\bexport(?:ing|s|ed)?\s+(?:your\s+)?"
+        r"(?:emails?|drafts?|content|data|results|contacts|files|campaigns)\b"
+        r"|\bexport(?:ing|s|ed)?\s+(?:to|as|in)\b.{0,45}"
+        r"\b(?:esp|html|csv|pdf|json|your own|your existing)\b"
+        r"|\bcopy\b.{0,35}\b(?:text|content|email)\b.{0,25}"
+        r"\b(?:for use|to use|into|to)\b.{0,25}\b(?:elsewhere|another|your own)\b",
+        text,
+    ))
 
 
 #: How much two of our own claims have to share before one is treated as a
