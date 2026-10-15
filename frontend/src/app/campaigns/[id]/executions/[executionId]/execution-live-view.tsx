@@ -455,10 +455,10 @@ export function ExecutionLiveView({
             )}
             {unargued.length > 0 && (
               <p className="text-amber-400">
-                Email{unargued.length === 1 ? "" : "s"} {unargued.join(", ")} made no use of the
-                evidence they were built on. Nothing in them is invented - but nothing in them is
-                checkable either, and a stranger has no reason to believe a company describing
-                itself.
+                The automatic check did not match email{unargued.length === 1 ? "" : "s"}{" "}
+                {unargued.join(", ")} to the assigned evidence. Compare the claims with your
+                sources before using the copy. This check can miss paraphrases; it does not
+                establish whether a claim is true or invented.
               </p>
             )}
             {report.contract_violations.length > 0 && (
