@@ -1,0 +1,949 @@
+{
+  "id": "62cbd16d-85ab-44a7-93c7-d4a6cb56fd6f",
+  "campaign_id": "6ff0aee8-8b3e-4967-9119-9d71dcf46c65",
+  "status": "completed",
+  "error_message": null,
+  "started_at": "2026-10-15T21:05:31.529056Z",
+  "completed_at": "2026-10-15T21:14:17.221084Z",
+  "created_at": "2026-10-15T21:05:31.529056Z",
+  "total_input_tokens": 917842,
+  "total_output_tokens": 68484,
+  "total_cache_read_tokens": 648704,
+  "estimated_cost_usd": 4.7266,
+  "recommendation_snapshot": {
+    "campaign_id": "6ff0aee8-8b3e-4967-9119-9d71dcf46c65",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "d76ecf98-d2a0-4dab-b669-71eeb9051e9a",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 The smallest useful MarketingOS test is one email for a real offer, because the product first turns the supplied material into a set of facts the draft is allowed to use.",
+          "#2 The useful review is not a score taken on faith: the reader can inspect both the source facts behind the draft and the report showing what the simulated reader understood, where they stopped, and what they doubted."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-15T21:05:31.610388Z",
+      "completed_at": "2026-10-15T21:07:04.724582Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 27237,
+      "output_tokens": 7832,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 12288,
+      "cost_usd": 0.462686,
+      "duration_ms": 93009.08320000053,
+      "attempt": 1
+    },
+    {
+      "id": "d8d79bd4-2601-4703-9379-bb0921627327",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "The smallest useful MarketingOS test is one email for a real offer, because the product first turns the supplied material into a set of facts the draft is allowed to use.",
+          "The smallest useful MarketingOS test is one email for a real offer, because the product first turns the supplied material into a set of facts the draft is allowed to use."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Test one offer in MarketingOS",
+          "Turn one offer into one draft"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-15T21:07:04.770216Z",
+      "completed_at": "2026-10-15T21:07:24.560086Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 27596,
+      "output_tokens": 2942,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 24576,
+      "cost_usd": 0.328689,
+      "duration_ms": 33878.53389999873,
+      "attempt": 1
+    },
+    {
+      "id": "aa121d6b-62c1-4af6-8ed8-1a8018af0ba5",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s) read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 8,
+        "scores": [
+          8,
+          8
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-15T21:07:24.593401Z",
+      "completed_at": "2026-10-15T21:07:47.069443Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 34818,
+      "output_tokens": 7952,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 79872,
+      "cost_usd": 0.581002,
+      "duration_ms": 127083.09799999915,
+      "attempt": 1
+    },
+    {
+      "id": "7042e65c-8393-4931-93e2-fd470f6213a8",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · the two best candidates, read side by side",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "challenger_won": true
+      },
+      "error_message": null,
+      "started_at": "2026-10-15T21:07:47.081469Z",
+      "completed_at": "2026-10-15T21:07:55.672091Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11547,
+      "output_tokens": 1129,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 57600,
+      "cost_usd": 0.172326,
+      "duration_ms": 30448.27669999904,
+      "attempt": 1
+    },
+    {
+      "id": "b256f6b2-3924-48e3-bec9-ba096ebd7fd1",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "copy",
+        "strategy_gap": ""
+      },
+      "error_message": null,
+      "started_at": "2026-10-15T21:07:55.694258Z",
+      "completed_at": "2026-10-15T21:08:38.718447Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 10412,
+      "output_tokens": 3465,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.199329,
+      "duration_ms": 42974.64729999956,
+      "attempt": 1
+    },
+    {
+      "id": "17d6f9fb-ab32-4390-a7bf-7c80b28aa128",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "Check one email against one real offer"
+      },
+      "error_message": null,
+      "started_at": "2026-10-15T21:08:38.728840Z",
+      "completed_at": "2026-10-15T21:09:13.594002Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 3309,
+      "output_tokens": 3620,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 25856,
+      "cost_usd": 0.155757,
+      "duration_ms": 34819.02910000099,
+      "attempt": 2
+    },
+    {
+      "id": "f378d775-a9ce-42f7-9a6f-8dfe55630c11",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-10-15T21:09:13.624599Z",
+      "completed_at": "2026-10-15T21:09:36.274077Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 19541,
+      "output_tokens": 3688,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 36864,
+      "cost_usd": 0.296459,
+      "duration_ms": 58647.84019999934,
+      "attempt": 2
+    },
+    {
+      "id": "558a1569-a3d1-4a92-b595-db756cdec2a1",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 8,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1 read against the version it would replace",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "challenger_won": false
+      },
+      "error_message": null,
+      "started_at": "2026-10-15T21:09:36.292062Z",
+      "completed_at": "2026-10-15T21:09:45.623967Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11579,
+      "output_tokens": 978,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 57600,
+      "cost_usd": 0.168052,
+      "duration_ms": 29435.34290000025,
+      "attempt": 2
+    },
+    {
+      "id": "10f96a3e-dbfc-47f5-b67d-d6481187db20",
+      "agent_id": "subject_writer",
+      "agent_name": "Subject Lines",
+      "sequence_order": 9,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 4 alternative subject lines",
+        "position": 1,
+        "variants": 4
+      },
+      "output_data": {
+        "subject": "Would you put one MarketingOS draft under your name?"
+      },
+      "error_message": null,
+      "started_at": "2026-10-15T21:09:45.642123Z",
+      "completed_at": "2026-10-15T21:10:10.125327Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 17418,
+      "output_tokens": 2337,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 51968,
+      "cost_usd": 0.251028,
+      "duration_ms": 40591.46419999888,
+      "attempt": 1
+    },
+    {
+      "id": "b609a178-390a-49d0-b112-c7148f2c4d1f",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 10,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · 2 candidate(s), first draft",
+        "position": 2,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "The useful review is not a score taken on faith: the reader can inspect both the source facts behind the draft and the report showing what the simulated reader understood, where they stopped, and what they doubted.",
+          "The useful review is not a score taken on faith: the reader can inspect both the source facts behind the draft and the report showing what the simulated reader understood, where they stopped, and what they doubted."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Inspect what sits behind the draft",
+          "See what supports the draft"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-15T21:10:10.161584Z",
+      "completed_at": "2026-10-15T21:10:35.137640Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 22534,
+      "output_tokens": 4107,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 30208,
+      "cost_usd": 0.327648,
+      "duration_ms": 45546.59179999908,
+      "attempt": 3
+    },
+    {
+      "id": "26481686-e64e-4bb0-b636-93c88302e301",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 11,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · 1 candidate(s) read cold by 3 reader(s) (1 broke an automatic check and cannot win - not read)",
+        "position": 2,
+        "attempt": 1,
+        "candidates": 1,
+        "vetoed": 1
+      },
+      "output_data": {
+        "pull": 8,
+        "scores": [
+          8
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-15T21:10:35.173759Z",
+      "completed_at": "2026-10-15T21:11:09.193893Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11099,
+      "output_tokens": 7160,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 45312,
+      "cost_usd": 0.339842,
+      "duration_ms": 88482.34079999929,
+      "attempt": 3
+    },
+    {
+      "id": "4bd95e47-092d-4300-a0d8-f1b292c986d3",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 12,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · conversion critique",
+        "position": 2,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "copy",
+        "strategy_gap": ""
+      },
+      "error_message": null,
+      "started_at": "2026-10-15T21:11:09.214374Z",
+      "completed_at": "2026-10-15T21:11:48.759347Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 10127,
+      "output_tokens": 3340,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.193299,
+      "duration_ms": 39497.29959999968,
+      "attempt": 2
+    },
+    {
+      "id": "063cd00c-121f-4213-b27c-2c694cc1e892",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 13,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · rewrite 1",
+        "position": 2,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "What a cold-read cannot prove"
+      },
+      "error_message": null,
+      "started_at": "2026-10-15T21:11:48.769478Z",
+      "completed_at": "2026-10-15T21:12:18.818423Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 14078,
+      "output_tokens": 2838,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.209847,
+      "duration_ms": 30009.003900000607,
+      "attempt": 4
+    },
+    {
+      "id": "b10f6879-8815-48cc-ae29-955e0c032954",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 14,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · read cold by 3 reader(s)",
+        "position": 2,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 6
+      },
+      "error_message": null,
+      "started_at": "2026-10-15T21:12:18.849998Z",
+      "completed_at": "2026-10-15T21:12:50.357473Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11276,
+      "output_tokens": 6634,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 45312,
+      "cost_usd": 0.325478,
+      "duration_ms": 86014.18360000025,
+      "attempt": 4
+    },
+    {
+      "id": "9d0a54ca-c626-4726-a6da-288a63a5b7e6",
+      "agent_id": "subject_writer",
+      "agent_name": "Subject Lines",
+      "sequence_order": 15,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · 4 alternative subject lines",
+        "position": 2,
+        "variants": 4
+      },
+      "output_data": {
+        "subject": "What can you use from the draft?"
+      },
+      "error_message": null,
+      "started_at": "2026-10-15T21:12:50.373991Z",
+      "completed_at": "2026-10-15T21:13:20.318247Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 8928,
+      "output_tokens": 3046,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 60416,
+      "cost_usd": 0.211137,
+      "duration_ms": 48827.05569999962,
+      "attempt": 2
+    },
+    {
+      "id": "fced694b-bdf7-4cce-8cb3-109db1f37a8d",
+      "agent_id": "sequence_reviewer",
+      "agent_name": "Sequence Reviewer",
+      "sequence_order": 16,
+      "status": "completed",
+      "input_data": {
+        "label": "Reading all 2 emails as one sequence"
+      },
+      "output_data": {
+        "passed": false
+      },
+      "error_message": null,
+      "started_at": "2026-10-15T21:13:20.343515Z",
+      "completed_at": "2026-10-15T21:13:29.432190Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 2484,
+      "output_tokens": 603,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.050045,
+      "duration_ms": 9042.935500001477,
+      "attempt": 1
+    },
+    {
+      "id": "a5d2b200-5128-4f95-a56b-183c9def02ef",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 17,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · rewrite 2",
+        "position": 2,
+        "attempt": 3
+      },
+      "output_data": {
+        "subject": "Inspect your MarketingOS campaign evidence"
+      },
+      "error_message": null,
+      "started_at": "2026-10-15T21:13:29.472811Z",
+      "completed_at": "2026-10-15T21:13:49.315904Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 13969,
+      "output_tokens": 1827,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.178645,
+      "duration_ms": 19785.08210000109,
+      "attempt": 5
+    },
+    {
+      "id": "b49b6211-2576-4080-a82f-a13cd65f6b6a",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 18,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · read cold by 3 reader(s)",
+        "position": 2,
+        "attempt": 3
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-10-15T21:13:49.343285Z",
+      "completed_at": "2026-10-15T21:14:17.161540Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11186,
+      "output_tokens": 4986,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 45312,
+      "cost_usd": 0.275318,
+      "duration_ms": 72360.38740000004,
+      "attempt": 5
+    }
+  ],
+  "assets": [
+    {
+      "id": "528aaac1-9797-418d-a65e-f9a64a70acce",
+      "asset_type": "email",
+      "title": "Would you put one MarketingOS draft under your name?",
+      "content": "Subject: Would you put one MarketingOS draft under your name?\nPreview text: Run a real offer, then check every fact, link and phrase before you decide.\n\nHi there,\n\nMarketingOS starts with the material behind one real offer. It reads that material into compiled facts it is allowed to claim, then uses those facts to draft the launch or onboarding email you request.\n\nYou do not need to begin with a full sequence. Register your brand in your existing workspace, add the website material or pasted text for one offer, and request one email.\n\nThat gives you a bounded test: a concrete draft built from the offer material you supplied, so you can decide whether it is worth reviewing further for this campaign.\n\nMarketingOS does not replace your approval. Check the draft’s facts, links, and brand voice before copying any of it into your sending tool.\n\nSign in and request one email → https://app.orqagent.com/login/\n\n- the MarketingOS team",
+      "content_html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n<meta name=\"x-apple-disable-message-reformatting\" />\n<meta name=\"color-scheme\" content=\"light\" />\n<meta name=\"supported-color-schemes\" content=\"light\" />\n<title>Would you put one MarketingOS draft under your name?</title>\n</head>\n<body style=\"margin:0;padding:0;background-color:#ffffff;-webkit-text-size-adjust:100%;\">\n<div style=\"display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;\">Run a real offer, then check every fact, link and phrase before you decide.&#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; </div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#ffffff;\">\n<tr><td align=\"center\" style=\"padding:24px 12px;\">\n<table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;background-color:#ffffff;border-radius:6px;\">\n<tr><td style=\"padding:32px 32px 16px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">Hi there,</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">MarketingOS starts with the material behind one real offer. It reads that material into compiled facts it is allowed to claim, then uses those facts to draft the launch or onboarding email you request.</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">You do not need to begin with a full sequence. Register your brand in your existing workspace, add the website material or pasted text for one offer, and request one email.</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">That gives you a bounded test: a concrete draft built from the offer material you supplied, so you can decide whether it is worth reviewing further for this campaign.</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">MarketingOS does not replace your approval. Check the draft’s facts, links, and brand voice before copying any of it into your sending tool.</p></td></tr>\n<tr><td style=\"padding:8px 32px 24px;\"><a href=\"https://app.orqagent.com/login/\" style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;color:#1a56db;font-weight:600;text-decoration:underline;\">Sign in and request one email &rarr;</a></td></tr>\n<tr><td style=\"padding:22px 32px 20px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6;color:#5a6069;\">- the MarketingOS team</p></td></tr>\n</table>\n</td></tr>\n</table>\n</body>\n</html>\n",
+      "position": 1,
+      "asset_metadata": {
+        "position": 1,
+        "role": "Begin one bounded test with a real offer",
+        "subject": "Would you put one MarketingOS draft under your name?",
+        "preview_text": "Run a real offer, then check every fact, link and phrase before you decide.",
+        "eyebrow": "",
+        "headline": "",
+        "greeting": "Hi there,",
+        "body": "MarketingOS starts with the material behind one real offer. It reads that material into compiled facts it is allowed to claim, then uses those facts to draft the launch or onboarding email you request.\n\nYou do not need to begin with a full sequence. Register your brand in your existing workspace, add the website material or pasted text for one offer, and request one email.\n\nThat gives you a bounded test: a concrete draft built from the offer material you supplied, so you can decide whether it is worth reviewing further for this campaign.\n\nMarketingOS does not replace your approval. Check the draft’s facts, links, and brand voice before copying any of it into your sending tool.",
+        "call_to_action": "Sign in and request one email",
+        "sign_off": "- the MarketingOS team",
+        "postscript": "",
+        "pull": 8,
+        "revisions": 1,
+        "single_idea": "The smallest useful MarketingOS test is one email for a real offer, because the product first turns the supplied material into a set of facts the draft is allowed to use.",
+        "evidence_ids": [
+          "E11",
+          "E18",
+          "E15"
+        ],
+        "tier": "plain",
+        "sequence_review_pending": false
+      },
+      "created_at": "2026-10-15T21:14:17.205207Z"
+    },
+    {
+      "id": "f669cb5a-3afa-4558-b1bd-335a8325fae1",
+      "asset_type": "email",
+      "title": "What can you use from the draft?",
+      "content": "Subject: What can you use from the draft?\nPreview text: Check the supporting facts and the point where the simulated reader lost the thread.\n\nHi there,\n\nMarketingOS drafts campaign emails from supplied material, then exposes the evidence behind a completed campaign. Its Knowledge page shows the compiled facts, supporting quotations, evidence identifiers, strength labels, and gaps in the material.\n\nThe “Why it scored what it scored” report makes the cold-read concrete: what the simulated reader understood, where they stopped, their biggest doubt, and the changes it suggests.\n\nThat assessment is not evidence of how real recipients will open, click, or buy. It gives you specific observations to weigh—not a performance result to trust.\n\nYour existing account opens the workspace where both views are available. Inspect them before deciding which language is usable, which claims need checking, and what should be rewritten.\n\nSign in and inspect the campaign → https://app.orqagent.com/login/\n\n- the MarketingOS team",
+      "content_html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n<meta name=\"x-apple-disable-message-reformatting\" />\n<meta name=\"color-scheme\" content=\"light\" />\n<meta name=\"supported-color-schemes\" content=\"light\" />\n<title>What can you use from the draft?</title>\n</head>\n<body style=\"margin:0;padding:0;background-color:#ffffff;-webkit-text-size-adjust:100%;\">\n<div style=\"display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;\">Check the supporting facts and the point where the simulated reader lost the thread.&#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; </div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#ffffff;\">\n<tr><td align=\"center\" style=\"padding:24px 12px;\">\n<table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;background-color:#ffffff;border-radius:6px;\">\n<tr><td style=\"padding:32px 32px 16px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">Hi there,</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">MarketingOS drafts campaign emails from supplied material, then exposes the evidence behind a completed campaign. Its Knowledge page shows the compiled facts, supporting quotations, evidence identifiers, strength labels, and gaps in the material.</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">The “Why it scored what it scored” report makes the cold-read concrete: what the simulated reader understood, where they stopped, their biggest doubt, and the changes it suggests.</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">That assessment is not evidence of how real recipients will open, click, or buy. It gives you specific observations to weigh—not a performance result to trust.</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">Your existing account opens the workspace where both views are available. Inspect them before deciding which language is usable, which claims need checking, and what should be rewritten.</p></td></tr>\n<tr><td style=\"padding:8px 32px 24px;\"><a href=\"https://app.orqagent.com/login/\" style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;color:#1a56db;font-weight:600;text-decoration:underline;\">Sign in and inspect the campaign &rarr;</a></td></tr>\n<tr><td style=\"padding:22px 32px 20px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6;color:#5a6069;\">- the MarketingOS team</p></td></tr>\n</table>\n</td></tr>\n</table>\n</body>\n</html>\n",
+      "position": 2,
+      "asset_metadata": {
+        "position": 2,
+        "role": "inspect the draft’s evidence and cold-read feedback",
+        "subject": "What can you use from the draft?",
+        "preview_text": "Check the supporting facts and the point where the simulated reader lost the thread.",
+        "eyebrow": "",
+        "headline": "",
+        "greeting": "Hi there,",
+        "body": "MarketingOS drafts campaign emails from supplied material, then exposes the evidence behind a completed campaign. Its Knowledge page shows the compiled facts, supporting quotations, evidence identifiers, strength labels, and gaps in the material.\n\nThe “Why it scored what it scored” report makes the cold-read concrete: what the simulated reader understood, where they stopped, their biggest doubt, and the changes it suggests.\n\nThat assessment is not evidence of how real recipients will open, click, or buy. It gives you specific observations to weigh—not a performance result to trust.\n\nYour existing account opens the workspace where both views are available. Inspect them before deciding which language is usable, which claims need checking, and what should be rewritten.",
+        "call_to_action": "Sign in and inspect the campaign",
+        "sign_off": "- the MarketingOS team",
+        "postscript": "",
+        "pull": 8,
+        "revisions": 2,
+        "single_idea": "The useful review is not a score taken on faith: the reader can inspect both the source facts behind the draft and the report showing what the simulated reader understood, where they stopped, and what they doubted.",
+        "evidence_ids": [
+          "E4",
+          "E6",
+          "E3"
+        ],
+        "tier": "plain",
+        "sequence_review_pending": false
+      },
+      "created_at": "2026-10-15T21:14:17.214686Z"
+    }
+  ],
+  "result": {
+    "run_status": "degraded",
+    "report": {
+      "request": "Write exactly two English emails introducing MarketingOS to invited early-access testers who already have a test account. They run a small SaaS business and need to write a launch or onboarding email campaign. Explain one concrete supported reason to try the product, then invite them to test one real offer and review the output. Do not assume their present tools, revenue, list size, staffing, email results or urgency. Do not invent prices, testimonials, performance gains or public signup. Make the first action small: sign in, add the real offer material, and request one email. In the second email explain why inspecting source facts and reader feedback is useful. One clear CTA in each email to their existing account. The product is MarketingOS, not the older orqAgent AI agent builder.",
+      "delivered": 2,
+      "promised": 2,
+      "contract_violations": [],
+      "emails": [
+        {
+          "position": 1,
+          "subject": "Would you put one MarketingOS draft under your name?",
+          "single_idea": "The smallest useful MarketingOS test is one email for a real offer, because the product first turns the supplied material into a set of facts the draft is allowed to use.",
+          "pull": 8.0,
+          "revisions": 1,
+          "clean": true,
+          "landed": true,
+          "rewrites_stopped_helping": true,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E11",
+            "E18",
+            "E15"
+          ],
+          "evidence_spent": [],
+          "attributions": 0,
+          "unresolved": [],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "MarketingOS is software that turns source material for one SaaS offer into a draft launch or onboarding email, potentially reducing the time I spend producing a first draft.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile explicitly establishes that I run a small SaaS business and need launch or onboarding email copy, so the core use case fits. The email additionally assumes I have one current offer, usable source material, and an existing workspace ready for brand registration; whether those conditions apply today is unknown.",
+              "assumed_experiences": [
+                "Profile-supported: I operate a small SaaS business and need launch or onboarding email copy.",
+                "Profile-supported: I am an invited early-access tester with an existing account.",
+                "Email-only: I have one real offer ready to test now.",
+                "Email-only: I have website material or pasted text suitable for that offer.",
+                "Email-only: my existing workspace is ready for me to register a brand.",
+                "Email-only: reviewing a generated draft for the current campaign is timely."
+              ],
+              "problem_now": "Producing launch or onboarding email copy is a documented need, but the profile does not establish that I have an active campaign, an offer ready, or time to test this on this particular Tuesday morning.",
+              "stopped_at": "It reads that material into compiled facts it is allowed to claim, then uses those facts to draft the launch or onboarding email you request.",
+              "biggest_doubt": "I cannot tell how much setup this test requires or whether the resulting draft will be useful enough to justify doing it before my meeting.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me exactly how many minutes it takes to go from pasted offer material to a first draft.",
+              "fixes": [
+                "Rewrite \"It reads that material into compiled facts it is allowed to claim, then uses those facts to draft the launch or onboarding email you request.\" as \"Paste the source material for one offer, and MarketingOS will use only those facts to draft one launch or onboarding email.\"",
+                "Rewrite \"Register your brand in your existing workspace, add the website material or pasted text for one offer, and request one email.\" to state the expected time and clarify what registering a brand requires.",
+                "Cut \"That gives you a bounded test:\" and lead directly with what I will receive and how quickly.",
+                "Rewrite \"so you can decide whether it is worth reviewing further for this campaign\" because I do not yet know whether the first draft itself will be useful enough to review."
+              ],
+              "opens_in_100": 52,
+              "clicks_in_100": 10,
+              "persona": "Selected audience (user-stated constraints): Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy..\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.",
+              "pull": 8
+            },
+            {
+              "what_it_sells": "MarketingOS is software that turns source material about one SaaS offer into a fact-grounded draft of a launch or onboarding email, potentially reducing the time I spend producing that copy.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile establishes that I have an existing account, was invited to early access, run a small SaaS business, and need launch or onboarding email copy. That makes the proposed one-email test relevant. The email additionally assumes I have one offer ready, suitable source material, and a campaign worth testing now; those details are plausible but not established.",
+              "assumed_experiences": [
+                "Profile-supported: I have an existing MarketingOS account and workspace.",
+                "Profile-supported: I operate a small SaaS business and need launch or onboarding email copy.",
+                "Email-only: I have one current offer with website material or pasted text ready to supply.",
+                "Email-only: I have a campaign for which reviewing a generated draft would be useful now.",
+                "Email-only: my brand has not yet been registered in the workspace."
+              ],
+              "problem_now": "Producing launch or onboarding copy is a documented need, but the profile does not establish an immediate campaign, deadline, or that drafting is a pressing Tuesday-morning problem.",
+              "stopped_at": "Register your brand in your existing workspace, add the website material or pasted text for one offer, and request one email.",
+              "biggest_doubt": "I cannot tell how long registering the brand, supplying material, and requesting the draft will take, so the test feels larger than I can justify three minutes before a meeting.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me exactly what the setup requires and how many minutes the one-email test typically takes.",
+              "fixes": [
+                "Rewrite \"Turn one offer into one draft\" to name the output: \"Turn your offer page into a launch or onboarding email draft.\"",
+                "Rewrite \"MarketingOS starts with the material behind one real offer\" as \"Paste an offer page or source text, and MarketingOS drafts one launch or onboarding email using only facts from that material.\"",
+                "Rewrite \"Register your brand in your existing workspace, add the website material or pasted text for one offer, and request one email\" to state the concrete setup steps and expected time, if known.",
+                "Replace \"Sign in and request one email →\" with a CTA that accurately previews the immediate next step, such as \"Sign in to start the one-email test →\"."
+              ],
+              "opens_in_100": 52,
+              "clicks_in_100": 12,
+              "persona": "Selected audience (user-stated constraints): Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy..\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 8
+            },
+            {
+              "what_it_sells": "MarketingOS is software that turns source material for one SaaS offer into a draft launch or onboarding email for me to review.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile establishes that I have an existing account, was invited to early access, run a small SaaS business, and need launch or onboarding email copy. That directly fits the offered test. The email additionally assumes I have an existing workspace ready for brand registration and suitable offer material available; those details are not established by the profile.",
+              "assumed_experiences": [
+                "Profile-supported: I operate a small SaaS business and need launch or onboarding email copy.",
+                "Profile-supported: I have an existing account and was invited as an early-access tester.",
+                "Email-only: my account already contains an existing workspace in which I can register a brand.",
+                "Email-only: I have website material or pasted text for one real offer ready to provide.",
+                "Email-only: I am comfortable supplying that material without further information about storage, access, or reuse."
+              ],
+              "problem_now": "Producing launch or onboarding email copy is an explicitly established need, but no immediate campaign, deadline, or urgency is established. Testing one draft is relevant, though not something I need to start three minutes before a meeting.",
+              "stopped_at": "MarketingOS starts with the material behind one real offer. It reads that material into compiled facts it is allowed to claim, then uses those facts to draft the launch or onboarding email you request.",
+              "biggest_doubt": "I cannot tell how much setup \"register your brand\" requires or what happens to the offer material I provide, and the phrase \"facts it is allowed to claim\" is too vague to earn trust in the resulting draft.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me how long the test takes, what brand registration involves, and whether my supplied material is stored or reused.",
+              "fixes": [
+                "Rewrite \"It reads that material into compiled facts it is allowed to claim\" in plain language and state what determines whether a fact may be used.",
+                "Rewrite \"Register your brand in your existing workspace\" to say exactly what information registration requires and roughly how long it takes.",
+                "Add a concrete data-handling sentence after \"add the website material or pasted text for one offer\" explaining whether that material is stored, shared, or used beyond this draft.",
+                "Rewrite \"Sign in and request one email →\" to reflect the actual steps described in the body, including brand registration and supplying source material."
+              ],
+              "opens_in_100": 49,
+              "clicks_in_100": 9,
+              "persona": "Selected audience (user-stated constraints): Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy..\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 8
+            }
+          ],
+          "sameness": []
+        },
+        {
+          "position": 2,
+          "subject": "What can you use from the draft?",
+          "single_idea": "The useful review is not a score taken on faith: the reader can inspect both the source facts behind the draft and the report showing what the simulated reader understood, where they stopped, and what they doubted.",
+          "pull": 8.0,
+          "revisions": 2,
+          "clean": true,
+          "landed": false,
+          "rewrites_stopped_helping": true,
+          "read_reported": true,
+          "understood": true,
+          "relevant": false,
+          "evidence_assigned": [
+            "E4",
+            "E6",
+            "E3"
+          ],
+          "evidence_spent": [
+            "E4",
+            "E6"
+          ],
+          "attributions": 0,
+          "unresolved": [
+            "Unresolved audience mismatch: The profile-supported need for launch or onboarding email copy makes the general product relevant, and the existing account is also established. However, the immediate CTA assumes a specific completed campaign and two populated views are already waiting; that is an email-only premise, not established by the profile, so I cannot tell whether there is anything useful for me to inspect now."
+          ],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "MarketingOS is software that drafts campaign emails from supplied material and shows the source evidence and simulated-reader feedback so I can review and rewrite launch or onboarding copy.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile establishes that I am an invited early-access tester with an existing account, run a small SaaS business, and need launch or onboarding email copy, so the use case fits. The email additionally presupposes that my workspace contains an inspectable campaign and both reports; whether that campaign uses my material and is relevant to current work is unknown.",
+              "assumed_experiences": [
+                "Profile-supported: I have an existing account and was invited as an early-access tester.",
+                "Profile-supported: I operate a small SaaS business and need launch or onboarding email copy.",
+                "Email-only: both the Knowledge page and scoring report are available in my workspace.",
+                "Email-only: there is a completed campaign ready for me to inspect.",
+                "Unknown: whether I have already supplied material or begun a campaign in MarketingOS."
+              ],
+              "problem_now": "Getting usable, supportable launch or onboarding copy is a documented need, but no current deadline, active campaign, or urgency is established.",
+              "stopped_at": "",
+              "biggest_doubt": "I cannot tell whether this is a quick inspection of something already prepared for me or a longer review task that will consume time I do not have this morning.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me how long it typically takes to inspect one campaign.",
+              "fixes": [
+                "Rewrite “See what supports the draft” as “Inspect the evidence behind your MarketingOS draft” so the subject identifies both the product and the task.",
+                "Rewrite “The ‘Why it scored what it scored’ report makes the cold-read concrete” as “The score report shows what the simulated reader understood, where they stopped, and what raised doubt” to remove the abstract setup.",
+                "Rewrite “Your existing account opens the workspace where both views are available” as “Sign in to your existing account to view the Knowledge page and score report.”",
+                "Rewrite “Sign in and inspect the campaign →” to state whether a campaign is already waiting and how much time the inspection usually takes."
+              ],
+              "opens_in_100": 44,
+              "clicks_in_100": 11,
+              "persona": "Selected audience (user-stated constraints): Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy..\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.",
+              "pull": 8
+            },
+            {
+              "what_it_sells": "MarketingOS is software that drafts campaign emails from supplied source material and lets me inspect the evidence and a simulated-reader critique before using the copy.",
+              "understood": true,
+              "situation_matches": false,
+              "relevance_feedback": "The profile-supported need for launch or onboarding email copy makes the general product relevant, and the existing account is also established. However, the immediate CTA assumes a specific completed campaign and two populated views are already waiting; that is an email-only premise, not established by the profile, so I cannot tell whether there is anything useful for me to inspect now.",
+              "assumed_experiences": [
+                "Profile-supported: I have an existing account and was invited as an early-access tester.",
+                "Profile-supported: I operate a small SaaS business and need launch or onboarding email copy.",
+                "Email-only: I have supplied source material to MarketingOS.",
+                "Email-only: a completed campaign exists in my workspace.",
+                "Email-only: the Knowledge page and scoring report are populated and ready for inspection."
+              ],
+              "problem_now": "Being able to verify claims and improve launch or onboarding copy is relevant, but whether I have a campaign requiring review today—and whether these views contain anything—is unknown.",
+              "stopped_at": "Its Knowledge page shows the compiled facts, supporting quotations, evidence identifiers, strength labels, and gaps in the material.",
+              "biggest_doubt": "I do not know whether a completed campaign is actually waiting in my account or how much time this inspection will take, so the link could lead to setup work rather than an immediate review.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me whether a completed campaign was already waiting in my workspace and that I could inspect one concrete issue in under a minute.",
+              "fixes": [
+                "Rewrite “See what supports the draft” to name the product and immediate task, such as “Review the evidence behind your MarketingOS campaign draft.”",
+                "Replace “Its Knowledge page shows the compiled facts, supporting quotations, evidence identifiers, strength labels, and gaps in the material.” with one concrete benefit, such as “Open the Knowledge page to see which source supports each claim—and which claims still need checking.”",
+                "Rewrite “Your existing account opens the workspace where both views are available.” to clarify whether the views are already populated or require creating a campaign first.",
+                "Replace “Sign in and inspect the campaign →” with a CTA that names the expected effort and destination, provided those details are accurate."
+              ],
+              "opens_in_100": 36,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (user-stated constraints): Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy..\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "MarketingOS is software that drafts campaign emails from supplied material and lets me inspect the supporting evidence and a simulated reader’s critique before using the copy.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile establishes that I run a small SaaS business, need launch or onboarding email copy, have an existing account, and was invited to early access. Drafting campaign emails and checking their claims is therefore relevant. The email additionally implies that a completed campaign and both reports are already waiting in my workspace; that is not established by the profile. I do not know whether the workspace contains my material, a sample, or nothing until I create a campaign.",
+              "assumed_experiences": [
+                "Profile-supported: I have an existing MarketingOS account and was invited as an early-access tester.",
+                "Profile-supported: I need launch or onboarding email copy for a small SaaS business.",
+                "Email-only: I have a completed campaign whose evidence and cold-read report are ready to inspect.",
+                "Email-only: I already know which draft and source material the subject and preview refer to.",
+                "Email-only: opening my account will immediately expose both described views."
+              ],
+              "problem_now": "Reviewing launch or onboarding copy and verifying its claims matters to my work, but the profile establishes no immediate deadline or active campaign this Tuesday morning. The need is documented; the urgency and whether a reviewable draft exists are unknown.",
+              "stopped_at": "Its Knowledge page shows the compiled facts, supporting quotations, evidence identifiers, strength labels, and gaps in the material.",
+              "biggest_doubt": "I cannot tell whether there is already a campaign based on my material waiting inside, or whether clicking will lead to setup work I do not have time for before my meeting.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me whether a campaign using my supplied material was already ready to inspect and that the first review would take under a minute.",
+              "fixes": [
+                "Rewrite \"See what supports the draft\" to identify the product and the specific draft or report waiting in the account; as written, \"the draft\" assumes context the subject does not provide.",
+                "Replace \"Its Knowledge page shows the compiled facts, supporting quotations, evidence identifiers, strength labels, and gaps in the material.\" with a shorter explanation of the immediate benefit, such as checking which claims in the draft are supported and which need verification.",
+                "Rewrite \"Your existing account opens the workspace where both views are available.\" to say whether my workspace already contains a campaign based on my material or whether I must create one first.",
+                "Add the expected time and exact first step to \"Sign in and inspect the campaign →\" so I can judge whether it fits into the next three minutes."
+              ],
+              "opens_in_100": 38,
+              "clicks_in_100": 9,
+              "persona": "Selected audience (user-stated constraints): Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy..\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 8
+            }
+          ],
+          "sameness": []
+        }
+      ],
+      "limiting_gaps": [
+        "No price or free-entry terms found - emails cannot name a price, a trial length or a risk reversal",
+        "No customer names, quotes or case studies found - the copy can describe the product but cannot prove anyone uses it",
+        "No measurable results found - claims stay qualitative, and adjectives convert worse than numbers"
+      ],
+      "what_would_help_most": "Recheck the selected audience situation: The profile-supported need for launch or onboarding email copy makes the general product relevant, and the existing account is also established. However, the immediate CTA assumes a specific completed campaign and two populated views are already waiting; that is an email-only premise, not established by the profile, so I cannot tell whether there is anything useful for me to inspect now.",
+      "questions": [],
+      "sequence_summary": "The sequence has a coherent create-then-review arc, but Email 2 depends on an unverified action from Email 1.",
+      "knowledge_version": 2,
+      "notes": [],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "This is a two-email onboarding sequence for invited early-access testers who already have a MarketingOS account, not a sales or public-signup campaign. The selected reader runs a small SaaS and has a real launch or onboarding offer to test; the sequence asks for one bounded product trial and then a careful review of its output.",
+      "reader": "Selected audience (user-stated constraints): Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy..\nNo further recipient situation is established. Compiled market context is research to check for applicability, not a replacement biography.",
+      "reader_segment": "An invited pilot user with a live account who still has not pushed one real offer through it",
+      "reader_profile_override": "Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy.",
+      "fixed_cta_url": "https://app.orqagent.com/login/",
+      "promise": "A test on one real offer lets the reader judge a draft built from their supplied facts and inspect the evidence and simulated-reader diagnosis before deciding what is usable.",
+      "orientation": "MarketingOS turns source material for a SaaS offer into reviewed launch or onboarding email drafts that the account holder checks before copying into their own sending tool.",
+      "arc": "Email 1 moves from an unused account to the smallest meaningful test: supply one real offer and request one email. Email 2 moves from having a draft to judging it deliberately: inspect the compiled source facts and the simulated reader's specific points of confusion before deciding what to keep or rewrite.",
+      "sequence_rationale": "The sequence starts with action because these readers already have access and do not need a category lesson; explaining every review surface before a draft exists would increase the apparent commitment. The second email earns its place after the run by showing how to evaluate the result without treating an AI critique as customer-performance evidence. Both emails stand alone, use the existing-account login, and avoid unsupported claims about speed, savings, correctness, results, pricing, or continued access. The single thing the user could send us that would most change this campaign is one attributable pilot result showing the factual-error count and editing time for a real generated email.",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Get the invited tester to begin one bounded, real-product test by supplying offer material and requesting a single launch or onboarding email.",
+          "single_idea": "The smallest useful MarketingOS test is one email for a real offer, because the product first turns the supplied material into a set of facts the draft is allowed to use.",
+          "felt_need": "I need a launch or onboarding email for a real SaaS offer, and I need to be able to check what the draft says before using it.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "The reader registers the brand, adds source material for one real offer, and requests one email. MarketingOS compiles the material into facts it is allowed to claim before drafting; the reader still checks the resulting facts, links, and voice.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: trying the account sounds like committing to a whole campaign. After: one real offer and one requested email are enough to produce something concrete to evaluate.",
+          "evidence_ids": [
+            "E11",
+            "E18",
+            "E15"
+          ],
+          "must_not_say": [
+            "Do not imply that a campaign or draft is already waiting in the account.",
+            "Do not promise that setup is quick, that generation is immediate, or that the first run will be complete.",
+            "Do not claim the compiled fact set guarantees an error-free or fully source-traced draft.",
+            "Do not assume what tools, templates, writers, results, staffing, revenue, list size, or deadlines the reader has.",
+            "Do not mention pricing, a free trial, public signup, testimonials, performance gains, sending, publishing, competitor research, audience research, LinkedIn, or the older orqAgent agent builder."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "The draft could still say something about the offer that the reader would not approve under their own name.",
+          "tone": "Direct, practical, and low-pressure.",
+          "call_to_action": "Sign in to your existing MarketingOS workspace, register the brand, add the real material for one offer, and request one launch or onboarding email.",
+          "next_step_decision": "Decide whether a draft grounded in the supplied offer material is worth reviewing further for this campaign.",
+          "next_step_value": "The workspace lets the reader register the brand, add real source material, and request the first email rather than committing to a full sequence.",
+          "next_step_evidence_ids": [
+            "E11"
+          ],
+          "next_step_limit": "The requested draft still requires the reader to check its facts, links, and brand voice before using it.",
+          "subject_strategy": "Make the bounded test unmistakable: one real offer and one email, without hype, urgency, a time promise, or an implied waiting draft.",
+          "must_not_reuse": []
+        },
+        {
+          "position": 2,
+          "job": "Get the tester to inspect the factual basis and simulated-reader feedback for the generated draft before deciding what to keep or rewrite.",
+          "single_idea": "The useful review is not a score taken on faith: the reader can inspect both the source facts behind the draft and the report showing what the simulated reader understood, where they stopped, and what they doubted.",
+          "felt_need": "I need to know which parts of this draft are grounded in my material and where an unfamiliar reader may lose the thread before I decide what belongs in the campaign.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "On the Knowledge page, the reader can inspect compiled facts, supporting quotations, evidence identifiers, strength labels, and missing information. In the completed campaign's review report, they can inspect what the simulated reader understood, where they stopped, their biggest doubt, and suggested changes; these observations guide a human review rather than standing in for campaign results.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: the output is another AI draft accompanied by an opaque AI opinion. After: the factual inputs and the simulated reader's specific diagnosis are visible enough to judge on their merits, while real recipient response remains unproven.",
+          "evidence_ids": [
+            "E4",
+            "E6",
+            "E3"
+          ],
+          "must_not_say": [
+            "Do not call the cold reader a human reviewer or imply that it represents actual customers.",
+            "Do not present its assessment as measured opens, clicks, sales, conversions, or proof the email will perform.",
+            "Do not guarantee that every draft claim is correct merely because source facts are inspectable.",
+            "Do not add a second CTA asking for a reply, meeting, signup, purchase, or public registration.",
+            "Do not repeat the setup argument from email 1 or introduce pricing, testimonials, sending features, competitor research, LinkedIn, or the older orqAgent agent builder."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "An AI assessment of an AI-written email does not prove how real recipients will respond.",
+          "tone": "Analytical, candid, and quietly confident.",
+          "call_to_action": "Sign in to your existing MarketingOS workspace, open the completed campaign, and inspect its Knowledge page and “Why it scored what it scored” report before deciding what you would keep or rewrite.",
+          "next_step_decision": "Decide which language is usable, which claims need checking, and which parts of the draft should be rewritten before it goes anywhere else.",
+          "next_step_value": "The account exposes the compiled facts and supporting material alongside a specific diagnosis of what the simulated reader understood, where they stopped, and their biggest doubt.",
+          "next_step_evidence_ids": [
+            "E4",
+            "E6"
+          ],
+          "next_step_limit": "This review helps assess the draft itself; it does not establish how real recipients will open, click, buy, or otherwise respond.",
+          "subject_strategy": "Signal an inspectable review rather than a performance claim: invite the reader to look behind the draft at its facts and the point where the cold read broke down.",
+          "must_not_reuse": [
+            "The smallest useful MarketingOS test is one email for a real offer, because the product first turns the supplied material into a set of facts the draft is allowed to use."
+          ]
+        }
+      ],
+      "voice_notes": "Use direct, explanatory English with no greeting or personal signature. Refer to MarketingOS by name, use “reads,” “compiled facts,” “draft,” and “cold-read” where natural, and keep qualifications explicit. Avoid hype adjectives, generic AI language, and any suggestion that the older orqAgent agent-builder product is being offered.",
+      "contract": {
+        "kind": "email_sequence",
+        "count": 2,
+        "count_is_explicit": true,
+        "evidence": "two English emails"
+      }
+    },
+    "knowledge_version": 2,
+    "recommendation_at_generation": {
+      "campaign_id": "6ff0aee8-8b3e-4967-9119-9d71dcf46c65",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

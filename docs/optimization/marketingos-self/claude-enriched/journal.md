@@ -1,0 +1,7 @@
+# MarketingOS — enriched source / Claude track
+
+Same two-email English request and audience as the original case. Added verified UI capability evidence and explicit AI-reader identity. Balanced, opus subscription override; no API billing switch. Not comparable to GPT/original-corpus scores.
+Stable grid: facts25, audience/offer20, specificity/argument20, continuity15, polish10, unsupported promises/repetition10. No score before completed deliverables. Hypothesis: explicit evidence for Knowledge and reader-report screens should close the genuine material gap; writer wording must still pass unchanged repetition gates.
+
+## Iteration 1 — 72/100, not ready as delivered
+Two emails delivered in 17m35s, internal estimate USD 7.3087; 20 role steps, no contract violations. Best so far 72/100 in this separate track. Clear product, correct sign-in URL, explicit AI simulation and inspectable review screens are strengths. Email 1 overclaims that every sentence traces to source and that cold-reading has no equivalent in a blank prompt; its subject invents an afternoon comparison. Both are unlicensed extensions of the mechanism, despite clean gates. The automated 7/10 reader assessments do not overrule this review. No API invoice or customer outcome claimed. Next: tighten scope at strategy and critique, not the evidence gates; regenerate with enriched corpus and default GPT after reset (separate model track).

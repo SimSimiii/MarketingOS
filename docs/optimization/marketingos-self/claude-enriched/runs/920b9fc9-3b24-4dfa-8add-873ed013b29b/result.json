@@ -1,0 +1,1075 @@
+{
+  "id": "920b9fc9-3b24-4dfa-8add-873ed013b29b",
+  "campaign_id": "a6fd71e7-9262-42c8-90f1-de37f85ac4d1",
+  "status": "completed",
+  "error_message": null,
+  "started_at": "2026-10-14T23:36:41.817237Z",
+  "completed_at": "2026-10-14T23:54:17.204237Z",
+  "created_at": "2026-10-14T23:36:41.817662Z",
+  "total_input_tokens": 431566,
+  "total_output_tokens": 112803,
+  "total_cache_read_tokens": 3768,
+  "estimated_cost_usd": 7.3087,
+  "recommendation_snapshot": {
+    "campaign_id": "a6fd71e7-9262-42c8-90f1-de37f85ac4d1",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "99812ef5-1044-4287-a41d-dab39b4779d6",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Before anything gets written, your material is compiled into a set of facts the writing is allowed to claim — and then every draft is read by a reader who has never seen the brief, and rewritten where it did not land; that is the part you cannot get from a blank prompt, and it only starts once you put one real offer in.",
+          "#2 The useful half of a run is the working: the compiled facts with the quotation each one came from, and the report naming what the cold reader understood, where they stopped and their biggest doubt — read those and you are judging a critique you can argue with, not a score you have to trust."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:36:41.895333Z",
+      "completed_at": "2026-10-14T23:39:35.174184Z",
+      "model": "opus",
+      "input_tokens": 2,
+      "output_tokens": 12045,
+      "cache_creation_input_tokens": 36768,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.695075,
+      "duration_ms": 173179.22660001204,
+      "attempt": 1
+    },
+    {
+      "id": "db727200-0434-49d0-8564-4f5a79b5427c",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "Before anything gets written, your material is compiled into a set of facts the writing is allowed to claim — and then every draft is read by a reader who has never seen the brief, and rewritten where it did not land; that is the part you cannot get from a blank prompt, and it only starts once you put one real offer in.",
+          "What comes back is text, not a send: subject, preview, body and call to action, copyable or exportable with an HTML preview — nothing is sent, nothing is published, so testing it on a real offer costs you an evening, not a campaign."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Point MarketingOS at one real offer",
+          "Draft text for your launch, nothing sent"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:39:35.215167Z",
+      "completed_at": "2026-10-14T23:40:28.910089Z",
+      "model": "opus",
+      "input_tokens": 4,
+      "output_tokens": 6936,
+      "cache_creation_input_tokens": 35210,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.550689,
+      "duration_ms": 92365.47979997704,
+      "attempt": 1
+    },
+    {
+      "id": "f8b9ec76-b2e2-4339-bd33-9ea8ae06006f",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s) read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 8,
+        "scores": [
+          7,
+          8
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:40:28.961418Z",
+      "completed_at": "2026-10-14T23:41:13.334407Z",
+      "model": "opus",
+      "input_tokens": 14,
+      "output_tokens": 11854,
+      "cache_creation_input_tokens": 39161,
+      "cache_read_input_tokens": 3768,
+      "cost_usd": 0.699845,
+      "duration_ms": 194648.91669998178,
+      "attempt": 1
+    },
+    {
+      "id": "9876640b-9dc9-4dea-9163-4ddf914af08c",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · the two best candidates, read side by side",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "challenger_won": true
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:41:13.347209Z",
+      "completed_at": "2026-10-14T23:41:30.480483Z",
+      "model": "opus",
+      "input_tokens": 8,
+      "output_tokens": 2875,
+      "cache_creation_input_tokens": 15515,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.231281,
+      "duration_ms": 58316.83109997539,
+      "attempt": 1
+    },
+    {
+      "id": "f7d480a4-8f56-4b37-a927-d6d6c3f7645a",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "copy",
+        "strategy_gap": ""
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:41:30.505855Z",
+      "completed_at": "2026-10-14T23:42:55.700882Z",
+      "model": "opus",
+      "input_tokens": 2,
+      "output_tokens": 6058,
+      "cache_creation_input_tokens": 17798,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.342129,
+      "duration_ms": 85157.1192999836,
+      "attempt": 1
+    },
+    {
+      "id": "b9176916-b64d-4721-8f57-2175551c4e4a",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "Paste one offer in, ask for one email"
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:42:55.713287Z",
+      "completed_at": "2026-10-14T23:43:51.761340Z",
+      "model": "opus",
+      "input_tokens": 2,
+      "output_tokens": 4146,
+      "cache_creation_input_tokens": 23808,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.35897,
+      "duration_ms": 55998.28090000665,
+      "attempt": 2
+    },
+    {
+      "id": "27d74b30-8b3e-468a-880e-98e3b8206dda",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 8
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:43:51.794591Z",
+      "completed_at": "2026-10-14T23:44:29.803708Z",
+      "model": "opus",
+      "input_tokens": 6,
+      "output_tokens": 6121,
+      "cache_creation_input_tokens": 18081,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.337802,
+      "duration_ms": 101260.60279997182,
+      "attempt": 2
+    },
+    {
+      "id": "bf0d808a-17d7-472a-94cb-bf427da750e0",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 8,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1 read against the version it would replace",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "challenger_won": false
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:44:29.817251Z",
+      "completed_at": "2026-10-14T23:44:45.522173Z",
+      "model": "opus",
+      "input_tokens": 8,
+      "output_tokens": 1735,
+      "cache_creation_input_tokens": 15707,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.204691,
+      "duration_ms": 40691.5844999894,
+      "attempt": 2
+    },
+    {
+      "id": "fb0969d1-3f74-4f12-9b1f-2ba8d6d9912f",
+      "agent_id": "subject_writer",
+      "agent_name": "Subject Lines",
+      "sequence_order": 9,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 4 alternative subject lines",
+        "position": 1,
+        "variants": 4
+      },
+      "output_data": {
+        "subject": "Five onboarding emails in an afternoon is a fair comparison"
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:44:45.541748Z",
+      "completed_at": "2026-10-14T23:45:19.393945Z",
+      "model": "opus",
+      "input_tokens": 8,
+      "output_tokens": 3704,
+      "cache_creation_input_tokens": 14952,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.24661,
+      "duration_ms": 64731.978199997684,
+      "attempt": 1
+    },
+    {
+      "id": "64afd9f1-d708-4d66-b627-6cd642925825",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 10,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · 2 candidate(s), first draft",
+        "position": 2,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "The useful half of a run is the working: the compiled facts with the quotation each one came from, and the report naming what the cold reader understood, where they stopped and their biggest doubt — read those and you are judging a critique you can argue with, not a score you have to trust.",
+          "The notes the pilot asks for — the phrases you would keep or rewrite, the factual errors, the time you spent editing — are measurements only you can take, because you are the one who still checks the facts, the links and the voice before anything leaves."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Read the reasoning, not the score",
+          "Your edit is the measurement"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:45:19.424721Z",
+      "completed_at": "2026-10-14T23:46:37.542192Z",
+      "model": "opus",
+      "input_tokens": 4,
+      "output_tokens": 9551,
+      "cache_creation_input_tokens": 36292,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.62761,
+      "duration_ms": 126925.02349999268,
+      "attempt": 3
+    },
+    {
+      "id": "0bc16286-38de-4d1b-bf3a-aa7208769a2e",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 11,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · 1 candidate(s) read cold by 3 reader(s) (1 broke an automatic check and cannot win - not read)",
+        "position": 2,
+        "attempt": 1,
+        "candidates": 1,
+        "vetoed": 1
+      },
+      "output_data": {
+        "pull": 8,
+        "scores": [
+          8
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:46:37.592481Z",
+      "completed_at": "2026-10-14T23:47:23.070666Z",
+      "model": "opus",
+      "input_tokens": 6,
+      "output_tokens": 8279,
+      "cache_creation_input_tokens": 18075,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.391702,
+      "duration_ms": 126470.82009998849,
+      "attempt": 3
+    },
+    {
+      "id": "cba05105-8be9-497c-879f-e1adbc351dc6",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 12,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · conversion critique",
+        "position": 2,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "copy",
+        "strategy_gap": ""
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:47:23.098988Z",
+      "completed_at": "2026-10-14T23:48:55.037374Z",
+      "model": "opus",
+      "input_tokens": 2,
+      "output_tokens": 6467,
+      "cache_creation_input_tokens": 18754,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.362603,
+      "duration_ms": 91897.83640002133,
+      "attempt": 2
+    },
+    {
+      "id": "e54d3380-aeb5-4957-bb9d-2233a34d431e",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 13,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · rewrite 1",
+        "position": 2,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "The fact check only you can make"
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:48:55.049903Z",
+      "completed_at": "2026-10-14T23:50:10.518256Z",
+      "model": "opus",
+      "input_tokens": 2,
+      "output_tokens": 5729,
+      "cache_creation_input_tokens": 25077,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.412132,
+      "duration_ms": 75428.05550000048,
+      "attempt": 4
+    },
+    {
+      "id": "967ed259-4f6c-47ab-875c-29f11396d227",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 14,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · read cold by 3 reader(s)",
+        "position": 2,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:50:10.548470Z",
+      "completed_at": "2026-10-14T23:50:46.350568Z",
+      "model": "opus",
+      "input_tokens": 6,
+      "output_tokens": 7031,
+      "cache_creation_input_tokens": 18054,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.360277,
+      "duration_ms": 105066.05870000203,
+      "attempt": 4
+    },
+    {
+      "id": "8e1a399b-e1b2-473a-8e07-b1f9b65c0b32",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 15,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · rewrite 1 read against the version it would replace",
+        "position": 2,
+        "attempt": 2
+      },
+      "output_data": {
+        "challenger_won": false
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:50:46.361905Z",
+      "completed_at": "2026-10-14T23:51:01.717738Z",
+      "model": "opus",
+      "input_tokens": 8,
+      "output_tokens": 1787,
+      "cache_creation_input_tokens": 15691,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.205836,
+      "duration_ms": 40330.51390000037,
+      "attempt": 3
+    },
+    {
+      "id": "3a35ae2b-b691-4e4a-b877-2aa9ec5b2fc1",
+      "agent_id": "subject_writer",
+      "agent_name": "Subject Lines",
+      "sequence_order": 16,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · 4 alternative subject lines",
+        "position": 2,
+        "variants": 4
+      },
+      "output_data": {
+        "subject": "Would you send these words under your own name?"
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:51:01.735287Z",
+      "completed_at": "2026-10-14T23:51:36.103861Z",
+      "model": "opus",
+      "input_tokens": 8,
+      "output_tokens": 3379,
+      "cache_creation_input_tokens": 15089,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.239855,
+      "duration_ms": 61508.7319999875,
+      "attempt": 2
+    },
+    {
+      "id": "f462c0b3-ad37-40db-b647-904169b8bc19",
+      "agent_id": "sequence_reviewer",
+      "agent_name": "Sequence Reviewer",
+      "sequence_order": 17,
+      "status": "completed",
+      "input_data": {
+        "label": "Reading all 2 emails as one sequence"
+      },
+      "output_data": {
+        "passed": false
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:51:36.124234Z",
+      "completed_at": "2026-10-14T23:52:02.024804Z",
+      "model": "opus",
+      "input_tokens": 2,
+      "output_tokens": 1546,
+      "cache_creation_input_tokens": 4655,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.086369,
+      "duration_ms": 25872.622599999886,
+      "attempt": 1
+    },
+    {
+      "id": "9538419b-d4e9-4314-aa0c-650013b54493",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 18,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · rewrite 2",
+        "position": 2,
+        "attempt": 3
+      },
+      "output_data": {
+        "subject": "The quote behind every fact it claims"
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:52:02.059301Z",
+      "completed_at": "2026-10-14T23:53:18.071558Z",
+      "model": "opus",
+      "input_tokens": 2,
+      "output_tokens": 5378,
+      "cache_creation_input_tokens": 24828,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.400688,
+      "duration_ms": 75973.05100000813,
+      "attempt": 5
+    },
+    {
+      "id": "988a17c9-80ab-47c7-bf99-92a60bc19417",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 19,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · read cold by 3 reader(s)",
+        "position": 2,
+        "attempt": 3
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:53:18.103169Z",
+      "completed_at": "2026-10-14T23:54:05.393118Z",
+      "model": "opus",
+      "input_tokens": 6,
+      "output_tokens": 6577,
+      "cache_creation_input_tokens": 18216,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.350562,
+      "duration_ms": 106265.69469997776,
+      "attempt": 5
+    },
+    {
+      "id": "60a4bf85-35cd-4db5-9f08-0fc95c535ae1",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 20,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · rewrite 2 read against the version it would replace",
+        "position": 2,
+        "attempt": 3
+      },
+      "output_data": {
+        "challenger_won": true
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T23:54:05.403986Z",
+      "completed_at": "2026-10-14T23:54:17.142393Z",
+      "model": "opus",
+      "input_tokens": 8,
+      "output_tokens": 1605,
+      "cache_creation_input_tokens": 15959,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.203956,
+      "duration_ms": 39233.0956000078,
+      "attempt": 4
+    }
+  ],
+  "assets": [
+    {
+      "id": "bf22fc4c-f910-4163-99d4-fde3ced30189",
+      "asset_type": "email",
+      "title": "Five onboarding emails in an afternoon is a fair comparison",
+      "content": "Subject: Five onboarding emails in an afternoon is a fair comparison\nPreview text: The difference is in method — the facts the copy is allowed to claim, then a cold read of every draft.\n\nHi {{first_name}},\n\nYour account is already open. Signing in puts you in a workspace where you register your brand, add the real material for one launch or onboarding offer, and ask for the emails you need in your own words.\n\nMarketingOS hands back reviewed draft text — subject, preview, body, call to action — for you to check and copy into whatever you send with. It drafts; it does not send.\n\nFive onboarding emails out of a chat model in an afternoon is a fair comparison to make. The difference is in method, not in adjectives.\n\nYour material is read into a set of facts the writing is allowed to claim, so each sentence traces back to something you supplied.\n\nThen every draft is cold-read by a simulated reader who has never seen the brief, and what did not land is rewritten before it reaches you. That pass has no equivalent in a blank prompt.\n\nNone of it exists until the setup is done: a new account has no campaign waiting, so the brand and the real material go in first, then one request.\n\nSign in to your workspace → https://app.orqagent.com/login/\n\n- MarketingOS, private pilot\n\nP.S. The pilot asks for the phrases you would keep or rewrite, the factual errors you find, and the time spent editing.",
+      "content_html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n<meta name=\"x-apple-disable-message-reformatting\" />\n<meta name=\"color-scheme\" content=\"light\" />\n<meta name=\"supported-color-schemes\" content=\"light\" />\n<title>Five onboarding emails in an afternoon is a fair comparison</title>\n</head>\n<body style=\"margin:0;padding:0;background-color:#ffffff;-webkit-text-size-adjust:100%;\">\n<div style=\"display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;\">The difference is in method — the facts the copy is allowed to claim, then a cold read of every draft.&#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; </div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#ffffff;\">\n<tr><td align=\"center\" style=\"padding:24px 12px;\">\n<table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;background-color:#ffffff;border-radius:6px;\">\n<tr><td style=\"padding:32px 32px 16px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">Hi {{first_name}},</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">Your account is already open. Signing in puts you in a workspace where you register your brand, add the real material for one launch or onboarding offer, and ask for the emails you need in your own words.</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">MarketingOS hands back reviewed draft text — subject, preview, body, call to action — for you to check and copy into whatever you send with. It drafts; it does not send.</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">Five onboarding emails out of a chat model in an afternoon is a fair comparison to make. The difference is in method, not in adjectives.</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">Your material is read into <strong style=\"font-weight:700;color:#111418;\">a set of facts the writing is allowed to claim</strong>, so each sentence traces back to something you supplied.</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">Then every draft is cold-read by a simulated reader who has never seen the brief, and what did not land is rewritten before it reaches you. That pass has no equivalent in a blank prompt.</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">None of it exists until the setup is done: a new account has no campaign waiting, so the brand and the real material go in first, then one request.</p></td></tr>\n<tr><td style=\"padding:8px 32px 24px;\"><a href=\"https://app.orqagent.com/login/\" style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;color:#1a56db;font-weight:600;text-decoration:underline;\">Sign in to your workspace &rarr;</a></td></tr>\n<tr><td style=\"padding:22px 32px 20px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6;color:#5a6069;\">- MarketingOS, private pilot</p></td></tr>\n<tr><td style=\"padding:0 32px 32px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.5;color:#5a6069;border-top:1px solid #e8eaed;padding-top:20px;\">P.S. The pilot asks for the phrases you would keep or rewrite, the factual errors you find, and the time spent editing.</td></tr>\n</table>\n</td></tr>\n</table>\n</body>\n</html>\n",
+      "position": 1,
+      "asset_metadata": {
+        "position": 1,
+        "role": "Activation — get an invited pilot user to sign in, register the brand, add real offer material, and request one email",
+        "subject": "Five onboarding emails in an afternoon is a fair comparison",
+        "preview_text": "The difference is in method — the facts the copy is allowed to claim, then a cold read of every draft.",
+        "eyebrow": "",
+        "headline": "",
+        "greeting": "Hi {{first_name}},",
+        "body": "Your account is already open. Signing in puts you in a workspace where you register your brand, add the real material for one launch or onboarding offer, and ask for the emails you need in your own words.\n\nMarketingOS hands back reviewed draft text — subject, preview, body, call to action — for you to check and copy into whatever you send with. It drafts; it does not send.\n\nFive onboarding emails out of a chat model in an afternoon is a fair comparison to make. The difference is in method, not in adjectives.\n\nYour material is read into **a set of facts the writing is allowed to claim**, so each sentence traces back to something you supplied.\n\nThen every draft is cold-read by a simulated reader who has never seen the brief, and what did not land is rewritten before it reaches you. That pass has no equivalent in a blank prompt.\n\nNone of it exists until the setup is done: a new account has no campaign waiting, so the brand and the real material go in first, then one request.",
+        "call_to_action": "Sign in to your workspace",
+        "sign_off": "- MarketingOS, private pilot",
+        "postscript": "The pilot asks for the phrases you would keep or rewrite, the factual errors you find, and the time spent editing.",
+        "pull": 7,
+        "revisions": 1,
+        "single_idea": "Before anything gets written, your material is compiled into a set of facts the writing is allowed to claim — and then every draft is read by a reader who has never seen the brief, and rewritten where it did not land; that is the part you cannot get from a blank prompt, and it only starts once you put one real offer in.",
+        "evidence_ids": [
+          "E11",
+          "E18",
+          "E20"
+        ],
+        "tier": "plain",
+        "sequence_review_pending": false
+      },
+      "created_at": "2026-10-14T23:54:17.187152Z"
+    },
+    {
+      "id": "fa2611cc-659d-4eb0-b956-6533f76ce936",
+      "asset_type": "email",
+      "title": "The quote behind every fact it claims",
+      "content": "Subject: The quote behind every fact it claims\nPreview text: Plus the cold read: what that reader understood, where it stopped, and the doubt it named.\n\nHi {{first_name}},\n\nA draft either claims something your own material supports, or it does not. That is checkable rather than arguable.\n\nMarketingOS drafts launch and onboarding email copy from whatever you point it at — a URL, a PDF, a screenshot, pasted text — and shows the source quote behind each fact it was allowed to use.\n\nOn a finished run, the Knowledge page lists those compiled facts beside the quotation each one came from, with a strength label and the gaps it could not fill.\n\nThe execution page holds the draft and its cold read: what an AI reader given no brief took the offer to be, where it stopped, the doubt it named, the changes it suggested. Not opens or clicks — a critique you can argue with.\n\nYou are the last check on facts, links and brand voice, so your edit is the measurement the pilot wants: which lines you keep, which you rewrite, what came back wrong, how long it took. Nothing to write up afterwards that the check itself does not produce.\n\nSigning in opens your workspace rather than a draft. Both pages belong to a run — read them on one that has finished, or one real offer and one request starts one.\n\nSign in to check a run → https://app.orqagent.com/login/\n\n- MarketingOS, private pilot\n\nP.S. A run takes several minutes and can come back asking for more material; the two pages are waiting on it once it finishes.",
+      "content_html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n<meta name=\"x-apple-disable-message-reformatting\" />\n<meta name=\"color-scheme\" content=\"light\" />\n<meta name=\"supported-color-schemes\" content=\"light\" />\n<title>The quote behind every fact it claims</title>\n</head>\n<body style=\"margin:0;padding:0;background-color:#ffffff;-webkit-text-size-adjust:100%;\">\n<div style=\"display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;\">Plus the cold read: what that reader understood, where it stopped, and the doubt it named.&#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; </div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#ffffff;\">\n<tr><td align=\"center\" style=\"padding:24px 12px;\">\n<table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;background-color:#ffffff;border-radius:6px;\">\n<tr><td style=\"padding:32px 32px 16px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">Hi {{first_name}},</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">A draft either claims something your own material supports, or it does not. That is checkable rather than arguable.</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">MarketingOS drafts launch and onboarding email copy from whatever you point it at — a URL, a PDF, a screenshot, pasted text — and shows the source quote behind each fact it was allowed to use.</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">On a finished run, the Knowledge page lists those compiled facts beside the quotation each one came from, with a strength label and the gaps it could not fill.</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">The execution page holds the draft and its cold read: what an AI reader given no brief took the offer to be, where it stopped, the doubt it named, the changes it suggested. Not opens or clicks — a critique you can argue with.</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">You are the last check on facts, links and brand voice, so <strong style=\"font-weight:700;color:#111418;\">your edit is the measurement</strong> the pilot wants: which lines you keep, which you rewrite, what came back wrong, how long it took. Nothing to write up afterwards that the check itself does not produce.</p></td></tr>\n<tr><td style=\"padding:0 32px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2328;\">Signing in opens your workspace rather than a draft. Both pages belong to a run — read them on one that has finished, or one real offer and one request starts one.</p></td></tr>\n<tr><td style=\"padding:8px 32px 24px;\"><a href=\"https://app.orqagent.com/login/\" style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;color:#1a56db;font-weight:600;text-decoration:underline;\">Sign in to check a run &rarr;</a></td></tr>\n<tr><td style=\"padding:22px 32px 20px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6;color:#5a6069;\">- MarketingOS, private pilot</p></td></tr>\n<tr><td style=\"padding:0 32px 32px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.5;color:#5a6069;border-top:1px solid #e8eaed;padding-top:20px;\">P.S. A run takes several minutes and can come back asking for more material; the two pages are waiting on it once it finishes.</td></tr>\n</table>\n</td></tr>\n</table>\n</body>\n</html>\n",
+      "position": 2,
+      "asset_metadata": {
+        "position": 2,
+        "role": "Make both inspectable pages concrete and turn the pilot's feedback into the by-product of one honest check",
+        "subject": "The quote behind every fact it claims",
+        "preview_text": "Plus the cold read: what that reader understood, where it stopped, and the doubt it named.",
+        "eyebrow": "",
+        "headline": "",
+        "greeting": "Hi {{first_name}},",
+        "body": "A draft either claims something your own material supports, or it does not. That is checkable rather than arguable.\n\nMarketingOS drafts launch and onboarding email copy from whatever you point it at — a URL, a PDF, a screenshot, pasted text — and shows the source quote behind each fact it was allowed to use.\n\nOn a finished run, the Knowledge page lists those compiled facts beside the quotation each one came from, with a strength label and the gaps it could not fill.\n\nThe execution page holds the draft and its cold read: what an AI reader given no brief took the offer to be, where it stopped, the doubt it named, the changes it suggested. Not opens or clicks — a critique you can argue with.\n\nYou are the last check on facts, links and brand voice, so **your edit is the measurement** the pilot wants: which lines you keep, which you rewrite, what came back wrong, how long it took. Nothing to write up afterwards that the check itself does not produce.\n\nSigning in opens your workspace rather than a draft. Both pages belong to a run — read them on one that has finished, or one real offer and one request starts one.",
+        "call_to_action": "Sign in to check a run",
+        "sign_off": "- MarketingOS, private pilot",
+        "postscript": "A run takes several minutes and can come back asking for more material; the two pages are waiting on it once it finishes.",
+        "pull": 7,
+        "revisions": 2,
+        "single_idea": "The notes the pilot asks for — the phrases you would keep or rewrite, the factual errors, the time you spent editing — are measurements only you can take, because you are the one who still checks the facts, the links and the voice before anything leaves.",
+        "evidence_ids": [
+          "E39",
+          "E15",
+          "E12"
+        ],
+        "tier": "plain",
+        "sequence_review_pending": false
+      },
+      "created_at": "2026-10-14T23:54:17.195859Z"
+    }
+  ],
+  "result": {
+    "run_status": "completed",
+    "report": {
+      "request": "Write exactly two English emails introducing MarketingOS to invited early-access testers who already have a test account. They run a small SaaS business and need to write a launch or onboarding email campaign. Explain one concrete supported reason to try the product, then invite them to test one real offer and review the output. Do not assume their present tools, revenue, list size, staffing, email results or urgency. Do not invent prices, testimonials, performance gains or public signup. Make the first action small: sign in, add the real offer material, and request one email. In the second email explain why inspecting source facts and reader feedback is useful. One clear CTA in each email to their existing account. The product is MarketingOS, not the older orqAgent AI agent builder.",
+      "delivered": 2,
+      "promised": 2,
+      "contract_violations": [],
+      "emails": [
+        {
+          "position": 1,
+          "subject": "Five onboarding emails in an afternoon is a fair comparison",
+          "single_idea": "Before anything gets written, your material is compiled into a set of facts the writing is allowed to claim — and then every draft is read by a reader who has never seen the brief, and rewritten where it did not land; that is the part you cannot get from a blank prompt, and it only starts once you put one real offer in.",
+          "pull": 7.0,
+          "revisions": 1,
+          "clean": true,
+          "landed": true,
+          "rewrites_stopped_helping": true,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E11",
+            "E18",
+            "E20"
+          ],
+          "evidence_spent": [],
+          "attributions": 0,
+          "unresolved": [],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "A workspace where I register my brand, paste in the real details of one launch or onboarding offer, describe the emails I want, and it hands back draft subject/preview/body/CTA text for me to check and copy into my own sending tool — it doesn't send anything.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile establishes what the email leans on: I'm an invited early-access tester, I have an account, I run a small SaaS, and I need launch or onboarding email copy. So 'Your account is already open' and 'ask for the emails you need' land on a real need rather than a manufactured one, and the sign-in CTA is coherent with the relationship. What the email adds on its own: that I'd otherwise be getting 'five onboarding emails out of a chat model in an afternoon' (email-only — nothing in my profile says what I currently use, or that I've tried a chat model for this), that I have the 'real material' for an offer already assembled in a form I can paste (email-only, plausible but unverified), and that editing time and factual errors are a pain I've measured (email-only — the P.S. asks for them, which is fair as a pilot ask, but it presumes a baseline I haven't reported). Unknowns: how long setup takes, what counts as 'material', how many offers or requests the pilot allows, and whether the output is close enough to use.",
+              "assumed_experiences": [
+                "Existing account and invited-tester relationship — profile-supported",
+                "Needing launch or onboarding email copy for one offer — profile-supported",
+                "Having previously produced onboarding emails with a chat model, or benchmarked against one — email-only",
+                "Having brand material and offer facts ready to paste in — email-only",
+                "Having spent measurable time editing AI drafts and found factual errors in them — email-only",
+                "A current tool that does sending, into which drafts get copied — email-only"
+              ],
+              "problem_now": "The need for launch/onboarding copy is documented in my situation, so this is a real standing task rather than an invented one. What is not established is urgency: no launch date, no deadline, nothing that makes this Tuesday the Tuesday. So it competes with 400 unread and a meeting, and loses on timing, not on relevance.",
+              "stopped_at": "Five onboarding emails out of a chat model in an afternoon is a fair comparison to make. The difference is in method, not in adjectives.",
+              "biggest_doubt": "Effort before any payoff. The email is explicit that nothing exists until I register the brand and load real material — so the first session is unpaid setup work of unknown length, and I have no idea whether what comes back is usable enough to justify it. 'Cold-read by a simulated reader' is an interesting-sounding claim with nothing behind it yet.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me how long the setup actually takes and what exactly to bring — e.g. 'paste your pricing page and one existing welcome email, about ten minutes, first drafts back in two' — so I could judge whether it fits before the meeting or has to wait for Thursday.",
+              "fixes": [
+                "Cut 'The difference is in method, not in adjectives.' — it's a line about copywriting, not about my offer, and it's where I stopped.",
+                "Rewrite 'Five onboarding emails out of a chat model in an afternoon is a fair comparison to make.' — I never said I did that; arguing with a baseline I didn't claim reads as defensive.",
+                "'Your material is read into a set of facts the writing is allowed to claim' — say it plainly: it only writes claims it can trace to something I pasted.",
+                "'Then every draft is cold-read by a simulated reader who has never seen the brief' — either say what that changes in the output or drop it; as written it's an unverifiable mechanism claim.",
+                "'None of it exists until the setup is done: a new account has no campaign waiting' — replace with the actual cost: what to bring, how many minutes, how long until the first draft.",
+                "'Sign in to your workspace →' — name the first screen, so I know whether I'm one click from registering a brand or from a ten-step wizard."
+              ],
+              "opens_in_100": 34,
+              "clicks_in_100": 8,
+              "persona": "Selected audience (user-stated constraints): Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy..\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.",
+              "pull": 7
+            },
+            {
+              "what_it_sells": "A tool in my existing workspace that, after I register my brand and upload the real material for one offer, writes marketing email drafts — subject, preview, body, CTA — grounded only in facts I supplied, which I then copy into whatever I actually send with.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Profile-supported: I was invited to early access, I already have an account, and I do need launch/onboarding email copy — so 'Your account is already open' and 'ask for the emails you need' land on something real rather than guessing at my job. Email-only: that I would otherwise be generating 'five onboarding emails out of a chat model in an afternoon', that a blank prompt is my current method, and that I have an offer whose 'real material' is already written down somewhere I can grab. None of that is established by my profile, and I'm not saying it's wrong — it's just the sender's assumption. Unknowns the copy leaves open: what counts as 'material' (a URL? a PDF? pasted text?), how long the brand registration takes, how many requests or drafts the pilot includes, and whether there's any cost after the pilot. The premise itself fits; the next step's size does not.",
+              "assumed_experiences": [
+                "email-only: that I currently produce onboarding emails by prompting a chat model",
+                "email-only: that my brand facts and offer material exist in a form I can paste or upload today",
+                "email-only: that I have a launch or onboarding offer live or imminent right now",
+                "profile-supported: that I have an account and have not yet set anything up in it",
+                "profile-supported: that I need launch or onboarding email copy"
+              ],
+              "problem_now": "Documented: I do need launch/onboarding copy, that's why I accepted the invite. Not documented: any deadline. Nothing in my week forces this to happen Tuesday morning, so 'now' is a plausible soon, not an urgent now.",
+              "stopped_at": "Five onboarding emails out of a chat model in an afternoon is a fair comparison to make. The difference is in method, not in adjectives.",
+              "biggest_doubt": "Effort before any output. The email is honest that nothing exists until I register the brand and feed in real material — which means my first visit is a data-entry session with unknown length and unknown input format, and I get nothing back to judge until it's done. Three minutes before a meeting, that's a 'later' task, and 'later' tasks die.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me how long the setup actually takes and in what form the material goes in — e.g. 'paste your landing page and one existing email, about ten minutes, and you get five drafts back.'",
+              "fixes": [
+                "Cut 'Five onboarding emails out of a chat model in an afternoon is a fair comparison to make. The difference is in method, not in adjectives.' — I had to read it twice to work out who was being compared to whom, and it plants a rival tool in my head for no gain.",
+                "Rewrite 'None of it exists until the setup is done: a new account has no campaign waiting, so the brand and the real material go in first, then one request.' — this is the one paragraph that decides whether I click, and it reads as an apology. Replace with the concrete cost: what I need to have open, in what format, and how many minutes.",
+                "'Your material is read into a set of facts the writing is allowed to claim, so each sentence traces back to something you supplied.' — I can decode it, but 'a set of facts the writing is allowed to claim' is internal phrasing. Say it as: it only claims things that are in what you gave it.",
+                "'Then every draft is cold-read by a simulated reader who has never seen the brief' — interesting and the most distinctive thing here, but it is buried under the chat-model comparison. Lead with it or cut the comparison that steals its place.",
+                "The CTA 'Sign in to your workspace →' asks for the biggest version of the step. Offer the smallest one that produces output, if one exists."
+              ],
+              "opens_in_100": 38,
+              "clicks_in_100": 9,
+              "persona": "Selected audience (user-stated constraints): Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy..\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 8
+            },
+            {
+              "what_it_sells": "A web workspace where I register my brand, paste in the real material for one launch or onboarding offer, describe what I want, and it writes draft marketing emails (subject, preview, body, CTA) for me to copy into my own sending tool — it doesn't send anything.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Profile establishes three things the email relies on: I run a small SaaS, I need launch/onboarding email copy, and I have an existing account as an invited early-access tester. The email's premise — 'Your account is already open', 'a new account has no campaign waiting', 'set up brand + material, then ask' — fits all three without stretching. What's email-only: that I've tried a chat model for this ('five onboarding emails out of a chat model in an afternoon'), that I currently have a launch or onboarding offer live or imminent, and that I have 'real material' already written and assembled somewhere. None of those are established by my profile; they aren't contradicted either — I simply haven't said. Also email-only: that reviewing and editing drafts is where my time goes. The pitch doesn't collapse if those are wrong, because the core ask (sign in, set up, try one request) is conditional and small. Unknowns that matter to me: how long setup takes, whether the pilot costs anything, what happens to material I paste in, and whether there is a usage limit per account.",
+              "assumed_experiences": [
+                "email-only: that I have previously generated onboarding emails with a chat model and can compare",
+                "email-only: that I have a launch or onboarding offer currently in flight to point this at",
+                "email-only: that I have 'the real material' (positioning, feature facts, pricing) already written down and to hand",
+                "email-only: that editing AI drafts is a measurable time cost for me",
+                "profile-supported: that I have an account and was invited to an early-access pilot",
+                "profile-supported: that I need launch or onboarding email copy at all"
+              ],
+              "problem_now": "",
+              "stopped_at": "Five onboarding emails out of a chat model in an afternoon is a fair comparison to make. The difference is in method, not in adjectives.",
+              "biggest_doubt": "",
+              "to_click_it_would_have_to": "",
+              "fixes": [],
+              "opens_in_100": null,
+              "clicks_in_100": null,
+              "persona": "Selected audience (user-stated constraints): Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy..\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 0
+            }
+          ],
+          "sameness": []
+        },
+        {
+          "position": 2,
+          "subject": "The quote behind every fact it claims",
+          "single_idea": "The notes the pilot asks for — the phrases you would keep or rewrite, the factual errors, the time you spent editing — are measurements only you can take, because you are the one who still checks the facts, the links and the voice before anything leaves.",
+          "pull": 7.0,
+          "revisions": 2,
+          "clean": true,
+          "landed": true,
+          "rewrites_stopped_helping": true,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E39",
+            "E15",
+            "E12"
+          ],
+          "evidence_spent": [],
+          "attributions": 0,
+          "unresolved": [],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "A tool that writes launch/onboarding email copy from material you give it (URL, PDF, screenshot, pasted text), shows the source quote behind each fact it used, and attaches an AI 'cold read' critique of the draft — I'm being asked to run one and edit the output as pilot feedback.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Profile-supported: I run a small SaaS business, I need launch/onboarding email copy, and I have an account as an invited early-access tester — so the email's core premise (draft this kind of copy from my own material, then edit it) lands on something I actually do. Email-only: that I have a finished run sitting in my workspace waiting to be read, that I've been bothered by drafts inventing facts my material doesn't support, and that writing up pilot feedback has previously been a chore ('Nothing to write up afterwards'). None of that is established by my profile; I may never have started a run. Unknowns: whether I've used the product at all yet, what my current copy process is, whether hallucinated claims have ever burned me, and how many runs my pilot access allows.",
+              "assumed_experiences": [
+                "That I have at least one finished run, or am ready to start one (email-only)",
+                "That I've seen AI drafts assert facts my own material doesn't support (email-only)",
+                "That I'm the final approver on facts, links and brand voice (plausible for a small SaaS owner but email-only as a claim about me)",
+                "That writing up pilot feedback is a burden I want removed (email-only)",
+                "That I need launch/onboarding email copy (profile-supported)",
+                "That I have an account and can sign in (profile-supported)"
+              ],
+              "problem_now": "Needing launch/onboarding copy is documented for me. Fact-checking an AI draft against my own material is a plausible risk the email names well, not something my situation establishes as a current pain. No deadline in my profile; timing urgency is unknown.",
+              "stopped_at": "Both pages belong to a run — read them on one that has finished, or one real offer and one request starts one.",
+              "biggest_doubt": "Effort and timing on a Tuesday with 400 unread: the P.S. tells me a run takes several minutes and may come back asking for more material, and the ask is really 'produce a judged edit of a draft', which is half an hour of my attention, not a one-minute look. I also can't tell from this whether I already have a finished run waiting or whether I'd be starting cold.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me whether a finished run is already sitting in my workspace — name it, or say plainly 'you have none yet; here is the one offer and one request it takes, and it costs you about 8 minutes'.",
+              "fixes": [
+                "Cut 'A draft either claims something your own material supports, or it does not. That is checkable rather than arguable.' — it's an abstract opener; lead with what MarketingOS does from a URL or PDF.",
+                "Rewrite 'Both pages belong to a run — read them on one that has finished, or one real offer and one request starts one.' — I read it twice and still had to work out whether I have a finished run. Say 'You have 1 finished run' or 'You have none yet — starting one needs an offer URL and one sentence of what you want'.",
+                "Rewrite 'Signing in opens your workspace rather than a draft.' — this reads as a warning that the CTA won't take me where I want to go.",
+                "Tighten 'so your edit is the measurement the pilot wants: which lines you keep, which you rewrite, what came back wrong, how long it took' — four asks in one clause; say how long you expect it to take me.",
+                "The P.S. ('A run takes several minutes and can come back asking for more material') is the cost of entry and it's buried last — move it up and pair it with the actual time commitment."
+              ],
+              "opens_in_100": 38,
+              "clicks_in_100": 9,
+              "persona": "Selected audience (user-stated constraints): Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy..\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.",
+              "pull": 8
+            },
+            {
+              "what_it_sells": "It drafts launch and onboarding email copy from material I give it (a URL, PDF, screenshot, pasted text), then shows me the exact source quote behind each fact it used, plus an AI 'cold read' critique of the draft — and in the pilot my edits are the feedback they want.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Profile-supported: I was invited to this private pilot, I have an account, and I run a small SaaS where I do need launch/onboarding email copy — so 'drafts launch and onboarding email copy' lands on a real need, and the sign-off 'MarketingOS, private pilot' matches a relationship I actually have. Email-only: that I already have a finished run to go read ('read them on one that has finished'), that I have a URL or PDF ready to point it at, and that I currently act as 'the last check on facts, links and brand voice' in some existing drafting process. None of that is established by my profile — it may be true, I just can't confirm it from here. The email handles the finished-run part conditionally ('or one real offer and one request starts one'), which keeps it from being a false premise. Unknown: whether I have ever started a run, what my current copy process is, and how much time the full check costs me.",
+              "assumed_experiences": [
+                "I have a finished run in my workspace to open (email-only)",
+                "I have source material — URL, PDF, screenshot — ready to point at (email-only, plausible)",
+                "I already serve as the final fact/link/brand-voice checker on drafts (email-only)",
+                "I agreed to report back on a pilot by editing drafts (pilot-implied, not stated in my profile)",
+                "I know what the 'Knowledge page' and 'execution page' are from prior use (email-only)"
+              ],
+              "problem_now": "Documented: I need launch and onboarding email copy, so the core offer is relevant. Not documented: any deadline, any current failure, or that fact-checking AI drafts is a pain I have actually hit. Treat the urgency as unknown — today the binding constraint is that I'm three minutes from a meeting with 400 unread.",
+              "stopped_at": "Both pages belong to a run — read them on one that has finished, or one real offer and one request starts one.",
+              "biggest_doubt": "Effort and timing, not trust. The P.S. tells me a run takes several minutes and may come back asking for more material, and the body tells me I'm the last check on facts, links and brand voice — that is a 20–40 minute sitting, not a click. Nothing tells me whether there's already a finished run waiting that I could just read in two minutes.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me whether a finished run is already sitting in my workspace — 'your run from Oct 9 is finished, here are its two pages' — and roughly how many minutes reading and editing it takes.",
+              "fixes": [
+                "Cut the opening riddle: 'A draft either claims something your own material supports, or it does not. That is checkable rather than arguable.' It makes me parse before I know what the mail is about; lead with 'MarketingOS drafts launch and onboarding email copy from...' instead.",
+                "Rewrite 'Both pages belong to a run — read them on one that has finished, or one real offer and one request starts one.' I read it twice and still had to work out the second clause. Say: 'If you have a finished run, open it. If not, one offer plus one request starts one.'",
+                "'Signing in opens your workspace rather than a draft' tells me what I won't get; say instead where to click once I'm in.",
+                "'Not opens or clicks — a critique you can argue with' assumes I was expecting opens and clicks — I wasn't; drop the contrast or name what the critique looks like (one example line of a doubt it named).",
+                "'so your edit is the measurement the pilot wants: which lines you keep, which you rewrite, what came back wrong, how long it took' — this is four asks dressed as one; say the one thing you actually need back.",
+                "The P.S. ('A run takes several minutes and can come back asking for more material') is the real cost and it's buried last; put the time cost next to the CTA so I can decide in one pass."
+              ],
+              "opens_in_100": 36,
+              "clicks_in_100": 8,
+              "persona": "Selected audience (user-stated constraints): Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy..\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 7
+            },
+            {
+              "what_it_sells": "Software that writes launch and onboarding email copy from material I point it at (URL, PDF, screenshot, pasted text), shows the exact source quote behind every fact it used plus what it couldn't source, and gives the draft a no-brief AI 'cold read' critique — so my week changes by me editing a sourced draft instead of writing from scratch and fact-checking myself.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Profile-supported: I am an invited early-access tester with an existing account, I run a small SaaS, and I need launch/onboarding email copy. The email's core premise — a pilot run that drafts exactly that kind of copy and asks for my edit — lines up with all three, and the sign-off ('MarketingOS, private pilot') matches a relationship I actually have, so this does not read cold. Email-only: that I have material worth pointing it at (a page, a PDF, a deck) and an offer currently in flight; plausible for a small SaaS but not established here. Email-only and weaker: that unsourced or wrongly-sourced claims are a problem I have been having, and that I have a draft-review habit to compare against — neither is in my profile. Unknowns the copy leaves open: how long my own editing pass takes, what the minimum input is, whether anything exists in my workspace already, and whether the output is close enough to ship or close enough only to critique. Those are doubts about the ask, not a mismatch of situation.",
+              "assumed_experiences": [
+                "That I need launch or onboarding email copy — profile-supported",
+                "That I have an existing account I can sign into for a private pilot — profile-supported",
+                "That I have source material (URL, PDF, screenshot, pasted text) describing a real offer to point it at — email-only, plausible but unstated",
+                "That I have a 'real offer' live or imminent that needs copy right now — email-only",
+                "That fact-checking claims against my own material is currently a chore or a failure point for me — email-only, not established",
+                "That I already know what a 'run', the 'Knowledge page' and the 'execution page' are — email-only; the terms are explained adequately but assume familiarity with the workspace layout",
+                "That I care about critique over opens/clicks as the measurement — email-only inference about my preferences"
+              ],
+              "problem_now": "Needing launch/onboarding copy is documented as my situation, so the subject matter is live. Whether it is urgent this Tuesday is unknown — nothing in my profile sets a launch date, and the email wisely doesn't claim one. The specific pain it leans on (claims not traceable to my own material) is a plausible risk for me rather than a documented incident; I have not reported being burned by an invented fact. The real present constraint is time: I am three minutes from a meeting and the ask is a multi-minute run plus my editing pass.",
+              "stopped_at": "Both pages belong to a run — read them on one that has finished, or one real offer and one request starts one.",
+              "biggest_doubt": "Effort and timing against unknown payoff. The honest cost is not 'sign in' — it is find the right source material, wait several minutes, possibly get asked for more material, then read two pages and do a full edit pass so my edit can be 'the measurement the pilot wants'. Nothing here tells me how long my part takes or how close the draft lands, and the cold read being another AI judging the first AI doesn't tell me whether the facts came back right. I am happy to try a run; I am not ready to commit a morning to being the pilot's measurement instrument.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me the smallest possible first step with its real cost in it — e.g. 'paste one pricing-page URL, the run takes about six minutes, you get a sourced onboarding email and five quote-to-fact pairs to check' — or shown me one actual fact next to its actual quote so I could judge the output without starting anything.",
+              "fixes": [
+                "Cut or rewrite: 'Both pages belong to a run — read them on one that has finished, or one real offer and one request starts one.' I read this twice and still had to reverse-engineer it. Say plainly: 'If a run has already finished, open it. If not, one offer plus one request starts one.'",
+                "Rewrite the subject: 'The quote behind every fact it claims' never says who is writing and never names the product. For a pilot I'm already in, 'MarketingOS: see the quote behind every fact in your draft' earns the open on recognition instead of riddle.",
+                "Rewrite: 'You are the last check on facts, links and brand voice, so your edit is the measurement the pilot wants: which lines you keep, which you rewrite, what came back wrong, how long it took.' This reads as an assignment with homework attached. Tell me what I get first; ask for the edit log second, and say whether it's logged automatically or I have to type it.",
+                "Fix the P.S.: 'A run takes several minutes and can come back asking for more material' is the first thing I budget against and the vaguest line in the email. Give the actual number of minutes and what 'more material' typically means.",
+                "Add one concrete artefact: a single compiled fact shown beside its source quote and its strength label. One example does more than three paragraphs describing the page.",
+                "Replace the abstract opening: 'A draft either claims something your own material supports, or it does not. That is checkable rather than arguable.' True but it spends my first line on a principle. Lead with what the product does to my inbox this week."
+              ],
+              "opens_in_100": 37,
+              "clicks_in_100": 8,
+              "persona": "Selected audience (user-stated constraints): Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy..\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 7
+            }
+          ],
+          "sameness": []
+        }
+      ],
+      "limiting_gaps": [
+        "No price or free-entry terms found - emails cannot name a price, a trial length or a risk reversal",
+        "No customer names, quotes or case studies found - the copy can describe the product but cannot prove anyone uses it",
+        "No measurable results found - claims stay qualitative, and adjectives convert worse than numbers"
+      ],
+      "what_would_help_most": "Resolve this simulated next-step obstacle: I would have clicked if this email had told me how long the setup actually takes and what exactly to bring — e.g. 'paste your pricing page and one existing welcome email, about ten minutes, first drafts back in two' — so I could judge whether it fits before the meeting or has to wait for Thursday. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.",
+      "questions": [],
+      "sequence_summary": "Two emails that argue one promise in the right order — earn the run, then make the run's working readable — and both stand alone; the only sequence-level slack is that email 2's reader-report half repeats email 1's claim instead of opening it the way it opens the facts page.}",
+      "knowledge_version": 2,
+      "notes": [],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "Read as an activation request to people who already hold accounts, not an acquisition campaign: two emails to invited pilot users, each asking them to use the login they already have. The campaign goal is one real run on one real offer plus a review of what came back, not a purchase decision — public registration is closed and no price, trial, testimonial or result exists, so no commercial argument is available or attempted. 'Launch or onboarding email campaign' is treated as the work they already have to do (as the user stated), not as a deadline, a failing current sequence, or evidence about their tools, list, staffing or past email results — none of which are assumed anywhere in the brief. Where the request says 'one concrete supported reason', email 1 spends it on the one mechanism a prompt has no room for: material read into a fixed set of claimable facts, then every draft cold-read by a reader that never saw the brief and rewritten where it did not land. Email 2 takes the second half of the request literally: why inspecting the compiled facts and the reader report is worth the reader's time. Segment chosen is the only one whose next step actually exists; the SaaS and launch/onboarding specifics from the user's request are carried in reader_profile_override.",
+      "reader": "Selected audience (user-stated constraints): Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy..\nNo further recipient situation is established. Compiled market context is research to check for applicability, not a replacement biography.",
+      "reader_segment": "An invited pilot user with a live account who still has not pushed one real offer through it",
+      "reader_profile_override": "Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy.",
+      "fixed_cta_url": "https://app.orqagent.com/login/",
+      "promise": "On one real offer, in one run, you can find out for yourself whether MarketingOS writes launch or onboarding email text you would be willing to send under your own name — and check its working rather than take its word for it.",
+      "orientation": "MarketingOS is what is behind the login you already have: you point it at your own offer material — your site, a PDF, a screenshot, pasted text — ask for the launch or onboarding emails you need in your own words, and it hands back reviewed draft text (subject, preview, body, call to action) for you to check and copy into whatever you send with.",
+      "arc": "Email 1 moves them from an unopened account to one real run: it names the one thing in the process that a blank prompt has no room for — a fixed set of claimable facts compiled from their own material, and a cold read of every draft by a reader who never saw the brief — and asks for the smallest complete action, which is sign in, register the brand, add the real offer material, request one email. Email 2 assumes the run may or may not have happened and changes what they think the output is: not a verdict to accept or reject on taste, but two inspectable pages — the compiled facts with their source quotations and strength labels, and the reader report naming what the simulated reader understood, where they stopped and their biggest doubt. Email 1 earns the run; email 2 makes the run readable, which is also what makes their pilot notes possible. Neither depends on the other being read.",
+      "sequence_rationale": "Two emails, and the order is forced by what exists. Nothing has been generated for this reader — a new account has no campaign waiting — so an email about how to inspect a reader report is addressed to a page they cannot open yet. Email 1 therefore has one job: make the first run exist, with the smallest action that completes (sign in, register the brand, add the real offer material, request one email) and exactly one reason to bother, chosen because it is the one thing a chat prompt structurally cannot do — fix the set of facts the writing is allowed to claim before a word is written, then have a reader who never saw the brief read the draft and rewrite what did not land. Email 2 comes second because inspection is only valuable once there is something to inspect, and because it answers the objection that email 1 deliberately leaves standing: an AI reviewing an AI proves nothing. That is answered by disclosure and a readable diagnosis, never by an implied result — so email 2 says plainly that the cold reader is a simulation and not a measurement, and argues that the critique is worth reading on its merits and the compiled facts are worth reading against their own material. Reversing the order would ask them to evaluate transparency about an output that does not exist. Both emails avoid every argument this material cannot carry: no price, no trial, no testimonial, no performance claim, no time saving (no setup time has been measured), no sector-quality claim, and no promise that the first run comes back complete. The single thing the user could send us that would most change this campaign: confirmed commercial terms — what MarketingOS costs after the pilot and whether any free entry exists — because a pilot user who likes the output currently has nothing to convert into, and that silence is the one objection neither email can answer.",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Get them to sign in, register their brand, add the real offer material for one launch or onboarding campaign, and request one email.",
+          "single_idea": "Before anything gets written, your material is compiled into a set of facts the writing is allowed to claim — and then every draft is read by a reader who has never seen the brief, and rewritten where it did not land; that is the part you cannot get from a blank prompt, and it only starts once you put one real offer in.",
+          "felt_need": "I have a launch or onboarding sequence to write and no copy for it yet, and there is an account sitting there that I have not actually used for anything.",
+          "status_quo": "The account is open and empty. No draft, no report, nothing generated — so the sequence is still an unstarted task, written however they would normally write it.",
+          "why_it_fails": "An account on its own produces nothing: a new account has no campaign waiting, and until the brand is registered and real material is in there, there is nothing to read, nothing to react to and nothing to report back.",
+          "mechanism": "Point it at the material you already have for this offer — your site, a PDF, a screenshot, pasted text — and ask for what you need in your own words, e.g. a five-email onboarding campaign for your SaaS. That material is read into a set of facts it is allowed to claim, so every sentence traces back to something you supplied; each draft is then read by a simulated reader who knows nothing about your product, and what did not land is rewritten before you see it. The payoff only exists after the setup step: register the brand and add the real offer material first, then request one email.",
+          "alternative_ideas": [],
+          "alternative_arguments": [
+            {
+              "single_idea": "What comes back is text, not a send: subject, preview, body and call to action, copyable or exportable with an HTML preview — nothing is sent, nothing is published, so testing it on a real offer costs you an evening, not a campaign.",
+              "felt_need": "I am not handing my launch over to something that might mail my customers on my behalf, and I do not want a tool I have to migrate into.",
+              "status_quo": "They write and send from whatever they already use, and keep the decision about what goes out entirely in their own hands.",
+              "why_it_fails": "",
+              "mechanism": "MarketingOS drafts only: the output is subject, preview, body and a call to action, with text copying or export and an HTML preview, which you review and transfer into your own sending tool. It does not send emails, publish campaigns or guarantee opens, clicks, revenue or conversions — the send stays where it is.",
+              "belief_shift": "Before: trying this means letting something loose on my launch. After: trying this means asking for one draft I can read, copy or throw away, with my sending tool untouched.",
+              "evidence_ids": [
+                "E36",
+                "E37",
+                "E38"
+              ],
+              "must_not_say": [
+                "no claim that reviewing and pasting is faster or less work than writing it — no setup or editing time has been measured",
+                "no integration or deliverability claims: nothing is established about connecting to any sending tool",
+                "do not frame the absence of sending as a competitor comparison"
+              ],
+              "objection": "If I still have to verify every fact and link, fix the voice and paste it into my own sender, I have not removed the work — just moved it, and I do not know whether it is less.",
+              "call_to_action": "Sign in to your existing account, add the material for one real offer, and request one email.",
+              "next_step_decision": "Whether reviewed draft text in this shape — subject, preview, body, call to action — is something they would actually move into their own sending tool for this launch.",
+              "next_step_value": "In the workspace they can request one email against their own offer material and, when it arrives, read it as subject, preview, body and call to action, copy or export the text and preview it as HTML.",
+              "next_step_evidence_ids": [
+                "E36",
+                "E37"
+              ],
+              "next_step_limit": "It does not send or schedule anything, does not connect to their sending tool, and does not establish what the product costs once the pilot ends.",
+              "subject_strategy": "Promise the artefact and its boundary in plain words — draft text you can copy, nothing sent — so the open costs them no suspicion."
+            }
+          ],
+          "belief_shift": "Before: the account is a favour I have not got round to, and feeding a tool a thin version of my company will produce thin copy. After: the thing being tested is a specific process — fixed claimable facts, then a cold read and a rewrite — and it can only be judged by putting one real offer in, which is a half hour of material and one request.",
+          "evidence_ids": [
+            "E11",
+            "E18",
+            "E20"
+          ],
+          "must_not_say": [
+            "no price, plan, trial length, discount or free-entry terms — none exist",
+            "no testimonials, customer names, 'other pilot users', 'companies like yours' or any implied adoption",
+            "no claim about opens, clicks, replies, revenue or conversions, and no 'better emails' performance promise",
+            "no claim that setup, material gathering or the run is quick, or takes a stated number of minutes, or saves time — no hands-on setup time has been measured",
+            "do not assume their current tools, email platform, revenue, list size, staffing, past email results or any deadline",
+            "no public signup or 'share this with a friend' — registration is closed",
+            "nothing from the older orqAgent agent builder: no Slack bot, integrations, credits or agent claims",
+            "keep the market research, audience map and LinkedIn workspace out of this email — it argues one thing",
+            "no reassurance about data storage, retention, security or confidentiality — nothing is established",
+            "do not claim the product writes well for SaaS specifically, or for any sector; sector quality is not established",
+            "do not promise the first run comes back complete"
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "I could get five onboarding emails out of a chat model in an afternoon. Why does this need my evening?",
+          "tone": "Matter-of-fact and unhurried; a direct request from someone who knows the reader has not done it yet and is not annoyed about it.",
+          "call_to_action": "Sign in to the account you already have, register your brand, add the real material for one launch or onboarding offer, and request one email.",
+          "next_step_decision": "Whether MarketingOS produces launch or onboarding text they would be willing to send under their own name — decided on one offer that actually matters to them rather than in the abstract.",
+          "next_step_value": "Signing in opens their workspace, where they register the brand, add the real source material, and request one email against it; the request can be written in their own words.",
+          "next_step_evidence_ids": [
+            "E11",
+            "E18"
+          ],
+          "next_step_limit": "The login opens an empty workspace, not a draft — nothing has been generated for them yet. A generation can take several minutes and may finish with partial delivery or come back asking for more material, and it does not answer what the product costs after the pilot.",
+          "subject_strategy": "Name the exact state of their account and the one small action that changes it. No hype adjectives, no urgency, no 'introducing' — they already know what this is, so the subject has to make the next ten minutes concrete.",
+          "must_not_reuse": []
+        },
+        {
+          "position": 2,
+          "job": "Get them to open the compiled facts and the reader report for their run — and, if they have not run one yet, to sign in and start one so there is something to read.",
+          "single_idea": "The useful half of a run is the working: the compiled facts with the quotation each one came from, and the report naming what the cold reader understood, where they stopped and their biggest doubt — read those and you are judging a critique you can argue with, not a score you have to trust.",
+          "felt_need": "I am the one whose name is on the email. If a sentence about my product is wrong, or a stranger stops reading in paragraph two, I need to see that before I send it — and an AI grading another AI's writing tells me nothing on its own.",
+          "status_quo": "They read a draft the way anyone reads a draft: on taste and memory, deciding sentence by sentence whether it sounds like them and whether they believe it.",
+          "why_it_fails": "Read on its own, a draft can only be judged by feel. It does not show you which claim came from which line of your own material, where the gaps were, or where somebody who does not already know your product lost the thread — and you are the only reader you have.",
+          "mechanism": "Two separate pages in the workspace carry that working. The brand's Knowledge page lists the compiled facts with the supporting source quotation, an evidence identifier, a strength label and what information was missing — so a claim in the draft can be traced back to the line you supplied, or shown to have no line behind it. The campaign's execution page shows the draft next to its review report, and under 'Why it scored what it scored' you can read what the simulated reader understood, where they stopped, their biggest doubt and what they suggested changing. That reader is an AI simulation that never saw the brief — not a human reviewer — which is exactly why the critique is published in specifics instead of a verdict: you read the reasoning and decide whether it is right about your email.",
+          "alternative_ideas": [],
+          "alternative_arguments": [
+            {
+              "single_idea": "The notes the pilot asks for — the phrases you would keep or rewrite, the factual errors, the time you spent editing — are measurements only you can take, because you are the one who still checks the facts, the links and the voice before anything leaves.",
+              "felt_need": "I was asked for feedback and I have nothing to say yet, because I have not run anything through it on something that matters.",
+              "status_quo": "The account sits unused, and the notes they were asked for stay unwritten because there is nothing to write them about.",
+              "why_it_fails": "",
+              "mechanism": "After a run produces a draft, you can compare its claims against the compiled knowledge and against the original material you supplied — which turns 'is this true about my product' from a memory test into a side-by-side check. You are still the last check on facts, links and brand voice before anything is copied into your sending tool, which is why the edit you make is the measurement: the pilot asks for one real offer and the phrases you would keep or rewrite, the factual errors, and the time spent editing.",
+              "belief_shift": "Before: giving feedback is a favour on top of my own work. After: the feedback is the by-product of checking one real draft against my own material, which I would have to do anyway before sending it.",
+              "evidence_ids": [
+                "E39",
+                "E15",
+                "E12"
+              ],
+              "must_not_say": [
+                "no claim that editing is faster than writing from scratch, and no editing-time figure — no baseline exists",
+                "no aggregate feedback claims ('most testers said...') — no such reports are established",
+                "no price, trial or continuation terms",
+                "do not imply the notes buy them anything, a discount or future access"
+              ],
+              "objection": "If the editing takes longer than writing it myself, I have lost the evening and owe an awkward answer.",
+              "call_to_action": "Sign in, run one real offer, then compare the draft's claims against your own material and note what you kept, what you rewrote and how long it took.",
+              "next_step_decision": "Whether the editing this draft needs is work they would do again for the rest of the sequence.",
+              "next_step_value": "In the workspace they can open a completed run's draft and compare its claims with the compiled knowledge and the original source material they supplied, which is the check the pilot's questions are about.",
+              "next_step_evidence_ids": [
+                "E12",
+                "E39"
+              ],
+              "next_step_limit": "It does not establish how long editing takes in general, does not verify their links or voice for them, and does not answer what happens after the pilot.",
+              "subject_strategy": "Lead on the fact that their edit is the measurement — specific, bounded, and obviously theirs to make."
+            }
+          ],
+          "belief_shift": "Before: a machine's opinion of a machine's email is worth nothing, and I would have to take the output on faith. After: the output comes with its sources and its reasoning exposed, so I can check the facts against my own material and judge the critique on whether it is right — which is a different thing from being asked to believe a score.",
+          "evidence_ids": [
+            "E4",
+            "E6",
+            "E2"
+          ],
+          "must_not_say": [
+            "do not imply the cold reader is a human, a real customer, a focus group or a measurement of anything",
+            "no claim that the review predicts or improves opens, clicks, replies, revenue or conversions",
+            "no price, plan, trial, discount or free-entry terms",
+            "no testimonials, customer names or implied adoption by anyone else",
+            "do not promise the compiled facts are complete or correct, or that the draft contains no errors — the reader is still the last check on facts, links and brand voice",
+            "do not assume they already ran a campaign, nor that they did not; write so both readers can act",
+            "do not assume their tools, list size, revenue, staffing, past email results or urgency",
+            "no security, retention or confidentiality reassurance about their material",
+            "keep competitor research, the audience map and LinkedIn out of this email",
+            "nothing from the older orqAgent agent builder",
+            "do not claim the two pages save time or shorten review — no such measurement exists"
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "An AI telling me another AI's email is good proves nothing — nobody has measured whether a human opens it.",
+          "tone": "Plainer and more technical than the first email; candid about what the review is not, confident about what you can actually read on the page.",
+          "call_to_action": "Sign in and open your brand's Knowledge page and the review report for your run — or, if you have not run one yet, add the material for one real offer and request one email so there is something to read.",
+          "next_step_decision": "Whether they trust the draft enough to put their own name on it — decided by reading the facts it was allowed to claim and the reader's stated doubts, rather than by trusting the tool.",
+          "next_step_value": "In their workspace, the brand's Knowledge page shows the compiled facts with supporting source quotations, evidence identifiers, strength labels and what was missing; a completed campaign's execution page shows the draft alongside the review report, including what the simulated reader understood, where they stopped, their biggest doubt and suggested changes.",
+          "next_step_evidence_ids": [
+            "E4",
+            "E6"
+          ],
+          "next_step_limit": "Signing in opens the workspace, not a report: if no campaign has been run, there is no draft or review to open yet. The report is one simulated reader's reading, not a measurement of how real recipients behave, and it does not establish what the product costs after the pilot.",
+          "subject_strategy": "Concede the suspicion in the subject and point at what is actually readable — the sources behind each claim, and where the cold reader stopped. Curiosity about the working, not a claim about quality.",
+          "must_not_reuse": [
+            "Before anything gets written, your material is compiled into a set of facts the writing is allowed to claim — and then every draft is read by a reader who has never seen the brief, and rewritten where it did not land; that is the part you cannot get from a blank prompt, and it only starts once you put one real offer in."
+          ]
+        }
+      ],
+      "voice_notes": "Brand register: direct and explanatory, careful and almost legalistic about what is not claimed, no hype adjectives; short declarative openers mixed with longer clause-stacked sentences, em dashes and colons to qualify rather than a new sentence. Use the company's own words where they fit: cold read, Knowledge page, execution page, 'Why it scored what it scored', compiled knowledge, source material, reviewed draft. Second person to the reader is fine — this is a request to a specific person with an account — but no first-person named human, no invented founder anecdote and no signature block, since none is captured. Never write a sentence that could describe any AI writing tool; if a paragraph would survive a find-and-replace of the product name, it is the wrong paragraph.",
+      "contract": {
+        "kind": "email_sequence",
+        "count": 2,
+        "count_is_explicit": true,
+        "evidence": "two English emails"
+      }
+    },
+    "knowledge_version": 2,
+    "recommendation_at_generation": {
+      "campaign_id": "a6fd71e7-9262-42c8-90f1-de37f85ac4d1",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

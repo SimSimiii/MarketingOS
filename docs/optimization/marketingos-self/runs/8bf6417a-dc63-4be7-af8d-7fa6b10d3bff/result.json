@@ -1,0 +1,228 @@
+{
+  "id": "8bf6417a-dc63-4be7-af8d-7fa6b10d3bff",
+  "campaign_id": "2a44e15d-c717-4f19-8c03-c67e7840acfb",
+  "status": "failed",
+  "error_message": "The model stopped answering and did not come back after several attempts. Everything finished before that point is below.",
+  "started_at": "2026-10-14T09:38:43.771649Z",
+  "completed_at": "2026-10-14T09:40:29.047766Z",
+  "created_at": "2026-10-14T09:38:43.771649Z",
+  "total_input_tokens": 38351,
+  "total_output_tokens": 5619,
+  "total_cache_read_tokens": 11520,
+  "estimated_cost_usd": 0.3924,
+  "recommendation_snapshot": {
+    "campaign_id": "2a44e15d-c717-4f19-8c03-c67e7840acfb",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "af7ef905-570f-496d-972b-82f533f6f131",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Use the existing account for one small test: add the real offer material and request one launch or onboarding email before deciding whether to generate a full campaign.",
+          "#2 Judge the output on two separate questions—whether its claims stay within the supplied source facts and whether a reader without prior product knowledge can follow it—before deciding which wording to keep or rewrite."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T09:38:43.992541Z",
+      "completed_at": "2026-10-14T09:40:19.841159Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 26831,
+      "output_tokens": 5619,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 11520,
+      "cost_usd": 0.392434,
+      "duration_ms": 95741.71550001483,
+      "attempt": 1
+    },
+    {
+      "id": "0eed76f9-6bf7-4c6a-81f0-1d2680a482a2",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "failed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "Use the existing account for one small test: add the real offer material and request one launch or onboarding email before deciding whether to generate a full campaign.",
+          "Use the existing account for one small test: add the real offer material and request one launch or onboarding email before deciding whether to generate a full campaign."
+        ]
+      },
+      "output_data": null,
+      "error_message": "RoutingProvider call failed after 3 attempt(s): codex exec reported a failed turn: You’ve hit your usage limit. Upgrade to Pro (https://chatgpt.com/explore/pro), visit https://chatgpt.com/settings/usage to purchase more credits or try again at 3:48 PM.",
+      "started_at": "2026-10-14T09:40:19.895492Z",
+      "completed_at": "2026-10-14T09:40:29.016713Z",
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.0,
+      "duration_ms": 0.0,
+      "attempt": 1
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "provider_unavailable",
+    "report": {
+      "request": "Write exactly two English emails introducing MarketingOS to invited early-access testers who already have a test account. They run a small SaaS business and need to write a launch or onboarding email campaign. Explain one concrete supported reason to try the product, then invite them to test one real offer and review the output. Do not assume their present tools, revenue, list size, staffing, email results or urgency. Do not invent prices, testimonials, performance gains or public signup. Make the first action small: sign in, add the real offer material, and request one email. In the second email explain why inspecting source facts and reader feedback is useful. One clear CTA in each email to their existing account. The product is MarketingOS, not the older orqAgent AI agent builder.",
+      "delivered": 0,
+      "promised": 2,
+      "contract_violations": [
+        "the user asked for 2 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [
+        "No price or free-entry terms found - emails cannot name a price, a trial length or a risk reversal",
+        "No customer names, quotes or case studies found - the copy can describe the product but cannot prove anyone uses it"
+      ],
+      "what_would_help_most": "What does it cost, and is there a free trial or free tier?",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "The model stopped answering and did not come back after several attempts. Everything finished before that point is below."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "This is a two-email pilot-onboarding sequence for invited early-access users who already have accounts, not a sales campaign or public launch. Email 1 activates a bounded test on one real SaaS offer; email 2 shows how to evaluate the resulting draft.",
+      "reader": "Selected audience (user-stated constraints): Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy..\nNo further recipient situation is established. Compiled market context is research to check for applicability, not a replacement biography.",
+      "reader_segment": "an invited pilot user with one real offer to test and the founder waiting on her notes",
+      "reader_profile_override": "Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy.",
+      "fixed_cta_url": "https://app.orqagent.com/login/",
+      "promise": "A bounded test using one real offer lets an invited user judge whether MarketingOS produces source-grounded, independently reviewed email copy worth carrying into a larger campaign.",
+      "orientation": "MarketingOS turns a SaaS company's real offer material into reviewed draft emails that the user checks and transfers into their own sending tool.",
+      "arc": "Email 1 turns an abstract pilot invitation into one small, concrete run: sign in, supply the real offer material, and request one email. Email 2 changes the evaluation from a vague judgment of whether the prose sounds good to a specific inspection of factual grounding, cold-reader comprehension, and the editing still required.",
+      "sequence_rationale": "The reader is already product-aware and already has access, so the sequence should not explain the category or sell an account. It begins with the smallest useful test, using evidence about accepted source material and the actions available inside the existing account. Only after a draft exists does the second email explain how source facts and cold-reader feedback help distinguish a usable draft from merely fluent copy. The two messages therefore own different decisions: whether to run one bounded test, then whether the resulting output merits further use. No alternative proposition is included because the only other substantial angles—competitive research, audience discovery, contact finding, and LinkedIn drafting—would broaden the requested test and distract from the launch-or-onboarding job. The campaign does not claim speed, performance, affordability, sector reliability, or customer proof because none is established. The single thing the user could send us that would most change this campaign: What does it cost, and is there a free trial or free tier?",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Get the invited tester to start one bounded run for a real SaaS launch or onboarding offer.",
+          "single_idea": "Use the existing account for one small test: add the real offer material and request one launch or onboarding email before deciding whether to generate a full campaign.",
+          "felt_need": "I need email copy for a real SaaS offer, but the pilot test should be small enough to judge without becoming another project.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "The tester signs in to the account already provisioned for them, supplies the offer through a website, PDF, screenshot, or pasted text, and describes the single email needed in their own words.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: testing MarketingOS sounds like committing time to an undefined campaign run. After: it is a bounded one-email check using material from an offer the reader already needs to explain.",
+          "evidence_ids": [
+            "E16",
+            "E17",
+            "E2"
+          ],
+          "must_not_say": [
+            "Do not imply public signup, a free trial, a price, a discount, or continuing commercial terms.",
+            "Do not claim the draft will improve opens, clicks, conversions, revenue, or launch performance.",
+            "Do not assume a current writing tool, sending platform, list size, team structure, missed deadline, or poor existing results.",
+            "Do not call MarketingOS an AI agent builder or mention the older product's Slack bot, integrations, or credits.",
+            "Do not expand the ask into a full campaign, competitor analysis, audience research, LinkedIn work, or contact finding.",
+            "Do not imply MarketingOS sends or publishes the email."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "Testing an unfamiliar product could become more work than the single email currently needed; answer only by keeping the requested run to one real offer and one email, not by promising time savings.",
+          "tone": "Direct, calm, and deliberately low-friction.",
+          "call_to_action": "Sign in to your existing MarketingOS account, add the real offer material, and request one launch or onboarding email.",
+          "next_step_decision": "Decide whether the output from one real offer is useful enough to justify testing a larger sequence.",
+          "next_step_value": "The account lets the tester register the brand, add website material or pasted text, state the email needed, and generate a reviewed draft.",
+          "next_step_evidence_ids": [
+            "E16",
+            "E17"
+          ],
+          "next_step_limit": "This one-email run does not establish how a complete campaign will perform, whether the product is suitable for every SaaS offer, or what continued access will cost.",
+          "subject_strategy": "Frame the open around the bounded one-email test waiting in the reader's existing account; avoid launch hype, broad product claims, and promised outcomes.",
+          "must_not_reuse": []
+        },
+        {
+          "position": 2,
+          "job": "Get the tester to inspect the completed draft systematically and form useful pilot feedback.",
+          "single_idea": "Judge the output on two separate questions—whether its claims stay within the supplied source facts and whether a reader without prior product knowledge can follow it—before deciding which wording to keep or rewrite.",
+          "felt_need": "A fluent draft is not enough; I need to know whether it says only defensible things about the offer and whether the message makes sense outside my own product context.",
+          "status_quo": "The tester must review the generated text before transferring anything into a sending tool.",
+          "why_it_fails": "Reading only for polish can miss two different problems: a plausible sentence that is not supported by the source material, and an accurate explanation that does not land with someone unfamiliar with the product.",
+          "mechanism": "MarketingOS first compiles the supplied material into facts it is allowed to claim, then has the draft read by someone without product knowledge and rewrites what did not land. The tester can use those two lenses when reviewing the delivered subject, preview, body, and call to action: compare claims with the real offer material, then note the phrases to keep or rewrite, factual errors, and editing time.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: reviewing the result means deciding whether the writing sounds good. After: reviewing it means checking factual grounding and cold-reader comprehension separately, then recording the remaining editing burden.",
+          "evidence_ids": [
+            "E18",
+            "E3",
+            "E21"
+          ],
+          "must_not_say": [
+            "Do not claim the compiled facts eliminate factual errors or remove the need for the user's own checks.",
+            "Do not imply the cold-reader review proves campaign performance or substitutes for feedback from the user's actual audience.",
+            "Do not claim the account sends, publishes, or inserts the draft into the reader's sending tool.",
+            "Do not invent testimonials, accuracy rates, editing-time reductions, or results from other pilot users.",
+            "Do not reopen setup instructions as the main argument; this email is about inspecting an output that has already been generated.",
+            "Do not introduce pricing, security, integrations, competitor research, audience discovery, contact finding, or the older orqAgent product."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "A confident but incorrect sentence still exposes the tester's brand, and MarketingOS does not remove the need to check the work. Answer candidly: factual errors are one of the things the pilot asks users to identify, while the compiled source facts and cold-reader review provide two concrete places to inspect rather than a guarantee of correctness.",
+          "tone": "Analytical, candid, and respectful of the reader's responsibility for the final send.",
+          "call_to_action": "Sign in to your existing account and review the generated subject, preview, body, and call to action against the offer facts and cold-reader feedback.",
+          "next_step_decision": "Decide which phrases are usable, what must be corrected or rewritten, and whether the draft deserves a place in the rest of the campaign.",
+          "next_step_value": "The account contains the finished email output—subject, preview, body, and call to action—for review, copying or export, with an HTML preview.",
+          "next_step_evidence_ids": [
+            "E18"
+          ],
+          "next_step_limit": "Reviewing the draft does not validate opens, clicks, conversions, revenue, brand voice, links, or factual accuracy without the tester's own checks, and the application does not send the email.",
+          "subject_strategy": "Signal a practical review step—facts first, reader comprehension second—rather than asking for generic feedback or implying that a polished draft is ready to send unchanged.",
+          "must_not_reuse": [
+            "Use the existing account for one small test: add the real offer material and request one launch or onboarding email before deciding whether to generate a full campaign."
+          ]
+        }
+      ],
+      "voice_notes": "Match the brand's mechanism-first register: complete the reasoning with precise clauses, then use short declarative sentences for limits. Address the reader as an existing invited user. Avoid hype, superlatives, invented familiarity, and first-person company language.",
+      "contract": {
+        "kind": "email_sequence",
+        "count": 2,
+        "count_is_explicit": true,
+        "evidence": "two English emails"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "2a44e15d-c717-4f19-8c03-c67e7840acfb",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

@@ -1,0 +1,7 @@
+# MarketingOS — enriched source / default GPT track
+
+Original two-email English brief and audience, v2 source corpus, Balanced preset, no model override. Different model from Claude-enriched; scores are not directly comparable.
+Stable grid: facts25, audience/offer20, specificity/argument20, continuity15, polish10, unsupported promises/repetition10. Hypothesis: strategy and critique must preserve the supported fact-compilation and AI-review mechanism without promising universal correctness, per-sentence tracing or exclusive capability versus generic assistants. No extra model calls are introduced.
+
+## Iteration 1 — 84/100, usable after minor brand review
+Run 62cbd16d-85ab-44a7-93c7-d4a6cb56fd6f delivered two English drafts in 8m45s, estimated USD 4.7266, 18 role steps. Best in this separate GPT track: 84/100 (24/17/15/12/9/7). Universal tracing, unsupported prompt exclusivity and the invented afternoon benchmark are absent. Actual source supports the described mechanism and review views; correct CTA appears in text and HTML. Raw email 2 still implies an existing result, and the automatic relevance/sequence warning is retained. One conditional paragraph plus CTA was edited without model calls in separately named reviewed files; originals are immutable. Verdict: this pilot case is usable after ordinary brand review and that minor edit; no claim of raw send-ready automation, global sellability or customer performance. Stop spending on this case and observe the real tester. Ruff and 1488 tests passed; API build for 53c2ba2 succeeded.

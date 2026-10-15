@@ -1,0 +1,634 @@
+{
+  "id": "9dadde91-9495-467e-92fa-59a86a4ba030",
+  "campaign_id": "2a44e15d-c717-4f19-8c03-c67e7840acfb",
+  "status": "failed",
+  "error_message": "Execution exceeded its token budget.",
+  "started_at": "2026-10-14T22:42:19.987789Z",
+  "completed_at": "2026-10-14T22:54:57.810345Z",
+  "created_at": "2026-10-14T22:42:19.987789Z",
+  "total_input_tokens": 3481604,
+  "total_output_tokens": 93200,
+  "total_cache_read_tokens": 3068544,
+  "estimated_cost_usd": 8.5553,
+  "recommendation_snapshot": {
+    "campaign_id": "2a44e15d-c717-4f19-8c03-c67e7840acfb",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "391f3f36-6af3-424f-bf0a-50fec6f1c2d7",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Do not begin with a full campaign: sign in, add the real material for one offer and request one launch or onboarding email that can be judged against that material.",
+          "#2 The useful review is not limited to whether the email sounds polished: inspect the source facts to see what the draft was allowed to claim, then inspect the unfamiliar reader's feedback to see what did not land."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T22:42:20.134346Z",
+      "completed_at": "2026-10-14T22:43:21.555263Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 26819,
+      "output_tokens": 5030,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 12288,
+      "cost_usd": 0.375282,
+      "duration_ms": 61227.86769998493,
+      "attempt": 1
+    },
+    {
+      "id": "20353795-5d95-40d3-a7a3-250c091160be",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "Do not begin with a full campaign: sign in, add the real material for one offer and request one launch or onboarding email that can be judged against that material.",
+          "Do not begin with a full campaign: sign in, add the real material for one offer and request one launch or onboarding email that can be judged against that material."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Test one offer with one email",
+          "One real offer, one email"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T22:43:21.611571Z",
+      "completed_at": "2026-10-14T22:43:41.884097Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 32552,
+      "output_tokens": 2838,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 20224,
+      "cost_usd": 0.361735,
+      "duration_ms": 33298.99959999602,
+      "attempt": 1
+    },
+    {
+      "id": "4f578a5e-724d-46f4-8fe9-ac0714d28456",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s) read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 8,
+        "scores": [
+          7,
+          8
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T22:43:41.926205Z",
+      "completed_at": "2026-10-14T22:44:07.287901Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 30640,
+      "output_tokens": 8179,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 82176,
+      "cost_usd": 0.556231,
+      "duration_ms": 115666.73679993255,
+      "attempt": 1
+    },
+    {
+      "id": "d78b4f5c-95c4-4a8a-8bef-e4762dbef0ea",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · the two best candidates, read side by side",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "challenger_won": false
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T22:44:07.305832Z",
+      "completed_at": "2026-10-14T22:44:15.206134Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 14411,
+      "output_tokens": 731,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 54784,
+      "cost_usd": 0.181045,
+      "duration_ms": 25608.69940003613,
+      "attempt": 1
+    },
+    {
+      "id": "c089efc0-968e-447f-9934-2c8ff8dc5087",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "copy",
+        "strategy_gap": ""
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T22:44:15.237460Z",
+      "completed_at": "2026-10-14T22:45:06.381757Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 9965,
+      "output_tokens": 5585,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.259353,
+      "duration_ms": 51061.36650001281,
+      "attempt": 1
+    },
+    {
+      "id": "d1fa7d9d-d254-4050-8a28-09d80a0e4716",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "Judge MarketingOS on one draft"
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T22:45:06.391213Z",
+      "completed_at": "2026-10-14T22:45:32.564933Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 14168,
+      "output_tokens": 2758,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.208167,
+      "duration_ms": 26107.722599990666,
+      "attempt": 2
+    },
+    {
+      "id": "ca8b2eee-f1b6-41ff-a922-159ed892b249",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T22:45:32.598630Z",
+      "completed_at": "2026-10-14T22:46:03.672139Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 16842,
+      "output_tokens": 7292,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 39680,
+      "cost_usd": 0.38524,
+      "duration_ms": 88896.73930002027,
+      "attempt": 2
+    },
+    {
+      "id": "a1a2f8c8-529b-451b-9bad-d219d62660f7",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 8,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1 read against the version it would replace",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "challenger_won": true
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T22:46:03.692116Z",
+      "completed_at": "2026-10-14T22:46:11.007790Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 14587,
+      "output_tokens": 887,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 54784,
+      "cost_usd": 0.187133,
+      "duration_ms": 25979.825700022047,
+      "attempt": 2
+    },
+    {
+      "id": "1cac4437-ba40-4544-8ecd-31e8a1052bb2",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 9,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "missing_material",
+        "strategy_gap": "The supplied evidence does not establish the typical hands-on time required to register a brand, prepare or add the minimum source material, and review one draft; without it, the email cannot resolve the repeatedly reported effort-versus-usefulness objection to completing the test."
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T22:46:11.019198Z",
+      "completed_at": "2026-10-14T22:47:25.538012Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 10210,
+      "output_tokens": 7768,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.326803,
+      "duration_ms": 74465.85750000668,
+      "attempt": 2
+    },
+    {
+      "id": "5a5a195b-7ca4-489b-90f8-6815cd080121",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 10,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · 2 candidate(s), first draft",
+        "position": 2,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "The useful review is not limited to whether the email sounds polished: inspect the source facts to see what the draft was allowed to claim, then inspect the unfamiliar reader's feedback to see what did not land.",
+          "The useful review is not limited to whether the email sounds polished: inspect the source facts to see what the draft was allowed to claim, then inspect the unfamiliar reader's feedback to see what did not land."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Check what the draft supports",
+          "Separate facts from unclear copy"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T22:47:25.564921Z",
+      "completed_at": "2026-10-14T22:47:57.463913Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 23434,
+      "output_tokens": 4613,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 30208,
+      "cost_usd": 0.350028,
+      "duration_ms": 48306.25159997726,
+      "attempt": 3
+    },
+    {
+      "id": "63a84785-e2a9-491e-823a-9f8ec82e12c6",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 11,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · 2 candidate(s) read cold by 3 reader(s)",
+        "position": 2,
+        "attempt": 1,
+        "candidates": 2,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 7,
+        "scores": [
+          7,
+          6
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T22:47:57.513619Z",
+      "completed_at": "2026-10-14T22:48:42.465982Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 28492,
+      "output_tokens": 13884,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 85504,
+      "cost_usd": 0.712859,
+      "duration_ms": 169075.73320000665,
+      "attempt": 3
+    },
+    {
+      "id": "ccf85213-957f-4078-a255-1d8f5a1a31c7",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 12,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · conversion critique",
+        "position": 2,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "copy",
+        "strategy_gap": ""
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T22:48:42.492568Z",
+      "completed_at": "2026-10-14T22:49:25.747768Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 13524,
+      "output_tokens": 4291,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 12288,
+      "cost_usd": 0.246752,
+      "duration_ms": 43198.48159997491,
+      "attempt": 3
+    },
+    {
+      "id": "9e0f5609-0591-4710-af0e-6ea9d339f616",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 13,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · rewrite 1",
+        "position": 2,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "Review email claims and reader feedback"
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T22:49:25.762644Z",
+      "completed_at": "2026-10-14T22:50:11.736046Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 15211,
+      "output_tokens": 5318,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.293311,
+      "duration_ms": 45911.466399993515,
+      "attempt": 4
+    },
+    {
+      "id": "e902c0c4-1e1d-439b-8493-3c7179b050db",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 14,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · read cold by 3 reader(s)",
+        "position": 2,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T22:50:11.772237Z",
+      "completed_at": "2026-10-14T22:50:42.881282Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 13981,
+      "output_tokens": 7866,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 42496,
+      "cost_usd": 0.381825,
+      "duration_ms": 86719.12610001164,
+      "attempt": 4
+    },
+    {
+      "id": "e41d6f84-6b9a-44af-953b-3e281be8d72e",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 15,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · conversion critique",
+        "position": 2,
+        "attempt": 2
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "missing_material",
+        "strategy_gap": "The supplied evidence does not establish that source facts and unfamiliar-reader feedback are exposed in the account at the login destination, or that this recipient has a completed run waiting; both are required for the CTA's promised review."
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T22:50:42.897967Z",
+      "completed_at": "2026-10-14T22:51:40.934617Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 10418,
+      "output_tokens": 6476,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.289707,
+      "duration_ms": 57984.338200010825,
+      "attempt": 4
+    },
+    {
+      "id": "d83bd753-2d0c-4dc9-b851-ba86d9dceb27",
+      "agent_id": "material_researcher",
+      "agent_name": "Official Material Researcher",
+      "sequence_order": 16,
+      "status": "completed",
+      "input_data": {
+        "label": "Finding and verifying official material for 2 gap(s)"
+      },
+      "output_data": {
+        "recovered": false,
+        "evidence": [],
+        "sources": [],
+        "dropped_claims": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-14T22:51:40.967835Z",
+      "completed_at": "2026-10-14T22:54:57.773234Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 137806,
+      "output_tokens": 9684,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 2558592,
+      "cost_usd": 3.439842,
+      "duration_ms": 196250.95840002177,
+      "attempt": 1
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "budget_exhausted",
+    "report": {
+      "request": "Write exactly two English emails introducing MarketingOS to invited early-access testers who already have a test account. They run a small SaaS business and need to write a launch or onboarding email campaign. Explain one concrete supported reason to try the product, then invite them to test one real offer and review the output. Do not assume their present tools, revenue, list size, staffing, email results or urgency. Do not invent prices, testimonials, performance gains or public signup. Make the first action small: sign in, add the real offer material, and request one email. In the second email explain why inspecting source facts and reader feedback is useful. One clear CTA in each email to their existing account. The product is MarketingOS, not the older orqAgent AI agent builder.",
+      "delivered": 0,
+      "promised": 2,
+      "contract_violations": [
+        "the user asked for 2 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [
+        "No price or free-entry terms found - emails cannot name a price, a trial length or a risk reversal",
+        "No customer names, quotes or case studies found - the copy can describe the product but cannot prove anyone uses it"
+      ],
+      "what_would_help_most": "Provide verified material to resolve: The supplied evidence does not establish the typical hands-on time required to register a brand, prepare or add the minimum source material, and review one draft; without it, the email cannot resolve the repeatedly reported effort-versus-usefulness objection to completing the test.",
+      "questions": [
+        "Provide verified material to resolve: The supplied evidence does not establish the typical hands-on time required to register a brand, prepare or add the minimum source material, and review one draft; without it, the email cannot resolve the repeatedly reported effort-versus-usefulness objection to completing the test.",
+        "Provide verified material to resolve: The supplied evidence does not establish that source facts and unfamiliar-reader feedback are exposed in the account at the login destination, or that this recipient has a completed run waiting; both are required for the CTA's promised review."
+      ],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "Execution exceeded its token budget.",
+        "Withheld emails needing verified material: 1, 2"
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "This is a two-email onboarding sequence for invited early-access testers who already have MarketingOS accounts, not a sales campaign or a public signup campaign. The selected reader operates a small SaaS business and has a real launch or onboarding offer to test.",
+      "reader": "Selected audience (user-stated constraints): Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy..\nNo further recipient situation is established. Compiled market context is research to check for applicability, not a replacement biography.",
+      "reader_segment": "an invited pilot user with one real offer to test and the founder waiting on her notes",
+      "reader_profile_override": "Invited early-access testers with an existing account who operate a small SaaS business and need launch or onboarding email copy.",
+      "fixed_cta_url": "https://app.orqagent.com/login/",
+      "promise": "A bounded test with one real SaaS offer will let the reader judge whether MarketingOS's source-grounded drafting and cold-reader review produce an email worth using and reveal exactly what still needs correction.",
+      "orientation": "MarketingOS turns material about a real SaaS offer into reviewed launch or onboarding email drafts that the reader checks and transfers into their own sending tool.",
+      "arc": "Email 1 moves the reader from having an invited account to running the smallest useful test: one real offer and one email. Email 2 moves them from judging the prose at face value to examining the source facts and reader feedback that explain what the draft claimed, what failed to land and what should be kept or revised.",
+      "sequence_rationale": "The audience is already product-aware and already has access, so the sequence should not explain the category, manufacture urgency or make an unsupported sales case. The first email minimizes the test without promising a result: sign in, supply real offer material and request one launch or onboarding email. The second email then explains how to assess that output rather than merely admire its fluency, using the allowed source facts and unfamiliar-reader response as separate checks before the reader reports phrases to keep or rewrite, factual errors and editing time. This order is stronger than leading with the full pipeline because the reader first needs a real draft to inspect. No testimonial, price or performance argument is available, and the absence of those facts should not be written around. The single thing that would most change this campaign is: the subscription price and whether there is a free trial or free tier.",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Get the invited tester to run the smallest useful test with one real SaaS offer.",
+          "single_idea": "Do not begin with a full campaign: sign in, add the real material for one offer and request one launch or onboarding email that can be judged against that material.",
+          "felt_need": "I need a launch or onboarding campaign for a real SaaS offer, but I first need to see whether this product can produce one usable email from the material I actually have.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "MarketingOS accepts a website, PDF, screenshot or pasted material and a request in the user's own words. The reader can therefore test it with one real offer and one specific email request rather than inventing a sample project or committing to a complete sequence.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: trying MarketingOS sounds like evaluating an entire campaign workflow. After: one real offer and one requested email are enough to begin a concrete evaluation.",
+          "evidence_ids": [
+            "E2",
+            "E16",
+            "E17"
+          ],
+          "must_not_say": [
+            "Do not describe this as public signup, a free trial or a purchase.",
+            "Do not mention a price, discount, plan or continuation terms.",
+            "Do not promise that the draft will outperform existing copy, save time or be ready to send unchanged.",
+            "Do not assume what writing tools, sending platform, team structure, list size or campaign results the reader has.",
+            "Do not introduce competitor research, audience research, LinkedIn outreach or contact finding in this email.",
+            "Do not reuse claims from the older orqAgent agent-builder product, including agents, Slack bots, integrations or credits."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "A full generation run may be more evaluation than the reader wants before seeing whether the output fits a real offer; answer by keeping the first request to one email, without claiming that the run will be fast or effortless.",
+          "tone": "Direct, welcoming and deliberately low-pressure.",
+          "call_to_action": "Sign in to your existing MarketingOS account, add the website, PDF, screenshot or pasted material for one real offer, and request one launch or onboarding email.",
+          "next_step_decision": "Decide whether the first draft is relevant enough to justify testing the rest of the campaign workflow.",
+          "next_step_value": "The existing account provides the place to register the brand, add real offer material and generate a reviewed email draft from a request written in the reader's own words.",
+          "next_step_evidence_ids": [
+            "E2",
+            "E16",
+            "E17"
+          ],
+          "next_step_limit": "This first run does not establish campaign performance, sector-wide quality, pricing or whether the draft can be sent without the reader checking it.",
+          "subject_strategy": "Make the existing invitation actionable by naming the bounded first test—one real offer and one email—without hype, urgency or a broad product claim.",
+          "must_not_reuse": []
+        },
+        {
+          "position": 2,
+          "job": "Teach the tester how to review the run and ask them to inspect the evidence and feedback behind the draft.",
+          "single_idea": "The useful review is not limited to whether the email sounds polished: inspect the source facts to see what the draft was allowed to claim, then inspect the unfamiliar reader's feedback to see what did not land.",
+          "felt_need": "I need to know which parts of this draft are grounded, which parts are unclear to someone new to the offer and what I would have to change before using it.",
+          "status_quo": "A draft can be judged only as finished prose—whether it sounds plausible—without separating factual grounding from reader comprehension.",
+          "why_it_fails": "Fluent prose does not reveal whether a claim came from the supplied material or whether a reader unfamiliar with the product understood the argument; those are different failure modes and call for different edits.",
+          "mechanism": "MarketingOS first compiles the supplied material into facts it is allowed to claim, then has the draft read by someone unfamiliar with the product and rewrites what did not land. Reviewing those source facts and that reader response lets the tester distinguish a factual mismatch from an explanation that is merely unclear, then report the phrases worth keeping or rewriting, factual errors and editing time.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: the output is a piece of AI-written copy to accept or reject as a whole. After: the source facts and reader feedback provide two concrete checks for deciding what is usable and what needs revision.",
+          "evidence_ids": [
+            "E3",
+            "E21"
+          ],
+          "must_not_say": [
+            "Do not claim that the compiled facts prevent all factual errors.",
+            "Do not imply that cold-reader review proves conversions, opens, clicks or revenue.",
+            "Do not say the draft is approved, final or safe to send without checking facts, links and brand voice.",
+            "Do not claim that the product sends, publishes or installs the campaign in another tool.",
+            "Do not ask for a testimonial, public endorsement or purchase.",
+            "Do not introduce pricing, competitive analysis, audience discovery, contact finding or LinkedIn features.",
+            "Do not reuse claims from the older orqAgent agent-builder product."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "The reader still has to check every draft, and factual errors may still occur. Answer by presenting the source facts and reader feedback as inspection aids—not guarantees—and by making errors and required edits part of the requested pilot review.",
+          "tone": "Analytical, candid and useful rather than promotional.",
+          "call_to_action": "Sign in to your existing account and review the source facts, unfamiliar-reader feedback and draft for the same real offer, noting phrases you would keep or rewrite, factual errors and editing time.",
+          "next_step_decision": "Decide whether the draft is grounded and clear enough to continue with the rest of the launch or onboarding campaign.",
+          "next_step_value": "The review exposes the two inputs needed for that decision: the allowed source facts behind the claims and the response of a reader who did not already know the product, alongside the specific pilot notes requested.",
+          "next_step_evidence_ids": [
+            "E3",
+            "E21"
+          ],
+          "next_step_limit": "This inspection does not prove commercial performance or remove the need to check facts, links and brand voice before transferring any text into a sending tool.",
+          "subject_strategy": "Frame the open around a practical review question—what the source supports and what an unfamiliar reader understood—rather than announcing another feature or asking for generic feedback.",
+          "must_not_reuse": [
+            "Do not begin with a full campaign: sign in, add the real material for one offer and request one launch or onboarding email that can be judged against that material."
+          ]
+        }
+      ],
+      "voice_notes": "Match the company's mechanism-first register: precise, restrained and candid about limits. Use second person for the test steps and third person for what MarketingOS does. Prefer one fully developed idea per paragraph, with an occasional short sentence for a boundary. Avoid hype, generic AI language, invented familiarity and any first-person founder voice.",
+      "contract": {
+        "kind": "email_sequence",
+        "count": 2,
+        "count_is_explicit": true,
+        "evidence": "two English emails"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "2a44e15d-c717-4f19-8c03-c67e7840acfb",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}
