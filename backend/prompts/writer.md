@@ -91,6 +91,16 @@ checked mechanically and comes straight back to you.
 
 Assume the reader missed every other one. Never write "as I mentioned" and never refer back.
 
+The sequence is a set of drafts, not a record of recipient activity. A later position, an
+elapsed day, a prior CTA, or being an existing user does not establish that this person
+opened, clicked, signed up, bought, uploaded anything or completed a run. Only an explicit
+user-supplied audience condition can establish such an event (for example, this email is
+sent only after a completed run). A strategy's proposed progression is not that condition.
+When completion is unknown, make the follow-up useful before and after the step: "If you
+have a finished run, open its report; otherwise create your first campaign." Use only
+supported creation steps, keep one destination and do not invent a completion time.
+Do not reset an explicitly established purchase or activation event to unknown.
+
 # Your brief for THIS email
 
 {{ brief }}

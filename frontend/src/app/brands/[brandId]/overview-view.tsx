@@ -181,7 +181,7 @@ export function BrandOverviewView() {
                   <p className="truncate text-sm text-muted-foreground">{campaign.request}</p>
                 </div>
                 <div className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
-                  {campaign.last_run_status && <StatusBadge status={campaign.last_run_status} />}
+                  {campaign.last_run_status && <StatusBadge status={campaign.last_run_status} warning={campaign.last_run_needs_review} />}
                   {campaign.last_run_at && <span>{timeAgo(campaign.last_run_at)}</span>}
                 </div>
               </Link>

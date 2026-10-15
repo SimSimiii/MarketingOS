@@ -157,7 +157,10 @@ export function ExecutionLiveView({
   const status = run.finalStatus ?? initialStatus;
   const isLive = !TERMINAL.includes(status);
   const currentFinal = finalSnapshot?.id === executionId ? finalSnapshot : null;
-  const report = reportFromResult(currentFinal?.result ?? initialResult);
+  const currentResult = currentFinal?.result ?? initialResult;
+  const needsReview = status === "completed" && (Boolean(errorMessage) ||
+    ["degraded", "budget_exhausted", "cancelled", "failed"].includes(String(currentResult?.run_status)));
+  const report = reportFromResult(currentResult);
   const questions = report?.questions ?? [];
 
   // Deliverables land mid-run: refetch whenever another email is accepted, and
@@ -282,7 +285,7 @@ export function ExecutionLiveView({
               needs your answers
             </Badge>
           ) : (
-            <StatusBadge status={status} warning={status === "completed" && Boolean(errorMessage)}
+            <StatusBadge status={status} warning={needsReview}
               label={status === "completed" && report && report.delivered < report.promised ? "Partial delivery" : undefined} />
           )}
           <span className="tabular-nums" title="Wall-clock time">

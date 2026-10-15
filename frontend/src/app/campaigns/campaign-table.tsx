@@ -27,11 +27,11 @@ type Filter = "all" | "completed" | "failed" | "never";
 
 const FILTERS: { value: Filter; label: string; matches: (campaign: Campaign) => boolean }[] = [
   { value: "all", label: "All", matches: () => true },
-  { value: "completed", label: "Completed", matches: (c) => c.last_run_status === "completed" },
+  { value: "completed", label: "Completed", matches: (c) => c.last_run_status === "completed" && !c.last_run_needs_review },
   {
     value: "failed",
     label: "Needs attention",
-    matches: (c) => c.last_run_status === "failed" || c.last_run_status === "cancelled",
+    matches: (c) => c.last_run_needs_review === true || c.last_run_status === "failed" || c.last_run_status === "cancelled",
   },
   { value: "never", label: "Never run", matches: (c) => c.last_run_status === null },
 ];
@@ -205,7 +205,7 @@ export function CampaignTable({
                             campaign.last_run_at ? formatAbsolute(campaign.last_run_at) : undefined
                           }
                         >
-                          <StatusBadge status={campaign.last_run_status} />
+                          <StatusBadge status={campaign.last_run_status} warning={campaign.last_run_needs_review} />
                           {campaign.last_run_at && (
                             <span className="text-xs text-muted-foreground">
                               {timeAgo(campaign.last_run_at)}

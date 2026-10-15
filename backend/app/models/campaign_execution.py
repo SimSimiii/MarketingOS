@@ -35,3 +35,12 @@ class CampaignExecution(SQLModel, table=True):
     #: run can be explained rather than just stated.
     total_cache_read_tokens: int = 0
     estimated_cost_usd: float = 0.0
+
+    @property
+    def needs_review(self) -> bool:
+        """A completed process can still have an incomplete delivery."""
+        result = self.result or {}
+        return self.status == ExecutionStatus.COMPLETED and (
+            bool(self.error_message)
+            or result.get("run_status") in {"degraded", "budget_exhausted", "cancelled", "failed"}
+        )

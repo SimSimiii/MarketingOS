@@ -139,12 +139,12 @@ export function CampaignDetailView() {
           </span>
           <span className="min-w-0 flex-1">
             <span className="block text-sm font-medium">
-              {live ? "A run is in progress" : latest?.error_message ? "Your latest run needs review" : "Your latest drafts are ready for review"}
+              {live ? "A run is in progress" : (latest?.needs_review || latest?.error_message) ? "Your latest run needs review" : "Your latest drafts are ready for review"}
             </span>
             <span className="mt-0.5 block text-xs text-muted-foreground">
               {live
                 ? `Started ${live.started_at ? timeAgo(live.started_at) : "just now"} — open the run and refresh to see its progress.`
-                : `Finished ${latest!.completed_at ? timeAgo(latest!.completed_at) : ""} — ${latest!.error_message ? "review the stop reason and any delivered drafts." : "read the drafts and review them before use."}`}
+                : `Finished ${latest!.completed_at ? timeAgo(latest!.completed_at) : ""} — ${(latest!.needs_review || latest!.error_message) ? "review the stop reason and any delivered drafts." : "read the drafts and review them before use."}`}
             </span>
           </span>
           <span className="inline-flex items-center gap-1.5 text-sm font-medium text-violet-200">
@@ -247,7 +247,7 @@ export function CampaignDetailView() {
                           <span className="w-7 text-xs text-muted-foreground tabular-nums">
                             #{executions.length - index}
                           </span>
-                          <StatusBadge status={execution.status} warning={execution.status === "completed" && Boolean(execution.error_message)} />
+                          <StatusBadge status={execution.status} warning={execution.needs_review || (execution.status === "completed" && Boolean(execution.error_message))} />
                           {/* Once per run it is a note, not an alarm - an amber
                               badge on every row turned the table orange. */}
                           {execution.generated_despite_recommendation && (

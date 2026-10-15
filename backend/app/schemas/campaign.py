@@ -118,6 +118,8 @@ class CampaignRead(BaseModel):
     #: progress without a request per row. None = never run.
     last_run_status: ExecutionStatus | None = None
     last_run_at: UtcDatetime | None = None
+    #: A finished process may retain usable drafts but need editorial review.
+    last_run_needs_review: bool = False
 
     @field_serializer("model_overrides")
     def hide_model_overrides(self, value: dict[str, str] | None) -> dict[str, str] | None:
@@ -280,6 +282,7 @@ class CampaignExecutionRead(BaseModel):
     id: UUID
     campaign_id: UUID
     status: ExecutionStatus
+    needs_review: bool = False
     error_message: str | None
     started_at: UtcDatetime | None
     completed_at: UtcDatetime | None

@@ -106,15 +106,17 @@ function tasksFrom(
     }
   }
   const failed = campaigns
-    .filter((campaign) => campaign.last_run_status === "failed")
+    .filter((campaign) => campaign.last_run_status === "failed" || campaign.last_run_needs_review)
     .slice(0, 3);
   for (const campaign of failed) {
     tasks.push({
       key: `failed-${campaign.id}`,
       icon: RotateCcw,
       tone: "attention",
-      title: <>{campaign.name} stopped</>,
-      detail: campaign.last_run_at
+      title: <>{campaign.name} {campaign.last_run_needs_review ? "needs review" : "stopped"}</>,
+      detail: campaign.last_run_needs_review
+        ? "Drafts are available, but the last run needs review. Open it to see the remaining issues."
+        : campaign.last_run_at
         ? `Stopped ${timeAgo(campaign.last_run_at)} - open it to see why, or run it again.`
         : "Open it to see why, or run it again.",
       href: `/campaigns/${campaign.id}`,
@@ -356,7 +358,7 @@ export function DashboardView() {
                             </span>
                           </p>
                         </div>
-                        {campaign.last_run_status && <StatusBadge status={campaign.last_run_status} />}
+                        {campaign.last_run_status && <StatusBadge status={campaign.last_run_status} warning={campaign.last_run_needs_review} />}
                         <ArrowRight
                           className="size-4 shrink-0 text-muted-foreground transition-transform group-hover/row:translate-x-0.5 group-hover/row:text-violet-300"
                           aria-hidden="true"

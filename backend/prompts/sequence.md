@@ -10,6 +10,12 @@ from inside a single draft.
 
 {{ reader }}
 
+# The user's original request and recipient conditions
+
+{{ user_request }}
+
+This outranks a proposed arc or brief when deciding which recipient events are established.
+
 # What the campaign promised
 
 {{ promise }}
@@ -41,6 +47,13 @@ material is spent and an email reaches for a new angle to have something to say.
 Does any email depend on one before it? A back-reference ("as I mentioned", "following up on my
 last note"), an unexplained term introduced earlier, a joke whose setup was in email two — each of
 those turns a missed email into a confusing one.
+
+Also check dependencies on an earlier action. Sending a draft, placing an email later in
+the sequence, or waiting a day does not establish an open, click, signup, purchase, upload
+or completed run. "Open your finished report" fails this test if no supplied audience
+condition establishes a finished run. Require conditional wording or supported creation
+steps for readers who have not acted, using the same destination. Do not undo an explicit
+user-supplied behaviour trigger. A proposed arc or brief alone cannot establish one.
 
 **Does the reader ever learn what this is?** Read the sequence as somebody who opened exactly one
 of these, and check each email separately: can they say what is being sold from that email alone?

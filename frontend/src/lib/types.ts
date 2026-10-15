@@ -66,6 +66,8 @@ export interface Campaign {
   /** Status of the most recent run; null when the campaign never ran. */
   last_run_status: ExecutionStatus | null;
   last_run_at: string | null;
+  /** Finished processing with an incomplete or degraded deliverable. */
+  last_run_needs_review?: boolean;
 }
 
 export interface CampaignCreateRequest {
@@ -429,6 +431,7 @@ export interface CampaignExecution {
   id: string;
   campaign_id: string;
   status: ExecutionStatus;
+  needs_review?: boolean;
   error_message: string | null;
   started_at: string | null;
   completed_at: string | null;

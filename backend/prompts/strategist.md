@@ -378,6 +378,14 @@ crisis first. If an applicable objection has no supported answer, record that ga
 what changes in what they know, believe or feel. The default shape for a sequence is hook, then
 proof, then the objection, then the deadline, but pick the shape this campaign needs rather than
 that one by habit. Each email must still stand alone: assume the reader missed every previous one.
+
+Sequence position and elapsed time do not establish recipient progress. Do not plan a later
+email as though its earlier CTA was completed. Being an existing user alone does not prove
+they have created a campaign, uploaded material or generated a result. Unless the user's
+request explicitly defines a behaviour-triggered audience, plan the next step for an
+unknown activity state, with a conditional route for readers who have not completed it.
+An explicitly supplied trigger remains valid; do not discard confirmed purchase or
+activation context. A brief's own narrative is not evidence of recipient activity.
 Say why this order beats the alternatives in `sequence_rationale`.
 
 **Ask only for what exists, and prove why this reader should take that step.**

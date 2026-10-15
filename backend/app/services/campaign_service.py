@@ -155,7 +155,7 @@ class CampaignService:
         read = self._campaigns.list_all if include_archived else self._campaigns.list_active
         return read(limit, offset, brand_id)
 
-    def latest_run_by_campaign(self, campaign_ids=None) -> dict[UUID, tuple[ExecutionStatus, datetime]]:
+    def latest_run_by_campaign(self, campaign_ids=None) -> dict[UUID, tuple[ExecutionStatus, datetime, bool]]:
         """Feeds CampaignRead.last_run_status for a whole list in one query."""
         return self._executions.latest_by_campaign(campaign_ids)  # type: ignore[return-value]
 

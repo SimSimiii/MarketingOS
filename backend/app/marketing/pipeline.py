@@ -1067,7 +1067,7 @@ class EmailCampaignPipeline:
             SEQUENCE_ROLE, f"Reading all {len(result.outcomes)} emails as one sequence"
         )
         report = await SequenceReviewer(self._session).review(
-            result.emails, brief, arc_read=self._policy.sequence_pass
+            result.emails, brief, arc_read=self._policy.sequence_pass, request=request
         )
         result.sequence = report
         self._observer.on_sequence(report)

@@ -390,20 +390,21 @@ def _opening_constraint(opening_move: str) -> str:
 
 
 def _already_sent(previous: list[Email]) -> str:
-    """The emails the reader has already had, verbatim.
+    """Earlier drafts in this sequence, not evidence of recipient behaviour.
 
     A digest would let the writer repeat a line it cannot see - which is
     exactly the failure the overlap gate would then catch, one expensive model
     call later.
     """
     if not previous:
-        return "Nothing has been sent yet - this is the first email they get from you."
+        return "This is the first draft in this sequence. Drafts establish no recipient activity."
     sent = "\n\n".join(
         f"--- email {email.position} ---\n{render_review(email)}"
         for email in sorted(previous, key=lambda item: item.position)
     )
     return (
-        "Already written and sent, in full. Do not reuse an angle, a proof, an opening move or "
-        "a phrase from any of them - and never refer back to them, the reader may have missed "
-        f"every one:\n\n{sent}"
+        "Earlier drafts in this sequence, in full. They are not delivery, open, click or "
+        "completion records. Do not infer that the recipient acted on an earlier CTA. "
+        "Do not reuse an angle, a proof, an opening move or a phrase from any of them, "
+        f"and never refer back: the reader may have missed every one.\n\n{sent}"
     )

@@ -53,7 +53,7 @@ def list_campaigns(
         read = CampaignRead.model_validate(campaign)
         run = latest.get(campaign.id)
         if run is not None:
-            read.last_run_status, read.last_run_at = run
+            read.last_run_status, read.last_run_at, read.last_run_needs_review = run
         campaigns.append(read)
     return campaigns
 
