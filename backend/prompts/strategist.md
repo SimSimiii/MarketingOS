@@ -226,6 +226,12 @@ or a dossier as well as claims you derive yourself:
 - Keep capability, default and guarantee distinct. Accessing source context does not
   establish answer correctness; being able to cite facts does not promise citations
   every time. Assign a source-comparison test when correctness is what must be checked.
+- Compiling allowed facts and reviewing drafts establish a workflow, not a guarantee that
+  every generated sentence is correct or individually traced to a quotation. Describe the
+  documented review aids and the user's check; do not turn them into universal verification.
+- A built-in workflow does not prove that a generic assistant or prompt cannot perform its
+  steps. Explain the supported method without unsupported exclusivity or a made-up benchmark
+  involving a number of outputs and a duration, including in the subject strategy.
 - Separate drafting, review and sending. Manual authorship is not the only way to retain
   approval control; templates and other tools can preserve it too. Describe the work
   this product handles, not a false choice between doing everything by hand and losing control.

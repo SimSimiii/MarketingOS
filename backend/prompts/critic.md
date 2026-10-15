@@ -194,6 +194,14 @@ license guaranteed uptime. A supported capability can still be unpersuasive: dia
 as an editorial problem, without falsely claiming the evidence is absent. Preserve the
 supported part and change only the unsupported extension.
 
+In particular, a compiled fact set and a draft review do not establish that every sentence
+is verified or individually traced to a source quotation. A documented built-in workflow
+does not prove that a generic assistant or blank prompt has no equivalent. Flag these
+universal or exclusive extensions even when the underlying mechanism is supported. Diagnose
+`copy` when narrowing the claim preserves the supported proposition; do not demand new
+material merely to retain an unnecessary absolute. Check invented benchmarks and durations
+in subjects as well as body copy.
+
 For each issue, reuse `edits`: quote the passage in `line`, explain the precise mismatch in
 `problem`, specify the supported scope or correction in `fix`, and rank its `severity`.
 Gate advisories are questions to check against evidence, not proof of falsity. Do not invent
