@@ -62,3 +62,21 @@ The preceding captured-claims correction is recorded separately in
 Local browser checks use the current working UI, which also contains pre-existing
 visual edits. Only this task's functional changes are staged for deployment.
 Build and deployment results are recorded in the accompanying verification JSON.
+
+## Deployment and production smoke check
+
+API and console CodeBuild jobs both succeeded for source revision
+`43bdb7686c033f87367d174ef0354681fd590375`. The earlier candidate build was
+stopped in pre-build to include the quote correction before deployment.
+
+The site and API health return HTTP 200; an anonymous campaigns request returns
+401. Signed into the existing Mehdi test account, opened Overview, Brands and
+Campaigns, and reloaded Campaigns after deployment. The session remained active.
+The account still has no brands or campaigns and shows 0/50 runs. No production
+test content or generation was added to his workspace.
+
+See `pilot-verification-2026-10-16.json` for exact build IDs and
+`production-mehdi-ready-2026-10-16.jpg` for the browser result. A full real campaign
+on production Lambda was not executed: the workflow is covered by scripted tests,
+while the two actual writer probes ran locally. Observe the first real tester's
+campaign before claiming the production happy path has been exercised end to end.
