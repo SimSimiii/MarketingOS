@@ -2,15 +2,15 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { Search, SearchX } from "lucide-react";
+import { Mail, SearchX } from "lucide-react";
 
 import { CampaignActions } from "@/components/campaign-actions";
 import { EmptyState } from "@/components/empty-state";
+import { FilterPills, SearchField, Toolbar } from "@/components/toolbar";
 import { StatusBadge } from "@/components/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/table";
 import { formatAbsolute, timeAgo } from "@/lib/format";
 import type { Campaign } from "@/lib/types";
-import { cn } from "@/lib/utils";
 
 type Filter = "all" | "completed" | "failed" | "never";
 
@@ -85,43 +84,26 @@ export function CampaignTable({
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card p-3">
-        <div className="relative min-w-48 flex-1">
-          <Search
-            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-            aria-hidden="true"
-          />
-          <Input
-            type="search"
-            aria-label="Search campaigns"
-            placeholder={paged ? "Search this page by name, brief or brand…" : "Search by name, brief or brand…"}
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            className="h-9 pl-9"
-          />
-        </div>
-        <div role="group" aria-label="Filter by last run" className="flex flex-wrap gap-1.5">
-          {FILTERS.map((option) => {
-            const count = counts.get(option.value) ?? 0;
-            if (option.value !== "all" && count === 0) return null;
-            return (
-              <button
-                key={option.value}
-                type="button"
-                aria-pressed={filter === option.value}
-                onClick={() => setFilter(option.value)}
-                className={cn(
-                  buttonVariants({ variant: filter === option.value ? "secondary" : "ghost", size: "sm" }),
-                  filter === option.value && "ring-1 ring-violet-400/40",
-                )}
-              >
-                {option.label}
-                <span className="tabular-nums text-muted-foreground">{count}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      <Toolbar>
+        <SearchField
+          label="Search campaigns"
+          placeholder={paged ? "Search this page by name, brief or brand…" : "Search by name, brief or brand…"}
+          value={query}
+          onChange={setQuery}
+        />
+        <FilterPills
+          label="Filter by last run"
+          value={filter}
+          onChange={setFilter}
+          options={FILTERS.filter(
+            (option) => option.value === "all" || (counts.get(option.value) ?? 0) > 0,
+          ).map((option) => ({
+            value: option.value,
+            label: option.label,
+            count: counts.get(option.value) ?? 0,
+          }))}
+        />
+      </Toolbar>
 
       <Card className="gap-0 py-0">
         <CardContent className="p-0">
@@ -165,23 +147,30 @@ export function CampaignTable({
                         the fifth word, and it took the width the actions
                         needed. Under the name it is the subtitle it is. */}
                     <TableCell className="max-w-0 whitespace-normal md:w-[55%]">
-                      <div className="flex min-w-0 items-center gap-2">
-                        <Link
-                          href={`/campaigns/${campaign.id}`}
-                          className="truncate font-medium text-foreground underline-offset-4 after:absolute after:inset-0 hover:text-violet-200 hover:underline focus-visible:outline-2 focus-visible:outline-ring"
-                        >
-                          {campaign.name}
-                        </Link>
-                        {campaign.status === "archived" && (
-                          <Badge variant="secondary">archived</Badge>
-                        )}
+                      <div className="flex min-w-0 items-center gap-3.5">
+                        <span className="hidden size-9 shrink-0 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.03] text-violet-300 transition-colors group-hover/row:border-violet-400/30 group-hover/row:bg-violet-500/10 md:flex">
+                          <Mail className="size-4" aria-hidden="true" />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex min-w-0 items-center gap-2">
+                            <Link
+                              href={`/campaigns/${campaign.id}`}
+                              className="truncate font-medium text-foreground underline-offset-4 after:absolute after:inset-0 group-hover/row:text-violet-100 focus-visible:outline-2 focus-visible:outline-ring"
+                            >
+                              {campaign.name}
+                            </Link>
+                            {campaign.status === "archived" && (
+                              <Badge variant="secondary">archived</Badge>
+                            )}
+                          </div>
+                          <p
+                            className="mt-0.5 truncate text-xs text-muted-foreground"
+                            title={campaign.request}
+                          >
+                            {campaign.request}
+                          </p>
+                        </div>
                       </div>
-                      <p
-                        className="mt-0.5 truncate text-xs text-muted-foreground"
-                        title={campaign.request}
-                      >
-                        {campaign.request}
-                      </p>
                     </TableCell>
                     <TableCell data-label="Brand" className="text-muted-foreground">
                       {campaign.brand_id ? (
@@ -213,7 +202,9 @@ export function CampaignTable({
                           )}
                         </span>
                       ) : (
-                        <span className="text-sm text-muted-foreground">Never run</span>
+                        <span className="inline-flex h-[1.375rem] items-center rounded-full px-2.5 text-[0.6875rem] font-medium text-muted-foreground ring-1 ring-white/10 ring-inset">
+                          Never run
+                        </span>
                       )}
                     </TableCell>
                     <TableCell

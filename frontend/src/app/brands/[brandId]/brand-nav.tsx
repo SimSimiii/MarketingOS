@@ -17,10 +17,58 @@ export function BrandNav({ brandId, counts }: { brandId: string; counts: { sourc
     { href: `${base}/identity`, label: "Identity", hint: "Email appearance", icon: Palette, badge: null },
   ];
   const active = items.filter((item) => item.exact ? pathname === item.href : pathname === item.href || pathname.startsWith(`${item.href}/`)).sort((a, b) => b.href.length - a.href.length)[0]?.href;
-  return <nav aria-label="Brand workspace" className="grid grid-cols-2 gap-2 rounded-2xl border border-border bg-card/50 p-2 sm:grid-cols-3 xl:grid-cols-5">
-    {items.map(({ icon: Icon, ...item }) => <Link key={item.href} href={item.href} aria-current={item.href === active ? "page" : undefined} className={cn("min-w-0 rounded-xl border p-2.5 transition-colors", item.href === active ? "border-violet-400/40 bg-violet-500/15 text-foreground shadow-sm" : "border-transparent text-muted-foreground hover:border-border hover:bg-accent/30 hover:text-foreground")}>
-      <span className="flex items-center gap-2"><Icon className={cn("size-4 shrink-0", item.href === active && "text-violet-300")} /><span className="whitespace-nowrap text-[13px] font-semibold">{item.label}</span>{item.badge !== null && item.badge > 0 && <span className="ml-auto shrink-0 whitespace-nowrap rounded-md bg-background/60 px-1.5 py-0.5 text-[10px] tabular-nums">{item.badge}{item.label === "Market" && counts.alerts > 0 ? " new" : ""}</span>}</span>
-      <span className="mt-1.5 hidden text-[11px] text-muted-foreground sm:block">{item.hint}</span>
-    </Link>)}
-  </nav>;
+  return (
+    <nav
+      aria-label="Brand workspace"
+      className="grid grid-cols-2 gap-1.5 rounded-2xl bg-black/25 p-1.5 shadow-[inset_0_1px_2px_0_oklch(0_0_0/30%)] ring-1 ring-white/[0.06] sm:grid-cols-3 xl:grid-cols-5"
+    >
+      {items.map(({ icon: Icon, ...item }) => {
+        const current = item.href === active;
+        const alert = item.label === "Market" && counts.alerts > 0;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            aria-current={current ? "page" : undefined}
+            className={cn(
+              "group/tab min-w-0 rounded-xl px-3 py-2.5 transition-all duration-200",
+              current
+                ? "bg-[linear-gradient(180deg,oklch(0.55_0.2_293/26%),oklch(0.55_0.2_293/10%))] text-foreground shadow-[inset_0_1px_0_0_oklch(1_0_0/8%),0_0_0_1px_oklch(0.7_0.16_293/28%),0_8px_20px_-10px_oklch(0.55_0.22_293/60%)]"
+                : "text-muted-foreground hover:bg-white/[0.04] hover:text-foreground",
+            )}
+          >
+            <span className="flex items-center gap-2.5">
+              <span
+                className={cn(
+                  "flex size-7 shrink-0 items-center justify-center rounded-lg transition-colors",
+                  current ? "bg-violet-500/25 text-violet-100" : "bg-white/[0.04] group-hover/tab:text-foreground",
+                )}
+              >
+                <Icon className="size-3.5" aria-hidden="true" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[0.8125rem] font-semibold">{item.label}</span>
+                <span className="hidden truncate text-[0.6875rem] text-muted-foreground sm:block">{item.hint}</span>
+              </span>
+              {item.badge !== null && item.badge > 0 && (
+                <span
+                  className={cn(
+                    "shrink-0 rounded-full px-1.5 py-0.5 text-[0.625rem] font-semibold whitespace-nowrap tabular-nums",
+                    alert
+                      ? "bg-amber-400/15 text-amber-200 ring-1 ring-amber-400/25"
+                      : current
+                        ? "bg-white/[0.1] text-foreground"
+                        : "bg-white/[0.05] text-muted-foreground",
+                  )}
+                >
+                  {item.badge}
+                  {alert ? " new" : ""}
+                </span>
+              )}
+            </span>
+          </Link>
+        );
+      })}
+    </nav>
+  );
 }

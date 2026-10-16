@@ -205,11 +205,11 @@ export function CommandPalette() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
         showCloseButton={false}
-        className="top-[15%] translate-y-0 gap-0 overflow-hidden p-0 sm:max-w-xl"
+        className="top-[12%] translate-y-0 gap-0 overflow-hidden p-0 sm:max-w-2xl"
       >
         <DialogTitle className="sr-only">Jump to a page, campaign or brand</DialogTitle>
-        <div className="flex items-center gap-3 border-b border-border px-4">
-          <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+        <div className="flex items-center gap-3 border-b border-hairline px-5">
+          <Search className="size-[1.125rem] shrink-0 text-violet-300" aria-hidden="true" />
           <input
             autoFocus
             value={query}
@@ -224,20 +224,18 @@ export function CommandPalette() {
             aria-expanded="true"
             aria-controls="command-palette-list"
             aria-activedescendant={entries[selected] ? `cmd-${entries[selected].id}` : undefined}
-            className="h-12 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            className="h-14 w-full bg-transparent text-[0.9375rem] outline-none placeholder:text-muted-foreground/70"
           />
-          <kbd className="hidden rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground sm:inline">
-            Esc
-          </kbd>
+          <kbd className="kbd hidden sm:inline-flex">Esc</kbd>
         </div>
         <div
           ref={list}
           id="command-palette-list"
           role="listbox"
-          className="max-h-[min(24rem,60vh)] overflow-y-auto p-2"
+          className="max-h-[min(26rem,60vh)] overflow-y-auto p-2"
         >
           {entries.length === 0 ? (
-            <p className="px-3 py-8 text-center text-sm text-muted-foreground">
+            <p className="px-3 py-10 text-center text-sm text-muted-foreground">
               {data === null ? "Loading…" : `Nothing matches “${query}”.`}
             </p>
           ) : (
@@ -248,7 +246,7 @@ export function CommandPalette() {
               return (
                 <div key={entry.id}>
                   {heading && (
-                    <p className="px-3 pb-1 pt-3 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground first:pt-1">
+                    <p className="px-3 pt-4 pb-1.5 text-[0.625rem] font-medium uppercase tracking-[0.2em] text-muted-foreground/80 first:pt-2">
                       {heading}
                     </p>
                   )}
@@ -260,13 +258,22 @@ export function CommandPalette() {
                     onMouseMove={() => setActive(index)}
                     onClick={() => go(entry)}
                     className={cn(
-                      "flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2",
-                      index === selected ? "bg-violet-500/15 text-foreground" : "text-foreground/90",
+                      "flex cursor-pointer items-center gap-3 rounded-xl px-2.5 py-2 transition-colors",
+                      index === selected
+                        ? "bg-[linear-gradient(90deg,oklch(0.6_0.2_293/20%),oklch(0.6_0.2_293/5%))] text-foreground shadow-[0_0_0_1px_oklch(0.7_0.16_293/20%)]"
+                        : "text-foreground/90",
                     )}
                   >
-                    <Icon
-                      className={cn("size-4 shrink-0", index === selected ? "text-violet-300" : "text-muted-foreground")}
-                    />
+                    <span
+                      className={cn(
+                        "flex size-8 shrink-0 items-center justify-center rounded-lg border transition-colors",
+                        index === selected
+                          ? "border-violet-400/30 bg-violet-500/20 text-violet-200"
+                          : "border-white/[0.06] bg-white/[0.03] text-muted-foreground",
+                      )}
+                    >
+                      <Icon className="size-4" />
+                    </span>
                     <span className="min-w-0 flex-1 truncate text-sm">{entry.label}</span>
                     <span className="hidden max-w-[40%] truncate text-xs text-muted-foreground sm:block">
                       {entry.hint}
@@ -280,9 +287,10 @@ export function CommandPalette() {
             })
           )}
         </div>
-        <div className="flex items-center gap-4 border-t border-border bg-muted/30 px-4 py-2 text-[11px] text-muted-foreground">
-          <span><kbd className="font-sans">↑ ↓</kbd> to move</span>
-          <span><kbd className="font-sans">Enter</kbd> to open</span>
+        <div className="flex items-center gap-4 border-t border-hairline bg-black/20 px-5 py-2.5 text-[0.6875rem] text-muted-foreground">
+          <span className="flex items-center gap-1.5"><kbd className="kbd">↑</kbd><kbd className="kbd">↓</kbd> to move</span>
+          <span className="flex items-center gap-1.5"><kbd className="kbd">Enter</kbd> to open</span>
+          <span className="ml-auto hidden items-center gap-1.5 sm:flex"><kbd className="kbd">Esc</kbd> to close</span>
         </div>
       </DialogContent>
     </Dialog>

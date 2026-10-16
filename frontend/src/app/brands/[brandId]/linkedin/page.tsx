@@ -1,6 +1,5 @@
-import { redirect } from "next/navigation";
+import { LinkedInRedirect } from "./linkedin-redirect";
 
-export default async function LinkedInPage({ params }: { params: Promise<{ brandId: string }> }) {
-  const { brandId } = await params;
-  redirect(`/brands/${brandId}`);
+export default function LinkedInPage() {
+  return <LinkedInRedirect />;
 }

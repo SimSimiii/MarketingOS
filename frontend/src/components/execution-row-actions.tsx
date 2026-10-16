@@ -28,7 +28,7 @@ export function ExecutionRowActions({
     try {
       await api.cancelExecution(execution.id);
       confirmStop.setOpen(false);
-      toast.success("Stopping - it finishes the model call it's on, then stops for good");
+      toast.success("Stopping after the current step. Finished drafts will be kept.");
       refreshPage();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not cancel");
@@ -47,7 +47,7 @@ export function ExecutionRowActions({
           open={confirmStop.open}
           onOpenChange={confirmStop.setOpen}
           title="Stop this campaign?"
-          description="It stops as soon as the model call currently in flight finishes - already-finished emails are kept, but nothing further is generated and the run cannot be resumed."
+          description="It stops after the current step. Finished emails are kept, but nothing further is generated and the run cannot be resumed."
           confirmLabel="Stop campaign"
           pending={busy}
           onConfirm={handleCancel}

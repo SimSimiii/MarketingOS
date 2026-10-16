@@ -27,6 +27,97 @@
       "remaining_defect": "The message still reads mainly as configuration guidance, and readers cannot tell whether the linked guide helps assess their existing site before adopting Plausible.",
       "evidence": "1/1 clean delivered; simulated pull 6/10; all readers understood and found it relevant; $3.8762 estimated; 375px mobile no overflow; GO_NARROW dossier current.",
       "next_action": "Make the pre-adoption assessment value explicit and distinguish Plausible's goal view from generic analytics, without implying paid-customer attribution."
+    },
+    {
+      "iteration": 3,
+      "execution_id": "b4b906e3-d44f-4ffa-a440-d2da21f957dd",
+      "score": 80,
+      "comparable": true,
+      "model": "opus (all roles); earlier iterations gpt-5.6-sol",
+      "strengths": [
+        "Opens on the useful outcome (sources and entry pages behind trial signups, E68) rather than configuration; honest subject; no disclaimer P.S.",
+        "Pageview vs custom goal distinction (E70/E71) and dashboard path are accurate; clean 375px HTML."
+      ],
+      "remaining_defect": "Written for an existing Plausible user although the request introduces Plausible to a prospect: 'without a code change' and 'pageviews are already collected' hold only after the Plausible script (E35) is installed; all three readers flagged it.",
+      "evidence": "1/1 delivered, clean, understood, pull 6/10, 9 calls, $2.2742 estimated. Buffer-derived prompt fixes transferred without regression.",
+      "next_action": "Writer prompt: when introducing the product to a non-user, user-side facts describe life after adoption - say so and name the documented first step. Regenerate."
+    },
+    {
+      "iteration": 4,
+      "execution_id": "22dfb06b-6bb8-4552-b68c-3162495b8416",
+      "score": 72,
+      "comparable": true,
+      "model": "opus (all roles)",
+      "strengths": [
+        "First version to give value before installation: the public live demo with real trial-signup numbers (E29), stated honestly as 'our numbers, not yours'.",
+        "Outcome-led problem framing (sources behind the signup count, E68); pull 7/10."
+      ],
+      "remaining_defect": "The button reads 'View live demo' but links to the user-fixed goal-conversions guide: the campaign's cta_url never reached the strategist, only the renderer. The requested concrete first step for setting up a goal is gone, and the body's first line repeats the subject verbatim.",
+      "evidence": "1/1 delivered, clean, pull 7/10, 9 calls, $2.066 estimated; href checked in email.html.",
+      "next_action": "Pass the fixed cta_url into CampaignRequest.render_context so the strategist plans the ask for that page. Regenerate."
+    },
+    {
+      "iteration": 5,
+      "execution_id": "48c8f8b4-8e58-4920-a4b9-c12f5b01d6ae",
+      "score": 83,
+      "comparable": true,
+      "model": "opus (all roles)",
+      "strengths": [
+        "CTA 'Read the goal-conversions guide' matches the fixed destination, and the requested concrete first step (pageview goal on the confirmation page, E70/E71) is back: the cta_url fix held.",
+        "Outcome-led opening (sources and entry pages behind signups, E68); honest subject; clean 375px HTML."
+      ],
+      "remaining_defect": "Still written for an existing Plausible user: 'no code changes, since Plausible collects pageviews automatically' omits that the Plausible script (E35) comes first; all three readers asked whether it applies to them. The writer-prompt rule did not fire.",
+      "evidence": "1/1 delivered, clean, understood, pull 6/10, 9 calls, $2.247 estimated.",
+      "next_action": "Move the prospect-prerequisite rule into the strategist's next-step contract so the brief carries it to the writer. Regenerate."
+    },
+    {
+      "iteration": 6,
+      "execution_id": "420b68e1-da5a-4072-92e7-72bcac15bbcd",
+      "score": 74,
+      "comparable": true,
+      "model": "opus (all roles)",
+      "strengths": [
+        "The adoption prerequisite is finally stated, CTA matches the guide, bot/spam filtering (E92) is a real differentiator."
+      ],
+      "remaining_defect": "The prerequisite arrives as a defeatist P.S. ('seeing your own numbers takes Plausible running on your site') because it was routed through next_step_limit; the angle ('your raw total counts bots') presumes the reader's current analytics, which the request forbids. Pull fell to 5/10.",
+      "evidence": "1/1 delivered, clean, pull 5/10, 9 calls, $2.4167 estimated.",
+      "next_action": "Route the prerequisite into the mechanism as a positive condition ('once its script is on your site'), not next_step_limit; writer states it in the body, never as a disclaimer. Regenerate."
+    },
+    {
+      "iteration": 7,
+      "execution_id": "4c209489-4d1e-4977-ac23-5ad629a07f82",
+      "score": 80,
+      "comparable": true,
+      "model": "opus (all roles)",
+      "strengths": [
+        "Most specific argument so far: a signup that completes without loading a new page is missed by a pageview goal, so a custom event (E65) is the right choice; prerequisite stated as a condition in the body, no disclaimer P.S.; CTA matches the guide."
+      ],
+      "remaining_defect": "Still does not say the Plausible script comes first, so readers cannot tell whether it applies to them; 'Most signup tracking keys on a page load' is an unsupported market generalisation.",
+      "evidence": "1/1 delivered, clean, pull 6/10, 9 calls, $2.0108 estimated; subject bake-off returned nothing sendable.",
+      "next_action": "Stop buying runs on this request: iterations 3-7 score 72-83 and each correction moves the defect. The request asks a prospect to read a configuration guide; iteration 4 found the stronger pre-adoption step (public live demo, E29). Changing the request's CTA is the user's call."
+    },
+    {
+      "iteration": 8,
+      "execution_id": "f2e0a144-8936-47bb-9136-af932b92f7d7",
+      "score": 85,
+      "comparable": false,
+      "track": "openai_resume_2026_10_05",
+      "model": "gpt-5.6-sol (all 8 calls)",
+      "grid": {
+        "facts": 25,
+        "audience_offer": 17,
+        "argument": 11,
+        "continuity": 13,
+        "polish_rendering": 9,
+        "unsupported_repetition": 10
+      },
+      "strengths": [
+        "No assumption of installed Plausible: once collecting pageviews is an explicit condition (E71). The reader can first check for a distinct successful-signup confirmation URL.",
+        "Goal reporting matches E67/E68/E71; CTA resolves to the requested goal-conversions guide. Mobile 375px reviewed: no horizontal overflow."
+      ],
+      "remaining_defect": "A functional introductory email, with a restrained persuasion argument; the alternative route for a signup without a confirmation URL is left to the linked guide. No material unsupported promise found.",
+      "evidence": "1/1 completed, no gaps or contract violations; all 8 calls gpt-5.6-sol; simulated pull 6/10 is not a customer metric; $5.0589 estimated. 1383 tests pass; Ruff clean.",
+      "next_action": "Sellable for the requested guide-oriented introductory scenario. Validate current defaults and latest prompts on Buffer."
     }
   ],
   "runs": [
@@ -53,9 +144,75 @@
       "result_dir": "docs\\optimization\\cross-brand-validation\\plausible\\runs\\7f298688-93bc-45b8-9f93-341305f159e1",
       "estimated_cost_usd": 3.8762,
       "completed_at": "2026-10-01T00:07:42.487485Z"
+    },
+    {
+      "execution_id": "b4b906e3-d44f-4ffa-a440-d2da21f957dd",
+      "campaign_id": "811ea04a-5284-4ed2-99c9-e1d69b226ee7",
+      "status": "completed",
+      "launched_at": "2026-10-02T20:13:34.439435+00:00",
+      "code_revision": "working-tree",
+      "last_checked_at": "2026-10-02T20:19:55.588721+00:00",
+      "result_dir": "docs\\optimization\\cross-brand-validation\\plausible\\runs\\b4b906e3-d44f-4ffa-a440-d2da21f957dd",
+      "estimated_cost_usd": 2.2742,
+      "completed_at": "2026-10-02T20:19:48.578464Z"
+    },
+    {
+      "execution_id": "22dfb06b-6bb8-4552-b68c-3162495b8416",
+      "campaign_id": "811ea04a-5284-4ed2-99c9-e1d69b226ee7",
+      "status": "completed",
+      "launched_at": "2026-10-02T20:22:38.170279+00:00",
+      "code_revision": "working-tree",
+      "last_checked_at": "2026-10-02T20:29:50.398246+00:00",
+      "result_dir": "docs\\optimization\\cross-brand-validation\\plausible\\runs\\22dfb06b-6bb8-4552-b68c-3162495b8416",
+      "estimated_cost_usd": 2.066,
+      "completed_at": "2026-10-02T20:29:48.911866Z"
+    },
+    {
+      "execution_id": "48c8f8b4-8e58-4920-a4b9-c12f5b01d6ae",
+      "campaign_id": "811ea04a-5284-4ed2-99c9-e1d69b226ee7",
+      "status": "completed",
+      "launched_at": "2026-10-02T20:34:53.373483+00:00",
+      "code_revision": "working-tree",
+      "last_checked_at": "2026-10-02T20:40:54.601320+00:00",
+      "result_dir": "docs\\optimization\\cross-brand-validation\\plausible\\runs\\48c8f8b4-8e58-4920-a4b9-c12f5b01d6ae",
+      "estimated_cost_usd": 2.247,
+      "completed_at": "2026-10-02T20:40:53.308940Z"
+    },
+    {
+      "execution_id": "420b68e1-da5a-4072-92e7-72bcac15bbcd",
+      "campaign_id": "811ea04a-5284-4ed2-99c9-e1d69b226ee7",
+      "status": "completed",
+      "launched_at": "2026-10-02T20:43:28.467319+00:00",
+      "code_revision": "working-tree",
+      "last_checked_at": "2026-10-02T20:50:59.778418+00:00",
+      "result_dir": "docs\\optimization\\cross-brand-validation\\plausible\\runs\\420b68e1-da5a-4072-92e7-72bcac15bbcd",
+      "estimated_cost_usd": 2.4167,
+      "completed_at": "2026-10-02T20:50:58.083263Z"
+    },
+    {
+      "execution_id": "4c209489-4d1e-4977-ac23-5ad629a07f82",
+      "campaign_id": "811ea04a-5284-4ed2-99c9-e1d69b226ee7",
+      "status": "completed",
+      "launched_at": "2026-10-02T20:52:24.960577+00:00",
+      "code_revision": "working-tree",
+      "last_checked_at": "2026-10-02T20:59:05.736895+00:00",
+      "result_dir": "docs\\optimization\\cross-brand-validation\\plausible\\runs\\4c209489-4d1e-4977-ac23-5ad629a07f82",
+      "estimated_cost_usd": 2.0108,
+      "completed_at": "2026-10-02T20:59:00.084978Z"
+    },
+    {
+      "execution_id": "f2e0a144-8936-47bb-9136-af932b92f7d7",
+      "campaign_id": "811ea04a-5284-4ed2-99c9-e1d69b226ee7",
+      "status": "completed",
+      "launched_at": "2026-10-05T05:49:34.300294+00:00",
+      "code_revision": "working-tree",
+      "last_checked_at": "2026-10-05T05:54:55.143559+00:00",
+      "result_dir": "docs\\optimization\\cross-brand-validation\\plausible\\runs\\f2e0a144-8936-47bb-9136-af932b92f7d7",
+      "estimated_cost_usd": 5.0589,
+      "completed_at": "2026-10-05T05:54:47.265375Z"
     }
   ],
-  "status": "below_sellable_bar",
+  "status": "sellable",
   "case": "plausible",
   "quality_best": {
     "iteration": 2,
@@ -69,5 +226,14 @@
     "positioning": "no_open_ground",
     "readiness": "GO_NARROW",
     "limit": "Signup attribution does not establish why trial users become paying customers."
-  }
+  },
+  "resume_action": "2026-10-05: reopen under campaign-optimization authorization; restore GPT default and evaluate unchanged campaign inputs on a separate OpenAI comparison track.",
+  "quality_best_by_track": {
+    "openai_resume_2026_10_05": {
+      "iteration": 8,
+      "execution_id": "f2e0a144-8936-47bb-9136-af932b92f7d7",
+      "score": 85
+    }
+  },
+  "verdict": "Reviewed iteration 8 meets the usable paid-quality bar for this narrow guide-oriented introduction; not proof of willingness to pay or actual conversion improvement."
 }

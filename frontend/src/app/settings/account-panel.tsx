@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { KeyRound, LogOut, Monitor, UserRound } from "lucide-react";
 
 import { api } from "@/lib/api-client";
 import type { Account, AuthSession } from "@/lib/types";
@@ -51,7 +52,12 @@ function PasswordCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Password</CardTitle>
+        <CardTitle className="flex items-center gap-3">
+          <span className="icon-tile flex size-8 items-center justify-center rounded-lg">
+            <KeyRound className="size-4" aria-hidden="true" />
+          </span>
+          Password
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={submit} className="space-y-4">
@@ -82,9 +88,11 @@ function PasswordCard() {
               one.
             </p>
           </div>
-          <Button type="submit" disabled={busy}>
-            {busy ? "Changing…" : "Change password"}
-          </Button>
+          <div className="border-t border-hairline pt-4">
+            <Button type="submit" disabled={busy}>
+              {busy ? "Changing…" : "Change password"}
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>
@@ -127,44 +135,55 @@ function SessionsCard({ account }: { account: Account }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Account</CardTitle>
+        <CardTitle className="flex items-center gap-3">
+          <span className="icon-tile flex size-8 items-center justify-center rounded-lg">
+            <UserRound className="size-4" aria-hidden="true" />
+          </span>
+          Account
+        </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <dl className="grid grid-cols-2 gap-y-2 text-sm">
+      <CardContent className="space-y-5">
+        <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-6 gap-y-3 rounded-xl bg-black/20 p-4 text-sm ring-1 ring-white/[0.05]">
           <dt className="text-muted-foreground">Email</dt>
           <dd className="truncate">{account.email}</dd>
           <dt className="text-muted-foreground">Plan</dt>
-          <dd className="capitalize">{account.plan}</dd>
-          <dt className="text-muted-foreground">Runs this period</dt>
           <dd>
+            <span className="rounded-full bg-violet-500/15 px-2 py-0.5 text-xs font-medium capitalize text-violet-200 ring-1 ring-violet-400/25">
+              {account.plan}
+            </span>
+          </dd>
+          <dt className="text-muted-foreground">Runs this period</dt>
+          <dd className="tabular-nums">
             {account.monthly_run_quota > 0
               ? `${account.runs_used} of ${account.monthly_run_quota}`
               : `${account.runs_used} (no limit set)`}
           </dd>
         </dl>
 
-        <div className="border-t border-border pt-4">
-          <p className="text-sm font-medium">Where you are signed in</p>
+        <div className="border-t border-hairline pt-4">
+          <p className="text-sm font-semibold">Where you are signed in</p>
           {sessions === null ? (
             <p className="mt-1 text-sm text-muted-foreground">Loading…</p>
           ) : sessions.length === 0 ? (
             <p className="mt-1 text-sm text-muted-foreground">No other devices.</p>
           ) : (
-            <ul className="mt-2 space-y-1.5 text-xs text-muted-foreground">
+            <ul className="mt-3 space-y-2 text-xs text-muted-foreground">
               {sessions.map((session) => (
-                <li key={session.id} className="flex justify-between gap-3">
-                  <span className="truncate">{session.user_agent ?? "Unknown device"}</span>
-                  <span className="shrink-0">{session.ip_address ?? "—"}</span>
+                <li key={session.id} className="flex items-center gap-3 rounded-xl bg-white/[0.025] px-3 py-2.5 ring-1 ring-white/[0.05]">
+                  <Monitor className="size-4 shrink-0 text-violet-300" aria-hidden="true" />
+                  <span className="min-w-0 flex-1 truncate">{session.user_agent ?? "Unknown device"}</span>
+                  <span className="shrink-0 font-mono tabular-nums">{session.ip_address ?? "—"}</span>
                 </li>
               ))}
             </ul>
           )}
           <Button
-            variant="outline"
-            className="mt-3"
+            variant="destructive"
+            className="mt-4"
             disabled={busy || sessions === null || sessions.length === 0}
             onClick={signOutEverywhere}
           >
+            <LogOut aria-hidden="true" />
             {busy ? "Signing out…" : "Sign out everywhere"}
           </Button>
         </div>

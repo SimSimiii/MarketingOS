@@ -598,15 +598,19 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
           put, the fields scroll, and the things you can actually launch stay
           on screen the whole way down. */}
       <DialogContent className="flex max-h-[90vh] w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-3xl">
-        <DialogHeader className="gap-1 border-b border-border px-5 py-4 pr-12">
-          <DialogTitle>New campaign</DialogTitle>
+        <DialogHeader className="gap-1.5 border-b border-hairline px-6 pt-6 pb-5 pr-14">
+          <p className="flex items-center gap-2.5 text-[0.6875rem] font-medium uppercase tracking-[0.2em] text-violet-300/90">
+            <span className="h-px w-6 bg-gradient-to-r from-violet-400/80 to-transparent" aria-hidden="true" />
+            Email studio
+          </p>
+          <DialogTitle className="font-display text-[2rem] leading-tight font-normal">New campaign</DialogTitle>
           <DialogDescription>
             Name it, point it at what it should read, and say who it is for. Everything else
             already has a default.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-5 py-5">
+        <div className="min-h-0 flex-1 space-y-8 overflow-y-auto px-6 py-6">
           <FormSection title="Campaign">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
@@ -780,10 +784,10 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
 
               {mappedAudienceSelected && (
                 <div
-                  className={`rounded-md p-3 text-xs sm:col-span-2 ${
+                  className={`rounded-xl p-3.5 text-xs leading-relaxed ring-1 sm:col-span-2 ${
                     requiresOverride
-                      ? "bg-amber-500/10 text-amber-200"
-                      : "bg-primary/10 text-foreground/80"
+                      ? "bg-amber-400/[0.07] text-amber-100/90 ring-amber-400/20"
+                      : "bg-violet-500/[0.08] text-foreground/85 ring-violet-400/20"
                   }`}
                 >
                   <p className="font-medium">
@@ -1042,7 +1046,7 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
           </FormSection>
         </div>
 
-        <DialogFooter className="mx-0 mb-0 flex-col items-stretch gap-3 px-5 py-4 sm:flex-col sm:items-stretch">
+        <DialogFooter className="mx-0 mb-0 flex-col items-stretch gap-3 px-6 py-4 sm:flex-col sm:items-stretch">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-sm font-medium">Save a brief, then review the run estimate</p>
             {/* Not a deliverable - it leaves the form - so it does not sit in the
@@ -1067,6 +1071,7 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
             <Button
               type="button"
               size="lg"
+              variant="outline"
               className="h-auto min-w-0 flex-col items-start gap-0.5 whitespace-normal px-2.5 py-2 text-left text-xs sm:px-3 sm:py-3 sm:text-sm"
               disabled={submitting}
               onClick={() => handleGenerate("cart_recovery")}
@@ -1079,6 +1084,7 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
             <Button
               type="button"
               size="lg"
+              variant="outline"
               className="h-auto min-w-0 flex-col items-start gap-0.5 whitespace-normal px-2.5 py-2 text-left text-xs sm:px-3 sm:py-3 sm:text-sm"
               disabled={submitting}
               onClick={() => handleGenerate("launch_email")}
@@ -1100,9 +1106,10 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
  * grouping them is the difference between a form and a wall. */
 function FormSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="space-y-3">
-      <h3 className="border-b border-border/60 pb-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+    <section className="space-y-4">
+      <h3 className="flex items-center gap-3 text-[0.6875rem] font-medium tracking-[0.18em] text-muted-foreground uppercase">
         {title}
+        <span className="h-px flex-1 bg-gradient-to-r from-white/[0.08] to-transparent" aria-hidden="true" />
       </h3>
       {children}
     </section>

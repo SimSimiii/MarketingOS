@@ -191,7 +191,13 @@ def main():
             "campaign": f"/campaigns/{campaign_id}",
             "forecast": f"/campaigns/{campaign_id}/forecast",
         }.items():
-            save(directory / f"{name}.json", api(base, path, token))
+            try:
+                save(directory / f"{name}.json", api(base, path, token))
+            except RuntimeError as exc:
+                if name not in {"knowledge", "audience"} or "HTTP 404:" not in str(exc):
+                    raise
+                save(directory / f"{name}.error.json", {"error": str(exc)})
+                print(f"Context unavailable ({name}): {exc}")
         print(f"Saved context in {directory}")
         return 0
 

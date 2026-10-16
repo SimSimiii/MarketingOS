@@ -173,15 +173,15 @@ export function MarketView({
         <Button variant="outline" size="sm" disabled={refreshing} onClick={refreshStatus}><RefreshCw className={refreshing ? "size-4 animate-spin" : "size-4"} />{refreshing ? "Refreshing…" : "Refresh results"}</Button>
       } />
       <Tabs value={activeTab} onValueChange={changeTab} className="gap-5">
-        <TabsList aria-label="Market sections" className="market-section-tabs grid w-full grid-cols-2 gap-2 rounded-xl border border-border bg-card p-2 sm:grid-cols-3 xl:grid-cols-5">
+        <TabsList aria-label="Market sections" className="market-section-tabs grid w-full grid-cols-2 gap-1.5 rounded-2xl bg-black/25 p-1.5 shadow-[inset_0_1px_2px_0_oklch(0_0_0/30%)] ring-1 ring-white/[0.06] sm:grid-cols-3 xl:grid-cols-5">
           {sections.map(({ icon: Icon, ...section }) => <TabsTrigger key={section.value} value={section.value} className="market-section-trigger flex min-h-16 min-w-0 flex-col items-start justify-center gap-1 rounded-lg border px-3 py-3 text-left whitespace-normal">
-            <span className="flex w-full items-center gap-1.5"><Icon className="size-4" /><span className="whitespace-nowrap text-xs font-semibold sm:text-sm">{section.label}</span>{section.count !== null && section.count > 0 && <span className="ml-auto shrink-0 whitespace-nowrap rounded bg-background/50 px-1.5 text-[10px] tabular-nums">{section.count}</span>}</span>
+            <span className="flex w-full items-center gap-1.5"><Icon className="size-4" /><span className="whitespace-nowrap text-xs font-semibold sm:text-sm">{section.label}</span>{section.count !== null && section.count > 0 && <span className="ml-auto shrink-0 whitespace-nowrap rounded-full bg-white/[0.08] px-1.5 py-px text-[10px] tabular-nums">{section.count}</span>}</span>
             <span className="text-[11px] font-normal opacity-80">{section.hint}</span>
           </TabsTrigger>)}
         </TabsList>
 
         {job && (running || job.state === "failed") && <JobBanner job={job} now={now} />}
-        {(activeTab === "positioning" || activeTab === "rivals" || activeTab === "radar") && <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card/50 p-4">
+        {(activeTab === "positioning" || activeTab === "rivals" || activeTab === "radar") && <div className="surface flex flex-wrap items-center justify-between gap-3 rounded-2xl p-4 sm:px-5">
           <div><p className="text-sm font-medium">Market research</p><p className="mt-1 text-xs text-muted-foreground">{initialMarket.scanned_at ? `Last scanned ${formatDate(initialMarket.scanned_at)}` : "Start a scan to discover your competitive landscape."}</p></div>
           <div className="flex flex-wrap gap-2"><Button variant="outline" size="sm" disabled={starting || running || rivals.length === 0} onClick={() => start("rescan")} title="Re-read existing competitors without finding new ones">Update competitors</Button><Button size="sm" disabled={starting || running} onClick={() => start("scan")}><ScanSearch className="size-4" />{running && (job?.kind === "scan" || job?.kind === "rescan") ? "Scanning…" : positioning ? "New market scan" : "Scan this market"}</Button></div>
         </div>}

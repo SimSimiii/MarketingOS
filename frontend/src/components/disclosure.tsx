@@ -33,14 +33,14 @@ export function Disclosure({
     <details
       open={defaultOpen}
       className={cn(
-        "group/disclosure rounded-xl border bg-card",
-        tone === "attention" ? "border-amber-400/25" : "border-border",
+        "group/disclosure surface rounded-2xl",
+        tone === "attention" && "shadow-[var(--shadow-surface),0_0_0_1px_oklch(0.8_0.15_80/25%)]",
         className,
       )}
     >
-      <summary className="flex cursor-pointer list-none items-center gap-3 rounded-xl p-4 transition-colors hover:bg-accent/15 focus-visible:outline-2 focus-visible:outline-ring sm:px-5 [&::-webkit-details-marker]:hidden">
+      <summary className="flex cursor-pointer list-none items-center gap-3 rounded-2xl p-4 transition-colors hover:bg-white/[0.025] focus-visible:outline-2 focus-visible:outline-ring sm:px-5 [&::-webkit-details-marker]:hidden">
         <span className="min-w-0 flex-1">
-          <span className="block text-sm font-medium">{title}</span>
+          <span className="block text-sm font-semibold tracking-tight">{title}</span>
           {summary && (
             <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">
               {summary}
@@ -48,10 +48,12 @@ export function Disclosure({
           )}
         </span>
         {badge}
-        <ChevronDown
-          className="size-4 shrink-0 text-muted-foreground transition-transform group-open/disclosure:rotate-180"
-          aria-hidden="true"
-        />
+        <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.03] text-muted-foreground transition-colors group-hover/disclosure:text-foreground group-open/disclosure:border-violet-400/30 group-open/disclosure:text-violet-300">
+          <ChevronDown
+            className="size-3.5 transition-transform duration-200 group-open/disclosure:rotate-180"
+            aria-hidden="true"
+          />
+        </span>
       </summary>
       <div className="border-t border-hairline p-4 sm:p-5">{children}</div>
     </details>

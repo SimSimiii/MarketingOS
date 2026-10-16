@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { api } from "@/lib/api-client";
+import { problemText } from "@/lib/product-progress";
 import type {
   LinkedInCandidate,
   LinkedInCriteria,
@@ -251,7 +252,7 @@ export function LinkedInWorkspace({
           </div>
           <p className="text-xs text-muted-foreground">
             {ready
-              ? "One research call, at most three web searches inside it. A web search reads whole pages: this is the most expensive call in the product and can run to several hundred thousand tokens. Public results may be incomplete or outdated."
+              ? "Searches public profiles against your audience criteria. Results may be incomplete or outdated; review each match before reaching out."
               : "Propose criteria above, fill one field in by hand, or type what to look for - a search needs something to look for."}
           </p>
           <Button type="submit" disabled={busy || !ready}>Search LinkedIn</Button>
@@ -307,11 +308,11 @@ function RunCard({
   return <Disclosure
     defaultOpen={defaultOpen}
     title={title}
-    summary={`${outcome} · ${formatAbsolute(run.created_at)} · ${run.calls} model call${run.calls === 1 ? "" : "s"}`}
+    summary={`${outcome} · ${formatAbsolute(run.created_at)}`}
     tone={run.error ? "attention" : "default"}
   >
     <div className="space-y-4">
-    {run.error && <p role="alert" className="text-sm text-destructive">{run.error}</p>}
+    {run.error && <p role="alert" className="text-sm text-destructive">{problemText(run.error)}</p>}
     {run.state === "running" && <p className="text-sm text-muted-foreground">In progress at last refresh.</p>}
     {run.result.note && <ExpandableText text={run.result.note} limit={260} className="text-muted-foreground" />}
 

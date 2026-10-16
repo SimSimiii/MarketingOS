@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { FilterPills, SearchField, Toolbar } from "@/components/toolbar";
 import { cn } from "@/lib/utils";
 import type { FactCategory, KnowledgeBase, KnowledgeEntry, ValueBand } from "@/lib/types";
 
@@ -18,10 +18,9 @@ const BAND_LABEL: Record<ValueBand, string> = {
 };
 
 const BAND_CLASS: Record<ValueBand, string> = {
-  headline:
-    "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
-  supporting: "border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-500",
-  background: "border-border text-muted-foreground",
+  headline: "border-emerald-400/25 bg-emerald-400/10 text-emerald-300",
+  supporting: "border-amber-400/25 bg-amber-400/10 text-amber-300",
+  background: "border-white/10 text-muted-foreground",
 };
 
 const GROUNDING_LABEL: Record<string, string> = {
@@ -73,25 +72,22 @@ export function KnowledgeBaseExplorer({ base }: { base: KnowledgeBase }) {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-3">
-        <Input
-          aria-label="Search knowledge"
+      <Toolbar>
+        <SearchField
+          label="Search knowledge"
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={setQuery}
           placeholder="Search everything we know — a price, a customer, an integration…"
-          className="max-w-md"
         />
-        {BANDS.map((option) => (
-          <Button
-            key={option}
-            size="sm"
-            variant={band === option ? "default" : "outline"}
-            aria-pressed={band === option}
-            onClick={() => setBand(band === option ? null : option)}
-          >
-            {BAND_LABEL[option]}
-          </Button>
-        ))}
+        <FilterPills
+          label="Filter by strength"
+          value={band ?? "any"}
+          onChange={(value) => setBand(value === "any" ? null : value)}
+          options={[
+            { value: "any" as const, label: "Any strength" },
+            ...BANDS.map((option) => ({ value: option, label: BAND_LABEL[option] })),
+          ]}
+        />
         {filtering && (
           <Button
             size="sm"
@@ -105,41 +101,31 @@ export function KnowledgeBaseExplorer({ base }: { base: KnowledgeBase }) {
             Clear
           </Button>
         )}
-      </div>
+      </Toolbar>
 
-      <div className="flex flex-wrap gap-2">
-        <Button
-          size="sm"
-          variant={category === null ? "default" : "outline"}
-          aria-pressed={category === null}
-          onClick={() => setCategory(null)}
-        >
-          Everything ({base.total})
-        </Button>
+      <div role="group" aria-label="Shelves" className="flex flex-wrap gap-2">
+        <ShelfChip active={category === null} onClick={() => setCategory(null)} label="Everything" count={base.total} />
         {base.shelves.map((shelf) => (
-          <Button
+          <ShelfChip
             key={shelf.category}
-            size="sm"
-            variant={category === shelf.category ? "default" : "outline"}
-            aria-pressed={category === shelf.category}
+            active={category === shelf.category}
             onClick={() => setCategory(category === shelf.category ? null : shelf.category)}
-            className={cn(shelf.count === 0 && "text-muted-foreground/60")}
-          >
-            {shelf.label} ({shelf.count})
-          </Button>
+            label={shelf.label}
+            count={shelf.count}
+          />
         ))}
       </div>
 
       {query !== "" || band !== null ? (
         <FlatResults entries={visible} />
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-10">
           {shelves.map((shelf) => (
-            <section key={shelf.category} className="space-y-3">
-              <div>
-                <h2 className="text-base font-semibold tracking-tight">
+            <section key={shelf.category} className="space-y-4">
+              <div className="border-b border-hairline pb-3">
+                <h2 className="font-display text-[1.625rem] leading-tight">
                   {shelf.label}{" "}
-                  <span className="text-sm font-normal text-muted-foreground">
+                  <span className="font-sans text-sm font-normal text-muted-foreground">
                     · {shelf.count} fact{shelf.count === 1 ? "" : "s"}
                     {shelf.headline_count > 0 && `, ${shelf.headline_count} can lead an email`}
                   </span>
@@ -149,8 +135,8 @@ export function KnowledgeBaseExplorer({ base }: { base: KnowledgeBase }) {
                 </p>
               </div>
               {shelf.entries.length === 0 ? (
-                <Card className="border-dashed">
-                  <CardContent className="p-4 text-sm text-muted-foreground">
+                <Card className="bg-transparent bg-none shadow-none ring-white/[0.06] [--card-spacing:--spacing(4)]">
+                  <CardContent className="text-sm text-muted-foreground">
                     Nothing here yet. {shelf.when_empty}
                   </CardContent>
                 </Card>
@@ -251,7 +237,7 @@ function EntryCard({ entry }: { entry: KnowledgeEntry }) {
         <p className="font-medium">{entry.statement}</p>
 
         {entry.verbatim && (
-          <p className="border-l-2 border-border pl-3 text-muted-foreground">
+          <p className="border-l-2 border-violet-400/30 pl-3 text-muted-foreground">
             &ldquo;{entry.verbatim}&rdquo;
           </p>
         )}
@@ -288,5 +274,37 @@ function EntryCard({ entry }: { entry: KnowledgeEntry }) {
         )}
       </CardContent>
     </Card>
+  );
+}
+
+/** One shelf in the row above the facts: a pill with how much it holds. */
+function ShelfChip({
+  active,
+  onClick,
+  label,
+  count,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  count: number;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={active}
+      onClick={onClick}
+      className={cn(
+        "inline-flex h-8 cursor-pointer items-center gap-2 rounded-full border px-3.5 text-[0.8125rem] font-medium transition-all focus-visible:ring-3 focus-visible:ring-ring/45 focus-visible:outline-none",
+        active
+          ? "border-violet-400/40 bg-violet-500/20 text-violet-100 shadow-[0_6px_18px_-8px_oklch(0.6_0.22_293/70%)]"
+          : count === 0
+            ? "border-white/[0.06] text-muted-foreground/60 hover:text-muted-foreground"
+            : "border-white/10 bg-white/[0.03] text-foreground/85 hover:border-white/20 hover:bg-white/[0.06]",
+      )}
+    >
+      {label}
+      <span className={cn("tabular-nums", active ? "text-violet-200" : "text-muted-foreground")}>{count}</span>
+    </button>
   );
 }

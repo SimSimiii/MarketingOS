@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { RefreshCw } from "lucide-react";
+import { CheckCircle2, Mail, RefreshCw, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 
 import { AnswerQuestionsCard } from "@/components/answer-questions-card";
@@ -15,6 +15,7 @@ import { ExportAllButton } from "@/components/export-all-button";
 import { Notice } from "@/components/notice";
 import { PageHeader } from "@/components/page-header";
 import { RunTimeline } from "@/components/run-timeline";
+import { ScoreRing } from "@/components/score-ring";
 import { useRunLauncher } from "@/components/run-launcher";
 import { StatusBadge } from "@/components/status-badge";
 import { ReaderVerdictCard } from "@/components/reader-verdict-card";
@@ -30,6 +31,7 @@ import { ROLE_CATALOG } from "@/lib/specialists";
 import { cn } from "@/lib/utils";
 import type { ExecutionStatus, GeneratedAsset } from "@/lib/types";
 import { refreshPage } from "@/lib/page-data";
+import { activityLabel, problemText } from "@/lib/product-progress";
 
 const TERMINAL: ExecutionStatus[] = ["completed", "failed", "cancelled"];
 
@@ -192,7 +194,7 @@ export function ExecutionLiveView({
     try {
       await api.cancelExecution(executionId);
       confirmStop.setOpen(false);
-      toast.success("Stopping - it finishes the model call it's on, then stops for good");
+      toast.success("Stopping after the current step. Finished drafts will be kept.");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not cancel");
     } finally {
@@ -214,7 +216,7 @@ export function ExecutionLiveView({
     <section aria-labelledby="deliverables-title" className="space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 id="deliverables-title" className="text-lg font-semibold tracking-tight">
+          <h2 id="deliverables-title" className="font-display text-[1.875rem] leading-tight">
             {assets.length === 0
               ? "Your emails"
               : `Your ${assets.length === 1 ? "email" : `${assets.length} emails`}`}
@@ -231,11 +233,16 @@ export function ExecutionLiveView({
         </div>
       </div>
       {assets.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-border/80 bg-card/30 px-5 py-8 text-center text-sm text-muted-foreground">
-          {isLive
-            ? "No drafts yet - each email appears after its review."
-            : "Nothing was produced in this run."}
-        </p>
+        <div className="surface flex flex-col items-center rounded-2xl px-5 py-12 text-center">
+          <span className="icon-tile mb-4 flex size-12 items-center justify-center rounded-2xl">
+            {isLive ? <span className="live-dot" aria-hidden="true" /> : <Mail className="size-5" aria-hidden="true" />}
+          </span>
+          <p className="text-sm text-muted-foreground">
+            {isLive
+              ? "No drafts yet - each email appears after its review."
+              : "Nothing was produced in this run."}
+          </p>
+        </div>
       ) : (
         assets.map((asset) => <AssetCard key={asset.id} asset={asset} />)
       )}
@@ -246,21 +253,22 @@ export function ExecutionLiveView({
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
       <div className="min-w-0 space-y-3">
         <div className="flex items-center justify-between gap-4">
-          <h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            What your team is doing{isLive ? " right now" : ""}
+          <h3 className="flex items-center gap-2 text-[0.6875rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+            {isLive && <span className="live-dot" aria-hidden="true" />}
+            Campaign progress{isLive ? " right now" : ""}
           </h3>
           <Link
             href={`/logs?execution=${executionId}`}
-            className="text-xs text-muted-foreground hover:text-foreground"
+            className="text-xs font-medium text-muted-foreground transition-colors hover:text-violet-200"
           >
-            Full log
+            All activity →
           </Link>
         </div>
         <RunTimeline steps={run.steps} events={events} now={now} />
       </div>
       <div className="space-y-2 lg:sticky lg:top-6 lg:self-start">
-        <h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          The team
+        <h3 className="text-[0.6875rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+          Campaign activities
         </h3>
         <Roster steps={run.steps} finished={!isLive} />
       </div>
@@ -281,9 +289,10 @@ export function ExecutionLiveView({
               the user pays for twice: once by not answering, and once by
               distrusting the badge on a run that really did fail. */}
           {questions.length > 0 ? (
-            <Badge variant="outline" className="border-transparent bg-amber-500/15 text-amber-400">
-              needs your answers
-            </Badge>
+            <span className="inline-flex h-[1.375rem] items-center gap-1.5 rounded-full bg-amber-400/10 px-2.5 text-[0.6875rem] font-medium text-amber-300 ring-1 ring-amber-400/25 ring-inset">
+              <span className="size-1.5 rounded-full bg-amber-400" aria-hidden="true" />
+              Needs your answers
+            </span>
           ) : (
             <StatusBadge status={status} warning={needsReview}
               label={status === "completed" && report && report.delivered < report.promised ? "Partial delivery" : undefined} />
@@ -323,7 +332,7 @@ export function ExecutionLiveView({
                 open={confirmStop.open}
                 onOpenChange={confirmStop.setOpen}
                 title="Stop this campaign?"
-                description="It stops as soon as the model call currently in flight finishes - already-finished emails are kept, but nothing further is generated and the run cannot be resumed."
+                description="It stops after the current step. Finished emails are kept, but nothing further is generated and the run cannot be resumed."
                 confirmLabel="Stop campaign"
                 pending={cancelling}
                 onConfirm={handleCancel}
@@ -353,7 +362,7 @@ export function ExecutionLiveView({
       ) : (
         errorMessage && (
           <Notice tone="danger" title="This run stopped">
-            {errorMessage}
+            {problemText(errorMessage)}
           </Notice>
         )
       )}
@@ -364,19 +373,50 @@ export function ExecutionLiveView({
       {report && (
         <div
           className={cn(
-            "flex flex-col items-stretch gap-x-6 gap-y-3 rounded-xl border p-4 sm:flex-row sm:items-center sm:px-5",
+            "rise relative isolate flex flex-col items-stretch gap-x-8 gap-y-5 overflow-hidden rounded-2xl p-5 shadow-[var(--shadow-surface)] sm:flex-row sm:items-center sm:p-6",
             needsAttention
-              ? "border-amber-400/25 bg-amber-400/5"
-              : "border-emerald-400/20 bg-emerald-400/5",
+              ? "bg-card bg-[linear-gradient(110deg,oklch(0.8_0.15_80/9%),transparent_55%)] ring-1 ring-amber-400/25"
+              : "bg-card bg-[linear-gradient(110deg,oklch(0.8_0.15_165/9%),transparent_55%)] ring-1 ring-emerald-400/20",
           )}
         >
+          <span
+            className={cn(
+              "flex size-12 shrink-0 items-center justify-center rounded-2xl ring-1",
+              needsAttention
+                ? "bg-amber-400/10 text-amber-300 ring-amber-400/25"
+                : "bg-emerald-400/10 text-emerald-300 ring-emerald-400/25",
+            )}
+          >
+            {needsAttention ? (
+              <TriangleAlert className="size-5" aria-hidden="true" />
+            ) : (
+              <CheckCircle2 className="size-5" aria-hidden="true" />
+            )}
+          </span>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium">
+            <p className="text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-muted-foreground">
+              Delivery
+            </p>
+            <p className="mt-1 text-lg font-semibold tracking-tight">
               Delivered {report.delivered} of {report.promised}{" "}
               {report.reads_expected === false ? "LinkedIn message" : "email"}
               {report.promised === 1 ? "" : "s"}
             </p>
-            <p className="mt-0.5 text-xs text-muted-foreground">
+            <div
+              className="mt-2.5 h-1.5 max-w-sm overflow-hidden rounded-full bg-white/[0.07]"
+              role="presentation"
+            >
+              <div
+                className={cn(
+                  "h-full rounded-full",
+                  needsAttention
+                    ? "bg-gradient-to-r from-amber-300 to-amber-500"
+                    : "bg-gradient-to-r from-emerald-300 to-violet-400",
+                )}
+                style={{ width: `${report.promised > 0 ? Math.min(100, (report.delivered / report.promised) * 100) : 0}%` }}
+              />
+            </div>
+            <p className="mt-2.5 text-xs leading-relaxed text-muted-foreground">
               {report.reads_expected === false
                 ? "Every claim passed the evidence gate; no cold-reader panel grades this channel."
                 : needsAttention
@@ -387,14 +427,14 @@ export function ExecutionLiveView({
           {/* A channel no cold reader has ever read has no score, and a 0.0
               here would be read as one. */}
           {report.reads_expected !== false && (
-            <div className="text-left sm:shrink-0 sm:text-right">
-              <p className="text-2xl font-semibold tracking-tight tabular-nums">
-                {averagePull(report).toFixed(1)}
-                <span className="text-sm font-normal text-muted-foreground">/10</span>
-              </p>
-              <p className="text-[11px] text-muted-foreground">
-                cold-read score · AI simulation, uncalibrated
-              </p>
+            <div className="flex items-center gap-4 sm:shrink-0 sm:border-l sm:border-white/[0.07] sm:pl-8">
+              <ScoreRing value={averagePull(report)} label="Average cold-read score" />
+              <div>
+                <p className="text-sm font-medium">Cold-read score</p>
+                <p className="mt-0.5 max-w-[11rem] text-[0.6875rem] leading-relaxed text-muted-foreground">
+                  AI simulation, uncalibrated - averaged over the emails a reader reported on.
+                </p>
+              </div>
             </div>
           )}
         </div>
@@ -473,7 +513,7 @@ export function ExecutionLiveView({
               </p>
             ))}
             {report.what_would_help_most && (
-              <p className="rounded-lg border border-violet-400/20 bg-violet-500/5 p-3 text-violet-100">
+              <p className="rounded-xl border border-violet-400/20 bg-violet-500/[0.07] p-3.5 text-violet-100">
                 <span className="font-medium">What would help most next time: </span>
                 {report.what_would_help_most}
               </p>
@@ -543,7 +583,7 @@ export function ExecutionLiveView({
 
       {!isLive && (
         <Disclosure
-          title="Behind the scenes"
+          title="Campaign progress"
           summary={`Every step the team took - ${run.steps.length} step${run.steps.length === 1 ? "" : "s"}`}
         >
           {behindTheScenes}
@@ -569,7 +609,7 @@ function ConnectionIndicator({
       <span
         className={cn(
           "size-1.5 rounded-full",
-          failed ? "bg-amber-400" : phase === "loading" ? "bg-violet-400 motion-safe:animate-pulse" : "bg-muted-foreground/50",
+          failed ? "bg-amber-400" : phase === "loading" ? "live-dot !size-1.5" : "bg-muted-foreground/50",
         )}
         aria-hidden="true"
       />
@@ -603,40 +643,58 @@ function Roster({
   );
 
   return (
-    <div className="space-y-2">
+    <div className="surface divide-y divide-hairline overflow-hidden rounded-2xl">
       {ROLE_CATALOG.map((specialist) => {
         const step = latest.get(specialist.id);
         const dispatches = runs.get(specialist.id) ?? 0;
         return (
-          <Card key={specialist.id} size="sm">
+          <Card key={specialist.id} size="sm" className="rounded-none bg-transparent bg-none shadow-none ring-0">
             <CardContent className="space-y-1.5">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-sm font-medium">{specialist.name}</span>
+                <span className="flex min-w-0 items-center gap-2.5">
+                  <span
+                    className={cn(
+                      "flex size-7 shrink-0 items-center justify-center rounded-lg text-[0.6875rem] font-semibold",
+                      step?.state === "running"
+                        ? "brand-mark text-white"
+                        : step
+                          ? "bg-white/[0.06] text-foreground/80 ring-1 ring-white/[0.08]"
+                          : "bg-white/[0.03] text-muted-foreground/60 ring-1 ring-white/[0.05]",
+                    )}
+                    aria-hidden="true"
+                  >
+                    {activityLabel(specialist.id).slice(0, 1)}
+                  </span>
+                  <span className="text-sm font-medium">{activityLabel(specialist.id)}</span>
+                </span>
                 {step ? (
                   <Badge
                     variant="outline"
                     className={
                       step.state === "failed"
-                        ? "border-transparent bg-destructive/15 text-destructive"
+                        ? "border-red-400/25 bg-red-500/10 text-red-300"
                         : step.state === "running"
-                          ? "border-transparent bg-primary/20 text-primary"
-                          : "border-transparent bg-emerald-500/15 text-emerald-400"
+                          ? "border-violet-400/30 bg-violet-500/15 text-violet-200"
+                          : "border-emerald-400/20 bg-emerald-400/10 text-emerald-300"
                     }
                   >
-                    {step.state === "running" ? "working..." : step.state}
+                    {step.state === "running" ? "working…" : step.state}
                   </Badge>
                 ) : (
-                  <Badge variant="outline" className="border-transparent bg-muted text-muted-foreground">
+                  <Badge variant="outline" className="border-white/[0.07] bg-transparent text-muted-foreground">
                     {finished ? "not needed" : "not started"}
                   </Badge>
                 )}
               </div>
-              <p className="text-xs text-muted-foreground">{specialist.role}</p>
-              {dispatches > 0 && (
-                <p className="text-xs text-muted-foreground tabular-nums">
-                  {dispatches} turn{dispatches === 1 ? "" : "s"}
-                </p>
-              )}
+              <p className="pl-[2.375rem] text-xs leading-relaxed text-muted-foreground">
+                {specialist.role}
+                {dispatches > 0 && (
+                  <span className="text-muted-foreground/70 tabular-nums">
+                    {" · "}
+                    {dispatches} turn{dispatches === 1 ? "" : "s"}
+                  </span>
+                )}
+              </p>
             </CardContent>
           </Card>
         );

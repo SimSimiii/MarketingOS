@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { MessageCircleQuestion } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -94,9 +95,14 @@ export function AnswerQuestionsCard({
   }
 
   return (
-    <Card className="ring-amber-500/40">
+    <Card className="rise bg-[linear-gradient(110deg,oklch(0.8_0.15_80/7%),transparent_50%)] ring-amber-400/30">
       <CardHeader>
-        <CardTitle className="text-base">Answer these and this campaign becomes writable</CardTitle>
+        <CardTitle className="flex items-center gap-3 text-base">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-amber-400/10 text-amber-300 ring-1 ring-amber-400/25">
+            <MessageCircleQuestion className="size-[1.125rem]" aria-hidden="true" />
+          </span>
+          Answer these and this campaign becomes writable
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm text-muted-foreground">
@@ -105,12 +111,15 @@ export function AnswerQuestionsCard({
           Answer the questions below or add supporting material before running again.
         </p>
         {questions.map((question, index) => (
-          <div key={question} className="space-y-1.5">
+          <div key={question} className="space-y-2">
             <label
               htmlFor={`answer-${index}`}
-              className="block text-sm font-medium leading-snug"
+              className="flex gap-3 text-sm font-medium leading-snug"
             >
-              {question}
+              <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-[0.6875rem] font-semibold tabular-nums text-amber-200 ring-1 ring-white/10">
+                {index + 1}
+              </span>
+              <span className="pt-0.5">{question}</span>
             </label>
             <Textarea
               id={`answer-${index}`}
@@ -125,7 +134,7 @@ export function AnswerQuestionsCard({
             />
           </div>
         ))}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 border-t border-hairline pt-4">
           <Button size="sm" disabled={saving || answered === 0} onClick={() => save(true)}>
             {saving ? "Saving..." : "Save and run again"}
           </Button>

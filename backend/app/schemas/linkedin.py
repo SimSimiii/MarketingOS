@@ -1,4 +1,5 @@
 from datetime import datetime
+from ipaddress import ip_address
 from typing import Annotated, Literal
 from urllib.parse import urlsplit, urlunsplit
 from uuid import UUID
@@ -16,6 +17,24 @@ from pydantic import (
 #: One line of a targeting criterion - a role, an industry, a signal. Bounded
 #: because every one of them is pasted into a search prompt.
 Criterion = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
+
+
+def public_url(value: str) -> str:
+    """A reviewable public source, never a local or executable link."""
+    parts = urlsplit(value.strip())
+    host = (parts.hostname or "").lower().rstrip(".")
+    if (parts.scheme != "https" or not host or parts.username or parts.password
+        or parts.port not in {None, 443} or "." not in host
+        or host.endswith((".localhost", ".local", ".internal"))):
+        raise ValueError("A public HTTPS URL is required")
+    try:
+        address = ip_address(host)
+    except ValueError:
+        pass
+    else:
+        if not address.is_global:
+            raise ValueError("A public HTTPS URL is required")
+    return urlunsplit(("https", parts.netloc, parts.path, parts.query, ""))
 
 
 def linkedin_url(value: str) -> str:
@@ -46,6 +65,7 @@ class TargetingCriteria(BaseModel):
     industries: list[Criterion] = Field(default_factory=list, max_length=12)
     company_sizes: list[Criterion] = Field(default_factory=list, max_length=6)
     geographies: list[Criterion] = Field(default_factory=list, max_length=8)
+    languages: list[Criterion] = Field(default_factory=list, max_length=8)
     #: What a LinkedIn profile or its company page would actually say for
     #: somebody to count: a job title, a company descriptor, a product the
     #: company's own page names. This is the bar a candidate is held to.
@@ -90,6 +110,7 @@ class TargetingCriteria(BaseModel):
             ("Industries", self.industries),
             ("Organisation size", self.company_sizes),
             ("Geographies", self.geographies),
+            ("Audience languages (do not infer from nationality)", self.languages),
             ("Visible on the profile", self.profile_signals),
             (
                 "Corroboration - optional, never a condition for returning somebody",
@@ -123,11 +144,16 @@ class SearchRequest(BaseModel):
     #: would be a paid call with nothing to look for.
     query: str = Field(default="", max_length=2000)
     criteria: TargetingCriteria | None = None
-    target: Literal["people", "companies"] = "people"
+    target: Literal["people", "companies", "venues"] = "people"
+    source: Literal["linkedin", "web"] = "linkedin"
+    #: Saved with the search, so a lead list remains attached to its audience.
+    segment_name: str = Field(default="", max_length=200)
     limit: int = Field(default=5, ge=1, le=10)
 
     @model_validator(mode="after")
     def something_to_search_for(self) -> "SearchRequest":
+        if self.target == "venues" and self.source != "web":
+            raise ValueError("Audience reach channels use the public web source")
         if len(self.query) < 3 and (self.criteria is None or self.criteria.is_empty):
             raise ValueError("Describe who to look for, or propose criteria first")
         return self
@@ -164,7 +190,28 @@ class SearchAnswer(BaseModel):
     note: str = Field(default="", max_length=2000)
 
 
-class SearchResult(SearchAnswer):
+class PublicProspectCandidate(BaseModel):
+    """A search lead or a public audience venue, never verified buyer evidence."""
+
+    name: str = Field(min_length=1, max_length=200)
+    url: str
+    headline: str = Field(default="", max_length=500)
+    reason: str = Field(default="", max_length=1000)
+    source_url: str
+    excerpt: str = Field(min_length=1, max_length=2000)
+
+    @field_validator("url", "source_url")
+    @classmethod
+    def public_source(cls, value: str) -> str:
+        return public_url(value)
+
+
+class PublicProspectAnswer(BaseModel):
+    candidates: list[PublicProspectCandidate] = Field(default_factory=list, max_length=10)
+    note: str = Field(default="", max_length=2000)
+
+
+class SearchResult(PublicProspectAnswer):
     #: The criteria this search was actually run against, echoed back so the
     #: saved job says who it was looking for and not only what it found.
     criteria: TargetingCriteria | None = None

@@ -124,7 +124,7 @@ function EmailVerdicts({ email }: { email: ScoredEmail }) {
 
 
   return (
-    <div className="rounded-lg border border-border">
+    <div className="rounded-xl bg-white/[0.02] ring-1 ring-white/[0.07]">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
@@ -145,7 +145,7 @@ function EmailVerdicts({ email }: { email: ScoredEmail }) {
       </button>
 
       {open && (
-        <div className="space-y-4 border-t border-border/50 p-3">
+        <div className="space-y-4 border-t border-hairline p-3.5">
           {verdicts.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               No cold reader reported back on this one, so the score is a placeholder rather than
@@ -154,7 +154,7 @@ function EmailVerdicts({ email }: { email: ScoredEmail }) {
           ) : (
             verdicts.map((verdict, index) => (
               <div key={verdict.persona || index}>
-                {index > 0 && <div className="mb-3 border-t border-border/40" />}
+                {index > 0 && <div className="mb-3 border-t border-hairline" />}
                 <VerdictBlock verdict={verdict} />
               </div>
             ))

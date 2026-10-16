@@ -3,15 +3,14 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ScrollText, Search, SearchX } from "lucide-react";
+import { ScrollText, SearchX } from "lucide-react";
 
 import { EmptyState } from "@/components/empty-state";
 import { ExpandableText } from "@/components/expandable-text";
 import { PageHeader } from "@/components/page-header";
 import { LogLevelBadge } from "@/components/status-badge";
-import { buttonVariants } from "@/components/ui/button";
+import { FilterPills, SearchField, Toolbar } from "@/components/toolbar";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -23,6 +22,7 @@ import {
 import { api } from "@/lib/api-client";
 import { formatAbsolute, formatTime } from "@/lib/format";
 import { PageData, usePageData } from "@/lib/page-data";
+import { activityLabel, activityMessage } from "@/lib/product-progress";
 import type { ExecutionLog, LogLevel } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -39,7 +39,10 @@ export function LogsView() {
       ? await api
           .getExecutionLogs(execution, { agentId: agent, includeDebug: true })
       : await api.listLogs(200);
-    return { logs };
+    return { logs: logs.flatMap((log) => {
+      const message = activityMessage(log);
+      return message === null ? [] : [{ ...log, message }];
+    }) };
   }, [execution, agent]);
 
   return (
@@ -51,8 +54,8 @@ export function LogsView() {
             title="Activity"
             description={
               execution
-                ? `Every line logged during one run${agent ? ` by ${agent}` : ""}.`
-                : "The most recent lines across all campaign runs."
+                ? `Progress and feedback for this run${agent ? ` · ${activityLabel(agent)}` : ""}.`
+                : "Recent campaign progress, review feedback, and problems that need attention."
             }
             // Scoped here from a run's live view, so the way out is the unscoped
             // list rather than whichever page happened to link in.
@@ -61,8 +64,8 @@ export function LogsView() {
           {logs.length === 0 ? (
             <EmptyState
               icon={ScrollText}
-              title="Nothing logged yet"
-              description="Every step a run takes is written here as it happens. Start a campaign and the lines will arrive."
+              title="No activity yet"
+              description="Campaign progress and review feedback will appear here when you start a run."
             />
           ) : (
             <LogTable logs={logs} execution={execution} agent={agent} />
@@ -73,22 +76,14 @@ export function LogsView() {
   );
 }
 
-type Level = "all" | "useful" | "problems";
+type Level = "all" | "problems";
 
 const LEVELS: { value: Level; label: string; keeps: (level: LogLevel) => boolean }[] = [
-  { value: "useful", label: "Hide debug", keeps: (level) => level !== "debug" },
+  { value: "all", label: "All activity", keeps: () => true },
   { value: "problems", label: "Problems", keeps: (level) => level === "warning" || level === "error" },
-  { value: "all", label: "Everything", keeps: () => true },
 ];
 
-/**
- * The log, filtered.
- *
- * Half of what a run logs is DEBUG transport chatter - "Sent 16,094
- * characters to gpt-5.6-sol" - and it arrives in threes, one per cold reader.
- * Shown unfiltered, the five warnings in a run sat somewhere among a hundred
- * of those. Debug is hidden until asked for; problems are one click away.
- */
+/** Customer activity only; diagnostics are excluded before search and counts. */
 function LogTable({
   logs,
   execution,
@@ -98,7 +93,7 @@ function LogTable({
   execution: string | undefined;
   agent: string | undefined;
 }) {
-  const [level, setLevel] = useState<Level>("useful");
+  const [level, setLevel] = useState<Level>("all");
   const [query, setQuery] = useState("");
 
   const counts = useMemo(
@@ -111,45 +106,30 @@ function LogTable({
     return logs.filter(
       (log) =>
         keeps(log.level) &&
-        (!needle || `${log.message} ${log.agent_id ?? ""}`.toLocaleLowerCase().includes(needle)),
+        (!needle || `${log.message} ${activityLabel(log.agent_id)}`.toLocaleLowerCase().includes(needle)),
     );
   }, [logs, level, query]);
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card p-3">
-        <div className="relative min-w-48 flex-1">
-          <Search
-            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-            aria-hidden="true"
-          />
-          <Input
-            type="search"
-            aria-label="Search activity"
-            placeholder="Search messages or agents…"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            className="h-9 pl-9"
-          />
-        </div>
-        <div role="group" aria-label="Filter by level" className="flex flex-wrap gap-1.5">
-          {LEVELS.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              aria-pressed={level === option.value}
-              onClick={() => setLevel(option.value)}
-              className={cn(
-                buttonVariants({ variant: level === option.value ? "secondary" : "ghost", size: "sm" }),
-                level === option.value && "ring-1 ring-violet-400/40",
-              )}
-            >
-              {option.label}
-              <span className="tabular-nums text-muted-foreground">{counts.get(option.value) ?? 0}</span>
-            </button>
-          ))}
-        </div>
-      </div>
+      <Toolbar>
+        <SearchField
+          label="Search activity"
+          placeholder="Search progress or feedback…"
+          value={query}
+          onChange={setQuery}
+        />
+        <FilterPills
+          label="Filter by level"
+          value={level}
+          onChange={setLevel}
+          options={LEVELS.map((option) => ({
+            value: option.value,
+            label: option.label,
+            count: counts.get(option.value) ?? 0,
+          }))}
+        />
+      </Toolbar>
 
       <Card className="gap-0 py-0">
         <CardContent className="p-0">
@@ -169,7 +149,7 @@ function LogTable({
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-24">Level</TableHead>
-                  <TableHead className="w-40">Agent</TableHead>
+                  <TableHead className="w-40">Activity</TableHead>
                   <TableHead>Message</TableHead>
                   <TableHead className="w-44 text-right">Time</TableHead>
                 </TableRow>
@@ -180,24 +160,24 @@ function LogTable({
                     key={log.id}
                     className={cn(
                       "group/log",
-                      log.level === "error" && "bg-destructive/[0.04]",
-                      log.level === "warning" && "bg-amber-400/[0.03]",
+                      log.level === "error" && "bg-red-500/[0.05] hover:bg-red-500/[0.08]",
+                      log.level === "warning" && "bg-amber-400/[0.035] hover:bg-amber-400/[0.06]",
                     )}
                   >
                     <TableCell>
                       <LogLevelBadge level={log.level} />
                     </TableCell>
-                    <TableCell data-label="Agent" className="text-sm text-muted-foreground">
+                    <TableCell data-label="Activity" className="text-xs text-muted-foreground">
                       {log.agent_id && execution && !agent ? (
                         <Link
                           href={`/logs?execution=${execution}&agent=${encodeURIComponent(log.agent_id)}`}
                           className="hover:text-foreground hover:underline"
-                          title={`Only ${log.agent_id}'s lines`}
+                          title={`Show ${activityLabel(log.agent_id).toLowerCase()}`}
                         >
-                          {log.agent_id}
+                          {activityLabel(log.agent_id)}
                         </Link>
                       ) : (
-                        log.agent_id ?? "—"
+                        activityLabel(log.agent_id)
                       )}
                       {log.step !== null && (
                         <span className="ml-1.5 text-xs text-muted-foreground/70 tabular-nums">
@@ -205,10 +185,7 @@ function LogTable({
                         </span>
                       )}
                     </TableCell>
-                    {/* A run writes whole prompts into this column. Wrapping
-                        them is right; letting one line own a screen and a half
-                        is not - the excerpt is what makes the list scannable,
-                        and the full text is one click away. */}
+                    {/* Long product feedback remains available in full. */}
                     <TableCell data-label="Message" className="max-w-xl whitespace-normal">
                       <ExpandableText text={log.message} limit={180} />
                       {!execution && log.campaign_execution_id && (
@@ -236,8 +213,8 @@ function LogTable({
           )}
         </CardContent>
       </Card>
-      <p role="status" className="text-xs text-muted-foreground">
-        Showing {visible.length} of {logs.length} lines{execution ? "" : " - the most recent 200"}.
+      <p role="status" className="px-1 text-xs text-muted-foreground">
+        Showing {visible.length} of {logs.length} recent updates.
       </p>
     </div>
   );

@@ -1,0 +1,697 @@
+{
+  "id": "b5c48dde-2777-463d-8496-83a372b13e06",
+  "campaign_id": "866cd496-fc6f-478f-b7b1-dded9833c110",
+  "status": "completed",
+  "error_message": "Execution exceeded its maximum run time.",
+  "started_at": "2026-10-05T07:04:52.389465Z",
+  "completed_at": "2026-10-05T07:25:51.950174Z",
+  "created_at": "2026-10-05T07:04:52.389465Z",
+  "total_input_tokens": 1050199,
+  "total_output_tokens": 151686,
+  "total_cache_read_tokens": 647168,
+  "estimated_cost_usd": 18.3927,
+  "recommendation_snapshot": {
+    "campaign_id": "866cd496-fc6f-478f-b7b1-dded9833c110",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "5d43f7c3-dff0-4f9e-bc75-71c0516f65fd",
+      "agent_id": "knowledge_compiler",
+      "agent_name": "Knowledge Compiler",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Reading 12 document(s)",
+        "documents": 12
+      },
+      "output_data": {
+        "version": 1,
+        "evidence": 901
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:04:52.427654Z",
+      "completed_at": "2026-10-05T07:14:29.636362Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 160300,
+      "output_tokens": 120470,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 223744,
+      "cost_usd": 11.775366,
+      "duration_ms": 2094575.9922001744,
+      "attempt": 1
+    },
+    {
+      "id": "683c30ab-7547-4987-8974-12e510a76922",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Choose the Pro Tech Toolkit when the goal is broad electronics coverage: it combines 64 bits with opening, gripping, prying, and anti-static tools rather than treating bit count as the whole repair setup.",
+          "#2 When a repair reaches a prying step, the included Jimmy provides a purpose-built flexible steel blade and ergonomic handle instead of asking a screwdriver to do a prying tool's job.",
+          "#3 The Pro Tech Toolkit costs $79.95, carries a lifetime guarantee, and is covered by iFixit's 30-day return policy, giving the reader concrete terms to evaluate before buying."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:14:29.675822Z",
+      "completed_at": "2026-10-05T07:16:51.007536Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 70185,
+      "output_tokens": 5101,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 1.458006,
+      "duration_ms": 141146.55230008066,
+      "attempt": 1
+    },
+    {
+      "id": "237fe27c-982b-419f-8b18-0e7393fab6e8",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "Choose the Pro Tech Toolkit when the goal is broad electronics coverage: it combines 64 bits with opening, gripping, prying, and anti-static tools rather than treating bit count as the whole repair setup.",
+          "Choose the Pro Tech Toolkit when the goal is broad electronics coverage: it combines 64 bits with opening, gripping, prying, and anti-static tools rather than treating bit count as the whole repair setup."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Build for more than screws",
+          "Look beyond the bit count"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:16:51.622311Z",
+      "completed_at": "2026-10-05T07:17:37.149109Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 21642,
+      "output_tokens": 2215,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 30208,
+      "cost_usd": 0.536067,
+      "duration_ms": 67816.20230001863,
+      "attempt": 1
+    },
+    {
+      "id": "f68e8a0c-ac32-4717-85ab-afd63f6e3a37",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 1 candidate(s) read cold by 3 reader(s) (1 broke an automatic check and cannot win - not read)",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 1,
+        "vetoed": 1
+      },
+      "output_data": {
+        "pull": 6,
+        "scores": [
+          6
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:17:37.533243Z",
+      "completed_at": "2026-10-05T07:18:28.976531Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 12113,
+      "output_tokens": 3767,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 45312,
+      "cost_usd": 0.532188,
+      "duration_ms": 139836.60099992994,
+      "attempt": 1
+    },
+    {
+      "id": "c36053ca-329d-436c-8f21-ca080ad58a07",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "copy",
+        "strategy_gap": ""
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:18:29.000156Z",
+      "completed_at": "2026-10-05T07:19:36.345080Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 10140,
+      "output_tokens": 2848,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.388356,
+      "duration_ms": 67250.03029999789,
+      "attempt": 1
+    },
+    {
+      "id": "5f1add39-ab88-4dd5-b1f2-b57456a9a024",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "A fit test for broader repairs"
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:19:36.357029Z",
+      "completed_at": "2026-10-05T07:20:24.166192Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 14807,
+      "output_tokens": 1721,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.373836,
+      "duration_ms": 47697.62200000696,
+      "attempt": 2
+    },
+    {
+      "id": "fbf20897-e2c8-4da3-9fe2-fa8740253762",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 6
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:20:24.410259Z",
+      "completed_at": "2026-10-05T07:21:12.302806Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 19116,
+      "output_tokens": 3792,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 39680,
+      "cost_usd": 0.63066,
+      "duration_ms": 123151.08979993965,
+      "attempt": 2
+    },
+    {
+      "id": "07100239-74fd-4969-bce8-dfe811931d9d",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 8,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1 read against the version it would replace",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "challenger_won": true
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:21:12.321865Z",
+      "completed_at": "2026-10-05T07:21:27.221735Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 13647,
+      "output_tokens": 397,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 59136,
+      "cost_usd": 0.323184,
+      "duration_ms": 52267.14519993402,
+      "attempt": 1
+    },
+    {
+      "id": "a11f42d7-aa92-48f7-a827-dee561c9f1d3",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 9,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "copy",
+        "strategy_gap": ""
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:21:27.232910Z",
+      "completed_at": "2026-10-05T07:22:21.817359Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 9884,
+      "output_tokens": 2114,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.329466,
+      "duration_ms": 54491.00419995375,
+      "attempt": 2
+    },
+    {
+      "id": "965d16b8-f6a4-41bd-9ee6-1dd00291dc86",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 10,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 2",
+        "position": 1,
+        "attempt": 3
+      },
+      "output_data": {
+        "subject": "After the screws come out"
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:22:21.832579Z",
+      "completed_at": "2026-10-05T07:23:38.948129Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 29683,
+      "output_tokens": 2586,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 30208,
+      "cost_usd": 0.684507,
+      "duration_ms": 76966.18200000376,
+      "attempt": 3
+    },
+    {
+      "id": "61b4f56b-4486-45fd-9bbb-ca61121848a9",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 11,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 3
+      },
+      "output_data": {
+        "pull": 6
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:23:39.184534Z",
+      "completed_at": "2026-10-05T07:24:32.478965Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 14944,
+      "output_tokens": 3921,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 42496,
+      "cost_usd": 0.581979,
+      "duration_ms": 132643.23259994853,
+      "attempt": 3
+    },
+    {
+      "id": "0c85d918-6c9b-4faa-a55d-653e3f03f8b3",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 12,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 2 read against the version it would replace",
+        "position": 1,
+        "attempt": 3
+      },
+      "output_data": {
+        "challenger_won": true
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:24:32.493828Z",
+      "completed_at": "2026-10-05T07:24:49.727623Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 17251,
+      "output_tokens": 364,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 55552,
+      "cost_usd": 0.369393,
+      "duration_ms": 61675.38439994678,
+      "attempt": 2
+    },
+    {
+      "id": "a34be18d-c537-49a6-bfc7-1804a75cef1c",
+      "agent_id": "subject_writer",
+      "agent_name": "Subject Lines",
+      "sequence_order": 13,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 4 alternative subject lines",
+        "position": 1,
+        "variants": 4
+      },
+      "output_data": {
+        "subject": "More bits do not make a complete repair kit"
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:24:49.736672Z",
+      "completed_at": "2026-10-05T07:25:51.899526Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 9319,
+      "output_tokens": 2390,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 60416,
+      "cost_usd": 0.409659,
+      "duration_ms": 103774.45050003007,
+      "attempt": 1
+    }
+  ],
+  "assets": [
+    {
+      "id": "52f66e20-41d1-4e8a-8eca-eea7cf68cd21",
+      "asset_type": "email",
+      "title": "More bits do not make a complete repair kit",
+      "content": "Subject: More bits do not make a complete repair kit\nPreview text: The Pro Tech Toolkit adds tools for opening, prying, gripping, and anti-static work.\n\nChoose by repair stage, not bit count\n\nHi there,\n\nWhen sizing up a first toolkit, ask what happens after the screws come out.\n\nThe iFixit Pro Tech Toolkit is a general electronics repair kit with 64 bits plus tweezers, spudgers, opening tools, and anti-static safety accessories. Its breadth adds tools for opening, prying, gripping, and anti-static work—not only more fastener options.\n\nThat distinction is the fit test. If your anticipated repairs mainly call for a driver, the additional tools may be more than you need. If they move from fasteners into those other repair stages, the broader setup has a clear purpose.\n\nThe product page lists the 64-bit setup, included repair tools, and stated range: electronics, gaming consoles, drones, RC cars, and vintage devices. Compare those details with the steps required by the repairs you expect to attempt.\n\nSee what the toolkit includes →\n\n- the iFixit team",
+      "content_html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n<meta name=\"x-apple-disable-message-reformatting\" />\n<meta name=\"color-scheme\" content=\"light\" />\n<meta name=\"supported-color-schemes\" content=\"light\" />\n<title>More bits do not make a complete repair kit</title>\n</head>\n<body style=\"margin:0;padding:0;background-color:#eceef3;-webkit-text-size-adjust:100%;\">\n<div style=\"display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;\">The Pro Tech Toolkit adds tools for opening, prying, gripping, and anti-static work.&#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; </div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#eceef3;\">\n<tr><td align=\"center\" style=\"padding:24px 12px;\">\n<table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;background-color:#ffffff;border-radius:12px;\">\n<tr><td style=\"background-color:#1a56db;height:4px;font-size:0;line-height:0;\">&nbsp;</td></tr>\n<tr><td style=\"padding:26px 36px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;font-weight:700;letter-spacing:0.2px;color:#14161a;\">iFixit — pilot validation</td></tr>\n<tr><td style=\"padding:26px 36px 10px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#1a56db;\">TOOLKIT FIT</p></td></tr>\n<tr><td style=\"padding:0 36px 20px;\"><h1 style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:29px;line-height:1.2;font-weight:800;letter-spacing:-0.5px;color:#14161a;\">Choose by repair stage, not bit count</h1></td></tr>\n<tr><td style=\"padding:10px 36px 16px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Hi there,</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:17px;line-height:1.6;color:#3d434d;\">When sizing up a first toolkit, ask what happens after the screws come out.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">The iFixit Pro Tech Toolkit is a general electronics repair kit with <strong style=\"font-weight:700;color:#14161a;\">64 bits</strong> plus tweezers, spudgers, opening tools, and anti-static safety accessories. Its breadth adds tools for opening, prying, gripping, and anti-static work—not only more fastener options.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">That distinction is the fit test. If your anticipated repairs mainly call for a driver, the additional tools may be more than you need. If they move from fasteners into those other repair stages, the broader setup has a clear purpose.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">The product page lists the 64-bit setup, included repair tools, and stated range: electronics, gaming consoles, drones, RC cars, and vintage devices. Compare those details with the steps required by the repairs you expect to attempt.</p></td></tr>\n<tr><td style=\"padding:6px 36px 22px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td style=\"border-top:1px solid #e6e9ef;font-size:0;line-height:0;\">&nbsp;</td></tr></table></td></tr>\n<tr><td align=\"center\" style=\"padding:4px 36px 8px;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"center\" style=\"background-color:#1a56db;border-radius:8px;\"><a href=\"https://www.ifixit.com/products/pro-tech-toolkit\" style=\"display:inline-block;padding:16px 40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;\">See what the toolkit includes</a></td></tr></table></td></tr>\n<tr><td style=\"padding:22px 36px 20px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6;color:#767d89;\">- the iFixit team</p></td></tr>\n<tr><td align=\"center\" style=\"padding:22px 36px 28px;background-color:#fafbfc;border-top:1px solid #e6e9ef;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:12px;line-height:1.7;color:#767d89;\">iFixit — pilot validation</td></tr>\n</table>\n</td></tr>\n</table>\n</body>\n</html>\n",
+      "position": 1,
+      "asset_metadata": {
+        "position": 1,
+        "role": "Help readers judge whether broader repair coverage fits",
+        "subject": "More bits do not make a complete repair kit",
+        "preview_text": "The Pro Tech Toolkit adds tools for opening, prying, gripping, and anti-static work.",
+        "eyebrow": "TOOLKIT FIT",
+        "headline": "Choose by repair stage, not bit count",
+        "greeting": "Hi there,",
+        "body": "When sizing up a first toolkit, ask what happens after the screws come out.\n\nThe iFixit Pro Tech Toolkit is a general electronics repair kit with **64 bits** plus tweezers, spudgers, opening tools, and anti-static safety accessories. Its breadth adds tools for opening, prying, gripping, and anti-static work—not only more fastener options.\n\nThat distinction is the fit test. If your anticipated repairs mainly call for a driver, the additional tools may be more than you need. If they move from fasteners into those other repair stages, the broader setup has a clear purpose.\n\nThe product page lists the 64-bit setup, included repair tools, and stated range: electronics, gaming consoles, drones, RC cars, and vintage devices. Compare those details with the steps required by the repairs you expect to attempt.",
+        "call_to_action": "See what the toolkit includes",
+        "sign_off": "- the iFixit team",
+        "postscript": "",
+        "pull": 6,
+        "revisions": 2,
+        "single_idea": "Choose the Pro Tech Toolkit when the goal is broad electronics coverage: it combines 64 bits with opening, gripping, prying, and anti-static tools rather than treating bit count as the whole repair setup.",
+        "evidence_ids": [
+          "E636",
+          "E654",
+          "E622"
+        ],
+        "tier": "branded"
+      },
+      "created_at": "2026-10-05T07:25:51.940379Z"
+    }
+  ],
+  "result": {
+    "run_status": "timed_out",
+    "report": {
+      "request": "Write exactly 3 English nurture emails for opted-in electronics hobbyists considering their first general repair toolkit. Promote the iFixit Pro Tech Toolkit using only official source facts. Email 1 helps assess whether the kit fits their repair work, email 2 explains a concrete tool use from the material, email 3 resolves a supported buying concern. Each email must stand alone, build a distinct argument, and point to the product page. No invented discounts, deadlines, cart activity, personal knowledge, or guaranteed repair outcomes. Readers have not purchased yet.",
+      "delivered": 1,
+      "promised": 3,
+      "contract_violations": [
+        "the user asked for 3 email(s) and the run produced 1"
+      ],
+      "emails": [
+        {
+          "position": 1,
+          "subject": "More bits do not make a complete repair kit",
+          "single_idea": "Choose the Pro Tech Toolkit when the goal is broad electronics coverage: it combines 64 bits with opening, gripping, prying, and anti-static tools rather than treating bit count as the whole repair setup.",
+          "pull": 6.0,
+          "revisions": 2,
+          "clean": true,
+          "landed": false,
+          "rewrites_stopped_helping": false,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E636",
+            "E654",
+            "E622"
+          ],
+          "evidence_spent": [
+            "E636",
+            "E654"
+          ],
+          "attributions": 0,
+          "unresolved": [],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "A broad iFixit electronics repair toolkit that would replace improvised or scattered tools with one 64-bit set for driving, opening, prying, gripping, and anti-static work.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile supports repairing multiple kinds of electronics and comparing compact kits with broader ones. The email appropriately makes the need for tools beyond a driver conditional rather than claiming I definitely use them. Whether my anticipated repairs require every included tool, and whether this kit is compact enough for everyday use, remain unknown.",
+              "assumed_experiences": [
+                "Profile-supported: I repair or maintain several kinds of electronics and am comparing compact and broader toolkits.",
+                "Profile-supported: I am tired of improvising tools across different devices.",
+                "Email-only: I am currently choosing my first toolkit.",
+                "Email-only but conditional: my anticipated repairs may continue beyond removing screws into opening, prying, gripping, or anti-static work."
+              ],
+              "problem_now": "Choosing between a compact driver set and a broader toolkit is relevant now because I am comparing those options, but the exact tools my next repairs will require are not established.",
+              "stopped_at": "",
+              "biggest_doubt": "I still do not know the price or how compact and well-organized the full kit is, so I cannot judge whether its extra breadth is worth carrying and storing.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me the price and the closed size of the organized kit.",
+              "fixes": [
+                "Rewrite \"When sizing up a first toolkit, ask what happens after the screws come out.\" because \"first toolkit\" assumes where I am in the buying journey; use \"When comparing toolkits, ask what happens after the screws come out.\"",
+                "Rewrite \"The product page lists the 64-bit setup, included repair tools, and stated range: electronics, gaming consoles, drones, RC cars, and vintage devices.\" to include the price and closed dimensions, which are the missing comparison facts.",
+                "Cut \"That distinction is the fit test.\" because the following two sentences already explain the distinction clearly."
+              ],
+              "opens_in_100": 25,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (explicit constraints): A hands-on electronics owner who is tired of improvising tools across phones, laptops, consoles, and household devices.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (vendor_claim; applicability must be checked): They repair or maintain several kinds of electronics rather than one named device. Their available tools may be scattered, incomplete, too large for precision work, or missing uncommon fasteners and safe opening tools. They are comparing compact everyday kits with broader toolkits that can remain useful across future repairs.\nSource: https://www.ifixit.com/products/moray-driver-kit; quote: Whether you're a professional fixer or a weekend warrior, the Moray has what you need to disassemble and repair smartphones, laptops, new and vintage game consoles, kitchen appliances, and more.\nSource: https://www.ifixit.com/products/pro-tech-toolkit; quote: The Pro Tech® Toolkit is the one thing every DIYer, fixer, hacker, hobbyist, and professional needs to tackle any job.\nProblem context: A compact driver set may still omit the opening, prying, gripping, extension, or anti-static tools needed once a repair goes beyond removing screws. (inferred); source: unknown\nProblem context: They must choose among overlapping 16-, 32-, and 64-bit kits without overbuying for repairs they may never attempt. (inferred); source: unknown\nProblem context: They want tools that remain organized and available instead of becoming another collection of loose bits in a drawer. (company claim about the buyer); source: https://www.ifixit.com/products/pro-tech-toolkit",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "A broad, organized electronics repair toolkit with 64 driver bits and tools for opening, prying, gripping, and anti-static work, intended to replace some of my improvised tools across different devices.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile establishes that I work on several kinds of electronics, am tired of improvising, and am comparing compact kits with broader ones. The email addresses that choice directly and conditionally: a driver kit may be enough for screw-only jobs, while broader repairs may justify additional tools. Whether my anticipated repairs actually require every included tool, and whether this is my first toolkit, remain unknown.",
+              "assumed_experiences": [
+                "Profile-supported: I repair or maintain multiple kinds of electronics and currently rely on tools that may be scattered, incomplete, oversized, or missing specialized items.",
+                "Profile-supported: I am comparing compact driver sets with broader toolkits and want tools that stay organized.",
+                "Email-only: I am sizing up a first toolkit.",
+                "Email-only but presented conditionally: my anticipated repairs may progress from removing fasteners to opening, prying, gripping, or anti-static work."
+              ],
+              "problem_now": "Choosing a kit that reduces improvisation without overbuying is relevant now because the profile establishes that I am comparing kit sizes. The need for all the broader tools on an upcoming repair is only a plausible risk; no specific repair or deadline is established.",
+              "stopped_at": "",
+              "biggest_doubt": "I cannot judge whether the broader kit is worth considering without knowing its price.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me the price of the Pro Tech Toolkit.",
+              "fixes": [
+                "Rewrite “The iFixit Pro Tech Toolkit is a general electronics repair kit with 64 bits plus tweezers, spudgers, opening tools, and anti-static safety accessories.” to include the price, so I can immediately judge whether the broader setup is realistic for me.",
+                "Cut “That distinction is the fit test.” because the following two sentences already explain the distinction.",
+                "Shorten “The product page lists the 64-bit setup, included repair tools, and stated range: electronics, gaming consoles, drones, RC cars, and vintage devices.” to “See the complete tool list and the devices iFixit says the kit supports.”"
+              ],
+              "opens_in_100": 23,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (explicit constraints): A hands-on electronics owner who is tired of improvising tools across phones, laptops, consoles, and household devices.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (vendor_claim; applicability must be checked): They repair or maintain several kinds of electronics rather than one named device. Their available tools may be scattered, incomplete, too large for precision work, or missing uncommon fasteners and safe opening tools. They are comparing compact everyday kits with broader toolkits that can remain useful across future repairs.\nSource: https://www.ifixit.com/products/moray-driver-kit; quote: Whether you're a professional fixer or a weekend warrior, the Moray has what you need to disassemble and repair smartphones, laptops, new and vintage game consoles, kitchen appliances, and more.\nSource: https://www.ifixit.com/products/pro-tech-toolkit; quote: The Pro Tech® Toolkit is the one thing every DIYer, fixer, hacker, hobbyist, and professional needs to tackle any job.\nProblem context: A compact driver set may still omit the opening, prying, gripping, extension, or anti-static tools needed once a repair goes beyond removing screws. (inferred); source: unknown\nProblem context: They must choose among overlapping 16-, 32-, and 64-bit kits without overbuying for repairs they may never attempt. (inferred); source: unknown\nProblem context: They want tools that remain organized and available instead of becoming another collection of loose bits in a drawer. (company claim about the buyer); source: https://www.ifixit.com/products/pro-tech-toolkit\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "A broad 64-bit electronics repair toolkit that would replace several improvised or scattered tools for opening, prying, gripping, and working safely on different devices.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile establishes that I maintain multiple kinds of electronics and am comparing compact versus broader kits, so the fit question is relevant. The email appropriately makes repairs beyond fasteners conditional rather than claiming I already perform them. Whether I need all 64 bits or the additional tools remains unknown.",
+              "assumed_experiences": [
+                "Profile-supported: I repair or maintain multiple kinds of electronics and am comparing toolkit breadth.",
+                "Email-only: I am choosing a first toolkit; the profile does not establish that this would be my first.",
+                "Email-only but conditional: some anticipated repairs continue into opening, prying, gripping, or anti-static work after screw removal."
+              ],
+              "problem_now": "Choosing enough coverage without overbuying is a current comparison problem. Needing every included tool is only a plausible future requirement, not an established immediate need.",
+              "stopped_at": "",
+              "biggest_doubt": "I still cannot judge whether the broader kit earns its likely extra cost and storage space because the email gives neither the price nor the packed size.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me the price and packed dimensions so I could immediately compare the broader kit with compact alternatives.",
+              "fixes": [
+                "Rewrite \"When sizing up a first toolkit, ask what happens after the screws come out.\" to \"When comparing a compact driver kit with a broader toolkit, ask what your repairs require after the screws come out.\"",
+                "Rewrite \"If they move from fasteners into those other repair stages, the broader setup has a clear purpose.\" to include the toolkit's price and packed dimensions, so I can judge whether that purpose justifies the extra cost and space."
+              ],
+              "opens_in_100": 27,
+              "clicks_in_100": 7,
+              "persona": "Selected audience (explicit constraints): A hands-on electronics owner who is tired of improvising tools across phones, laptops, consoles, and household devices.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (vendor_claim; applicability must be checked): They repair or maintain several kinds of electronics rather than one named device. Their available tools may be scattered, incomplete, too large for precision work, or missing uncommon fasteners and safe opening tools. They are comparing compact everyday kits with broader toolkits that can remain useful across future repairs.\nSource: https://www.ifixit.com/products/moray-driver-kit; quote: Whether you're a professional fixer or a weekend warrior, the Moray has what you need to disassemble and repair smartphones, laptops, new and vintage game consoles, kitchen appliances, and more.\nSource: https://www.ifixit.com/products/pro-tech-toolkit; quote: The Pro Tech® Toolkit is the one thing every DIYer, fixer, hacker, hobbyist, and professional needs to tackle any job.\nProblem context: A compact driver set may still omit the opening, prying, gripping, extension, or anti-static tools needed once a repair goes beyond removing screws. (inferred); source: unknown\nProblem context: They must choose among overlapping 16-, 32-, and 64-bit kits without overbuying for repairs they may never attempt. (inferred); source: unknown\nProblem context: They want tools that remain organized and available instead of becoming another collection of loose bits in a drawer. (company claim about the buyer); source: https://www.ifixit.com/products/pro-tech-toolkit\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 7
+            }
+          ],
+          "sameness": []
+        }
+      ],
+      "limiting_gaps": [],
+      "what_would_help_most": "Resolve this simulated next-step obstacle: I would have clicked if this email had told me the price and the closed size of the organized kit. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "Execution exceeded its maximum run time."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "A three-email pre-purchase nurture sequence in English for opted-in electronics hobbyists evaluating their first general repair toolkit. This is a sales-consideration campaign, not customer onboarding: readers have not purchased, and every email sends them to the Pro Tech Toolkit product page.",
+      "reader": "Selected audience: A hands-on electronics owner who is tired of improvising tools across phones, laptops, consoles, and household devices.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (vendor_claim; check applicability): They repair or maintain several kinds of electronics rather than one named device. Their available tools may be scattered, incomplete, too large for precision work, or missing uncommon fasteners and safe opening tools. They are comparing compact everyday kits with broader toolkits that can remain useful across future repairs.\nUser-specified audience: Opted-in electronics hobbyists considering their first general repair toolkit",
+      "reader_segment": "A hands-on electronics owner who is tired of improvising tools across phones, laptops, consoles, and household devices",
+      "promise": "The Pro Tech Toolkit can serve as a broad first repair setup when the reader expects to work across different electronics and needs more than screwdrivers alone.",
+      "orientation": "The Pro Tech Toolkit is a general electronics repair kit combining a 64-bit precision driver set with tools for opening, prying, gripping, and anti-static work.",
+      "arc": "First establish whether the toolkit's breadth matches the reader's likely repair mix; then make that breadth tangible through one specific prying tool; finally reduce purchase hesitation with the published price, lifetime guarantee, and return policy.",
+      "sequence_rationale": "The reader first needs to decide whether a 64-bit general toolkit is appropriate rather than excessive. Once the fit is clear, a concrete use of the Jimmy shows why this is more than a large screwdriver set and answers the household-screwdriver alternative. The final email addresses commitment only after the product's relevance and practical value have been established. Each email stands alone by naming the Pro Tech Toolkit, making one distinct argument, and describing what the reader can verify on the product page. Exact suitability for a particular repair remains dependent on that repair's requirements and must not be guaranteed.",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Help the reader decide whether the Pro Tech Toolkit's scope fits the range of electronics they expect to repair.",
+          "single_idea": "Choose the Pro Tech Toolkit when the goal is broad electronics coverage: it combines 64 bits with opening, gripping, prying, and anti-static tools rather than treating bit count as the whole repair setup.",
+          "felt_need": "I want a first toolkit that remains useful across different electronics, but I do not want to buy breadth I will never use.",
+          "status_quo": "The reader may be comparing toolkits primarily by their 16-, 32-, or 64-bit counts.",
+          "why_it_fails": "Bit count alone does not reveal whether a kit also covers the opening, prying, gripping, and anti-static stages that can follow screw removal.",
+          "mechanism": "The Pro Tech Toolkit pairs its 64-bit set with tweezers, spudgers, opening tools, and anti-static accessories, and its stated device range includes electronics, gaming consoles, drones, RC cars, and vintage devices.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: 64 bits may look like unnecessary excess for a first toolkit. After: the relevant test is whether the reader wants broad device coverage plus non-driver tools in one kit.",
+          "evidence_ids": [
+            "E636",
+            "E654",
+            "E622"
+          ],
+          "must_not_say": [
+            "Do not claim the toolkit covers every device, fault, or repair.",
+            "Do not imply that every reader's existing tools are inadequate.",
+            "Do not discuss price, shipping, returns, or the lifetime guarantee; email 3 owns the purchase-risk argument.",
+            "Do not turn the email into an inventory of individual bits."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "I cannot tell whether a 64-bit kit and the additional tools are useful breadth or simply more than I need.",
+          "tone": "Practical and diagnostic, like a knowledgeable fixer helping the reader choose without pressure.",
+          "call_to_action": "View the Pro Tech Toolkit at https://www.ifixit.com/products/pro-tech-toolkit to inspect its 64-bit setup, included repair tools, and stated device range.",
+          "next_step_decision": "Decide whether the reader's anticipated mix of electronics calls for the broader 64-bit toolkit.",
+          "next_step_value": "The product page shows the 64-bit count, included tool categories, and the electronics and device categories the toolkit is designed to support.",
+          "next_step_evidence_ids": [
+            "E636",
+            "E654"
+          ],
+          "next_step_limit": "The page's broad device range does not establish that the kit contains every tool or part required by a particular repair; the reader still needs to check that repair's requirements.",
+          "subject_strategy": "Frame the open around a quick fit test for a first general toolkit, contrasting broad repair coverage with bit count alone.",
+          "must_not_reuse": []
+        },
+        {
+          "position": 2,
+          "job": "Show one concrete non-screwdriver use that makes the toolkit's broader repair capability easy to understand.",
+          "single_idea": "When a repair reaches a prying step, the included Jimmy provides a purpose-built flexible steel blade and ergonomic handle instead of asking a screwdriver to do a prying tool's job.",
+          "felt_need": "Removing the screws may be only the first step; I also need a controlled way to pry during disassembly.",
+          "status_quo": "A screwdriver-only setup can remove fasteners but does not provide a tool designed specifically for prying.",
+          "why_it_fails": "A driver is built to turn a fastener, whereas a prying step calls for a blade and handle designed for that action.",
+          "mechanism": "The Pro Tech Toolkit includes Jimmy, whose flexible steel blade and ergonomic handle are designed for precise and powerful prying.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: a large bit set may seem like the toolkit's only meaningful advantage. After: the kit also supplies purpose-built tools for repair steps that happen after the screws come out.",
+          "evidence_ids": [
+            "E595",
+            "E602"
+          ],
+          "must_not_say": [
+            "Do not promise damage-free opening or successful disassembly.",
+            "Do not invent a specific device, adhesive, gap width, or prying technique.",
+            "Do not claim a household screwdriver will always cause damage.",
+            "Do not broaden the email into a tour of every included tool.",
+            "Do not mention guarantee or return terms; email 3 owns that argument."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "I already own screwdrivers, so another toolkit may add little to what I can do.",
+          "tone": "Hands-on and instructive, centered on one recognizable repair moment.",
+          "call_to_action": "Visit https://www.ifixit.com/products/pro-tech-toolkit to see Jimmy and the other tools included alongside the 64-bit driver kit.",
+          "next_step_decision": "Decide whether purpose-built prying capability makes the complete toolkit more useful than buying a driver set alone.",
+          "next_step_value": "The product page identifies Jimmy as an included tool and describes its flexible steel blade, ergonomic handle, and prying purpose.",
+          "next_step_evidence_ids": [
+            "E595",
+            "E602"
+          ],
+          "next_step_limit": "Seeing the tool and its intended use does not establish that it is appropriate for every device or every prying step.",
+          "subject_strategy": "Use the moment after the last screw is removed to reveal why a repair toolkit needs more than bits.",
+          "must_not_reuse": [
+            "Choose the Pro Tech Toolkit when the goal is broad electronics coverage: it combines 64 bits with opening, gripping, prying, and anti-static tools rather than treating bit count as the whole repair setup."
+          ]
+        },
+        {
+          "position": 3,
+          "job": "Resolve concern about committing $79.95 to a first general toolkit by making the published purchase protections explicit.",
+          "single_idea": "The Pro Tech Toolkit costs $79.95, carries a lifetime guarantee, and is covered by iFixit's 30-day return policy, giving the reader concrete terms to evaluate before buying.",
+          "felt_need": "I want to know what protects the purchase if this first toolkit is not the right choice or a covered tool fails later.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "The product is sold at a published $79.95 price with a lifetime guarantee, while iFixit also publishes a 30-day return policy.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: buying a broader first toolkit may feel like an open-ended durability and fit risk. After: the reader can assess the decision against a stated price, lifetime guarantee, and 30-day return window.",
+          "evidence_ids": [
+            "E556",
+            "E588",
+            "E570"
+          ],
+          "must_not_say": [
+            "Do not invent a discount, deadline, scarcity claim, or cart activity.",
+            "Do not imply that the guarantee covers accidental device damage, repair outcomes, or every circumstance.",
+            "Do not paraphrase unprovided guarantee or return exclusions as fact.",
+            "Do not promise that the toolkit will pay for itself.",
+            "Do not introduce refurbished pricing or other toolkit prices."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "I do not want to spend $79.95 on a toolkit that may not last or may turn out not to fit my needs.",
+          "tone": "Direct and reassuring, with the commercial terms stated plainly rather than dramatized.",
+          "call_to_action": "Review the $79.95 Pro Tech Toolkit, lifetime guarantee, and purchase details at https://www.ifixit.com/products/pro-tech-toolkit, then add it to the cart if the terms and toolkit fit your plans.",
+          "next_step_decision": "Decide whether the toolkit's published price and protections make the purchase acceptable.",
+          "next_step_value": "The product page lets the reader review the toolkit at its published $79.95 price alongside its lifetime guarantee and purchase information.",
+          "next_step_evidence_ids": [
+            "E556",
+            "E588",
+            "E570"
+          ],
+          "next_step_limit": "These terms do not guarantee a successful repair or confirm that the toolkit contains every item required for a particular job; guarantee and return conditions should be reviewed on the official site.",
+          "subject_strategy": "Lead with the durability-and-commitment question, then signal that the email contains concrete purchase terms rather than a promotional deadline.",
+          "must_not_reuse": [
+            "Choose the Pro Tech Toolkit when the goal is broad electronics coverage: it combines 64 bits with opening, gripping, prying, and anti-static tools rather than treating bit count as the whole repair setup.",
+            "When a repair reaches a prying step, the included Jimmy provides a purpose-built flexible steel blade and ergonomic handle instead of asking a screwdriver to do a prying tool's job."
+          ]
+        }
+      ],
+      "voice_notes": "Use short, practical sentences and repair-specific verbs. Sound empowering rather than fearless or absolute. Do not add a greeting or human signature, and avoid generic claims such as “everything you need” or “tackle any repair.”",
+      "contract": {
+        "kind": "email_sequence",
+        "count": 3,
+        "count_is_explicit": true,
+        "evidence": "3 English nurture emails"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "866cd496-fc6f-478f-b7b1-dded9833c110",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

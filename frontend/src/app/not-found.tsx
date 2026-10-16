@@ -12,17 +12,18 @@ import { buttonVariants } from "@/components/ui/button";
  */
 export default function NotFound() {
   return (
-    <div className="studio-hero mx-auto mt-10 max-w-lg overflow-hidden rounded-2xl border border-border p-8 text-center sm:p-10">
-      <span className="mx-auto mb-5 flex size-12 items-center justify-center rounded-2xl border border-violet-400/25 bg-violet-500/10 text-violet-300">
+    <div className="studio-hero rise mx-auto mt-6 max-w-xl overflow-hidden rounded-3xl px-8 py-12 text-center sm:mt-12 sm:px-12">
+      <div aria-hidden="true" className="bg-grid pointer-events-none absolute inset-0 -z-10" />
+      <span className="icon-tile mx-auto mb-6 flex size-14 items-center justify-center rounded-2xl">
         <Compass className="size-6" aria-hidden="true" />
       </span>
-      <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-violet-300">404</p>
-      <h1 className="mt-2 text-xl font-semibold tracking-tight">This page is not here</h1>
+      <p className="font-display text-7xl leading-none text-gradient-accent">404</p>
+      <h1 className="mt-4 text-xl font-semibold tracking-tight">This page is not here</h1>
       <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
         The address may be mistyped, or what it pointed to has moved. Everything you made is still
         in your workspace.
       </p>
-      <div className="mt-7 flex flex-wrap justify-center gap-2">
+      <div className="mt-8 flex flex-wrap justify-center gap-2">
         <Link href="/" className={buttonVariants({ size: "lg" })}>
           Back to overview
         </Link>

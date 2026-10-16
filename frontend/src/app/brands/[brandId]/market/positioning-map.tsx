@@ -130,7 +130,7 @@ function AxisCard({ reading }: { reading: AxisReading }) {
       )}
 
       {open && rivals.length > 0 && (
-        <div className="mt-3 space-y-2 border-t border-border/50 pt-2 text-xs">
+        <div className="mt-3 space-y-2 border-t border-hairline pt-2 text-xs">
           {rivals.map(([name, claims]) => (
             <div key={name}>
               <p className="font-medium text-foreground/80">{name}</p>
@@ -149,7 +149,7 @@ function AxisCard({ reading }: { reading: AxisReading }) {
           type="button"
           onClick={() => setOpen((value) => !value)}
           aria-expanded={open}
-          className="mt-3 min-h-9 rounded-md border border-border px-3 text-xs font-medium text-foreground hover:bg-accent/30"
+          className="mt-3 min-h-9 cursor-pointer rounded-lg border border-white/10 bg-white/[0.035] px-3 text-xs font-medium text-foreground transition-colors hover:border-white/[0.16] hover:bg-white/[0.07]"
         >
           {open ? "Show less" : rivals.length > 0 ? "See what they say" : "See all"}
         </button>
@@ -173,7 +173,7 @@ function TerritoryColumn({
         <p className="text-xs text-muted-foreground">{meta.advice}</p>
       </div>
       {readings.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border/60 p-3 text-xs text-muted-foreground">
+        <p className="rounded-xl bg-white/[0.025] p-3 text-xs text-muted-foreground ring-1 ring-white/[0.06]">
           Nothing here.
         </p>
       ) : (
@@ -262,7 +262,7 @@ export function PositioningMap({ positioning }: { positioning: Positioning }) {
       )}
 
       <BrandDisclosure title="Strategy brief" description="The full positioning instructions available to your campaign strategist.">
-        <pre className="max-h-96 overflow-auto rounded-lg bg-background/40 p-4 text-xs leading-relaxed whitespace-pre-wrap text-muted-foreground">{positioning.brief_for_strategy}</pre>
+        <pre className="max-h-96 overflow-auto rounded-xl bg-black/25 p-4 text-xs leading-relaxed ring-1 ring-white/[0.05] whitespace-pre-wrap text-muted-foreground">{positioning.brief_for_strategy}</pre>
       </BrandDisclosure>
     </div>
   );

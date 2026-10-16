@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { AudioLines, RefreshCw } from "lucide-react";
+import { ArrowRight, AudioLines, RefreshCw } from "lucide-react";
 
 import { EmptyState } from "@/components/empty-state";
 import { MarketJobCard } from "@/components/market-job-card";
 import { Notice } from "@/components/notice";
 import { CompilationJobCard } from "./compilation-job-card";
+import { GroupLabel } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { api } from "@/lib/api-client";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -58,8 +58,8 @@ export function LiveRuns({
   const finishedCount = recent.length + recentlyCompiled.length;
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+    <div className="space-y-6">
+      <div className="surface flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl p-2.5 pr-4">
         <Button variant="outline" size="sm" disabled={refreshing} onClick={refresh}>
           <RefreshCw
             className={cn("size-3.5", refreshing && "motion-safe:animate-spin")}
@@ -67,9 +67,15 @@ export function LiveRuns({
           />
           {refreshing ? "Refreshing…" : "Refresh runs"}
         </Button>
-        <p className="text-xs text-muted-foreground tabular-nums">
+        <p className="flex items-center gap-2 text-xs text-muted-foreground tabular-nums">
+          <span className="size-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_oklch(0.8_0.17_160/70%)]" aria-hidden="true" />
           Snapshot from {formatTime(now)}
         </p>
+        {!nothingRunning && (
+          <p className="ml-auto text-xs text-muted-foreground tabular-nums">
+            {runs.length + running.length + compiling.length} in progress
+          </p>
+        )}
       </div>
       {unavailable && (
         <Notice tone="warning" title="Refresh failed">
@@ -95,33 +101,31 @@ export function LiveRuns({
           progress". */}
       {!nothingRunning && (
         <section aria-labelledby="running-title" className="space-y-3">
-          <h2 id="running-title" className="flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-muted-foreground">
-            <span className="size-1.5 rounded-full bg-violet-400 motion-safe:animate-pulse" aria-hidden="true" />
+          <GroupLabel id="running-title" live>
             Running now
-          </h2>
+          </GroupLabel>
           {runs.map((run) => (
             <Link
               key={run.id}
               href={`/campaigns/${run.campaign_id}/executions/${run.id}`}
-              className="block"
+              className="group ring-gradient surface-interactive relative flex items-center gap-4 overflow-hidden rounded-2xl bg-card bg-[linear-gradient(100deg,oklch(0.55_0.2_293/14%),transparent_60%)] p-4 shadow-[var(--shadow-surface)] sm:p-5"
             >
-              <Card className="transition-colors hover:ring-violet-400/40">
-                <CardContent className="flex items-start gap-4">
-                  <span className="mt-1.5 size-2 shrink-0 motion-safe:animate-pulse rounded-full bg-primary" />
-                  <div className="min-w-0 flex-1 space-y-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-medium">{run.campaign_name}</span>
-                      <StatusBadge status={run.status} />
-                    </div>
-                    <p className="truncate text-sm text-muted-foreground">{run.campaign_request}</p>
-                  </div>
-                  <span className="shrink-0 text-sm text-muted-foreground tabular-nums">
-                    {run.started_at
-                      ? formatDuration(now - new Date(run.started_at).getTime())
-                      : "starting"}
-                  </span>
-                </CardContent>
-              </Card>
+              <span className="brand-mark flex size-11 shrink-0 items-center justify-center rounded-xl">
+                <span className="live-dot !bg-white" aria-hidden="true" />
+              </span>
+              <div className="min-w-0 flex-1 space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-semibold">{run.campaign_name}</span>
+                  <StatusBadge status={run.status} />
+                </div>
+                <p className="truncate text-sm text-muted-foreground">{run.campaign_request}</p>
+              </div>
+              <span className="shrink-0 rounded-full bg-white/[0.05] px-3 py-1 text-sm font-medium tabular-nums text-foreground/90 ring-1 ring-white/[0.08]">
+                {run.started_at
+                  ? formatDuration(now - new Date(run.started_at).getTime())
+                  : "starting"}
+              </span>
+              <ArrowRight className="hidden size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-violet-200 sm:block" aria-hidden="true" />
             </Link>
           ))}
           {running.map((job) => (
@@ -139,9 +143,7 @@ export function LiveRuns({
           becoming a history page - that is what each brand's own tabs are for. */}
       {finishedCount > 0 && (
         <section aria-labelledby="finished-title" className="space-y-3 pt-2">
-          <h2 id="finished-title" className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-            Recently finished
-          </h2>
+          <GroupLabel id="finished-title">Recently finished</GroupLabel>
           {recent.map((job) => (
             <MarketJobCard key={`${job.brand_id}-${job.started_at}`} job={job} now={now} />
           ))}

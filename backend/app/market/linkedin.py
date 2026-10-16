@@ -13,6 +13,7 @@ from app.market.demand import AudienceSegment
 from app.runtime.model_session import ModelSession
 from app.schemas.linkedin import (
     CriteriaRequest,
+    PublicProspectAnswer,
     SearchAnswer,
     SearchRequest,
     SearchResult,
@@ -89,25 +90,31 @@ async def propose_criteria(
     return criteria
 
 
-async def search(session: ModelSession, request: SearchRequest) -> SearchResult:
+async def search(
+    session: ModelSession, request: SearchRequest, segment: AudienceSegment | None = None,
+) -> SearchResult:
     criteria = request.criteria
+    public_web = request.source == "web"
     result = await session.structured(
         role=ROLE_ID, tier=ModelTier.BALANCED,
-        template="linkedin_search",
+        template="prospect_search" if public_web else "linkedin_search",
         variables={
             "query": request.query,
             "target": request.target,
             "limit": request.limit,
             "criteria": criteria.render() if criteria is not None else "",
+            "audience": render_segment(segment),
+            "venues": "; ".join(segment.where) if segment and request.target == "venues" else "",
         },
         task="Search the public web now. Return only sourced candidates; fewer or none is fine.",
-        schema=SearchAnswer, tools=[ResearchTool.WEB_SEARCH],
+        schema=PublicProspectAnswer if public_web else SearchAnswer,
+        tools=[ResearchTool.WEB_SEARCH],
     )
     prefix = "/in/" if request.target == "people" else "/company/"
     seen: set[str] = set()
     candidates = []
     for candidate in result.candidates:
-        if prefix not in candidate.url or candidate.url.casefold() in seen:
+        if (not public_web and prefix not in candidate.url) or candidate.url.casefold() in seen:
             continue
         seen.add(candidate.url.casefold())
         candidates.append(candidate)

@@ -59,6 +59,33 @@ class EvidenceStrength(StrEnum):
     WEAK = "weak"
 
 
+class EvidenceContext(BaseModel):
+    """The boundary of a fact, not another source of facts.
+
+    Empty fields mean unknown. Old ledgers have no context at all; reading
+    one must never silently infer a customer outcome, current price or launch.
+    The prose fields deliberately preserve source-specific terms rather than
+    turning every offer into a large, partly invented pricing schema.
+    """
+
+    subject: str = ""
+    source_kind: str = "unknown"
+    claim_scope: str = "unknown"
+    conditions: str = ""
+    temporal_scope: str = ""
+    limitations: str = ""
+    verification: str = "unknown"
+
+    def render(self) -> str:
+        fields = [
+            ("subject", self.subject), ("source nature", self.source_kind),
+            ("scope", self.claim_scope), ("conditions", self.conditions),
+            ("time", self.temporal_scope), ("limits", self.limitations),
+            ("source check", self.verification),
+        ]
+        return "; ".join(f"{label}: {value}" for label, value in fields if value)
+
+
 class Evidence(BaseModel):
     """One thing the copy is allowed to assert, and the text that proves it."""
 
@@ -81,6 +108,7 @@ class Evidence(BaseModel):
     #: costs nothing and a derived one costs a regex, so neither case needs a
     #: migration or a recompile.
     category: FactCategory | None = None
+    context: EvidenceContext | None = None
 
     @property
     def licensing_text(self) -> str:
@@ -245,9 +273,18 @@ def render_entries(entries: list[Evidence]) -> str:
     """
     if not entries:
         return "No evidence was found in the user's material. Make no factual claims."
-    return "\n".join(
+    rules = (
+        "Use each fact only for its named subject, conditions and time. Documentation can "
+        "support a capability, not a customer result. A customer's result belongs to that "
+        "customer; a plan price is not a separate feature price. A vendor comparison is "
+        "that vendor's claim about rivals, not independent verification. Unknown context "
+        "stays unknown; do not claim novelty or current terms without dated support.\n"
+    )
+    return rules + "\n".join(
         f"- [{entry.id}] ({category_of(entry)}/{entry.kind}, {entry.strength}) {entry.claim}\n"
-        f'      source says: "{_collapse(entry.verbatim, 240)}"'
+        f'      source says: "{_collapse(entry.verbatim, 500)}"\n'
+        f"      source: {entry.source or 'not recorded'}; "
+        f"{entry.context.render() if entry.context else 'context not recorded (legacy or unknown); verify scope before extending the claim'}"
         for entry in entries
     )
 

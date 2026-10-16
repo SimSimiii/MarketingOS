@@ -88,7 +88,7 @@ function ResearchEvidenceLinks({
             target="_blank"
             rel="noreferrer noopener"
             title={`${item.quote} — ${source.title}`}
-            className="rounded bg-primary/10 px-1 text-primary underline-offset-2 hover:underline"
+            className="rounded bg-violet-500/15 px-1 text-violet-200 underline-offset-2 hover:underline"
           >
             [{item.source_id}] &ldquo;{item.quote}&rdquo; · {source.title}
           </a>
@@ -104,7 +104,7 @@ function ResearchResult({ research }: { research: AudienceResearch }) {
     .join(" · ");
 
   return (
-    <details className="rounded-md border border-border/70 bg-background/40 p-3 text-xs">
+    <details className="rounded-xl bg-black/20 ring-1 ring-white/[0.06] p-3 text-xs">
       <summary className="cursor-pointer font-medium text-foreground">
         Research v{research.version} · {research.sources.length} sources · {mix}
       </summary>
@@ -227,7 +227,7 @@ function DefinitionReceipt({ definition }: { definition: AudienceDefinition }) {
     ...definition.required_workflow_signals,
   ];
   return (
-    <details className="rounded-md border border-border/70 bg-background/40 p-3 text-xs">
+    <details className="rounded-xl bg-black/20 ring-1 ring-white/[0.06] p-3 text-xs">
       <summary className="cursor-pointer font-medium text-foreground">
         Qualification definition · schema v{definition.schema_version}
       </summary>
@@ -482,7 +482,7 @@ function EvidenceQuote({
             href={origin}
             target="_blank"
             rel="noreferrer noopener"
-            className="mt-1 block break-all text-primary hover:underline"
+            className="mt-1 block break-all text-violet-300 hover:underline"
           >
             {origin}
           </a>
@@ -499,7 +499,7 @@ function EvidenceQuote({
 function DossierEvidenceReference({ evidence }: { evidence?: RelevanceEvidence }) {
   if (!evidence) return null;
   return (
-    <details className="mt-1 rounded-md border border-border/60 bg-background/40 p-2">
+    <details className="mt-1 rounded-xl bg-black/20 ring-1 ring-white/[0.06] p-2">
       <summary className="cursor-pointer font-medium text-foreground/90">
         [{evidence.id}] {evidence.claim}
       </summary>
@@ -515,7 +515,7 @@ function DossierEvidenceReference({ evidence }: { evidence?: RelevanceEvidence }
 
 function QualificationReceipt({ qualification }: { qualification: CompanyQualification }) {
   return (
-    <div className="rounded-md border border-border/70 bg-background/40 p-3 text-xs">
+    <div className="rounded-xl bg-black/20 ring-1 ring-white/[0.06] p-3 text-xs">
       <div className="flex flex-wrap items-center gap-2">
         <span className="font-medium">Qualification receipt</span>
         <span className="text-muted-foreground">
@@ -581,7 +581,7 @@ function QualificationReceipt({ qualification }: { qualification: CompanyQualifi
                     href={signal.source_identifier}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className="mt-1 block break-all text-primary hover:underline"
+                    className="mt-1 block break-all text-violet-300 hover:underline"
                   >
                     {signal.source_identifier}
                   </a>
@@ -710,7 +710,7 @@ function ClaimContractView({
         />
       </div>
       {contract.warnings.length > 0 && (
-        <details className="rounded-md border border-amber-500/40 bg-amber-500/5 p-2">
+        <details className="rounded-xl border border-amber-400/25 bg-amber-400/[0.05] p-2">
           <summary className="cursor-pointer font-medium text-amber-500">
             Contract warnings · {contract.warnings.length}
           </summary>
@@ -721,7 +721,7 @@ function ClaimContractView({
           </ul>
         </details>
       )}
-      <details className="rounded-md border border-border/60 bg-background/40 p-2">
+      <details className="rounded-xl bg-black/20 ring-1 ring-white/[0.06] p-2">
         <summary className="cursor-pointer font-medium text-foreground/90">
           Full verified product facts · {contract.verified_product_claims.length}
         </summary>
@@ -765,7 +765,7 @@ function DossierResult({
   const problems = new Map(research.problems.map((problem) => [problem.id, problem]));
 
   return (
-    <details className="rounded-md border border-primary/30 bg-primary/5 p-3 text-xs">
+    <details className="rounded-xl border border-violet-400/25 bg-violet-500/[0.07] p-3 text-xs">
       <summary className="flex cursor-pointer list-none flex-wrap items-center gap-2 font-medium">
         Relevance dossier v{relevance.generation_version}
         <Badge variant={relevance.status === "stale" ? "destructive" : "secondary"}>
@@ -1216,7 +1216,7 @@ function AudienceForm({
         </AudienceField>
       </div>
 
-      <div className="space-y-3 rounded-lg border border-dashed p-3">
+      <div className="space-y-3 rounded-xl bg-white/[0.02] p-3 ring-1 ring-white/[0.06]">
         <p className="text-xs text-muted-foreground">
           These two are what a research pass spends its search on. Leave them empty
           and this saves anyway — it just cannot be researched or prospected until
@@ -1551,7 +1551,7 @@ function SegmentCard({
         {(segment.who || segment.organization) && (
           <ExpandableText text={segment.who || segment.organization} className="text-foreground/90" limit={200} />
         )}
-        <dl className="grid grid-cols-3 gap-2 rounded-lg border border-border bg-background/40 p-3 text-xs">
+        <dl className="grid grid-cols-3 gap-2 rounded-xl bg-black/20 ring-1 ring-white/[0.06] p-3 text-xs">
           {[{ label: "Product fit", value: segment.assessment.compatibility }, { label: "Evidence", value: segment.assessment.evidence_strength }, { label: "Findability", value: segment.assessment.findability }].map((item) => <div key={item.label} className="min-w-0"><dt className="text-[10px] text-muted-foreground">{item.label}</dt><dd className="mt-1 break-words font-medium capitalize">{item.value.replaceAll("_", " ")}</dd></div>)}
         </dl>
         {segment.assessment.counterevidence > 0 && <p className="text-xs text-amber-300">{segment.assessment.counterevidence} source{segment.assessment.counterevidence === 1 ? "" : "s"} against this fit. Review before proceeding.</p>}
@@ -1565,7 +1565,7 @@ function SegmentCard({
         >
           {expanded ? "Hide audience details" : "Audience details & evidence"}<ChevronDown className={cn("size-3.5", expanded && "rotate-180")} />
         </Button>
-        <div id={detailsId} hidden={!expanded} className="space-y-3 rounded-xl border border-border bg-background/30 p-4">
+        <div id={detailsId} hidden={!expanded} className="space-y-3 rounded-2xl bg-black/20 p-4 ring-1 ring-white/[0.06]">
           {expanded && <div className="space-y-3">
             {segment.organization && (
               <p className="text-xs">Who they are: {segment.organization}</p>
@@ -1616,7 +1616,7 @@ function SegmentCard({
                       </p>
                     )}
                     <blockquote className="border-l-2 pl-2 text-muted-foreground">{evidence.quote}</blockquote>
-                    <a className="break-all text-primary underline" href={evidence.url} target="_blank" rel="noopener noreferrer">{evidence.url}</a>
+                    <a className="break-all text-violet-300 underline" href={evidence.url} target="_blank" rel="noopener noreferrer">{evidence.url}</a>
                     {evidence.fetched_at && <p className="text-muted-foreground">Fetched {formatDate(evidence.fetched_at)}</p>}
                   </div>
                 ))}
@@ -2053,12 +2053,12 @@ export function AudiencePanel({
       />
 
       <div className="space-y-3">
-        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card p-3">
+        <div className="flex flex-wrap items-center gap-3 surface rounded-2xl p-3">
           <div className="relative min-w-48 flex-1"><Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" /><Input aria-label="Search audiences" placeholder="Search audiences, needs or industries…" value={query} onChange={(event) => setQuery(event.target.value)} className="pl-9" /></div>
           <label className="flex items-center gap-2 text-xs text-muted-foreground"><SlidersHorizontal className="size-4" /><span className="sr-only">Audience priority</span><select value={priority} onChange={(event) => setPriority(event.target.value)} className="min-h-9 rounded-lg border border-input bg-background px-3 text-sm text-foreground"><option value="all">All priorities</option><option value="explore_first">Explore first</option><option value="review_first">Review counterevidence</option><option value="hypothesis">Hypothesis</option><option value="incompatible">Incompatible</option></select></label>
           <span role="status" className="text-xs text-muted-foreground">{segments.length} of {demand.segments.length}</span>
         </div>
-        {segments.length === 0 && <div className="rounded-xl border border-dashed p-8 text-center"><Users className="mx-auto mb-3 size-6 text-muted-foreground" /><p className="font-medium">No audiences match these filters</p><Button variant="outline" size="sm" className="mt-3" onClick={() => { setQuery(""); setPriority("all"); }}>Clear filters</Button></div>}
+        {segments.length === 0 && <div className="surface rounded-2xl p-8 text-center"><Users className="mx-auto mb-3 size-6 text-muted-foreground" /><p className="font-medium">No audiences match these filters</p><Button variant="outline" size="sm" className="mt-3" onClick={() => { setQuery(""); setPriority("all"); }}>Clear filters</Button></div>}
       </div>
       {selected && <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-violet-400/30 bg-violet-500/10 p-3 text-sm"><span>Organisations filtered by <strong>{selected}</strong></span><Button size="sm" variant="outline" onClick={() => setSelected(null)}>Clear selection</Button></div>}
       <div className="grid items-start gap-4 xl:grid-cols-2">
@@ -2127,7 +2127,7 @@ export function AudiencePanel({
         </Card>
       )}
 
-      {visible.length === 0 && <div className="rounded-xl border border-dashed p-8 text-center"><p className="font-medium">{rows.length === 0 ? "No organisations found yet" : "No matching organisations"}</p><p className="mt-2 text-sm text-muted-foreground">{rows.length === 0 ? "Choose an audience, then use Find these companies to start a search." : "Try another search or clear your audience selection."}</p><Button className="mt-4" variant="outline" size="sm" onClick={() => { setView("audiences"); setSelected(null); setOrganisationQuery(""); }}>Back to audiences</Button></div>}
+      {visible.length === 0 && <div className="surface rounded-2xl p-8 text-center"><p className="font-medium">{rows.length === 0 ? "No organisations found yet" : "No matching organisations"}</p><p className="mt-2 text-sm text-muted-foreground">{rows.length === 0 ? "Choose an audience, then use Find these companies to start a search." : "Try another search or clear your audience selection."}</p><Button className="mt-4" variant="outline" size="sm" onClick={() => { setView("audiences"); setSelected(null); setOrganisationQuery(""); }}>Back to audiences</Button></div>}
       <div className="space-y-3">
         {visible.map((prospect) => (
           <ProspectCard

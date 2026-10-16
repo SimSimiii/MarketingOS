@@ -2,12 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Loader2, RefreshCw } from "lucide-react";
+import { Loader2, RefreshCw, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api-client";
 import type { CompilationStatus } from "@/lib/types";
 import { refreshPage } from "@/lib/page-data";
+import { problemText, progressText } from "@/lib/product-progress";
 
 export function CompileButton({ brandId, compiled }: { brandId: string; compiled: boolean }) {
   const [job, setJob] = useState<CompilationStatus | null>(null);
@@ -56,19 +57,36 @@ export function CompileButton({ brandId, compiled }: { brandId: string; compiled
 
   const busy = starting || job?.state === "running";
   return (
-    <div className="space-y-2">
-      <Button variant="outline" size="sm" disabled={refreshing} onClick={async () => { setRefreshing(true); await refreshStatus(); }}>{refreshing ? "Refreshing..." : "Refresh status"}</Button>
-      <Button onClick={compile} disabled={busy || refreshing || job === null} size="sm">
-        {busy ? <Loader2 className="size-4 animate-spin" /> : <RefreshCw className="size-4" />}
-        {busy ? "Compiling…" : compiled ? "Recompile knowledge sources" : "Compile knowledge sources"}
-      </Button>
+    <div className="space-y-2.5">
+      {/* Side by side: they were two inline buttons in a stacked block, so the
+          second sat half a line lower than the first. */}
+      <div className="flex flex-wrap items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={refreshing}
+          onClick={async () => { setRefreshing(true); await refreshStatus(); }}
+        >
+          <RefreshCw className={refreshing ? "motion-safe:animate-spin" : undefined} aria-hidden="true" />
+          {refreshing ? "Refreshing…" : "Refresh status"}
+        </Button>
+        <Button onClick={compile} disabled={busy || refreshing || job === null} size="sm">
+          {busy ? <Loader2 className="animate-spin" aria-hidden="true" /> : <Sparkles aria-hidden="true" />}
+          {busy ? "Compiling…" : compiled ? "Recompile sources" : "Compile sources"}
+        </Button>
+      </div>
       <p className="text-xs text-muted-foreground">Reads all attached sources to prepare your brand knowledge.</p>
-      {job?.message && <p role="status" className="text-sm text-muted-foreground">{job.message}</p>}
-      {job?.state === "running" && (
-        <Link href="/live" className="inline-block text-sm text-violet-300 hover:underline">Follow in Runs →</Link>
+      {job?.message && (
+        <p role="status" className="flex items-center gap-2 text-sm text-muted-foreground">
+          {job.state === "running" && <span className="live-dot" aria-hidden="true" />}
+          {job.state === "failed" ? problemText(job.message) : progressText(job.message, "Preparing your brand knowledge…")}
+        </p>
       )}
-      {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
-      {pollError && <p role="alert" className="text-sm text-destructive">{pollError}</p>}
+      {job?.state === "running" && (
+        <Link href="/live" className="inline-block text-sm font-medium text-violet-300 hover:text-violet-200">Follow in Runs →</Link>
+      )}
+      {error && <p role="alert" className="text-sm text-red-300">{problemText(error)}</p>}
+      {pollError && <p role="alert" className="text-sm text-red-300">{problemText(pollError)}</p>}
     </div>
   );
 }

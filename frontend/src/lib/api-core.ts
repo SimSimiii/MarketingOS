@@ -1,4 +1,5 @@
 import { API_URL } from "@/lib/config";
+import { problemText } from "@/lib/product-progress";
 import type {
   LinkedInCriteriaRequest,
   LinkedInRun,
@@ -78,19 +79,19 @@ async function errorMessage(response: Response): Promise<string> {
   const body = await response.text();
   try {
     const parsed = JSON.parse(body) as { detail?: unknown };
-    if (typeof parsed.detail === "string" && parsed.detail) return parsed.detail;
+    if (typeof parsed.detail === "string" && parsed.detail) return problemText(parsed.detail);
     if (
       parsed.detail &&
       typeof parsed.detail === "object" &&
       "message" in parsed.detail &&
       typeof parsed.detail.message === "string"
     ) {
-      return parsed.detail.message;
+      return problemText(parsed.detail.message);
     }
   } catch {
     // Not JSON - fall through to the raw body below.
   }
-  return `API error ${response.status}: ${body}`;
+  return `The request could not be completed (${response.status}). Please try again.`;
 }
 
 /** Thrown on a 401 so callers can tell "signed out" from "that failed".
@@ -229,6 +230,10 @@ export function createApi(auth: AuthSource) {
       if (page.brandId) query.set("brand_id", page.brandId);
       return request<Campaign[]>(`/campaigns?${query}`);
     },
+    /** Every live campaign for one brand, across pages - filtered by the API
+     * rather than by fetching the whole account and discarding the rest. */
+    listBrandCampaigns: (brandId: string) =>
+      pages<Campaign>(`/campaigns?include_archived=false&brand_id=${encodeURIComponent(brandId)}`),
     getCampaign: (id: string) => request<Campaign>(`/campaigns/${id}`),
     createCampaign: (data: CampaignCreateRequest) =>
       request<Campaign>("/campaigns", { method: "POST", body: JSON.stringify(data) }),

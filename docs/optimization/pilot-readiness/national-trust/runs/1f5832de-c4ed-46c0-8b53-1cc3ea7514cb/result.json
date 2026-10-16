@@ -1,0 +1,451 @@
+{
+  "id": "1f5832de-c4ed-46c0-8b53-1cc3ea7514cb",
+  "campaign_id": "1be4a38e-e406-4af3-a35f-122a6dc6d1d7",
+  "status": "failed",
+  "error_message": "The model stopped answering and did not come back after several attempts. Everything finished before that point is below.",
+  "started_at": "2026-10-05T07:30:37.468656Z",
+  "completed_at": "2026-10-05T07:40:33.378683Z",
+  "created_at": "2026-10-05T07:30:37.468656Z",
+  "total_input_tokens": 583292,
+  "total_output_tokens": 34041,
+  "total_cache_read_tokens": 418944,
+  "estimated_cost_usd": 5.6467,
+  "recommendation_snapshot": {
+    "campaign_id": "1be4a38e-e406-4af3-a35f-122a6dc6d1d7",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "f1917c8e-11f6-4463-bdb6-7e9e7b953a89",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Rather than assume membership is or is not worthwhile, compare the visits you expect to make with the exact joint-membership terms: £168 a year or 12 monthly payments of £14 for two adults aged 26 or over at the same address, with free entry to more than 500 places and free parking at most National Trust car parks."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:30:37.538390Z",
+      "completed_at": "2026-10-05T07:31:26.416688Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 16486,
+      "output_tokens": 3168,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.507546,
+      "duration_ms": 48798.04410005454,
+      "attempt": 1
+    },
+    {
+      "id": "483d73b5-195b-49ac-b170-589abafa2078",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "Rather than assume membership is or is not worthwhile, compare the visits you expect to make with the exact joint-membership terms: £168 a year or 12 monthly payments of £14 for two adults aged 26 or over at the same address, with free entry to more than 500 places and free parking at most National Trust car parks.",
+          "Rather than assume membership is or is not worthwhile, compare the visits you expect to make with the exact joint-membership terms: £168 a year or 12 monthly payments of £14 for two adults aged 26 or over at the same address, with free entry to more than 500 places and free parking at most National Trust car parks."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Does joint membership fit your planned visits?",
+          "Check if joint membership fits"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:31:26.479231Z",
+      "completed_at": "2026-10-05T07:32:17.846980Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 22548,
+      "output_tokens": 3318,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 30208,
+      "cost_usd": 0.632382,
+      "duration_ms": 92778.99769996293,
+      "attempt": 1
+    },
+    {
+      "id": "5de68c48-b90a-4cd2-978b-2bcad5ed1c3a",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s) read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 6,
+        "scores": [
+          6,
+          6
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:32:17.901712Z",
+      "completed_at": "2026-10-05T07:33:08.035056Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 23371,
+      "output_tokens": 6686,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 90624,
+      "cost_usd": 0.987951,
+      "duration_ms": 237331.29889983684,
+      "attempt": 1
+    },
+    {
+      "id": "6c05f203-5bfb-49ab-b2ed-f6587dca8dfe",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · the two best candidates, read side by side",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "challenger_won": false
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:33:08.041763Z",
+      "completed_at": "2026-10-05T07:33:23.497105Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 9587,
+      "output_tokens": 404,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 60416,
+      "cost_usd": 0.264729,
+      "duration_ms": 58608.36919979192,
+      "attempt": 1
+    },
+    {
+      "id": "eaa42cdc-720b-4e19-99be-23a880eccd4f",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "missing_material",
+        "strategy_gap": "The email promises a visit-based assessment of whether £168 is worthwhile, but neither the supplied evidence nor the linked destination provides admission and parking prices, a supported break-even example, or another comparison mechanism that can answer that question."
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:33:23.516313Z",
+      "completed_at": "2026-10-05T07:34:11.947999Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 9717,
+      "output_tokens": 1939,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.313836,
+      "duration_ms": 48398.294200072996,
+      "attempt": 1
+    },
+    {
+      "id": "d6825e46-8d17-4c60-9c62-60d01f165292",
+      "agent_id": "material_researcher",
+      "agent_name": "Official Material Researcher",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Finding and verifying official material for 1 gap(s)"
+      },
+      "output_data": {
+        "recovered": false,
+        "evidence": [],
+        "sources": [],
+        "dropped_claims": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:34:11.969122Z",
+      "completed_at": "2026-10-05T07:35:46.157701Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 20169,
+      "output_tokens": 1786,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 71552,
+      "cost_usd": 0.543813,
+      "duration_ms": 93433.01570008043,
+      "attempt": 1
+    },
+    {
+      "id": "d4e6f191-a737-43cb-a0f0-d41de2426856",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Before judging membership by an unsupported savings estimate, check the facts that are available: Joint membership covers two adults aged 26 or over at the same address, costs £168 a year or 12 monthly payments of £14, includes free entry to more than 500 places in the National Trust's care and includes free parking at most National Trust car parks."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:35:46.192001Z",
+      "completed_at": "2026-10-05T07:38:09.599635Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 16665,
+      "output_tokens": 5929,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.717306,
+      "duration_ms": 143312.8615000751,
+      "attempt": 2
+    },
+    {
+      "id": "0847eccd-62ba-4ca0-beba-14e647d2ef19",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 8,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "Before judging membership by an unsupported savings estimate, check the facts that are available: Joint membership covers two adults aged 26 or over at the same address, costs £168 a year or 12 monthly payments of £14, includes free entry to more than 500 places in the National Trust's care and includes free parking at most National Trust car parks.",
+          "Before judging membership by an unsupported savings estimate, check the facts that are available: Joint membership covers two adults aged 26 or over at the same address, costs £168 a year or 12 monthly payments of £14, includes free entry to more than 500 places in the National Trust's care and includes free parking at most National Trust car parks."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Check if Joint membership fits",
+          "Check your Joint membership fit"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:38:09.643602Z",
+      "completed_at": "2026-10-05T07:38:52.499912Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 22428,
+      "output_tokens": 3249,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 30208,
+      "cost_usd": 0.625407,
+      "duration_ms": 66644.96730000246,
+      "attempt": 2
+    },
+    {
+      "id": "7097fe73-2279-4499-b5a7-13b5780fc14d",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 9,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s) read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 6,
+        "scores": [
+          6,
+          6
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:38:52.516975Z",
+      "completed_at": "2026-10-05T07:39:39.190215Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 23377,
+      "output_tokens": 7562,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 90624,
+      "cost_usd": 1.053741,
+      "duration_ms": 255501.85620004777,
+      "attempt": 2
+    },
+    {
+      "id": "257a254d-4b7a-4c20-bae2-4382da92e36f",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 10,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · the two best candidates, read side by side",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "challenger_won": false
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T07:39:39.202680Z",
+      "completed_at": "2026-10-05T07:40:02.596290Z",
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.0,
+      "duration_ms": 0.0,
+      "attempt": 2
+    },
+    {
+      "id": "97d2d419-187b-46fe-841e-d56c21a70786",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 11,
+      "status": "failed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": null,
+      "error_message": "RoutingProvider call failed after 3 attempt(s): codex exec reported a failed turn: You’ve hit your usage limit. Upgrade to Pro (https://chatgpt.com/explore/pro), visit https://chatgpt.com/codex/settings/usage to purchase more credits or try again at 12:46 PM.",
+      "started_at": "2026-10-05T07:40:02.628014Z",
+      "completed_at": "2026-10-05T07:40:33.364316Z",
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.0,
+      "duration_ms": 0.0,
+      "attempt": 2
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "provider_unavailable",
+    "report": {
+      "request": "Write exactly 1 English marketing email to UK adults who have opted in and are considering National Trust membership for visits to historic places and outdoor spaces. Help them decide whether membership suits their planned visits, using only the imported official membership page. Invite them to review the membership options and conditions. Do not invent local places, opening hours, events, discounts, free access exceptions, prices absent from evidence, or guaranteed savings. This is an existing membership offer, not a new launch.",
+      "delivered": 0,
+      "promised": 1,
+      "contract_violations": [
+        "the user asked for 1 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [
+        "No customer names, quotes or case studies found - the copy can describe the product but cannot prove anyone uses it",
+        "No measurable results found - claims stay qualitative, and adjectives convert worse than numbers"
+      ],
+      "what_would_help_most": "Which customers or quotes may we name?",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "The model stopped answering and did not come back after several attempts. Everything finished before that point is below."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "Treat this as one decision-support sales email for an existing membership offer, not onboarding or a launch. Because the requested audience is broad but the brief requires one supported segment, focus on couples aged 26 or over who live together and are considering shared visits. Help them assess eligibility and documented benefits, without claiming the page can calculate value from their planned visits.",
+      "reader": "Selected audience: A couple aged 26 or over at the same address who expect to visit historic places, gardens or countryside together.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (vendor_claim; check applicability): They are considering one shared membership covering two adults rather than arranging and paying for visits separately. Joint membership costs £168 a year or £14 a month and requires both adults to be aged 26 or over and live at the same address.\nUser-specified audience: UK adults considering membership for historic places and outdoor visits",
+      "reader_segment": "A couple aged 26 or over at the same address who expect to visit historic places, gardens or countryside together",
+      "promise": "The reader can make a grounded first-pass decision by checking whether Joint membership covers them and whether its documented visitor benefits match their plans, while recognising that the available information cannot prove savings for their particular visits.",
+      "orientation": "National Trust Joint membership is a paid membership for two adults aged 26 or over at the same address, offering member entry to places in its care and other stated benefits.",
+      "arc": "Move from general interest in shared days out to a specific fit check: who Joint membership covers, what it costs, which core visit benefits it includes and what the membership page cannot determine for the reader.",
+      "sequence_rationale": "A single email should make one modest, verifiable decision easier rather than attempt an unsupported value calculation. Eligibility and price establish whether Joint membership is a relevant option; entry and parking benefits establish what the reader would receive. The email then sends them to the official membership page to review the options and conditions themselves. It must explicitly avoid suggesting that the page provides admission-price comparisons, a visit-frequency break-even point or guaranteed savings. The visit-frequency objection is not assigned because the supplied evidence cannot resolve it. The single thing the user could send us that would most change this campaign is: what measurable result do members get, and how do you know?",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Get the reader to review the official membership options and conditions so they can decide whether Joint membership's coverage and benefits suit their planned visits.",
+          "single_idea": "Before judging membership by an unsupported savings estimate, check the facts that are available: Joint membership covers two adults aged 26 or over at the same address, costs £168 a year or 12 monthly payments of £14, includes free entry to more than 500 places in the National Trust's care and includes free parking at most National Trust car parks.",
+          "felt_need": "We are planning days out together and want to know whether one membership is structured for us and what it would include.",
+          "status_quo": "They are comparing a shared membership with arranging and paying for visits separately.",
+          "why_it_fails": "",
+          "mechanism": "Use the official page as a first-pass fit check: confirm the two-adult age and same-address rules, inspect the stated annual or monthly payment amounts, and review the entry and parking benefits. This establishes coverage and terms, not whether membership will be cheaper for the reader's particular itinerary.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: deciding whether membership suits us requires knowing an exact visit-frequency break-even point. After: we can first verify whether the documented coverage, price and benefits fit our household and plans, while treating personal savings as unanswered.",
+          "evidence_ids": [
+            "E3",
+            "E20",
+            "E21"
+          ],
+          "must_not_say": [
+            "Do not claim or imply a break-even number of visits, personal savings, guaranteed value or that £168 will be worthwhile for this reader.",
+            "Do not imply that the destination provides admission prices or a calculation comparing membership with paying per visit.",
+            "Do not say parking is free everywhere; the supported claim is free parking at most National Trust car parks.",
+            "Do not invent local places, opening hours, events, discounts, access exceptions or prices absent from the evidence.",
+            "Do not imply that every National Trust place or every area of a place is included or accessible.",
+            "Do not present the membership as new, newly launched or time-limited.",
+            "Do not use testimonials, popularity claims, measurable outcomes or customer proof.",
+            "Do not list every membership tier, life membership, gift membership, Explorer Pass or unrelated benefits; let the destination carry the wider range.",
+            "Do not describe 12 monthly payments as a cancellable monthly membership or a one-month trial."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "We are not sure a shared membership fits our ages and household arrangement.",
+          "tone": "Warm, practical and transparent, with quiet purpose rather than urgency.",
+          "call_to_action": "Review the membership options and conditions: https://www.nationaltrust.org.uk/membership",
+          "next_step_decision": "Decide whether Joint membership's eligibility rules, price and stated visit benefits make it an appropriate option to consider for the two adults.",
+          "next_step_value": "The official page lets the reader review who Joint membership covers, its annual and monthly-payment amounts, and the stated entry and parking benefits alongside the membership information.",
+          "next_step_evidence_ids": [
+            "E3",
+            "E20",
+            "E21"
+          ],
+          "next_step_limit": "The page does not provide a supported visit-by-visit cost comparison or establish whether membership will save this household money on its planned visits.",
+          "subject_strategy": "Frame the open as a practical Joint membership fit check for two people, without teasing savings, urgency or a new offer.",
+          "must_not_reuse": []
+        }
+      ],
+      "voice_notes": "Use short, clear paragraphs and National Trust language such as “places in our care”, “discover” and “looking after”. Address the reader as “you” and speak as “we” only when representing the National Trust. Keep the invitation reassuring and factual; acknowledge the parking limitation and avoid hype.",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "1 English marketing email"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "1be4a38e-e406-4af3-a35f-122a6dc6d1d7",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

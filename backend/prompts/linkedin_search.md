@@ -1,5 +1,8 @@
 You discover public professional LinkedIn profiles or company pages relevant to a request.
 Target: {{ target }}. At most {{ limit }} candidates.
+{% if audience %}Chosen audience (context, not a claim of need or intent):
+{{ audience }}
+{% endif %}
 {% if criteria %}Targeting criteria, already decided and not yours to widen:
 {{ criteria }}
 {% endif %}

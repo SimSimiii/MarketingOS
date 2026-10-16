@@ -1,0 +1,434 @@
+{
+  "id": "01378db2-a929-42bb-8886-f2f5b6cd83bd",
+  "campaign_id": "1be4a38e-e406-4af3-a35f-122a6dc6d1d7",
+  "status": "failed",
+  "error_message": "Email 1 still needs verified material: The supplied evidence and destination do not establish which included places are near the reader, whether their intended places participate, or what restrictions apply; without that material, the audience cannot connect the £168 commitment to visits they would realistically make.",
+  "started_at": "2026-10-05T15:10:14.865790Z",
+  "completed_at": "2026-10-05T15:21:13.878250Z",
+  "created_at": "2026-10-05T15:10:14.865790Z",
+  "total_input_tokens": 541631,
+  "total_output_tokens": 36977,
+  "total_cache_read_tokens": 345088,
+  "estimated_cost_usd": 6.2391,
+  "recommendation_snapshot": {
+    "campaign_id": "1be4a38e-e406-4af3-a35f-122a6dc6d1d7",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "cde5bf2f-0e00-422c-a01d-d3dd1188e75a",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Before joining, compare the exact joint-membership terms and annual cost with the visits you genuinely expect to make; its included entry and parking benefits provide the relevant basis for that decision, without guaranteeing savings."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T15:10:14.953180Z",
+      "completed_at": "2026-10-05T15:10:57.684150Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 19317,
+      "output_tokens": 3134,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 12288,
+      "cost_usd": 0.543237,
+      "duration_ms": 42644.046999979764,
+      "attempt": 1
+    },
+    {
+      "id": "50807a32-ce61-41bf-b890-55a6abfb46fb",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "Before joining, compare the exact joint-membership terms and annual cost with the visits you genuinely expect to make; its included entry and parking benefits provide the relevant basis for that decision, without guaranteeing savings.",
+          "Membership can suit readers who want their visits to contribute to caring for the historic and outdoor places they value, because membership income supports the National Trust's work looking after nature, beauty and history."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Match membership to your visits",
+          "Where your membership money goes"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T15:10:57.778204Z",
+      "completed_at": "2026-10-05T15:12:23.455105Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 24894,
+      "output_tokens": 4788,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 27392,
+      "cost_usd": 0.773598,
+      "duration_ms": 135255.99069998134,
+      "attempt": 1
+    },
+    {
+      "id": "a0fb0ba3-266a-4155-be81-a04d2d85cfdd",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s) read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 6,
+        "scores": [
+          6,
+          4
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T15:12:23.492436Z",
+      "completed_at": "2026-10-05T15:13:28.804318Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 33498,
+      "output_tokens": 7563,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 79360,
+      "cost_usd": 1.188735,
+      "duration_ms": 277797.10559989326,
+      "attempt": 1
+    },
+    {
+      "id": "274c3eb4-91c5-47f8-9bf9-2f67daa91241",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "missing_material",
+        "strategy_gap": "The promised decision requires a way to verify whether the reader’s intended places and car parks are included and to compare their individual admission and parking costs with £168. Neither that evidence nor a destination that supplies it is provided, so wording alone cannot bridge planned outings to the membership decision."
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T15:13:28.855827Z",
+      "completed_at": "2026-10-05T15:14:52.394952Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 8677,
+      "output_tokens": 2970,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.375561,
+      "duration_ms": 83484.99959998298,
+      "attempt": 1
+    },
+    {
+      "id": "f6e1fce2-2b60-47fc-b12c-9402fbdd9217",
+      "agent_id": "material_researcher",
+      "agent_name": "Official Material Researcher",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Finding and verifying official material for 1 gap(s)"
+      },
+      "output_data": {
+        "recovered": false,
+        "evidence": [],
+        "sources": [],
+        "dropped_claims": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T15:14:52.430465Z",
+      "completed_at": "2026-10-05T15:15:41.957127Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 31073,
+      "output_tokens": 1086,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 68352,
+      "cost_usd": 0.650073,
+      "duration_ms": 48444.79490001686,
+      "attempt": 1
+    },
+    {
+      "id": "838cc022-80e6-466d-859c-ee788d7f2546",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 For two adults aged 26 or over living at the same address, Joint membership has clear eligibility and payment terms that can be checked before deciding whether to proceed."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T15:15:41.993693Z",
+      "completed_at": "2026-10-05T15:18:10.443844Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 16690,
+      "output_tokens": 4302,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.595656,
+      "duration_ms": 148377.85679998342,
+      "attempt": 2
+    },
+    {
+      "id": "d2a0de8d-cb65-4698-a771-d54d06d5a0e7",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "For two adults aged 26 or over living at the same address, Joint membership has clear eligibility and payment terms that can be checked before deciding whether to proceed.",
+          "Membership can be considered not only for its visitor benefits but also as a way to support the care of houses, gardens, coastlines and countryside."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Check Joint membership for two",
+          "When days out support places"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T15:18:10.503973Z",
+      "completed_at": "2026-10-05T15:19:27.051428Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 25052,
+      "output_tokens": 3952,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 27392,
+      "cost_usd": 0.713268,
+      "duration_ms": 91027.66239992343,
+      "attempt": 2
+    },
+    {
+      "id": "c4c233d9-75bb-4893-a736-040d79413fe2",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 8,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s) read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 6,
+        "scores": [
+          6,
+          4
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T15:19:27.083796Z",
+      "completed_at": "2026-10-05T15:20:21.860405Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 28421,
+      "output_tokens": 7551,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 84992,
+      "cost_usd": 1.120128,
+      "duration_ms": 281097.5050998386,
+      "attempt": 2
+    },
+    {
+      "id": "93c7d833-faf9-4f35-89f8-165ec4ae6618",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 9,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "missing_material",
+        "strategy_gap": "The supplied evidence and destination do not establish which included places are near the reader, whether their intended places participate, or what restrictions apply; without that material, the audience cannot connect the £168 commitment to visits they would realistically make."
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T15:20:21.898672Z",
+      "completed_at": "2026-10-05T15:21:13.830480Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 8921,
+      "output_tokens": 1631,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.278796,
+      "duration_ms": 51883.492100052536,
+      "attempt": 2
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "needs_input",
+    "report": {
+      "request": "Write exactly 1 English marketing email to UK adults who have opted in and are considering National Trust membership for visits to historic places and outdoor spaces. Help them decide whether membership suits their planned visits, using only the imported official membership page. Invite them to review the membership options and conditions. Do not invent local places, opening hours, events, discounts, free access exceptions, prices absent from evidence, or guaranteed savings. This is an existing membership offer, not a new launch.",
+      "delivered": 0,
+      "promised": 1,
+      "contract_violations": [
+        "the user asked for 1 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [
+        "No customer names, quotes or case studies found - the copy can describe the product but cannot prove anyone uses it",
+        "No measurable results found - claims stay qualitative, and adjectives convert worse than numbers"
+      ],
+      "what_would_help_most": "Which customers or quotes may we name?",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "Email 1 still needs verified material: The supplied evidence and destination do not establish which included places are near the reader, whether their intended places participate, or what restrictions apply; without that material, the audience cannot connect the £168 commitment to visits they would realistically make."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "Treat this as one decision-support email for opted-in, solution-aware prospects, not an onboarding message or a launch announcement. Because the brief requires one supported reader segment, narrow the broad UK-adult audience to couples aged 26 or over who live together. Help them judge the documented fit of Joint membership, while explicitly avoiding the unsupported claim that membership will save money on their planned visits.",
+      "reader": "Selected audience (user-stated constraints): UK adults considering membership for historic places and outdoor visits.\nNo further recipient situation is established. Compiled market context is research to check for applicability, not a replacement biography.",
+      "reader_segment": "A couple aged 26 or over at the same address who expect to visit historic places, gardens or countryside together",
+      "reader_profile_override": "UK adults considering membership for historic places and outdoor visits",
+      "promise": "The email will help the couple make the smaller, evidence-supported decision of whether Joint membership's stated eligibility, price, entry benefit and Direct Debit renewal condition merit further consideration; it will not claim to determine savings or suitability for their particular destinations.",
+      "orientation": "National Trust Joint membership is an annual membership for two eligible adults at the same address, providing member benefits for visits while supporting places in the National Trust's care.",
+      "arc": "In one email, move from a general interest in shared days out to a focused review of the Joint option's documented fit: who it covers, what it costs, what the entry benefit includes and how Direct Debit renewal works.",
+      "sequence_rationale": "A single email should not attempt an artificial sequence. Lead with the eligibility and £168 annual or £14 monthly price because these are immediate, checkable fit criteria for this reader. Then connect the option to free entry at more than 500 places and disclose that Direct Debit renews automatically after a year. The CTA sends readers to the official membership page to inspect the options and conditions themselves. This is intentionally narrower than deciding whether membership will pay for their planned outings: the evidence does not identify their intended places or car parks and supplies no individual admission or parking prices for a break-even comparison. The single thing the user could send us that would most change this campaign: Which customers or quotes may we name?",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Get eligible couples to review the official membership options and conditions so they can decide whether Joint membership's documented structure is suitable enough to consider further.",
+          "single_idea": "For two adults aged 26 or over living at the same address, Joint membership has clear eligibility and payment terms that can be checked before deciding whether to proceed.",
+          "felt_need": "We are planning days out together, but first need to know exactly who the shared membership covers, what it costs and what commitment it involves.",
+          "status_quo": "They are comparing a shared membership with arranging their visits separately.",
+          "why_it_fails": "",
+          "mechanism": "State that Joint membership covers two adults aged 26 or over at the same address and costs £168 a year or 12 monthly payments of £14. Explain that membership includes free entry to more than 500 places in the National Trust's care. Make the ongoing condition visible: payment by Direct Debit automatically renews the membership after one year.",
+          "alternative_ideas": [],
+          "alternative_arguments": [
+            {
+              "single_idea": "Membership can be considered not only for its visitor benefits but also as a way to support the care of houses, gardens, coastlines and countryside.",
+              "felt_need": "We want our days out to contribute to looking after the kinds of places we value.",
+              "status_quo": "",
+              "why_it_fails": "",
+              "mechanism": "Explain that membership support helps the National Trust look after hundreds of places, from houses and gardens to coastlines and countryside, and that every penny from membership goes towards looking after nature, beauty and history.",
+              "belief_shift": "Before: membership is only a transaction for visits. After: supporting the care of these places may be a separate, relevant reason to consider it.",
+              "evidence_ids": [
+                "E1",
+                "E19"
+              ],
+              "must_not_say": [
+                "Do not claim membership creates measurable conservation outcomes for each member.",
+                "Do not imply that joining guarantees any particular place, habitat or building will be preserved.",
+                "Do not claim this support makes membership financially worthwhile for the reader.",
+                "Do not introduce customer stories, testimonials or quantified impact."
+              ],
+              "objection": "We would rather pay only when we visit or support the National Trust another way.",
+              "call_to_action": "Review the membership options and conditions at https://www.nationaltrust.org.uk/membership.",
+              "next_step_decision": "Whether supporting the care of the National Trust's places is an important enough part of the offer to keep considering membership.",
+              "next_step_value": "The official page explains that membership revenue supports the care of nature, beauty and history and describes the kinds of places that member support helps look after.",
+              "next_step_evidence_ids": [
+                "E1",
+                "E19"
+              ],
+              "next_step_limit": "The page does not compare membership with individual admission payments or direct donations, quantify the effect of one membership, or establish financial value for this couple.",
+              "subject_strategy": "Earn the open by connecting planned days out with the care of houses, gardens, coastlines and countryside, without using guilt, urgency or an impact claim."
+            }
+          ],
+          "belief_shift": "Before: Joint membership is a vague shared-days-out offer whose fit is hard to judge. After: its age, address, price, entry benefit and automatic-renewal condition are concrete enough to review directly.",
+          "evidence_ids": [
+            "E3",
+            "E20",
+            "E26"
+          ],
+          "must_not_say": [
+            "Do not claim or imply that membership will save this couple money or pay for itself.",
+            "Do not give a visit-frequency or break-even estimate.",
+            "Do not imply that any intended place is included or open to them.",
+            "Do not claim free parking, because that would require another evidence point and would still not establish coverage at their intended car parks.",
+            "Do not describe free entry as applying without exceptions or conditions.",
+            "Do not call the offer new, newly launched, limited-time or urgent.",
+            "Do not invent local places, opening hours, events, discounts or admission prices.",
+            "Do not imply that monthly payment removes the annual commitment.",
+            "Do not omit or soften automatic renewal when discussing Direct Debit.",
+            "Do not introduce family, junior, lifetime, senior, gift, Explorer Pass, guest-pass, Handbook, Magazine or Essential Companion details; they would dilute this email's fit decision."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "We do not want to consider a shared membership until we know whether we meet its household rules and whether paying by Direct Debit creates an ongoing commitment.",
+          "tone": "Warm, clear and unhurried, with practical terms presented plainly and no pressure to join.",
+          "call_to_action": "Review the membership options and conditions at https://www.nationaltrust.org.uk/membership.",
+          "next_step_decision": "Whether Joint membership's eligibility, stated price, core entry benefit and Direct Debit renewal condition fit well enough to remain under consideration.",
+          "next_step_value": "The official membership page shows that Joint membership covers two adults aged 26 or over at the same address, costs £168 a year or 12 monthly payments of £14, includes free entry to more than 500 places in the National Trust's care, and explains that Direct Debit renews automatically after one year.",
+          "next_step_evidence_ids": [
+            "E3",
+            "E20",
+            "E26"
+          ],
+          "next_step_limit": "Reviewing this page does not verify whether the couple's intended places or car parks are included, provide their individual admission or parking costs, or establish whether membership would save them money.",
+          "subject_strategy": "Signal a practical membership-fit check for two people rather than promise savings, adventure or a special offer.",
+          "must_not_reuse": []
+        }
+      ],
+      "voice_notes": "Use National Trust language such as “places in our care”, “discover”, “explore” and “looking after”. Address the reader as “you” and speak as “we” where needed. Keep paragraphs short and avoid hype, forced urgency and a human sign-off.",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "1 English marketing email"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "1be4a38e-e406-4af3-a35f-122a6dc6d1d7",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

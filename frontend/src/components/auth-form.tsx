@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Sparkles } from "lucide-react";
+import { ArrowRight, Eye, Layers, ShieldCheck, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -85,134 +85,218 @@ export function AuthForm({ mode, allowSignup }: { mode: Mode; allowSignup: boole
   }
 
   return (
-    <div className="mx-auto flex min-h-[80vh] w-full max-w-md flex-col justify-center">
-      <div className="mb-8 flex items-center justify-center gap-3">
-        <span className="flex size-10 items-center justify-center rounded-xl border border-violet-400/30 bg-violet-500/15 text-violet-300 shadow-[0_0_24px_-6px_oklch(0.62_0.22_292/0.7)]">
-          <Sparkles className="size-5" aria-hidden="true" />
-        </span>
-        <span className="text-xl font-semibold tracking-tight">
-          Marketing<span className="text-violet-300">OS</span>
-        </span>
-      </div>
+    <div className="grid min-h-dvh lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
+      <AuthShowcase />
 
-      {/* The one page a signed-out visitor can reach, so it gets the same
-          surface the workspace uses rather than bare fields on the ground. */}
-      <div className="studio-hero rounded-2xl border border-violet-400/15 p-6 sm:p-8">
-      <h1 className="text-2xl font-semibold tracking-tight">
-        {signingUp ? "Create your account" : "Sign in"}
-      </h1>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-        {signingUp
-          ? "One account holds your businesses, their compiled knowledge, and every campaign written from it."
-          : "Your businesses, their knowledge and their campaigns are behind this."}
-      </p>
+      <section className="relative flex items-center justify-center px-5 py-12 sm:px-8">
+        <div className="w-full max-w-[26rem]">
+          <Link href="/" className="mb-10 flex justify-center lg:hidden" aria-label="MarketingOS home">
+            <AuthWordmark />
+          </Link>
 
-      {signingUp && !allowSignup && (
-        <p className="mt-4 rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
-          Access is currently by invitation. Ask the person who invited you to create your
-          account, then return to Sign in.
-        </p>
-      )}
-
-      <form onSubmit={submit} className="mt-6 space-y-4">
-        <div className="space-y-1.5">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            className="h-10"
-            autoComplete="username"
-            required
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-          />
-        </div>
-
-        {signingUp && (
-          <>
-            <div className="space-y-1.5">
-              <Label htmlFor="full-name">Your name</Label>
-              <Input
-                id="full-name"
-                className="h-10"
-                autoComplete="name"
-                value={fullName}
-                onChange={(event) => setFullName(event.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="company">Company</Label>
-              <Input
-                id="company"
-                className="h-10"
-                autoComplete="organization"
-                value={company}
-                onChange={(event) => setCompany(event.target.value)}
-              />
-            </div>
-          </>
-        )}
-
-        <div className="space-y-1.5">
-          <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            type="password"
-            className="h-10"
-            autoComplete={signingUp ? "new-password" : "current-password"}
-            required
-            minLength={signingUp ? 10 : undefined}
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-          {signingUp && (
-            <p className="text-xs text-muted-foreground">
-              At least 10 characters. Length is the only rule - a passphrase beats
-              punctuation.
+          {/* The one page a signed-out visitor can reach, so it gets the same
+              surface the workspace uses rather than bare fields on the ground. */}
+          <div className="studio-hero rise rounded-3xl p-7 sm:p-9">
+            <p className="mb-3 flex items-center gap-2.5 text-[0.6875rem] font-medium uppercase tracking-[0.2em] text-violet-300/90">
+              <span className="h-px w-6 bg-gradient-to-r from-violet-400/80 to-transparent" aria-hidden="true" />
+              {signingUp ? "Join the studio" : "Welcome back"}
             </p>
-          )}
-        </div>
+            <h1 className="font-display text-[2.5rem] leading-[1.05] text-gradient">
+              {signingUp ? "Create your account" : "Sign in"}
+            </h1>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              {signingUp
+                ? "One account holds your businesses, their compiled knowledge, and every campaign written from it."
+                : "Your businesses, their knowledge and their campaigns are behind this."}
+            </p>
 
-        {error && (
-          <p
-            role="alert"
-            className="rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-          >
-            {error}
+            {signingUp && !allowSignup && (
+              <p className="mt-5 rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-sm leading-relaxed text-muted-foreground">
+                Access is currently by invitation. Ask the person who invited you to create your
+                account, then return to Sign in.
+              </p>
+            )}
+
+            <form onSubmit={submit} className="mt-7 space-y-5">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  className="h-11"
+                  autoComplete="username"
+                  placeholder="you@company.com"
+                  required
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                />
+              </div>
+
+              {signingUp && (
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="full-name">Your name</Label>
+                    <Input
+                      id="full-name"
+                      className="h-11"
+                      autoComplete="name"
+                      value={fullName}
+                      onChange={(event) => setFullName(event.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="company">Company</Label>
+                    <Input
+                      id="company"
+                      className="h-11"
+                      autoComplete="organization"
+                      value={company}
+                      onChange={(event) => setCompany(event.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  className="h-11"
+                  autoComplete={signingUp ? "new-password" : "current-password"}
+                  required
+                  minLength={signingUp ? 10 : undefined}
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                />
+                {signingUp && (
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    At least 10 characters. Length is the only rule - a passphrase beats
+                    punctuation.
+                  </p>
+                )}
+              </div>
+
+              {error && (
+                <p
+                  role="alert"
+                  className="rounded-xl border border-red-400/25 bg-red-500/[0.07] px-4 py-3 text-sm text-red-200"
+                >
+                  {error}
+                </p>
+              )}
+
+              <Button
+                type="submit"
+                size="lg"
+                disabled={busy || (signingUp && !allowSignup)}
+                className="h-11 w-full text-[0.9375rem]"
+              >
+                {busy
+                  ? signingUp
+                    ? "Creating…"
+                    : "Signing in…"
+                  : signingUp
+                    ? "Create account"
+                    : "Sign in"}
+                {!busy && <ArrowRight aria-hidden="true" />}
+              </Button>
+            </form>
+          </div>
+
+          <p className="mt-7 text-center text-sm text-muted-foreground">
+            {signingUp ? (
+              <>
+                Already have an account?{" "}
+                <Link href="/login" className="font-medium text-violet-300 hover:text-violet-200 hover:underline">
+                  Sign in
+                </Link>
+              </>
+            ) : allowSignup ? (
+              <>
+                No account yet?{" "}
+                <Link href="/register" className="font-medium text-violet-300 hover:text-violet-200 hover:underline">
+                  Create one
+                </Link>
+              </>
+            ) : (
+              "Accounts are created by invitation while the product is in testing."
+            )}
           </p>
-        )}
+        </div>
+      </section>
+    </div>
+  );
+}
 
-        <Button type="submit" size="lg" disabled={busy || (signingUp && !allowSignup)} className="w-full">
-          {busy
-            ? signingUp
-              ? "Creating…"
-              : "Signing in…"
-            : signingUp
-              ? "Create account"
-              : "Sign in"}
-        </Button>
-      </form>
+export function AuthWordmark() {
+  return (
+    <span className="flex items-center gap-3">
+      <span className="brand-mark flex size-10 items-center justify-center rounded-xl text-white">
+        <Sparkles className="size-5" aria-hidden="true" />
+      </span>
+      <span className="text-xl font-semibold tracking-tight">
+        Marketing<span className="text-gradient-accent">OS</span>
+      </span>
+    </span>
+  );
+}
+
+const PROMISES = [
+  {
+    icon: ShieldCheck,
+    title: "Only what you can prove",
+    body: "Every number, price and quotation is checked against your own material before a draft can ship.",
+  },
+  {
+    icon: Eye,
+    title: "Read cold, first",
+    body: "Each email is read by someone who has never seen the brief. What they could not follow is rewritten.",
+  },
+  {
+    icon: Layers,
+    title: "One home per business",
+    body: "Sources, compiled knowledge and market context stay with the brand, and every campaign reuses them.",
+  },
+];
+
+/** The half of the sign-in page that says what is behind it. Hidden on a
+ * phone, where the form is the whole job. */
+function AuthShowcase() {
+  return (
+    <aside className="relative isolate hidden overflow-hidden border-r border-white/[0.06] lg:flex lg:flex-col lg:justify-between lg:p-12 xl:p-16">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_55%_at_20%_0%,oklch(0.5_0.22_293/30%),transparent_70%),radial-gradient(ellipse_60%_50%_at_100%_100%,oklch(0.5_0.16_262/18%),transparent_70%)]"
+      />
+      <div aria-hidden="true" className="bg-grid pointer-events-none absolute inset-0 -z-10 opacity-70" />
+
+      <Link href="/" aria-label="MarketingOS home" className="w-fit rounded-xl">
+        <AuthWordmark />
+      </Link>
+
+      <div className="max-w-xl">
+        <h2 className="font-display text-[3.25rem] leading-[1.02] xl:text-[3.75rem]">
+          Email copy written from{" "}
+          <span className="text-gradient-accent italic">your own material</span>, read cold before
+          you ever see it.
+        </h2>
+        <ul className="rise-stagger mt-12 space-y-6">
+          {PROMISES.map(({ icon: Icon, title, body }) => (
+            <li key={title} className="flex gap-4">
+              <span className="icon-tile flex size-10 shrink-0 items-center justify-center rounded-xl">
+                <Icon className="size-[1.125rem]" aria-hidden="true" />
+              </span>
+              <span>
+                <span className="block text-[0.9375rem] font-semibold">{title}</span>
+                <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">{body}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
 
-      <p className="mt-6 text-center text-sm text-muted-foreground">
-        {signingUp ? (
-          <>
-            Already have an account?{" "}
-            <Link href="/login" className="text-violet-300 hover:underline">
-              Sign in
-            </Link>
-          </>
-        ) : allowSignup ? (
-          <>
-            No account yet?{" "}
-            <Link href="/register" className="text-violet-300 hover:underline">
-              Create one
-            </Link>
-          </>
-        ) : (
-          "Accounts are created by invitation while the product is in testing."
-        )}
-      </p>
-    </div>
+      <p className="text-xs text-muted-foreground/70">MarketingOS · Grounded email studio</p>
+    </aside>
   );
 }

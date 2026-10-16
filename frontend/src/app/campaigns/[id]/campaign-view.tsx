@@ -128,17 +128,17 @@ export function CampaignDetailView() {
       {(live ?? latest) && (
         <Link
           href={`/campaigns/${campaign.id}/executions/${(live ?? latest)!.id}`}
-          className="group rise flex flex-wrap items-center gap-4 rounded-xl border border-violet-400/25 bg-violet-500/[0.07] p-4 transition-colors hover:border-violet-400/50 hover:bg-violet-500/10 sm:p-5"
+          className="group rise ring-gradient surface-interactive flex flex-wrap items-center gap-4 overflow-hidden rounded-2xl bg-[linear-gradient(100deg,oklch(0.55_0.2_293/16%),oklch(0.55_0.2_293/4%)_60%,transparent)] p-4 shadow-[var(--shadow-surface)] sm:p-5"
         >
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-violet-500/15 text-violet-300">
+          <span className="brand-mark flex size-11 shrink-0 items-center justify-center rounded-xl text-white">
             {live ? (
-              <span className="size-2.5 rounded-full bg-violet-400 motion-safe:animate-pulse" aria-hidden="true" />
+              <span className="live-dot !bg-white" aria-hidden="true" />
             ) : (
               <MailCheck className="size-5" aria-hidden="true" />
             )}
           </span>
-          <span className="min-w-0 flex-1">
-            <span className="block text-sm font-medium">
+          <span className="min-w-0 flex-1 basis-56">
+            <span className="block text-[0.9375rem] font-semibold">
               {live ? "A run is in progress" : (latest?.needs_review || latest?.error_message) ? "Your latest run needs review" : "Your latest drafts are ready for review"}
             </span>
             <span className="mt-0.5 block text-xs text-muted-foreground">
@@ -147,7 +147,7 @@ export function CampaignDetailView() {
                 : `Finished ${latest!.completed_at ? timeAgo(latest!.completed_at) : ""} — ${(latest!.needs_review || latest!.error_message) ? "review the stop reason and any delivered drafts." : "read the drafts and review them before use."}`}
             </span>
           </span>
-          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-violet-200">
+          <span className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-white/[0.06] px-3.5 py-1.5 text-sm font-medium text-violet-100 ring-1 ring-white/10 transition-colors group-hover:bg-white/[0.1] sm:w-auto">
             {live ? "Open the run" : "Open the emails"}
             <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
           </span>
@@ -156,12 +156,20 @@ export function CampaignDetailView() {
 
       {/* The brief is what every other panel on this page is downstream of, so
           it is quoted rather than filed in a card the same size as "Website". */}
-      <section className="studio-hero relative overflow-hidden rounded-2xl border border-violet-400/15 p-6 sm:p-7">
-        <p className="mb-3 flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.18em] text-violet-300">
+      <section className="studio-hero relative overflow-hidden rounded-3xl p-6 sm:p-9">
+        {/* The quotation mark as an ornament, set in the display face so the
+            brief reads as something the reader said rather than a form field. */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-6 right-6 font-display text-[11rem] leading-none text-violet-400/10 select-none sm:right-10"
+        >
+          &rdquo;
+        </span>
+        <p className="mb-4 flex items-center gap-2 text-[0.6875rem] font-medium uppercase tracking-[0.2em] text-violet-300">
           <Quote className="size-3.5" aria-hidden="true" /> What you asked for
         </p>
-        <p className="max-w-3xl text-lg leading-relaxed">{campaign.request}</p>
-        {executions.length > 0 && <p className="text-sm text-muted-foreground">To change this brief, choose Duplicate in the campaign menu. Previous runs keep their original campaign context.</p>}
+        <p className="relative max-w-3xl whitespace-pre-line text-[1.0625rem] leading-[1.75] text-foreground/95 sm:text-lg">{campaign.request}</p>
+        {executions.length > 0 && <p className="relative mt-5 border-t border-white/[0.07] pt-4 text-xs leading-relaxed text-muted-foreground">To change this brief, choose Duplicate in the campaign menu. Previous runs keep their original campaign context.</p>}
       </section>
 
       {/* Four short answers about one campaign, in one panel. As four cards
@@ -170,9 +178,9 @@ export function CampaignDetailView() {
       {/* Runs sit under the facts rather than below the whole grid: the preset
           column is tall, and beside a two-line fact panel it left a screen of
           empty space above the one table this page exists to show. */}
-      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
+      <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
         <div className="min-w-0 space-y-4">
-        <dl className="grid gap-x-6 gap-y-5 rounded-xl border border-border bg-card p-5 sm:grid-cols-3">
+        <dl className="surface grid gap-x-6 gap-y-5 rounded-2xl p-5 sm:grid-cols-3 sm:p-6">
           <Fact label="Website">
             {campaign.product_url ? (
               <a
@@ -211,8 +219,15 @@ export function CampaignDetailView() {
           </Fact>
         </dl>
         <Card className="gap-0 py-0">
-          <CardHeader className="border-b p-5">
-            <CardTitle>Runs</CardTitle>
+          <CardHeader className="border-b p-5 sm:px-6">
+            <CardTitle className="flex items-center gap-2.5">
+              Runs
+              {executions.length > 0 && (
+                <span className="rounded-full bg-white/[0.06] px-2 py-px text-[0.6875rem] font-medium tabular-nums text-muted-foreground">
+                  {executions.length}
+                </span>
+              )}
+            </CardTitle>
             <CardDescription>
               Every time this brief was sent through the pipeline, and what it produced.
             </CardDescription>
@@ -243,8 +258,8 @@ export function CampaignDetailView() {
                     <TableRow key={execution.id} className="relative">
                       <TableCell>
                         <span className="flex flex-wrap items-center gap-2">
-                          <span className="w-7 text-xs text-muted-foreground tabular-nums">
-                            #{executions.length - index}
+                          <span className="flex size-7 items-center justify-center rounded-lg bg-white/[0.04] text-[0.6875rem] font-medium text-muted-foreground tabular-nums ring-1 ring-white/[0.06]">
+                            {executions.length - index}
                           </span>
                           <StatusBadge status={execution.status} warning={execution.needs_review || (execution.status === "completed" && Boolean(execution.error_message))} />
                           {/* Once per run it is a note, not an alarm - an amber
@@ -283,7 +298,7 @@ export function CampaignDetailView() {
                       <TableCell className="text-right">
                         <Link
                           href={`/campaigns/${campaign.id}/executions/${execution.id}`}
-                          className="inline-flex items-center gap-1 text-sm font-medium text-violet-300 after:absolute after:inset-0 hover:underline"
+                          className="inline-flex items-center gap-1 text-sm font-medium text-violet-300 after:absolute after:inset-0 hover:text-violet-200"
                         >
                           Open
                           <ArrowRight className="size-3.5" aria-hidden="true" />
@@ -297,8 +312,8 @@ export function CampaignDetailView() {
           </CardContent>
         </Card>
         </div>
-        <div className="rounded-xl border border-border bg-card p-5 lg:sticky lg:top-6">
-          <p className="mb-2.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+        <div className="surface rounded-2xl p-5 lg:sticky lg:top-6">
+          <p className="mb-3 text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-muted-foreground">
             Execution preset
           </p>
           <CampaignPolicySelect campaign={campaign} />
@@ -324,7 +339,7 @@ function Fact({
 }) {
   return (
     <div className="min-w-0">
-      <dt className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+      <dt className="text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-muted-foreground">
         {label}
       </dt>
       <dd className="mt-1.5 text-sm leading-relaxed">{children}</dd>

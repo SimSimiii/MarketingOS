@@ -91,7 +91,7 @@ export function BrandKnowledgeDialog({
                   <Empty>No facts extracted yet.</Empty>
                 ) : (
                   knowledge.artifacts.evidence.entries.map((entry) => (
-                    <div key={entry.id} className="rounded-md border p-3 text-sm">
+                    <div key={entry.id} className="rounded-xl bg-white/[0.025] p-3.5 text-sm ring-1 ring-white/[0.06]">
                       <div className="mb-1 flex flex-wrap items-center gap-2">
                         <Badge variant="secondary">{entry.id}</Badge>
                         <Badge variant="outline">{entry.kind}</Badge>
@@ -117,7 +117,7 @@ export function BrandKnowledgeDialog({
                   <Empty>No audience segments established yet.</Empty>
                 ) : (
                   knowledge.artifacts.audience.segments.map((segment) => (
-                    <div key={segment.name} className="rounded-md border p-3 text-sm">
+                    <div key={segment.name} className="rounded-xl bg-white/[0.025] p-3.5 text-sm ring-1 ring-white/[0.06]">
                       <p className="font-medium">{segment.name}</p>
                       <p className="mt-1 text-muted-foreground">{segment.situation}</p>
                       <p className="mt-1">
@@ -138,7 +138,7 @@ export function BrandKnowledgeDialog({
                   <div className="pt-2">
                     <p className="mb-2 text-sm font-medium">Why they say no</p>
                     {knowledge.artifacts.audience.objections.map((objection, i) => (
-                      <div key={i} className="mb-2 rounded-md border p-3 text-sm">
+                      <div key={i} className="mb-2 rounded-xl bg-white/[0.025] p-3.5 text-sm ring-1 ring-white/[0.06]">
                         <p className="font-medium">{objection.objection}</p>
                         <p className="mt-1 text-muted-foreground">
                           {objection.answer || "nothing in the material answers this yet"}
@@ -152,7 +152,7 @@ export function BrandKnowledgeDialog({
 
             <TabsContent value="business" className="pt-4">
               <Scroll>
-                <div className="rounded-md border p-3 text-sm">
+                <div className="rounded-xl bg-white/[0.025] p-3.5 text-sm ring-1 ring-white/[0.06]">
                   <p className="font-medium">
                     {knowledge.artifacts.business.company_name || "Not named in the material"}
                   </p>
@@ -169,7 +169,7 @@ export function BrandKnowledgeDialog({
                   </div>
                 </div>
                 {knowledge.artifacts.business.facts.map((fact, i) => (
-                  <div key={i} className="rounded-md border p-3 text-sm">
+                  <div key={i} className="rounded-xl bg-white/[0.025] p-3.5 text-sm ring-1 ring-white/[0.06]">
                     <p>{fact.statement}</p>
                     <p className="mt-1 text-xs text-muted-foreground">
                       {GROUNDING_LABEL[fact.grounding] ?? fact.grounding}
@@ -178,7 +178,7 @@ export function BrandKnowledgeDialog({
                   </div>
                 ))}
                 {knowledge.artifacts.offer.plans.length > 0 && (
-                  <div className="rounded-md border p-3 text-sm">
+                  <div className="rounded-xl bg-white/[0.025] p-3.5 text-sm ring-1 ring-white/[0.06]">
                     <p className="mb-1 font-medium">Plans</p>
                     {knowledge.artifacts.offer.plans.map((plan) => (
                       <p key={plan.name} className="text-muted-foreground">
@@ -192,7 +192,7 @@ export function BrandKnowledgeDialog({
 
             <TabsContent value="voice" className="pt-4">
               <Scroll>
-                <div className="rounded-md border p-3 text-sm">
+                <div className="rounded-xl bg-white/[0.025] p-3.5 text-sm ring-1 ring-white/[0.06]">
                   <Badge variant={knowledge.artifacts.voice.learned ? "secondary" : "outline"}>
                     {knowledge.artifacts.voice.learned
                       ? "Learned from copy this company sent"
@@ -208,7 +208,7 @@ export function BrandKnowledgeDialog({
                   </p>
                 </div>
                 {knowledge.artifacts.voice.exemplars.map((passage, i) => (
-                  <div key={i} className="rounded-md border p-3 text-sm italic text-muted-foreground">
+                  <div key={i} className="rounded-xl bg-white/[0.025] p-3.5 text-sm ring-1 ring-white/[0.06] italic text-muted-foreground">
                     &ldquo;{passage}&rdquo;
                   </div>
                 ))}
@@ -221,7 +221,7 @@ export function BrandKnowledgeDialog({
                   <Empty>Nothing material is missing.</Empty>
                 ) : (
                   knowledge.artifacts.gaps.gaps.map((gap) => (
-                    <div key={gap.id} className="rounded-md border p-3 text-sm">
+                    <div key={gap.id} className="rounded-xl bg-white/[0.025] p-3.5 text-sm ring-1 ring-white/[0.06]">
                       <div className="mb-1 flex items-center gap-2">
                         <Badge variant={gap.severity === "blocking" ? "destructive" : "outline"}>
                           {gap.severity}

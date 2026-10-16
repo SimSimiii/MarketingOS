@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { Search, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { BrandDisclosure, BrandSectionHeader } from "../../brand-ui";
 import { ExpandableText } from "@/components/expandable-text";
+import { SearchField, Toolbar } from "@/components/toolbar";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -121,7 +122,7 @@ function RivalRow({
   return (
     <div
       className={cn(
-        "rounded-xl border border-border bg-card p-4",
+        "surface rounded-2xl p-4 transition-opacity sm:p-5",
         rival.muted && "opacity-50",
       )}
     >
@@ -166,7 +167,7 @@ function RivalRow({
         </div>
       </div>
       {open && (
-        <div className="mt-3 border-t border-border/50 pt-3">
+        <div className="mt-3 border-t border-hairline pt-3">
           {profile ? (
             <ProfileDetail profile={profile} />
           ) : (
@@ -277,12 +278,12 @@ export function RivalsPanel({
           </form>
           <p className="mt-2 text-xs text-muted-foreground">{KIND[kind].hint}</p>
       </BrandDisclosure>
-      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card p-3">
-        <div className="relative min-w-48 flex-1"><Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" /><Input aria-label="Search competitors" placeholder="Search competitors…" value={query} onChange={(event) => setQuery(event.target.value)} className="pl-9" /></div>
+      <Toolbar>
+        <SearchField label="Search competitors" placeholder="Search competitors…" value={query} onChange={setQuery} />
         <Button variant={showMuted ? "secondary" : "outline"} size="sm" aria-pressed={showMuted} onClick={() => setShowMuted(!showMuted)}>Include muted</Button>
-        <span role="status" className="text-xs text-muted-foreground">{visible.length} of {rows.length}</span>
-      </div>
-      {rows.length > 0 && visible.length === 0 && <div className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No matching competitors. Try another search or include muted entries.</div>}
+        <span role="status" className="px-1 text-xs text-muted-foreground tabular-nums">{visible.length} of {rows.length}</span>
+      </Toolbar>
+      {rows.length > 0 && visible.length === 0 && <div className="surface rounded-2xl p-6 text-center text-sm text-muted-foreground">No matching competitors. Try another search or include muted entries.</div>}
       {rows.length === 0 ? (
         <Card>
           <CardContent className="p-6 text-sm text-muted-foreground">

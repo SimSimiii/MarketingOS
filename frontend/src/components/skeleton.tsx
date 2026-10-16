@@ -16,7 +16,10 @@ export function Skeleton({ className }: { className?: string }) {
   return (
     <div
       aria-hidden="true"
-      className={cn("rounded-md bg-muted motion-safe:animate-pulse", className)}
+      className={cn(
+        "rounded-md bg-white/[0.045] bg-[linear-gradient(90deg,transparent_0%,oklch(1_0_0/5%)_45%,oklch(1_0_0/8%)_50%,oklch(1_0_0/5%)_55%,transparent_100%)] bg-[length:200%_100%] motion-safe:animate-shimmer",
+        className,
+      )}
     />
   );
 }
@@ -42,9 +45,9 @@ export function SkeletonPage({
 /** Eyebrow, title, description - the `PageHeader` every page opens with. */
 export function SkeletonHeader({ eyebrow = true }: { eyebrow?: boolean }) {
   return (
-    <div className="space-y-3">
-      {eyebrow && <Skeleton className="h-2.5 w-24" />}
-      <Skeleton className="h-8 w-2/3 max-w-sm" />
+    <div className="space-y-3.5">
+      {eyebrow && <Skeleton className="h-2.5 w-28" />}
+      <Skeleton className="h-11 w-2/3 max-w-sm rounded-lg" />
       <Skeleton className="h-4 w-4/5 max-w-lg" />
     </div>
   );
@@ -53,9 +56,9 @@ export function SkeletonHeader({ eyebrow = true }: { eyebrow?: boolean }) {
 /** A row of stat tiles, at the size `StatTile` actually renders. */
 export function SkeletonStats({ count = 3 }: { count?: number }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-3">
+    <div className={cn("grid gap-4 sm:grid-cols-2", count === 4 ? "xl:grid-cols-4" : "lg:grid-cols-3")}>
       {Array.from({ length: count }, (_, index) => (
-        <Skeleton key={index} className="h-[7.5rem] rounded-xl" />
+        <Skeleton key={index} className="h-[8.75rem] rounded-2xl" />
       ))}
     </div>
   );
@@ -64,7 +67,7 @@ export function SkeletonStats({ count = 3 }: { count?: number }) {
 /** A card holding a list or a table. */
 export function SkeletonTable({ rows = 5 }: { rows?: number }) {
   return (
-    <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
+    <div className="surface divide-y divide-hairline overflow-hidden rounded-2xl">
       {Array.from({ length: rows }, (_, index) => (
         <div key={index} className="flex items-center gap-4 p-5">
           <Skeleton className="size-10 shrink-0 rounded-lg" />

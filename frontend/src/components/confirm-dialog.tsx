@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { CircleHelp, TriangleAlert } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -44,6 +45,16 @@ export function ConfirmDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
+          <span
+            className={
+              tone === "destructive"
+                ? "mb-2 flex size-11 items-center justify-center rounded-2xl bg-red-500/10 text-red-300 ring-1 ring-red-400/25"
+                : "icon-tile mb-2 flex size-11 items-center justify-center rounded-2xl"
+            }
+            aria-hidden="true"
+          >
+            {tone === "destructive" ? <TriangleAlert className="size-5" /> : <CircleHelp className="size-5" />}
+          </span>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription render={<div />}>{description}</DialogDescription>
         </DialogHeader>
@@ -51,8 +62,13 @@ export function ConfirmDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={pending}>
             Cancel
           </Button>
-          <Button variant={tone === "destructive" ? "destructive" : "default"} onClick={onConfirm} disabled={pending}>
-            {pending ? "Working..." : confirmLabel}
+          <Button
+            variant={tone === "destructive" ? "destructive" : "default"}
+            onClick={onConfirm}
+            disabled={pending}
+            className={tone === "destructive" ? "border-red-400/40 bg-red-500/85 text-white hover:bg-red-500 hover:text-white" : undefined}
+          >
+            {pending ? "Working…" : confirmLabel}
           </Button>
         </DialogFooter>
       </DialogContent>

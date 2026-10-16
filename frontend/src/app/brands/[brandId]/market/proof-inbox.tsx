@@ -66,7 +66,7 @@ function ProofCard({
         {/* The verbatim is the thing being approved. Approving this card
             licenses these exact words in a finished email, so it is the
             largest text on the card rather than a footnote. */}
-        <blockquote className="border-l-2 border-border pl-3 text-foreground/90 italic">
+        <blockquote className="border-l-2 border-violet-400/40 pl-3 text-foreground/90 italic">
           &ldquo;{candidate.verbatim}&rdquo;
         </blockquote>
 

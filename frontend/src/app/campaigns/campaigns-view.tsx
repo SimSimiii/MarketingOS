@@ -46,8 +46,9 @@ export function CampaignsView() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Email studio"
-        title={`Campaigns${brand ? ` — ${brand.name}` : ""}`}
+        eyebrow={brand ? `Campaigns · ${brand.name}` : "Email studio"}
+        title={brand ? brand.name : "Campaigns"}
+        documentTitle={brand ? `Campaigns · ${brand.name}` : "Campaigns"}
         description={brand ? "Everything this business has asked for, written from its own knowledge base." : "From the first brief to the final email. Manage your work here."}
         backTo={brand ? { href: `/brands/${brand.id}`, label: brand.name } : undefined}
         actions={<>

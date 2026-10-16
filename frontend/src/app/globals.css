@@ -10,6 +10,9 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-geist-sans);
+  /* The editorial face: page titles and the few lines that are meant to be
+     read as a headline rather than scanned as a label. Never body copy. */
+  --font-display: var(--font-instrument-serif), ui-serif, Georgia, serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -40,6 +43,7 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-hairline: var(--hairline);
+  --color-surface-raised: var(--surface-raised);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -47,103 +51,104 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  --animate-shimmer: shimmer 1.8s ease-in-out infinite;
+  --animate-live: live 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/*
+ * One theme: dark, violet. The console has no light mode and no toggle, so
+ * the tokens live on :root and the `dark` class on <html> exists only for the
+ * `dark:` variants inside the generated primitives.
+ *
+ * The neutrals are not grey. Every surface carries a little of the accent's
+ * hue (285-293), which is what makes a near-black page read as ink rather
+ * than as a monitor switched off.
+ */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-  --hairline: oklch(0 0 0 / 6%);
-}
-
-.dark {
-  --background: oklch(0.145 0.009 285);
-  --foreground: oklch(0.965 0.005 292);
-  --card: oklch(0.195 0.012 285);
-  --card-foreground: oklch(0.965 0.005 292);
-  --popover: oklch(0.19 0.02 292);
-  --popover-foreground: oklch(0.965 0.005 292);
-  --primary: oklch(0.606 0.25 292.717);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.26 0.03 292);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.24 0.02 292);
-  --muted-foreground: oklch(0.72 0.015 292);
-  --accent: oklch(0.3 0.06 292.717);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.606 0.25 292.717);
-  --chart-1: oklch(0.606 0.25 292.717);
-  --chart-2: oklch(0.702 0.183 293.541);
-  --chart-3: oklch(0.556 0 0);
-  --chart-4: oklch(0.439 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.17 0.012 285);
-  --sidebar-foreground: oklch(0.965 0.005 292);
-  --sidebar-primary: oklch(0.606 0.25 292.717);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.26 0.04 292);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.606 0.25 292.717);
+  --background: oklch(0.13 0.014 283);
+  --foreground: oklch(0.97 0.004 286);
+  --card: oklch(0.172 0.016 284);
+  --card-foreground: oklch(0.97 0.004 286);
+  --popover: oklch(0.185 0.02 285);
+  --popover-foreground: oklch(0.97 0.004 286);
+  --primary: oklch(0.62 0.22 293);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.245 0.022 286);
+  --secondary-foreground: oklch(0.97 0.004 286);
+  --muted: oklch(0.225 0.018 286);
+  --muted-foreground: oklch(0.71 0.018 286);
+  --accent: oklch(0.28 0.06 292);
+  --accent-foreground: oklch(0.99 0 0);
+  --destructive: oklch(0.69 0.19 22);
+  --border: oklch(1 0 0 / 8.5%);
+  --input: oklch(1 0 0 / 11%);
+  --ring: oklch(0.66 0.2 293);
+  --chart-1: oklch(0.62 0.22 293);
+  --chart-2: oklch(0.72 0.17 300);
+  --chart-3: oklch(0.7 0.14 250);
+  --chart-4: oklch(0.75 0.15 165);
+  --chart-5: oklch(0.8 0.14 80);
+  --radius: 0.7rem;
+  --sidebar: oklch(0.145 0.015 283);
+  --sidebar-foreground: oklch(0.97 0.004 286);
+  --sidebar-primary: oklch(0.62 0.22 293);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.25 0.04 290);
+  --sidebar-accent-foreground: oklch(0.99 0 0);
+  --sidebar-border: oklch(1 0 0 / 7%);
+  --sidebar-ring: oklch(0.66 0.2 293);
 
   /* Lighter than --border, for a panel nested inside a card: at the same
      weight, an inner box and the card holding it read as two cards. */
-  --hairline: oklch(1 0 0 / 8%);
+  --hairline: oklch(1 0 0 / 6.5%);
+  /* A panel inside a card that should sit above it rather than in it. */
+  --surface-raised: oklch(1 0 0 / 3%);
+
+  /* The light that falls on every raised surface from above: a highlight on
+     the top edge and a shadow that is longer than it is dark. */
+  --shadow-surface:
+    inset 0 1px 0 0 oklch(1 0 0 / 5%),
+    0 1px 2px 0 oklch(0 0 0 / 35%),
+    0 12px 32px -18px oklch(0 0 0 / 70%);
+  --shadow-float:
+    inset 0 1px 0 0 oklch(1 0 0 / 7%),
+    0 24px 64px -16px oklch(0 0 0 / 75%),
+    0 0 0 1px oklch(1 0 0 / 8%);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-    /* One faint wash of the accent behind everything, so the workspace reads
-       as a lit room rather than as a flat sheet of near-black. It is fixed
-       rather than scrolled: a gradient that slides up the page turns into a
-       band you can see moving, which is the opposite of ambient. */
-    background-image: radial-gradient(
-      ellipse 90rem 45rem at 50% -10rem,
-      oklch(0.45 0.16 292 / 14%),
-      transparent 70%
-    );
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-  }
   html {
     @apply font-sans;
     color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground;
+    /* An aurora rather than a single wash: the accent from the top left, a
+       cooler indigo from the top right, a trace of rose at the foot. Fixed,
+       so it lights the room instead of scrolling past like a banner. */
+    background-image:
+      radial-gradient(64rem 34rem at 12% -10rem, oklch(0.5 0.2 293 / 15%), transparent 70%),
+      radial-gradient(52rem 30rem at 95% -8rem, oklch(0.52 0.16 262 / 11%), transparent 70%),
+      radial-gradient(46rem 30rem at 55% 115%, oklch(0.5 0.16 330 / 6%), transparent 70%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+  }
+  /* Grain. A flat gradient on a wide screen bands into visible steps; a
+     whisper of noise dithers them away and gives the dark a texture, the way
+     paper has one. Behind everything, never over text. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.045;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   }
   /* Headings wrap on meaning rather than on width, and no paragraph is left
      with a one-word last line. Both are free; neither reflows anything. */
@@ -158,16 +163,17 @@
   a:focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 4px;
+    border-radius: 4px;
   }
   ::selection {
-    background: oklch(0.606 0.25 292.717 / 40%);
+    background: oklch(0.62 0.22 293 / 45%);
     color: white;
   }
   /* The default scrollbar is a light-mode artefact on a dark page: a white
      trough down the side of every long run log. */
   * {
     scrollbar-width: thin;
-    scrollbar-color: oklch(1 0 0 / 18%) transparent;
+    scrollbar-color: oklch(1 0 0 / 16%) transparent;
   }
   ::-webkit-scrollbar {
     width: 10px;
@@ -177,53 +183,238 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: oklch(1 0 0 / 14%);
+    background: oklch(1 0 0 / 12%);
     border: 3px solid transparent;
     background-clip: padding-box;
     border-radius: 999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: oklch(1 0 0 / 26%);
+    background: oklch(1 0 0 / 24%);
     background-clip: padding-box;
+  }
+  kbd {
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui;
   }
 }
 
 @layer components {
+  /* ── Surfaces ─────────────────────────────────────────────────────────
+     Every raised panel in the console is one of these, so "a card" looks the
+     same whether it came from <Card> or from a div that needed to be one. */
+  .surface {
+    background-color: var(--card);
+    background-image: linear-gradient(180deg, oklch(1 0 0 / 2.5%), transparent 55%);
+    box-shadow: var(--shadow-surface), 0 0 0 1px var(--border);
+  }
+  .surface-interactive {
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.2s ease;
+  }
+  .surface-interactive:hover {
+    box-shadow:
+      var(--shadow-surface),
+      0 0 0 1px oklch(0.7 0.16 293 / 35%),
+      0 18px 40px -20px oklch(0.55 0.2 293 / 45%);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .surface-interactive:hover {
+      transform: translateY(-1px);
+    }
+  }
+
+  /* Frosted chrome - the sidebar, the phone header, popovers. */
+  .glass {
+    background-color: oklch(0.16 0.016 284 / 72%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    backdrop-filter: blur(18px) saturate(140%);
+  }
+
+  /* The one surface on a page that is its headline: the brief, a brand's
+     header, the first-visit welcome. A lit corner and a gradient edge. */
   .studio-hero {
-    background: radial-gradient(ellipse at 95% 0%, oklch(0.45 0.18 292 / 25%), transparent 60%), var(--card);
+    position: relative;
+    isolation: isolate;
+    background:
+      radial-gradient(ellipse 70% 90% at 100% 0%, oklch(0.5 0.2 293 / 22%), transparent 60%),
+      radial-gradient(ellipse 50% 70% at 0% 100%, oklch(0.5 0.15 262 / 10%), transparent 60%),
+      linear-gradient(180deg, oklch(1 0 0 / 3%), transparent 60%),
+      var(--card);
+    box-shadow: var(--shadow-surface);
+  }
+  .studio-hero::before,
+  .ring-gradient::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      140deg,
+      oklch(0.78 0.14 293 / 55%),
+      oklch(1 0 0 / 8%) 35%,
+      oklch(1 0 0 / 5%) 65%,
+      oklch(0.7 0.14 262 / 35%)
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  .studio-hero::before {
+    z-index: 1;
+  }
+  .ring-gradient {
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* A faint drafting grid, faded out toward the edges. Decoration for a
+     hero, never behind a table. */
+  .bg-grid {
+    background-image:
+      linear-gradient(oklch(1 0 0 / 4%) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(1 0 0 / 4%) 1px, transparent 1px);
+    background-size: 32px 32px;
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 70% 0%, #000 20%, transparent 75%);
+    mask-image: radial-gradient(ellipse 80% 70% at 70% 0%, #000 20%, transparent 75%);
+  }
+
+  /* ── Type ─────────────────────────────────────────────────────────────── */
+  .text-gradient {
+    background: linear-gradient(180deg, oklch(0.99 0 0), oklch(0.82 0.05 293));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .text-gradient-accent {
+    background: linear-gradient(100deg, oklch(0.84 0.11 293), oklch(0.8 0.14 320) 55%, oklch(0.82 0.1 262));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  /* ── Marks ────────────────────────────────────────────────────────────── */
+  /* The product's mark: a lit tile of the accent. Used for the logo and for
+     the icon an empty state or a hero leads with. */
+  .brand-mark {
+    background:
+      radial-gradient(120% 120% at 30% 0%, oklch(0.82 0.13 300 / 90%), transparent 55%),
+      linear-gradient(145deg, oklch(0.62 0.23 293), oklch(0.5 0.22 280));
+    box-shadow:
+      inset 0 1px 0 0 oklch(1 0 0 / 35%),
+      inset 0 -1px 0 0 oklch(0 0 0 / 25%),
+      0 0 0 1px oklch(0.55 0.2 293 / 60%),
+      0 8px 24px -6px oklch(0.6 0.24 293 / 65%);
+  }
+  .icon-tile {
+    background: linear-gradient(160deg, oklch(0.62 0.2 293 / 22%), oklch(0.62 0.2 293 / 6%));
+    box-shadow:
+      inset 0 1px 0 0 oklch(1 0 0 / 8%),
+      0 0 0 1px oklch(0.7 0.16 293 / 22%);
+    color: oklch(0.83 0.1 293);
+  }
+
+  /* A run in progress: a dot with a ring that breathes out from it. */
+  .live-dot {
+    position: relative;
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: oklch(0.72 0.19 293);
+    box-shadow: 0 0 10px oklch(0.72 0.19 293 / 70%);
+  }
+  .live-dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: inherit;
+    animation: live 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  .kbd {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.125rem;
+    border-radius: 0.375rem;
+    border: 1px solid oklch(1 0 0 / 10%);
+    background: oklch(1 0 0 / 4%);
+    box-shadow: inset 0 -1px 0 oklch(1 0 0 / 6%);
+    padding: 0.0625rem 0.375rem;
+    font-size: 0.625rem;
+    font-weight: 500;
+    color: var(--muted-foreground);
   }
 
   /* A page's worth of cards arriving at once is a flicker; arriving in order
      is a page being built. Purely decorative, so it is opt-in per section and
      off entirely when the reader has asked for less motion. */
   .rise {
-    animation: rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
   }
   .rise-stagger > * {
-    animation: rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
   }
   .rise-stagger > *:nth-child(1) { animation-delay: 0ms; }
-  .rise-stagger > *:nth-child(2) { animation-delay: 45ms; }
-  .rise-stagger > *:nth-child(3) { animation-delay: 90ms; }
-  .rise-stagger > *:nth-child(4) { animation-delay: 135ms; }
-  .rise-stagger > *:nth-child(n + 5) { animation-delay: 180ms; }
+  .rise-stagger > *:nth-child(2) { animation-delay: 50ms; }
+  .rise-stagger > *:nth-child(3) { animation-delay: 100ms; }
+  .rise-stagger > *:nth-child(4) { animation-delay: 150ms; }
+  .rise-stagger > *:nth-child(5) { animation-delay: 200ms; }
+  .rise-stagger > *:nth-child(n + 6) { animation-delay: 240ms; }
 
   @keyframes rise {
     from {
       opacity: 0;
-      transform: translateY(0.5rem);
+      transform: translateY(0.6rem);
+      filter: blur(2px);
     }
     to {
       opacity: 1;
       transform: none;
+      filter: none;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .rise,
-    .rise-stagger > * {
+    .rise-stagger > *,
+    .live-dot::after {
       animation: none;
     }
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes live {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  80%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
   }
 }
 
@@ -313,10 +504,12 @@
   color: var(--muted-foreground);
 }
 .brand-workspace .market-section-trigger[data-active] {
-  border-color: oklch(0.7 0.18 292 / 50%);
-  background: oklch(0.38 0.12 292 / 55%);
-  color: oklch(0.95 0.03 292);
-  box-shadow: 0 2px 12px oklch(0.1 0.03 292 / 20%);
+  border-color: oklch(0.7 0.18 292 / 45%);
+  background: linear-gradient(180deg, oklch(0.45 0.16 292 / 45%), oklch(0.38 0.12 292 / 35%));
+  color: oklch(0.96 0.03 292);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 10%),
+    0 6px 18px -8px oklch(0.55 0.22 292 / 60%);
 }
 .brand-workspace summary:focus-visible,
 .brand-workspace button:focus-visible {

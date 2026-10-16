@@ -2,10 +2,13 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 import ts from 'typescript';
+import * as progress from '../src/lib/product-progress.ts';
 
 async function client() {
   const source = await readFile(new URL('../src/lib/api-core.ts', import.meta.url), 'utf8');
-  const js = ts.transpileModule(source.replace(/import .*config.*;/, 'const API_URL = "/api";'), {
+  const progressUrl = new URL('../src/lib/product-progress.ts', import.meta.url).href;
+  const js = ts.transpileModule(source.replace(/import .*config.*;/, 'const API_URL = "/api";')
+    .replace('"@/lib/product-progress"', JSON.stringify(progressUrl)), {
     compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022 },
   }).outputText;
   const clientModule = await import(`data:text/javascript;base64,${Buffer.from(js).toString('base64')}#${Math.random()}`);
@@ -30,6 +33,21 @@ test('authentication failure remains distinguishable from a missing resource', a
   const { api, ApiError, UnauthorizedError } = await client();
   await assert.rejects(api.getCurrentUser(), error =>
     error instanceof UnauthorizedError && error instanceof ApiError && error.status === 401);
+});
+
+test('provider failures and raw server bodies do not leak implementation details', async t => {
+  const previous = globalThis.fetch;
+  t.after(() => { globalThis.fetch = previous; });
+  for (const body of [JSON.stringify({ detail: 'sonnet CLI failed: subscription unavailable' }), '<html>Traceback: secret diagnostic</html>']) {
+    globalThis.fetch = async () => new Response(body, { status: 503 });
+    const { api } = await client();
+    await assert.rejects(api.getBrand('example'), error => {
+      assert.doesNotMatch(error.message, /sonnet|CLI|Traceback|diagnostic|html/);
+      assert.match(error.message, /retry|try again/);
+      return true;
+    });
+  }
+  assert.equal(progress.problemText('Insufficient credits. Add credits to continue.'), 'Insufficient credits. Add credits to continue.');
 });
 
 test('a failed response is not reused as an empty successful answer', async t => {

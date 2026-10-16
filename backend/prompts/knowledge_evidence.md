@@ -33,6 +33,29 @@ claim says "up to 40%" — not "40%".
 
 **`document_id`** is the id attribute of the document the quote came from.
 
+**`context`** preserves what the quote actually supports. Include `subject` (the product,
+plan, customer or rival the assertion is about), `source_kind` (`official_documentation`,
+`vendor_statement`, `vendor_comparison`, `customer_statement`, `third_party` or `unknown`),
+`claim_scope` (`capability`, `offer`, `customer_outcome`, `comparison`, `launch` or `unknown`),
+`conditions`, `temporal_scope`, and `limitations`. Empty means unknown, never unrestricted.
+Leave `verification` unknown: code checks quotation presence, not semantic truth.
+
+For prices preserve currency, billing period, named plan, per-seat/unit basis, annual-payment
+requirements, taxes and introductory terms when stated. An included feature does not itself
+cost the plan's price. If the page says “Pro $29/month, billed annually, includes exports”,
+record that as a Pro offer with those terms; never “exports cost $29/month”. If different
+pages disagree, retain their distinct subjects/conditions/dates and note the conflict; do
+not silently select a current price. A retrieval date does not prove the terms are current.
+
+Vendor comparison pages describe the vendor's assertions about rivals. Keep rival claims
+attributed and scoped to that comparison; do not turn them into facts about this product or
+independently verified competitor limitations. A customer result is an attributed observation
+under its stated conditions, never a result every buyer can expect. Functional documentation
+supports what the product does, not faster work, more sales or other unmeasured benefits.
+Only record novelty or a launch when dated launch evidence actually supports it; “new” on an
+undated marketing page does not establish a recent release. A real quotation is necessary,
+but does not by itself entail a stronger paraphrase.
+
 **`kind`** — `metric` for measurable results, `price` for costs and plans, `testimonial` for
 something a customer said, `customer` for a named user, `integration` for what it connects to,
 `feature` for a specific capability, `guarantee` for promises, `certification` for compliance,

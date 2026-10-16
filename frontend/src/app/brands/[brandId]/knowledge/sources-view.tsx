@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { ChevronLeft, ChevronRight, FileText, Globe, Image as ImageIcon, Files } from "lucide-react";
 import { BrandSectionHeader } from "../../brand-ui";
+import { EmptyState } from "@/components/empty-state";
 
 import { AddKnowledgeDialog } from "@/app/knowledge/add-knowledge-dialog";
 import { DeleteDocumentButton } from "@/app/knowledge/delete-document-button";
@@ -60,16 +62,16 @@ export function BrandSourcesView() {
           <AddKnowledgeDialog brand={brand} />
         </>} />
 
-      <Card>
+      <Card className="gap-0 py-0">
         <CardContent className="p-0">
           {documents.length === 0 ? (
-            <div className="space-y-2 p-6 text-sm text-muted-foreground">
-              <p className="font-medium text-foreground">Nothing for this brand yet.</p>
-              <p>
-                Add its website so the copy uses its own words instead of guesses. Anything you
-                add here is read on the next campaign run for this brand — and only for this one.
-              </p>
-            </div>
+            <EmptyState
+              variant="inline"
+              icon={Files}
+              title="Nothing for this brand yet"
+              description="Add its website so the copy uses its own words instead of guesses. Anything you add here is read on the next campaign run for this brand — and only for this one."
+              action={<AddKnowledgeDialog brand={brand} />}
+            />
           ) : (
             <Table className="brand-source-table">
               <TableHeader>
@@ -85,11 +87,16 @@ export function BrandSourcesView() {
               <TableBody>
                 {documents.map((document) => (
                   <TableRow key={document.id}>
-                    <TableCell data-label="Title" className="max-w-xs truncate font-medium">
-                      {document.title}
+                    <TableCell data-label="Title" className="max-w-xs font-medium">
+                      <span className="flex min-w-0 items-center gap-3">
+                        <span className="hidden size-8 shrink-0 items-center justify-center rounded-lg border border-white/[0.07] bg-white/[0.03] text-violet-300 md:flex">
+                          <SourceIcon type={document.source_type} />
+                        </span>
+                        <span className="truncate">{document.title}</span>
+                      </span>
                     </TableCell>
                     <TableCell data-label="Source">
-                      <Badge variant="secondary">{document.source_type}</Badge>
+                      <Badge variant="secondary">{document.source_type.replace("_", " ")}</Badge>
                     </TableCell>
                     <TableCell data-label="Origin" className="max-w-xs truncate text-muted-foreground">
                       {document.source_url ?? "—"}
@@ -118,6 +125,7 @@ export function BrandSourcesView() {
         <nav aria-label="Source pages" className="flex items-center justify-between gap-3 text-sm">
           {page > 1 ? (
             <Link href={`?page=${page - 1}`} className={buttonVariants({ variant: "outline", size: "sm" })}>
+              <ChevronLeft aria-hidden="true" />
               Previous
             </Link>
           ) : <span />}
@@ -125,6 +133,7 @@ export function BrandSourcesView() {
           {rows.length > 50 ? (
             <Link href={`?page=${page + 1}`} className={buttonVariants({ variant: "outline", size: "sm" })}>
               Next
+              <ChevronRight aria-hidden="true" />
             </Link>
           ) : <span />}
         </nav>
@@ -134,4 +143,16 @@ export function BrandSourcesView() {
       }}
     </PageData>
   );
+}
+
+/** What kind of thing a source is, at a glance: a page, a picture, a file. */
+function SourceIcon({ type }: { type: string }) {
+  const kind = type.toLowerCase();
+  if (kind.includes("url") || kind.includes("web") || kind.includes("page")) {
+    return <Globe className="size-4" aria-hidden="true" />;
+  }
+  if (kind.includes("image") || kind.includes("screenshot")) {
+    return <ImageIcon className="size-4" aria-hidden="true" />;
+  }
+  return <FileText className="size-4" aria-hidden="true" />;
 }

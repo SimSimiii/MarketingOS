@@ -1,0 +1,188 @@
+{
+  "id": "d5dad417-f8aa-49ce-a7c8-a66bb5ab643a",
+  "campaign_id": "1be4a38e-e406-4af3-a35f-122a6dc6d1d7",
+  "status": "cancelled",
+  "error_message": "Cancelled by user request.",
+  "started_at": "2026-10-05T15:04:49.003843Z",
+  "completed_at": "2026-10-05T15:06:24.278060Z",
+  "created_at": "2026-10-05T15:04:49.003843Z",
+  "total_input_tokens": 31590,
+  "total_output_tokens": 2355,
+  "total_cache_read_tokens": 12288,
+  "estimated_cost_usd": 0.4846,
+  "recommendation_snapshot": {
+    "campaign_id": "1be4a38e-e406-4af3-a35f-122a6dc6d1d7",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "ecf93e51-259c-4926-8a6e-95093cd77711",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Joint membership may suit two eligible adults planning visits together, but its fit should be judged against the visits they actually expect to make rather than an assumed saving."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T15:04:49.037752Z",
+      "completed_at": "2026-10-05T15:06:24.254432Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 19302,
+      "output_tokens": 2355,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 12288,
+      "cost_usd": 0.484587,
+      "duration_ms": 95157.50550001394,
+      "attempt": 1
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "cancelled",
+    "report": {
+      "request": "Write exactly 1 English marketing email to UK adults who have opted in and are considering National Trust membership for visits to historic places and outdoor spaces. Help them decide whether membership suits their planned visits, using only the imported official membership page. Invite them to review the membership options and conditions. Do not invent local places, opening hours, events, discounts, free access exceptions, prices absent from evidence, or guaranteed savings. This is an existing membership offer, not a new launch.",
+      "delivered": 0,
+      "promised": 1,
+      "contract_violations": [
+        "the user asked for 1 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [
+        "No customer names, quotes or case studies found - the copy can describe the product but cannot prove anyone uses it",
+        "No measurable results found - claims stay qualitative, and adjectives convert worse than numbers"
+      ],
+      "what_would_help_most": "Which customers or quotes may we name?",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "Cancelled by user request."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "Treat this as a single decision-support sales email for opted-in UK adults considering an existing membership, not an onboarding or launch message. Because no campaign segment was explicitly marked, focus on the documented couple segment whose planned shared visits most closely match the request.",
+      "reader": "Selected audience: A couple aged 26 or over at the same address who expect to visit historic places, gardens or countryside together.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (vendor_claim; check applicability): They are considering one shared membership covering two adults rather than arranging and paying for visits separately. Joint membership costs £168 a year or £14 a month and requires both adults to be aged 26 or over and live at the same address.\nUser-specified audience: UK adults considering membership for historic places and outdoor visits",
+      "reader_segment": "A couple aged 26 or over at the same address who expect to visit historic places, gardens or countryside together",
+      "promise": "The reader can make a better membership decision by comparing the documented benefits, price and eligibility conditions with the visits they realistically expect to make.",
+      "orientation": "National Trust membership is an annual option for visiting places in its care, with entry and parking benefits alongside support for looking after nature, beauty and history.",
+      "arc": "Move from uncertainty about likely use to a practical fit check: establish what joint membership covers, identify the benefits relevant to planned visits, then invite the reader to review all options and conditions before deciding.",
+      "sequence_rationale": "One email is sufficient because the requested outcome is a focused fit decision rather than a multi-stage conversion sequence. Lead with the reader's planned visits, then give the joint membership eligibility and price alongside the two benefits most relevant to visiting. Explicitly preserve the limits: no break-even claim, guaranteed saving or implication that parking is free everywhere. The destination then lets the reader compare the available membership options and their conditions. The single thing the user could send us that would most change this campaign is permission to name a customer or use a customer quote.",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Help the reader compare joint membership with their own planned visits and decide whether to explore the available membership options further.",
+          "single_idea": "Joint membership may suit two eligible adults planning visits together, but its fit should be judged against the visits they actually expect to make rather than an assumed saving.",
+          "felt_need": "We are considering several days out together, but we are not sure whether membership would suit how often and where we plan to visit.",
+          "status_quo": "They can continue considering visits individually or compare their plans with the published membership terms; the evidence does not establish how they currently pay for days out.",
+          "why_it_fails": "",
+          "mechanism": "Joint membership covers two adults aged 26 or over living at the same address for £168 a year or 12 monthly payments of £14. Membership includes free entry to more than 500 places in the National Trust's care and free parking at most National Trust car parks, giving the reader concrete terms to compare with their intended visits.",
+          "alternative_ideas": [],
+          "alternative_arguments": [
+            {
+              "single_idea": "Membership can be considered not only for its visitor benefits but also as a way to support the care of houses, gardens, coastlines and countryside.",
+              "felt_need": "We want our days out to support places we value, but that still needs to sit alongside a membership arrangement that suits us.",
+              "status_quo": "",
+              "why_it_fails": "",
+              "mechanism": "Membership revenue goes towards looking after nature, beauty and history, while member support helps care for hundreds of places including houses, gardens, coastlines and countryside.",
+              "belief_shift": "Before: views membership only as a calculation about visits. After: sees that supporting the care of places is another documented reason to consider it, while recognising that personal fit still depends on the published options and conditions.",
+              "evidence_ids": [
+                "E1",
+                "E19"
+              ],
+              "must_not_say": [
+                "That membership produces a measurable conservation result for each member.",
+                "That supporting the National Trust makes membership financially worthwhile.",
+                "Customer stories, popularity claims or attributed outcomes.",
+                "Any guarantee about access, savings or the future condition of places."
+              ],
+              "objection": "I would rather pay only when I visit or support conservation another way than commit to membership.",
+              "call_to_action": "Review the membership options and conditions at https://www.nationaltrust.org.uk/membership",
+              "next_step_decision": "Decide whether the combination of supporting places and receiving membership benefits is relevant enough to compare the available plans.",
+              "next_step_value": "The official membership page explains what member support contributes towards and presents the membership offer for further review.",
+              "next_step_evidence_ids": [
+                "E1",
+                "E19"
+              ],
+              "next_step_limit": "The page does not establish whether membership is better for this reader than paying per visit or donating directly.",
+              "subject_strategy": "Frame membership as helping care for the kinds of places the reader wants to visit, without sentimentality or implying a measurable personal impact."
+            }
+          ],
+          "belief_shift": "Before: assumes membership value can be judged only through a general promise of more days out. After: sees a specific price, eligibility rule and set of visit benefits they can compare with their own plans, without being promised savings.",
+          "evidence_ids": [
+            "E3",
+            "E20",
+            "E21"
+          ],
+          "must_not_say": [
+            "That membership will save the reader money or pay for itself.",
+            "A visit-frequency break-even point or comparison with individual admission prices.",
+            "That parking is free at every National Trust car park.",
+            "That every place, historic property or outdoor space is included or always open.",
+            "Local places, opening hours, events or discounts.",
+            "That monthly payments reduce the annual price or remove the commitment.",
+            "Guest-pass, family, junior, young-person, lifetime, senior, gift, Explorer Pass, accessibility or renewal details; these would dilute the single fit-check argument.",
+            "Any new-launch language, urgency, guarantee, testimonial or popularity claim."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "We may not visit often enough for membership to justify the annual price.",
+          "tone": "Warm, practical and unhurried; candid about the decision rather than pushing for an immediate purchase.",
+          "call_to_action": "Review the membership options and conditions at https://www.nationaltrust.org.uk/membership",
+          "next_step_decision": "Decide which membership option, if any, matches the reader's household, eligibility and planned visits.",
+          "next_step_value": "The official membership page lets the reader review membership types, prices, eligibility conditions and stated visitor benefits.",
+          "next_step_evidence_ids": [
+            "E3",
+            "E20",
+            "E21"
+          ],
+          "next_step_limit": "Reviewing the page cannot determine how often this household will visit, guarantee savings, confirm parking at every intended location or establish a personal break-even point.",
+          "subject_strategy": "Earn the open with a calm question about whether membership fits the visits they are planning, avoiding savings claims, urgency and generic adventure language.",
+          "must_not_reuse": []
+        }
+      ],
+      "voice_notes": "Use British English and the National Trust's short, inviting style. Address the reader as “you” and use “we” or “our” for the organisation. Present the figures and limitations plainly; do not pressure the reader to join.",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "1 English marketing email"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "1be4a38e-e406-4af3-a35f-122a6dc6d1d7",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

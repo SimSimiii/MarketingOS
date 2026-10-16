@@ -18,10 +18,10 @@ import { formatDate } from "@/lib/format";
 const SEVERITY: Record<RadarSeverity, { label: string; tone: string }> = {
   acts_on_copy: {
     label: "Makes your copy worse",
-    tone: "border-l-amber-500 bg-amber-500/5",
+    tone: "border-l-amber-400 bg-amber-400/[0.04]",
   },
-  notable: { label: "Worth knowing", tone: "border-l-sky-500/60" },
-  routine: { label: "On the record", tone: "border-l-border" },
+  notable: { label: "Worth knowing", tone: "border-l-violet-400/70" },
+  routine: { label: "On the record", tone: "border-l-white/15" },
 };
 
 function when(iso: string) {
@@ -69,7 +69,7 @@ export function RadarFeed({
     <div className="space-y-4">
       <BrandSectionHeader title="Market changes" description="See what changed between scans and what it means for your copy." />
       {important.length === 0 && (
-        <p className="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground">
+        <p className="surface rounded-2xl p-4 text-sm text-muted-foreground">
           Nothing since the last scan touches your copy - only the routine changes below.
         </p>
       )}
@@ -78,7 +78,7 @@ export function RadarFeed({
         return (
           <div
             key={event.id}
-            className={cn("rounded-xl border border-border border-l-2 bg-card p-4", severity.tone)}
+            className={cn("surface rounded-2xl border-l-[3px] p-4 sm:p-5", severity.tone)}
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="text-sm font-medium">{event.headline}</p>

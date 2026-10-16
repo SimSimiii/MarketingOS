@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, ArrowUpRight, Building2, Megaphone } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Megaphone } from "lucide-react";
 
 import { BrandNav } from "./brand-nav";
 import { BrandSwitcher } from "./brand-switcher";
+import { BrandMonogram } from "@/components/brand-monogram";
 import { DocumentTitle } from "@/components/document-title";
 import { buttonVariants } from "@/components/ui/button";
 import { ApiError, api } from "@/lib/api-client";
@@ -51,21 +52,42 @@ export function BrandLayoutView({ children }: { children: React.ReactNode }) {
       {({ brand, brands, documents, base, market }) => (
     <div className="brand-workspace min-w-0 space-y-6">
       <DocumentTitle title={brand.name} />
-      <header className="studio-hero rounded-2xl border border-border p-5 sm:p-6">
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-          <Link href="/brands" className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground"><ArrowLeft className="size-3.5" /> All brands</Link>
+      <header className="studio-hero rise overflow-hidden rounded-3xl p-5 sm:p-7">
+        <div aria-hidden="true" className="bg-grid pointer-events-none absolute inset-0 -z-10" />
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <Link
+            href="/brands"
+            className="group/back inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.03] py-1 pr-3 pl-2 text-xs font-medium text-muted-foreground transition-colors hover:border-white/15 hover:text-foreground"
+          >
+            <ArrowLeft className="size-3.5 transition-transform group-hover/back:-translate-x-0.5" aria-hidden="true" />
+            All brands
+          </Link>
           <BrandSwitcher brand={brand} brands={brands} />
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-5">
-          <div className="flex min-w-0 items-center gap-4">
-            <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl border border-violet-400/20 bg-violet-500/15 text-violet-300"><Building2 className="size-6" /></div>
+        <div className="flex flex-wrap items-end justify-between gap-5">
+          <div className="flex min-w-0 items-center gap-5">
+            <BrandMonogram name={brand.name} size="lg" />
             <div className="min-w-0">
-              <p className="mb-1 text-[10px] font-medium uppercase tracking-[0.18em] text-violet-300">Brand workspace</p>
-              <h1 className="break-words text-2xl font-semibold tracking-tight sm:text-3xl">{brand.name}</h1>
-              {brand.website_url ? <a href={brand.website_url} target="_blank" rel="noreferrer noopener" className="mt-1 inline-flex max-w-full items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"><span className="truncate">{brand.website_url.replace(/^https?:\/\//, "").replace(/\/$/, "")}</span><ArrowUpRight className="size-3 shrink-0" /></a> : <p className="mt-1 text-xs text-muted-foreground">Sources, knowledge and campaigns for this brand.</p>}
+              <p className="mb-1.5 text-[0.6875rem] font-medium uppercase tracking-[0.2em] text-violet-300/90">Brand workspace</p>
+              <h1 className="font-display text-[2.125rem] leading-[1.05] break-words text-gradient sm:text-[2.625rem]">{brand.name}</h1>
+              {brand.website_url ? (
+                <a
+                  href={brand.website_url}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="mt-2 inline-flex max-w-full items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-violet-200"
+                >
+                  <span className="truncate">{brand.website_url.replace(/^https?:\/\//, "").replace(/\/$/, "")}</span>
+                  <ArrowUpRight className="size-3 shrink-0" aria-hidden="true" />
+                </a>
+              ) : (
+                <p className="mt-2 text-xs text-muted-foreground">Sources, knowledge and campaigns for this brand.</p>
+              )}
             </div>
           </div>
-          <Link href={`/campaigns?brand=${brand.id}`} className={buttonVariants({ variant: "outline", size: "sm" })}><Megaphone className="size-4" /> Campaigns</Link>
+          <Link href={`/campaigns?brand=${brand.id}`} className={buttonVariants({ variant: "outline" })}>
+            <Megaphone aria-hidden="true" /> Campaigns
+          </Link>
         </div>
       </header>
 

@@ -1,0 +1,41 @@
+
+> frontend@0.1.0 test
+> node --experimental-strip-types --test tests/*.test.mjs
+
+✔ API error 404 preserves status and readable message (133.3155ms)
+✔ API error 503 preserves status and readable message (31.3513ms)
+✔ authentication failure remains distinguishable from a missing resource (26.293ms)
+✔ a failed response is not reused as an empty successful answer (21.407ms)
+✔ an optional resource is empty only when the server actually returns 404 (22.0878ms)
+(node:20928) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/oussa/Desktop/Workspace/projects/MarketingOS/frontend/src/lib/campaign-brief.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\frontend\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ keeps the selected count ahead of freeform instructions and preserves the brief (1.0825ms)
+✔ refuses empty instructions and counts outside the supported contract (0.6213ms)
+(node:5704) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/oussa/Desktop/Workspace/projects/MarketingOS/frontend/src/lib/email-parts.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\frontend\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ splits the labelled subject and preview from the body (1.693ms)
+✔ keeps an empty preview line rather than refusing the email (0.7643ms)
+✔ tolerates CRLF line endings (0.1564ms)
+✔ returns null for anything that is not a labelled email (0.1178ms)
+✔ expired access cookie: concurrent requests and tabs rotate the refresh token once (79.9367ms)
+✔ temporary refresh outage permits a later retry (8.7788ms)
+✔ revoked refresh token returns signed-out without retrying forever (6.0977ms)
+(node:15032) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/oussa/Desktop/Workspace/projects/MarketingOS/frontend/src/lib/visible-polling.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\frontend\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ slow requests never overlap and the next delay starts after completion (2.8637ms)
+✔ hidden tabs pause and resume once immediately; disposal removes the listener (0.8408ms)
+✔ completion while hidden does not restart polling (0.6487ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 604.3452

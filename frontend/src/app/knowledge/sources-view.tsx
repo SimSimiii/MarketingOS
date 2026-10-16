@@ -64,7 +64,7 @@ export function CampaignSourcesView() {
         </>}
       />
 
-      <Card>
+      <Card className="gap-0 py-0">
         <CardContent className="p-0">
           {oneOffs.length === 0 ? (
             <EmptyState
@@ -99,7 +99,7 @@ export function CampaignSourcesView() {
                       {document.title}
                     </TableCell>
                     <TableCell data-label="Source">
-                      <Badge variant="secondary">{document.source_type}</Badge>
+                      <Badge variant="secondary">{document.source_type.replace("_", " ")}</Badge>
                     </TableCell>
                     <TableCell data-label="Read by" className="text-muted-foreground">
                       {document.campaign_id ? (

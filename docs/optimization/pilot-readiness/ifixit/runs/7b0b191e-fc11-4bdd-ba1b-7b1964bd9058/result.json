@@ -1,0 +1,989 @@
+{
+  "id": "7b0b191e-fc11-4bdd-ba1b-7b1964bd9058",
+  "campaign_id": "866cd496-fc6f-478f-b7b1-dded9833c110",
+  "status": "cancelled",
+  "error_message": "Cancelled by user request.",
+  "started_at": "2026-10-05T16:01:38.203816Z",
+  "completed_at": "2026-10-05T16:19:14.257414Z",
+  "created_at": "2026-10-05T16:01:38.203816Z",
+  "total_input_tokens": 1141760,
+  "total_output_tokens": 55536,
+  "total_cache_read_tokens": 794368,
+  "estimated_cost_usd": 10.5676,
+  "recommendation_snapshot": {
+    "campaign_id": "866cd496-fc6f-478f-b7b1-dded9833c110",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "b0ab62e1-51ea-4c5c-a59d-f7135e42aa4a",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 The Pro Tech Toolkit is a fit when the reader wants coverage across several electronics categories and expects projects to require opening, prying, gripping, or anti-static tools as well as screwdriver bits.",
+          "#2 During disassembly, the inside of the driver-kit lid can serve as a sorting tray for removed fasteners while the case and foam insert keep the toolkit organized.",
+          "#3 The Pro Tech Toolkit carries a Lifetime Guarantee that promises covered products will function for as long as the customer has them, with explicit exclusions for misuse, accidental damage, installation damage, device damage, and data loss."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T16:01:38.281875Z",
+      "completed_at": "2026-10-05T16:04:29.506999Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 71491,
+      "output_tokens": 4944,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 1.465821,
+      "duration_ms": 171028.46059994772,
+      "attempt": 1
+    },
+    {
+      "id": "51e35d63-eeab-4c2b-9727-6e327f6beb51",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "The Pro Tech Toolkit is a fit when the reader wants coverage across several electronics categories and expects projects to require opening, prying, gripping, or anti-static tools as well as screwdriver bits.",
+          "The Pro Tech Toolkit is a fit when the reader wants coverage across several electronics categories and expects projects to require opening, prying, gripping, or anti-static tools as well as screwdriver bits."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Choose tools beyond the screwdriver",
+          "Look beyond the bit count"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T16:04:30.179778Z",
+      "completed_at": "2026-10-05T16:05:05.258997Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 21726,
+      "output_tokens": 1965,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 30208,
+      "cost_usd": 0.518577,
+      "duration_ms": 68516.07090013567,
+      "attempt": 1
+    },
+    {
+      "id": "61698f28-3579-49c8-ac27-7594fd232e4d",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s) read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 7,
+        "scores": [
+          7,
+          7
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T16:05:05.562383Z",
+      "completed_at": "2026-10-05T16:06:10.308751Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 27917,
+      "output_tokens": 7697,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 84992,
+      "cost_usd": 1.123518,
+      "duration_ms": 288846.8371001072,
+      "attempt": 1
+    },
+    {
+      "id": "c1c4f1e1-26ed-436b-828b-b9ed9bf63e0d",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · the two best candidates, read side by side",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "challenger_won": false
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T16:06:10.317070Z",
+      "completed_at": "2026-10-05T16:06:22.235735Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 8955,
+      "output_tokens": 411,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 60416,
+      "cost_usd": 0.255774,
+      "duration_ms": 37267.2828999348,
+      "attempt": 1
+    },
+    {
+      "id": "433d5b3d-9e79-468a-b276-b994418ed8bc",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "missing_material",
+        "strategy_gap": "The supplied material does not provide the current price or a complete itemized list of included bits, tool types, and sizes, which the cold readers consistently need to judge whether this is sensible first-kit breadth rather than unnecessary equipment."
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T16:06:22.255065Z",
+      "completed_at": "2026-10-05T16:07:29.479573Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 8999,
+      "output_tokens": 2299,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.330066,
+      "duration_ms": 67127.71409994457,
+      "attempt": 1
+    },
+    {
+      "id": "6f6a1d72-4f62-482d-a6ee-97edfec9c869",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · 2 candidate(s), first draft",
+        "position": 2,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "During disassembly, the inside of the driver-kit lid can serve as a sorting tray for removed fasteners while the case and foam insert keep the toolkit organized.",
+          "During disassembly, the inside of the driver-kit lid can serve as a sorting tray for removed fasteners while the case and foam insert keep the toolkit organized."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Give removed screws a workspace",
+          "Put the case to work"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T16:07:29.498470Z",
+      "completed_at": "2026-10-05T16:08:08.995993Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 21652,
+      "output_tokens": 2282,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 30208,
+      "cost_usd": 0.541242,
+      "duration_ms": 74092.07270015031,
+      "attempt": 2
+    },
+    {
+      "id": "fb9f0b43-1e01-4a54-8a70-4c8fac4ebc4c",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · 2 candidate(s) read cold by 3 reader(s)",
+        "position": 2,
+        "attempt": 1,
+        "candidates": 2,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 6,
+        "scores": [
+          6,
+          6
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T16:08:09.331273Z",
+      "completed_at": "2026-10-05T16:09:02.908500Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 25050,
+      "output_tokens": 8122,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 87808,
+      "cost_usd": 1.116612,
+      "duration_ms": 297114.4002000801,
+      "attempt": 2
+    },
+    {
+      "id": "0f62ebe7-0bfb-4339-8881-85dc7897dd11",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 8,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · the two best candidates, read side by side",
+        "position": 2,
+        "attempt": 1
+      },
+      "output_data": {
+        "challenger_won": false
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T16:09:02.920682Z",
+      "completed_at": "2026-10-05T16:09:12.441499Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 8887,
+      "output_tokens": 282,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 60416,
+      "cost_usd": 0.245079,
+      "duration_ms": 31731.083399849012,
+      "attempt": 2
+    },
+    {
+      "id": "7e7ea684-bab3-48ad-a269-77c8e0c7441c",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 9,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · conversion critique",
+        "position": 2,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "copy",
+        "strategy_gap": ""
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T16:09:12.467785Z",
+      "completed_at": "2026-10-05T16:10:41.723443Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 8930,
+      "output_tokens": 3090,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.388356,
+      "duration_ms": 89162.78580005746,
+      "attempt": 2
+    },
+    {
+      "id": "21247a1b-19da-4368-b885-ee8c8517b69d",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 10,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · rewrite 1",
+        "position": 2,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "A place for removed fasteners"
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T16:10:41.734409Z",
+      "completed_at": "2026-10-05T16:11:40.418497Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 13875,
+      "output_tokens": 2027,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.382806,
+      "duration_ms": 58578.85139994323,
+      "attempt": 3
+    },
+    {
+      "id": "2a8f774f-3c12-43b1-84c9-3354fb5e1bdc",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 11,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · read cold by 3 reader(s)",
+        "position": 2,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 6
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T16:11:40.566848Z",
+      "completed_at": "2026-10-05T16:12:51.306971Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11153,
+      "output_tokens": 4720,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 45312,
+      "cost_usd": 0.589263,
+      "duration_ms": 156410.92089994345,
+      "attempt": 3
+    },
+    {
+      "id": "5fa43795-1d6e-4f53-91e5-d307cd465e91",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 12,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · rewrite 1 read against the version it would replace",
+        "position": 2,
+        "attempt": 2
+      },
+      "output_data": {
+        "challenger_won": false
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T16:12:51.316516Z",
+      "completed_at": "2026-10-05T16:13:00.973181Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 8967,
+      "output_tokens": 428,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 60416,
+      "cost_usd": 0.257229,
+      "duration_ms": 32272.451400058344,
+      "attempt": 3
+    },
+    {
+      "id": "c7d43ae9-df6f-45ee-819d-1d4276890120",
+      "agent_id": "subject_writer",
+      "agent_name": "Subject Lines",
+      "sequence_order": 13,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · 4 alternative subject lines",
+        "position": 2,
+        "variants": 4
+      },
+      "output_data": {
+        "subject": "Where do the screws go after they come out?"
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T16:13:00.986638Z",
+      "completed_at": "2026-10-05T16:13:47.788273Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 8376,
+      "output_tokens": 1941,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 60416,
+      "cost_usd": 0.361839,
+      "duration_ms": 70728.4481000388,
+      "attempt": 1
+    },
+    {
+      "id": "99b3a303-7d16-41d0-9b64-8cfd8b295d90",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 14,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 3 · 2 candidate(s), first draft",
+        "position": 3,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "The Pro Tech Toolkit carries a Lifetime Guarantee that promises covered products will function for as long as the customer has them, with explicit exclusions for misuse, accidental damage, installation damage, device damage, and data loss.",
+          "The Pro Tech Toolkit carries a Lifetime Guarantee that promises covered products will function for as long as the customer has them, with explicit exclusions for misuse, accidental damage, installation damage, device damage, and data loss."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Check the coverage before choosing",
+          "What the Lifetime Guarantee covers"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T16:13:47.807398Z",
+      "completed_at": "2026-10-05T16:14:32.457814Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 22736,
+      "output_tokens": 2006,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 30208,
+      "cost_usd": 0.536802,
+      "duration_ms": 53730.75799993239,
+      "attempt": 4
+    },
+    {
+      "id": "b3402941-8c47-4be0-a692-dbb07760a01f",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 15,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 3 · 2 candidate(s) read cold by 3 reader(s)",
+        "position": 3,
+        "attempt": 1,
+        "candidates": 2,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 6,
+        "scores": [
+          7,
+          6
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T16:14:32.814395Z",
+      "completed_at": "2026-10-05T16:15:29.976979Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 25818,
+      "output_tokens": 8449,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 87808,
+      "cost_usd": 1.152657,
+      "duration_ms": 310884.97889996506,
+      "attempt": 4
+    },
+    {
+      "id": "90c031ca-ce06-4022-918f-0a7b3c7ca26d",
+      "agent_id": "material_researcher",
+      "agent_name": "Official Material Researcher",
+      "sequence_order": 16,
+      "status": "completed",
+      "input_data": {
+        "label": "Finding and verifying official material for 1 gap(s)"
+      },
+      "output_data": {
+        "recovered": true,
+        "evidence": [
+          {
+            "id": "R1",
+            "kind": "price",
+            "claim": "The Pro Tech Toolkit sale price is $79.95.",
+            "verbatim": "Pro Tech Toolkit - New\n\nSale price $79.95",
+            "source": "https://www.ifixit.com/products/pro-tech-toolkit",
+            "document_id": "auto:e2891b007a740c665606",
+            "strength": "strong",
+            "user_attested": false,
+            "category": null
+          },
+          {
+            "id": "R3",
+            "kind": "feature",
+            "claim": "The toolkit includes a magnetized case with sorting-tray lid, 150 mm flex extension, 4 mm aluminum bit driver, 4 mm screwdriver bits and adapter, anti-static wrist strap, suction handle, three opening tools, six opening picks, three types of tweezers, three spudgers, Jimmy, magnetic pad, and polyester tool roll.",
+            "verbatim": "- Easy-to-Open Magnetized Case\n  - Apply opposing pressure to the top and bottom sides of the case (like opening a jar)\n- Lid with Built-in Sorting Tray\n- 150 mm Flex Extension\n  - Used to get to those hard-to-reach screws\n  - The bits are held in with friction\n    - Please reference [this answer](/Answers/View/595946/Can+anyone+tell+me+how+do+I+use+the+flex+extension) for additional help\n    - Also, note that the screws will not be held to the bit due the to friction system and not magnetic\n      - The bits however can be magnetized with a magnetizer/demagnetizer if that functionality is desired and that can be [purchased here](https://www.ifixit.com/en-eu/products/magnetizer-demagnetizer)\n- 4 mm Aluminum Bit Driver\n  - This is not a pry tool\n  - The magnetic bit holder transmits magnetism through the screwdriver bit, helping you handle all those tiny screws.\n  - If you are experiencing any issues with the rotating end of the driver please reference the fixes in [this guide](/Guide/How+to+Reattach+the+Cap+on+a+4+mm+iFixit+Precision+Bit+Driver/145856).\n- 4 mm Screwdriver Bits\n  - For rust prevention, store the toolkit in a well-ventilated dry place indoors. Avoid prolonged exposure to humid, wet environments.\n    - If you live in a humid wet environment (or anywhere) then utilize the desiccant bag that comes inside the bit case and add a few more for good measure\n  - For rust removal: A bath with vinegar or Evapo-Rust or something along those lines works pretty well. After de-rusting a coating of oil should be re-applied, silicone spray, WD-40, spray wax, or anything to keep the elements off the surface of the material.\n  - 1/4\" to 4 mm Driver Adapter\n    - The bits are held in with friction\n      - Please reference [this guide](https://help.ifixit.com/article/188-64-bit-driver-kits-150mm-flexible-extension-is-not-holding-bits) for additional help.\n      - Also, note that the screws will not be held to the bit due the to friction system and not magnetic\n        - The bits however can be magnetized with a magnetizer/demagnetizer if that functionality is desired and that can be [purchased here](https://www.ifixit.com/en-eu/products/magnetizer-demagnetizer)\n- Anti-Static Wrist Strap\n  - Helps protect your electronics from accidental electrostatic discharge (ESD) damage during repairs.\n  - The anti-static wrist strap is not designed to be conductive. In fact, it is designed to do the exact opposite of conducting static electricity, as wearing a conductive component during electronic repairs would more likely allow electrostatic discharge to harm your device.\n  - It is designed to be highly resistant to anti-static buildup when used in conjunction with a ground, and it will protect your electronics from electrostatic discharge damage during repairs when worn and used in conjunction with a ground\n  - We have [this guide](/Guide/How+to+Use+the+Anti-Static+Wrist+Strap/153022) detailing how to use this wrist strap\n- Suction Handle\n  - Works best under a warmer environment. When too cold the plastic suction portion becomes stiff and harder to adhere.\n    - Even in a cold environment, the suction handle can be warmed up from the heat of your hands (or putting it in your pocket, or under an iOpener).\n  - Works best on a smooth, flat glass surface. Cracked/shattered screens may pose difficulty in obtaining adequate suction. If your screen is cracked/shattered and suction cannot be obtained, [try this trick instead](/Guide/iPhone+SE+2020+Screen+Replacement/133817#s193571), using tape.\n- 3x iFixit Opening Tool\n  - Tough-yet-soft material pry open the tightest cracks, but won't scratch or mar your workpiece\n  - Two tips provide alternate opening options: Wedge for breaching and Hook for lifting and levering\n  - These tools are designed to break before the device does\n  - Consumable - not covered under warranty\n  - Can be purchased here [iFixit Opening Tool](https://www.ifixit.com/en-eu/products/ifixit-opening-tool)\n  - [Watch video here](https://vimeo.com/176377498?embedded=true&source=vimeo_logo&owner=2326705)\n- 6x iFixit Opening Pick\n  - Can be used for prying, sliding, separating, and air guitaring.\n  - These tools are designed to break before the device does\n  - Consumable - not covered under warranty\n  - Can be purchased here [6x iFixit Opening Pick](https://www.ifixit.com/en-eu/products/ifixit-opening-picks-set-of-6)\n- Nylon Tipped Reverse Tweezers\n  - ESD-safe nylon tips (the metal handle is not ESD-safe)\n  - Reverse tweezers stay closed until you squeeze them open\n  - Tips are replaceable and come in 3 types ([Pointed](https://www.ifixit.com/en-eu/products/nylon-tipped-tweezers?variant=31917884375121), [Blunt](https://www.ifixit.com/en-eu/products/nylon-tipped-tweezers?variant=31917884342353), [Curved](https://www.ifixit.com/en-eu/products/nylon-tipped-tweezers?variant=31917884309585))\n  - Tweezers and tweezer tips have Lifetime Guarantee\n- Angled ESD Tweezers\n  - ESD safe\n    - But shouldn't be used on live circuits. There won't be any transmission between the user's hand and the metallic tips, but the metallic nature of the tweezers means that they are electrically conductive from tip to tip.\n  - With angled, pointed tips for hard-to-reach places\n  - It comes with a small cap to cover the point that is consumable and not covered under warranty\n  - If you notice the cap splitting you can reinforce it with some tape\n- Blunt ESD Tweezers\n  - ESD safe\n    - But shouldn't be used on live circuits. There won't be any transmission between the user's hand and the metallic tips, but the metallic nature of the tweezers means that they are electrically conductive from tip to tip.\n  - Blunted tips for powerful precision work.\n  - It comes with a small cap to cover the point that is consumable and not covered under warranty\n  - If you notice the cap splitting you can reinforce it with some tape\n- Spudger\n  - Poke and pry ask much as you like with this spudger\n  - The tool also includes a notch for hooking wires.\n  - The glass-filled nylon Spudger is the preferred spudger for use while soldering.\n  - The pliable and antistatic properties make it ideal for working around sensitive electronic components without fear of shocking or scratching them (ESD safe)\n  - This tool is designed to break before the device does\n  - Consumable - not covered under warranty\n  - Can be purchased here [Spudger](https://www.ifixit.com/en-eu/products/spudger?variant=31946524229713)\n- Halberd Spudger\n  - Specifically shaped for electronics repair, this spudger features a hook for scooping, scraping, pulling, and guiding.\n  - ESD-safe fiber-reinforced nylon\n  - This tool is designed to break before the device does\n  - Consumable - not covered under warranty\n  - Can be purchased here [Halberd Spudger](https://www.ifixit.com/en-eu/products/halberd-spudger)\n- Metal Spudger\n  - The ultimate prying tool for if you need a little more power than the opening tools can provide\n  - Be sure to exercise caution when using this tool. With its great strength comes the potential to scratch or otherwise damage components\n  - [Watch video here](https://vimeo.com/65236137?embedded=true&source=vimeo_logo&owner=2326705)\n- Jimmy\n  - A high-quality steel blade easily slips between the tightest gaps in the toughest devices.\n  - [Watch video here](https://vimeo.com/105270399?embedded=true&source=vimeo_logo&owner=2326705)\n  - Can be very sharp\n  - Often times can not be taken on a plane, please [read this blog post](https://www.ifixit.com/News/32644/can-you-bring-ifixit-toolkits-on-a-plane) if you intend to travel with your Pro Tech Toolkit\n- Magnetic Pad\n  - Holds the bit case to the tool roll\n  - If you are dealing with lots of screws or you don't want the screws to move around this pad can also hold onto those screws for you\n- Tool Roll\n  - Made of polyester with hook and loop (velcro) closure",
+            "source": "https://www.ifixit.com/Wiki/iFixit_Pro_Tech_Toolkit_Care_and_Use",
+            "document_id": "auto:d4b3cf16b725dfdce5ff",
+            "strength": "strong",
+            "user_attested": false,
+            "category": null
+          },
+          {
+            "id": "R12",
+            "kind": "feature",
+            "claim": "The included 64-bit assortment comprises the listed bit types, counts, and sizes.",
+            "verbatim": "1/4\"\n\n1\n\n×\n\n1/4\" to 4 mm Adapter\n\n![](https://ifixit-strapi-uploads.s3.us-east-1.amazonaws.com/flathead_7a1a1c39e8.svg)\n\n4 mm\n\n6\n\n×\n\nFlathead\n\n1.0 mm\n\n1.5 mm\n\n2.0 mm\n\n2.5 mm\n\n3.0 mm\n\n4.0 mm\n\n![](https://ifixit-strapi-uploads.s3.us-east-1.amazonaws.com/gamebit_b771c96986.svg)\n\n4 mm\n\n2\n\n×\n\nGamebit\n\n3.8 mm\n\n4.5 mm\n\n![](https://ifixit-strapi-uploads.s3.us-east-1.amazonaws.com/hex_84f31144e6.svg)\n\n4 mm\n\n11\n\n×\n\nHex\n\n0.7 mm\n\n0.9 mm\n\n1.3 mm\n\n1.5 mm\n\n2.0 mm\n\n2.5 mm\n\n3.0 mm\n\n3.5 mm\n\n4.0 mm\n\n4.5 mm\n\n5.0 mm\n\n![](https://ifixit-strapi-uploads.s3.us-east-1.amazonaws.com/iphone_standoff_a019368007.svg)\n\n4 mm\n\n1\n\n×\n\niPhone Standoff\n\n![](https://ifixit-strapi-uploads.s3.us-east-1.amazonaws.com/jis_5d3f245c2b.svg)\n\n4 mm\n\n4\n\n×\n\nJIS\n\n0\n\n00\n\n000\n\n1\n\n![](https://ifixit-strapi-uploads.s3.us-east-1.amazonaws.com/magnetic_pickup_d738029c10.svg)\n\n4 mm\n\n1\n\n×\n\nMagnetic Pickup\n\n![](https://ifixit-strapi-uploads.s3.us-east-1.amazonaws.com/nut_driver_57951eb1dd.svg)\n\n4 mm\n\n6\n\n×\n\nNut Driver\n\n2.5 mm\n\n3.0 mm\n\n3.5 mm\n\n4.0 mm\n\n5.0 mm\n\n5.5 mm\n\n![](https://ifixit-strapi-uploads.s3.us-east-1.amazonaws.com/oval_bb02c76b19.svg)\n\n4 mm\n\n1\n\n×\n\nOval Drive\n\n![](https://ifixit-strapi-uploads.s3.us-east-1.amazonaws.com/pentalobe_4bf278d887.svg)\n\n4 mm\n\n3\n\n×\n\nPentalobe\n\nP2\n\nP5\n\nP6\n\n![](https://ifixit-strapi-uploads.s3.us-east-1.amazonaws.com/phillips_1cb7c13111.svg)\n\n4 mm\n\n5\n\n×\n\nPhillips\n\n#0\n\n#00\n\n#000\n\n#1\n\n#2\n\n![]()\n\n4 mm\n\n1\n\n×\n\nSIM Eject\n\n![](https://ifixit-strapi-uploads.s3.us-east-1.amazonaws.com/spanner_0c26f041aa.svg)\n\n4 mm\n\n2\n\n×\n\nSpanner\n\n6.0\n\n8.0\n\n![](https://ifixit-strapi-uploads.s3.us-east-1.amazonaws.com/square_2abc3b0ce4.svg)\n\n4 mm\n\n2\n\n×\n\nSquare\n\n1\n\n2\n\n![](https://ifixit-strapi-uploads.s3.us-east-1.amazonaws.com/torx_461b92457a.svg)\n\n4 mm\n\n4\n\n×\n\nTORX®\n\nT2\n\nT3\n\nT4\n\nT5\n\n![](https://ifixit-strapi-uploads.s3.us-east-1.amazonaws.com/torx_security_9d423f1f88.svg)\n\n4 mm\n\n8\n\n×\n\nTORX® Security\n\nTR6\n\nTR7\n\nTR8\n\nTR9\n\nTR10\n\nTR15\n\nTR20\n\nTR25\n\n![](https://ifixit-strapi-uploads.s3.us-east-1.amazonaws.com/tri_point_659af4a23b.svg)\n\n4 mm\n\n4\n\n×\n\nTri-point\n\nY000\n\nY00\n\nY0\n\nY1\n\n![](https://ifixit-strapi-uploads.s3.us-east-1.amazonaws.com/triangle_000961d0d8.svg)\n\n4 mm\n\n2\n\n×\n\nTriangle\n\n2\n\n3",
+            "source": "https://www.ifixit.com/products/pro-tech-toolkit",
+            "document_id": "auto:e2891b007a740c665606",
+            "strength": "strong",
+            "user_attested": false,
+            "category": null
+          }
+        ],
+        "sources": [
+          "https://www.ifixit.com/products/pro-tech-toolkit",
+          "https://www.ifixit.com/Wiki/iFixit_Pro_Tech_Toolkit_Care_and_Use"
+        ],
+        "dropped_claims": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T16:15:30.009147Z",
+      "completed_at": "2026-10-05T16:19:14.093101Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 52860,
+      "output_tokens": 4873,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 95744,
+      "cost_usd": 1.301991,
+      "duration_ms": 223175.4897000501,
+      "attempt": 1
+    }
+  ],
+  "assets": [
+    {
+      "id": "904d8c6b-71d0-4016-8313-e9dba90886a0",
+      "asset_type": "email",
+      "title": "Where do the screws go after they come out?",
+      "content": "Subject: Where do the screws go after they come out?\nPreview text: The Pro Tech Toolkit’s removable magnetic lid gives them a defined place during disassembly.\n\nTurn the case lid into a sorting surface\n\nHi there,\n\nGive removed screws a dedicated surface while you work. The iFixit Pro Tech Toolkit lets you use the inside of its driver-kit lid as a sorting tray during disassembly.\n\nThe lid attaches magnetically to the driver-kit case. Remove it, turn it over, and you have a defined place to arrange fasteners instead of treating the case as packaging that sits aside.\n\nWhen the work is done, the magnetic case and foam insert provide secure tool storage. The included fabric roll makes the broader toolkit portable, so the same design supports work at the bench and carrying the tools elsewhere.\n\nA sorting surface does not record where each screw belongs, so careful tracking still matters. Visit the product page to decide whether the integrated tray and organized storage fit the way you want to work.\n\nSee the case and storage design →\n\n- iFixit",
+      "content_html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n<meta name=\"x-apple-disable-message-reformatting\" />\n<meta name=\"color-scheme\" content=\"light\" />\n<meta name=\"supported-color-schemes\" content=\"light\" />\n<title>Where do the screws go after they come out?</title>\n</head>\n<body style=\"margin:0;padding:0;background-color:#eceef3;-webkit-text-size-adjust:100%;\">\n<div style=\"display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;\">The Pro Tech Toolkit’s removable magnetic lid gives them a defined place during disassembly.&#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; </div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#eceef3;\">\n<tr><td align=\"center\" style=\"padding:24px 12px;\">\n<table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;background-color:#ffffff;border-radius:12px;\">\n<tr><td style=\"background-color:#1a56db;height:4px;font-size:0;line-height:0;\">&nbsp;</td></tr>\n<tr><td style=\"padding:26px 36px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;font-weight:700;letter-spacing:0.2px;color:#14161a;\">iFixit — pilot validation</td></tr>\n<tr><td style=\"padding:26px 36px 10px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#1a56db;\">Repair setup</p></td></tr>\n<tr><td style=\"padding:0 36px 20px;\"><h1 style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:29px;line-height:1.2;font-weight:800;letter-spacing:-0.5px;color:#14161a;\">Turn the case lid into a sorting surface</h1></td></tr>\n<tr><td style=\"padding:10px 36px 16px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Hi there,</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:17px;line-height:1.6;color:#3d434d;\">Give removed screws a dedicated surface while you work. The iFixit Pro Tech Toolkit lets you use the inside of its driver-kit lid as a sorting tray during disassembly.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">The lid attaches magnetically to the driver-kit case. Remove it, turn it over, and you have a defined place to arrange fasteners instead of treating the case as packaging that sits aside.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">When the work is done, the magnetic case and foam insert provide secure tool storage. The included fabric roll makes the broader toolkit portable, so the same design supports work at the bench and carrying the tools elsewhere.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">A sorting surface does not record where each screw belongs, so careful tracking still matters. Visit the product page to decide whether the integrated tray and organized storage fit the way you want to work.</p></td></tr>\n<tr><td style=\"padding:6px 36px 22px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td style=\"border-top:1px solid #e6e9ef;font-size:0;line-height:0;\">&nbsp;</td></tr></table></td></tr>\n<tr><td align=\"center\" style=\"padding:4px 36px 8px;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"center\" style=\"background-color:#1a56db;border-radius:8px;\"><a href=\"https://www.ifixit.com/products/pro-tech-toolkit\" style=\"display:inline-block;padding:16px 40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;\">See the case and storage design</a></td></tr></table></td></tr>\n<tr><td style=\"padding:22px 36px 20px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6;color:#767d89;\">- iFixit</p></td></tr>\n<tr><td align=\"center\" style=\"padding:22px 36px 28px;background-color:#fafbfc;border-top:1px solid #e6e9ef;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:12px;line-height:1.7;color:#767d89;\">iFixit — pilot validation</td></tr>\n</table>\n</td></tr>\n</table>\n</body>\n</html>\n",
+      "position": 2,
+      "asset_metadata": {
+        "position": 2,
+        "role": "Show how the toolkit’s case supports disassembly",
+        "subject": "Where do the screws go after they come out?",
+        "preview_text": "The Pro Tech Toolkit’s removable magnetic lid gives them a defined place during disassembly.",
+        "eyebrow": "Repair setup",
+        "headline": "Turn the case lid into a sorting surface",
+        "greeting": "Hi there,",
+        "body": "Give removed screws a dedicated surface while you work. The iFixit Pro Tech Toolkit lets you use the inside of its driver-kit lid as a sorting tray during disassembly.\n\nThe lid attaches magnetically to the driver-kit case. Remove it, turn it over, and you have a defined place to arrange fasteners instead of treating the case as packaging that sits aside.\n\nWhen the work is done, the magnetic case and foam insert provide secure tool storage. The included fabric roll makes the broader toolkit portable, so the same design supports work at the bench and carrying the tools elsewhere.\n\nA sorting surface does not record where each screw belongs, so careful tracking still matters. Visit the product page to decide whether the integrated tray and organized storage fit the way you want to work.",
+        "call_to_action": "See the case and storage design",
+        "sign_off": "- iFixit",
+        "postscript": "",
+        "pull": 6,
+        "revisions": 1,
+        "single_idea": "During disassembly, the inside of the driver-kit lid can serve as a sorting tray for removed fasteners while the case and foam insert keep the toolkit organized.",
+        "evidence_ids": [
+          "E580",
+          "E623",
+          "E624"
+        ],
+        "tier": "branded"
+      },
+      "created_at": "2026-10-05T16:19:14.244996Z"
+    },
+    {
+      "id": "98b473d6-b071-4693-8327-840b6082e08b",
+      "asset_type": "email",
+      "title": "What the Lifetime Guarantee covers",
+      "content": "Subject: What the Lifetime Guarantee covers\nPreview text: See the defined promise—and the exclusions—before choosing your first general toolkit.\n\nKnow what lifetime coverage means\n\nHi there,\n\nThe Pro Tech Toolkit’s product page identifies a Lifetime Guarantee. iFixit defines that promise clearly: the covered product is guaranteed to function for as long as you have it.\n\nThat gives you a documented standard to consider when choosing a repair toolkit—not simply a durability claim with no stated duration.\n\nThe guarantee has boundaries. Claims may be denied for abuse, negligence, unintended use, cosmetic issues, loss, installation damage, accidental damage, misuse, device damage, or data loss. iFixit may also require the product to be returned for analysis before issuing credit or a replacement.\n\nThe iFixit Pro Tech Toolkit is a general repair toolkit with lifetime coverage identified on its product page. Review that label to decide whether the defined protection addresses your concern about covered tool failure during intended use.\n\nReview the Lifetime Guarantee →\n\n- iFixit",
+      "content_html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n<meta name=\"x-apple-disable-message-reformatting\" />\n<meta name=\"color-scheme\" content=\"light\" />\n<meta name=\"supported-color-schemes\" content=\"light\" />\n<title>What the Lifetime Guarantee covers</title>\n</head>\n<body style=\"margin:0;padding:0;background-color:#eceef3;-webkit-text-size-adjust:100%;\">\n<div style=\"display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;\">See the defined promise—and the exclusions—before choosing your first general toolkit.&#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; </div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#eceef3;\">\n<tr><td align=\"center\" style=\"padding:24px 12px;\">\n<table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;background-color:#ffffff;border-radius:12px;\">\n<tr><td style=\"background-color:#1a56db;height:4px;font-size:0;line-height:0;\">&nbsp;</td></tr>\n<tr><td style=\"padding:26px 36px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;font-weight:700;letter-spacing:0.2px;color:#14161a;\">iFixit — pilot validation</td></tr>\n<tr><td style=\"padding:26px 36px 10px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#1a56db;\">GUARANTEE DETAILS</p></td></tr>\n<tr><td style=\"padding:0 36px 20px;\"><h1 style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:29px;line-height:1.2;font-weight:800;letter-spacing:-0.5px;color:#14161a;\">Know what lifetime coverage means</h1></td></tr>\n<tr><td style=\"padding:10px 36px 16px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Hi there,</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:17px;line-height:1.6;color:#3d434d;\">The Pro Tech Toolkit’s product page identifies a Lifetime Guarantee. iFixit defines that promise clearly: the covered product is guaranteed to function for as long as you have it.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">That gives you a documented standard to consider when choosing a repair toolkit—not simply a durability claim with no stated duration.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">The guarantee has boundaries. Claims may be denied for abuse, negligence, unintended use, cosmetic issues, loss, installation damage, accidental damage, misuse, device damage, or data loss. iFixit may also require the product to be returned for analysis before issuing credit or a replacement.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">The iFixit Pro Tech Toolkit is a general repair toolkit with lifetime coverage identified on its product page. Review that label to decide whether the defined protection addresses your concern about covered tool failure during intended use.</p></td></tr>\n<tr><td style=\"padding:6px 36px 22px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td style=\"border-top:1px solid #e6e9ef;font-size:0;line-height:0;\">&nbsp;</td></tr></table></td></tr>\n<tr><td align=\"center\" style=\"padding:4px 36px 8px;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"center\" style=\"background-color:#1a56db;border-radius:8px;\"><a href=\"https://www.ifixit.com/products/pro-tech-toolkit\" style=\"display:inline-block;padding:16px 40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;\">Review the Lifetime Guarantee</a></td></tr></table></td></tr>\n<tr><td style=\"padding:22px 36px 20px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6;color:#767d89;\">- iFixit</p></td></tr>\n<tr><td align=\"center\" style=\"padding:22px 36px 28px;background-color:#fafbfc;border-top:1px solid #e6e9ef;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:12px;line-height:1.7;color:#767d89;\">iFixit — pilot validation</td></tr>\n</table>\n</td></tr>\n</table>\n</body>\n</html>\n",
+      "position": 3,
+      "asset_metadata": {
+        "position": 3,
+        "role": "resolve durability concern",
+        "subject": "What the Lifetime Guarantee covers",
+        "preview_text": "See the defined promise—and the exclusions—before choosing your first general toolkit.",
+        "eyebrow": "GUARANTEE DETAILS",
+        "headline": "Know what lifetime coverage means",
+        "greeting": "Hi there,",
+        "body": "The Pro Tech Toolkit’s product page identifies a Lifetime Guarantee. iFixit defines that promise clearly: the covered product is guaranteed to function for as long as you have it.\n\nThat gives you a documented standard to consider when choosing a repair toolkit—not simply a durability claim with no stated duration.\n\nThe guarantee has boundaries. Claims may be denied for abuse, negligence, unintended use, cosmetic issues, loss, installation damage, accidental damage, misuse, device damage, or data loss. iFixit may also require the product to be returned for analysis before issuing credit or a replacement.\n\nThe iFixit Pro Tech Toolkit is a general repair toolkit with lifetime coverage identified on its product page. Review that label to decide whether the defined protection addresses your concern about covered tool failure during intended use.",
+        "call_to_action": "Review the Lifetime Guarantee",
+        "sign_off": "- iFixit",
+        "postscript": "",
+        "pull": 6,
+        "revisions": 0,
+        "single_idea": "The Pro Tech Toolkit carries a Lifetime Guarantee that promises covered products will function for as long as the customer has them, with explicit exclusions for misuse, accidental damage, installation damage, device damage, and data loss.",
+        "evidence_ids": [
+          "R5",
+          "R6",
+          "R7"
+        ],
+        "tier": "branded"
+      },
+      "created_at": "2026-10-05T16:19:14.252992Z"
+    }
+  ],
+  "result": {
+    "run_status": "cancelled",
+    "report": {
+      "request": "Write exactly 3 English nurture emails for opted-in electronics hobbyists considering their first general repair toolkit. Promote the iFixit Pro Tech Toolkit using only official source facts. Email 1 helps assess whether the kit fits their repair work, email 2 explains a concrete tool use from the material, email 3 resolves a supported buying concern. Each email must stand alone, build a distinct argument, and point to the product page. No invented discounts, deadlines, cart activity, personal knowledge, or guaranteed repair outcomes. Readers have not purchased yet.",
+      "delivered": 2,
+      "promised": 3,
+      "contract_violations": [
+        "the user asked for 3 email(s) and the run produced 2"
+      ],
+      "emails": [
+        {
+          "position": 2,
+          "subject": "Where do the screws go after they come out?",
+          "single_idea": "During disassembly, the inside of the driver-kit lid can serve as a sorting tray for removed fasteners while the case and foam insert keep the toolkit organized.",
+          "pull": 6.0,
+          "revisions": 1,
+          "clean": true,
+          "landed": false,
+          "rewrites_stopped_helping": true,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E580",
+            "E623",
+            "E624"
+          ],
+          "evidence_spent": [],
+          "attributions": 0,
+          "unresolved": [],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "A general electronics repair toolkit whose removable magnetic case lid doubles as a screw-sorting surface and whose case, foam insert, and fabric roll organize the tools.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile establishes that I am an electronics hobbyist considering a first general repair toolkit, so organized tools and a place for screws are relevant. The email additionally assumes I perform screw-based disassembly and would benefit from a portable kit; those details are plausible but not established, and whether I currently lose track of screws is unknown.",
+              "assumed_experiences": [
+                "Profile-supported: considering a first general repair toolkit for electronics hobby work.",
+                "Email-only: removing screws during disassembly.",
+                "Email-only: needing a dedicated surface to arrange fasteners.",
+                "Email-only: working both at a bench and elsewhere.",
+                "Email-only: wanting magnetic storage, a foam insert, and a fabric tool roll."
+              ],
+              "problem_now": "Keeping screws associated with their positions is a plausible concern for electronics repair, but the profile does not establish that it is causing trouble now or that a repair is imminent. On this rushed morning, it feels like an anticipated convenience rather than an urgent problem.",
+              "stopped_at": "When the work is done, the magnetic case and foam insert provide secure tool storage.",
+              "biggest_doubt": "I still do not know the price or which tools are included, so I cannot judge whether this is a sensible first general repair toolkit rather than an expensive case built around one neat feature.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me the price and briefly named the main tools included for a first electronics repair kit.",
+              "fixes": [
+                "Rewrite \"The iFixit Pro Tech Toolkit lets you use the inside of its driver-kit lid as a sorting tray during disassembly.\" to name the main included tools and price alongside the tray feature.",
+                "Cut \"Remove it, turn it over, and you have a defined place to arrange fasteners instead of treating the case as packaging that sits aside.\" The subject, preview, and prior sentence have already explained the tray.",
+                "Shorten \"When the work is done, the magnetic case and foam insert provide secure tool storage. The included fabric roll makes the broader toolkit portable, so the same design supports work at the bench and carrying the tools elsewhere.\" to \"The magnetic case, foam insert, and fabric roll keep the included tools organized at the bench or in transit.\"",
+                "Rewrite \"Visit the product page to decide whether the integrated tray and organized storage fit the way you want to work.\" to specify what the page will show, such as the included tools, price, dimensions, and case layout, if those details are available there."
+              ],
+              "opens_in_100": 38,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (user-stated constraints): Opted-in electronics hobbyists considering their first general repair toolkit.\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "A general electronics repair toolkit whose removable magnetic case lid doubles as a screw-sorting tray and whose case and roll organize the tools.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile establishes that I opted in and am considering my first general repair toolkit, so an organized toolkit with a surface for removed screws is directly relevant. The email additionally assumes I will perform disassembly and value portability between a bench and other locations; those uses are plausible but not established.",
+              "assumed_experiences": [
+                "Profile-supported: considering a first general repair toolkit.",
+                "Email-only: removing screws during disassembly.",
+                "Email-only: needing a dedicated surface for arranging fasteners.",
+                "Email-only: working both at a bench and elsewhere.",
+                "Email-only: wanting portable storage for a broader set of tools."
+              ],
+              "problem_now": "Keeping screws organized is a plausible concern for future repair work, but the profile does not establish an active repair, an existing screw-tracking problem, or any urgency this Tuesday morning.",
+              "stopped_at": "The included fabric roll makes the broader toolkit portable, so the same design supports work at the bench and carrying the tools elsewhere.",
+              "biggest_doubt": "I still do not know the price or enough about the included tools to judge whether this is a sensible first general toolkit; the tray alone is not worth opening a product page three minutes before a meeting.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me the toolkit's price and named its main included tools.",
+              "fixes": [
+                "Rewrite \"The included fabric roll makes the broader toolkit portable, so the same design supports work at the bench and carrying the tools elsewhere.\" to name the main tools included in the roll instead of adding a general portability claim.",
+                "Rewrite \"Visit the product page to decide whether the integrated tray and organized storage fit the way you want to work.\" to include the price before asking me to visit the page.",
+                "Cut \"instead of treating the case as packaging that sits aside\"; the removable-lid explanation already makes the benefit clear."
+              ],
+              "opens_in_100": 38,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (user-stated constraints): Opted-in electronics hobbyists considering their first general repair toolkit.\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "A portable general repair toolkit whose removable magnetic driver-case lid doubles as a surface for sorting screws during disassembly.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile establishes that I opted in and am considering a first general repair toolkit, so the product category and organized-storage premise are relevant. The email additionally assumes I regularly remove and sort screws during disassembly; that is plausible for an electronics hobbyist but is not explicitly established, and my current need or urgency is unknown.",
+              "assumed_experiences": [
+                "Profile-supported: I opted in and am considering my first general repair toolkit.",
+                "Email-only: I perform disassembly work involving removed screws.",
+                "Email-only: I want to use the toolkit both at a bench and elsewhere.",
+                "Email-only: keeping fasteners organized is a meaningful problem in my current projects."
+              ],
+              "problem_now": "Keeping differently placed screws organized is a plausible risk during electronics repair, but the profile does not establish that I am repairing something now, have encountered this problem before, or need a toolkit on a deadline.",
+              "stopped_at": "When the work is done, the magnetic case and foam insert provide secure tool storage.",
+              "biggest_doubt": "The email gives me one case feature but not the toolkit's price or enough detail about the included tools to judge whether it is a sensible first general repair toolkit.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me the price and briefly named the main tools included in the kit.",
+              "fixes": [
+                "Rewrite \"The iFixit Pro Tech Toolkit lets you use the inside of its driver-kit lid as a sorting tray during disassembly.\" to identify the main included tools and price alongside the lid feature.",
+                "Cut or shorten \"When the work is done, the magnetic case and foam insert provide secure tool storage. The included fabric roll makes the broader toolkit portable, so the same design supports work at the bench and carrying the tools elsewhere.\" because it repeats the organization point without helping me judge the toolkit's contents.",
+                "Rewrite \"Visit the product page to decide whether the integrated tray and organized storage fit the way you want to work.\" to specify that the page shows the full tool list, price, and case layout, if it does."
+              ],
+              "opens_in_100": 38,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (user-stated constraints): Opted-in electronics hobbyists considering their first general repair toolkit.\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 6
+            }
+          ],
+          "sameness": []
+        },
+        {
+          "position": 3,
+          "subject": "What the Lifetime Guarantee covers",
+          "single_idea": "The Pro Tech Toolkit carries a Lifetime Guarantee that promises covered products will function for as long as the customer has them, with explicit exclusions for misuse, accidental damage, installation damage, device damage, and data loss.",
+          "pull": 6.0,
+          "revisions": 0,
+          "clean": true,
+          "landed": false,
+          "rewrites_stopped_helping": false,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "R5",
+            "R6",
+            "R7"
+          ],
+          "evidence_spent": [
+            "R6"
+          ],
+          "attributions": 0,
+          "unresolved": [],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "iFixit offers a general repair toolkit for electronics work, backed by a stated lifetime guarantee that could reduce the cost of replacing covered failed tools.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile establishes that I opted in and am considering my first general repair toolkit, so warranty coverage is relevant to that decision. The email additionally assumes I am concerned about covered tool failure during intended use; that concern is plausible but not established. Whether this specific toolkit, its contents, price, or claim process suits me remains unknown.",
+              "assumed_experiences": [
+                "Profile-supported: I opted in to receive messages.",
+                "Profile-supported: I am considering my first general repair toolkit.",
+                "Email-only: I have a current concern about tool failure during intended use.",
+                "Email-only: lifetime coverage is an important factor in my toolkit decision.",
+                "Not established: I have previously broken, misused, or submitted a claim for a repair tool."
+              ],
+              "problem_now": "Choosing a first general repair toolkit is currently relevant, but a tool failure or warranty claim is only an anticipated risk; no immediate failure, purchase deadline, or prior claim is established.",
+              "stopped_at": "The guarantee has boundaries. Claims may be denied for abuse, negligence, unintended use, cosmetic issues, loss, installation damage, accidental damage, misuse, device damage, or data loss.",
+              "biggest_doubt": "The broad exclusions make the promise hard to evaluate without a concrete example of an ordinary tool failure that would actually qualify and what remedy I would receive.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me one concrete example of a tool breaking during normal repair use that would be covered, including whether I would receive a replacement or only credit.",
+              "fixes": [
+                "Rewrite \"The Pro Tech Toolkit’s product page identifies a Lifetime Guarantee. iFixit defines that promise clearly: the covered product is guaranteed to function for as long as you have it.\" to name one ordinary covered failure and the remedy provided.",
+                "Shorten \"Claims may be denied for abuse, negligence, unintended use, cosmetic issues, loss, installation damage, accidental damage, misuse, device damage, or data loss.\" by grouping overlapping exclusions and separating exclusions affecting the toolkit from unrelated device or data damage.",
+                "Cut \"That gives you a documented standard to consider when choosing a repair toolkit—not simply a durability claim with no stated duration.\" because it repeats the preceding guarantee definition without resolving what failures qualify.",
+                "Rewrite \"Review that label to decide whether the defined protection addresses your concern about covered tool failure during intended use.\" to state that the link opens the complete guarantee terms and claim requirements."
+              ],
+              "opens_in_100": 43,
+              "clicks_in_100": 6,
+              "persona": "Selected audience (user-stated constraints): Opted-in electronics hobbyists considering their first general repair toolkit.\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.",
+              "pull": 7
+            },
+            {
+              "what_it_sells": "iFixit is offering a general repair toolkit with a lifetime guarantee, which could give me one set of tools for attempting common electronics repairs.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile establishes that I opted in and am considering my first general repair toolkit, so warranty coverage is relevant to that choice. The email additionally assumes I am concerned about covered tool failure; that specific concern and the guarantee's importance to my decision are unknown.",
+              "assumed_experiences": [
+                "Profile-supported: I am considering my first general repair toolkit.",
+                "Email-only: I have a concern about tool failure during intended use.",
+                "Email-only: lifetime coverage is an important factor in my toolkit decision.",
+                "Not established: I have previously broken, misused, or made a warranty claim for a tool."
+              ],
+              "problem_now": "Choosing a first general toolkit is current, but tool failure is only an anticipated risk; the profile establishes no broken tool, urgent repair, or immediate need to make a warranty claim.",
+              "stopped_at": "The guarantee has boundaries. Claims may be denied for abuse, negligence, unintended use, cosmetic issues, loss, installation damage, accidental damage, misuse, device damage, or data loss.",
+              "biggest_doubt": "I still cannot tell whether ordinary wear or a broken driver bit would actually qualify, so the broad exclusions make the lifetime promise feel less useful than the headline suggests.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me whether a driver bit that wears out or breaks during normal use is covered, using one concrete claim example.",
+              "fixes": [
+                "Rewrite \"The Pro Tech Toolkit’s product page identifies a Lifetime Guarantee. iFixit defines that promise clearly: the covered product is guaranteed to function for as long as you have it.\" as \"If a tool in your Pro Tech Toolkit stops functioning during normal intended use, here is whether we repair, replace, or credit it.\"",
+                "Replace \"Claims may be denied for abuse, negligence, unintended use, cosmetic issues, loss, installation damage, accidental damage, misuse, device damage, or data loss.\" with a shorter distinction between covered normal-use failure and excluded accidental damage or misuse.",
+                "Cut \"That gives you a documented standard to consider when choosing a repair toolkit—not simply a durability claim with no stated duration.\" because it repeats the guarantee claim without showing how it works.",
+                "Rewrite \"Review the Lifetime Guarantee →\" as \"See what is covered, with claim examples →\""
+              ],
+              "opens_in_100": 39,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (user-stated constraints): Opted-in electronics hobbyists considering their first general repair toolkit.\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+              "pull": 6
+            },
+            {
+              "what_it_sells": "A general repair toolkit for electronics, backed by a lifetime guarantee for covered tool failures, which could give me one kit for routine repair work.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile establishes that I opted in and am considering my first general repair toolkit, so information about a toolkit's guarantee is relevant to that decision. The email additionally assumes I have a specific concern about covered tool failure; that concern is not established, though it is a plausible consideration.",
+              "assumed_experiences": [
+                "Profile-supported: I am considering my first general repair toolkit.",
+                "Profile-supported: I opted in to receive communication.",
+                "Email-only: covered tool failure during intended use is a concern influencing my choice.",
+                "Email-only: lifetime coverage is important enough to review before choosing.",
+                "Not established: I have previously owned, broken, or made a guarantee claim on a repair tool."
+              ],
+              "problem_now": "Choosing a first general toolkit is current and documented, but needing lifetime protection is only a plausible future risk. No imminent failure, purchase deadline, or prior bad experience is established.",
+              "stopped_at": "Claims may be denied for abuse, negligence, unintended use, cosmetic issues, loss, installation damage, accidental damage, misuse, device damage, or data loss.",
+              "biggest_doubt": "The guarantee sounds heavily qualified, but the email does not give the actual guarantee terms, explain what counts as intended use, or show whether common tool wear and breakage are covered; it also tells me too little about the toolkit itself to judge whether this protection matters.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me one concrete example of a commonly used toolkit component that would be replaced after failing during normal electronics repair, plus a direct link to the complete terms.",
+              "fixes": [
+                "Rewrite \"The Pro Tech Toolkit’s product page identifies a Lifetime Guarantee\" as \"If a driver, bit, or other covered tool fails during normal electronics repair, here is what iFixit says it will replace—and what it will not.\"",
+                "Replace the long sentence beginning \"Claims may be denied for abuse\" with a shorter summary and a link to the complete terms; the undifferentiated list makes ordinary exclusions and consequential exclusions hard to assess quickly.",
+                "Cut \"That gives you a documented standard to consider when choosing a repair toolkit—not simply a durability claim with no stated duration.\" It restates the preceding claim without adding evidence.",
+                "Rewrite \"Review that label to decide whether the defined protection addresses your concern about covered tool failure during intended use\" to avoid assuming this is already my concern and to state what I will find after clicking."
+              ],
+              "opens_in_100": 43,
+              "clicks_in_100": 5,
+              "persona": "Selected audience (user-stated constraints): Opted-in electronics hobbyists considering their first general repair toolkit.\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+              "pull": 6
+            }
+          ],
+          "sameness": []
+        }
+      ],
+      "limiting_gaps": [],
+      "what_would_help_most": "Provide verified material to resolve: The supplied material does not provide the current price or a complete itemized list of included bits, tool types, and sizes, which the cold readers consistently need to judge whether this is sensible first-kit breadth rather than unnecessary equipment.",
+      "questions": [
+        "Provide verified material to resolve: The supplied material does not provide the current price or a complete itemized list of included bits, tool types, and sizes, which the cold readers consistently need to judge whether this is sensible first-kit breadth rather than unnecessary equipment."
+      ],
+      "sequence_summary": "",
+      "knowledge_version": 3,
+      "notes": [
+        "Cancelled by user request.",
+        "Withheld emails needing verified material: 1"
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "A pre-purchase nurture sequence for solution-aware, opted-in electronics hobbyists choosing their first broad repair toolkit—not customer onboarding. The sequence helps them judge fit, understand one practical use, and evaluate durability coverage before buying.",
+      "reader": "Selected audience (user-stated constraints): Opted-in electronics hobbyists considering their first general repair toolkit.\nNo further recipient situation is established. Compiled market context is research to check for applicability, not a replacement biography.",
+      "reader_segment": "A hands-on electronics owner who is tired of improvising tools across phones, laptops, consoles, and household devices",
+      "reader_profile_override": "Opted-in electronics hobbyists considering their first general repair toolkit",
+      "promise": "The Pro Tech Toolkit is a broad, organized option for hobbyists who want one toolkit for varied electronics work, with practical repair tools and defined long-term coverage.",
+      "orientation": "The Pro Tech Toolkit is a general electronics repair kit combining a 64-bit driver set with opening, prying, gripping, and anti-static tools in portable storage.",
+      "arc": "First establish whether the toolkit's breadth matches the reader's likely repair range; then make that breadth tangible through one concrete project-management use; finally address concern about buying tools that may not last.",
+      "sequence_rationale": "The reader must determine relevance before tool details or guarantee terms matter. Email 1 therefore frames a fit test around device range and tool breadth. Email 2 turns the product from an inventory list into a concrete repair-workflow example. Email 3 resolves the supported durability concern with the Lifetime Guarantee and its limits. Each email can be understood independently and sends the reader to the same product page for the decision relevant to that message.",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Help the reader decide whether the Pro Tech Toolkit's breadth fits the kinds of electronics repairs they want to attempt.",
+          "single_idea": "The Pro Tech Toolkit is a fit when the reader wants coverage across several electronics categories and expects projects to require opening, prying, gripping, or anti-static tools as well as screwdriver bits.",
+          "felt_need": "I want one first toolkit that can stay useful across different electronics, but I do not want to buy breadth I will never use.",
+          "status_quo": "The reader may be comparing smaller bit sets, basic phone-and-laptop kits, or a broader general repair toolkit.",
+          "why_it_fails": "Bit count alone does not show whether a kit supports the non-screw steps that electronics repairs can involve.",
+          "mechanism": "The Pro Tech Toolkit combines 64 bits with tweezers, spudgers, opening tools, and anti-static accessories, and its stated device range includes electronics, gaming consoles, drones, RC cars, and vintage devices.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: a larger toolkit may simply mean more bits. After: fit depends on both fastener breadth and whether the included handling and opening tools match the reader's intended repair work.",
+          "evidence_ids": [
+            "E636",
+            "E622",
+            "E654"
+          ],
+          "must_not_say": [
+            "Do not claim the toolkit fits every device, model, or repair.",
+            "Do not imply that every reader's existing tools are inadequate.",
+            "Do not promise successful repairs or protection from device damage.",
+            "Do not introduce professional-repair or repair-business positioning.",
+            "Do not turn the email into a complete inventory list."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "I cannot tell whether a 64-bit general toolkit is useful breadth or more kit than my first repairs require.",
+          "tone": "Practical and diagnostic",
+          "call_to_action": "View the Pro Tech Toolkit product page: https://www.ifixit.com/products/pro-tech-toolkit",
+          "next_step_decision": "Decide whether the included bit range and non-driver tools match the categories and repair steps the reader expects to encounter.",
+          "next_step_value": "The page lets the reader inspect the 64-bit driver kit, broader repair-tool assortment, and supported device range before choosing.",
+          "next_step_evidence_ids": [
+            "E636",
+            "E622",
+            "E654"
+          ],
+          "next_step_limit": "The page's general device range does not establish compatibility with every specific model or confirm every tool required by an individual repair guide.",
+          "subject_strategy": "Frame the open around a quick fit check for varied electronics work, not a sweeping claim that more tools are automatically better.",
+          "must_not_reuse": []
+        },
+        {
+          "position": 2,
+          "job": "Show one concrete way the toolkit supports an electronics repair after the device has been opened.",
+          "single_idea": "During disassembly, the inside of the driver-kit lid can serve as a sorting tray for removed fasteners while the case and foam insert keep the toolkit organized.",
+          "felt_need": "Once screws start coming out, I need a clear place to set them while I work.",
+          "status_quo": "A first-time toolkit buyer may focus on which bits remove screws without considering where those fasteners go during the repair.",
+          "why_it_fails": "Removing a fastener and managing it during disassembly are separate parts of the same task.",
+          "mechanism": "The driver-kit case uses a magnetically attached lid whose inside serves as a sorting tray; the broader toolkit uses a magnetic case, foam insert, and fabric roll for storage and portability.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: the case is only packaging for the tools. After: part of the case becomes a usable work surface during disassembly, then returns to organized storage.",
+          "evidence_ids": [
+            "E580",
+            "E623",
+            "E624"
+          ],
+          "must_not_say": [
+            "Do not claim the tray guarantees that screws cannot be lost or mixed up.",
+            "Do not claim the lid documents screw positions or replaces deliberate organization.",
+            "Do not broaden the email into a list of all 64 bits or every included tool.",
+            "Do not guarantee a repair outcome or imply that organization prevents device damage.",
+            "Do not invent a repair the recipient has already attempted."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "A tool case may seem like storage that adds little once the repair begins.",
+          "tone": "Hands-on and instructional",
+          "call_to_action": "See the Pro Tech Toolkit's case and storage design on the product page: https://www.ifixit.com/products/pro-tech-toolkit",
+          "next_step_decision": "Decide whether an integrated sorting surface and organized portable storage would be useful in the reader's repair workflow.",
+          "next_step_value": "The page shows how the toolkit's magnetic case, foam insert, sorting-tray lid, and fabric roll are designed to store and carry the tools.",
+          "next_step_evidence_ids": [
+            "E580",
+            "E623",
+            "E624"
+          ],
+          "next_step_limit": "The storage design does not identify where each removed screw belongs or eliminate the need to track parts carefully.",
+          "subject_strategy": "Earn the open with a specific overlooked moment in a repair—what to do with screws after removing them—rather than a generic tool feature.",
+          "must_not_reuse": [
+            "The Pro Tech Toolkit is a fit when the reader wants coverage across several electronics categories and expects projects to require opening, prying, gripping, or anti-static tools as well as screwdriver bits."
+          ]
+        },
+        {
+          "position": 3,
+          "job": "Resolve the concern that a first general toolkit may not remain dependable beyond a small number of repairs.",
+          "single_idea": "The Pro Tech Toolkit carries a Lifetime Guarantee that promises covered products will function for as long as the customer has them, with explicit exclusions for misuse, accidental damage, installation damage, device damage, and data loss.",
+          "felt_need": "If I invest in a general toolkit, I want to know what support exists if a tool fails during intended use.",
+          "status_quo": "The reader can otherwise judge durability only from product descriptions and materials before purchase.",
+          "why_it_fails": "Those details do not by themselves define what the seller will do if a covered product stops functioning.",
+          "mechanism": "The product page identifies the Lifetime Guarantee, while iFixit's official policy defines its duration and distinguishes covered failure from user-caused damage or unintended use.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: lifetime coverage may sound like an undefined durability slogan. After: it is a stated promise of function for as long as the customer owns the covered product, bounded by documented exclusions.",
+          "evidence_ids": [
+            "R5",
+            "R6",
+            "R7"
+          ],
+          "must_not_say": [
+            "Do not describe the guarantee as unconditional replacement of every toolkit item.",
+            "Do not imply that the guarantee covers consumables without separate terms.",
+            "Do not imply coverage for misuse, loss, accidental damage, installation errors, device damage, or data loss.",
+            "Do not present the guarantee as a repair-success guarantee.",
+            "Do not invent a discount, deadline, scarcity claim, or cart activity."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "I do not want my first general repair toolkit to become a short-lived purchase after only a few projects.",
+          "tone": "Reassuring but precise",
+          "call_to_action": "Review the Pro Tech Toolkit and its Lifetime Guarantee label on the product page: https://www.ifixit.com/products/pro-tech-toolkit",
+          "next_step_decision": "Decide whether the documented lifetime coverage meaningfully reduces concern about covered tool failure during intended use.",
+          "next_step_value": "The product page identifies the Pro Tech Toolkit's Lifetime Guarantee, allowing the reader to verify that coverage is attached to this product.",
+          "next_step_evidence_ids": [
+            "R5"
+          ],
+          "next_step_limit": "The product page does not make the guarantee unconditional, cover user-caused device damage, or guarantee that a repair will succeed.",
+          "subject_strategy": "Address durability directly by distinguishing a defined lifetime promise from an unlimited repair or damage guarantee.",
+          "must_not_reuse": [
+            "The Pro Tech Toolkit is a fit when the reader wants coverage across several electronics categories and expects projects to require opening, prying, gripping, or anti-static tools as well as screwdriver bits.",
+            "During disassembly, the inside of the driver-kit lid can serve as a sorting tray for removed fasteners while the case and foam insert keep the toolkit organized."
+          ]
+        }
+      ],
+      "voice_notes": "Use short, practical sentences and confident repair language. Address the reader as “you” without implying personal repair history. Keep each message focused on one decision and describe the product-page CTA specifically.",
+      "contract": {
+        "kind": "email_sequence",
+        "count": 3,
+        "count_is_explicit": true,
+        "evidence": "3 English nurture emails"
+      }
+    },
+    "knowledge_version": 3,
+    "recommendation_at_generation": {
+      "campaign_id": "866cd496-fc6f-478f-b7b1-dded9833c110",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

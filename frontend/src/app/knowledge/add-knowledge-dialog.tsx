@@ -2,23 +2,26 @@
 
 import { useRef, useState } from "react";
 import { toast } from "sonner";
+import { FileUp, Globe, Plus, Type } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { FIELD_STYLES, Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/lib/api-client";
 import type { Brand, Campaign } from "@/lib/types";
 import { refreshPage } from "@/lib/page-data";
+import { cn } from "@/lib/utils";
 
 /** Every document needs a home a campaign run can actually find: a brand
  * (reused by every campaign attached to it) or a single campaign (read once,
@@ -101,7 +104,7 @@ export function AddKnowledgeDialog({
   const scopeAndTitle = (
     <>
       {brand ? (
-        <p className="rounded-md bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+        <p className="rounded-xl bg-violet-500/[0.07] px-3.5 py-2.5 text-sm leading-relaxed text-muted-foreground ring-1 ring-violet-400/20">
           Saved to <span className="font-medium text-foreground">{brand.name}</span> — read by
           every campaign for this brand, and by no other brand&rsquo;s.
         </p>
@@ -112,7 +115,7 @@ export function AddKnowledgeDialog({
           id="scope"
           value={scopeValue}
           onChange={(e) => setScopeValue(e.target.value)}
-          className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+          className={cn(FIELD_STYLES, "h-9 cursor-pointer px-3 [&_optgroup]:bg-popover [&_option]:bg-popover")}
         >
           <option value="" disabled>
             Choose a brand or campaign…
@@ -147,17 +150,20 @@ export function AddKnowledgeDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button>Add knowledge</Button>} />
-      <DialogContent className="max-h-[85vh] overflow-y-auto">
+      <DialogTrigger render={<Button><Plus aria-hidden="true" />Add knowledge</Button>} />
+      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Tell us about your product</DialogTitle>
+          <DialogTitle className="font-display text-[1.875rem] leading-tight font-normal">Tell us about your product</DialogTitle>
+          <DialogDescription>
+            A page, a document or a few pasted lines. Everything the emails say comes from here.
+          </DialogDescription>
         </DialogHeader>
 
         <Tabs defaultValue="url">
-          <TabsList>
-            <TabsTrigger value="url">Website</TabsTrigger>
-            <TabsTrigger value="file">File</TabsTrigger>
-            <TabsTrigger value="text">Text</TabsTrigger>
+          <TabsList className="w-full">
+            <TabsTrigger value="url"><Globe aria-hidden="true" />Website</TabsTrigger>
+            <TabsTrigger value="file"><FileUp aria-hidden="true" />File</TabsTrigger>
+            <TabsTrigger value="text"><Type aria-hidden="true" />Text</TabsTrigger>
           </TabsList>
 
           <TabsContent value="url" className="space-y-4 pt-4">

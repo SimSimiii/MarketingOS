@@ -9,8 +9,10 @@ import {
   BookOpen,
   Building2,
   CheckCircle2,
+  ChevronRight,
   CloudOff,
   Mail,
+  MailCheck,
   PlayCircle,
   RotateCcw,
   ShieldCheck,
@@ -20,12 +22,12 @@ import {
 import { NewCampaignDialog } from "@/app/campaigns/new-campaign-dialog";
 import { EmptyState } from "@/components/empty-state";
 import { Notice } from "@/components/notice";
-import { PageHeader } from "@/components/page-header";
+import { GroupLabel, PageHeader } from "@/components/page-header";
 import { StatTile } from "@/components/stat-tile";
 import { StatusBadge } from "@/components/status-badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { buttonVariants } from "@/components/ui/button";
 import { api } from "@/lib/api-client";
-import { formatAbsolute, formatDuration, timeAgo } from "@/lib/format";
+import { LOCALE, formatAbsolute, formatDuration, timeAgo } from "@/lib/format";
 import { PageData, usePageData } from "@/lib/page-data";
 import type { BrandOverview, Campaign, RunningExecution } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -139,10 +141,22 @@ function tasksFrom(
 }
 
 const TONE: Record<Task["tone"], string> = {
-  live: "border-violet-400/30 bg-violet-500/[0.08] text-violet-300",
-  attention: "border-amber-400/25 bg-amber-400/[0.06] text-amber-300",
-  default: "border-border bg-background/40 text-muted-foreground",
+  live: "bg-violet-500/15 text-violet-200 ring-violet-400/30",
+  attention: "bg-amber-400/10 text-amber-300 ring-amber-400/25",
+  default: "bg-white/[0.04] text-muted-foreground ring-white/[0.08]",
 };
+
+/** "Good evening" - the page is rendered in the reader's browser, so this is
+ * their clock, not a server's. */
+function greeting(at: number): string {
+  const hour = new Date(at).getHours();
+  if (hour < 5) return "Working late";
+  if (hour < 12) return "Good morning";
+  if (hour < 18) return "Good afternoon";
+  return "Good evening";
+}
+
+const today = new Intl.DateTimeFormat(LOCALE, { weekday: "long", day: "numeric", month: "long" });
 
 export function DashboardView() {
   const state = usePageData(async () => {
@@ -170,10 +184,11 @@ export function DashboardView() {
         const firstVisit = brands !== null && brands.length === 0;
 
         return (
-          <div className="space-y-8">
+          <div className="space-y-10">
             <PageHeader
-              eyebrow="Your email studio"
-              title="Overview"
+              eyebrow={today.format(loadedAt)}
+              title={greeting(loadedAt)}
+              documentTitle="Overview"
               description={
                 firstVisit
                   ? "Three steps from your own material to emails worth sending."
@@ -181,7 +196,13 @@ export function DashboardView() {
                     ? `${tasks.length} thing${tasks.length === 1 ? "" : "s"} waiting on you, most urgent first.`
                     : "Everything is up to date. Start something new whenever you are ready."
               }
-              actions={<NewCampaignDialog />}
+              actions={<>
+                <Link href="/brands?new=1" className={buttonVariants({ variant: "outline" })}>
+                  <Building2 aria-hidden="true" />
+                  New brand
+                </Link>
+                <NewCampaignDialog />
+              </>}
             />
 
             {(campaigns === null || brands === null) && (
@@ -191,36 +212,37 @@ export function DashboardView() {
             )}
 
             {firstVisit ? (
-              <section className="studio-hero overflow-hidden rounded-2xl border border-violet-400/15 p-6 sm:p-8">
-                <p className="mb-4 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-violet-300">
+              <section className="studio-hero rise overflow-hidden rounded-3xl p-6 sm:p-10">
+                <div aria-hidden="true" className="bg-grid pointer-events-none absolute inset-0 -z-10" />
+                <p className="mb-5 flex items-center gap-2 text-[0.6875rem] font-medium uppercase tracking-[0.2em] text-violet-300">
                   <Sparkles className="size-4" aria-hidden="true" /> Grounded in your business
                 </p>
-                <h2 className="max-w-xl text-2xl font-medium leading-tight tracking-tight sm:text-3xl">
+                <h2 className="max-w-2xl font-display text-[2.5rem] leading-[1.05] sm:text-[3.25rem]">
                   Your expertise.{" "}
-                  <span className="text-muted-foreground">Ready for their inbox.</span>
+                  <span className="text-gradient-accent italic">Ready for their inbox.</span>
                 </h2>
-                <ol className="mt-8 grid gap-4 md:grid-cols-3">
+                <ol className="rise-stagger mt-10 grid gap-4 md:grid-cols-3">
                   {STEPS.map(({ title, body, href, icon: Icon }, index) => (
                     <li key={title}>
                       <Link
                         href={href}
                         className={cn(
-                          "group flex h-full flex-col gap-3 rounded-xl border p-5 transition-colors",
-                          index === 0
-                            ? "border-violet-400/40 bg-violet-500/10 hover:bg-violet-500/15"
-                            : "border-border bg-background/40 hover:border-violet-400/30",
+                          "group surface surface-interactive flex h-full flex-col gap-3 rounded-2xl p-5",
+                          index === 0 && "shadow-[var(--shadow-surface),0_0_0_1px_oklch(0.7_0.16_293/40%),0_18px_40px_-20px_oklch(0.55_0.2_293/55%)]",
                         )}
                       >
-                        <span className="flex items-center gap-3">
-                          <span className="flex size-8 items-center justify-center rounded-lg border border-border text-violet-300">
+                        <span className="flex items-center justify-between gap-3">
+                          <span className="icon-tile flex size-9 items-center justify-center rounded-xl">
                             <Icon className="size-4" aria-hidden="true" />
                           </span>
-                          <span className="text-xs text-muted-foreground tabular-nums">Step {index + 1}</span>
+                          <span className="font-display text-2xl text-muted-foreground/60 tabular-nums">
+                            0{index + 1}
+                          </span>
                         </span>
-                        <span className="text-sm font-medium">{title}</span>
-                        <span className="text-xs leading-relaxed text-muted-foreground">{body}</span>
+                        <span className="mt-2 text-[0.9375rem] font-semibold">{title}</span>
+                        <span className="text-sm leading-relaxed text-muted-foreground">{body}</span>
                         {index === 0 && (
-                          <span className="mt-auto inline-flex items-center gap-1.5 pt-2 text-sm font-medium text-violet-200">
+                          <span className="mt-auto inline-flex items-center gap-1.5 pt-3 text-sm font-medium text-violet-200">
                             Register your business
                             <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                           </span>
@@ -231,144 +253,162 @@ export function DashboardView() {
                 </ol>
               </section>
             ) : (
-              <section aria-labelledby="waiting-title" className="space-y-3">
-                <h2 id="waiting-title" className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-                  Waiting on you
-                </h2>
-                {tasks.length === 0 ? (
-                  <div className="flex items-center gap-4 rounded-xl border border-emerald-400/20 bg-emerald-400/[0.05] p-5">
-                    <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-emerald-400/10 text-emerald-300">
-                      <CheckCircle2 className="size-5" aria-hidden="true" />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium">All clear</p>
-                      <p className="mt-0.5 text-xs text-muted-foreground">
-                        No run in progress, nothing to review, nothing stopped.
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <ul className="rise-stagger grid gap-3 lg:grid-cols-2">
-                    {tasks.slice(0, 6).map((task) => (
-                      <li key={task.key} className="min-w-0">
-                        <Link
-                          href={task.href}
-                          className="group flex h-full items-start gap-4 rounded-xl border border-border bg-card p-4 transition-colors hover:border-violet-400/35 hover:bg-accent/15"
-                        >
-                          <span className={cn("flex size-9 shrink-0 items-center justify-center rounded-lg border", TONE[task.tone])}>
-                            {task.tone === "live" ? (
-                              <span className="size-2 rounded-full bg-violet-400 motion-safe:animate-pulse" aria-hidden="true" />
-                            ) : (
-                              <task.icon className="size-4" aria-hidden="true" />
-                            )}
-                          </span>
-                          <span className="min-w-0 flex-1">
-                            <span className="block truncate text-sm font-medium">{task.title}</span>
-                            <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">{task.detail}</span>
-                          </span>
-                          <span className="inline-flex shrink-0 items-center gap-1 self-center text-xs font-medium text-violet-300">
-                            <span className="hidden sm:inline">{task.cta}</span>
-                            <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
-                          </span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {tasks.length > 6 && (
-                  <p className="text-xs text-muted-foreground">
-                    And {tasks.length - 6} more - see{" "}
-                    <Link href="/campaigns" className="text-violet-300 hover:underline">campaigns</Link> and{" "}
-                    <Link href="/brands" className="text-violet-300 hover:underline">brands</Link>.
-                  </p>
-                )}
-              </section>
-            )}
-
-            <div className="rise-stagger grid gap-4 sm:grid-cols-3">
-              <StatTile
-                label="Brand workspaces"
-                value={brands?.length ?? "—"}
-                hint={waiting ? `${waiting} item${waiting === 1 ? "" : "s"} to review` : "Knowledge, positioning and proof"}
-                href="/brands"
-                icon={waiting ? AlertTriangle : Building2}
-                tone={waiting ? "attention" : "default"}
-              />
-              <StatTile
-                label="Campaigns"
-                value={campaigns?.length ?? "—"}
-                hint={delivered !== undefined ? `${delivered} with finished emails` : "From your brief to finished copy"}
-                href="/campaigns"
-                icon={Mail}
-              />
-              <StatTile
-                label="Running now"
-                value={runningResult.status === "fulfilled" ? running.length : "—"}
-                hint={running.length > 0 ? "Follow them as they write" : "Runs, research and compilation"}
-                href="/live"
-                icon={AudioLines}
-              />
-            </div>
-
-            <Card className="gap-0 py-0">
-              <CardHeader className="flex flex-row items-center justify-between border-b p-5">
-                <CardTitle>Recent campaigns</CardTitle>
-                <Link href="/campaigns" className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground">
-                  View all<ArrowRight className="size-3.5" aria-hidden="true" />
-                </Link>
-              </CardHeader>
-              <CardContent className="p-0">
-                {campaigns === null ? (
-                  <EmptyState
-                    variant="inline"
-                    icon={CloudOff}
-                    title="Campaigns are temporarily unavailable"
-                    description="The API did not answer. Nothing has been lost — reload the page to try again."
+              <>
+                <div className="rise-stagger grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+                  <StatTile
+                    label="Brand workspaces"
+                    value={brands?.length ?? "—"}
+                    hint={waiting ? `${waiting} item${waiting === 1 ? "" : "s"} to review` : "Knowledge, positioning and proof"}
+                    href="/brands"
+                    icon={waiting ? AlertTriangle : Building2}
+                    tone={waiting ? "attention" : "default"}
                   />
-                ) : campaigns.length === 0 ? (
-                  <EmptyState
-                    variant="inline"
+                  <StatTile
+                    label="Campaigns"
+                    value={campaigns?.length ?? "—"}
+                    hint="From your brief to finished copy"
+                    href="/campaigns"
                     icon={Mail}
-                    title="Your next campaign starts here"
-                    description="Start with a simple brief. A welcome sequence, a product launch, a reason to come back."
-                    action={<NewCampaignDialog />}
                   />
-                ) : (
-                  <div className="divide-y divide-border">
-                    {campaigns.slice(0, 5).map((campaign) => (
-                      <Link
-                        key={campaign.id}
-                        href={`/campaigns/${campaign.id}`}
-                        className="group/row flex items-center gap-4 p-4 transition-colors hover:bg-accent/20 sm:px-5"
-                      >
-                        <span className="hidden size-9 shrink-0 items-center justify-center rounded-lg border border-border bg-background/40 text-violet-300 sm:flex">
-                          <Mail className="size-4" aria-hidden="true" />
+                  <StatTile
+                    label="With finished emails"
+                    value={delivered ?? "—"}
+                    hint="Read cold before you see them"
+                    href="/campaigns"
+                    icon={MailCheck}
+                  />
+                  <StatTile
+                    label="Running now"
+                    value={runningResult.status === "fulfilled" ? running.length : "—"}
+                    hint={running.length > 0 ? "Follow them as they write" : "Runs, research and compilation"}
+                    href="/live"
+                    icon={AudioLines}
+                  />
+                </div>
+
+                <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+                  <section aria-labelledby="waiting-title" className="min-w-0 space-y-3">
+                    <GroupLabel id="waiting-title" live={running.length > 0} count={tasks.length || undefined}>
+                      Waiting on you
+                    </GroupLabel>
+                    {tasks.length === 0 ? (
+                      <div className="surface flex items-center gap-4 rounded-2xl p-5">
+                        <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-400/10 text-emerald-300 ring-1 ring-emerald-400/25">
+                          <CheckCircle2 className="size-5" aria-hidden="true" />
                         </span>
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium">{campaign.name}</p>
-                          <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                            <span className="text-foreground/70">
-                              {campaign.brand_id ? brandNames.get(campaign.brand_id) ?? "Brand" : "One-off"}
-                            </span>
-                            {" · "}
-                            <span title={formatAbsolute(campaign.last_run_at ?? campaign.created_at)}>
-                              {campaign.last_run_at
-                                ? `ran ${timeAgo(campaign.last_run_at)}`
-                                : `created ${timeAgo(campaign.created_at)}`}
-                            </span>
+                          <p className="text-sm font-semibold">All clear</p>
+                          <p className="mt-0.5 text-xs text-muted-foreground">
+                            No run in progress, nothing to review, nothing stopped.
                           </p>
                         </div>
-                        {campaign.last_run_status && <StatusBadge status={campaign.last_run_status} warning={campaign.last_run_needs_review} />}
-                        <ArrowRight
-                          className="size-4 shrink-0 text-muted-foreground transition-transform group-hover/row:translate-x-0.5 group-hover/row:text-violet-300"
-                          aria-hidden="true"
-                        />
+                      </div>
+                    ) : (
+                      <ul className="surface rise-stagger divide-y divide-hairline overflow-hidden rounded-2xl">
+                        {tasks.slice(0, 6).map((task) => (
+                          <li key={task.key} className="min-w-0">
+                            <Link
+                              href={task.href}
+                              className="group flex items-center gap-4 px-4 py-4 transition-colors hover:bg-white/[0.03] sm:px-5"
+                            >
+                              <span className={cn("flex size-10 shrink-0 items-center justify-center rounded-xl ring-1", TONE[task.tone])}>
+                                {task.tone === "live" ? (
+                                  <span className="live-dot" aria-hidden="true" />
+                                ) : (
+                                  <task.icon className="size-[1.125rem]" aria-hidden="true" />
+                                )}
+                              </span>
+                              <span className="min-w-0 flex-1">
+                                <span className="block truncate text-sm font-medium">{task.title}</span>
+                                <span className="mt-0.5 line-clamp-2 block text-xs leading-relaxed text-muted-foreground">{task.detail}</span>
+                              </span>
+                              <span className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-muted-foreground transition-colors group-hover:text-violet-200">
+                                <span className="hidden sm:inline">{task.cta}</span>
+                                <ChevronRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                              </span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {tasks.length > 6 && (
+                      <p className="px-1 text-xs text-muted-foreground">
+                        And {tasks.length - 6} more - see{" "}
+                        <Link href="/campaigns" className="text-violet-300 hover:underline">campaigns</Link> and{" "}
+                        <Link href="/brands" className="text-violet-300 hover:underline">brands</Link>.
+                      </p>
+                    )}
+                  </section>
+
+                  <section aria-labelledby="recent-title" className="min-w-0 space-y-3">
+                    <div className="flex items-center gap-4">
+                      <div className="flex-1">
+                        <GroupLabel id="recent-title">Recent campaigns</GroupLabel>
+                      </div>
+                      <Link
+                        href="/campaigns"
+                        className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-violet-200"
+                      >
+                        View all
+                        <ArrowRight className="size-3.5" aria-hidden="true" />
                       </Link>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                    </div>
+                    <div className="surface overflow-hidden rounded-2xl">
+                      {campaigns === null ? (
+                        <EmptyState
+                          variant="inline"
+                          icon={CloudOff}
+                          title="Campaigns are temporarily unavailable"
+                          description="The API did not answer. Nothing has been lost — reload the page to try again."
+                        />
+                      ) : campaigns.length === 0 ? (
+                        <EmptyState
+                          variant="inline"
+                          icon={Mail}
+                          title="Your next campaign starts here"
+                          description="Start with a simple brief. A welcome sequence, a product launch, a reason to come back."
+                          action={<NewCampaignDialog />}
+                        />
+                      ) : (
+                        <ul className="divide-y divide-hairline">
+                          {campaigns.slice(0, 6).map((campaign) => (
+                            <li key={campaign.id}>
+                              <Link
+                                href={`/campaigns/${campaign.id}`}
+                                className="group/row flex items-center gap-3.5 px-4 py-3.5 transition-colors hover:bg-white/[0.03] sm:px-5"
+                              >
+                                <span className="hidden size-9 shrink-0 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.03] text-violet-300 transition-colors group-hover/row:border-violet-400/30 sm:flex">
+                                  <Mail className="size-4" aria-hidden="true" />
+                                </span>
+                                <div className="min-w-0 flex-1">
+                                  <p className="truncate text-sm font-medium transition-colors group-hover/row:text-violet-100">{campaign.name}</p>
+                                  <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                                    <span className="text-foreground/70">
+                                      {campaign.brand_id ? brandNames.get(campaign.brand_id) ?? "Brand" : "One-off"}
+                                    </span>
+                                    {" · "}
+                                    <span title={formatAbsolute(campaign.last_run_at ?? campaign.created_at)}>
+                                      {campaign.last_run_at
+                                        ? `ran ${timeAgo(campaign.last_run_at)}`
+                                        : `created ${timeAgo(campaign.created_at)}`}
+                                    </span>
+                                  </p>
+                                </div>
+                                {campaign.last_run_status ? (
+                                  <StatusBadge status={campaign.last_run_status} warning={campaign.last_run_needs_review} />
+                                ) : (
+                                  <span className="text-[0.6875rem] text-muted-foreground">Draft</span>
+                                )}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </section>
+                </div>
+              </>
+            )}
           </div>
         );
       }}

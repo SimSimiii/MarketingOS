@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen } from "lucide-react";
+import { BookOpen, CheckCircle2, Crown, History, Quote } from "lucide-react";
 
 import { KnowledgeBaseExplorer } from "@/app/brands/[brandId]/knowledge/base/knowledge-base-explorer";
 import { EmptyState } from "@/components/empty-state";
@@ -47,8 +47,9 @@ export function KnowledgeBaseView() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="One-off campaign"
-        title={`Knowledge base${campaign ? ` — ${campaign.name}` : ""}`}
+        eyebrow={campaign ? `Knowledge base · one-off campaign` : "One-off campaign"}
+        title={campaign ? campaign.name : "Knowledge base"}
+        documentTitle={campaign ? `Knowledge base · ${campaign.name}` : "Knowledge base"}
         description="Everything this one-off campaign established, kept to itself. Attach it to a brand instead and the next campaign starts from all of it rather than from an empty page."
         backTo={
           campaign
@@ -65,21 +66,24 @@ export function KnowledgeBaseView() {
         />
       ) : (
         <>
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <StatTile label="Facts established" value={base.total} />
+          <div className="rise-stagger grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+            <StatTile label="Facts established" value={base.total} icon={CheckCircle2} hint="Everything the compiler could stand behind." />
             <StatTile
               label="Citable in copy"
               value={base.citable_total}
+              icon={Quote}
               hint="Only these carry an id a copywriter may quote — the rest is context."
             />
             <StatTile
               label="Strong enough to lead"
               value={base.headline_total}
+              icon={Crown}
               hint="Specific, attributed, and checkable by a stranger."
             />
             <StatTile
               label="Compiled"
               value={`v${base.version}`}
+              icon={History}
               hint={base.compiled_at ? formatAbsolute(base.compiled_at) : undefined}
             />
           </div>

@@ -61,7 +61,9 @@ export function CampaignPolicySelect({ campaign }: { campaign: Campaign }) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
+      <div className="space-y-1.5">
+      <p className="text-xs font-medium text-foreground/80">Review depth</p>
       <Select
         value={currentPreset(campaign)}
         onValueChange={(value) =>
@@ -81,13 +83,15 @@ export function CampaignPolicySelect({ campaign }: { campaign: Campaign }) {
           ))}
         </SelectContent>
       </Select>
+      </div>
 
       {/* Presentation, not shape: it changes nothing about how the run is
           bought, which is why it does not move the forecast below. Offered
           after the run rather than only on the creation form because it is the
           one decision a user revises once they have seen the emails, and
           re-running a campaign is cheap where re-creating it is not. */}
-      <div className="space-y-1">
+      <div className="space-y-1.5">
+        <p className="text-xs font-medium text-foreground/80">Email look</p>
         <Select
           value={currentTier(campaign)}
           onValueChange={(value) =>
@@ -105,7 +109,7 @@ export function CampaignPolicySelect({ campaign }: { campaign: Campaign }) {
           </SelectContent>
         </Select>
         {currentTier(campaign) === "branded" && (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs leading-relaxed text-muted-foreground">
             {campaign.brand_id
               ? "Set the logo, colour and footer on the brand page, or it renders as plain."
               : "Nothing to brand it with until this campaign is attached to a brand."}

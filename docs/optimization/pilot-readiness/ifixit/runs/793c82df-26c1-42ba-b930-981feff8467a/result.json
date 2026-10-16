@@ -1,0 +1,1162 @@
+{
+  "id": "793c82df-26c1-42ba-b930-981feff8467a",
+  "campaign_id": "866cd496-fc6f-478f-b7b1-dded9833c110",
+  "status": "cancelled",
+  "error_message": "Cancelled by user request.",
+  "started_at": "2026-10-06T00:43:54.564549Z",
+  "completed_at": "2026-10-06T00:57:24.730611Z",
+  "created_at": "2026-10-06T00:43:54.564549Z",
+  "total_input_tokens": 2039889,
+  "total_output_tokens": 98168,
+  "total_cache_read_tokens": 1289088,
+  "estimated_cost_usd": 20.5582,
+  "recommendation_snapshot": {
+    "campaign_id": "866cd496-fc6f-478f-b7b1-dded9833c110",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "501b64b7-75e1-4402-8da5-17e76d13d087",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 The Pro Tech Toolkit is most relevant when the reader wants one kit for varied electronics work rather than tools selected for only one device family or basic screw removal.",
+          "#2 The included 150 mm flex extension gives the precision driver access to screws that are difficult to reach in a straight line.",
+          "#3 The Pro Tech Toolkit carries a Lifetime Guarantee intended to keep the covered product functioning for as long as the customer owns it, while consumable items have separate as-is coverage."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:43:54.700275Z",
+      "completed_at": "2026-10-06T00:44:54.363709Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 76677,
+      "output_tokens": 5522,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 12288,
+      "cost_usd": 1.582737,
+      "duration_ms": 59011.99260004796,
+      "attempt": 1
+    },
+    {
+      "id": "d7297713-2c5e-4f46-907c-92ffdd248b50",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "The Pro Tech Toolkit is most relevant when the reader wants one kit for varied electronics work rather than tools selected for only one device family or basic screw removal.",
+          "The Pro Tech Toolkit is most relevant when the reader wants one kit for varied electronics work rather than tools selected for only one device family or basic screw removal."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "One toolkit for varied repairs",
+          "Match the kit to your repairs"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:44:55.327078Z",
+      "completed_at": "2026-10-06T00:45:21.567414Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 27512,
+      "output_tokens": 3152,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 24576,
+      "cost_usd": 0.685944,
+      "duration_ms": 40441.72709970735,
+      "attempt": 1
+    },
+    {
+      "id": "2e28a6e6-1da9-468c-87ac-a6f550f487ab",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s) read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 7,
+        "scores": [
+          7,
+          6
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:45:22.044720Z",
+      "completed_at": "2026-10-06T00:45:43.563002Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 37367,
+      "output_tokens": 7846,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 76544,
+      "cost_usd": 1.263771,
+      "duration_ms": 118916.6067999322,
+      "attempt": 1
+    },
+    {
+      "id": "1bb8c209-b4cf-428b-91b7-0039f872e179",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · the two best candidates, read side by side",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "challenger_won": true
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:45:43.577051Z",
+      "completed_at": "2026-10-06T00:45:48.587521Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 17443,
+      "output_tokens": 204,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 52480,
+      "cost_usd": 0.355665,
+      "duration_ms": 18888.99420038797,
+      "attempt": 1
+    },
+    {
+      "id": "c874565f-2e89-43b5-8c2d-613ecb37ca0b",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "copy",
+        "strategy_gap": ""
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:45:48.619120Z",
+      "completed_at": "2026-10-06T00:46:33.545078Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 8954,
+      "output_tokens": 4106,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.464916,
+      "duration_ms": 44577.484800014645,
+      "attempt": 1
+    },
+    {
+      "id": "e20e2c55-0fd8-4fd4-bd7c-36eb6bfcd6d1",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "What $79.95 puts in reach"
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:46:33.563290Z",
+      "completed_at": "2026-10-06T00:46:46.116875Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 13713,
+      "output_tokens": 1069,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.308526,
+      "duration_ms": 12219.32390006259,
+      "attempt": 2
+    },
+    {
+      "id": "0d04f56e-53f8-4b83-a0a8-6dd86cd6e858",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:46:46.370632Z",
+      "completed_at": "2026-10-06T00:47:12.656723Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 14026,
+      "output_tokens": 4533,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 42496,
+      "cost_usd": 0.614109,
+      "duration_ms": 61030.231799930334,
+      "attempt": 2
+    },
+    {
+      "id": "af875365-5c26-49b0-adbf-b9105a3a4fa5",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 8,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1 read against the version it would replace",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "challenger_won": true
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:47:12.670879Z",
+      "completed_at": "2026-10-06T00:47:20.963515Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 14783,
+      "output_tokens": 696,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 54784,
+      "cost_usd": 0.356121,
+      "duration_ms": 24893.020400078967,
+      "attempt": 2
+    },
+    {
+      "id": "05bb08ee-ef8c-4c68-a862-70e880f8414d",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 9,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "copy",
+        "strategy_gap": ""
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:47:20.978072Z",
+      "completed_at": "2026-10-06T00:47:42.240379Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 9019,
+      "output_tokens": 2224,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.324741,
+      "duration_ms": 20919.00400002487,
+      "attempt": 2
+    },
+    {
+      "id": "c8150238-4b75-4771-9e26-4667b5fd7b9d",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 10,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 2",
+        "position": 1,
+        "attempt": 3
+      },
+      "output_data": {
+        "subject": "Driver set or broader repair kit?"
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:47:42.253138Z",
+      "completed_at": "2026-10-06T00:47:57.234477Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 13891,
+      "output_tokens": 1314,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.329571,
+      "duration_ms": 14746.678199851885,
+      "attempt": 3
+    },
+    {
+      "id": "d9d29026-3223-4744-8b68-dc393d2d7617",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 11,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 3
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:47:57.499230Z",
+      "completed_at": "2026-10-06T00:48:19.154650Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 16890,
+      "output_tokens": 3913,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 39680,
+      "cost_usd": 0.606345,
+      "duration_ms": 59907.57070016116,
+      "attempt": 3
+    },
+    {
+      "id": "11b75b76-4dce-47c1-a18c-dee68a36e72a",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 12,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 2 read against the version it would replace",
+        "position": 1,
+        "attempt": 3
+      },
+      "output_data": {
+        "challenger_won": true
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:48:19.167215Z",
+      "completed_at": "2026-10-06T00:48:26.530273Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 9215,
+      "output_tokens": 486,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 60416,
+      "cost_usd": 0.265299,
+      "duration_ms": 21185.674199834466,
+      "attempt": 3
+    },
+    {
+      "id": "bf53fed7-47a4-4101-b2c6-6f723646d641",
+      "agent_id": "subject_writer",
+      "agent_name": "Subject Lines",
+      "sequence_order": 13,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 4 alternative subject lines",
+        "position": 1,
+        "variants": 4
+      },
+      "output_data": {
+        "subject": "Driver set or broader repair kit?"
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:48:26.542721Z",
+      "completed_at": "2026-10-06T00:48:55.929913Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 8467,
+      "output_tokens": 2596,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 60416,
+      "cost_usd": 0.412329,
+      "duration_ms": 43196.27150008455,
+      "attempt": 1
+    },
+    {
+      "id": "154902e2-fcee-43ce-9a27-b1a1aa87d808",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 14,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · 2 candidate(s), first draft",
+        "position": 2,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "The included 150 mm flex extension gives the precision driver access to screws that are difficult to reach in a straight line.",
+          "The included 150 mm flex extension gives the precision driver access to screws that are difficult to reach in a straight line."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Reach screws beyond a straight path",
+          "When the right bit cannot reach"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:48:55.953322Z",
+      "completed_at": "2026-10-06T00:49:15.724146Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 26018,
+      "output_tokens": 2772,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 30208,
+      "cost_usd": 0.643482,
+      "duration_ms": 32787.68419986591,
+      "attempt": 4
+    },
+    {
+      "id": "5069fc72-dcba-4249-af54-e390d217b73c",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 15,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · 2 candidate(s) read cold by 3 reader(s)",
+        "position": 2,
+        "attempt": 1,
+        "candidates": 2,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 7,
+        "scores": [
+          6,
+          7
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:49:16.238408Z",
+      "completed_at": "2026-10-06T00:49:37.712929Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 28872,
+      "output_tokens": 6907,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 85504,
+      "cost_usd": 1.079361,
+      "duration_ms": 109093.51860010065,
+      "attempt": 4
+    },
+    {
+      "id": "30e6e93a-45d4-402f-b372-c758f7b82b38",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 16,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · the two best candidates, read side by side",
+        "position": 2,
+        "attempt": 1
+      },
+      "output_data": {
+        "challenger_won": false
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:49:37.726146Z",
+      "completed_at": "2026-10-06T00:49:44.219916Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 14639,
+      "output_tokens": 615,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 54784,
+      "cost_usd": 0.347886,
+      "duration_ms": 22995.315400185063,
+      "attempt": 4
+    },
+    {
+      "id": "3a354f5e-ee30-4f21-9cf1-69cf2fa424ba",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 17,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 2 · conversion critique",
+        "position": 2,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "missing_material",
+        "strategy_gap": "The supplied destination only confirms that the flex extension is included and intended for hard-to-reach screws; it provides no concrete repair example, demonstration, or access detail that would help the reader judge whether the extension is useful for their anticipated repairs, so the email cannot substantiate its promised reason to click."
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:49:44.246556Z",
+      "completed_at": "2026-10-06T00:50:14.658019Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 8951,
+      "output_tokens": 2246,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.325371,
+      "duration_ms": 30159.85170006752,
+      "attempt": 3
+    },
+    {
+      "id": "61c1d526-6c07-483a-a9c4-80081216697e",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 18,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 3 · 2 candidate(s), first draft",
+        "position": 3,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "The Pro Tech Toolkit carries a Lifetime Guarantee intended to keep the covered product functioning for as long as the customer owns it, while consumable items have separate as-is coverage.",
+          "The Pro Tech Toolkit carries a Lifetime Guarantee intended to keep the covered product functioning for as long as the customer owns it, while consumable items have separate as-is coverage."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "Support beyond the first few repairs",
+          "What the Lifetime Guarantee covers"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:50:14.681322Z",
+      "completed_at": "2026-10-06T00:50:36.375735Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 25698,
+      "output_tokens": 2698,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 27392,
+      "cost_usd": 0.628908,
+      "duration_ms": 35832.47829996981,
+      "attempt": 5
+    },
+    {
+      "id": "d29d6e79-df41-45d9-92ee-7f2082b00fd2",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 19,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 3 · 1 candidate(s) read cold by 3 reader(s) (1 broke an automatic check and cannot win - not read)",
+        "position": 3,
+        "attempt": 1,
+        "candidates": 1,
+        "vetoed": 1
+      },
+      "output_data": {
+        "pull": 6,
+        "scores": [
+          6
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:50:36.861028Z",
+      "completed_at": "2026-10-06T00:50:57.895356Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11117,
+      "output_tokens": 4405,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 45312,
+      "cost_usd": 0.565098,
+      "duration_ms": 57582.473000045866,
+      "attempt": 5
+    },
+    {
+      "id": "28e4f527-22e7-49e3-8c3c-698b394f16af",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 20,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 3 · conversion critique",
+        "position": 3,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "copy",
+        "strategy_gap": ""
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:50:57.916353Z",
+      "completed_at": "2026-10-06T00:51:29.145098Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11667,
+      "output_tokens": 3307,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 12288,
+      "cost_usd": 0.441462,
+      "duration_ms": 30993.898499989882,
+      "attempt": 4
+    },
+    {
+      "id": "a9130156-61da-4eae-8b0e-9a9081081de1",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 21,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 3 · rewrite 1",
+        "position": 3,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "Coverage for tools you keep"
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:51:29.158155Z",
+      "completed_at": "2026-10-06T00:51:48.434829Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 14054,
+      "output_tokens": 1274,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.329016,
+      "duration_ms": 19011.45390002057,
+      "attempt": 6
+    },
+    {
+      "id": "4d5621fe-6d68-41fa-a429-17db563c2e61",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 22,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 3 · read cold by 3 reader(s)",
+        "position": 3,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 6
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:51:48.699013Z",
+      "completed_at": "2026-10-06T00:52:07.019388Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 13954,
+      "output_tokens": 3672,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 42496,
+      "cost_usd": 0.548454,
+      "duration_ms": 54338.65309995599,
+      "attempt": 6
+    },
+    {
+      "id": "eb3b0006-df78-43a5-ade8-b07889e0a9be",
+      "agent_id": "subject_writer",
+      "agent_name": "Subject Lines",
+      "sequence_order": 23,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 3 · 4 alternative subject lines",
+        "position": 3,
+        "variants": 4
+      },
+      "output_data": {
+        "subject": "Will the Pro Tech Toolkit last?"
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:52:07.035758Z",
+      "completed_at": "2026-10-06T00:52:29.761125Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 8349,
+      "output_tokens": 1795,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 60416,
+      "cost_usd": 0.350484,
+      "duration_ms": 36179.17919997126,
+      "attempt": 2
+    },
+    {
+      "id": "2d8558e9-22f0-451c-a2d5-fc8ef1f366cc",
+      "agent_id": "material_researcher",
+      "agent_name": "Official Material Researcher",
+      "sequence_order": 24,
+      "status": "completed",
+      "input_data": {
+        "label": "Finding and verifying official material for 1 gap(s)"
+      },
+      "output_data": {
+        "recovered": true,
+        "evidence": [
+          {
+            "id": "R13",
+            "kind": "feature",
+            "claim": "In a Polaroid Go front-shell repair, the extension reaches two screws inside the film compartment where normal screwdriver alignment is difficult, helping avoid stripping.",
+            "verbatim": "Given the location of the screws, it's difficult to keep your screwdriver [properly aligned](/Guide/Screwdriver+Best+Practices/25630#s64985). You'll need to use a [flexible extension](https://www.ifixit.com/en-eu/products/flexible-extension) or a very short screwdriver to remove the screws without stripping them.\n      - Use a Phillips screwdriver to remove the two 4.2 mm‑long front shell screws from the film compartment.",
+            "source": "https://www.ifixit.com/Guide/Polaroid+Go+(Gen+1+and+2)+Front+Shell+Replacement/178110",
+            "document_id": "auto:441312122fc30a52f91f",
+            "strength": "strong",
+            "user_attested": false,
+            "category": null
+          }
+        ],
+        "sources": [
+          "https://www.ifixit.com/Guide/Polaroid+Go+(Gen+1+and+2)+Front+Shell+Replacement/178110"
+        ],
+        "dropped_claims": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:52:29.824105Z",
+      "completed_at": "2026-10-06T00:53:06.629703Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 36917,
+      "output_tokens": 1478,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 71296,
+      "cost_usd": 0.771549,
+      "duration_ms": 34180.049600079656,
+      "attempt": 1
+    },
+    {
+      "id": "84123485-13bd-4408-b20e-04b63278e67e",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 25,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 The Pro Tech Toolkit is a sensible candidate when the reader wants one kit for varied electronics work rather than only a compact driver set: it combines 64 bits selected for current and legacy consumer-electronics fasteners with opening, gripping, anti-static, access, and organization tools.",
+          "#2 A flex extension earns its place when enclosure geometry prevents a straight driver approach: in an official Polaroid Go front-shell repair, it reaches two screws inside the film compartment where normal screwdriver alignment is difficult.",
+          "#3 The Pro Tech Toolkit carries a Lifetime Guarantee promising that covered products will function for as long as the customer has them, while consumable items in the kit are covered separately on an as-is basis."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:53:06.806392Z",
+      "completed_at": "2026-10-06T00:54:56.688921Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 150806,
+      "output_tokens": 8624,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 30208,
+      "cost_usd": 2.954202,
+      "duration_ms": 109372.00939981267,
+      "attempt": 2
+    },
+    {
+      "id": "a65c3920-5421-4739-b9a7-ca37785d8a96",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 26,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s), first draft",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "ideas": [
+          "The Pro Tech Toolkit is a sensible candidate when the reader wants one kit for varied electronics work rather than only a compact driver set: it combines 64 bits selected for current and legacy consumer-electronics fasteners with opening, gripping, anti-static, access, and organization tools.",
+          "The Pro Tech Toolkit is a sensible candidate when the reader wants one kit for varied electronics work rather than only a compact driver set: it combines 64 bits selected for current and legacy consumer-electronics fasteners with opening, gripping, anti-static, access, and organization tools."
+        ]
+      },
+      "output_data": {
+        "subjects": [
+          "One toolkit beyond the driver",
+          "More than a 64-bit driver set"
+        ],
+        "dropped": 0
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:54:57.713927Z",
+      "completed_at": "2026-10-06T00:55:15.316001Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 26154,
+      "output_tokens": 2192,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 30208,
+      "cost_usd": 0.602022,
+      "duration_ms": 31328.327200142667,
+      "attempt": 7
+    },
+    {
+      "id": "4d4ec97c-84c4-4778-a809-650d7e99fb6e",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 27,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · 2 candidate(s) read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 1,
+        "candidates": 2,
+        "vetoed": 0
+      },
+      "output_data": {
+        "pull": 7,
+        "scores": [
+          7,
+          6
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:55:15.843711Z",
+      "completed_at": "2026-10-06T00:55:42.525878Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 22406,
+      "output_tokens": 8473,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 91136,
+      "cost_usd": 1.108269,
+      "duration_ms": 129302.57870000787,
+      "attempt": 7
+    },
+    {
+      "id": "415f7b90-1b8f-4797-9786-a1aa36c09437",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 28,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · the two best candidates, read side by side",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "challenger_won": false
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:55:42.537909Z",
+      "completed_at": "2026-10-06T00:55:47.548898Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 19639,
+      "output_tokens": 208,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 50432,
+      "cost_usd": 0.385833,
+      "duration_ms": 18782.255299622193,
+      "attempt": 5
+    },
+    {
+      "id": "95c0190a-9927-4ade-8a56-02862da0f143",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 29,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "copy",
+        "strategy_gap": ""
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:55:47.577183Z",
+      "completed_at": "2026-10-06T00:56:14.036507Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 9212,
+      "output_tokens": 2020,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.312336,
+      "duration_ms": 26102.55889990367,
+      "attempt": 5
+    },
+    {
+      "id": "0cd0e88a-baea-437a-ba60-80860079ead1",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 30,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "Choose the breadth you will use"
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:56:14.048764Z",
+      "completed_at": "2026-10-06T00:56:35.321717Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 16068,
+      "output_tokens": 1540,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.379176,
+      "duration_ms": 21040.43659986928,
+      "attempt": 8
+    },
+    {
+      "id": "c3052626-d2c5-4f15-868a-6893bfeaa501",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 31,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 3 reader(s)",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:56:35.584871Z",
+      "completed_at": "2026-10-06T00:56:55.328996Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 14041,
+      "output_tokens": 3788,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 42496,
+      "cost_usd": 0.558459,
+      "duration_ms": 57663.624400040135,
+      "attempt": 8
+    },
+    {
+      "id": "7eb18e1e-3e77-485c-8592-73649fd3d993",
+      "agent_id": "preference_judge",
+      "agent_name": "Side-by-Side Reader",
+      "sequence_order": 32,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1 read against the version it would replace",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "challenger_won": true
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:56:55.339629Z",
+      "completed_at": "2026-10-06T00:57:02.141131Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 15279,
+      "output_tokens": 256,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 55296,
+      "cost_usd": 0.331329,
+      "duration_ms": 22243.531299754977,
+      "attempt": 6
+    },
+    {
+      "id": "d10af889-806d-4dca-abbe-afd7017a79b9",
+      "agent_id": "conversion_critic",
+      "agent_name": "Conversion Critic",
+      "sequence_order": 33,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · conversion critique",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "verdict": "revise",
+        "failure_mode": "missing_material",
+        "strategy_gap": "The supplied evidence and destination do not provide a repair-to-tool decision aid showing which common first repairs need the full kit’s non-driver tools, nor a verified smaller-kit comparison; the feature list alone cannot resolve whether the added breadth justifies $79.95."
+      },
+      "error_message": null,
+      "started_at": "2026-10-06T00:57:02.152781Z",
+      "completed_at": "2026-10-06T00:57:24.671858Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 9003,
+      "output_tokens": 2237,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.325476,
+      "duration_ms": 22229.106100043282,
+      "attempt": 6
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "cancelled",
+    "report": {
+      "request": "Write exactly 3 English nurture emails for opted-in electronics hobbyists considering their first general repair toolkit. Promote the iFixit Pro Tech Toolkit using only official source facts. Email 1 helps assess whether the kit fits their repair work, email 2 explains a concrete tool use from the material, email 3 resolves a supported buying concern. Each email must stand alone, build a distinct argument, and point to the product page. No invented discounts, deadlines, cart activity, personal knowledge, or guaranteed repair outcomes. Readers have not purchased yet.",
+      "delivered": 0,
+      "promised": 3,
+      "contract_violations": [
+        "the user asked for 3 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [],
+      "what_would_help_most": "Provide verified material to resolve: The supplied evidence and destination do not provide a repair-to-tool decision aid showing which common first repairs need the full kit’s non-driver tools, nor a verified smaller-kit comparison; the feature list alone cannot resolve whether the added breadth justifies $79.95.",
+      "questions": [
+        "Provide verified material to resolve: The supplied evidence and destination do not provide a repair-to-tool decision aid showing which common first repairs need the full kit’s non-driver tools, nor a verified smaller-kit comparison; the feature list alone cannot resolve whether the added breadth justifies $79.95."
+      ],
+      "sequence_summary": "",
+      "knowledge_version": 4,
+      "notes": [
+        "Cancelled by user request.",
+        "Withheld emails needing verified material: 1"
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "A pre-purchase nurture sequence—not onboarding—for opted-in electronics hobbyists evaluating the Pro Tech Toolkit as their first broad, cross-device repair kit. The sequence helps them judge fit, understand one concrete tool use, and assess the guarantee without assuming prior purchases, repairs, or tool ownership.",
+      "reader": "Selected audience (user-stated constraints): Opted-in electronics hobbyists considering their first general repair toolkit.\nNo further recipient situation is established. Compiled market context is research to check for applicability, not a replacement biography.",
+      "reader_segment": "A hands-on electronics owner who is tired of improvising tools across phones, laptops, consoles, and household devices",
+      "reader_profile_override": "Opted-in electronics hobbyists considering their first general repair toolkit",
+      "promise": "The sequence will help the reader decide whether the Pro Tech Toolkit's broad fastener and opening-tool coverage, practical access tools, and documented guarantee make it a suitable first general repair toolkit for the electronics work they anticipate.",
+      "orientation": "The iFixit Pro Tech Toolkit is a general electronics repair kit combining a 64-bit precision driver set with opening, handling, anti-static, and organization tools.",
+      "arc": "First establish the repairs and tool breadth that make the kit a fit; then make that breadth tangible through a specific hard-to-reach screw example; finally address whether the tools are supported for continued ownership through the documented Lifetime Guarantee and its limits.",
+      "sequence_rationale": "Email 1 answers the threshold question: whether a broad $79.95 kit matches the reader's anticipated mix of repairs. Email 2 follows with a concrete use case so the kit is not perceived as an abstract inventory of tools; it uses the recovered Polaroid Go example required by the corrective material. Email 3 addresses longevity only after usefulness has been established, explaining the Lifetime Guarantee without presenting it as blanket coverage. Each email stands alone. Emails 1 and 3 point directly to the fixed product page; email 2 uses the official repair guide as its primary decision destination because it shows the recovered concrete tool use, while the email should also point readers to the Pro Tech Toolkit product page. Exact device-repair requirements must still be checked against the relevant repair guide.",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Help the reader decide whether the Pro Tech Toolkit's breadth fits the range of electronics repairs they expect to attempt.",
+          "single_idea": "The Pro Tech Toolkit is a sensible candidate when the reader wants one kit for varied electronics work rather than only a compact driver set: it combines 64 bits selected for current and legacy consumer-electronics fasteners with opening, gripping, anti-static, access, and organization tools.",
+          "felt_need": "I want my first toolkit to cover more than one device category, but I do not want to pay for breadth I am unlikely to use.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "The kit centers on 64 CNC-machined bits selected through research into current and legacy electronics fasteners, then adds tools for opening, prying, gripping, electrostatic-discharge precautions, hard-to-reach screws, and screw organization.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: a general toolkit is difficult to distinguish from an oversized screwdriver set. After: the reader can judge fit by comparing their anticipated repairs with the kit's combination of fastener coverage and non-driver tools.",
+          "evidence_ids": [
+            "R1",
+            "R2",
+            "R3"
+          ],
+          "must_not_say": [
+            "That every included tool is required for every repair",
+            "That the kit supports every device or guarantees completion of any repair",
+            "That the reader currently owns inadequate tools or has already stalled a repair",
+            "Discounts, deadlines, cart activity, or a price other than the verified $79.95",
+            "Lifetime Guarantee details, which belong to email 3"
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "I may be overbuying when a smaller driver kit could cover the repairs I actually plan to do.",
+          "tone": "Practical and diagnostic",
+          "call_to_action": "Review the Pro Tech Toolkit at https://www.ifixit.com/products/pro-tech-toolkit",
+          "next_step_decision": "Decide whether the kit's broad fastener and non-driver tool coverage matches the variety of electronics repairs the reader anticipates well enough to justify the $79.95 price.",
+          "next_step_value": "The product page presents the $79.95 price, the 64-bit driver-kit core, and the toolkit's included repair-tool categories for a fit check.",
+          "next_step_evidence_ids": [
+            "R1",
+            "R2",
+            "R3"
+          ],
+          "next_step_limit": "The page does not establish that every tool required by a particular device and repair procedure is included; the relevant repair guide still needs to be checked.",
+          "subject_strategy": "Frame the open as a quick fit test for a first general toolkit, using repair breadth rather than hype or an assumed urgent repair.",
+          "must_not_reuse": []
+        },
+        {
+          "position": 2,
+          "job": "Show how one included tool solves a concrete access problem encountered in an official repair guide.",
+          "single_idea": "A flex extension earns its place when enclosure geometry prevents a straight driver approach: in an official Polaroid Go front-shell repair, it reaches two screws inside the film compartment where normal screwdriver alignment is difficult.",
+          "felt_need": "A screw can match an available bit and still be difficult to remove when the enclosure prevents the driver from staying properly aligned.",
+          "status_quo": "Approach a recessed or obstructed screw with a normal straight screwdriver.",
+          "why_it_fails": "In the documented Polaroid Go example, the screws' position inside the film compartment makes proper straight-driver alignment difficult and creates a stripping concern.",
+          "mechanism": "The included 150 mm flex extension bends the drive path to reach the two film-compartment screws while supporting better alignment in that specific repair.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: the extension looks like an extra accessory with no clear role. After: the reader understands one documented situation in which it enables access that a normally aligned screwdriver struggles to provide.",
+          "evidence_ids": [
+            "R13"
+          ],
+          "must_not_say": [
+            "That every repair has hard-to-reach screws",
+            "That the flex extension prevents stripping in all circumstances",
+            "That using the extension guarantees a successful Polaroid repair",
+            "That the reader owns or plans to repair a Polaroid Go",
+            "A full list of the toolkit's tools or bit sizes",
+            "Guarantee claims",
+            "Do not state or imply that every reader uses Front. Present this integration conditionally (for example, 'If you use Front...') unless the user-supplied campaign context establishes it.",
+            "Do not state or imply that every reader uses Shell. Present this integration conditionally (for example, 'If you use Shell...') unless the user-supplied campaign context establishes it.",
+            "Do not state or imply that every reader uses Polaroid. Present this integration conditionally (for example, 'If you use Polaroid...') unless the user-supplied campaign context establishes it."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "I understand why I need bits, but I am unsure whether accessories such as a flex extension provide meaningful value.",
+          "tone": "Concrete and instructional",
+          "call_to_action": "Review the official documentation: https://www.ifixit.com/Guide/Polaroid+Go+(Gen+1+and+2)+Front+Shell+Replacement/178110",
+          "next_step_decision": "Decide whether the documented access advantage is relevant to the kinds of enclosed devices the reader expects to open.",
+          "next_step_value": "The official page documents this verified fact: In a Polaroid Go front-shell repair, the extension reaches two screws inside the film compartment where normal screwdriver alignment is difficult, helping avoid stripping.",
+          "next_step_evidence_ids": [
+            "R13"
+          ],
+          "next_step_limit": "The example does not prove that the extension is needed for the reader's specific device; its repair guide must identify the required tools and access steps.",
+          "subject_strategy": "Lead with the recognizable problem of a screw a straight driver cannot comfortably reach, then signal that the email contains one specific official repair example.",
+          "must_not_reuse": [
+            "The Pro Tech Toolkit is a sensible candidate when the reader wants one kit for varied electronics work rather than only a compact driver set: it combines 64 bits selected for current and legacy consumer-electronics fasteners with opening, gripping, anti-static, access, and organization tools."
+          ]
+        },
+        {
+          "position": 3,
+          "job": "Resolve the supported concern that a first general toolkit may not remain supported beyond its initial uses.",
+          "single_idea": "The Pro Tech Toolkit carries a Lifetime Guarantee promising that covered products will function for as long as the customer has them, while consumable items in the kit are covered separately on an as-is basis.",
+          "felt_need": "If I choose one general toolkit, I want to understand what support exists if its tools fail over time.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "The product page identifies the Lifetime Guarantee, and the official terms define its duration while distinguishing the kit's consumable items from the other covered tools and parts.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: “Lifetime Guarantee” is only a broad label. After: the reader understands the documented duration and the important consumables exception, allowing a more informed buying decision.",
+          "evidence_ids": [
+            "R5",
+            "R6",
+            "R8"
+          ],
+          "must_not_say": [
+            "That every item in the toolkit receives lifetime replacement",
+            "That the guarantee covers ordinary consumption, misuse, accidental damage, device damage, or every possible claim",
+            "That a claim will always be approved or that replacement is unconditional",
+            "That the guarantee ensures successful repairs",
+            "Discounts, deadlines, or invented commercial terms"
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "I do not want a general toolkit that becomes an unsupported one- or two-repair purchase if a covered tool fails later.",
+          "tone": "Reassuring but precise",
+          "call_to_action": "View the Pro Tech Toolkit and its Lifetime Guarantee link at https://www.ifixit.com/products/pro-tech-toolkit",
+          "next_step_decision": "Decide whether the documented guarantee scope provides enough long-term support for the reader's first general toolkit purchase.",
+          "next_step_value": "The product page identifies the Pro Tech Toolkit's Lifetime Guarantee and provides access to the official terms defining its duration and coverage boundaries.",
+          "next_step_evidence_ids": [
+            "R5",
+            "R6",
+            "R8"
+          ],
+          "next_step_limit": "The guarantee is not blanket coverage for every kit item: consumable products have their own as-is coverage, and eligibility for any claim depends on the full official terms.",
+          "subject_strategy": "Address tool longevity directly while signaling that the email explains both what “lifetime” means and where the coverage stops.",
+          "must_not_reuse": [
+            "The Pro Tech Toolkit is a sensible candidate when the reader wants one kit for varied electronics work rather than only a compact driver set: it combines 64 bits selected for current and legacy consumer-electronics fasteners with opening, gripping, anti-static, access, and organization tools.",
+            "A flex extension earns its place when enclosure geometry prevents a straight driver approach: in an official Polaroid Go front-shell repair, it reaches two screws inside the film compartment where normal screwdriver alignment is difficult."
+          ]
+        }
+      ],
+      "voice_notes": "Use short, practical sentences and repair-specific language. Sound empowering without implying that tools remove all repair risk. Avoid greetings, fictional personalization, pressure tactics, and claims that the reader has already attempted or failed a repair.",
+      "contract": {
+        "kind": "email_sequence",
+        "count": 3,
+        "count_is_explicit": true,
+        "evidence": "3 English nurture emails"
+      }
+    },
+    "knowledge_version": 4,
+    "recommendation_at_generation": {
+      "campaign_id": "866cd496-fc6f-478f-b7b1-dded9833c110",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

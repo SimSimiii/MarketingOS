@@ -35,10 +35,11 @@ PROOF_KINDS = (
     EvidenceKind.CERTIFICATION,
 )
 
-#: Evidence a reader can check for themselves without trusting anyone. Weaker
-#: than proof and not a substitute for it, but it is what makes an email
-#: specific when no proof exists, and specific beats persuasive.
+#: Evidence supporting a checkable functional or commercial assertion.
+#: Official documentation can support a capability without a testimonial;
+#: neither documentation nor a price establishes a customer outcome.
 CHECKABLE_KINDS = (
+    EvidenceKind.FEATURE,
     EvidenceKind.METRIC,
     EvidenceKind.PRICE,
     EvidenceKind.INTEGRATION,
@@ -112,8 +113,9 @@ class ProofPosture:
 
         if self.has_proof:
             lines.append(
-                "\nSpend these deliberately - they are the only entries a stranger has any "
-                "reason to believe, and there are not many:\n"
+                "\nUse these for the particular claims they support. A customer name, award "
+                "or certification is not evidence of a customer outcome. Keep the subject, "
+                "conditions and limits of any quoted result:\n"
                 + "\n".join(f"- [{entry.id}] {entry.claim}" for entry in self.proof)
             )
         else:
@@ -141,9 +143,9 @@ class ProofPosture:
 
         if self.has_checkable:
             lines.append(
-                "\nCheckable specifics - not proof, but the difference between an email that "
-                "reads as written by someone who knows the product and one that reads as "
-                "written about it:\n"
+                "\nCheckable specifics - sufficient support for a documented capability or "
+                "offer, without requiring a testimonial. They do not establish time saved, "
+                "revenue gained, customer adoption or any other result:\n"
                 + "\n".join(f"- [{entry.id}] {entry.claim}" for entry in self.checkable)
             )
 

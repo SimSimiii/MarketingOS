@@ -1,0 +1,83 @@
+{
+  "runs": [
+    {
+      "execution_id": "b361b5d4-0808-4838-9b4f-2327f7843472",
+      "campaign_id": "1e244dcd-c2ad-44ad-8373-980cec84d87e",
+      "status": "completed",
+      "launched_at": "2026-10-13T21:45:15.090296+00:00",
+      "code_revision": "working-tree",
+      "last_checked_at": "2026-10-13T21:52:36.184151+00:00",
+      "result_dir": "docs\\optimization\\friend-preflight\\runs\\b361b5d4-0808-4838-9b4f-2327f7843472",
+      "estimated_cost_usd": 4.2364,
+      "completed_at": "2026-10-13T21:52:35.395174Z"
+    }
+  ],
+  "quality_history": [
+    {
+      "iteration": 1,
+      "execution_id": "b361b5d4-0808-4838-9b4f-2327f7843472",
+      "score": 84,
+      "comparable": true,
+      "track": "French single-email US toolkit offer",
+      "grid": {
+        "facts": 25,
+        "audience_offer": 18,
+        "argument": 14,
+        "continuity": 11,
+        "polish_rendering": 7,
+        "unsupported_repetition": 9
+      },
+      "strengths": [
+        "Supported kit composition and non-exhaustive warranty exclusions",
+        "Clear product-page CTA and explicit US warranty scope"
+      ],
+      "remaining_defect": "Warranty paragraph and preheader are heavy; price absent; HTML language remains hardcoded English.",
+      "evidence": [
+        "runs/b361b5d4-0808-4838-9b4f-2327f7843472/result.json",
+        "knowledge.json: R2,R3,R5,R14-R19",
+        "mobile-email.jpg",
+        "email.fr.html"
+      ],
+      "next_action": "Inspect rendering, then friend tests his actual offer; no further paid iteration for marginal style gains."
+    },
+    {
+      "iteration": 2,
+      "execution_id": "b361b5d4-0808-4838-9b4f-2327f7843472",
+      "score": 84,
+      "comparable": true,
+      "track": "French single-email US toolkit offer",
+      "grid": {
+        "facts": 25,
+        "audience_offer": 18,
+        "argument": 14,
+        "continuity": 11,
+        "polish_rendering": 7,
+        "unsupported_repetition": 9
+      },
+      "strengths": [
+        "Same supported French copy; deterministic text export now preserves the actual CTA URL",
+        "Explicit destination survives recovered checkpoints"
+      ],
+      "remaining_defect": "Same copy limitations and hardcoded English HTML language; historical assets are not silently rewritten.",
+      "evidence": [
+        "email.fr.corrected.txt",
+        "runs/b361b5d4-0808-4838-9b4f-2327f7843472/result.json"
+      ],
+      "next_action": "Mehdi tests one real offer; observe the first production campaign end to end before expanding the pilot.",
+      "change": 0,
+      "generation": "No new model call; same saved email re-rendered and inspected."
+    }
+  ],
+  "quality_best": {
+    "score": 84,
+    "iteration": 1,
+    "execution_id": "b361b5d4-0808-4838-9b4f-2327f7843472"
+  },
+  "verdict": "This French single-email draft meets the scoped usable-copy bar after normal brand review and minor editing. Mobile preview and text export verified. Not proof of conversion, multilingual accessibility or general e-commerce sellability.",
+  "deployment": {
+    "frontend_revision": "cc822a607af2395660b457e0063f7b95c5100c18",
+    "api_revision": "16553a18e3345c59cfaf19ff21f52b3208ae9a16",
+    "status": "succeeded",
+    "production_http_checks": "production-http-final.json"
+  }
+}

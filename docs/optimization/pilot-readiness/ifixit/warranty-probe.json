@@ -1,0 +1,95 @@
+{
+  "scope": "targeted role probe, not a scored full campaign",
+  "knowledge_version": 5,
+  "old_draft_critique": {
+    "verdict": "revise",
+    "failure_mode": "copy",
+    "strategy_gap": "",
+    "brief_drift": "The draft narrows the assigned consumables exception to three opening tools, although the evidence documents additional excluded consumables in the kit.",
+    "unspent_evidence": [],
+    "edits": [
+      {
+        "line": "The boundary is specific: the three iFixit Opening Tools are consumables and do not receive Lifetime Guarantee replacement. The other tools and parts remain covered.",
+        "problem": "This presents the three opening tools as the complete coverage boundary, but opening picks, the Spudger, the Halberd Spudger, and an Angled ESD Tweezers cap are also documented as consumables excluded from warranty coverage.",
+        "fix": "State the boundary as applying to all documented toolkit consumables and distinguish them from the covered non-consumable tools and parts without implying that the three opening tools are the only exclusions.",
+        "severity": "blocking"
+      },
+      {
+        "line": "Not quite. Three opening tools are consumables; everything else remains covered.",
+        "problem": "The preview makes an unsupported complete-list claim because documented consumables extend beyond the three opening tools.",
+        "fix": "Preserve the direct answer while describing the broader consumables exception accurately and avoiding any claim that every other individual piece is covered.",
+        "severity": "blocking"
+      },
+      {
+        "line": "It identifies a limited exception you can weigh against everything else included in the kit.",
+        "problem": "The singular exception reinforces the false impression that only one three-item category falls outside lifetime replacement.",
+        "fix": "Make clear that the decision concerns the kit's documented consumable items collectively, not one isolated exception.",
+        "severity": "major"
+      },
+      {
+        "line": "The product page shows the complete set of tools alongside the Lifetime Guarantee designation, so you can decide whether those three excluded items change the value of the kit for you.",
+        "problem": "The promised decision test directs the reader to assess only three excluded items and therefore understates the exclusions relevant to the CTA.",
+        "fix": "Frame the page inspection as a way to identify the included consumables and judge the full documented coverage boundary before deciding.",
+        "severity": "major"
+      }
+    ],
+    "summary": "Correct every line that treats the three opening tools as the exhaustive exception so the email consistently distinguishes all documented consumables from covered tools and parts."
+  },
+  "calls": [
+    {
+      "role": "conversion_critic",
+      "model": "gpt-5.6-sol",
+      "tier": "deep",
+      "input_tokens": 7684,
+      "output_tokens": 1699,
+      "duration_ms": 23872.367500094697,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.26534100000000005
+    },
+    {
+      "role": "email_writer",
+      "model": "gpt-5.6-sol",
+      "tier": "deep",
+      "input_tokens": 12447,
+      "output_tokens": 1591,
+      "duration_ms": 21434.43789985031,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.328686
+    },
+    {
+      "role": "conversion_critic",
+      "model": "gpt-5.6-sol",
+      "tier": "deep",
+      "input_tokens": 7705,
+      "output_tokens": 1031,
+      "duration_ms": 13580.10709984228,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15104,
+      "cost_usd": 0.21555599999999997
+    }
+  ],
+  "revised_email": {
+    "position": 3,
+    "role": "Clarify the Lifetime Guarantee coverage boundary",
+    "subject": "Where lifetime coverage stops",
+    "preview_text": "Consumables have an as-is guarantee; other tools and parts are covered.",
+    "eyebrow": "Guarantee details",
+    "headline": "Know what the Lifetime Guarantee covers",
+    "greeting": "Hi there,",
+    "body": "“Lifetime Guarantee” needs one clear boundary: it does not mean lifetime replacement for every item in the kit.\n\nThe iFixit Pro Tech Toolkit is an organized electronics-repair kit combining a 64-bit driver assortment with opening, prying, gripping, and anti-static tools. Its product page identifies a Lifetime Guarantee.\n\nConsumable products in the toolkit carry their own “as-is” guarantee and do not receive lifetime-guarantee replacement. Documented consumables include opening tools, opening picks, spudgers, and the small cap supplied with the Angled ESD Tweezers.\n\niFixit states that the kit’s other tools and parts are covered. That makes the guarantee meaningful without making it blanket coverage.\n\nThe product page shows the included tools and the Lifetime Guarantee designation. Review both to decide whether the coverage boundary meets your expectations for a first general repair toolkit.",
+    "call_to_action": "Review the toolkit and guarantee",
+    "sign_off": "- the iFixit fixers",
+    "postscript": ""
+  },
+  "revised_critique": {
+    "verdict": "ship",
+    "failure_mode": "none",
+    "strategy_gap": "",
+    "brief_drift": "",
+    "unspent_evidence": [],
+    "edits": [],
+    "summary": "The email clearly identifies the toolkit, accurately states the documented consumables boundary without implying its list is exhaustive, and gives the reader a supported reason to inspect the product page."
+  }
+}

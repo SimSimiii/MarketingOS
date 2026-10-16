@@ -1,0 +1,156 @@
+[
+  {
+    "id": "b1408ce6-24dc-474c-8f98-e33f1f70015a",
+    "campaign_execution_id": "d5dad417-f8aa-49ce-a7c8-a66bb5ab643a",
+    "agent_execution_id": null,
+    "agent_id": null,
+    "step": null,
+    "event_type": "execution_started",
+    "level": "info",
+    "message": "Request: Write exactly 1 English marketing email to UK adults who have opted in and are considering National Trust membership for visits to historic places and outdoor spaces. Help them decide whether membership suits their planned visits, using only the imported official membership page. Invite them to review the membership options and conditions. Do not invent local places, opening hours, events, discounts, free access exceptions, prices absent from evidence, or guaranteed savings. This is an existing membership offer, not a new launch.",
+    "created_at": "2026-10-05T15:04:49.009423Z"
+  },
+  {
+    "id": "ecd171e4-76cc-4f03-9c50-c641011312e9",
+    "campaign_execution_id": "d5dad417-f8aa-49ce-a7c8-a66bb5ab643a",
+    "agent_execution_id": null,
+    "agent_id": null,
+    "step": null,
+    "event_type": "phase",
+    "level": "info",
+    "message": "Read the request as 1 email(s) - the user said so",
+    "created_at": "2026-10-05T15:04:49.018465Z"
+  },
+  {
+    "id": "1ba902a0-4589-4f7f-81ef-b19b572b1403",
+    "campaign_execution_id": "d5dad417-f8aa-49ce-a7c8-a66bb5ab643a",
+    "agent_execution_id": null,
+    "agent_id": null,
+    "step": null,
+    "event_type": "phase",
+    "level": "info",
+    "message": "Reusing what we already know about this business (version 1, 38 facts)",
+    "created_at": "2026-10-05T15:04:49.026589Z"
+  },
+  {
+    "id": "6c1139b1-951f-438f-9d99-12aa563b64a5",
+    "campaign_execution_id": "d5dad417-f8aa-49ce-a7c8-a66bb5ab643a",
+    "agent_execution_id": null,
+    "agent_id": "knowledge_compiler",
+    "step": null,
+    "event_type": "knowledge_ready",
+    "level": "info",
+    "message": "Knowledge reused: 38 facts the copy may claim, 2 gap(s)",
+    "created_at": "2026-10-05T15:04:49.030591Z"
+  },
+  {
+    "id": "813db1f8-d49c-464d-bdd2-1a85365afa75",
+    "campaign_execution_id": "d5dad417-f8aa-49ce-a7c8-a66bb5ab643a",
+    "agent_execution_id": null,
+    "agent_id": null,
+    "step": null,
+    "event_type": "phase",
+    "level": "info",
+    "message": "Nothing here proves anyone uses this. The copy can be specific and checkable, but it cannot be believed on someone else's word",
+    "created_at": "2026-10-05T15:04:49.035412Z"
+  },
+  {
+    "id": "bbec6489-b7a6-49fc-9e10-af1cfa1180f3",
+    "campaign_execution_id": "d5dad417-f8aa-49ce-a7c8-a66bb5ab643a",
+    "agent_execution_id": null,
+    "agent_id": "strategist",
+    "step": 1,
+    "event_type": "agent_started",
+    "level": "info",
+    "message": "Strategist: Deciding what this campaign says, and in what order",
+    "created_at": "2026-10-05T15:04:49.037752Z"
+  },
+  {
+    "id": "5ed9c5d0-d938-47cb-ad08-d98427d0b1ac",
+    "campaign_execution_id": "d5dad417-f8aa-49ce-a7c8-a66bb5ab643a",
+    "agent_execution_id": null,
+    "agent_id": "strategist",
+    "step": 1,
+    "event_type": "model_call_started",
+    "level": "debug",
+    "message": "Sent 70,337 characters to gpt-5.6-sol - waiting for the answer",
+    "created_at": "2026-10-05T15:04:49.079431Z"
+  },
+  {
+    "id": "5e6c7d87-74ef-4680-aa1d-0b76428e252b",
+    "campaign_execution_id": "d5dad417-f8aa-49ce-a7c8-a66bb5ab643a",
+    "agent_execution_id": null,
+    "agent_id": "strategist",
+    "step": 1,
+    "event_type": "model_call_finished",
+    "level": "debug",
+    "message": "gpt-5.6-sol answered with 7,505 characters in 95.2s (31,590 in / 2,355 out)",
+    "created_at": "2026-10-05T15:06:24.243975Z"
+  },
+  {
+    "id": "cd930473-4c19-466e-b048-321bb98508c2",
+    "campaign_execution_id": "d5dad417-f8aa-49ce-a7c8-a66bb5ab643a",
+    "agent_execution_id": null,
+    "agent_id": "strategist",
+    "step": 1,
+    "event_type": "brief_ready",
+    "level": "info",
+    "message": "Campaign brief: The reader can make a better membership decision by comparing the documented benefits, price and eligibility conditions with the visits they realistically expect to make.",
+    "created_at": "2026-10-05T15:06:24.248501Z"
+  },
+  {
+    "id": "3f96e185-96ad-4ae4-97c7-1e15c726ef8c",
+    "campaign_execution_id": "d5dad417-f8aa-49ce-a7c8-a66bb5ab643a",
+    "agent_execution_id": "ecf93e51-259c-4926-8a6e-95093cd77711",
+    "agent_id": "strategist",
+    "step": 1,
+    "event_type": "agent_completed",
+    "level": "info",
+    "message": "Strategist: 1 email(s) to Selected audience: A couple aged 26 or over at the same address who expect to visit historic places, gardens or countryside together.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (vendor_claim; check applicability): They are considering one shared membership covering two adults rather than arranging and paying for visits separately. Joint membership costs £168 a year or £14 a month and requires both adults to be aged 26 or over and live at the same address.\nUser-specified audience: UK adults considering membership for historic places and outdoor visits",
+    "created_at": "2026-10-05T15:06:24.259124Z"
+  },
+  {
+    "id": "5c56788e-d6b2-40bb-8b1a-0dbaf762dad7",
+    "campaign_execution_id": "d5dad417-f8aa-49ce-a7c8-a66bb5ab643a",
+    "agent_execution_id": null,
+    "agent_id": null,
+    "step": 1,
+    "event_type": "phase",
+    "level": "info",
+    "message": "Drafts will be read cold by: A couple aged 26 or over at the same address who expect to visit historic places, gardens or countryside together",
+    "created_at": "2026-10-05T15:06:24.260939Z"
+  },
+  {
+    "id": "ca37975c-25f5-4755-990b-fed2bb69a8ff",
+    "campaign_execution_id": "d5dad417-f8aa-49ce-a7c8-a66bb5ab643a",
+    "agent_execution_id": null,
+    "agent_id": null,
+    "step": 1,
+    "event_type": "campaign_report",
+    "level": "info",
+    "message": "Request: Write exactly 1 English marketing email to UK adults who have opted in and are considering National Trust membership for visits to historic places and outdoor spaces. Help them decide whether membership suits their planned visits, using only the imported official membership page. Invite them to review the membership options and conditions. Do not invent local places, opening hours, events, discounts, free access exceptions, prices absent from evidence, or guaranteed savings. This is an existing membership offer, not a new launch.\nDelivered 0 of 1 email(s). Average AI simulation assessment (uncalibrated) 0.0/10.\nContract problems: the user asked for 1 email(s) and the run produced 0\nWhat held the copy back: No customer names, quotes or case studies found - the copy can describe the product but cannot prove anyone uses it; No measurable results found - claims stay qualitative, and adjectives convert worse than numbers\nWhat would help most next time: Which customers or quotes may we name?\nCancelled by user request.",
+    "created_at": "2026-10-05T15:06:24.260939Z"
+  },
+  {
+    "id": "fbfd6d95-2688-4653-8ad5-bc00fcbe252d",
+    "campaign_execution_id": "d5dad417-f8aa-49ce-a7c8-a66bb5ab643a",
+    "agent_execution_id": null,
+    "agent_id": null,
+    "step": 1,
+    "event_type": "phase",
+    "level": "info",
+    "message": "Cancelled by user request.",
+    "created_at": "2026-10-05T15:06:24.271772Z"
+  },
+  {
+    "id": "3ea6d2c6-e0ad-4b73-bc02-ed227c674fa3",
+    "campaign_execution_id": "d5dad417-f8aa-49ce-a7c8-a66bb5ab643a",
+    "agent_execution_id": null,
+    "agent_id": null,
+    "step": null,
+    "event_type": "execution_finished",
+    "level": "info",
+    "message": "Campaign run finished: cancelled",
+    "created_at": "2026-10-05T15:06:24.283731Z"
+  }
+]

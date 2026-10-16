@@ -32,7 +32,6 @@ import LiveLoading from "@/app/live/loading";
 import LogsLoading from "@/app/logs/loading";
 import SettingsLoading from "@/app/settings/loading";
 import {
-  Skeleton,
   SkeletonCampaign,
   SkeletonHeader,
   SkeletonPage,
@@ -186,9 +185,11 @@ export function PageLoading() {
   return (
     <SkeletonPage label="Loading your workspace…">
       <SkeletonHeader />
-      <Skeleton className="h-48 rounded-2xl" />
-      <SkeletonStats />
-      <SkeletonTable rows={4} />
+      <SkeletonStats count={4} />
+      <div className="grid gap-6 xl:grid-cols-2">
+        <SkeletonTable rows={4} />
+        <SkeletonTable rows={4} />
+      </div>
     </SkeletonPage>
   );
 }

@@ -1,0 +1,316 @@
+{
+  "id": "968b3229-050c-4d8c-8557-0162db88c446",
+  "campaign_id": "866cd496-fc6f-478f-b7b1-dded9833c110",
+  "status": "cancelled",
+  "error_message": "Cancelled by user request.",
+  "started_at": "2026-10-05T15:04:49.271282Z",
+  "completed_at": "2026-10-05T15:08:23.355300Z",
+  "created_at": "2026-10-05T15:04:49.272283Z",
+  "total_input_tokens": 85289,
+  "total_output_tokens": 5853,
+  "total_cache_read_tokens": 12288,
+  "estimated_cost_usd": 1.5524,
+  "recommendation_snapshot": {
+    "campaign_id": "866cd496-fc6f-478f-b7b1-dded9833c110",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "9bbed442-13c2-42cb-b5e4-54de44027dab",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 The Pro Tech Toolkit fits best when the reader expects to work across several electronics categories and wants both broad fastener coverage and tools for getting beyond the screws.",
+          "#2 Jimmy gives the reader a purpose-built prying option when an electronics repair calls for precise or stronger prying.",
+          "#3 The $79.95 Pro Tech Toolkit is backed by a lifetime guarantee, and iFixit says it will replace an iFixit tool if it breaks."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-10-05T15:04:49.445436Z",
+      "completed_at": "2026-10-05T15:08:23.300997Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 73001,
+      "output_tokens": 5853,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 12288,
+      "cost_usd": 1.552422,
+      "duration_ms": 213746.56330002472,
+      "attempt": 1
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "cancelled",
+    "report": {
+      "request": "Write exactly 3 English nurture emails for opted-in electronics hobbyists considering their first general repair toolkit. Promote the iFixit Pro Tech Toolkit using only official source facts. Email 1 helps assess whether the kit fits their repair work, email 2 explains a concrete tool use from the material, email 3 resolves a supported buying concern. Each email must stand alone, build a distinct argument, and point to the product page. No invented discounts, deadlines, cart activity, personal knowledge, or guaranteed repair outcomes. Readers have not purchased yet.",
+      "delivered": 0,
+      "promised": 3,
+      "contract_violations": [
+        "the user asked for 3 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [],
+      "what_would_help_most": "",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "Cancelled by user request."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "A pre-purchase nurture sequence for opted-in, solution-aware electronics hobbyists choosing their first general repair toolkit. It is not onboarding: each email helps the reader evaluate the Pro Tech Toolkit before buying.",
+      "reader": "Selected audience: A hands-on electronics owner who is tired of improvising tools across phones, laptops, consoles, and household devices.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (vendor_claim; check applicability): They repair or maintain several kinds of electronics rather than one named device. Their available tools may be scattered, incomplete, too large for precision work, or missing uncommon fasteners and safe opening tools. They are comparing compact everyday kits with broader toolkits that can remain useful across future repairs.\nUser-specified audience: Opted-in electronics hobbyists considering their first general repair toolkit",
+      "reader_segment": "A hands-on electronics owner who is tired of improvising tools across phones, laptops, consoles, and household devices",
+      "promise": "The Pro Tech Toolkit is a broad first repair toolkit for hobbyists who expect to work across device types and need more than screwdrivers, with a documented guarantee that reduces the risk of investing in durable tools.",
+      "orientation": "The Pro Tech Toolkit combines a 64-bit precision driver kit with opening, prying, gripping, and anti-static tools for electronics repair.",
+      "arc": "First establish whether the kit matches the reader's range of repair work, then make its value tangible through one specific tool, and finally address hesitation about spending $79.95 on a first toolkit.",
+      "sequence_rationale": "The reader should establish fit before being shown technique or asked to resolve purchase risk. Email 1 distinguishes a broad toolkit from a narrowly useful driver set. Email 2 turns the inventory into a concrete repair-stage use. Email 3 answers the supported durability concern with the listed price, lifetime guarantee, and replacement policy. Each email remains independently understandable and links to the same product page.",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Help the reader decide whether the Pro Tech Toolkit fits the range and depth of electronics repairs they expect to attempt.",
+          "single_idea": "The Pro Tech Toolkit fits best when the reader expects to work across several electronics categories and wants both broad fastener coverage and tools for getting beyond the screws.",
+          "felt_need": "I want one organized first toolkit that can remain useful across different electronics instead of solving only one device-specific repair.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "The kit combines a 64 Bit Driver Kit with Opening Picks and is documented for electronics, gaming consoles, drones, RC cars, and vintage devices.",
+          "alternative_ideas": [],
+          "alternative_arguments": [
+            {
+              "single_idea": "The kit's selection is grounded in repair work rather than assembled as a generic assortment.",
+              "felt_need": "I cannot tell whether a large tool list reflects real electronics repairs or simply adds more pieces.",
+              "status_quo": "Comparing kits by item count alone.",
+              "why_it_fails": "A count does not explain why those tools were selected for electronics repair.",
+              "mechanism": "iFixit's in-house repair experts and teardown engineers designed and curated the toolkit using data from thousands of teardowns and repair guides.",
+              "belief_shift": "Before: a broad toolkit may be an arbitrary collection. After: this toolkit's selection is tied to documented teardown and repair-guide experience.",
+              "evidence_ids": [
+                "E625",
+                "E626"
+              ],
+              "must_not_say": [
+                "Do not claim every included tool will be needed for every repair.",
+                "Do not imply that the toolkit guarantees a successful repair.",
+                "Do not present iFixit's own design process as independent third-party validation."
+              ],
+              "objection": "A 64-bit toolkit may contain many tools I will never use.",
+              "call_to_action": "View the Pro Tech Toolkit product page at https://www.ifixit.com/products/pro-tech-toolkit to inspect how iFixit says the kit was designed and what it contains.",
+              "next_step_decision": "Decide whether the kit's repair-informed curation is a persuasive reason to choose it as a first general toolkit.",
+              "next_step_value": "The page explains that iFixit's repair experts and teardown engineers curated the kit using teardown and repair-guide data.",
+              "next_step_evidence_ids": [
+                "E625",
+                "E626"
+              ],
+              "next_step_limit": "The page cannot determine which tools a reader's specific future repairs will require.",
+              "subject_strategy": "Raise the question of how a repair toolkit earns its tool selection, without claiming that more pieces automatically mean better coverage."
+            }
+          ],
+          "belief_shift": "Before: the Pro Tech Toolkit may be more kit than a first-time buyer needs. After: its breadth makes sense when the buyer expects varied electronics work and needs opening tools as well as bits.",
+          "evidence_ids": [
+            "E573",
+            "E654"
+          ],
+          "must_not_say": [
+            "Do not claim the kit works for every device or every repair.",
+            "Do not imply that owning the kit removes the need to check a repair guide and required-tool list.",
+            "Do not lead with the lifetime guarantee or price; email 3 owns the purchase-risk argument.",
+            "Do not turn the email into a complete inventory list."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "I may be overbuying when a smaller driver set could cover my first repair.",
+          "tone": "Practical and diagnostic, helping the reader self-select without pressure.",
+          "call_to_action": "View the Pro Tech Toolkit product page at https://www.ifixit.com/products/pro-tech-toolkit to compare its device range, 64-bit driver kit, and opening tools with the repairs you expect to attempt.",
+          "next_step_decision": "Decide whether anticipated work across multiple electronics categories justifies a broad toolkit instead of a narrower driver set.",
+          "next_step_value": "The page shows the toolkit's documented device range and that it includes both the 64 Bit Driver Kit and Opening Picks.",
+          "next_step_evidence_ids": [
+            "E573",
+            "E654"
+          ],
+          "next_step_limit": "The product page does not confirm that the kit contains every tool or part required by a particular repair guide.",
+          "subject_strategy": "Invite a quick fit check based on the reader's likely device range, rather than promising universal coverage.",
+          "must_not_reuse": []
+        },
+        {
+          "position": 2,
+          "job": "Make the toolkit's value concrete by showing what one included tool does during an opening task.",
+          "single_idea": "Jimmy gives the reader a purpose-built prying option when an electronics repair calls for precise or stronger prying.",
+          "felt_need": "Once the screws are out, I still need an appropriate way to approach parts that must be pried apart.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "The included Jimmy uses a flexible steel blade and an ergonomic handle for precise and powerful prying.",
+          "alternative_ideas": [],
+          "alternative_arguments": [
+            {
+              "single_idea": "The driver case can become a temporary sorting surface while the repair is underway.",
+              "felt_need": "Small fasteners need a clear place to stay while a device is open.",
+              "status_quo": "",
+              "why_it_fails": "",
+              "mechanism": "The driver-kit case uses a magnetically attached lid whose inside serves as a sorting tray.",
+              "belief_shift": "Before: the case only stores tools between repairs. After: its lid also has a documented use during the work.",
+              "evidence_ids": [
+                "E579",
+                "E580"
+              ],
+              "must_not_say": [
+                "Do not claim the tray records screw locations or prevents every lost screw.",
+                "Do not imply that the magnetic lid is appropriate for placing every electronic component.",
+                "Do not add an unsupported step-by-step repair procedure."
+              ],
+              "objection": "",
+              "call_to_action": "View the Pro Tech Toolkit product page at https://www.ifixit.com/products/pro-tech-toolkit to see the driver case and its built-in sorting-tray design.",
+              "next_step_decision": "Decide whether an integrated sorting surface adds practical value to the reader's repair setup.",
+              "next_step_value": "The page explains that the case has a magnetically attached lid whose inside serves as a sorting tray.",
+              "next_step_evidence_ids": [
+                "E579",
+                "E580"
+              ],
+              "next_step_limit": "The page does not establish a complete screw-tracking method for any particular device.",
+              "subject_strategy": "Focus on the useful second job performed by a familiar-looking part of the kit."
+            }
+          ],
+          "belief_shift": "Before: the toolkit's extra opening tools may look like accessories around the driver. After: at least one included tool has a defined role for prying work that a bit driver does not perform.",
+          "evidence_ids": [
+            "E595",
+            "E602"
+          ],
+          "must_not_say": [
+            "Do not claim Jimmy is safe for every seam, screen, battery, or component.",
+            "Do not prescribe where or how much force to apply without a device-specific guide.",
+            "Do not promise that using Jimmy prevents cosmetic or internal damage.",
+            "Do not repeat the broad device-range argument from email 1.",
+            "Do not discuss the guarantee or purchase price; email 3 owns those points."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "I already own screwdrivers, so the additional tools may not add much.",
+          "tone": "Concrete, instructional, and restrained.",
+          "call_to_action": "View the Pro Tech Toolkit product page at https://www.ifixit.com/products/pro-tech-toolkit to see the included Jimmy and its documented prying purpose.",
+          "next_step_decision": "Decide whether a dedicated prying tool addresses a capability missing from the reader's current screwdriver-focused setup.",
+          "next_step_value": "The page identifies Jimmy as included and describes its flexible steel blade, ergonomic handle, and prying use.",
+          "next_step_evidence_ids": [
+            "E595",
+            "E602"
+          ],
+          "next_step_limit": "The product page does not establish that Jimmy is appropriate for every device or replace the need to follow the relevant repair guide.",
+          "subject_strategy": "Open on the moment after screw removal, then name the specific included tool designed for the next kind of work.",
+          "must_not_reuse": [
+            "The Pro Tech Toolkit fits best when the reader expects to work across several electronics categories and wants both broad fastener coverage and tools for getting beyond the screws."
+          ]
+        },
+        {
+          "position": 3,
+          "job": "Resolve the supported concern that a $79.95 first toolkit may not remain useful long enough to justify the purchase.",
+          "single_idea": "The $79.95 Pro Tech Toolkit is backed by a lifetime guarantee, and iFixit says it will replace an iFixit tool if it breaks.",
+          "felt_need": "If I spend more on my first general repair toolkit, I want to know what stands behind the tools beyond the first few projects.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "The product carries iFixit's lifetime guarantee, supported by the company's stated tool-replacement policy.",
+          "alternative_ideas": [],
+          "alternative_arguments": [
+            {
+              "single_idea": "The Pro Tech Toolkit is an established choice within iFixit's toolkit range, not an untested addition.",
+              "felt_need": "I want evidence that other buyers have already evaluated this toolkit before I make it my first general kit.",
+              "status_quo": "",
+              "why_it_fails": "",
+              "mechanism": "The official product page identifies it as iFixit's number-one best-selling toolkit and displays a 4.93 rating based on 150 reviews.",
+              "belief_shift": "Before: the toolkit may be an unfamiliar premium option. After: the product page shows substantial buyer feedback and best-selling status within iFixit's range.",
+              "evidence_ids": [
+                "E554",
+                "E557"
+              ],
+              "must_not_say": [
+                "Do not call the rating independent testing.",
+                "Do not claim best-selling status across the entire repair-tool market.",
+                "Do not imply that other customers' ratings guarantee this reader's satisfaction or repair outcome."
+              ],
+              "objection": "I am unsure whether a higher-priced first toolkit is a proven choice.",
+              "call_to_action": "View the Pro Tech Toolkit product page at https://www.ifixit.com/products/pro-tech-toolkit to review its displayed rating, review count, and best-selling status.",
+              "next_step_decision": "Decide whether the product's buyer feedback and standing within iFixit's range provide enough confidence to consider purchasing it.",
+              "next_step_value": "The page displays a 4.93 rating from 150 reviews and describes the product as iFixit's number-one best-selling toolkit.",
+              "next_step_evidence_ids": [
+                "E554",
+                "E557"
+              ],
+              "next_step_limit": "Ratings and best-selling status do not establish compatibility with a particular repair or guarantee the reader's outcome.",
+              "subject_strategy": "Address uncertainty with specific, bounded signals of buyer adoption rather than broad popularity language."
+            }
+          ],
+          "belief_shift": "Before: $79.95 may feel risky for a first toolkit that could fail after limited use. After: the reader can evaluate that price alongside a lifetime guarantee and stated replacement policy for broken iFixit tools.",
+          "evidence_ids": [
+            "E556",
+            "E588",
+            "E669"
+          ],
+          "must_not_say": [
+            "Do not invent guarantee exclusions, coverage details, or a claim process.",
+            "Do not imply that the guarantee covers parts, devices, failed repairs, misuse, or accidental damage.",
+            "Do not promise the tools will never break.",
+            "Do not introduce discounts, deadlines, cart activity, or price savings.",
+            "Do not repeat the fit or Jimmy arguments from emails 1 and 2."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "I do not want to pay $79.95 for tools that may only last through one or two repairs.",
+          "tone": "Reassuring, factual, and commercially direct.",
+          "call_to_action": "View the Pro Tech Toolkit product page at https://www.ifixit.com/products/pro-tech-toolkit to review the listed $79.95 price, lifetime guarantee, and full kit details.",
+          "next_step_decision": "Decide whether the documented guarantee makes the listed price acceptable for a first general repair toolkit.",
+          "next_step_value": "The page lets the reader verify the listed price and lifetime guarantee before choosing whether to buy.",
+          "next_step_evidence_ids": [
+            "E556",
+            "E588"
+          ],
+          "next_step_limit": "The product page and supplied evidence do not show that the guarantee covers a reader's device, repair outcome, misuse, or every cause of tool damage.",
+          "subject_strategy": "Put the durability concern in plain language and answer it with the exact price and guarantee, without urgency or promotional framing.",
+          "must_not_reuse": [
+            "The Pro Tech Toolkit fits best when the reader expects to work across several electronics categories and wants both broad fastener coverage and tools for getting beyond the screws.",
+            "Jimmy gives the reader a purpose-built prying option when an electronics repair calls for precise or stronger prying."
+          ]
+        }
+      ],
+      "voice_notes": "Use short, practical sentences and light repair language. Sound empowering, not reckless: encourage readers to match tools to the relevant repair guide and never imply guaranteed repair success.",
+      "contract": {
+        "kind": "email_sequence",
+        "count": 3,
+        "count_is_explicit": true,
+        "evidence": "3 English nurture emails"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "866cd496-fc6f-478f-b7b1-dded9833c110",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

@@ -33,6 +33,7 @@ from app.knowledge.artifacts import (
 from app.knowledge.corpus import Document, SourceCorpus, collapse, fold
 from app.knowledge.ledger import (
     Evidence,
+    EvidenceContext,
     EvidenceKind,
     EvidenceLedger,
     EvidenceStrength,
@@ -95,6 +96,7 @@ class _EvidenceDraft(BaseModel):
     #: does not answer, or answers wrongly, is classified in code instead -
     #: see `_shelf`.
     category: str = ""
+    context: EvidenceContext | None = None
 
 
 class _EvidencePass(BaseModel):
@@ -273,7 +275,11 @@ class KnowledgeCompiler:
                     )
                     continue
                 claim = collapse(draft.claim)
-                verbatim = collapse(draft.verbatim, 400)
+                verbatim = collapse(draft.verbatim)
+                context = draft.context.model_copy(deep=True) if draft.context else None
+                if context is not None:
+                    # Model assertions about verification never certify themselves.
+                    context.verification = "quote_verified_in_material"
                 entries.append(
                     Evidence(
                         id=f"E{len(entries) + 1}",
@@ -284,6 +290,7 @@ class KnowledgeCompiler:
                         document_id=document.id if document else None,
                         strength=draft.strength,
                         category=_shelf(draft, claim, verbatim),
+                        context=context,
                     )
                 )
         return EvidenceLedger(entries=entries), intake
@@ -420,7 +427,7 @@ def find_gaps(artifacts: KnowledgeArtifacts) -> GapReport:
             Gap(
                 id="G-numbers",
                 missing="No measurable results found",
-                impact="claims stay qualitative, and adjectives convert worse than numbers",
+                impact="emails may describe documented capabilities but cannot invent measured outcomes",
                 question="What measurable result do customers get, and how do you know?",
                 severity="significant",
             )

@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
 import { AuthGuard } from "@/components/auth-guard";
@@ -16,9 +16,23 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Display only: page titles and headlines. One weight is all it has, which is
+// the point - it is the voice of the product, not a second body face.
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+});
+
 export const metadata: Metadata = {
   title: "MarketingOS",
   description: "Email copy written from your own material, read cold before you ever see it.",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0b0a12",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({
@@ -29,13 +43,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`dark ${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <body className="min-h-full">
         <AppShell>
           <AuthGuard>{children}</AuthGuard>
         </AppShell>
-        <Toaster richColors position="top-right" />
+        <Toaster position="top-right" />
       </body>
     </html>
   );

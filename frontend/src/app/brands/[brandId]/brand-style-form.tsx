@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { Check } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -53,9 +55,13 @@ export function BrandStyleForm({ brand }: { brand: Brand }) {
     }
   }
 
+  const accent = /^#[0-9a-fA-F]{6}$/.test(color.trim()) ? color.trim() : DEFAULT_ACCENT;
+  const footerLines = footer.split("\n").map((line) => line.trim()).filter(Boolean);
+
   return (
+    <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_24rem]">
     <Card>
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-1">
         <CardTitle className="text-base">Email appearance</CardTitle>
         <p className="text-sm text-muted-foreground">
           Your logo, accent colour and footer for campaigns using the branded layout.
@@ -88,7 +94,7 @@ export function BrandStyleForm({ brand }: { brand: Brand }) {
                 aria-label="Pick the accent colour"
                 value={/^#[0-9a-fA-F]{6}$/.test(color) ? color : DEFAULT_ACCENT}
                 onChange={(event) => setColor(event.target.value)}
-                className="size-9 shrink-0 cursor-pointer rounded-md border border-input bg-transparent"
+                className="size-9 shrink-0 cursor-pointer rounded-lg border border-white/10 bg-transparent p-0.5"
               />
               <Input
                 id="color"
@@ -133,12 +139,102 @@ export function BrandStyleForm({ brand }: { brand: Brand }) {
           </p>
         </div>
 
-        <div className="flex justify-end">
-          <Button size="sm" onClick={save} disabled={saving}>
-            {saving ? "Saving…" : "Save"}
+        <div className="flex justify-end border-t border-hairline pt-4">
+          <Button onClick={save} disabled={saving}>
+            <Check aria-hidden="true" />
+            {saving ? "Saving…" : "Save appearance"}
           </Button>
         </div>
       </CardContent>
     </Card>
+    <EmailPreview
+      brandName={brand.name}
+      logoUrl={logoUrl.trim()}
+      accent={accent}
+      footerLines={footerLines}
+      unsubscribe={Boolean(unsubscribe.trim())}
+    />
+    </div>
+  );
+}
+
+/**
+ * What a branded email will look like with these settings, as they are typed.
+ *
+ * A colour is a guess until it is seen on a button, and a footer is a guess
+ * until it is seen under an email. The lines of the body are placeholders on
+ * purpose: this previews the frame the brand controls, not copy nobody wrote.
+ */
+function EmailPreview({
+  brandName,
+  logoUrl,
+  accent,
+  footerLines,
+  unsubscribe,
+}: {
+  brandName: string;
+  logoUrl: string;
+  accent: string;
+  footerLines: string[];
+  unsubscribe: boolean;
+}) {
+  const [brokenLogo, setBrokenLogo] = useState<string | null>(null);
+  const showLogo = /^https?:\/\//.test(logoUrl) && brokenLogo !== logoUrl;
+  return (
+    <aside aria-label="Branded email preview" className="xl:sticky xl:top-6">
+      <p className="mb-3 text-[0.6875rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        Live preview
+      </p>
+      <div className="overflow-hidden rounded-2xl bg-[#f6f6f8] shadow-[0_30px_60px_-20px_oklch(0_0_0/70%)] ring-1 ring-white/10">
+        <div className="flex items-center gap-1.5 border-b border-black/5 bg-white px-4 py-2.5">
+          <span className="size-2.5 rounded-full bg-[#ff5f57]" />
+          <span className="size-2.5 rounded-full bg-[#febc2e]" />
+          <span className="size-2.5 rounded-full bg-[#28c840]" />
+          <span className="ml-3 truncate text-[0.6875rem] text-neutral-500">Inbox · {brandName}</span>
+        </div>
+        <div className="p-5">
+          <div className="rounded-xl bg-white p-6 shadow-sm">
+            <div className="mb-5 flex h-9 items-center">
+              {showLogo ? (
+                // eslint-disable-next-line @next/next/no-img-element -- a user-supplied URL on any host
+                <img
+                  src={logoUrl}
+                  alt={brandName}
+                  className="max-h-9 max-w-[10rem] object-contain"
+                  onError={() => setBrokenLogo(logoUrl)}
+                />
+              ) : (
+                <span className="text-base font-semibold text-neutral-900">{brandName}</span>
+              )}
+            </div>
+            <div className="space-y-2" aria-hidden="true">
+              <div className="h-2.5 w-11/12 rounded-full bg-neutral-200" />
+              <div className="h-2.5 w-full rounded-full bg-neutral-200" />
+              <div className="h-2.5 w-4/5 rounded-full bg-neutral-200" />
+            </div>
+            <div className="my-5 border-l-[3px] py-1 pl-3" style={{ borderColor: accent }}>
+              <div className="h-2.5 w-3/4 rounded-full bg-neutral-200" aria-hidden="true" />
+            </div>
+            <span
+              className="inline-block rounded-md px-4 py-2 text-xs font-semibold text-white"
+              style={{ backgroundColor: accent }}
+            >
+              Call to action
+            </span>
+            <p className="mt-4 text-xs text-neutral-500">
+              Links look <span className="underline" style={{ color: accent }}>like this</span>.
+            </p>
+          </div>
+          <div className="space-y-0.5 px-2 pt-4 text-center text-[0.6875rem] leading-relaxed text-neutral-500">
+            {footerLines.length > 0 ? (
+              footerLines.map((line) => <p key={line}>{line}</p>)
+            ) : (
+              <p className="italic text-neutral-400">Footer lines appear here</p>
+            )}
+            {unsubscribe && <p className="pt-1 underline">Unsubscribe</p>}
+          </div>
+        </div>
+      </div>
+    </aside>
   );
 }

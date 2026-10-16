@@ -5,14 +5,15 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { formatTime } from "@/lib/format";
+import { activityLabel, activityMessage, problemText, progressText } from "@/lib/product-progress";
 import type { StepState, TimelineStep } from "@/lib/run-timeline";
 import type { LiveExecutionEvent } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const STEP_STYLES: Record<StepState, { dot: string; label: string; badge: string }> = {
-  running: { dot: "bg-primary animate-pulse", label: "working", badge: "bg-primary/20 text-primary" },
-  completed: { dot: "bg-emerald-500", label: "done", badge: "bg-emerald-500/15 text-emerald-400" },
-  failed: { dot: "bg-destructive", label: "failed", badge: "bg-destructive/15 text-destructive" },
+  running: { dot: "live-dot", label: "working", badge: "border-violet-400/30 bg-violet-500/15 text-violet-200" },
+  completed: { dot: "bg-emerald-400 shadow-[0_0_8px_oklch(0.8_0.17_160/70%)]", label: "done", badge: "border-emerald-400/20 bg-emerald-400/10 text-emerald-300" },
+  failed: { dot: "bg-red-400 shadow-[0_0_8px_oklch(0.7_0.2_25/70%)]", label: "failed", badge: "border-red-400/25 bg-red-500/10 text-red-300" },
 };
 
 /** Every turn a reasoning role took, in order, and what each one produced.
@@ -35,14 +36,17 @@ export function RunTimeline({
 
   if (steps.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground">
-        Reading everything you provided before anything gets written...
+      <p className="surface flex items-center gap-3 rounded-xl px-4 py-3.5 text-sm text-muted-foreground">
+        <span className="live-dot" aria-hidden="true" />
+        Reading everything you provided before anything gets written…
       </p>
     );
   }
 
   return (
-    <ol className="space-y-2">
+    // The rail behind the cards joins the turns into one sequence; it shows
+    // only in the gaps between them, which is where the eye reads "then".
+    <ol className="relative space-y-2.5 before:absolute before:top-4 before:bottom-4 before:left-[1.3rem] before:w-px before:bg-gradient-to-b before:from-violet-400/50 before:via-white/10 before:to-transparent">
       {steps.map((step) => (
         <li key={step.step}>
           <StepRow
@@ -72,7 +76,7 @@ function StepRow({
   onToggle: () => void;
 }) {
   const style = STEP_STYLES[step.state];
-  const lines = events.filter((event) => event.step === step.step);
+  const lines = events.filter((event) => event.step === step.step && activityMessage(event) !== null);
   // A finished step reports what it took; a running one has to keep moving,
   // or the page reads as frozen through a 40-second model call.
   const elapsedMs =
@@ -81,52 +85,63 @@ function StepRow({
       : step.durationMs;
 
   return (
-    <Card size="sm" className={cn(open && "ring-foreground/20")}>
+    <Card
+      size="sm"
+      className={cn(
+        "relative",
+        open && "ring-violet-400/30",
+        step.state === "running" && "ring-violet-400/30 shadow-[var(--shadow-surface),0_0_24px_-8px_oklch(0.6_0.22_293/50%)]",
+      )}
+    >
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={open}
-        className="flex w-full items-start gap-3 px-(--card-spacing) text-left"
+        className="flex w-full cursor-pointer items-start gap-3 px-(--card-spacing) text-left"
       >
-        <span className={cn("mt-1.5 size-2 shrink-0 rounded-full", style.dot)} />
+        <span className="mt-1 flex size-3.5 shrink-0 items-center justify-center rounded-full bg-card ring-4 ring-card">
+          <span className={cn("size-2 rounded-full", style.dot)} />
+        </span>
         <span className="min-w-0 flex-1 space-y-1">
           <span className="flex flex-wrap items-center gap-2">
-            <span className="text-sm font-medium">
-              {step.agentName ?? step.agentId ?? "Working"}
+            <span className="text-sm font-semibold">
+              {activityLabel(step.agentId)}
             </span>
-            <Badge variant="outline" className={cn("border-transparent", style.badge)}>
+            <Badge variant="outline" className={style.badge}>
               {style.label}
             </Badge>
-            <span className="text-xs text-muted-foreground">step {step.step}</span>
+            <span className="text-[0.6875rem] text-muted-foreground tabular-nums">step {step.step}</span>
             {step.attempt > 1 && (
-              <Badge variant="outline" className="border-transparent bg-amber-500/15 text-amber-400">
+              <Badge variant="outline" className="border-amber-400/25 bg-amber-400/10 text-amber-300">
                 rework - attempt {step.attempt}
               </Badge>
             )}
           </span>
 
           {step.label && (
-            <span className="block text-sm text-muted-foreground">{step.label}</span>
+            <span className="block text-sm text-muted-foreground">{progressText(step.label)}</span>
           )}
 
           {step.progress && (
-            <span className="block text-xs text-primary">{step.progress}</span>
+            <span className="block text-xs text-violet-300">{progressText(step.progress, `${activityLabel(step.agentId)}…`)}</span>
           )}
 
-          {step.error && <span className="block text-xs text-destructive">{step.error}</span>}
+          {step.error && <span className="block text-xs text-destructive">{problemText(step.error)}</span>}
 
           {step.summary && (
-            <span className="block text-xs text-emerald-400">{step.summary}</span>
+            <span className="block text-xs text-emerald-300">{progressText(step.summary, "Review complete.")}</span>
           )}
 
           <span className="flex flex-wrap gap-x-3 text-xs text-muted-foreground tabular-nums">
             {elapsedMs > 0 && <span>{(elapsedMs / 1000).toFixed(1)}s</span>}
             <span className="text-muted-foreground/70">
-              {lines.length} log line{lines.length === 1 ? "" : "s"}
+              {lines.length} update{lines.length === 1 ? "" : "s"}
             </span>
           </span>
         </span>
-        <span className="mt-0.5 shrink-0 text-xs text-muted-foreground">{open ? "hide" : "logs"}</span>
+        <span className="mt-0.5 shrink-0 rounded-full border border-white/[0.08] bg-white/[0.03] px-2 py-0.5 text-[0.6875rem] text-muted-foreground transition-colors hover:text-foreground">
+          {open ? "Hide" : "Details"}
+        </span>
       </button>
 
       {open && <StepLog lines={lines} />}
@@ -135,13 +150,11 @@ function StepRow({
 }
 
 function StepLog({ lines }: { lines: LiveExecutionEvent[] }) {
-  const [showDebug, setShowDebug] = useState(true);
   const [expanded, setExpanded] = useState<Set<number>>(() => new Set());
-  // Indices into `lines`, not into the filtered view: hiding the debug lines
-  // must not silently re-point what is open at a different event.
+  // Keep event indices stable when non-customer diagnostics are omitted.
   const visible = lines
     .map((line, index) => ({ line, index }))
-    .filter(({ line }) => showDebug || line.level !== "debug");
+    .filter(({ line }) => activityMessage(line) !== null);
   const expandable = visible.filter(({ line }) => hasDetail(line));
 
   const toggle = (index: number) =>
@@ -152,9 +165,9 @@ function StepLog({ lines }: { lines: LiveExecutionEvent[] }) {
     });
 
   return (
-    <div className="mt-2 border-t border-border pt-2">
+    <div className="mt-2 border-t border-hairline bg-black/15 pt-2">
       <div className="flex items-center justify-between gap-3 px-(--card-spacing) pb-1">
-        <span className="text-xs font-medium text-muted-foreground">Log</span>
+        <span className="text-xs font-medium text-muted-foreground">Progress and feedback</span>
         <span className="flex items-center gap-3">
           {expandable.length > 0 && (
             <button
@@ -171,18 +184,11 @@ function StepLog({ lines }: { lines: LiveExecutionEvent[] }) {
               {expanded.size > 0 ? "collapse all" : `expand all (${expandable.length})`}
             </button>
           )}
-          <button
-            type="button"
-            onClick={() => setShowDebug(!showDebug)}
-            className="text-xs text-muted-foreground hover:text-foreground"
-          >
-            {showDebug ? "hide debug lines" : "show debug lines"}
-          </button>
         </span>
       </div>
       <div className="max-h-[32rem] overflow-y-auto px-(--card-spacing)">
         {visible.length === 0 ? (
-          <p className="py-2 text-xs text-muted-foreground">Nothing logged for this step yet.</p>
+          <p className="py-2 text-xs text-muted-foreground">No progress updates for this step yet.</p>
         ) : (
           <ul className="space-y-1 text-xs">
             {visible.map(({ line, index }) => {
@@ -192,7 +198,7 @@ function StepLog({ lines }: { lines: LiveExecutionEvent[] }) {
                 <li key={index}>
                   <div
                     className={cn(
-                      "flex gap-2 font-mono",
+                      "flex gap-2",
                       detailed && "cursor-pointer rounded hover:bg-muted/50",
                     )}
                     onClick={detailed ? () => toggle(index) : undefined}
@@ -201,7 +207,7 @@ function StepLog({ lines }: { lines: LiveExecutionEvent[] }) {
                       {formatTime(line.at)}
                     </span>
                     <span className={cn("min-w-0 flex-1", LEVEL_TEXT[line.level])}>
-                      {line.message}
+                      {activityMessage(line)}
                     </span>
                     {detailed && (
                       <span className="shrink-0 text-muted-foreground/60">{open ? "−" : "+"}</span>

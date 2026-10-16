@@ -53,6 +53,10 @@ def validate_request(db, brand_id, provider, request):
     kind = _KINDS[type(request)]
     if kind == "search" and ResearchTool.WEB_SEARCH not in provider.available_tools():
         raise LinkedInError("The configured model provider cannot search the public web.")
+    if kind == "search" and request.segment_name:
+        demand = MarketStore(db).latest_map(brand_id)
+        if demand is None or demand.named(request.segment_name) is None:
+            raise LinkedInError("This audience is no longer on the map. Refresh and choose an audience.")
     if (missing := _NEEDS_KNOWLEDGE.get(kind)) is not None:
         stored = ArtifactStore(db).load(ArtifactScope(brand_id=brand_id))
         if stored is None or not stored.artifacts.business.what_it_does.strip():
@@ -82,7 +86,12 @@ def launch(db: Session, brand_id: UUID, provider: AIProvider,
 async def _work(model: ModelSession, db: Session, row: LinkedInRun) -> dict:
     """The one paid step this job exists for, chosen by kind and nothing else."""
     if row.kind == "search":
-        found = await search(model, SearchRequest.model_validate(row.request))
+        request = SearchRequest.model_validate(row.request)
+        demand = MarketStore(db).latest_map(row.brand_id) if request.segment_name else None
+        segment = demand.named(request.segment_name) if demand is not None else None
+        if request.segment_name and segment is None:
+            raise LinkedInError("This audience is no longer on the map. Refresh and choose an audience.")
+        found = await search(model, request, segment)
         return found.model_dump(mode="json")
 
     stored = ArtifactStore(db).load(ArtifactScope(brand_id=row.brand_id))
