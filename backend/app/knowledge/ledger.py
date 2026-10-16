@@ -444,7 +444,12 @@ class EvidenceIndex:
         requested_support = numeric_support(text)
         for claim in extract_claims(text):
             if claim.kind is ClaimKind.QUOTE:
-                if claim.normalized not in self._corpus:
+                # English house styles place a sentence's comma or full stop
+                # inside quotation marks, even when it is not in a UI title or
+                # the quoted source. Ignore only that terminal punctuation;
+                # words and punctuation inside the passage still have to match.
+                quoted = claim.normalized.rstrip(".,;:!?")
+                if quoted not in self._corpus:
                     found.append(
                         UnsupportedClaim(
                             claim=claim,

@@ -5,5 +5,5 @@ export function customEmailRequest(count: number, brief: string): string {
   if (brief.trim().length < 10) {
     throw new Error("Describe what these emails should achieve (at least 10 characters).");
   }
-  return `Write exactly ${count} emails.\n\n${brief.trim()}`;
+  return `Write exactly ${count} ${count === 1 ? "email" : "emails"}.\n\n${brief.trim()}`;
 }

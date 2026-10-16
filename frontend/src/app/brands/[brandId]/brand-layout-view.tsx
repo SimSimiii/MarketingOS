@@ -62,7 +62,7 @@ export function BrandLayoutView({ children }: { children: React.ReactNode }) {
             <div className="min-w-0">
               <p className="mb-1 text-[10px] font-medium uppercase tracking-[0.18em] text-violet-300">Brand workspace</p>
               <h1 className="break-words text-2xl font-semibold tracking-tight sm:text-3xl">{brand.name}</h1>
-              {brand.website_url ? <a href={brand.website_url} target="_blank" rel="noreferrer noopener" className="mt-1 inline-flex max-w-full items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"><span className="truncate">{brand.website_url.replace(/^https?:\/\//, "").replace(/\/$/, "")}</span><ArrowUpRight className="size-3 shrink-0" /></a> : <p className="mt-1 text-xs text-muted-foreground">Add your website in Sources to get started.</p>}
+              {brand.website_url ? <a href={brand.website_url} target="_blank" rel="noreferrer noopener" className="mt-1 inline-flex max-w-full items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"><span className="truncate">{brand.website_url.replace(/^https?:\/\//, "").replace(/\/$/, "")}</span><ArrowUpRight className="size-3 shrink-0" /></a> : <p className="mt-1 text-xs text-muted-foreground">Sources, knowledge and campaigns for this brand.</p>}
             </div>
           </div>
           <Link href={`/campaigns?brand=${brand.id}`} className={buttonVariants({ variant: "outline", size: "sm" })}><Megaphone className="size-4" /> Campaigns</Link>

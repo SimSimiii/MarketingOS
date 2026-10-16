@@ -2,7 +2,7 @@
 
 import pytest
 
-from app.knowledge.ledger import ClaimKind, extract_claims
+from app.knowledge.ledger import ClaimKind, EvidenceIndex, EvidenceLedger, extract_claims
 
 
 def kinds(text: str) -> set[ClaimKind]:
@@ -64,3 +64,23 @@ def test_two_contractions_in_one_sentence_are_not_a_quotation():
         "months building yourself."
     )
     assert ClaimKind.QUOTE not in kinds(text)
+
+
+@pytest.mark.parametrize("ending", [",", ".", "!", "?", ";", ":"])
+def test_sentence_punctuation_inside_quotes_does_not_invent_a_testimonial(ending):
+    index = EvidenceIndex(EvidenceLedger(), source_text=(
+        'The report is titled "Why it scored what it scored".'
+    ))
+    assert not index.unsupported(f'In “Why it scored what it scored{ending}” inspect the feedback.')
+
+
+@pytest.mark.parametrize("passage", [
+    "Why it guaranteed a perfect result,",  # New words remain unsupported.
+    "Why it scored, what it scored,",  # Internal punctuation is not normalised away.
+    "Why it scored what it scored 99%,",  # A new number is independently blocked.
+])
+def test_terminal_punctuation_tolerance_preserves_the_quote_evidence_boundary(passage):
+    index = EvidenceIndex(EvidenceLedger(), source_text=(
+        'The report is titled "Why it scored what it scored".'
+    ))
+    assert index.unsupported(f'In “{passage}” inspect the feedback.')

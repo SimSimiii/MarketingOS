@@ -224,8 +224,7 @@ export function CampaignDetailView() {
                 icon={PlayCircle}
                 title="Nothing produced yet"
                 description={<>
-                  Hit &ldquo;Run campaign&rdquo; and the Marketing Director will research, write and
-                  review your material.
+                  Run the campaign to prepare your material and generate drafts for review.
                 </>}
               />
             ) : (
