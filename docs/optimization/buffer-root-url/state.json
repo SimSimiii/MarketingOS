@@ -1,0 +1,208 @@
+{
+  "runs": [],
+  "steps": {
+    "create": {
+      "started_at": "20261018T172618673675Z",
+      "snapshot": "docs\\optimization\\buffer-root-url\\steps\\20261018T172618673675Z-create.json"
+    },
+    "ingest": {
+      "started_at": "20261018T172619344024Z",
+      "snapshot": "docs\\optimization\\buffer-root-url\\steps\\20261018T172619344024Z-ingest.json"
+    },
+    "compile": {
+      "started_at": "20261018T172630044360Z",
+      "snapshot": "docs\\optimization\\buffer-root-url\\steps\\20261018T172630044360Z-compile.json"
+    },
+    "scan": {
+      "started_at": "20261018T174304314700Z",
+      "snapshot": "docs\\optimization\\buffer-root-url\\steps\\20261018T174304314700Z-scan.json"
+    },
+    "map": {
+      "started_at": "20261018T174840162192Z",
+      "snapshot": "docs\\optimization\\buffer-root-url\\steps\\20261018T174840162192Z-map.json",
+      "recovered_from_saved_launch_response": true
+    }
+  },
+  "status": "corrections_validated_live_audit_pending",
+  "quality_history": [
+    {
+      "iteration": "correction-1",
+      "track": "buffer-free-correction-validation",
+      "score": null,
+      "comparable": false,
+      "execution_id": null,
+      "strengths": [
+        "Three valid offer guarantees preserved with source wording; false upgrade guarantee removed",
+        "186 scoped owned capabilities instead of 276 mixed entries",
+        "Revenue and API quota misclassifications fixed; unsupported rival price range withheld"
+      ],
+      "remaining_defect": "Full audience/research/dossier/email flow has not been executed; live server reload and provider availability pending. No measured model latency or quota saving.",
+      "evidence": [
+        "correction-replay.json",
+        "crawl-after-fix.json",
+        "full-tests-final.txt"
+      ],
+      "next_action": "Load current code at the next normal backend restart, confirm Claude quota availability, then resume only map with revision quota-reset. Preserve the original corpus for a comparable continuation; do not rerun compilation or market scan merely to check these fixes."
+    }
+  ],
+  "stage_reviews": [
+    {
+      "stage": "ingestion",
+      "score": 7,
+      "facts": [
+        "12 documents, 17148 words",
+        "Pricing HTML and machine-readable pricing discovered automatically",
+        "Four detailed customer stories crawled"
+      ],
+      "limitations": [
+        "No support or developer subdomain docs imported",
+        "Case-study pagination consumes three crawl slots"
+      ],
+      "restored_from": "journal.md and immutable ingest snapshot after overlapping poll state write"
+    },
+    {
+      "stage": "compilation",
+      "score": 6.5,
+      "verified_ledger_quotes": 501,
+      "mismatches": 0,
+      "defect": {
+        "synthesized_guarantee": "Keep your three free channels if you upgrade from the Free plan",
+        "contradicting_source_evidence": {
+          "id": "E238",
+          "kind": "price",
+          "claim": "When upgrading from the Free plan to a paid plan, users pay for every connected channel, including channels they had on the Free plan, because paid plans give unlimited usage and advanced features for all connected channels",
+          "verbatim": "If you decide to upgrade to a paid plan, you will pay for each channel — including any channels you had while on the Free plan. This is because paid plans offer unlimited usage and advanced features for all channels you've connected to Buffer.",
+          "source": "https://buffer.com/pricing.md",
+          "document_id": "3092f652-d855-42fa-869e-a936021dcdf1",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial",
+          "context": {
+            "subject": "Buffer Free-to-paid upgrade",
+            "source_kind": "official_documentation",
+            "claim_scope": "offer",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "3092f652-d855-42fa-869e-a936021dcdf1",
+              "source": "https://buffer.com/pricing.md",
+              "source_type": "website"
+            },
+            {
+              "document_id": "1bc1ce7b-91a8-4966-a394-d8f878ca5d37",
+              "source": "https://buffer.com/pricing?cta=bufferSite-globalNav-pricing-pricing-1",
+              "source_type": "website"
+            }
+          ]
+        }
+      },
+      "observed_calls": 19,
+      "input_tokens": 284031,
+      "output_tokens": 299181,
+      "runtime_minutes": 16.4
+    },
+    {
+      "stage": "competitors",
+      "score": 7.5,
+      "facts": [
+        "Six relevant alternatives, including native Meta scheduler and manual posting",
+        "Four profiles, 127 verified claims",
+        "Accepted rationales cite own evidence and rival pages"
+      ],
+      "limitations": [
+        "Meta unreadable; manual posting has no site",
+        "Sprout rationale omits lower Essentials tier; discovery claims remain hypotheses"
+      ]
+    },
+    {
+      "stage": "positioning",
+      "score": 3.5,
+      "facts": [
+        "147 readings; 143 unknown comparisons and four potential differences",
+        "Uncertainty and source scopes preserved"
+      ],
+      "limitations": [
+        "Customer revenue classified as price proposition",
+        "AJ&Smart historical sales compared with competitor subscription prices",
+        "Open territory mostly means absent captured equivalent, not competitive differentiation"
+      ]
+    },
+    {
+      "stage": "capability_catalogue",
+      "score": 3,
+      "count": 276,
+      "facts": [
+        "All evidence ids resolve; atomic facts retain source scope"
+      ],
+      "limitations": [
+        "Twenty company-category entries remain verified capabilities",
+        "Twenty-one unknown-scope entries admitted",
+        "Third-party WriteStack scheduling included; valid quote is not product ownership"
+      ]
+    },
+    {
+      "stage": "audience_map",
+      "score": null,
+      "status": "failed_provider_quota",
+      "evidence": "docs\\optimization\\buffer-root-url\\steps\\20261018T175033750894Z-poll.json",
+      "remaining_stages": [
+        "select-first",
+        "research",
+        "dossier",
+        "campaign",
+        "email",
+        "render",
+        "cta"
+      ]
+    }
+  ],
+  "protocol": {
+    "homepage_only": true,
+    "audience_selection": "first",
+    "emails": 1,
+    "sending": false,
+    "stage_scale": "0–10 informed review: coverage, factual reliability, usefulness",
+    "email_grid": [
+      25,
+      20,
+      20,
+      15,
+      10,
+      10
+    ]
+  },
+  "last_snapshot": "docs\\optimization\\buffer-root-url\\steps\\20261018T175105430979Z-capture.json",
+  "blocker": {
+    "provider": "Claude Code subscription",
+    "message": "RoutingProvider call failed after 1 attempt(s): Claude Code rate limit: You've hit your session limit · resets 10:50pm (Europe/Paris).",
+    "reset_announced_local": "2026-10-18 22:50 Europe/Paris",
+    "automatic_resume_scheduled": false
+  },
+  "next_action": "Load current code at the next normal backend restart, confirm Claude quota availability, then resume only map with revision quota-reset. Preserve the original corpus for a comparable continuation; do not rerun compilation or market scan merely to check these fixes.",
+  "usage_summary": "docs\\optimization\\buffer-root-url\\usage-summary.json",
+  "report": "docs/reviews/buffer-url-principale-2026-10-18.md",
+  "email_quality": {
+    "score": null,
+    "reason": "No mapped audience, dossier or campaign exists; no email generated."
+  },
+  "correction_validation": {
+    "completed_at": "2026-10-18T18:33:43.418220+00:00",
+    "backend_tests_passed": 1746,
+    "frontend_tests_passed": 28,
+    "ruff": "passed",
+    "frontend_lint": "passed",
+    "frontend_typecheck": "passed",
+    "new_model_calls": 0,
+    "raw_audit_snapshot_unchanged_sha256": "76bcb4cd098fb7287b4ea5466bc6cc4f695d89dd2d8ce60eb339683b42c64d14",
+    "guarantees_retained": 3,
+    "positive_capabilities_before": 276,
+    "positive_capabilities_after": 186,
+    "runtime_reload_pending": true,
+    "live_email_validation": "not performed; no email generated",
+    "report": "docs/reviews/buffer-corrections-2026-10-18.md"
+  }
+}

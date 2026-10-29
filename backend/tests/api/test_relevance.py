@@ -30,6 +30,15 @@ def make_brand(client: TestClient) -> dict:
     return response.json()
 
 
+def test_missing_catalogue_explains_derivation_after_compilation(client, engine):
+    brand = make_brand(client)
+    compile_for_brand(engine, brand["id"])
+    response = client.get(f"/api/market/{brand['id']}/capability-profile")
+    assert response.status_code == 404
+    assert "derive" in response.json()["detail"]
+    assert "audience mapping" in response.json()["detail"]
+
+
 def prepare_inputs(engine, brand_id: str) -> None:
     compile_for_brand(engine, brand_id)
     with Session(engine) as session:
@@ -78,6 +87,10 @@ def answer() -> str:
     return json.dumps(
         {
             "orientation": "Release-note automation for teams losing time to manual updates.",
+            "defining_need_fit": {
+                "status": "addressed", "evidence_ids": ["E1"],
+                "why": "The verified outcome covers the complete release-note workflow.",
+            },
             "ranked_relevance": [
                 {
                     "evidence_id": "E1",
@@ -311,6 +324,32 @@ def test_no_go_preflight_is_free_and_api_launch_remains_advisory(
     market_service._jobs.clear()
     brand = make_brand(client)
     prepare_inputs(engine, brand["id"])
+    derived = client.post(
+        f"/api/market/{brand['id']}/capability-profile/derive", json={}
+    )
+    assert derived.status_code == 200, derived.text
+    profile = derived.json()
+    # Synthetic, user-maintained product boundary. An absent capability would
+    # mean unknown support and discovery-only, rather than an explicit no-go.
+    saved = client.post(
+        f"/api/market/{brand['id']}/capability-profile",
+        json={
+            "capabilities": [
+                *profile["capabilities"],
+                {
+                    "id": "full_saas_backend",
+                    "label": "Hosted SaaS backend",
+                    "state": "unsupported",
+                    "note": "Synthetic fixture: release-note drafting does not provide a hosted SaaS backend.",
+                },
+            ],
+            "constraints": profile["constraints"],
+            "claims": profile["claims"],
+        },
+    )
+    assert saved.status_code == 200, saved.text
+    assert next(item for item in saved.json()["capabilities"]
+                if item["id"] == "full_saas_backend")["state"] == "unsupported"
     with Session(engine) as session:
         MarketStore(session).save_research(
             UUID(brand["id"]),

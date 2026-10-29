@@ -16,9 +16,8 @@ judging them costs one reaction per reader, because they are judged together:
 question a reader answers reliably. See tournament.py, which is the same
 argument about whole emails.
 
-The body is not touched. What comes out is the same email with the line most of
-a hundred people would open, or the original if none of the alternatives beat
-it - the incumbent wins ties here for the same reason it does everywhere else.
+The body is not touched. The result uses the highest editorial assessment,
+keeping the original on a near tie. These simulated judgments are uncalibrated.
 """
 
 import asyncio
@@ -45,14 +44,14 @@ logger = logging.getLogger("marketingos.marketing")
 WRITER_ROLE_ID = "subject_writer"
 SCANNER_ROLE_ID = "inbox_scanner"
 
-#: How many more opens in a hundred an alternative needs before it evicts the
+#: How many editorial points out of ten an alternative needs before it evicts the
 #: line the email already has. The incumbent was written with the body and has
 #: already been read with it; an alternative was written afterwards and is
 #: judged without the body at all, so a near-tie is the scanners' noise, not a
 #: better line. A measured Buffer run swapped a subject that carried the
 #: email's idea for one that led with a plan limit on a 24-to-23 median, and
 #: the delivered subject no longer matched what the body was selling.
-MIN_SUBJECT_GAIN = 3
+MIN_SUBJECT_GAIN = 0.3
 
 
 class SubjectOption(BaseModel):
@@ -87,12 +86,12 @@ class SubjectSet(BaseModel):
 
 
 class OptionScore(BaseModel):
-    """One reader on one line: how many of a hundred people tap it."""
+    """One simulated editorial assessment of a subject line, not an open rate."""
 
     #: The number the option was listed under. Matched back by position, and
     #: anything that does not name a listed option is dropped.
     option: int = 0
-    opens_in_100: int = Field(default=0, ge=0, le=100)
+    assessment: float = Field(default=0, ge=0, le=10)
     why: str = ""
 
 
@@ -126,7 +125,7 @@ class SubjectBakeOff:
         screen: Callable[[Email], bool] | None = None,
         audience_context: str = "No recipient history is established.",
     ) -> tuple[Email, str]:
-        """The same email, with the subject most people would open.
+        """The same email, with the preferred subject from simulated assessments.
 
         Returns the email and one line saying what happened, which the caller
         announces. A no-op - no alternatives, none sendable, none preferred -
@@ -164,16 +163,16 @@ class SubjectBakeOff:
             subject=email.subject, preview=email.preview_text, approach="the line it already had"
         )
         field = [incumbent, *clean]
-        opens = await self.rank(field, artifacts.business.company_name, personas)
-        if not opens:
+        assessments = await self.rank(field, artifacts.business.company_name, personas)
+        if not assessments:
             return email, "nobody could judge the subject lines"
 
-        best = max(range(len(field)), key=lambda index: (opens[index], -index))
-        if opens[best] - opens[0] < MIN_SUBJECT_GAIN:
+        best = max(range(len(field)), key=lambda index: (assessments[index], -index))
+        if round(assessments[best] - assessments[0], 3) < MIN_SUBJECT_GAIN:
             best = 0
         summary = (
-            "subject lines scored "
-            + ", ".join(f"{opens[index]:.0f}/100" for index in range(len(field)))
+            "subject line editorial assessments (uncalibrated) "
+            + ", ".join(f"{assessments[index]:.1f}/10" for index in range(len(field)))
             + (
                 f" ({dropped} more broke an automatic check and was never read)"
                 if dropped
@@ -254,7 +253,7 @@ class SubjectBakeOff:
                 continue
             for score in verdict.scores:
                 if 1 <= score.option <= len(field):
-                    by_option[score.option - 1].append(score.opens_in_100)
+                    by_option[score.option - 1].append(score.assessment)
         if not any(by_option):
             return []
         return [statistics.median(scores) if scores else 0.0 for scores in by_option]
@@ -268,7 +267,7 @@ class SubjectBakeOff:
                 role=SCANNER_ROLE_ID,
                 tier=ModelTier.BALANCED,
                 system_prompt=system_prompt,
-                task="Say how many of a hundred people like you would tap each one.",
+                task="Assess each subject/preview for this reader. Give editorial scores, not response probabilities.",
                 schema=InboxVerdict,
             )
         except ModelRuntimeError:

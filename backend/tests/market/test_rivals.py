@@ -158,6 +158,22 @@ async def test_a_claim_not_on_the_page_is_discarded(
 
 
 @pytest.mark.asyncio
+async def test_real_quote_cannot_be_bound_to_a_different_source_page(provider, session):
+    """Synthetic source mismatch: presence in the site's corpus is insufficient."""
+    payload = profile_payload(proof_shown=[])
+    payload["claims"][0]["source"] = "https://alpha.example"
+    provider.push("rival_profile", payload)
+    scout = scout_with(provider, session, {"https://alpha.example": [
+        ("https://alpha.example", HOME_PAGE),
+        ("https://alpha.example/pricing", PRICING_PAGE),
+    ]})
+    profile = await scout.profile(RivalLead(name="Alpha", url="https://alpha.example"))
+    assert len(profile.claims.claims) == 1
+    assert profile.claims.claims[0].axis is ClaimAxis.BREADTH
+    assert profile.unverified_claims == 1
+
+
+@pytest.mark.asyncio
 async def test_verification_is_blind_to_typography(
     provider: ScriptedProvider, session
 ) -> None:
@@ -246,7 +262,6 @@ async def test_discovery_asks_for_the_web(provider: ScriptedProvider, session) -
     assert found.leads[0].url == "https://alpha.example"
     assert set(provider.tools_used_by("rival_scan")) == {
         ResearchTool.WEB_SEARCH,
-        ResearchTool.WEB_FETCH,
     }
 
 

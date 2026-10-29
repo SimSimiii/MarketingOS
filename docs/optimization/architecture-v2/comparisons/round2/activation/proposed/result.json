@@ -1,0 +1,174 @@
+{
+  "status": "completed",
+  "abort_reason": null,
+  "report": {
+    "request": "Write exactly one onboarding email helping a new account connect its first drive and understand when search becomes available.\nUser-supplied campaign context: {\"objective\": \"activation\", \"reader_relationship\": \"customer\"}",
+    "effective_audience": "A new account administrator who has signed up but has not connected a drive.",
+    "audience_scope": "",
+    "assessment_method": "Simulated editorial assessment, uncalibrated; no response or conversion prediction",
+    "delivered": 1,
+    "promised": 1,
+    "contract_violations": [],
+    "emails": [
+      {
+        "position": 1,
+        "subject": "Connect your first drive",
+        "single_idea": "Connect the first drive now; Portway will index it in the background, and search will work once the first folder finishes indexing.",
+        "selection_reason": "This is the account administrator's required first activation step, and the available evidence directly explains both what connecting starts and when search becomes usable.",
+        "problem_ids": [],
+        "action_id": "action_15837ef14e97",
+        "next_step_decision": "Decide whether Portway's first available search is ready to use after the first folder has finished indexing.",
+        "next_step_value": "Connecting the drive starts background indexing and lets the administrator verify search once the first folder finishes indexing.",
+        "next_step_url": "https://portway.example/connect",
+        "next_step_limit": "This step does not establish total indexing time, provider compatibility, search quality, or when every file in the drive will be searchable.",
+        "pull": 7.0,
+        "revisions": 0,
+        "clean": true,
+        "landed": true,
+        "rewrites_stopped_helping": false,
+        "read_reported": true,
+        "understood": true,
+        "relevant": true,
+        "evidence_assigned": [
+          "E1",
+          "E2"
+        ],
+        "evidence_spent": [
+          "E1",
+          "E2"
+        ],
+        "attributions": 0,
+        "unresolved": [],
+        "reader_verdicts": [
+          {
+            "what_it_sells": "Portway is software that indexes files from a shared drive so my team can search them from one workspace.",
+            "understood": true,
+            "situation_matches": true,
+            "relevance_feedback": "The profile establishes that I am a new account administrator who has signed up but has not connected a drive, so the request to connect my first drive directly matches my current setup stage. The email additionally assumes that I have a shared drive containing files I want searchable; that is plausible but not established, and the drive provider, permissions, security requirements, and setup effort remain unknown.",
+            "assumed_experiences": [
+              "Profile-supported: I have signed up for Portway.",
+              "Profile-supported: I have not yet connected a drive.",
+              "Email-only: I have a shared drive containing files that should be searchable.",
+              "Email-only: I am ready and authorized to grant Portway access to that drive.",
+              "Email-only: background indexing and searching partially indexed content are useful to me now."
+            ],
+            "problem_now": "Connecting a first drive is the documented next setup step for this account, but the profile does not establish an urgent need for file search. On a Tuesday morning with four hundred unread emails and a meeting in three minutes, this is relevant but not urgent enough to begin an access-granting setup without knowing its effort and permissions.",
+            "stopped_at": "Search becomes available as soon as the first folder finishes indexing. That gives you a clear point to check whether your first available search is ready to use.",
+            "biggest_doubt": "I do not know which drive services are supported, what access Portway will request, or how long the connection step takes, so I would not start it immediately before a meeting.",
+            "to_click_it_would_have_to": "I would have clicked if this email had told me which drive services are supported, what permissions the connection requires, and approximately how long setup takes.",
+            "fixes": [
+              "Rewrite \"Once connected, Portway indexes the drive in the background. You do not need to wait for the entire drive to finish indexing before trying search.\" to include the requested access level and a realistic setup-time estimate.",
+              "Cut \"That gives you a clear point to check whether your first available search is ready to use.\" because it repeats the preceding sentence without helping me decide whether to connect.",
+              "Rewrite \"Open the connection page to connect your first drive and begin background indexing.\" as \"Connect [supported drive names] in about [time]; before approving, you’ll see the exact permissions Portway requests.\""
+            ],
+            "opens_in_100": null,
+            "clicks_in_100": null,
+            "persona": "Selected audience (user-stated constraints): A new account administrator who has signed up but has not connected a drive..\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.\nEstablished relationship to the sender: customer. This establishes no particular installed tools or desired reaction.",
+            "pull": 7
+          }
+        ],
+        "sameness": []
+      }
+    ],
+    "limiting_gaps": [],
+    "what_would_help_most": "Resolve this simulated next-step obstacle: I would have clicked if this email had told me which drive services are supported, what permissions the connection requires, and approximately how long setup takes. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.",
+    "questions": [],
+    "sequence_summary": "",
+    "knowledge_version": 1,
+    "notes": [
+      "Effective audience: A new account administrator who has signed up but has not connected a drive."
+    ],
+    "reads_expected": true
+  },
+  "brief": {
+    "interpretation": "Treat this as one activation-focused onboarding email for an existing customer account: help a new administrator connect the first drive and set the correct expectation that search becomes available when the first folder finishes indexing, not as a sales or replacement pitch.",
+    "pipeline_version": 2,
+    "intent": {
+      "objective": "activation",
+      "objective_source": "user",
+      "reader_relationship": "customer",
+      "relationship_source": "user",
+      "announcement": "",
+      "reason_now": "",
+      "desired_action": ""
+    },
+    "reader": "Selected audience (user-stated constraints): A new account administrator who has signed up but has not connected a drive..\nNo further recipient situation is established. Compiled market context is research to check for applicability, not a replacement biography.",
+    "reader_segment": "A new account administrator who has signed up but has not connected a drive.",
+    "reader_profile_override": "A new account administrator who has signed up but has not connected a drive.",
+    "reader_scope": "",
+    "fixed_cta_url": "",
+    "promise": "Connect the first drive to begin background indexing; search becomes available as soon as the first folder finishes indexing.",
+    "orientation": "Portway is a searchable workspace for files in a shared drive.",
+    "arc": "One self-contained activation step: orient the administrator, ask them to connect a drive, then explain exactly what happens next and when they can begin searching.",
+    "sequence_rationale": "A single onboarding email should remove uncertainty around the requested first action and its immediate payoff. The documented mechanism answers the relevant timing question without inventing setup effort, total indexing duration, compatibility, security, or customer results. No separate objection or later follow-up is needed because the requested count is exactly one.",
+    "emails": [
+      {
+        "problem_ids": [],
+        "offer_id": "offering",
+        "action_id": "action_15837ef14e97",
+        "selection_reason": "This is the account administrator's required first activation step, and the available evidence directly explains both what connecting starts and when search becomes usable.",
+        "next_step_url": "https://portway.example/connect",
+        "argument_issue": "",
+        "position": 1,
+        "job": "Get the new account administrator to connect the first drive and understand when search becomes available.",
+        "single_idea": "Connect the first drive now; Portway will index it in the background, and search will work once the first folder finishes indexing.",
+        "felt_need": "",
+        "status_quo": "",
+        "why_it_fails": "",
+        "mechanism": "After the administrator connects a drive, Portway indexes it in the background. The reader does not need to wait for the entire drive to finish indexing before trying search: search works as soon as the first folder finishes.",
+        "alternative_ideas": [],
+        "alternative_arguments": [],
+        "belief_shift": "Before: the reader does not know what happens after connecting a drive or how long they must wait to search. After: they understand that connecting starts background indexing and that search becomes available after the first folder finishes indexing.",
+        "evidence_ids": [
+          "E1",
+          "E2"
+        ],
+        "must_not_say": [
+          "Do not claim how long connecting or indexing takes.",
+          "Do not claim that setup is easy, instant, automatic beyond background indexing, or requires a specific number of steps.",
+          "Do not claim support for any particular drive provider, file type, folder structure, or technical environment.",
+          "Do not make security, privacy, compliance, pricing, support, migration, or integration claims.",
+          "Do not imply that the entire drive must finish indexing before search works.",
+          "Do not promise search quality, completeness, accuracy, time savings, adoption, or customer outcomes.",
+          "Do not introduce a sales, replacement, competitive, or urgency narrative."
+        ],
+        "forbidden_evidence_ids": [],
+        "forbidden_capability_ids": [],
+        "objection": "Do I have to wait for the entire drive to finish indexing before I can search? No: search works as soon as the first folder finishes indexing.",
+        "tone": "Warm, practical, and matter-of-fact.",
+        "call_to_action": "Connect a drive",
+        "next_step_decision": "Decide whether Portway's first available search is ready to use after the first folder has finished indexing.",
+        "next_step_value": "Connecting the drive starts background indexing and lets the administrator verify search once the first folder finishes indexing.",
+        "next_step_evidence_ids": [
+          "E1",
+          "E2"
+        ],
+        "next_step_limit": "This step does not establish total indexing time, provider compatibility, search quality, or when every file in the drive will be searchable.",
+        "subject_strategy": "Signal the single unfinished setup step and its near-term payoff plainly; avoid hype, urgency, or an unsupported time estimate.",
+        "must_not_reuse": []
+      }
+    ],
+    "voice_notes": "Use the default plain, direct voice: “Hi there,” short paragraphs, first person singular where needed, and sign off “- the team.” Keep the email focused on one action and the indexing expectation.",
+    "contract": {
+      "kind": "single_email",
+      "count": 1,
+      "count_is_explicit": true,
+      "evidence": "one onboarding email"
+    }
+  },
+  "emails": [
+    {
+      "position": 1,
+      "role": "Help a new administrator connect their first drive",
+      "subject": "Connect your first drive",
+      "preview_text": "Background indexing starts after connection, and search follows the first indexed folder.",
+      "eyebrow": "",
+      "headline": "",
+      "greeting": "Hi there,",
+      "body": "Portway is a searchable workspace for files in a shared drive. To start making those files available for search, the first step is connecting a drive.\n\nOnce connected, Portway indexes the drive in the background. You do not need to wait for the entire drive to finish indexing before trying search.\n\nSearch becomes available as soon as the first folder finishes indexing. That gives you a clear point to check whether your first available search is ready to use.\n\nOpen the connection page to connect your first drive and begin background indexing. After the first folder finishes, you can start searching the files indexed so far.",
+      "call_to_action": "Connect a drive",
+      "sign_off": "- the Portway team",
+      "postscript": ""
+    }
+  ]
+}

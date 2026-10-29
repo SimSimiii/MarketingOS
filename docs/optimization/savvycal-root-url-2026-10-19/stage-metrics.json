@@ -1,0 +1,76 @@
+{
+  "jobs": [
+    {
+      "kind": "compilation",
+      "state": "completed",
+      "started_at": "2026-10-18T23:04:24.601495Z",
+      "finished_at": "2026-10-18T23:11:58.699784Z",
+      "calls": 6,
+      "input_tokens": 80759,
+      "output_tokens": 91674,
+      "cache_read_tokens": null,
+      "cost_usd": null,
+      "summary": null,
+      "snapshot": "20261018T233823473287Z-poll.json",
+      "duration_seconds": 454.1
+    },
+    {
+      "kind": "scan",
+      "state": "done",
+      "started_at": "2026-10-18T23:12:11.219373Z",
+      "finished_at": "2026-10-18T23:17:17.428937Z",
+      "calls": 6,
+      "input_tokens": 125573,
+      "output_tokens": 79176,
+      "cache_read_tokens": 0,
+      "cost_usd": 1.4276980000000004,
+      "summary": "5 competitor(s) read - 0 documented difference(s); 30 unmatched captured proposition(s) need verification, not an exclusivity conclusion",
+      "snapshot": "20261018T231703295675Z-poll.json",
+      "duration_seconds": 306.21
+    },
+    {
+      "kind": "audience",
+      "state": "done",
+      "started_at": "2026-10-18T23:18:14.462652Z",
+      "finished_at": "2026-10-18T23:29:27.526254Z",
+      "calls": 2,
+      "input_tokens": 464912,
+      "output_tokens": 46429,
+      "cache_read_tokens": 317503,
+      "cost_usd": 3.2781665,
+      "summary": "6 audience(s) mapped; 0 worth exploring first. Commercial priority is a hypothesis, not a response-rate forecast.",
+      "snapshot": "20261018T232848301124Z-poll.json",
+      "duration_seconds": 673.06
+    },
+    {
+      "kind": "audience_research",
+      "state": "done",
+      "started_at": "2026-10-18T23:30:04.168059Z",
+      "finished_at": "2026-10-18T23:34:04.325428Z",
+      "calls": 2,
+      "input_tokens": 90639,
+      "output_tokens": 22485,
+      "cache_read_tokens": 41483,
+      "cost_usd": 0.6999835999999999,
+      "summary": "Audience research v1: 6 source(s), 5 source-backed problem(s), 0 unverifiable item(s) dropped",
+      "snapshot": "20261018T233354594104Z-poll.json",
+      "duration_seconds": 240.16
+    },
+    {
+      "kind": "relevance_dossier",
+      "state": "done",
+      "started_at": "2026-10-18T23:35:26.199904Z",
+      "finished_at": "2026-10-18T23:38:31.261688Z",
+      "calls": 1,
+      "input_tokens": 82566,
+      "output_tokens": 14447,
+      "cache_read_tokens": 0,
+      "cost_usd": 1.2519359999999997,
+      "summary": "Relevance dossier v1: 30 ranked fact(s), 5 problem fit(s), 0 silence(s); 0 dropped and 1 normalized",
+      "snapshot": "20261018T233823473287Z-poll.json",
+      "duration_seconds": 185.06
+    }
+  ],
+  "completed_audit_calls": 17,
+  "notes": "Adapter counts and cost estimates; not API charges. Compilation cost is unavailable in job snapshots. Campaign usage is separate."
+}

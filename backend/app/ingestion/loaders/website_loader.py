@@ -7,6 +7,8 @@ from app.ingestion.documents import RawDocument, SourceType
 from app.ingestion.exceptions import LoaderError
 from app.ingestion.loaders.base import Loader
 from app.ingestion.loaders.html_extract import extract_content
+from app.ingestion.loaders.public_content import content_issues, is_access_wall
+from app.ingestion.loaders.rendered_page import render_public_html
 
 
 class WebsiteLoader(Loader):
@@ -32,7 +34,7 @@ class WebsiteLoader(Loader):
             source=source,
             source_type=self.source_type,
             fetched_at=datetime.now(UTC),
-            metadata={"title": title, "description": description},
+            metadata={"title": title, "description": description, "content_issues": content_issues(markdown)},
         )
 
     async def fetch(self, url: str) -> str:
@@ -45,4 +47,11 @@ class WebsiteLoader(Loader):
             response.raise_for_status()
         except httpx.HTTPError as exc:
             raise LoaderError(f"Failed to fetch '{url}': {exc}", url=url) from exc
+        title, _, content = extract_content(response.text)
+        if is_access_wall(title, content):
+            raise LoaderError("The public page requires access verification; its content was not read", url=url)
+        if self._client is None and content_issues(content):
+            rendered = await render_public_html(str(response.url), response.text)
+            if rendered:
+                return rendered
         return response.text

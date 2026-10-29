@@ -21,7 +21,9 @@ nothing.
 """
 
 import re
+from datetime import UTC, datetime
 from enum import StrEnum
+from urllib.parse import urlsplit
 
 from pydantic import BaseModel, Field
 
@@ -109,6 +111,7 @@ class Evidence(BaseModel):
     #: migration or a recompile.
     category: FactCategory | None = None
     context: EvidenceContext | None = None
+    source_references: list[dict[str, str]] = Field(default_factory=list)
 
     @property
     def licensing_text(self) -> str:
@@ -121,6 +124,57 @@ def category_of(entry: Evidence) -> FactCategory:
     if entry.category is not None:
         return entry.category
     return classify(f"{entry.claim} {entry.verbatim}", str(entry.kind))
+
+
+def context_of(entry: Evidence) -> EvidenceContext:
+    """Read explicit scope, or label conservative legacy clues as inference.
+
+    This never mutates a stored artifact, authenticates a source, or treats an
+    extractor's paraphrase as proof. Derived scope is a caution for use, not
+    a newly validated factual claim.
+    """
+    context = entry.context.model_copy(deep=True) if entry.context else EvidenceContext()
+    derived = False
+    path = urlsplit(entry.source).path.lower()
+    comparison = bool(re.search(r"(?:^|/)(?:compare|comparison|comparisons|versus|vs|[^/]*-alternative)(?:/|$)", path))
+    customer_page = bool(re.search(r"(?:^|/)(?:customers?|case-stud(?:y|ies)|testimonials?)(?:/|$)", path))
+    outcome_figure = any(claim.kind in {ClaimKind.PERCENT, ClaimKind.MULTIPLIER, ClaimKind.DURATION}
+                         for claim in extract_claims(entry.verbatim))
+    if context.claim_scope in {"", "unknown"}:
+        if comparison:
+            context.claim_scope = "comparison"
+            derived = True
+        elif outcome_figure and (customer_page or entry.kind in {
+            EvidenceKind.CUSTOMER, EvidenceKind.TESTIMONIAL,
+        }):
+            context.claim_scope = "customer_outcome"
+            derived = True
+    if comparison and context.source_kind in {"", "unknown"}:
+        context.source_kind = "published_comparison"
+        derived = True
+    if not context.subject and context.claim_scope == "customer_outcome":
+        names = _named_anchors(entry.verbatim)
+        if names:
+            people = [name for name in names if " " in name]
+            context.subject = " / ".join(people or names[:1])
+            derived = True
+    if derived:
+        context.limitations = "; ".join(filter(None, (
+            context.limitations,
+            "Scope inferred from source clues; review required for attribution, use case and conditions",
+        )))
+        context.verification = "; ".join(filter(None, (
+            context.verification if context.verification != "unknown" else "",
+            "scope inferred from source clues; interpretation requires review",
+        )))
+    return context
+
+
+def _named_anchors(text: str) -> list[str]:
+    names = re.findall(r"\b[A-Z][\w'-]*(?:\s+[A-Z][\w'-]*){0,3}\b", text)
+    stop = {"the", "our", "we", "learn", "instead", "start", "free", "pro", "business",
+            "unlike", "this", "that", "it", "get", "you", "in", "for"}
+    return list(dict.fromkeys(name for name in names if fold(name) not in stop))[:6]
 
 
 def value_of(entry: Evidence) -> CommercialValue:
@@ -282,9 +336,11 @@ def render_entries(entries: list[Evidence]) -> str:
     )
     return rules + "\n".join(
         f"- [{entry.id}] ({category_of(entry)}/{entry.kind}, {entry.strength}) {entry.claim}\n"
-        f'      source says: "{_collapse(entry.verbatim, 500)}"\n'
+        f'      source says: "{entry.verbatim}"\n'
         f"      source: {entry.source or 'not recorded'}; "
-        f"{entry.context.render() if entry.context else 'context not recorded (legacy or unknown); verify scope before extending the claim'}"
+        + (f"additional source references: {entry.source_references}; " if entry.source_references else "")
+        +
+        f"{context_of(entry).render() if entry.context else 'context not recorded (legacy or unknown); inferred clues: ' + context_of(entry).render()}"
         for entry in entries
     )
 
@@ -325,7 +381,7 @@ _PERCENT_RE = re.compile(
 )
 _MULTIPLIER_RE = re.compile(r"\b\d[\d,]*(?:\.\d+)?\s?[x×]\b", re.IGNORECASE)
 _DURATION_RE = re.compile(
-    r"\b\d[\d,]*(?:\.\d+)?[\s-]?"
+    r"\b\d[\d,]*(?:\.\d+)?[\s\u2010\u2011-]?"
     r"(seconds?|secs?|minutes?|mins?|hours?|hrs?|days?|weeks?|months?|years?)\b",
     re.IGNORECASE,
 )
@@ -382,7 +438,8 @@ def _normalize_measure(raw: str) -> str:
     number = number.replace(",", "").rstrip(".")
     if "." in number:
         number = number.rstrip("0").rstrip(".")
-    unit = _UNIT_CANON.get(unit.strip(), unit.strip())
+    unit = unit.strip().lstrip("-‐‑").strip()
+    unit = _UNIT_CANON.get(unit, unit)
     return f"{symbol}{number}{(' ' + unit) if unit else ''}".strip()
 
 
@@ -457,6 +514,8 @@ class EvidenceIndex:
 
     def __init__(self, ledger: EvidenceLedger, source_text: str = "") -> None:
         self._ledger = ledger
+        self._contexts = {entry.id: context_of(entry) for entry in ledger.entries}
+        self._source_text = source_text
         licensing = "\n".join(entry.licensing_text for entry in ledger.entries)
         self._licensed: set[str] = {
             claim.normalized for claim in extract_claims(f"{licensing}\n{source_text}")
@@ -470,6 +529,33 @@ class EvidenceIndex:
         self._support_by_value: dict[tuple[ClaimKind, str], list[NumericSupport]] = {}
         for support in self.numeric_support:
             self._support_by_value.setdefault((support.kind, support.value), []).append(support)
+        self._price_support: dict[str, list[PriceSupport]] = {}
+        for support in [
+            *_price_supports(source_text),
+            *(support for entry in ledger.entries
+              for support in _price_supports(entry.verbatim, entry.context)),
+        ]:
+            self._price_support.setdefault(support.value, []).append(support)
+        # A model may qualify a plan as "Acme Starter" while the actual price
+        # heading says "Starter". Only that quoted heading can license the
+        # short name; dropping arbitrary prefixes would merge distinct plans.
+        candidates: dict[tuple[str, str], set[str]] = {}
+        for entry in ledger.entries:
+            if (entry.kind != EvidenceKind.PRICE or entry.context is None
+                    or entry.context.claim_scope != "offer"
+                    or entry.context.source_kind in {"third_party", "vendor_comparison", "customer_statement"}):
+                continue
+            headings = re.findall(r"(?:^|\n)\s*#{1,6}\s+([^\n$€£]+?)\s+(?=[$€£]\s*\d)", entry.verbatim)
+            supports = _price_supports(entry.verbatim, entry.context)
+            if len(headings) != 1 or len(supports) != 1:
+                continue
+            alias, support = fold(headings[0]), supports[0]
+            if support.subject.endswith(" " + alias):
+                candidates.setdefault((support.value, alias), set()).add(support.subject)
+        self._price_aliases: dict[str, dict[str, str]] = {}
+        for (value, alias), names in candidates.items():
+            if len(names) == 1 and not any(item.subject == alias for item in self._price_support[value]):
+                self._price_aliases.setdefault(value, {})[alias] = next(iter(names))
 
     @property
     def licensed_values(self) -> set[str]:
@@ -502,7 +588,10 @@ class EvidenceIndex:
                 requested = [support for support in requested_support
                              if support.value == claim.normalized and support.kind == claim.kind]
                 available = self._support_by_value.get((claim.kind, claim.normalized), [])
-                if any(item.metric and available and not any(
+                price_issue = self._price_issue(claim, text) if claim.kind is ClaimKind.MONEY else ""
+                if price_issue:
+                    found.append(UnsupportedClaim(claim=claim, reason=price_issue))
+                elif any(item.metric and available and not any(
                     item.metric == source.metric or not source.metric for source in available
                 ) for item in requested):
                     found.append(UnsupportedClaim(claim=claim, reason=(
@@ -534,6 +623,293 @@ class EvidenceIndex:
                 )
             )
         return found
+
+    def _price_issue(self, claim: Claim, text: str) -> str:
+        sources = self._price_support.get(claim.normalized, [])
+        subjects = tuple({item.subject for item in sources if item.subject})
+        requests = [item for item in _price_supports(
+            text, known_subjects=subjects, subject_aliases=self._price_aliases.get(claim.normalized),
+        )
+                    if item.value == claim.normalized]
+        for requested in requests:
+            eligible = list(sources)
+            for field, description in (("period", "billing period"), ("unit", "per-unit basis"),
+                                       ("subject", "plan or item being priced"),
+                                       ("role", "financial meaning (price versus savings)")):
+                wanted = getattr(requested, field)
+                scoped = [item for item in eligible if getattr(item, field)]
+                if wanted and scoped:
+                    compatible = [item for item in scoped if getattr(item, field) == wanted]
+                    if not compatible:
+                        return f"this amount is documented for a different {description}; preserve the source terms"
+                    eligible = compatible
+            # Only explicit restrictions present on every compatible source
+            # constrain a price. No semantic guess about arbitrary terms blocks.
+            if eligible:
+                required = set.intersection(*(set(item.conditions) for item in eligible))
+                missing = required - set(requested.conditions)
+                if missing:
+                    return "this price omits documented conditions: " + ", ".join(sorted(missing))
+        return ""
+
+    def context_issues(self, text: str) -> list[str]:
+        """Bounded semantic cautions; callers keep these advisory.
+
+        Exact numeric scope conflicts block above. Inferring a launch or a
+        general customer promise from prose still needs editorial judgment.
+        """
+        issues: list[str] = []
+        if _NOVELTY_CLAIM.search(fold(text)):
+            dated_launch = any(
+                _launch_in_scope(text, entry, self._contexts[entry.id])
+                for entry in self._ledger.entries
+            )
+            if not dated_launch:
+                issues.append(
+                    "A launch or novelty is asserted without dated launch evidence. Confirm the "
+                    "release and its timing, or describe the documented capability without 'new'."
+                )
+        for support in numeric_support(text):
+            customer_results = [entry for entry in self._ledger.entries
+                                if self._contexts[entry.id].claim_scope == "customer_outcome"
+                                and any(claim.normalized == support.value
+                                        for claim in extract_claims(entry.verbatim))]
+            unsafe_results = [entry for entry in customer_results
+                              if not _preserves_customer_scope(support.citation, entry,
+                                                               self._contexts[entry.id])]
+            if unsafe_results:
+                subjects = ", ".join(dict.fromkeys(self._contexts[entry.id].subject or entry.id
+                                                  for entry in unsafe_results))
+                issues.append(
+                    f"The figure {support.value} is an attributed customer result ({subjects}); "
+                    "keep its named subject, use case and conditions instead of promising that "
+                    "result to every buyer or transferring it to another workflow."
+                )
+            comparisons = [entry for entry in self._ledger.entries
+                           if self._contexts[entry.id].claim_scope == "comparison"
+                           and any(claim.normalized == support.value
+                                   for claim in extract_claims(entry.verbatim))
+                           and _comparison_subject_present(support.citation, entry)
+                           and not self._independent_comparison_support(support, entry)]
+            if comparisons and not _ATTRIBUTED_COMPARISON.search(fold(support.citation)):
+                issues.append(
+                    f"The figure {support.value} is supported by a published comparison "
+                    f"({comparisons[0].source or comparisons[0].id}). Attribute that source or "
+                    "verify the named rival's current offer directly; quotation presence does "
+                    "not independently validate a competitor claim."
+                )
+            if support.kind is ClaimKind.MONEY:
+                issues.extend(_plan_feature_issues(support, self._source_text))
+        return list(dict.fromkeys(issues))
+
+    def _independent_comparison_support(self, support: "NumericSupport", comparison: Evidence) -> bool:
+        subjects = [name for name in _named_anchors(comparison.claim)
+                    if fold(name) in fold(support.citation)]
+        return any(
+            self._contexts[entry.id].claim_scope != "comparison"
+            and entry.source and entry.source != comparison.source
+            and any(fold(name) in fold(entry.claim) for name in subjects)
+            and any(claim.normalized == support.value for claim in extract_claims(entry.verbatim))
+            for entry in self._ledger.entries
+        )
+
+
+class PriceSupport(BaseModel):
+    value: str
+    period: str = ""
+    unit: str = ""
+    subject: str = ""
+    role: str = ""
+    conditions: list[str] = Field(default_factory=list)
+
+
+_NOVELTY_CLAIM = re.compile(
+    r"\b(?:(?:just|recently)\s+(?:launched|released|introduced)|"
+    r"new\s+(?:feature|product|version|integration|offer)|"
+    r"nouve(?:au|lle)\s+(?:produit|fonctionnalite|version|offre)|"
+    r"(?:venons de|vient de)\s+(?:lancer|sortir)|"
+    r"(?:is|are)\s+now\s+available|now\s+(?:available|launching)|"
+    r"today[,\s]+we[’']re\s+introducing|product\s+launch|"
+    r"(?:desormais|maintenant)\s+disponible)\b"
+)
+_DATED_LAUNCH = re.compile(
+    r"\b(?:launch(?:ed)?|releas(?:e|ed)|introduc(?:ed|ing)|lance|sortie)\b"
+    r"[^.\n]{0,90}\b(?:19|20)\d{2}\b"
+)
+_GENERAL_RESULT = re.compile(
+    r"\b(?:you\s+(?:will|can)\s+(?:save|cut|reduce|increase|grow)|"
+    r"(?:all|every)\s+(?:customers?|teams?|businesses?)|"
+    r"(?:customers|teams|businesses)\s+(?:save|cut|reduce|increase)|"
+    r"vous\s+(?:allez|pouvez)\s+(?:gagner|reduire|economiser)|"
+    r"tous les clients|chaque client|gets?\s+you|gives?\s+you|"
+    r"guarantee\w*|assure\w*)\b"
+)
+_ATTRIBUTED_COMPARISON = re.compile(
+    r"\b(?:according to|published comparison|comparison (?:by|from|page)|"
+    r"says|reports|reported|selon|d'apres|comparaison publiee)\b"
+)
+
+
+def _launch_in_scope(text: str, entry: Evidence, context: EvidenceContext) -> bool:
+    if context.claim_scope != "launch" or not context.temporal_scope.strip():
+        return False
+    years = re.findall(r"\b(?:19|20)\d{2}\b", context.temporal_scope)
+    dates = re.findall(r"\b\d{4}-\d{2}-\d{2}\b", context.temporal_scope)
+    subject = set(re.findall(r"[a-z0-9]{3,}", fold(context.subject))) - {
+        "the", "new", "product", "feature", "launch",
+    }
+    return bool(subject and subject <= set(re.findall(r"[a-z0-9]{3,}", fold(text)))
+                and years and all(year in entry.verbatim for year in years)
+                and (any(value in text for value in dates)
+                     or datetime.now(UTC).date().isoformat() in dates))
+
+
+def _preserves_customer_scope(text: str, entry: Evidence, context: EvidenceContext) -> bool:
+    proposed = fold(text).strip(' ."“”')
+    source = fold(entry.verbatim)
+    if proposed and proposed in source:
+        return True
+    if _GENERAL_RESULT.search(proposed):
+        return False
+    names = [part.strip() for part in context.subject.split(" / ") if part.strip()]
+    if not names or not any(fold(name) in proposed for name in names):
+        return False
+    # An explicit condition remains required. This is only an advisory and
+    # deliberately asks for review when a paraphrase cannot be matched.
+    if context.conditions and fold(context.conditions) not in proposed:
+        return False
+    source_names = {fold(name) for name in _named_anchors(entry.verbatim)}
+    if any(fold(name) not in source_names for name in _named_anchors(text)):
+        return False
+    source_words = set(re.findall(r"[a-z]{4,}", source))
+    proposed_words = set(re.findall(r"[a-z]{4,}", proposed))
+    return len(source_words & proposed_words) >= min(3, len(source_words))
+
+
+def _comparison_subject_present(text: str, entry: Evidence) -> bool:
+    # Names come from the claim only as a retrieval clue. The source stays a
+    # comparison and the result stays advisory, never independently verified.
+    names = _named_anchors(entry.claim)
+    return bool(names and any(fold(name) in fold(text) for name in names))
+
+
+def _plan_feature_issues(support: "NumericSupport", source_text: str) -> list[str]:
+    """Notice an included feature priced as an item using raw offer sections.
+
+    A priced heading containing several subfeatures is a plan clue, not a
+    validated pricing ontology. Ambiguity reaches the reviewer as a caution.
+    """
+    requested = _PRICE_SUBJECT.search(support.citation)
+    if requested is None:
+        return []
+    item = fold(requested.group(1))
+    for section in re.finditer(r"(?m)^(#{1,3})\s+(.+)\n", source_text):
+        level = len(section.group(1))
+        remainder = source_text[section.end():]
+        boundary = re.search(rf"(?m)^#{{1,{level}}}\s+", remainder)
+        body = remainder[:boundary.start()] if boundary else remainder
+        if not any(claim.normalized == support.value for claim in extract_claims(body[:900])):
+            continue
+        features = [*re.findall(rf"(?m)^#{{{level + 1},6}}\s+(.+)$", body),
+                    *re.findall(r"(?m)^\*\*([^*\n]+)\*\*\s*$", body)]
+        if len(features) < 2 or not any(item in fold(feature) for feature in features):
+            continue
+        plan = section.group(2).strip()
+        if item in fold(plan):
+            continue
+        return [(f"The source lists this feature inside the priced '{plan}' offer. "
+                 "State that it is included in the plan and preserve the plan's terms; "
+                 "the subscription amount does not establish a separate feature price.")]
+    return []
+
+
+_PRICE_PERIOD = re.compile(
+    r"(?:/\s*|\bper\s+|\bpar\s+)(months?|mois|mo|years?|ans?|yr|weeks?|semaines?)\b",
+    re.IGNORECASE,
+)
+_PRICE_UNIT = re.compile(
+    r"(?:/\s*|\bper\s+|\bpar\s+)(seats?|users?|utilisateurs?|workspaces?|accounts?|"
+    r"credits?|emails?|requests?|requetes?)\b", re.IGNORECASE,
+)
+_PRICE_SUBJECT = re.compile(
+    r"\b([\w-]+)(?:\s+(?:plan|tier|subscription|abonnement|offre))?\s+"
+    r"(?:is|costs?|co[uû]te(?:nt)?|est)\s+(?:from\s+|a partir de\s+)?"
+    r"(?:[$€£]|\d+\s*(?:usd|eur|gbp))", re.IGNORECASE,
+)
+_PRICE_GENERIC_SUBJECTS = frozenset({
+    "it", "this", "that", "price", "pricing", "plan", "subscription", "product", "app",
+    "cela", "ceci", "prix", "abonnement", "produit",
+})
+_PRICE_CONDITIONS = {
+    "annual payment": r"\b(?:billed|paid|payable|facture|paye)\s+(?:annually|yearly|annuellement)|\bannual (?:billing|payment|commitment|contract)\b",
+    "tax excluded": r"\b(?:excluding|excludes|before|hors)\s+(?:vat|tax|taxes|tva)\b",
+    "introductory price": r"\b(?:introductory|introductoire|first (?:month|year)|premier(?:e)? (?:mois|annee))\b",
+    "new customers only": r"\b(?:new customers only|nouveaux clients uniquement)\b",
+}
+
+
+def _price_supports(
+    text: str, context: EvidenceContext | None = None, *, known_subjects: tuple[str, ...] = (),
+    subject_aliases: dict[str, str] | None = None,
+) -> list[PriceSupport]:
+    supports: list[PriceSupport] = []
+    for sentence in re.split(r"(?<=[.!?])\s+|\n+", text):
+        amounts = [claim for claim in extract_claims(sentence) if claim.kind is ClaimKind.MONEY]
+        # Multiple prices in one sentence cannot be bound to separate terms
+        # safely by a regex. Explicit per-entry context can still disambiguate.
+        if len(amounts) != 1:
+            continue
+        terms = f"{sentence} {context.conditions if context else ''}"
+        period_match = _PRICE_PERIOD.search(terms)
+        period = period_match.group(1).lower() if period_match else ""
+        period = {"mo": "month", "mois": "month", "months": "month", "yr": "year",
+                  "years": "year", "an": "year", "ans": "year", "weeks": "week",
+                  "semaine": "week", "semaines": "week"}.get(period, period)
+        unit_match = _PRICE_UNIT.search(terms)
+        unit = unit_match.group(1).lower().rstrip("s") if unit_match else ""
+        unit = {"utilisateur": "user", "requete": "request"}.get(unit, unit)
+        pricing_sentence = fold(sentence).replace("**", "").replace("__", "").replace("`", "")
+        subject_match = _PRICE_SUBJECT.search(pricing_sentence)
+        subject = fold(subject_match.group(1)) if subject_match else ""
+        # A single-word fallback must not turn the explicitly named "Pro
+        # Standard" into "Standard" and conflict with its own provenance.
+        # Match the complete known name only where the sentence prices it;
+        # mentioning it elsewhere cannot license another plan's amount.
+        for name in sorted(known_subjects, key=lambda value: (-len(value), value)):
+            if re.search(
+                rf"(?<!\w){re.escape(name)}(?:\s+(?:plan|tier|subscription|abonnement|offre))?\s+"
+                r"(?:is|costs?|co[uû]te(?:nt)?|est)\s+(?:from\s+|a partir de\s+)?"
+                r"(?:[$€£]|\d+\s*(?:usd|eur|gbp))", pricing_sentence,
+            ):
+                subject = name
+                break
+        for alias, canonical in (subject_aliases or {}).items():
+            # An exact clause boundary prevents "Basic Starter" inheriting the
+            # alias Starter merely because the old fallback sees its last word.
+            if re.search(
+                rf"(?:^|[,;:]\s*|\s-\s+)\s*(?:(?:and|et)\s+)?"
+                rf"(?:(?:the|our|le|notre)\s+)?{re.escape(alias)}"
+                r"(?:\s+(?:plan|tier|subscription|abonnement|offre))?\s+"
+                r"(?:is|costs?|co[uû]te(?:nt)?|est)\s+(?:from\s+|a partir de\s+)?"
+                r"(?:[$€£]|\d+\s*(?:usd|eur|gbp))", pricing_sentence,
+            ):
+                subject = canonical
+                break
+        if context and context.claim_scope == "offer" and context.subject:
+            subject = re.sub(r"\s+(?:plan|tier|subscription|abonnement|offre)$", "",
+                             fold(context.subject))
+        if subject in _PRICE_GENERIC_SUBJECTS:
+            subject = ""
+        conditions = [name for name, pattern in _PRICE_CONDITIONS.items()
+                      if re.search(pattern, fold(terms))]
+        role = "savings" if re.search(
+            r"\b(?:save|saves|saving|savings|economis(?:ez|er|e|ent))\b", fold(sentence)
+        ) else "price" if period or unit or subject or (
+            context is not None and context.claim_scope == "offer"
+        ) else ""
+        supports.append(PriceSupport(value=amounts[0].normalized, period=period, unit=unit,
+                                     subject=subject, role=role, conditions=conditions))
+    return supports
 
 
 class NumericSupport(BaseModel):

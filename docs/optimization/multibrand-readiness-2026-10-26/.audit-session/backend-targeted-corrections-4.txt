@@ -1,0 +1,43 @@
+........................................................................ [  4%]
+........................................................................ [  9%]
+........................................................................ [ 14%]
+........................................................................ [ 18%]
+........................................................................ [ 23%]
+........................................................................ [ 28%]
+........................................................................ [ 33%]
+........................................................................ [ 37%]
+........................................................................ [ 42%]
+........................................................................ [ 47%]
+........................................................................ [ 51%]
+........................................................................ [ 56%]
+........................................................................ [ 61%]
+........................................................................ [ 66%]
+........................................................................ [ 70%]
+........................................................................ [ 75%]
+........................................................................ [ 80%]
+.....F.................................................................. [ 84%]
+........................................................................ [ 89%]
+........................................................................ [ 94%]
+........................................................................ [ 99%]
+...............                                                          [100%]
+================================== FAILURES ===================================
+_________ test_the_run_stores_the_report_and_the_brief_it_worked_from _________
+tests\marketing\test_orchestrator.py:279: in test_the_run_stores_the_report_and_the_brief_it_worked_from
+    assert execution.result["run_status"] == "completed"
+E   AssertionError: assert 'degraded' == 'completed'
+E     
+E     - completed
+E     + degraded
+------------------------------ Captured log call ------------------------------
+INFO     marketingos.marketing:strategist.py:728 strategist: dropped unknown evidence ids ['E1']
+INFO     marketingos.marketing:strategist.py:575 strategist: correcting 1 plan defect(s)
+INFO     marketingos.marketing:strategist.py:728 strategist: dropped unknown evidence ids ['E1']
+============================== warnings summary ===============================
+tests/marketing/test_workflow_dispatch.py::test_linkedin_campaign_completes_in_plan_and_replay_does_not_buy_again
+  C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/marketing/test_orchestrator.py::test_the_run_stores_the_report_and_the_brief_it_worked_from
+1 failed, 1526 passed, 1 warning in 77.82s (0:01:17)

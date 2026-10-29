@@ -104,6 +104,27 @@ put one in the copy, and do not treat the ranking as more precise than it is.
 
 {{ campaign_intelligence }}
 
+When the current dossier supplies a qualified subsegment, retain it as the effective scope
+inside the user's selected audience. Do not generalize its product fit to the entire mapped
+segment. Preserve the user's explicit audience constraints; a narrower automatic suggestion
+cannot introduce an incompatible buyer, installed tool or situation.
+
+The exact selected audience defines the target constraints, including its stated job or format. Research may
+find broader desires or adjacent problems; use those as context, not a replacement for the
+selected job. A required format or output can define a useful product-led proposition without
+research proving that format is superior. A detailed discovery need may also propose methods:
+do not make those methods mandatory unless the user's request or a verified prerequisite requires them.
+Treat mapped need as a targeting hypothesis: never
+turn it into an observed recipient deadline, failed attempt or guaranteed result. If product
+evidence cannot support that job, name the mismatch rather than quietly changing the job.
+
+Connection routes must stay distinct. A native/prebuilt connector, a generic automation
+module and a custom HTTP webhook endpoint may have different setup steps and capabilities.
+Naming the same partner platform does not make those paths equivalent. Attach setup claims
+to the particular source and route that establish them. When a source only says the products
+can connect, leave the route and setup effort unknown. Explain the useful documented action
+without telling native-integration users to configure endpoints unless the source requires it.
+
 This section outranks discovery hypotheses and the company's compiled audience description on
 buyer reality. It does not outrank the complete Evidence Ledger on what the product may claim.
 For legacy intelligence without a V2 claim boundary, the ledger remains complete: a fact absent
@@ -112,6 +133,14 @@ V2 claim boundary is supplied, use only its campaign-safe claims; that boundary 
 
 When research is loaded, take `felt_need` from a verified problem and `status_quo` from observed
 incumbent behaviour. Let verified triggers and sophistication decide where the sequence may open.
+An observed problem is not evidence that the product solves it. Use a CURRENT dossier's explicit
+problem-to-assigned-evidence link for a problem-led argument. A stale or missing link leaves the
+problem available as research context, but cannot license a solution promise. Choose a supported
+function, offer, activation step or another evidenced argument instead. An announcement need not
+have a pain or failing alternative. Do not attach the first researched problem merely to fill a field.
+If you discard a current alternative, discard its failure story too. If you discard a problem
+bridge, rebuild the dependent idea, mechanism, belief shift and CTA payoff together; do not keep
+the old outcome hidden in another field. Keep supported specifics rather than adding vague caution.
 Buyer phrases may guide vocabulary, but are not attributed quotations and are never product
 evidence. Discovery `why_them`, `angle`, pains and sophistication are hypotheses only where they
 conflict with verified research.
@@ -132,8 +161,17 @@ campaign must not promise to solve; do not turn that absence into a negative pro
 IMMATERIAL problems normally do not lead. ADDRESSED and OFF_LIMITS are usable only when the
 current V2 intelligence names validated capability or constraint ids; legacy dossiers do not.
 
+An explicit eligibility constraint in the selected audience applies to every proposed argument,
+including alternatives. A secondary function does not remove it: if a product must work without
+consent cookies, an argument about sharing still needs documented support for that prerequisite.
+This is not a claim about an installed tool or a past incident, and it need not be turned into
+a researched pain. Use a documented product function and keep `felt_need` empty when appropriate.
+Choose a next step the reader can take before any unestablished approval or deployment permission.
+When an existing public demo or source page answers the first eligibility question, do not require
+installation on a live service just to decide whether a formal evaluation is worth beginning.
+
 If a V2 recommendation lists allowed and forbidden claims, that is the product-claim boundary
-for every brief. Never spend a forbidden/withheld/contested evidence id, and copy every forbidden
+for every brief. Never spend a forbidden or withheld evidence id, and copy every forbidden
 scope statement into `must_not_say`. Company qualification evidence describes the recipient, not
 the product. When it is missing or inferred, write at audience level or as a hypothesis ("if your
 team is rebuilding...") rather than stating that the company has that internal problem.
@@ -389,9 +427,13 @@ activation context. A brief's own narrative is not evidence of recipient activit
 Say why this order beats the alternatives in `sequence_rationale`.
 
 **Ask only for what exists, and prove why this reader should take that step.**
-`call_to_action` comes from the offer sheet's list of actions. An email that asks for a demo when
-the product is self-serve sends a real reader to a page that is not there. A real action can still
-be the wrong action for this argument, so complete its decision bridge:
+Choose a documented action from the offer sheet or a relevant source URL attached to this
+proposition's assigned evidence. Preserve any URL or action explicitly fixed by the user.
+Without a fixed action, choose the smallest verified step that advances this reader's concrete
+decision: do not assume acquisition requires immediate registration or purchase. A supplied
+explanation may answer a pre-adoption question before setup is justified. Do not promise a demo,
+preview, test mode or setup duration the destination's evidence does not establish. A real action
+can still be the wrong action for this argument, so complete its decision bridge:
 
 - **`next_step_decision`** — the concrete decision this reader can make more confidently after
   taking the action. “Learn more” and “evaluate the product” are not decisions.
@@ -409,9 +451,22 @@ holds under - "once its script is on your site, a signup page becomes a goal wit
 code" - so the email states it as part of how the product works. Not in `next_step_limit`: a
 prerequisite is not something the next step fails to deliver.
 
+Routine registration fields are not the commercial payoff of signup. Do not build the
+proposition around verifying an email address or entering profile details when the selected
+job is a product task. Keep adoption prerequisites that materially affect that task, then
+show the documented operation the account enables.
+
 Read those four fields as one sentence: “By taking [CTA], this reader gets [value], supported by
 [ids], which helps decide [decision], but does not establish [limit].” If that sentence does not
 connect the selected audience's situation to the action, discard the proposition before writing.
+
+Distinguish documented product output from an unproven customer outcome. A sourced ability to
+export or publish an item once supplied is a product capability; it does not promise that a
+person will supply one, that its content will be persuasive, or that publishing it will increase
+sales. Keep the prerequisite and applicable plan limits, but do not forbid a licensed downstream
+operation just because human response or commercial results are unknown. `argument_issue` is
+for an actual unresolved dependency of the chosen promise, not a list of outcomes the email
+does not promise. Put settled exclusions in `must_not_say` or `next_step_limit` instead.
 For a cold prospect, when an official page lets them inspect the promised behaviour without
 creating an account, verifying a domain or deploying an endpoint, make that read-only page the
 first ask. A list of prerequisites is not a useful substitute for seeing the capability. Ask for
@@ -457,3 +512,26 @@ Resolve the obstacle to the actual CTA using verified material already supplied;
 verified documentation link can suffice. If the answer is unknown, preserve the gap and
 narrow the ask. Never invent pricing, compatibility, key handling, integration effort or
 customer proof. Do not turn the email into a FAQ or add testimonials without a related need.
+# Proposition contract
+
+Preserve the campaign objective, reader relationship and fixed URL supplied in campaign context.
+Give every primary and alternative argument a `selection_reason`: why this supported reason is
+useful for this reader's requested next decision. Use `problem_ids` for any researched premise;
+copy the supplied ids even when you paraphrase. An announcement, activation or direct offering
+may leave problem_ids and felt_need empty. Never manufacture a pain to fill the structure.
+Use `offer_id="offering"` and the exact `action_id` shown on the offer sheet when choosing one
+of its actions, plus `next_step_url` for its destination. A documentation source is a candidate
+destination, not a default replacement for the requested action. For a documentation source
+outside the offer sheet, leave `action_id` empty, assign the evidence from that exact source in
+`evidence_ids`, and use its exact URL as `next_step_url`. State what the next step actually
+delivers and its material limits. Propose a complete alternative when the first
+problem/capability link is weak; keep its evidence, action and decision together.
+Keep a concrete object or task from the selected audience in every alternative argument,
+so switching propositions preserves why this reader should care. Use conditional language
+for unknown personal circumstances. A general capability applied to the audience's object
+does not establish additional compatibility, logistics or outcomes; preserve those limits.
+
+Set `destination_kind` to `web`, `reply` or `offline`. Every web CTA needs one exact
+`next_step_url`; a named action with no URL is not a verified destination. The renderer
+does not guess a product page from the brand homepage. Choose a source that actually
+answers the proposed question; do not ask the reader to inspect an unavailable example.

@@ -1,0 +1,146 @@
+{
+  "status": "degraded",
+  "abort_reason": null,
+  "report": {
+    "request": "Write exactly one friendly abandoned-cart reminder for the weekend bag. Invite the reader to return to their basket, without inventing urgency, discounts or why they stopped.\nUser-supplied campaign context: {\"objective\": \"recovery\", \"reader_relationship\": \"prospect\"}",
+    "effective_audience": "People who left the weekend bag in their basket without completing checkout.",
+    "audience_scope": "",
+    "assessment_method": "Simulated editorial assessment, uncalibrated; no response or conversion prediction",
+    "delivered": 1,
+    "promised": 3,
+    "contract_violations": [],
+    "emails": [
+      {
+        "position": 1,
+        "subject": "Your CanvasTrail weekend bag",
+        "single_idea": "The CanvasTrail weekend bag is worth another look if the reader is still considering it, and their next step is simply to return to the basket.",
+        "pull": 6.0,
+        "revisions": 1,
+        "clean": true,
+        "landed": false,
+        "rewrites_stopped_helping": true,
+        "read_reported": true,
+        "understood": true,
+        "relevant": true,
+        "evidence_assigned": [
+          "E1"
+        ],
+        "evidence_spent": [
+          "E1"
+        ],
+        "attributions": 0,
+        "unresolved": [],
+        "reader_verdicts": [
+          {
+            "what_it_sells": "A weekend bag with a removable shoulder strap and internal zipped pocket that I could use for short trips.",
+            "understood": true,
+            "situation_matches": true,
+            "relevance_feedback": "The profile explicitly establishes that I left this weekend bag in my basket, and the email accurately refers to that unfinished purchase. Whether I still want it, why I stopped checkout, and whether the two highlighted features matter to me are unknown.",
+            "assumed_experiences": [
+              "Profile-supported: I added the CanvasTrail weekend bag to my basket without completing checkout.",
+              "Email-only: I may still be considering whether the bag is right for me.",
+              "Email-only: the removable strap and internal zipped pocket may affect my decision."
+            ],
+            "problem_now": "The unfinished purchase is documented, but there is no established urgency. On a rushed Tuesday morning, deciding about a bag is not an immediate problem.",
+            "stopped_at": "There is no need to make that decision from this email.",
+            "biggest_doubt": "I still do not know the price or total checkout cost, which may be why I abandoned the basket; the two ordinary features do not resolve that doubt.",
+            "to_click_it_would_have_to": "I would have clicked if this email had told me the current price and whether delivery would add to the total.",
+            "fixes": [
+              "Rewrite “It comes with a removable shoulder strap and an internal zipped pocket—two details you may want to look over as you decide whether it is right for you.” to include the bag's current price and one practical detail such as dimensions or capacity.",
+              "Cut “There is no need to make that decision from this email. Your basket gives you a direct route back to the purchase you began, where you can continue if you choose.” because the CTA already makes that clear.",
+              "Cut “If the bag is still on your mind, you can take another look and decide in your own time. Nothing more is being asked here.” because it repeats the reminder without adding decision-relevant information."
+            ],
+            "opens_in_100": null,
+            "clicks_in_100": null,
+            "persona": "Selected audience (user-stated constraints): People who left the weekend bag in their basket without completing checkout..\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.",
+            "pull": 6
+          }
+        ],
+        "sameness": []
+      }
+    ],
+    "limiting_gaps": [],
+    "what_would_help_most": "Resolve this simulated next-step obstacle: I would have clicked if this email had told me the current price and whether delivery would add to the total. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.",
+    "questions": [],
+    "sequence_summary": "",
+    "knowledge_version": 1,
+    "notes": [
+      "Effective audience: People who left the weekend bag in their basket without completing checkout.",
+      "1 email(s) came in under the floor on a run configured without more than one opening per email, a panel of cold readers rather than one, alternative subject lines, more than one rewrite. These settings describe review depth, not the cause of the weak result. Check the audience fit and verified support for the reported obstacle first; additional readers or rewrites cannot supply missing evidence."
+    ],
+    "reads_expected": true
+  },
+  "brief": {
+    "interpretation": "Create one friendly abandoned-cart reminder, not a sequence, for a prospect who left the CanvasTrail weekend bag in their basket. The email should invite a return without speculating about the abandonment or adding urgency or incentives.",
+    "reader": "Selected audience (user-stated constraints): People who left the weekend bag in their basket without completing checkout..\nNo further recipient situation is established. Compiled market context is research to check for applicability, not a replacement biography.",
+    "reader_segment": "People who left the weekend bag in their basket without completing checkout.",
+    "reader_profile_override": "People who left the weekend bag in their basket without completing checkout.",
+    "reader_scope": "",
+    "fixed_cta_url": "",
+    "promise": "A friendly, low-pressure reminder makes it easy to return to the basket and decide whether to complete the purchase.",
+    "orientation": "CanvasTrail sells a canvas weekend bag that this reader previously placed in their basket.",
+    "arc": "One concise reminder: reorient the reader to the weekend bag, offer one useful product detail, and invite them back to their basket without pressure.",
+    "sequence_rationale": "One email is sufficient because the user explicitly requested exactly one reminder. Extending this into a sequence would add repetition and pressure unsupported by urgency, discounts, customer proof, or known objections.",
+    "emails": [
+      {
+        "position": 1,
+        "job": "Prompt a low-pressure return to the basket so the reader can decide whether to complete checkout.",
+        "single_idea": "The CanvasTrail weekend bag is worth another look if the reader is still considering it, and their next step is simply to return to the basket.",
+        "felt_need": "",
+        "status_quo": "",
+        "why_it_fails": "",
+        "mechanism": "Briefly identify the bag and ground the reminder in one concrete detail: it has a removable shoulder strap and an internal zipped pocket.",
+        "alternative_ideas": [],
+        "alternative_arguments": [],
+        "belief_shift": "Before: the unfinished basket is no longer top of mind. After: the reader remembers the specific bag and knows they can return to the basket without pressure.",
+        "evidence_ids": [
+          "E1"
+        ],
+        "must_not_say": [
+          "Any reason the reader stopped checkout",
+          "Urgency, deadlines, scarcity, or claims that the bag may sell out",
+          "Discounts, offers, savings, or implied incentives",
+          "Claims that the bag is reserved, waiting, or will remain in the basket",
+          "Popularity, customer outcomes, quality claims, guarantees, or social proof",
+          "Travel scenarios, packing capacity, durability, materials beyond canvas, or other undocumented product benefits",
+          "Shipping cost, delivery timing, returns, or taxes beyond the documented statement that shipping charges appear at checkout"
+        ],
+        "forbidden_evidence_ids": [],
+        "forbidden_capability_ids": [],
+        "objection": "",
+        "tone": "Friendly, warm, brief, and unhurried.",
+        "call_to_action": "Return to your basket",
+        "next_step_decision": "Whether to continue toward purchasing the CanvasTrail weekend bag.",
+        "next_step_value": "The basket gives the reader a direct route back to the purchase they began.",
+        "next_step_evidence_ids": [
+          "E1"
+        ],
+        "next_step_limit": "Returning to the basket does not establish the final order total, delivery timing, return terms, or why the reader previously stopped.",
+        "subject_strategy": "Use a plain, friendly reminder that identifies the basket or weekend bag without urgency, guilt, curiosity bait, or an incentive.",
+        "must_not_reuse": []
+      }
+    ],
+    "voice_notes": "Keep the message personal and direct with the greeting “Hi there,” and sign-off “- the team.” Do not sound automated, presumptive, or sales-heavy.",
+    "contract": {
+      "kind": "email_sequence",
+      "count": 3,
+      "count_is_explicit": false,
+      "evidence": ""
+    }
+  },
+  "emails": [
+    {
+      "position": 1,
+      "role": "Prompt a low-pressure return to the basket",
+      "subject": "Your CanvasTrail weekend bag",
+      "preview_text": "A reminder about its removable strap and internal zipped pocket.",
+      "eyebrow": "YOUR BASKET",
+      "headline": "Take another look at the weekend bag",
+      "greeting": "Hi there,",
+      "body": "Here’s a quick reminder about the CanvasTrail weekend bag you added to your basket.\n\nIt comes with a removable shoulder strap and an internal zipped pocket—two details you may want to look over as you decide whether it is right for you.\n\nThere is no need to make that decision from this email. Your basket gives you a direct route back to the purchase you began, where you can continue if you choose.\n\nIf the bag is still on your mind, you can take another look and decide in your own time. Nothing more is being asked here.",
+      "call_to_action": "Return to your basket",
+      "sign_off": "- the CanvasTrail team",
+      "postscript": ""
+    }
+  ]
+}

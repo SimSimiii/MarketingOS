@@ -237,8 +237,8 @@ async def test_a_score_for_a_line_that_was_not_offered_is_ignored():
             "inbox_scanner": json.dumps(
                 {
                     "scores": [
-                        {"option": 1, "opens_in_100": 30, "why": "fine"},
-                        {"option": 9, "opens_in_100": 99, "why": "nonsense"},
+                        {"option": 1, "assessment": 3.0, "why": "fine"},
+                        {"option": 9, "assessment": 9.9, "why": "nonsense"},
                     ]
                 }
             ),

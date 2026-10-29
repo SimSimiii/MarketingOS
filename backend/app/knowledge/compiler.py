@@ -13,6 +13,7 @@ invisibly, because nothing further down ever sees the original page.
 """
 
 import asyncio
+import hashlib
 import logging
 import re
 from collections.abc import Callable
@@ -21,6 +22,7 @@ from dataclasses import dataclass
 from pydantic import BaseModel, Field
 
 from app.ai.model_router import ModelTier
+from app.ingestion.loaders.public_content import content_issues
 from app.knowledge.artifacts import (
     AudienceModel,
     BusinessProfile,
@@ -38,6 +40,7 @@ from app.knowledge.ledger import (
     EvidenceLedger,
     EvidenceStrength,
 )
+from app.knowledge.quoted_terms import retain_billing_links, with_question
 from app.knowledge.taxonomy import FactCategory, classify
 from app.runtime.exceptions import ModelRuntimeError
 from app.runtime.model_session import ModelSession
@@ -176,6 +179,7 @@ class KnowledgeCompiler:
         )
 
         progress("audience", "Working out who buys this and why they hesitate")
+        profile.offer, rejected_guarantees = profile.offer.ground_guarantees(ledger)
         audience = await self._audience(corpus, profile, ledger)
 
         artifacts = KnowledgeArtifacts(
@@ -185,9 +189,12 @@ class KnowledgeCompiler:
             voice=voice,
             audience=audience,
             source_document_ids=[document.id for document in corpus.documents],
-            notes=intake.notes(),
+            notes=intake.notes() + ([
+                (f"{len(rejected_guarantees)} unverified offer guarantee summary item(s) omitted; "
+                 "consult the source-scoped Evidence Ledger for offer conditions.")
+            ] if rejected_guarantees else []),
         )
-        artifacts.gaps = find_gaps(artifacts)
+        artifacts.gaps = find_gaps(artifacts, sources=corpus.documents)
         progress(
             "compiled",
             f"Knowledge compiled: {len(ledger.entries)} facts, "
@@ -251,7 +258,7 @@ class KnowledgeCompiler:
         results = await asyncio.gather(*(extract(batch) for batch in plan.batches))
 
         entries: list[Evidence] = []
-        normalized: dict[str | None, str] = {}
+        normalized: dict[str, str] = {}
         intake = _Intake(readings=len(plan.batches), unread=plan.unread)
         for batch, drafts in zip(plan.batches, results, strict=True):
             if isinstance(drafts, BaseException):
@@ -259,14 +266,20 @@ class KnowledgeCompiler:
                 continue
             by_id = {reading.document.id: reading.document for reading in batch}
             for draft in drafts:
-                document = by_id.get(draft.document_id) or (
-                    batch[0].document if len({reading.document.id for reading in batch}) == 1
-                    else None
-                )
-                source_key = document.id if document else None
-                if source_key not in normalized:
-                    normalized[source_key] = fold(document.content if document else corpus.text)
-                haystack = normalized[source_key]
+                document = by_id.get(draft.document_id)
+                if not draft.document_id:
+                    # Missing metadata can be recovered only from a unique
+                    # matching document in this reading, never another batch.
+                    matches = []
+                    for candidate in by_id.values():
+                        if candidate.id not in normalized:
+                            normalized[candidate.id] = fold(candidate.content)
+                        if _quote_in_normalized(draft.verbatim, normalized[candidate.id]):
+                            matches.append(candidate)
+                    document = matches[0] if len(matches) == 1 else None
+                if document is not None and document.id not in normalized:
+                    normalized[document.id] = fold(document.content)
+                haystack = normalized[document.id] if document is not None else ""
                 intake.proposed += 1
                 if not _quote_in_normalized(draft.verbatim, haystack):
                     intake.unverifiable += 1
@@ -275,7 +288,7 @@ class KnowledgeCompiler:
                     )
                     continue
                 claim = collapse(draft.claim)
-                verbatim = collapse(draft.verbatim)
+                verbatim = collapse(with_question(draft.verbatim, document)) if document else collapse(draft.verbatim)
                 context = draft.context.model_copy(deep=True) if draft.context else None
                 if context is not None:
                     # Model assertions about verification never certify themselves.
@@ -293,6 +306,11 @@ class KnowledgeCompiler:
                         context=context,
                     )
                 )
+        for batch in plan.batches:
+            for reading in batch:
+                # Only inspect the material within this compilation's read budget.
+                retain_billing_links(Document(id=reading.document.id, title=reading.document.title,
+                    source=reading.document.source, content=reading.text), entries)
         return EvidenceLedger(entries=entries), intake
 
     async def _voice(self, corpus: SourceCorpus) -> VoiceProfile:
@@ -382,16 +400,39 @@ _NO_MATERIAL_GAP = Gap(
 )
 
 
-def find_gaps(artifacts: KnowledgeArtifacts) -> GapReport:
+def find_gaps(artifacts: KnowledgeArtifacts, *, sources: list[Document] | None = None) -> GapReport:
     """What is missing, computed rather than asked of a model.
 
     A gap only belongs here if it changes the copy. "No employee count" is
     trivia; "no price anywhere in the material" decides whether an email can
     name one, so it is a gap.
     """
-    gaps: list[Gap] = []
+    gaps: list[Gap] = [gap for gap in artifacts.gaps.gaps if gap.id.startswith("G-source-")] if sources is None else []
+    messages = {
+        "dynamic_values_missing": "Dynamic values are missing; prices and plan conditions remain unreadable",
+        "navigation_only": "Only navigation was captured, not the page's substantive content",
+        "partial_crawl": "Some linked source pages could not be read; the corpus is partial",
+    }
+    seen_issues: set[tuple[str, str]] = set()
+    for document in sources or []:
+        for issue in {*document.source_issues, *content_issues(document.content)} & messages.keys():
+            key = (document.source, issue)
+            if key in seen_issues:
+                continue
+            seen_issues.add(key)
+            gaps.append(Gap(
+                id="G-source-" + hashlib.sha256((document.source + issue).encode()).hexdigest()[:12],
+                missing=messages[issue] + ": " + document.source,
+                impact="Use only the readable captured facts; do not infer missing prices, features or proof.",
+                question="Can this source be supplied in a readable form or its missing details verified?",
+                severity="significant",
+            ))
 
-    priced = any(plan.price for plan in artifacts.offer.plans) or bool(artifacts.offer.free_entry)
+    priced = (
+        any(plan.price for plan in artifacts.offer.plans)
+        or bool(artifacts.offer.free_entry)
+        or bool(artifacts.evidence.of_kind(EvidenceKind.PRICE))
+    )
     if not priced:
         gaps.append(
             Gap(
@@ -603,6 +644,23 @@ def _readings(corpus: SourceCorpus, budget: int, total: int) -> _ReadingPlan:
         size += len(reading.text)
     if current:
         batches.append(current)
+    # Fill the holes left by source-order packing, without cutting any reading
+    # or widening either budget. Keep the existing order when packing buys no
+    # call reduction, and never pay more calls for the heuristic.
+    packed: list[list[_Reading]] = []
+    sizes: list[int] = []
+    for reading in sorted(readings, key=lambda item: -len(item.text)):
+        fitting = [index for index, size in enumerate(sizes) if size + len(reading.text) <= budget]
+        if fitting:
+            index = max(fitting, key=lambda item: sizes[item])
+            packed[index].append(reading)
+            sizes[index] += len(reading.text)
+        else:
+            packed.append([reading])
+            sizes.append(len(reading.text))
+    if len(packed) < len(batches):
+        order = {id(reading): index for index, reading in enumerate(readings)}
+        batches = [sorted(batch, key=lambda item: order[id(item)]) for batch in packed]
     return _ReadingPlan(batches=batches, unread=unread)
 
 

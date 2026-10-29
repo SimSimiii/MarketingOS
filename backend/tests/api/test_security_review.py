@@ -222,3 +222,11 @@ def test_a_resumed_reservation_does_not_charge_the_quota_again(engine):
 
     with Session(engine) as db:
         assert db.get(User, owner).runs_used == charged, "and must not refund on close"
+
+
+def test_api_responses_carry_hardening_headers(locked_client):
+    response = locked_client.get("/api/auth/config")
+    assert response.headers["x-content-type-options"] == "nosniff"
+    assert response.headers["x-frame-options"] == "DENY"
+    assert response.headers["referrer-policy"] == "no-referrer"
+    assert locked_client.get("/api/brands").headers["x-frame-options"] == "DENY"

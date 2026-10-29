@@ -123,6 +123,23 @@ def test_web_search_is_only_enabled_when_a_role_asked_for_it(monkeypatch):
     assert search_command.index("--search") < search_command.index("exec")
 
 
+def test_app_calls_exclude_host_skills_and_closed_calls_disable_cached_search(monkeypatch):
+    monkeypatch.setattr("app.ai.openai_provider._codex_path", lambda: "/usr/bin/codex")
+    provider = OpenAIProvider()
+    closed = provider._command(_request())
+    searching = provider._command(_request(tools=[ResearchTool.WEB_SEARCH]))
+    for command in (closed, searching):
+        assert "skills.include_instructions=false" in command
+        assert "skills.bundled.enabled=false" in command
+        assert "features.skip_host_skill_discovery=true" in command
+        assert "project_doc_max_bytes=0" in command
+        for feature in ["skill_search", "shell_tool", "apps", "plugins", "memories", "multi_agent"]:
+            assert f"features.{feature}=false" in command
+        assert command[command.index("--sandbox") + 1] == "read-only"
+    assert 'web_search="disabled"' in closed
+    assert 'web_search="live"' in searching
+
+
 def test_a_missing_binary_says_what_to_install(monkeypatch):
     """`ModelSession` retries a provider three times. Three copies of a bare
     'not found' is a worse message than one that names the fix."""
@@ -246,3 +263,15 @@ def test_only_web_search_is_offered():
     assert OpenAIProvider().available_tools("gpt-5.6-sol") == frozenset(
         {ResearchTool.WEB_SEARCH}
     )
+
+
+@pytest.mark.parametrize("detail,retryable", [
+    ("You’ve hit your usage limit. Try again at 7:54 AM.", False),
+    ("usage_limit_reached", False),
+    ("insufficient_quota", False),
+    ("connection reset by peer", True),
+    ("upstream server unavailable", True),
+])
+def test_failed_turn_classifies_hard_quota_without_disabling_transient_retries(detail, retryable):
+    from app.ai.openai_provider import _turn_error
+    assert _turn_error(detail).retryable is retryable

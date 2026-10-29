@@ -1,5 +1,8 @@
 "use client";
 
+import { CampaignIntentFields } from "@/components/campaign-intent-fields";
+import type { CampaignIntent } from "@/lib/types";
+
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -163,6 +166,7 @@ export interface NewCampaignDialogPrefill {
   productUrl?: string | null;
   targetMarket?: string | null;
   goals?: string | null;
+  intent?: CampaignIntent | null;
   senderName?: string | null;
   senderRole?: string | null;
 }
@@ -195,10 +199,12 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
   const [productUrl, setProductUrl] = useState("");
   const [targetMarket, setTargetMarket] = useState("");
   const [goals, setGoals] = useState("");
+  const [campaignIntent, setCampaignIntent] = useState<CampaignIntent | null>(null);
   const [senderName, setSenderName] = useState("");
   const [senderRole, setSenderRole] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [policyPreset, setPolicyPreset] = useState<PolicyPreset>("balanced");
+  const [strategyMode, setStrategyMode] = useState<"auto" | "planned" | "direct">("auto");
   const [tone, setTone] = useState<Tone>("professional");
   //: Who this campaign writes to on LinkedIn. Empty until the user opens the
   //: LinkedIn half of the form or arrives from a search result - an email
@@ -310,6 +316,7 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
       // control opens on it rather than on the default with a hidden value.
       if (prefill.targetMarket) setAudienceSegment(CUSTOM_AUDIENCE);
       setGoals(prefill.goals ?? "");
+      setCampaignIntent(prefill.intent ?? null);
       setSenderName(prefill.senderName ?? "");
       setSenderRole(prefill.senderRole ?? "");
       if (prefill.linkedinUrl) {
@@ -407,6 +414,7 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
     setSenderRole("");
     setFiles([]);
     setPolicyPreset("balanced");
+    setStrategyMode("auto");
     setTone("professional");
     setRecipientName("");
     setRecipientUrl("");
@@ -477,6 +485,14 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
         target_market:
           audienceSegment === CUSTOM_AUDIENCE ? targetMarket.trim() || null : null,
         goals: goals.trim() || null,
+        intent: {
+          ...campaignIntent,
+          objective: type === "launch_email" ? "announcement" : type === "cart_recovery" ? "recovery" : type === "linkedin_message" ? "acquisition" : campaignIntent?.objective ?? "custom",
+          objective_source: "user",
+          reader_relationship: campaignIntent?.reader_relationship ?? "unknown",
+          relationship_source: campaignIntent?.relationship_source ?? "user",
+          desired_action: goals.trim(),
+        },
         sender_name: senderName || null,
         sender_role: senderRole || null,
         brand_id: brandId,
@@ -505,6 +521,7 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
               }
             : null,
         policy_preset: policyPreset,
+        strategy_mode: strategyMode,
         model_overrides: null,
         force_recompile: brandId ? forceRecompile : null,
       });
@@ -913,6 +930,7 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
           </FormSection>
 
           <FormSection title="How it reads">
+            <CampaignIntentFields value={campaignIntent} onChange={setCampaignIntent} />
             <div className="grid gap-4 sm:grid-cols-2">
               {/* The last line of render_context() that no form filled. The
                   strategist is told the product, the audience and the sender; what
@@ -1022,6 +1040,25 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
 
           <FormSection title="How it runs">
             <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="strategy_mode">Writing approach</Label>
+                <Select value={strategyMode}
+                  onValueChange={(value) => value && setStrategyMode(value as typeof strategyMode)}
+                  items={{ auto: "Automatic", direct: "Direct draft", planned: "Planned campaign" }}>
+                  <SelectTrigger id="strategy_mode" className="w-full"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="auto">Automatic</SelectItem>
+                    <SelectItem value="direct">Direct draft</SelectItem>
+                    <SelectItem value="planned">Planned campaign</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Automatic uses one draft and one independent read for a single announcement,
+                  activation, reminder or nurture email with a documented action destination. Direct draft also
+                  permits other single-email jobs. Ambiguous actions and sequences use planning
+                  and the preset below. Every approach checks factual claims.
+                </p>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="policy_preset">Execution preset</Label>
                 <Select

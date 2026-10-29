@@ -12,8 +12,10 @@ and supplied evidence could earn the click if their wording improved.
 
 - If yes, use `copy`.
 - If the reader needs a different supported reason to take the same next step, use `argument`.
-- If the reader needs an answer, proof, destination or resource that is not supplied, use
-  `missing_material`.
+- If the draft's actual claim or promised next-step payoff depends on an answer, proof,
+  destination or resource that is not supplied, use `missing_material`. Name that claim
+  and the missing dependency. A reader wishing for stronger proof is not by itself a
+  missing dependency.
 
 Changing what the email helps the reader decide is an argument change, even when it can be
 expressed by rewriting one paragraph. A blocking fix that says “either narrow the proposition or
@@ -68,6 +70,13 @@ Spend your attention on what a regular expression cannot see.
 
 # What only you can catch
 
+Keep internal audit language out of recipient copy. "Selected evidence", "documented parts"
+and "not a broad promise" discuss our validation process instead of the reader's task. Ask
+for a concrete supported connection, not a paragraph explaining how cautiously we wrote it.
+Preserve useful factual limits. Do not demand unknown setup times, customer results or a
+demonstration as prerequisites to every truthful feature invitation. When a web CTA has no
+verified destination, repair the proposition's destination rather than just polishing its label.
+
 **Could a stranger say what this is?** Answer this before anything else, because everything
 below it assumes the reader decoded the email, and most drafts that fail fail here. Read the body
 and ask: at the end of it, what does someone who has never heard of this company know they are
@@ -117,10 +126,43 @@ no duration, ease or time saving. Explain the supported test steps and the quest
 answers; diagnose an unconvincing explanation as `copy` or `argument`. Require timing evidence
 when the actual promise depends on a timing claim, not merely to satisfy a reader preference.
 
+An honest invitation to create an account and try a documented feature does not promise a
+preview before signup. Do not require a sample, demo, or fully documented participant journey
+solely because those would make signup more attractive. If the email promises that invitees
+need no account, or that a preview exists before signup, require support for those claims.
+Otherwise preserve the unknowns and judge whether the supported feature earns the ask as
+`copy` or `argument`. Your material concerns guide research and human review; they are not
+automatic factual failures or an instruction to hide an otherwise usable draft.
+
 **Check the brief itself.** The brief is a plan, not evidence. Compare its central promise
 with the supplied evidence, including scope and conditions. If the draft faithfully repeats an
 unsupported promise, diagnose that overclaim and ask for a supported benefit or concrete test.
 Do not reward obedience to a weak brief or demand that a justified narrowing be reversed.
+The selected audience's job outranks a brief that drifted to an adjacent concern. A required
+format or output is not a claim that it is superior. Preserve a supported correction toward
+that job even if an earlier brief called the format off limits without factual grounds;
+do not confuse targeting with proof of this recipient's history or a promised outcome.
+An expanded discovery hypothesis can suggest a method; that does not make the method a
+requirement of the selected audience. Drop an optional method when its unresolved terms
+divert the email from the supported next step, rather than making the recipient read an
+internal evidence disclaimer about it.
+
+Check the complete causal chain: does the assigned capability address this particular problem,
+or merely belong to a tool category this audience uses? Free transport does not establish less
+maintenance or clearer ownership; collecting data does not establish a downstream result.
+However, a licensed operation on supplied data (export, download, embed or publish) is a
+product capability, not a promise that someone will supply useful data or that it will improve
+sales. Review its actual prerequisites and plan limits. Do not suppress documented output
+operations merely because response, quality or commercial outcomes remain unproven.
+If normalization removed an unobserved current alternative, its alleged failure cannot survive
+elsewhere in the draft. If a problem link was removed, do not reintroduce its benefit through
+the subject, mechanism, belief shift or CTA payoff. Preserve the useful documented function;
+diagnose a remaining weak argument instead of inventing a more dramatic problem to solve.
+
+For integrations, distinguish native/prebuilt connectors, generic automation modules and custom
+HTTP webhook endpoints. Check the exact source and route before requiring endpoint setup or
+promising no-code setup, redirects, response handling or delivery behavior. Do not merge their
+steps because they mention the same partner. This is a contextual review, not a new hard gate.
 
 **Brief drift.** Does this email argue the idea it was assigned, or a nearby, easier one? An
 email that reads beautifully and makes the wrong argument is the most expensive failure in a
@@ -158,6 +200,13 @@ could not say what it sells" means the promise is not on the page — name the p
 should have been. "They stopped at line four" identifies where attention was lost, not necessarily what to delete.
 Find whether the cause is repetition, confusion, missing context or an unanswered objection.
 A simulated doubt is diagnostic input, not an instruction to add every requested detail. Do not thank them for the feedback; act on it.
+Before declaring a requested product detail absent, check the index of existing licensed facts,
+not only the brief's original assigned evidence. Select up to six supporting_evidence_ids
+when they answer a material reader question; code will give their full citations and conditions
+to the rewrite. An index is a lookup aid, not a reason to add another angle or claim a result.
+When a shared obstacle has a supported answer there, prioritize that answer over cosmetic
+edits. A factual clarification of the same workflow does not require a new proposition or
+fresh research. Keep its conditions and campaign permissions; leave irrelevant wishes out.
 Evaluate the actual next step: a small trial can leave deployment questions for later. A
 one-document test does not claim that the product handles only one document. Do not invent a
 past failed purchase from a skeptical reading disposition. Disliking an offer or wanting more
@@ -258,6 +307,21 @@ independent defects already on the page; the loop will pivot or stop instead of 
 All three routing fields are required. A `ship` verdict must use `none` and an empty
 `strategy_gap`; a `copy` revision must have an empty `strategy_gap`; `argument` and
 `missing_material` must name the gap precisely.
+
+**research_question** — normally an empty string. For `revise` / `argument` only,
+you may name one specific factual question for official-source research when the
+current argument genuinely fails and an answer could supply a useful reason for
+the actual next step. For example, if the panel cannot evaluate a collection
+workflow without understanding the participant's submission steps, ask what the
+official documentation establishes about those steps. This remains an argument
+problem when the draft did not promise them; do not invent a factual violation.
+Prefer the supplied evidence first. Do not ask for generally stronger proof,
+testimonials, generic comparisons or marginal polish, or demand a preview before
+signup just because it would be attractive. Do not presume the answer or that a
+resource exists. The system can research once; only fetched, verified material
+may enter the next brief. A reader's desired answer is never product evidence.
+Leave this empty for `ship`, `copy`, or `missing_material` (whose dependency is
+already named in `strategy_gap`).
 
 **edits** — ranked, most damaging first, and **no more than five**. Each one quotes the `line` it
 is about, states the `problem` in a sentence, and says what the `fix` has to achieve without

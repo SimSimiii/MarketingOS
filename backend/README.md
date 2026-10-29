@@ -15,6 +15,19 @@ uvicorn app.main:app --reload
 
 API docs at http://localhost:8000/docs once running.
 
+### Optional rendering of public pages
+
+For sites whose public prices or article text require JavaScript, install
+`pip install -e ".[render]"`. Windows uses the installed Microsoft Edge; on Linux
+install Chromium with `python -m playwright install chromium` and its OS dependencies.
+This extra is deliberately absent from the default API/Lambda dependency set.
+Without a browser, incomplete sources retain explicit coverage gaps rather than
+supplying inferred prices. Each crawl permits at most two render attempts, each
+with a 35-second deadline and 32 admitted GET requests. A fresh context has no
+operator session; resources pass through the same public-address and redirect
+checks as ordinary ingestion. Forms, additional navigation and non-GET requests
+are blocked. No model call is added.
+
 ### Reproducible dependency sets
 
 `requirements.txt` locks the HTTP API dependencies including PostgreSQL and Stripe.

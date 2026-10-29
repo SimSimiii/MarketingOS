@@ -1,0 +1,37 @@
+{
+  "stage": "audience_map",
+  "verdict": "partial",
+  "segments": 7,
+  "selected_index": 0,
+  "selected_segment": "An EU or UK public sector web team that must publish analytics without a consent banner",
+  "strengths": [
+    "Concrete buyer/workflow/trigger, external source URLs, negative evidence and unknown population retained.",
+    "Public-sector usage independently confirmed on mygov.scot and gov.wales; coexistence with GA is real, so no guaranteed banner removal.",
+    "No paid-cloud purchase proven; map assessment explicitly retains self-host vs paid uncertainty."
+  ],
+  "defects": [
+    "Every segment has empty required_product_capabilities, leaving all compatibility unknown despite narrative supported-fit claims.",
+    "Narrative basis overstates all three public sites buying, while structured assessment retains only one observed use and uncertainty about purchase. GOV.WALES also explicitly names Plausible, so the one-user count is incomplete.",
+    "Narrative refers to absent SOC2/ISO/SLA rather than only unverified; absence in fetched sources is not proof of product absence.",
+    "Healthcare evidence is a trigger hypothesis, not customer/purchase proof.",
+    "Roughly 10m47s and 2 completed calls before any deep research; input/cache accounting needs care."
+  ],
+  "independent_checks": [
+    {
+      "url": "https://www.mygov.scot/cookies",
+      "observed": "Both Google Analytics and Plausible are declared; a performance-team contact is public."
+    },
+    {
+      "url": "https://www.gov.wales/details-about-cookies-govwales",
+      "observed": "Plausible, Google Analytics, Matomo and advertising tools coexist."
+    },
+    {
+      "url": "https://data.gov.scot/cookies/",
+      "observed": "Independent web tool returned403; do not claim independent verification of this page."
+    }
+  ],
+  "job_snapshot": "steps/20261018T053139502930Z-poll.json",
+  "full_map": "audience-map-full.json",
+  "next_action": "Research unchanged first audience; no evaluator source or claims supplied.",
+  "root_cause": "derive_capability_profile iterates fixed _EVIDENCE_DERIVATION_HINTS, currently agent-product vocabulary. For Plausible it derives only knowledge_base from HelpDocs integration E131 (third_party subject) and agent_api_keys from generic API rate limits E282, neither establishes those product capabilities. Relevant analytics/privacy facts E309/E324/E325 are not catalogued."
+}

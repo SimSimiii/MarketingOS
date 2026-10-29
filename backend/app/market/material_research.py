@@ -27,7 +27,7 @@ from app.ai.base import ResearchTool
 from app.ai.model_router import ModelTier
 from app.knowledge.artifacts import KnowledgeArtifacts
 from app.knowledge.corpus import Document, SourceCorpus, fold
-from app.knowledge.ledger import Evidence, EvidenceKind, EvidenceStrength
+from app.knowledge.ledger import Evidence, EvidenceContext, EvidenceKind, EvidenceStrength
 from app.market.audience_research import (
     FetchedSource,
     FixedURLFetcher,
@@ -86,6 +86,7 @@ class MaterialClaim(BaseModel):
     kind: EvidenceKind = EvidenceKind.INTEGRATION
     claim: str
     verbatim: str
+    context: EvidenceContext | None = None
 
     @field_validator("source_id", "claim", "verbatim")
     @classmethod
@@ -172,9 +173,13 @@ def existing_recovery(
     )
 
 
-def cited_recovery(*, gap: str, artifacts: KnowledgeArtifacts) -> MaterialRecovery | None:
+def cited_recovery(
+    *, gap: str, artifacts: KnowledgeArtifacts, evidence_ids: Sequence[str] = (),
+) -> MaterialRecovery | None:
     """Use exact verified facts cited by a critic to rebuild a weak argument."""
-    cited = list(dict.fromkeys(re.findall(r"\bR\d+\b", gap)))[:3]
+    cited = list(dict.fromkeys([
+        *evidence_ids, *re.findall(r"\bR\d+\b", gap),
+    ]))[:6 if evidence_ids else 3]
     evidence = [
         entry
         for evidence_id in cited
@@ -207,13 +212,19 @@ class MaterialResearcher:
         artifacts: KnowledgeArtifacts,
         reader: str,
         request: str,
+        identity_url: str | None = None,
     ) -> MaterialRecovery:
+        hosts = _identity_hosts(artifacts, identity_url)
+        if not hosts or all(host.endswith((".example", ".invalid", ".test")) for host in hosts):
+            return MaterialRecovery(gap=gap, note="Official company identity is not anchored to a public source domain; provide its website.")
         located = await self.locate(
             gap=gap,
             artifacts=artifacts,
             reader=reader,
             request=request,
+            identity_hosts=hosts,
         )
+        located = [source for source in located if _within_identity(source.url, hosts)]
         if not located:
             return MaterialRecovery(gap=gap, note="No official source URL was located.")
 
@@ -228,7 +239,8 @@ class MaterialResearcher:
                 for source in located
             ]
         )
-        official = [source for source in fetched.sources if _official_host(source.final_url)]
+        official = [source for source in fetched.sources
+                    if _official_host(source.final_url) and _within_identity(source.final_url, hosts)]
         if not official:
             return MaterialRecovery(
                 gap=gap,
@@ -254,6 +266,7 @@ class MaterialResearcher:
         artifacts: KnowledgeArtifacts,
         reader: str,
         request: str,
+        identity_hosts: set[str] | None = None,
     ) -> list[OfficialSource]:
         result = await self._session.structured(
             role=ROLE_ID,
@@ -267,6 +280,7 @@ class MaterialResearcher:
                 "campaign_request": request,
                 "gap": gap,
                 "limit": MAX_MATERIAL_URLS,
+                "identity_hosts": sorted(identity_hosts or _identity_hosts(artifacts)),
             },
             task=(
                 "Search now. Return only exact official product, integration or platform "
@@ -290,6 +304,7 @@ class MaterialResearcher:
                 break
         return kept
 
+
     async def synthesise(
         self, *, gap: str, sources: Sequence[FetchedSource]
     ) -> _MaterialDraft:
@@ -307,6 +322,31 @@ class MaterialResearcher:
             schema=_MaterialDraft,
             tools=[],
         )
+
+
+def _identity_hosts(artifacts: KnowledgeArtifacts, identity_url: str | None = None) -> set[str]:
+    # A company name cannot disambiguate an entity. Only already supplied
+    # product/integration origins can license new pages; recovered R facts
+    # cannot recursively bless a domain selected by the locating model.
+    urls = [identity_url] if identity_url else [
+        entry.source for entry in artifacts.evidence.entries
+        if entry.kind in {EvidenceKind.FEATURE, EvidenceKind.INTEGRATION}
+        and not re.fullmatch(r"R\d+", entry.id)
+    ]
+    return {host for url in urls if url and (host := _identity_host(url))}
+
+
+def _identity_host(url: str) -> str:
+    try:
+        parsed = urlsplit(url)
+        return (parsed.hostname or "").lower().removeprefix("www.") if parsed.scheme in {"http", "https"} else ""
+    except ValueError:
+        return ""
+
+
+def _within_identity(url: str, hosts: set[str]) -> bool:
+    host = _identity_host(url)
+    return bool(host) and any(host == known or host.endswith("." + known) for known in hosts)
 
 
 def verify_material(
@@ -352,6 +392,8 @@ def verify_material(
                 source=source.final_url,
                 document_id=f"auto:{source.content_hash[:20]}",
                 strength=EvidenceStrength.STRONG,
+                context=(proposed.context.model_copy(update={"verification": "quote_verified_in_material"})
+                         if proposed.context else None),
             )
         )
 

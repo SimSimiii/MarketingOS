@@ -32,7 +32,7 @@ from enum import StrEnum
 from pydantic import BaseModel, Field
 
 from app.market.claims import Claim, ClaimAxis, overlap
-from app.market.positioning import PositioningMap, Territory
+from app.market.positioning import AxisReading, PositioningMap, Territory
 from app.market.rivals import RivalProfile
 
 
@@ -148,27 +148,30 @@ def _territory_events(
     """
     if before.is_empty or after.is_empty:
         return []
-    was = {reading.axis: reading for reading in before.readings}
+    was = {_reading_key(reading): reading for reading in before.readings}
     events: list[RadarEvent] = []
 
     for reading in after.readings:
-        previous = was.get(reading.axis)
+        if not reading.ours:
+            continue
+        previous = was.get(_reading_key(reading))
         if previous is None or previous.territory is reading.territory:
             continue
         lost = _rank(reading.territory) > _rank(previous.territory)
+        label = reading.proposition or _axis_name(reading.axis)
         if lost:
             newcomers = sorted(set(reading.theirs) - set(previous.theirs))
             claim_verb = "claims" if len(newcomers) == 1 else "claim"
             events.append(
                 RadarEvent(
                     headline=(
-                        f"You no longer own {_axis_name(reading.axis)} on your own"
+                        f"Related captured claim found for {label}"
                         if reading.territory is Territory.CONTESTED
-                        else f"{_axis_name(reading.axis)} is now table stakes"
+                        else f"Equivalent captured claims recur for {label}"
                     ),
                     detail=(
                         (
-                            f"{', '.join(newcomers)} now {claim_verb} it too. "
+                            f"{', '.join(newcomers)} now {claim_verb} a related proposition. "
                             if newcomers
                             else ""
                         )
@@ -178,26 +181,41 @@ def _territory_events(
                     severity=RadarSeverity.ACTS_ON_COPY,
                     axis=reading.axis,
                     what_to_do=(
-                        "Any email leading on this claim is now an email your reader has "
-                        "had from somebody else. Lead on your open ground instead, or make "
-                        "this claim the only specific one in the field."
+                        "Inspect the quoted propositions and their scope before making "
+                        "a comparative claim. Related wording alone does not establish "
+                        "equivalence, superiority or the reader's previous experience."
                     ),
                 )
             )
         else:
             events.append(
                 RadarEvent(
-                    headline=f"{_axis_name(reading.axis)} opened up",
+                    headline=f"Fewer matching claims captured for {label}",
                     detail=(
                         f"you were {_territory_name(previous.territory)} here, you are now "
                         f"{_territory_name(reading.territory)}"
                     ),
                     severity=RadarSeverity.NOTABLE,
                     axis=reading.axis,
-                    what_to_do="This is worth leading an email on while it lasts.",
+                    what_to_do=(
+                        "Check which pages were read. A missing captured claim does not "
+                        "prove a capability disappeared or an exclusive advantage emerged."
+                    ),
                 )
             )
     return events
+
+
+def _reading_key(reading: AxisReading) -> tuple[ClaimAxis, str]:
+    """Several propositions can share an axis; never overwrite their history.
+
+    Claims supply the same identity for legacy readings without a proposition.
+    """
+    label = reading.proposition or "; ".join(claim.text for claim in reading.ours)
+    if not label:
+        label = "; ".join(sorted(claim.text for claims in reading.theirs.values()
+                                 for claim in claims))
+    return reading.axis, _normalized(label)
 
 
 def _proof_events(previous: MarketSnapshot, current: MarketSnapshot) -> list[RadarEvent]:
@@ -214,8 +232,9 @@ def _proof_events(previous: MarketSnapshot, current: MarketSnapshot) -> list[Rad
                 ),
                 severity=RadarSeverity.ACTS_ON_COPY,
                 what_to_do=(
-                    "Three customer names and one sentence each is an afternoon's work and "
-                    "it is the largest single gap between your copy and theirs."
+                    "Review whether their customer evidence supports the intended outcome. "
+                    "Add relevant authorised evidence if available. Documented functional "
+                    "claims do not require a testimonial."
                 ),
             )
         ]
@@ -315,10 +334,10 @@ def _normalized(text: str) -> str:
 #: middle of a feed row is the machine's vocabulary leaking into the product.
 _AXIS_NAMES: dict[ClaimAxis, str] = {ClaimAxis.BREADTH: "coverage"}
 _TERRITORY_NAMES: dict[Territory, str] = {
-    Territory.OPEN: "alone on it",
-    Territory.CONTESTED: "contested",
-    Territory.TABLE_STAKES: "table stakes",
-    Territory.EXPOSED: "not claiming it",
+    Territory.OPEN: "no equivalent captured",
+    Territory.CONTESTED: "related propositions captured",
+    Territory.TABLE_STAKES: "equivalent propositions recur",
+    Territory.EXPOSED: "no match in our captured material",
 }
 
 

@@ -18,7 +18,11 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 
 from app.knowledge.corpus import fold
-from app.knowledge.ledger import Evidence, EvidenceLedger
+from app.knowledge.ledger import Evidence, EvidenceKind, EvidenceLedger, category_of
+from app.knowledge.product_scope import is_product_subject
+from app.knowledge.taxonomy import FactCategory
+
+DERIVATION_VERSION = 3
 
 
 class CapabilityState(StrEnum):
@@ -59,6 +63,7 @@ class ProductCapability(BaseModel):
     #: two readings of an empty list, and only the second is a mistake somebody
     #: needs to go and fix. Recomputed on every normalisation; never input.
     unlicensed_evidence_ids: list[str] = Field(default_factory=list)
+    origin: str = "maintained"
 
 
 class ProductClaim(BaseModel):
@@ -88,6 +93,7 @@ class ProductCapabilityProfile(BaseModel):
     knowledge_id: UUID
     knowledge_version: int
     ledger_fingerprint: str = ""
+    derivation_version: int = 0
     capabilities: list[ProductCapability] = Field(default_factory=list)
     constraints: list[ScopeBoundary] = Field(default_factory=list)
     claims: list[ProductClaim] = Field(default_factory=list)
@@ -113,6 +119,16 @@ class ProductCapabilityProfile(BaseModel):
             }
             for item in self.capabilities
         ]
+
+    def discovery_context(self) -> dict:
+        """Product-specific catalogue, without duplicating the whole claim ledger."""
+        return {"capabilities": [
+                    {"id": item.id, "label": item.label, "state": str(item.state),
+                     **({"scope": item.description} if item.description else {}),
+                     **({"aliases": item.aliases} if item.aliases else {}),
+                     **({"note": item.note} if item.state is not CapabilityState.VERIFIED else {})}
+                    for item in self.capabilities],
+                "constraints": [item.model_dump(mode="json") for item in self.constraints]}
 
     @property
     def allowed_claims(self) -> list[ProductClaim]:
@@ -166,7 +182,7 @@ _EVIDENCE_DERIVATION_HINTS: dict[str, tuple[str, tuple[str, ...]]] = {
     ),
     "agent_api_keys": (
         "Per-agent API keys and usage caps",
-        (r"\bper[- ]agent api keys?\b", r"\busage caps?\b", r"\brate limits?\b"),
+        (r"\bper[- ]agent api keys?\b", r"\bagent (?:usage caps?|rate limits?)\b"),
     ),
     "run_history_analytics": (
         "Agent run history and analytics",
@@ -238,12 +254,12 @@ def capability_patterns(capability: ProductCapability) -> tuple[str, ...]:
         cleaned = re.sub(r"[^a-z0-9]+", " ", phrase.casefold()).strip()
         if not cleaned:
             continue
-        if " " in cleaned or len(cleaned) > 3 and cleaned not in _GENERIC_TERMS:
+        if " " in cleaned or (len(cleaned) > 3 and cleaned not in _GENERIC_TERMS):
             terms.append(cleaned)
     return tuple(rf"\b{re.escape(term)}\b" for term in dict.fromkeys(terms))
 
 
-def licenses(entry: Evidence, capability: ProductCapability) -> bool:
+def licenses(entry: Evidence, capability: ProductCapability, *, company_name: str = "") -> bool:
     """Whether this ledger fact is about this capability at all.
 
     The check the editor never had. A capability's state decides whether a
@@ -252,7 +268,47 @@ def licenses(entry: Evidence, capability: ProductCapability) -> bool:
     the attached evidence id existed somewhere in the ledger - so a fact about
     uptime could license guardrails, and did.
     """
+    if capability.id.startswith("fact_"):
+        return (capability.id == _fact_id(entry) and capability.label == entry.claim
+                and _product_fact(entry, company_name=company_name))
+    if entry.context and entry.context.source_kind in {"third_party", "vendor_comparison"}:
+        return False
+    if category_of(entry) in {FactCategory.COMPANY, FactCategory.MARKET, FactCategory.BRAND,
+                              FactCategory.PROOF, FactCategory.COMMERCIAL}:
+        return False
+    if entry.context and (
+        entry.context.claim_scope not in {"", "unknown", "capability"}
+        or (company_name and entry.context.subject
+            and not is_product_subject(entry.context.subject, company_name))
+    ):
+        return False
     return _matches(entry, capability_patterns(capability))
+
+
+def _fact_id(entry: Evidence) -> str:
+    identity = f"{fold(entry.claim)}\n{fold(entry.verbatim)}"
+    return "fact_" + hashlib.sha256(identity.encode("utf-8")).hexdigest()[:16]
+
+
+def _product_fact(entry: Evidence, *, company_name: str = "") -> bool:
+    """Retain the actual scoped fact; never generalise a keyword into a feature."""
+    if entry.kind not in {EvidenceKind.FEATURE, EvidenceKind.GUARANTEE, EvidenceKind.INTEGRATION}:
+        return False
+    context = entry.context
+    if (context is None or context.claim_scope != "capability" or not context.subject.strip()
+            or context.source_kind in {"third_party", "vendor_comparison", "customer_statement"}
+            or category_of(entry) in {FactCategory.COMPANY, FactCategory.MARKET,
+                                      FactCategory.BRAND, FactCategory.PROOF,
+                                      FactCategory.COMMERCIAL}):
+        return False
+    # A mention of our product inside a third party's workflow does not
+    # establish that we own that workflow. The asserted subject must be ours.
+    if company_name and not is_product_subject(context.subject, company_name):
+        return False
+    return len(fold(entry.verbatim)) >= 12 and not re.search(
+        r"\b(?:not supported|unsupported|not available|does not support|do not support|"
+        r"coming soon|roadmap|planned)\b", fold(entry.verbatim)
+    )
 
 
 def normalize_code(value: str) -> str:
@@ -265,10 +321,13 @@ def derive_capability_profile(
     knowledge_id: UUID,
     knowledge_version: int,
     previous: ProductCapabilityProfile | None = None,
+    company_name: str = "",
 ) -> ProductCapabilityProfile:
     """Create a conservative deterministic profile from the current ledger.
 
-    Only positively evidenced catalogue entries are introduced automatically.
+    Each derived entry preserves one product-specific ledger assertion and its
+    scope. Domain vocabulary is used only to validate maintained legacy IDs,
+    never to turn a keyword match into a broader capability automatically.
     Unsupported and unknown boundaries are product truth supplied in an
     existing/user-maintained profile; absence of evidence never manufactures
     either state. When knowledge changes, the previous product-specific
@@ -276,18 +335,27 @@ def derive_capability_profile(
     a universal catalogue.
     """
     capabilities: list[ProductCapability] = []
-    for capability_id, (label, patterns) in _EVIDENCE_DERIVATION_HINTS.items():
-        matched = [entry for entry in ledger.entries if _matches(entry, patterns)]
-        if not matched:
+    seen: set[str] = set()
+    for entry in ledger.entries:
+        if not _product_fact(entry, company_name=company_name) or _fact_id(entry) in seen:
             continue
+        seen.add(_fact_id(entry))
+        scope = entry.context
+        context = "; ".join(filter(None, (
+            f"Source: {scope.source_kind}" if scope else "Scope not documented.",
+            f"Subject: {scope.subject}" if scope and scope.subject else "",
+            scope.conditions if scope else "", scope.temporal_scope if scope else "",
+            scope.limitations if scope else "",
+        )))
         capabilities.append(
             ProductCapability(
-                id=capability_id,
-                label=label,
-                description=label,
+                id=_fact_id(entry),
+                label=entry.claim,
+                description=context,
                 state=CapabilityState.VERIFIED,
-                evidence=[_capability_evidence(entry) for entry in matched],
-                note="Verified by the current Evidence Ledger.",
+                evidence=[_capability_evidence(entry)],
+                note="Atomic product fact from the current Evidence Ledger; preserve its scope.",
+                origin="derived",
             )
         )
 
@@ -295,7 +363,12 @@ def derive_capability_profile(
     if previous is not None:
         refreshed = normalize_capability_profile(
             CapabilityProfileDraft(
-                capabilities=previous.capabilities,
+                capabilities=[item for item in previous.capabilities if item.origin != "derived"
+                              and not (previous.derivation_version == 0
+                                       and item.state != CapabilityState.UNSUPPORTED
+                                       and item.id in _EVIDENCE_DERIVATION_HINTS
+                                       and item.note.replace(UNLICENSED_NOTE, "").strip()
+                                       == "Verified by the current Evidence Ledger.")],
                 constraints=previous.constraints,
                 claims=previous.claims,
             ),
@@ -303,6 +376,7 @@ def derive_capability_profile(
             knowledge_id=knowledge_id,
             knowledge_version=knowledge_version,
             version=previous.version + 1,
+            company_name=company_name,
         )
         by_capability_id = {item.id: item for item in refreshed.capabilities}
         for item in capabilities:
@@ -332,6 +406,7 @@ def derive_capability_profile(
         knowledge_id=knowledge_id,
         knowledge_version=knowledge_version,
         ledger_fingerprint=capability_ledger_fingerprint(ledger),
+        derivation_version=DERIVATION_VERSION,
         capabilities=capabilities,
         constraints=constraints,
         claims=claims,
@@ -345,6 +420,7 @@ def normalize_capability_profile(
     knowledge_id: UUID,
     knowledge_version: int,
     version: int = 1,
+    company_name: str = "",
 ) -> ProductCapabilityProfile:
     """Resolve positive support and customer claims against the current ledger."""
     by_id = {entry.id: entry for entry in ledger.entries}
@@ -363,7 +439,9 @@ def normalize_capability_profile(
         licensed: list[str] = []
         unlicensed: list[str] = list(proposed.unlicensed_evidence_ids)
         for item in dict.fromkeys(evidence_ids):
-            target = licensed if item in by_id and licenses(by_id[item], proposed) else unlicensed
+            target = licensed if item in by_id and licenses(
+                by_id[item], proposed, company_name=company_name
+            ) else unlicensed
             target.append(item)
         unlicensed = [item for item in dict.fromkeys(unlicensed) if item not in licensed]
         evidence = [_capability_evidence(by_id[item]) for item in licensed]
@@ -388,6 +466,7 @@ def normalize_capability_profile(
                 ),
                 customer_copy_visibility=proposed.customer_copy_visibility,
                 note=note,
+                origin=proposed.origin,
             )
         )
 
@@ -405,6 +484,7 @@ def normalize_capability_profile(
         knowledge_id=knowledge_id,
         knowledge_version=knowledge_version,
         ledger_fingerprint=capability_ledger_fingerprint(ledger),
+        derivation_version=getattr(draft, "derivation_version", DERIVATION_VERSION),
         capabilities=capabilities,
         constraints=[item for item in draft.constraints if item.statement.strip()],
         claims=claims,
@@ -415,14 +495,18 @@ def capability_ledger_fingerprint(ledger: EvidenceLedger) -> str:
     payload = [
         {
             "id": item.id,
+            "kind": str(item.kind),
             "claim": item.claim,
             "verbatim": item.verbatim,
             "source": item.source,
             "document_id": item.document_id,
+            "context": item.context.model_dump(mode="json") if item.context else None,
+            "source_references": item.source_references,
         }
-        for item in ledger.entries
+        for item in sorted(ledger.entries, key=lambda item: item.id)
     ]
-    encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")
+    encoded = json.dumps({"derivation": DERIVATION_VERSION, "ledger": payload},
+                         ensure_ascii=False, sort_keys=True).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
 
 

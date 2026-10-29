@@ -5,6 +5,28 @@ extraction, not analysis: everything you report has to be on the pages below.
 
 {{ name }} - {{ url }}
 
+## Discovery hypothesis to reconsider, not repeat as fact
+
+{{ discovery_reason }}
+
+## Our product's source-backed facts
+
+{{ our_context }}
+
+If both sides support a useful reason to compare, put it in `why`, citing the exact
+page URLs in `why_sources` and our fact IDs in `our_evidence_ids`. Include at least
+one of their pages supporting a verified claim. Our page URLs are also allowed,
+but only when they are the sources of the cited `our_evidence_ids`. It remains an
+interpretation with verified references, not a proven purchase preference. Reconcile
+the discovery hypothesis with these pages: never claim our product lacks a feature
+merely because it was not selected. A rival listing funnels, for example, does not
+establish that our product lacks funnels or that buyers have outgrown it.
+For EITHER product, a quoted price keeps its plan, volume tier, billing period,
+seat/site allowance and conditions. Never describe a usage-tiered plan as flat or
+fixed, and never treat a starting price as the price for every volume or feature.
+Keep `why` to at most three sentences stating the documented overlap or difference;
+do not invent buyer preferences. Leave it empty when references cannot support it.
+
 # Their pages
 
 {{ material }}
@@ -41,6 +63,15 @@ Every distinct thing they assert about their product. For each one:
   checked automatically against the pages above, and a claim whose quote is not really there
   is discarded - so copy, never paraphrase, and never tidy up their punctuation.
 - **source** - the URL of the page it is on, from the `###` heading above it.
+  The quote is checked against this exact page; a quote on a different page does not count.
+- **context** - preserve `subject`, `source_kind`, `claim_scope`, `conditions`,
+  `temporal_scope` and `limitations`. Unknown stays unknown. On a comparison page,
+  distinguish the profiled company's capability from its assertions about a rival. Record
+  the latter with the rival as subject and `source_kind` `vendor_comparison`; they are not
+  independently verified rival facts. A plan's price does not price every included feature.
+  Keep currency, billing period, per-seat/unit basis, plan and annual-payment terms. Do not
+  convert documented functions into customer outcomes, individual results into universal
+  promises, or undated “new” copy into a recent launch.
 - **specific** - true when the claim carries something a reader could check: a figure, a named
   limit, a named integration, a named customer. False when it is an assertion: "the fastest",
   "enterprise-grade", "built for scale".
@@ -74,6 +105,12 @@ A logo wall with no names attached is not proof; record it as a claim on the `pr
 instead, with the verbatim heading above it.
 
 # Rules
+
+Any price mentioned in the comparison hypothesis must name its plan and billing basis.
+Do not imply a complete price range by selecting a subset of paid plans. An entry plan
+is not absent just because your comparison focuses on higher tiers. Do not synthesize
+a numeric range unless the quoted page itself states that range; prefer individual,
+named plan prices. Revenue, sales and customer savings belong to proof, not price.
 
 Report nothing that is not on these pages. You are not being asked what you know about this
 company - you are being asked what these pages say, and where they say it. Every verbatim is

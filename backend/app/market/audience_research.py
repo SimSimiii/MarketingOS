@@ -25,6 +25,7 @@ from app.ai.base import ResearchTool
 from app.ai.model_router import ModelTier
 from app.core.public_http import PublicTransport
 from app.ingestion.loaders.html_extract import extract_content
+from app.ingestion.loaders.public_content import is_access_wall
 from app.knowledge.artifacts import Grounding, Sophistication
 from app.knowledge.corpus import fold
 from app.market.demand import AudienceSegment, audience_fingerprint
@@ -94,6 +95,7 @@ class FetchedSource(BaseModel):
     venue: str = ""
     fetched_at: datetime
     published_date: date | None = None
+    publication_date_basis: str = "unknown"
     content_hash: str
     content: str
 
@@ -117,6 +119,7 @@ class SourceReference(BaseModel):
     venue: str = ""
     fetched_at: datetime
     published_date: date | None = None
+    publication_date_basis: str = "unknown"
     content_hash: str
 
 
@@ -140,6 +143,8 @@ class AudienceProblem(BaseModel):
     corroboration: int = 0
     cost: str = ""
     cost_evidence: EvidenceReference | None = None
+    source_count: int = 0
+    review_notes: list[str] = Field(default_factory=list)
 
 
 class BuyerPhrase(BaseModel):
@@ -180,6 +185,7 @@ class AudienceResearch(BaseModel):
     where: list[SourcedObservation] = Field(default_factory=list)
     sources: list[SourceReference] = Field(default_factory=list)
     dropped_claims: int = 0
+    interpretation_warnings: list[str] = Field(default_factory=list)
     researched_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
@@ -374,9 +380,14 @@ class FixedURLFetcher:
             title, _, content = extract_content(text)
         else:
             content = text.strip()
+        if is_access_wall(title, content):
+            raise ValueError("Page requires access verification; no audience text was read")
         if len(content) < _MIN_CONTENT_CHARS:
             raise ValueError("Page returned no useful readable text")
         fetched_at = datetime.now(UTC)
+        from app.market.source_dates import publication_date
+
+        published_date, date_basis = publication_date(text, final_url, fetched_at.date())
         return FetchedSource(
             requested_url=requested,
             final_url=final_url,
@@ -384,6 +395,8 @@ class FixedURLFetcher:
             tier=source.tier,
             venue=source.venue,
             fetched_at=fetched_at,
+            published_date=published_date,
+            publication_date_basis=date_basis,
             content_hash=hashlib.sha256(content.encode("utf-8")).hexdigest(),
             content=content,
         )
@@ -409,6 +422,17 @@ class AudienceResearcher:
         located = await self.locate(segment)
         progress(f"Fetching up to {min(len(located), MAX_ATTEMPTED_URLS)} exact source URLs")
         fetched = await self._fetcher.fetch(located)
+        _report_fetch_failures(fetched.failures, progress)
+        if not fetched.sources and fetched.failures:
+            # One fresh search may find a public alternative to an unreadable
+            # forum or access wall. Never retry its subdomains or solve its
+            # challenge, and never loop on empty source discovery.
+            unavailable = {_source_host(item.url) for item in fetched.failures} - {""}
+            progress("No readable sources; searching once for public alternatives on other hosts")
+            alternatives = await self.locate(segment, unavailable_hosts=unavailable)
+            recovered = await self._fetcher.fetch(alternatives)
+            _report_fetch_failures(recovered.failures, progress)
+            fetched = FetchResult(sources=recovered.sources, failures=[*fetched.failures, *recovered.failures])
         if not fetched.sources:
             detail = f" ({len(fetched.failures)} URL(s) failed)" if fetched.failures else ""
             raise AudienceResearchError(
@@ -420,6 +444,15 @@ class AudienceResearcher:
         )
         draft, references = await self.synthesise(segment, fetched.sources)
         verified = verify_research(segment, draft, fetched.sources, references)
+        if not any((verified.situation, verified.incumbent_behaviour, verified.sophistication_basis,
+                    verified.problems, verified.buyer_phrases, verified.triggers,
+                    verified.desired_outcomes, verified.signals, verified.where)):
+            raise AudienceResearchError("The readable sources produced no verified audience observations; no research was saved")
+        if fetched.failures:
+            verified.interpretation_warnings.append(
+                f"Source coverage is partial: {len(fetched.sources)} readable page(s), "
+                f"{len(fetched.failures)} unavailable URL(s). Findings cover only the pages read."
+            )
         progress(
             f"Verified {len(verified.problems)} problem(s) and "
             f"{len(verified.buyer_phrases)} buyer phrase(s); "
@@ -427,7 +460,9 @@ class AudienceResearcher:
         )
         return verified
 
-    async def locate(self, segment: AudienceSegment) -> list[LocatedSource]:
+    async def locate(
+        self, segment: AudienceSegment, *, unavailable_hosts: set[str] | None = None,
+    ) -> list[LocatedSource]:
         answer = await self._session.structured(
             role=ROLE_ID,
             tier=ModelTier.BALANCED,
@@ -437,11 +472,26 @@ class AudienceResearcher:
                 "Search the web now and return exact public URLs where this audience speaks "
                 "or leaves observable behavioural evidence. Locate sources only; do not "
                 "summarise snippets as findings."
+                + (" Previously attempted hosts returned no readable text: "
+                   + ", ".join(sorted(unavailable_hosts))
+                   + ". Find other public source hosts. Do not use these hosts or their subdomains, "
+                   "authenticate, or try to bypass an access restriction."
+                   if unavailable_hosts else "")
             ),
             schema=_LocatedSources,
             tools=[ResearchTool.WEB_SEARCH],
         )
-        return bounded_sources(answer.sources)
+        located = bounded_sources(answer.sources)
+        classified = {_canonical_url(item.url): item for item in located}
+        # Reuse discovery leads, never its assertions. Every page is fetched
+        # afresh and an unclassified lead remains interpretation-tier evidence.
+        seeds = [classified.get(_canonical_url(item.url), item)
+                 for item in _map_source_leads(segment)]
+        return bounded_sources([
+            item for item in [*seeds, *located]
+            if not any(_source_host(item.url) == host or _source_host(item.url).endswith("." + host)
+                       for host in unavailable_hosts or set())
+        ])
 
     async def synthesise(
         self, segment: AudienceSegment, fetched: Sequence[FetchedSource]
@@ -465,18 +515,49 @@ class AudienceResearcher:
         return draft, references
 
 
+def _report_fetch_failures(failures: Sequence[FetchFailure], progress: Callable[[str], None]) -> None:
+    def public_path(value: str) -> str:
+        try:
+            parsed = urlsplit(value.rstrip(".,;)'\""))
+            return urlunsplit((parsed.scheme, parsed.hostname or "invalid-host", parsed.path, "", ""))
+        except ValueError:
+            return "invalid-public-url"
+    for failure in failures[:MAX_ATTEMPTED_URLS]:
+        error = re.sub(r"https?://[^\s<>]+", lambda match: public_path(match[0]), failure.error)
+        progress(f"Unreadable source: {public_path(failure.url)} — {error[:200]}")
+
+
+def _source_host(url: str) -> str:
+    try:
+        return (urlsplit(url).hostname or "").lower().removeprefix("www.")
+    except ValueError:
+        return ""
+
+
 def _candidate_context(segment: AudienceSegment) -> str:
     """Discovery handles only: deliberately no fit, product bridge, angle, or objection."""
     return (
         f"Name: {segment.name}\n"
         f"Kind: {segment.kind}\n"
-        f"Situation hypothesis: {segment.who or 'not stated'}\n"
+        f"Organization hypothesis: {segment.organization or 'not stated'}\n"
+        f"Situation hypothesis: {segment.workflow or segment.who or 'not stated'}\n"
+        f"Need hypothesis to test, not assume: {segment.need or 'not stated'}\n"
         f"Possible trigger: {segment.trigger or 'not stated'}\n"
         "Observable signals:\n"
         + ("\n".join(f"- {item}" for item in segment.signals) or "- none")
         + "\nPlaces already named:\n"
         + ("\n".join(f"- {item}" for item in segment.where) or "- none")
+        + "\nPreviously located source leads (recheck relevance and voice tier):\n"
+        + ("\n".join(f"- {item.url}" for item in _map_source_leads(segment)) or "- none")
     )
+
+
+def _map_source_leads(segment: AudienceSegment) -> list[LocatedSource]:
+    return bounded_sources([
+        LocatedSource(url=item.url, reason="Previously located map lead; re-fetch and reclassify.")
+        for item in segment.assessment.evidence
+        if item.kind in {"need", "counterevidence"}
+    ], limit=2)
 
 
 def _corpus(
@@ -498,6 +579,7 @@ def _corpus(
                 venue=source.venue,
                 fetched_at=source.fetched_at,
                 published_date=source.published_date,
+                publication_date_basis=source.publication_date_basis,
                 content_hash=source.content_hash,
             )
         )
@@ -507,7 +589,8 @@ def _corpus(
         budget -= len(body)
         parts.append(
             f'<source id="{source_id}" tier="{int(source.tier)}" '
-            f'url="{source.final_url}">\n{body}\n</source>'
+            f'url="{source.final_url}" published_date="{source.published_date or "unknown"}" '
+            f'date_basis="{source.publication_date_basis}">\n{body}\n</source>'
         )
     return "\n\n".join(parts), references
 
@@ -572,7 +655,7 @@ def verify_research(
             dropped += 1
             return None
         tiers = {by_id[ref.source_id][0].tier for ref in kept}
-        if tiers == {SourceTier.INTERPRETATION}:
+        if tiers == {SourceTier.INTERPRETATION} or item.inference_basis.strip():
             if not item.inference_basis.strip():
                 dropped += 1
                 return None
@@ -653,7 +736,7 @@ def verify_research(
         sophistication = None
         dropped += 1
 
-    return AudienceResearch(
+    return review_research_interpretations(AudienceResearch(
         audience_name=segment.name,
         audience_fingerprint=audience_fingerprint(segment),
         candidate_kind=str(segment.kind),
@@ -670,7 +753,170 @@ def verify_research(
         where=observations(draft.where),
         sources=list(references),
         dropped_claims=dropped,
+    ))
+
+
+def review_research_interpretations(research: AudienceResearch) -> AudienceResearch:
+    """Downgrade clear directional reversals without claiming entailment.
+
+    Quotation presence was verified elsewhere. This bounded, free check keeps
+    the quotation inspectable while preventing an opposite interpretation
+    from being presented as grounded. It also works on stored research, with
+    no refetch or model call and without modifying historical payloads.
+    """
+    reviewed = research.model_copy(deep=True)
+    reversal_prefixes = (
+        "Review required: this problem may reverse the cited source's meaning.",
+        "Review required: this interpretation may reverse the cited source's meaning.",
     )
+    warnings = [warning for warning in reviewed.interpretation_warnings
+                if not warning.startswith(reversal_prefixes)]
+    from app.market.source_dates import date_from_url
+
+    for source in reviewed.sources:
+        if source.published_date is None:
+            source.published_date = date_from_url(source.final_url, reviewed.researched_at.date())
+            if source.published_date:
+                source.publication_date_basis = "dated_url"
+    sources = {source.id: source for source in reviewed.sources}
+
+    def temporal(refs: list[EvidenceReference]) -> list[str]:
+        used = [sources[ref.source_id] for ref in refs if ref.source_id in sources]
+        dates = sorted({source.published_date for source in used if source.published_date})
+        notes: list[str] = []
+        retrospective_years = {}
+        for source in used:
+            match = re.search(r"\b(20\d{2})\s+(?:in\s+review|retro(?:spective)?|recap)\b",
+                              source.title, re.IGNORECASE)
+            if match and reviewed.researched_at.year - int(match.group(1)) > 2:
+                retrospective_years[source.id] = match.group(1)
+        if used and all((source.published_date and
+                         (reviewed.researched_at.date() - source.published_date).days > 730)
+                        or source.id in retrospective_years for source in used):
+            labels = [str(value) for value in dates]
+            labels += ["retrospective content " + year for year in sorted(set(retrospective_years.values()))]
+            notes.append("Historical sources (" + ", ".join(labels)
+                         + "); present applicability is not corroborated.")
+        if used and len(dates) == 0:
+            notes.append("Publication date unknown; retrieval today does not establish current applicability.")
+        return notes
+
+    def observation(item: SourcedObservation | None) -> None:
+        if item is None:
+            return
+        item.inference_basis = item.inference_basis.replace(reversal_prefixes[1], "").strip("; ")
+        notes = temporal(item.evidence)
+        if notes:
+            for note in notes:
+                if note not in item.inference_basis:
+                    item.inference_basis = "; ".join(filter(None, [item.inference_basis, note]))
+            if any(note.startswith("Historical") for note in notes):
+                item.grounding = Grounding.INFERRED
+            warnings.extend(f"{note} {item.text}" for note in notes)
+        if not interpretation_reversal(item.text, item.evidence):
+            return
+        note = "Review required: this interpretation may reverse the cited source's meaning."
+        item.grounding = Grounding.INFERRED
+        if note not in item.inference_basis:
+            item.inference_basis = "; ".join(filter(None, (item.inference_basis, note)))
+        warnings.append(f"{note} {item.text}")
+
+    for item in (reviewed.situation, reviewed.sophistication_basis):
+        observation(item)
+    for items in (reviewed.incumbent_behaviour, reviewed.triggers, reviewed.desired_outcomes,
+                  reviewed.signals, reviewed.where):
+        for item in items:
+            observation(item)
+    for problem in reviewed.problems:
+        used = {ref.source_id for ref in problem.evidence if ref.source_id in sources}
+        # Copies of the same fetched text on different hosts are one source.
+        unique = {sources[key].content_hash or sources[key].final_url for key in used}
+        problem.source_count = len(unique)
+        domains = {_normalized_domain(sources[key].final_url) for key in used}
+        problem.corroboration = min(problem.corroboration, len(domains), len(unique))
+        notes = temporal(problem.evidence)
+        if any(note.startswith("Historical") for note in notes):
+            problem.grounding = Grounding.INFERRED
+        if problem.source_count == 1:
+            notes.append("Single-source problem; independent corroboration is not established.")
+        # These fields are computed review metadata, not model attestations.
+        problem.review_notes = list(dict.fromkeys(notes))
+        warnings.extend(f"{problem.id}: {note}" for note in notes)
+        if interpretation_reversal(problem.statement, problem.evidence):
+            problem.grounding = Grounding.INFERRED
+            problem.corroboration = 0
+            warnings.append(
+                "Review required: this problem may reverse the cited source's meaning. "
+                + problem.statement
+            )
+    problem_sources = {sources[ref.source_id].content_hash or sources[ref.source_id].final_url
+                       for problem in reviewed.problems for ref in problem.evidence
+                       if ref.source_id in sources}
+    if len(reviewed.problems) > 1 and len(problem_sources) == 1:
+        warnings.append(f"All {len(reviewed.problems)} problems rely on one source; problem count is not corroboration.")
+    reviewed.interpretation_warnings = list(dict.fromkeys(warnings))
+    return reviewed
+
+
+_INTERPRETATION_DIRECTIONS = (
+    (r"\b(?:easier|easy|simpler|simplif\w*|straightforward|moins complexe|plus simple)\b",
+     r"\b(?:complicat\w*|harder|difficult\w*|more complex|complexif\w*|plus complexe|plus difficile)\b"),
+    (r"\b(?:increas\w*|higher|rises?|rising|augment\w*)\b",
+     r"\b(?:decreas\w*|reduc\w*|lower|falls?|falling|diminu\w*)\b"),
+)
+_INTERPRETATION_STOPWORDS = frozenset({
+    "the", "this", "that", "with", "from", "their", "they", "our", "your", "and", "for",
+    "make", "makes", "making", "are", "was", "were", "have", "has", "can", "will", "been",
+    "its", "plus", "moins", "les", "des", "une", "dans", "avec", "est", "sont", "pour",
+})
+
+
+def interpretation_reversal(text: str, evidence: Sequence[EvidenceReference]) -> bool:
+    """Only opposing direction with shared topical anchors triggers review.
+
+    A mixed interpretation needs support for each direction it adds. Negated
+    directions remain uncertain. This is not general semantic validation and
+    never certifies a statement as entailed.
+    """
+    # A consequence can describe a different object (a complex incumbent
+    # pushing buyers toward simpler alternatives). Do not attribute the
+    # consequence's direction to the incumbent's topical anchors.
+    clauses = re.split(r",\s+(?=(?:pushing|prompting|driving|leading)\b)", text, flags=re.IGNORECASE)
+    if len(clauses) > 1:
+        return any(interpretation_reversal(clause, evidence) for clause in clauses)
+    proposed = fold(text)
+    for positive, negative in _INTERPRETATION_DIRECTIONS:
+        pattern = f"(?:{positive})|(?:{negative})"
+
+        def directions(value: str, combined: str = pattern, positive_pattern: str = positive) -> set[int]:
+            signs: set[int] = set()
+            for match in re.finditer(combined, value):
+                if re.search(r"\b(?:not|no|never|ne|pas|sans)\b", value[max(0, match.start() - 22):match.start()]):
+                    continue
+                signs.add(1 if re.fullmatch(positive_pattern, match.group(0)) else -1)
+            return signs
+
+        proposed_directions = directions(proposed)
+        if not proposed_directions:
+            continue
+        meaningful = _interpretation_topics(re.sub(pattern, " ", proposed))
+        quotes = [fold(item.quote) for item in evidence]
+        supported_directions: set[int] = set()
+        for quote in quotes:
+            anchors = _interpretation_topics(re.sub(pattern, " ", quote))
+            if len(meaningful & anchors) >= 2:
+                supported_directions.update(directions(quote))
+        if any(-direction in supported_directions and direction not in supported_directions
+               for direction in proposed_directions):
+            return True
+    return False
+
+
+def _interpretation_topics(text: str) -> set[str]:
+    # Minimal inflection folding lets "handling" and "handle", or
+    # "modules" and "module", anchor the same topic without an NLP layer.
+    words = set(re.findall(r"[^\W\d_]{3,}", text)) - _INTERPRETATION_STOPWORDS
+    return {re.sub(r"(?:ing|ed|s)$", "", word).rstrip("e") for word in words}
 
 
 def _normalized_domain(url: str) -> str:

@@ -72,8 +72,12 @@ class MarketScanner:
         if discover:
             say("discover", "Searching for who this buyer is really deciding between")
             found = await self._scout.discover(
-                artifacts.business, known=[lead.name for lead in leads]
+                artifacts.business, known=[lead.name for lead in leads],
+                public_page_requests={item.name: item.url for item in previous.rivals
+                                      if not item.verified and item.url} if previous else {},
             )
+            leads = [lead.model_copy(update={"public_urls": found.public_pages.get(lead.name, lead.public_urls)[:2]})
+                     for lead in leads]
             existing = {lead.name.strip().lower() for lead in leads}
             discovered = [
                 lead
@@ -99,7 +103,8 @@ class MarketScanner:
             )
 
         say("profile", f"Reading {len(leads)} competitor site(s)")
-        profiles = await self._scout.profile_all(leads)
+        profiles = await self._scout.profile_all(leads, artifacts=artifacts,
+                                                 previous=previous.rivals if previous else [])
         readable = [profile for profile in profiles if profile.verified]
         say(
             "profile",
@@ -111,6 +116,8 @@ class MarketScanner:
                 f"{len(unread)} competitor site(s) could not be read: "
                 + ", ".join(profile.name for profile in unread)
             )
+        if reused := sum(profile.reused for profile in profiles):
+            notes.append(f"{reused} unchanged source capture(s) reused; no extraction model call bought for them.")
 
         say("position", "Working out what only this company can say")
         ours = positioning_module.claims_from_knowledge(artifacts)

@@ -1,0 +1,146 @@
+{
+  "status": "degraded",
+  "abort_reason": null,
+  "report": {
+    "request": "Write exactly one onboarding email helping a new account connect its first drive and understand when search becomes available.\nUser-supplied campaign context: {\"objective\": \"activation\", \"reader_relationship\": \"customer\"}",
+    "effective_audience": "A new account administrator who has signed up but has not connected a drive.",
+    "audience_scope": "",
+    "assessment_method": "Simulated editorial assessment, uncalibrated; no response or conversion prediction",
+    "delivered": 1,
+    "promised": 1,
+    "contract_violations": [],
+    "emails": [
+      {
+        "position": 1,
+        "subject": "Connect your first drive",
+        "single_idea": "",
+        "selection_reason": "",
+        "problem_ids": [],
+        "action_id": "",
+        "next_step_decision": "",
+        "next_step_value": "",
+        "next_step_url": "",
+        "next_step_limit": "",
+        "pull": 6.0,
+        "revisions": 0,
+        "clean": true,
+        "landed": false,
+        "rewrites_stopped_helping": false,
+        "read_reported": true,
+        "understood": true,
+        "relevant": true,
+        "evidence_assigned": [],
+        "evidence_spent": [],
+        "attributions": 0,
+        "unresolved": [],
+        "reader_verdicts": [
+          {
+            "what_it_sells": "Portway is software that indexes shared-drive files so I can search them from one workspace instead of hunting through folders.",
+            "understood": true,
+            "situation_matches": true,
+            "relevance_feedback": "The profile establishes that I am a new account administrator who signed up but has not connected a drive, so the setup prompt directly matches my current account state. The email additionally assumes that I have a supported shared drive available and am ready and authorized to grant Portway access; those details are unknown.",
+            "assumed_experiences": [
+              "Profile-supported: I have signed up for Portway and have not connected a drive.",
+              "Email-only: I administer or can authorize access to a shared drive.",
+              "Email-only: Portway supports the drive service my organization uses.",
+              "Email-only: Searching shared-drive files would be useful enough to justify connecting the drive now."
+            ],
+            "problem_now": "My Portway setup is incomplete, and search cannot become available until I connect a drive and at least one folder is indexed. Whether this matters urgently today is unknown.",
+            "stopped_at": "That means indexing can still be running while search is already available.",
+            "biggest_doubt": "I do not know which drive services are supported, what permissions Portway will request, or whether connecting one exposes the entire drive. As the administrator, I would not grant access without that information.",
+            "to_click_it_would_have_to": "I would have clicked if this email had told me which drive services are supported, what access permissions Portway requests, and whether I can connect a limited folder first.",
+            "fixes": [
+              "Cut \"That means indexing can still be running while search is already available. The point to watch is the first folder finishing, rather than the entire drive reaching the end.\" It repeats the preceding paragraph after I already understand the timing.",
+              "Rewrite \"Connect your first drive to start background indexing. Search will follow when that first folder is finished.\" as \"Connect a supported drive or a limited folder, review the permissions Portway requests, and start indexing; search becomes available when the first folder finishes.\" Keep \"a limited folder\" only if that option is actually available.",
+              "Rewrite \"Connect a drive →\" to name the commitment, such as \"Review drive connection and permissions →\" if the link allows review before authorization."
+            ],
+            "opens_in_100": null,
+            "clicks_in_100": null,
+            "persona": "Selected audience (user-stated constraints): A new account administrator who has signed up but has not connected a drive..\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.",
+            "pull": 6
+          }
+        ],
+        "sameness": []
+      }
+    ],
+    "limiting_gaps": [],
+    "what_would_help_most": "Resolve this simulated next-step obstacle: I would have clicked if this email had told me which drive services are supported, what access permissions Portway requests, and whether I can connect a limited folder first. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.",
+    "questions": [],
+    "sequence_summary": "",
+    "knowledge_version": 1,
+    "notes": [
+      "Effective audience: A new account administrator who has signed up but has not connected a drive.",
+      "1 email(s) came in under the floor on a run configured without more than one opening per email, a panel of cold readers rather than one, the conversion critic, alternative subject lines, more than one rewrite. These settings describe review depth, not the cause of the weak result. Check the audience fit and verified support for the reported obstacle first; additional readers or rewrites cannot supply missing evidence."
+    ],
+    "reads_expected": true
+  },
+  "brief": {
+    "interpretation": "",
+    "pipeline_version": 2,
+    "intent": null,
+    "reader": "A new account administrator who has signed up but has not connected a drive.",
+    "reader_segment": "",
+    "reader_profile_override": "A new account administrator who has signed up but has not connected a drive.",
+    "reader_scope": "",
+    "fixed_cta_url": "",
+    "promise": "",
+    "orientation": "a searchable workspace for shared-drive files",
+    "arc": "",
+    "sequence_rationale": "",
+    "emails": [
+      {
+        "problem_ids": [],
+        "offer_id": "",
+        "action_id": "",
+        "selection_reason": "",
+        "next_step_url": "",
+        "argument_issue": "",
+        "position": 1,
+        "job": "Write exactly one onboarding email helping a new account connect its first drive and understand when search becomes available.\nUser-supplied campaign context: {\"objective\": \"activation\", \"reader_relationship\": \"customer\"}",
+        "single_idea": "",
+        "felt_need": "",
+        "status_quo": "",
+        "why_it_fails": "",
+        "mechanism": "",
+        "alternative_ideas": [],
+        "alternative_arguments": [],
+        "belief_shift": "",
+        "evidence_ids": [],
+        "must_not_say": [],
+        "forbidden_evidence_ids": [],
+        "forbidden_capability_ids": [],
+        "objection": "",
+        "tone": "",
+        "call_to_action": "",
+        "next_step_decision": "",
+        "next_step_value": "",
+        "next_step_evidence_ids": [],
+        "next_step_limit": "",
+        "subject_strategy": "",
+        "must_not_reuse": []
+      }
+    ],
+    "voice_notes": "",
+    "contract": {
+      "kind": "email_sequence",
+      "count": 3,
+      "count_is_explicit": false,
+      "evidence": ""
+    }
+  },
+  "emails": [
+    {
+      "position": 1,
+      "role": "activation",
+      "subject": "Connect your first drive",
+      "preview_text": "Search becomes available when the first folder finishes indexing.",
+      "eyebrow": "",
+      "headline": "",
+      "greeting": "Hi there,",
+      "body": "Your first useful step in Portway is connecting a drive.\n\nPortway is a searchable workspace for shared-drive files. Once a drive is connected, Portway indexes it in the background.\n\nYou do not need to wait for the whole drive to finish indexing before trying search. Search becomes available as soon as the first folder finishes indexing.\n\nThat means indexing can still be running while search is already available. The point to watch is the first folder finishing, rather than the entire drive reaching the end.\n\nConnect your first drive to start background indexing. Search will follow when that first folder is finished.",
+      "call_to_action": "Connect a drive",
+      "sign_off": "- the Portway team",
+      "postscript": ""
+    }
+  ]
+}

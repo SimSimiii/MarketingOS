@@ -7,6 +7,7 @@ export interface CreditBalance {
 }
 export type CampaignStatus = "active" | "archived";
 export type PolicyPreset = "fast" | "balanced" | "maximum";
+export type CampaignIntent = import("./api-schema").ApiSchemas["CampaignIntent"];
 /** How designed a finished email looks.
  *
  * "plain" is typography only and is the right answer for cold outreach — a
@@ -36,6 +37,7 @@ export interface Campaign {
   product_url: string | null;
   target_market: string | null;
   goals: string | null;
+  intent?: CampaignIntent | null;
   /** Who the emails are from. Without it the writer signs off as the company,
    * which reads as a broadcast because it is one. */
   sender_name: string | null;
@@ -71,12 +73,14 @@ export interface Campaign {
 }
 
 export interface CampaignCreateRequest {
+  strategy_mode?: "auto" | "planned" | "direct" | null;
   name: string;
   request: string;
   product_description?: string;
   product_url?: string | null;
   target_market?: string | null;
   goals?: string | null;
+  intent?: CampaignIntent | null;
   sender_name?: string | null;
   sender_role?: string | null;
   brand_id?: string | null;
@@ -150,6 +154,16 @@ export interface BrandStyleUpdate {
 export type Grounding = "grounded" | "inferred" | "user_stated" | "vendor_claim";
 export type EvidenceStrength = "strong" | "moderate" | "weak";
 
+export interface EvidenceContext {
+  subject: string;
+  source_kind: string;
+  claim_scope: string;
+  conditions: string;
+  temporal_scope: string;
+  limitations: string;
+  verification: string;
+}
+
 export interface KnowledgeProvenance {
   source: string;
   quote: string;
@@ -174,6 +188,7 @@ export interface EvidenceEntry {
   source: string;
   strength: EvidenceStrength;
   user_attested: boolean;
+  context?: EvidenceContext | null;
 }
 
 export interface AudienceSegment {
@@ -281,6 +296,7 @@ export interface KnowledgeEntry {
   verbatim: string;
   source: string;
   document_id: string | null;
+  context?: EvidenceContext | null;
   origin: EntryOrigin;
   kind: string;
   grounding: Grounding;
@@ -337,6 +353,7 @@ export interface CampaignPolicyUpdate {
 }
 
 export interface CampaignBriefUpdate {
+  intent?: CampaignIntent | null;
   name: string;
   request: string;
   product_description: string;
@@ -432,6 +449,8 @@ export interface CampaignExecution {
   campaign_id: string;
   status: ExecutionStatus;
   needs_review?: boolean;
+  outcome_status?: string;
+  review_reasons?: string[];
   error_message: string | null;
   started_at: string | null;
   completed_at: string | null;
@@ -612,6 +631,11 @@ export type LiveExecutionEvent = LiveEventBase &
            * short, and what this product does instead. `single_idea` is the
            * claim; these are what make the claim mean anything. */
           felt_need?: string;
+          selection_reason?: string;
+          problem_ids?: string[];
+          action_id?: string;
+          next_step_url?: string;
+          argument_issue?: string;
           status_quo?: string;
           why_it_fails?: string;
           mechanism?: string;
@@ -836,6 +860,7 @@ export interface RivalCreateRequest {
 }
 
 export interface Claim {
+  context?: EvidenceContext;
   text: string;
   verbatim: string;
   source: string;
@@ -852,6 +877,11 @@ export interface RivalProfile {
   url: string;
   kind: RivalKind;
   why: string;
+  discovery_reason?: string;
+  rationale_status?: string;
+  rationale_sources?: string[];
+  our_evidence_ids?: string[];
+  reused?: boolean;
   one_liner: string;
   promise: string;
   pricing: string;
@@ -873,8 +903,11 @@ export interface RivalProfile {
 export interface AxisReading {
   axis: ClaimAxis;
   territory: Territory;
-  /** True when we are the only one on this axis carrying a checkable figure,
-   * which is what makes a crowded axis ours anyway. */
+  proposition?: string;
+  comparison_status?: "equivalent" | "documented_difference" | "potential_difference" | "unknown";
+  comparisons?: Record<string, "equivalent" | "documented_difference" | "potential_difference">;
+  comparison_notes?: string[];
+  /** Only our captured proposition carries a figure; this does not establish superiority. */
   only_specific: boolean;
   ours: Claim[];
   theirs: Record<string, Claim[]>;
@@ -885,9 +918,7 @@ export interface Positioning {
   rivals_profiled: number;
   rivals_with_proof: number;
   we_have_proof: boolean;
-  /** Every competitor shows a named customer and we show none. The most
-   * expensive asymmetry in cold email, and the one a user can fix in an
-   * afternoon. */
+  /** Some competitors display third-party proof and none is captured for us. */
   proof_deficit: boolean;
   crowd_words: string[];
   readings: AxisReading[];
@@ -924,6 +955,8 @@ export interface ProofCandidate {
   attributed_to: string;
   venue: string;
   confidence: number;
+  verification_status: string;
+  context: EvidenceContext | null;
   /** Why this might not be what it looks like. What makes the decision take
    * ten seconds instead of ten minutes. */
   caveat: string;
@@ -1071,6 +1104,9 @@ export interface MappedSegment {
      * Its own axis: an audience nobody can reach is a different problem from
      * one nobody wants, and `priority` alone said the same word about both. */
     findability: "verified" | "unknown";
+    usage_or_purchase: "captured" | "unknown";
+    reachability: "venue_identified" | "unknown";
+    counterevidence_summary: string[];
     /** Unique source URLs arguing against this audience; material or unassessed
      * objections route to review rather than exclude the audience. */
     counterevidence: number;
@@ -1081,7 +1117,7 @@ export interface MappedSegment {
       claim: string;
       quote: string;
       url: string;
-      kind: "need" | "alternative" | "access" | "counterevidence" | "example";
+      kind: "need" | "alternative" | "access" | "counterevidence" | "example" | "usage" | "purchase";
       impact: "unknown" | "minor" | "material";
       impact_reason: string;
       fetched_at: string | null;
@@ -1152,11 +1188,21 @@ export interface UserAudienceInput {
 }
 
 export interface MapOptions {
+  model?: string | null;
   geography: string;
   language: string;
   exclusions: string;
   objective: "customers" | "partners" | "both";
-  mode: "refresh" | "explore";
+  mode: "refresh" | "explore" | "reassess";
+}
+
+export interface KnowledgeCompilationRequest {
+  model?: string | null;
+}
+
+export interface MarketScanRequest {
+  discover?: boolean;
+  model?: string | null;
 }
 
 export interface DemandMap {
@@ -1231,6 +1277,7 @@ export interface AudienceResearchSource {
   venue: string;
   fetched_at: string;
   published_date: string | null;
+  publication_date_basis?: string;
   content_hash: string;
 }
 
@@ -1252,6 +1299,8 @@ export interface AudienceResearchProblem {
   grounding: Grounding;
   evidence: AudienceEvidenceReference[];
   corroboration: number;
+  source_count?: number;
+  review_notes?: string[];
   cost: string;
   cost_evidence: AudienceEvidenceReference | null;
 }
@@ -1285,6 +1334,7 @@ export interface AudienceResearch {
   where: AudienceSourcedObservation[];
   sources: AudienceResearchSource[];
   dropped_claims: number;
+  interpretation_warnings: string[];
   researched_at: string;
   definition: AudienceDefinition;
 }
@@ -1402,6 +1452,7 @@ export interface CampaignRecommendation {
 
 export interface RelevanceDossier {
   schema_version: number;
+  interpretation_version?: number;
   audience_research_id: string;
   audience_name: string;
   audience_research_version: number;
@@ -1414,6 +1465,14 @@ export interface RelevanceDossier {
   qualification_fingerprint: string;
   built_at: string;
   orientation: string;
+  defining_need_fit?: {
+    status: "addressed" | "partial" | "unknown";
+    evidence_ids: string[];
+    capability_ids: string[];
+    unverified_requirements: string[];
+    caveat: string;
+    why: string;
+  } | null;
   ranked_relevance: RankedRelevance[];
   problem_fits: RelevanceProblemFit[];
   segment_objections: RelevanceObjection[];
@@ -1445,6 +1504,7 @@ export interface ProductCapability {
   note: string;
   /** Evidence attached to this capability that does not mention it. */
   unlicensed_evidence_ids: string[];
+  origin?: string;
 }
 
 export interface ProductClaim {
@@ -1470,6 +1530,7 @@ export interface ProductCapabilityProfile {
   knowledge_id: string;
   knowledge_version: number;
   ledger_fingerprint: string;
+  derivation_version?: number;
   capabilities: ProductCapability[];
   constraints: ScopeBoundary[];
   claims: ProductClaim[];
@@ -1624,12 +1685,14 @@ export interface ChangePasswordRequest {
 
 export interface LinkedInCandidate {
   name: string; url: string; headline: string; reason: string; source_url: string; excerpt: string;
+  kind?: "company" | "professional" | "venue";
 }
 /** Who is worth looking for, proposed from the brand's own knowledge and its
  * audience map before any search is paid for. Every field is editable: this
  * comes back to the form as a proposal, not as a decision. */
 export interface LinkedInCriteria {
   roles: string[]; industries: string[]; company_sizes: string[]; geographies: string[];
+  languages?: string[];
   /** What a profile or its company page actually says - the bar a candidate is
    * held to. */
   profile_signals: string[];
@@ -1646,7 +1709,9 @@ export interface LinkedInCriteriaRequest {
 export interface LinkedInSearchRequest {
   /** Optional: a search runs on the criteria, on a typed query, or on both. */
   query: string; criteria: LinkedInCriteria | null;
-  target: "people" | "companies"; limit: number;
+  target: "people" | "companies" | "venues"; limit: number;
+  source?: "linkedin" | "web";
+  segment_name?: string;
 }
 export interface LinkedInMessageRequest {
   recipient_name: string; recipient_url: string; confirmed_context: string;
@@ -1658,10 +1723,19 @@ export interface LinkedInChannel {
   recipient_name: string; recipient_url: string; confirmed_context: string;
   language: string; kind: "connection" | "message";
 }
+export interface MarketAudienceJobRequest {
+  segment: string;
+  model?: string | null;
+}
+export interface MarketRelevanceJobRequest extends MarketAudienceJobRequest {
+  verify_product_gaps?: boolean;
+}
+
 export interface LinkedInRun {
   id: string; brand_id: string; kind: "search" | "message" | "criteria";
   state: "running" | "completed" | "failed";
-  request: Partial<LinkedInSearchRequest & LinkedInMessageRequest & LinkedInCriteriaRequest>;
+  request: Partial<LinkedInSearchRequest & LinkedInMessageRequest>
+    & Partial<Pick<LinkedInCriteriaRequest, "hint">>;
   result: Partial<LinkedInCriteria> & {
     candidates?: LinkedInCandidate[]; note?: string; body?: string;
     characters?: number; limit?: number; criteria?: LinkedInCriteria | null;

@@ -162,14 +162,14 @@ class PairResult:
     original_pull: float | None = None
     mutant_pull: float | None = None
     gate_issues: tuple[str, ...] = ()
-    #: Opens in a hundred, when this pair was scored in an inbox rather than
+    #: Uncalibrated editorial points out of ten, when scored in an inbox rather than
     #: duelled - see `_subject_only`. None means the inbox arm did not run.
-    original_opens: float | None = None
-    mutant_opens: float | None = None
+    original_assessment: float | None = None
+    mutant_assessment: float | None = None
 
     @property
     def by_inbox(self) -> bool:
-        return self.original_opens is not None and self.mutant_opens is not None
+        return self.original_assessment is not None and self.mutant_assessment is not None
 
     @property
     def cast(self) -> int:
@@ -186,11 +186,11 @@ class PairResult:
         damage, it has declined to.
 
         The inbox arm is held to the same rule for the same reason: two lines
-        the scanner expects the same number of opens from are two lines it
+        the scanner gives the same editorial assessment are two lines it
         could not separate.
         """
         if self.by_inbox:
-            return self.original_opens > self.mutant_opens
+            return self.original_assessment > self.mutant_assessment
         return self.decided and self.original_votes > self.mutant_votes
 
     @property
@@ -225,7 +225,7 @@ class PairResult:
         tally = "in inbox" if self.by_inbox else f"{self.original_votes}-{self.mutant_votes}"
         line = f"  {mark} {self.mutation.name:<24} {self.source:<16} {tally:<8}  {verdict}"
         if self.by_inbox:
-            line += f"   opens {self.original_opens:.0f} vs {self.mutant_opens:.0f} in 100"
+            line += f"   editorial assessment {self.original_assessment:.1f} vs {self.mutant_assessment:.1f}/10 (uncalibrated)"
         if self.original_pull is not None and self.mutant_pull is not None:
             line += f"   pull {self.original_pull:.0f} → {self.mutant_pull:.0f}"
         if self.gate_issues:
@@ -789,8 +789,8 @@ async def run_bench(
                         source=name,
                         mutation=mutation,
                         anchor=source.anchor,
-                        original_opens=ranked[0],
-                        mutant_opens=ranked[1],
+                        original_assessment=ranked[0],
+                        mutant_assessment=ranked[1],
                         gate_issues=tuple(
                             issue.detail for issue in _free_gates(mutant).issues
                         ),

@@ -11,8 +11,11 @@ from app.auth.principal import Principal
 from app.auth.scope import owned
 from app.knowledge.store import ArtifactScope, ArtifactStore, fingerprint_documents
 from app.marketing.contract import linkedin_contract, parse_contract
+from app.marketing.direct import direct_brief
 from app.marketing.forecast import forecast
+from app.marketing.intent import CampaignIntent
 from app.marketing.policy import resolve_policy
+from app.marketing.request import CampaignRequest
 from app.models.agent_execution import AgentExecution
 from app.models.campaign import Campaign
 from app.models.campaign_execution import CampaignExecution
@@ -101,11 +104,13 @@ class CampaignService:
 
     def create_campaign(self, data: CampaignCreateRequest) -> Campaign:
         fields = data.model_dump(
-            exclude={"policy_preset", "model_overrides", "force_recompile", "email_tier"}
+            exclude={"policy_preset", "model_overrides", "force_recompile", "email_tier", "strategy_mode"}
         )
         policy: dict | None = None
         if data.policy_preset is not None:
             policy = {"preset": data.policy_preset}
+        if data.strategy_mode is not None:
+            policy = {**(policy or {}), "strategy_mode": data.strategy_mode}
         if data.force_recompile is not None:
             policy = {**(policy or {}), "force_recompile": data.force_recompile}
         if data.email_tier is not None:
@@ -241,6 +246,7 @@ class CampaignService:
                 product_url=campaign.product_url,
                 target_market=campaign.target_market,
                 goals=campaign.goals,
+                intent=campaign.intent,
                 audience_segment=campaign.audience_segment,
                 prospect_id=campaign.prospect_id,
                 sender_name=campaign.sender_name,
@@ -352,6 +358,15 @@ class CampaignService:
             contract,
             material_chars=sum(document.word_count * _CHARS_PER_WORD for document in documents),
             knowledge_reused=reused,
+            direct_eligible=(
+                direct_brief(CampaignRequest(
+                    name=campaign.name, request=campaign.request,
+                    intent=CampaignIntent.model_validate(campaign.intent) if campaign.intent else None,
+                    cta_url=campaign.cta_url,
+                    channel=campaign.channel,
+                ), stored.artifacts, contract, policy) is not None
+                if reused and not campaign.audience_segment and not campaign.prospect_id else None
+            ),
         )
         # Read once. Both figures below describe the same set of past runs,
         # and finding it walks every campaign the user has ever made.
@@ -383,10 +398,12 @@ class CampaignService:
         something went wrong.
         """
         preset = (campaign.policy or {}).get("preset") or "balanced"
+        strategy_mode = (campaign.policy or {}).get("strategy_mode", "planned")
         wanted = {
             other.id
             for other in self._campaigns.list_all()
             if ((other.policy or {}).get("preset") or "balanced") == preset
+            and (other.policy or {}).get("strategy_mode", "planned") == strategy_mode
         }
         runs: list[tuple[float, int]] = []
         for execution in self._executions.list_by_campaigns(wanted):

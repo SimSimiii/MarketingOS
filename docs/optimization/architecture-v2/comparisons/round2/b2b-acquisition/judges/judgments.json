@@ -1,0 +1,84 @@
+[
+  {
+    "opponent": "baseline",
+    "verdict": "proposed",
+    "ballots": [
+      {
+        "order": [
+          "proposed",
+          "baseline"
+        ],
+        "decoded_winner": "proposed",
+        "winner": "A",
+        "reason": "A is slightly better aligned with the exact request. It addresses owners who are merely considering customer inspection—“If you are considering whether customers should be able to inspect repair stages”—without presuming an existing software project. Its next step is specific and low-stakes: view the sample to judge whether the approach merits further evaluation. The subject, explanation, and action remain continuous around a customer view of repair stages. B is also clear and natural, but it more specifically asserts what the sample contains, including “the customer-facing view,” which is not established by the supplied evidence or action label.",
+        "decisive_passages": [
+          "“If you are considering whether customers should be able to inspect repair stages, the useful first question is what that view would actually show.”",
+          "“The sample board shows how Repairboard presents current repair stages, so you can judge whether this approach is relevant enough to evaluate further for your shop.”",
+          "B: “The sample shows this presentation directly: the shared board, the repair stages, and the customer-facing view.”"
+        ],
+        "material_concerns_a": [],
+        "material_concerns_b": [
+          "The claim that the sample directly shows “the customer-facing view” goes beyond the supplied evidence, which establishes a sample repair board and a shareable read-only status link but does not document the sample’s exact contents."
+        ]
+      },
+      {
+        "order": [
+          "baseline",
+          "proposed"
+        ],
+        "decoded_winner": "proposed",
+        "winner": "B",
+        "reason": "B better matches the cold acquisition request by naming the owner's relevant consideration without assuming an existing software project: “If you are considering whether customers should be able to inspect repair stages.” It accurately explains the two documented capabilities, gives a specific low-stakes reason to inspect the sample—judging how current stages are presented—and maintains clear continuity from subject and preview through the call to action. A is also usable, but it overstates what is established about the sample by asserting that it shows “the shared board, the repair stages, and the customer-facing view.”",
+        "decisive_passages": [
+          "“If you are considering whether customers should be able to inspect repair stages, the useful first question is what that view would actually show.”",
+          "“The customer link is read-only. Customers can inspect the repair stage, but they cannot use the link to change it.”",
+          "“The sample board shows how Repairboard presents current repair stages, so you can judge whether this approach is relevant enough to evaluate further for your shop.”"
+        ],
+        "material_concerns_a": [
+          "“The sample shows this presentation directly: the shared board, the repair stages, and the customer-facing view” claims specific sample contents not established in the selected evidence.",
+          "“That gives you something concrete to assess before considering anything further” is generic and adds little after the preceding evaluation rationale."
+        ],
+        "material_concerns_b": []
+      }
+    ]
+  },
+  {
+    "opponent": "simple",
+    "verdict": "mixed",
+    "ballots": [
+      {
+        "order": [
+          "proposed",
+          "simple"
+        ],
+        "decoded_winner": "tie",
+        "winner": "tie",
+        "reason": "Both emails accurately stay within the supplied evidence, clearly introduce the shared repair-status board and read-only customer link, and make the sample board a relevant, low-stakes first evaluation. A offers slightly stronger evaluation logic but sounds more formal in places; B is more natural and direct but repeats the evaluation prompt. Neither difference is material enough to make one clearly more usable after ordinary brand review and minor personalization.",
+        "decisive_passages": [
+          "A: “The sample board shows how Repairboard presents current repair stages, so you can judge whether this approach is relevant enough to evaluate further for your shop.”",
+          "B: “The sample shows the board directly, so you can judge whether this is a useful way to present repair progress to your customers.”",
+          "A: “The customer link is read-only. Customers can inspect the repair stage, but they cannot use the link to change it.”",
+          "B: “A shop can also give a customer a read-only status link. That gives the customer a way to inspect the stage without being able to change the board.”"
+        ],
+        "material_concerns_a": [],
+        "material_concerns_b": []
+      },
+      {
+        "order": [
+          "simple",
+          "proposed"
+        ],
+        "decoded_winner": "proposed",
+        "winner": "B",
+        "reason": "B more directly addresses the specified audience without assuming an existing software project: “If you are considering whether customers should be able to inspect repair stages” frames the exact decision shop owners are considering. It then gives a specific, low-stakes reason to act—seeing what the customer view actually shows and judging whether the approach merits further evaluation. Its subject, preview, explanation of the read-only link, and sample-board CTA form a particularly continuous sequence. The capability claims stay within the supplied evidence and make no promises about outcomes. A is also usable and well supported, but its evaluation prompt is slightly more diffuse across “how the stages appear” and “the right level of information.”",
+        "decisive_passages": [
+          "“If you are considering whether customers should be able to inspect repair stages, the useful first question is what that view would actually show.”",
+          "“The customer link is read-only. Customers can inspect the repair stage, but they cannot use the link to change it.”",
+          "“The sample board shows how Repairboard presents current repair stages, so you can judge whether this approach is relevant enough to evaluate further for your shop.”"
+        ],
+        "material_concerns_a": [],
+        "material_concerns_b": []
+      }
+    ]
+  }
+]

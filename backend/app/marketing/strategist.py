@@ -20,7 +20,8 @@ from app.ai.model_router import ModelTier
 from app.knowledge.artifacts import Grounding, KnowledgeArtifacts
 from app.knowledge.base import build_knowledge_base
 from app.knowledge.corpus import SourceCorpus
-from app.knowledge.ledger import EvidenceLedger
+from app.knowledge.decision_context import select_evidence
+from app.knowledge.ledger import EvidenceKind
 from app.market.demand import DemandMap
 from app.market.material_research import MaterialRecovery
 from app.market.positioning import PositioningMap
@@ -28,6 +29,7 @@ from app.marketing.briefs import ArgumentOption, CampaignBrief, EmailBrief
 from app.marketing.contract import DeliverableContract
 from app.marketing.exceptions import StrategyError
 from app.marketing.intelligence import CampaignIntelligence
+from app.marketing.intent import CampaignIntent
 from app.marketing.preflight import assess
 from app.marketing.request import CampaignRequest
 from app.runtime.model_session import ModelSession
@@ -132,9 +134,13 @@ def _render_recovery(
                 "This is corrective material, not optional background. Rebuild at least one "
                 "primary email around a recovered id and assign that id in evidence_ids. If an "
                 "official source page lets the reader answer the diagnosed question before "
-                "signup, put its exact URL in call_to_action and explain the decision it enables "
-                "in the next-step fields. Do not claim that the page proves anything outside "
-                "its quoted fact."
+                "signup, it is an available action, not a mandatory one. Recovery changes the "
+                "available evidence, not the campaign's objective. Recovered facts may instead "
+                "make an existing licensed signup or product action worthwhile. Choose a guide "
+                "only when its documented contents add useful evaluation beyond the email's "
+                "own explanation; use its exact URL and name that additional decision. Do not "
+                "require a documentation click just because it is the source of a fact. Do not "
+                "claim that a page proves anything outside its quoted fact."
             ),
         ]
     )
@@ -153,9 +159,20 @@ def _recovered_next_step(
     call_to_action: str,
     next_step_value: str,
     fixed_cta_url: str = "",
+    action_id: str = "",
 ) -> tuple[str, str]:
     """Tie an automatically recovered payoff to its exact official page."""
     if fixed_cta_url:
+        return call_to_action, next_step_value
+    urls = {
+        url.rstrip(".,;:)")
+        for url in re.findall(r'https?://[^\s<>"\]]+', call_to_action)
+    }
+    known_destinations = {action.url for action in artifacts.offer.calls_to_action if action.url}
+    if len(urls) == 1 and urls.issubset(known_destinations):
+        return call_to_action, next_step_value
+    if any(action_id == action.reference_id or call_to_action.casefold() == action.label.casefold()
+           for action in artifacts.offer.calls_to_action):
         return call_to_action, next_step_value
     ordered = list(dict.fromkeys([*next_step_evidence_ids, *evidence_ids]))
     entries = [
@@ -167,10 +184,6 @@ def _recovered_next_step(
     ]
     if not entries:
         return call_to_action, next_step_value
-    urls = {
-        url.rstrip(".,;:)")
-        for url in re.findall(r'https?://[^\s<>"\]]+', call_to_action)
-    }
     supported_sources = {
         entry.source for entry in entries
         if not next_step_evidence_ids or entry.id in next_step_evidence_ids
@@ -260,9 +273,152 @@ def _depends_on_unestablished_partner(
     )
 
 
+def _connection_route_constraints(evidence_ids: list[str], artifacts: KnowledgeArtifacts) -> list[str]:
+    """A platform name or a webhook capability does not specify its setup path."""
+    entries = [artifacts.evidence.get(item) for item in evidence_ids]
+    if not any(
+        item is not None and (
+            item.kind is EvidenceKind.INTEGRATION
+            or re.search(r"\b(?:webhooks?|endpoints?|native connector)\b", item.verbatim, re.IGNORECASE)
+        )
+        for item in entries
+    ):
+        return []
+    return [
+        ("Keep the connection route attached to its cited source. A native or prebuilt "
+        "integration and a custom HTTP/webhook endpoint are separate setup paths unless "
+        "the source explicitly equates them. A platform name alone establishes neither "
+        "manual endpoint configuration nor a no-setup connector. Keep unknown setup "
+        "requirements unknown; do not mix the steps or benefits of those paths.")
+    ]
+
+
+def _repair_argument_dependencies(
+    original: EmailBrief | ArgumentOption,
+    normalized: EmailBrief | ArgumentOption,
+    artifacts: KnowledgeArtifacts,
+    intelligence: CampaignIntelligence | None,
+    *,
+    fixed_cta_url: str,
+) -> tuple[EmailBrief | ArgumentOption, bool]:
+    """A rejected premise cannot keep its old benefit and CTA payoff alive.
+
+    This narrows a proposed plan, not the finished email's factual gates. No
+    new call is bought: a writer can explain the assigned function with its
+    limits, or the existing critic can report a remaining argument gap.
+    """
+    if intelligence is None or not intelligence.research_loaded:
+        return normalized, False
+    if not normalized.status_quo.strip():
+        normalized = normalized.model_copy(update={"why_it_fails": ""})
+    missing_bridge = bool((original.felt_need.strip() or original.problem_ids) and not normalized.felt_need.strip())
+    if not missing_bridge:
+        return normalized, False
+
+    entries = [item for id_ in normalized.evidence_ids
+               if (item := artifacts.evidence.get(id_)) is not None]
+    function = next((item for item in entries
+                     if item.kind in {EvidenceKind.FEATURE, EvidenceKind.INTEGRATION}), None)
+    anchor = function or next((item for item in entries if item.kind is EvidenceKind.PRICE), None)
+    # Preserve the requested action. A failed premise requires another
+    # strategic decision, not an automatic tutorial CTA.
+    claim = anchor.claim if anchor else (
+        artifacts.business.company_name
+        if intelligence.v2_claim_boundary else
+        f"{artifacts.business.company_name}: {artifacts.business.what_it_does}".strip(": ")
+    )
+    limitation = (
+        "The assigned evidence does not establish that this function resolves the proposed "
+        "buyer problem. Inspecting its source or starting an account does not demonstrate "
+        "that outcome, a completed integration, or a result for this recipient."
+    )
+    updates = {
+        "single_idea": claim,
+        "felt_need": "", "status_quo": "", "why_it_fails": "",
+        "mechanism": function.claim if function else "",
+        "belief_shift": "", "objection": "",
+        "subject_strategy": "Respect the campaign objective and name only a supported proposition; do not imply novelty without user-provided or dated support.",
+        "next_step_decision": "",
+        "next_step_value": "",
+        "next_step_evidence_ids": [],
+        "next_step_limit": limitation,
+        "argument_issue": "The proposed buyer problem is not linked to the assigned evidence. Select another complete argument while preserving campaign intent and action constraints.",
+        "must_not_say": _distinct_constraints([*normalized.must_not_say, limitation]),
+    }
+    if isinstance(normalized, EmailBrief):
+        updates["job"] = original.job
+    intelligence.trace.warn(
+        "Reframed an unlinked buyer-problem argument as the documented function or offer "
+        f"({', '.join(normalized.evidence_ids) or 'no assigned evidence'}); its old benefit, "
+        "alternative failure story and evaluation payoff were not retained."
+    )
+    return normalized.model_copy(update=updates), True
+
+
+def _resolve_proposition_action(
+    argument: EmailBrief | ArgumentOption, artifacts: KnowledgeArtifacts,
+    fixed_cta_url: str,
+) -> EmailBrief | ArgumentOption:
+    # Historical briefs put the chosen link in the CTA field. Preserve that
+    # explicit choice, subject to exactly the same licensing below.
+    if not argument.next_step_url:
+        urls = {url.rstrip(".,;:)") for url in re.findall(r'https?://[^\s<>"\]]+', argument.call_to_action)}
+        if len(urls) == 1:
+            argument = argument.model_copy(update={"next_step_url": urls.pop()})
+    actions = {item.reference_id: item for item in artifacts.offer.calls_to_action}
+    updates: dict = {"offer_id": argument.offer_id or "offering"}
+    known_offers = {"offering", *(plan.reference_id for plan in artifacts.offer.plans)}
+    if argument.offer_id and argument.offer_id not in known_offers:
+        updates["argument_issue"] = "The proposition references an unknown offer id. Select offering or an exact plan id from the offer sheet."
+    action = actions.get(argument.action_id) if argument.action_id else None
+    if argument.action_id and action is None:
+        updates["argument_issue"] = "The proposition references an unknown offer action. Choose an action from the supplied catalogue."
+    if action is None and not argument.action_id:
+        matches = [item for item in actions.values()
+                   if item.label.casefold() == argument.call_to_action.casefold()
+                   or (item.url and item.url == argument.next_step_url)]
+        if len(matches) == 1:
+            action = matches[0]
+            updates["action_id"] = action.reference_id
+    if action is not None and not argument.call_to_action:
+        updates["call_to_action"] = action.label
+
+    destination = fixed_cta_url or (action.url if action else "") or argument.next_step_url
+    if not destination and action is None and argument.next_step_evidence_ids:
+        sources = {entry.source for entry in artifacts.evidence.entries
+                   if entry.id in argument.next_step_evidence_ids
+                   and entry.id in argument.evidence_ids
+                   and entry.source.startswith(("https://", "http://"))}
+        if len(sources) == 1:
+            destination = sources.pop()
+    if destination and not fixed_cta_url and not (action and action.url):
+        licensed = {entry.source for entry in artifacts.evidence.entries
+                    if entry.id in argument.evidence_ids}
+        licensed.update(item.url for item in actions.values() if item.url)
+        if destination not in licensed:
+            destination = ""
+            updates["argument_issue"] = "The selected destination is not licensed by an assigned source or an offer action."
+    updates["next_step_url"] = destination or ""
+    if argument.destination_kind == "web" and not destination:
+        updates["argument_issue"] = (
+            "The web CTA has no verified destination. Choose one exact assigned evidence source "
+            "or an offer action with a URL; a brand homepage fallback does not establish the promised page."
+        )
+    return argument.model_copy(update=updates)
+
+
 class Strategist:
     def __init__(self, session: ModelSession) -> None:
         self._session = session
+        self.audit: list[dict] = []
+
+    def _normalize_traced(self, brief: CampaignBrief, *args, **kwargs) -> CampaignBrief:
+        raw = brief.model_dump(mode="json")
+        result = self._normalize(brief, *args, **kwargs)
+        effective = result.model_dump(mode="json")
+        self.audit.append({"raw_plan": raw, "effective_plan": effective,
+                           "changed_fields": [key for key in raw if raw[key] != effective.get(key)]})
+        return result
 
     async def build(
         self,
@@ -285,17 +441,9 @@ class Strategist:
             intelligence.admit_automatically_recovered(artifacts.evidence)
             intelligence.validate_against(artifacts.evidence)
             if intelligence.v2_claim_boundary:
-                forbidden = set(intelligence.forbidden_evidence_ids)
-                prompt_artifacts = artifacts.model_copy(
-                    update={
-                        "evidence": EvidenceLedger(
-                            entries=[
-                                item
-                                for item in artifacts.evidence.entries
-                                if item.id not in forbidden
-                            ]
-                        )
-                    }
+                prompt_artifacts = artifacts.for_claim_boundary(
+                    set(intelligence.allowed_evidence_ids)
+                    - set(intelligence.forbidden_evidence_ids)
                 )
             if researched:
                 # Discovery imagined a buyer so research could find one. Once
@@ -315,10 +463,20 @@ class Strategist:
                                    if item.grounding is Grounding.USER_STATED
                                    or (item.grounding is Grounding.GROUNDED and item.provenance)],
                 })
+        preferred = [item.evidence_id for item in intelligence.ranked_evidence
+                     if str(item.band) in {"LEAD", "SUPPORT", "lead", "support"}] if intelligence else []
+        selection = select_evidence(
+            prompt_artifacts.evidence,
+            f"{request.request} {request.render_context()} {chosen_segment} "
+            + (prompt_intelligence.render_for_strategy() if prompt_intelligence else ""),
+            preferred_ids=preferred,
+            excluded_ids=frozenset(intelligence.forbidden_evidence_ids) if intelligence else frozenset(),
+        )
+        prompt_artifacts = prompt_artifacts.model_copy(update={"evidence": selection.ledger})
         variables = {
             "request": request.request,
             "campaign_context": request.render_context(),
-            "knowledge": prompt_artifacts.render_for_strategy(),
+            "knowledge": selection.render_manifest() + "\n" + prompt_artifacts.render_for_strategy(),
             # The shape of what exists, above the facts themselves. A hundred
             # undifferentiated entries answer "what is true" and hide "what
             # can this campaign argue from at all" - and the second question
@@ -332,7 +490,13 @@ class Strategist:
             # empty - see PositioningMap.render_for_strategy.
             "positioning": (
                 positioning or PositioningMap()
-            ).render_for_strategy(),
+            ).render_for_strategy(audience=(
+                request.target_market or chosen_segment
+                or (intelligence.selected_audience if intelligence is not None else "")
+            ) + (
+                f"; qualified scope: {intelligence.eligible_subsegment}"
+                if intelligence is not None and intelligence.eligible_subsegment else ""
+            )),
             # Unverified discovery remains a fallback, not a second biography
             # beside the verified audience selected for this campaign.
             "demand": (
@@ -362,9 +526,10 @@ class Strategist:
             schema=CampaignBrief,
         )
         audience_context = f"{request.request}\n{request.render_context()}"
-        brief = self._normalize(
+        brief = self._normalize_traced(
             brief, contract, artifacts, intelligence, audience_context,
             fixed_cta_url=request.cta_url or "",
+            intent=request.effective_intent,
         )
 
         count_wrong = contract.count_is_explicit and len(brief.emails) != contract.count
@@ -373,7 +538,10 @@ class Strategist:
             if email.call_to_action and email.next_step_value
             and not email.next_step_evidence_ids
         ]
-        if count_wrong or unsupported_steps:
+        invalid_arguments = [email for email in brief.emails if email.argument_issue]
+        recovered_ids = {entry.id for entry in recovery.evidence} if recovery else set()
+        missing_recovery = bool(recovered_ids and not _spends_any(brief, recovered_ids))
+        if count_wrong or unsupported_steps or invalid_arguments or missing_recovery:
             # Both are errors in the plan, so combine them into one bounded
             # correction before paying a writer or a cold reader.
             corrections: list[str] = []
@@ -392,6 +560,18 @@ class Strategist:
                     "change the action and its payoff to a supported first decision. Do not "
                     "treat generic account creation as proof that a test works."
                 )
+            if invalid_arguments:
+                corrections.append(
+                    "Rebuild the invalid proposition(s), preserving the campaign objective, selected audience and fixed CTA: "
+                    + "; ".join(f"email {email.position}: {email.argument_issue}" for email in invalid_arguments)
+                    + ". Prefer a supported complete alternative; do not automatically replace the user's campaign by a documentation tutorial. Use problem_ids for researched premises."
+                )
+            if missing_recovery:
+                corrections.append(
+                    "Use at least one newly verified recovery fact to answer the diagnosed gap: "
+                    + ", ".join(sorted(recovered_ids))
+                    + ". Preserve the campaign objective and choose an action whose payoff the supplied material supports."
+                )
             logger.info("strategist: correcting %d plan defect(s)", len(corrections))
             brief = await self._session.structured(
                 role=ROLE_ID,
@@ -407,9 +587,10 @@ class Strategist:
                 ),
                 schema=CampaignBrief,
             )
-            brief = self._normalize(
+            brief = self._normalize_traced(
                 brief, contract, artifacts, intelligence, audience_context,
                 fixed_cta_url=request.cta_url or "",
+                intent=request.effective_intent,
             )
             if any(
                 email.call_to_action and email.next_step_value
@@ -421,36 +602,11 @@ class Strategist:
                     request=request.request,
                 )
 
-        recovered_ids = {entry.id for entry in recovery.evidence} if recovery else set()
         if recovered_ids and not _spends_any(brief, recovered_ids):
-            logger.info(
-                "strategist: recovered evidence %s was ignored - correcting",
-                sorted(recovered_ids),
+            raise StrategyError(
+                "The recovery strategy ignored every newly verified fact after its one combined correction.",
+                request=request.request,
             )
-            brief = await self._session.structured(
-                role=ROLE_ID,
-                tier=ModelTier.DEEP,
-                template="strategist",
-                variables=variables,
-                task=(
-                    "Rebuild the brief around the automatic recovery section. The previous "
-                    "brief ignored every newly verified fact. At least one primary email "
-                    f"must assign one of {', '.join(sorted(recovered_ids))} in evidence_ids, "
-                    "use it to answer the diagnosed gap, and make the supported official "
-                    "documentation page the next step when it helps the reader decide before "
-                    "signup. Keep the requested email count and all claim boundaries."
-                ),
-                schema=CampaignBrief,
-            )
-            brief = self._normalize(
-                brief, contract, artifacts, intelligence, audience_context,
-                fixed_cta_url=request.cta_url or "",
-            )
-            if not _spends_any(brief, recovered_ids):
-                raise StrategyError(
-                    "The recovery strategy ignored every newly verified fact.",
-                    request=request.request,
-                )
 
         if not brief.emails:
             raise StrategyError(
@@ -459,6 +615,11 @@ class Strategist:
             )
         if chosen_segment:
             brief.reader_segment = chosen_segment
+        brief.reader_scope = (
+            intelligence.eligible_subsegment
+            if intelligence is not None and intelligence.dossier_current
+            and intelligence.trace.qualified_subsegment and not request.target_market else ""
+        )
         brief.reader_profile_override = (
             (request.target_market or "").strip() if not chosen_segment else ""
         )
@@ -486,6 +647,8 @@ class Strategist:
             )
         if request.target_market:
             brief.reader += f"\nUser-specified audience: {request.target_market}"
+        if brief.reader_scope:
+            brief.reader += f"\nQualified campaign scope within that audience: {brief.reader_scope}."
         if brief.reader_profile_override:
             brief.reader = (
                 f"Selected audience (user-stated constraints): {brief.reader_profile_override}.\n"
@@ -495,6 +658,8 @@ class Strategist:
         if request.channel is not None and request.channel.confirmed_context:
             brief.reader += f"\nUser-confirmed recipient context: {request.channel.confirmed_context}"
         brief.contract = contract
+        if self.audit:
+            self.audit[-1]["effective_plan"] = brief.model_dump(mode="json")
         return brief
 
     # ------------------------------------------------------------- internals
@@ -508,6 +673,7 @@ class Strategist:
         audience_context: str = "",
         *,
         fixed_cta_url: str = "",
+        intent: CampaignIntent | None = None,
     ) -> CampaignBrief:
         """Fix in code everything about a brief that has a correct answer.
 
@@ -518,6 +684,9 @@ class Strategist:
         of thinking.
         """
         brief.fixed_cta_url = fixed_cta_url
+        brief.intent = intent
+        brief.pipeline_version = 2
+        brief.strategy_mode = "planned"
         if intelligence is not None:
             intelligence.validate_against(artifacts.evidence)
             if intelligence.dossier_current and intelligence.orientation:
@@ -544,6 +713,7 @@ class Strategist:
         cta_labels = {cta.label.lower() for cta in artifacts.offer.calls_to_action}
 
         normalized: list[EmailBrief] = []
+        reframed_positions: list[int] = []
         spent: list[str] = []
         spent_evidence: set[str] = set()
         for position, email in enumerate(emails, start=1):
@@ -575,7 +745,11 @@ class Strategist:
                     for evidence_id in assigned
                     if evidence_id in allowed and evidence_id not in forbidden
                 ]
-                forbidden_evidence = sorted(forbidden | set(removed))
+                # Carry the complete campaign boundary into craft retrieval,
+                # not only the disallowed ids the strategist happened to pick.
+                # Otherwise a later reader question can rediscover an unranked
+                # customer result that the contract never licensed.
+                forbidden_evidence = sorted(forbidden | (known_evidence - allowed))
             # Evidence is finite, and prompts/strategist.md asks for it to be
             # spent that way - "an id that is the backbone of one email should
             # not be the backbone of another". Nothing checked, and the failure
@@ -630,6 +804,7 @@ class Strategist:
                 call_to_action=email.call_to_action,
                 next_step_value=email.next_step_value,
                 fixed_cta_url=fixed_cta_url,
+                action_id=email.action_id,
             )
             constraints = _distinct_constraints(
                 [
@@ -637,14 +812,18 @@ class Strategist:
                     *_integration_conditions(
                         assigned, artifacts, supported_audience_context
                     ),
+                    *_connection_route_constraints(assigned, artifacts),
                 ]
             )
             felt_need = email.felt_need
             status_quo = email.status_quo
             if intelligence is not None:
                 if intelligence.research_loaded:
-                    felt_need = intelligence.normalized_felt_need(felt_need)
+                    felt_need = intelligence.normalized_felt_need(felt_need, assigned, email.problem_ids)
                     status_quo = intelligence.normalized_status_quo(status_quo)
+                    if email.felt_need.strip() and not felt_need:
+                        constraints = _distinct_constraints([*constraints,
+                            "No verified link connects this argument to the proposed buyer problem. Explain only the documented function; do not invent a pain, a switching story or a promised outcome."])
                 caveats = intelligence.constraints_for(assigned, artifacts.evidence)
                 if intelligence.v2_claim_boundary:
                     constraints = _distinct_constraints(
@@ -728,6 +907,7 @@ class Strategist:
                     call_to_action=alternative.call_to_action,
                     next_step_value=alternative.next_step_value,
                     fixed_cta_url=fixed_cta_url,
+                    action_id=alternative.action_id,
                 )
                 alternative_constraints = _distinct_constraints(
                     [
@@ -737,6 +917,7 @@ class Strategist:
                             artifacts,
                             supported_audience_context,
                         ),
+                        *_connection_route_constraints(alternative_evidence, artifacts),
                     ]
                 )
                 alternative_felt_need = alternative.felt_need
@@ -744,7 +925,7 @@ class Strategist:
                 if intelligence is not None:
                     if intelligence.research_loaded:
                         alternative_felt_need = intelligence.normalized_felt_need(
-                            alternative_felt_need
+                            alternative_felt_need, alternative_evidence, alternative.problem_ids
                         )
                         alternative_status_quo = intelligence.normalized_status_quo(
                             alternative_status_quo
@@ -762,7 +943,8 @@ class Strategist:
                             ),
                         ]
                     )
-                alternative_arguments.append(
+                repaired_alternative, _ = _repair_argument_dependencies(
+                    alternative,
                     alternative.model_copy(
                         update={
                             "felt_need": alternative_felt_need,
@@ -773,11 +955,13 @@ class Strategist:
                             "next_step_value": alternative_next_step_value,
                             "must_not_say": alternative_constraints,
                         }
-                    )
+                    ), artifacts, intelligence, fixed_cta_url=fixed_cta_url,
                 )
+                alternative_arguments.append(_resolve_proposition_action(repaired_alternative, artifacts, fixed_cta_url))
             email = email.model_copy(
                 update={
                     "position": position,
+                    "target_audience": intelligence.selected_audience if intelligence is not None else "",
                     "evidence_ids": assigned,
                     "next_step_evidence_ids": next_step_evidence,
                     "call_to_action": call_to_action,
@@ -799,6 +983,33 @@ class Strategist:
                     "alternative_arguments": alternative_arguments,
                 }
             )
+            email, reframed = _repair_argument_dependencies(
+                brief.emails[position - 1], email, artifacts, intelligence,
+                fixed_cta_url=fixed_cta_url,
+            )
+            email = _resolve_proposition_action(email, artifacts, fixed_cta_url)
+            if reframed:
+                reframed_positions.append(position)
+                email.alternative_ideas = []
+                valid_alternative = next((item for item in email.alternative_arguments
+                                          if not item.argument_issue), None)
+                if valid_alternative is not None:
+                    email = email.with_argument(valid_alternative)
+                    email.alternative_arguments = [item for item in email.alternative_arguments
+                                                   if item is not valid_alternative]
+                    reframed_positions.remove(position)
+                    if intelligence is not None:
+                        intelligence.trace.warn("Selected a complete supported alternative instead of changing the campaign into a first-feature documentation pitch.")
+            distinct_arguments: list[ArgumentOption] = []
+            argument_keys = [_idea_key(email.single_idea)]
+            for alternative in email.alternative_arguments:
+                key = _idea_key(alternative.single_idea)
+                if key and not any(_too_close(key, prior) for prior in argument_keys):
+                    distinct_arguments.append(alternative)
+                    argument_keys.append(key)
+            if len(distinct_arguments) != len(email.alternative_arguments) and intelligence is not None:
+                intelligence.trace.warn("Removed duplicate arguments after repairing their unsupported premise; no redundant draft is needed.")
+            email.alternative_arguments = distinct_arguments
             if cta_labels and email.call_to_action and email.call_to_action.lower() not in cta_labels:
                 # Not fatal: the strategist may legitimately phrase an existing
                 # action differently. Worth knowing when a run's CTAs drift.
@@ -821,6 +1032,15 @@ class Strategist:
             spent_evidence.update(assigned)
 
         brief.emails = normalized
+        if reframed_positions:
+            brief.promise = " ".join(_distinct_constraints([item.single_idea for item in normalized]))
+            brief.arc = " ".join(item.job for item in normalized if item.job)
+            brief.sequence_rationale = (
+                "The product/problem link was not established for email(s) "
+                + ", ".join(map(str, reframed_positions))
+                + ". A new proposition is needed to meet the original campaign objective; "
+                "the unsupported problem and dependent outcome were removed without changing the requested action."
+            )
         return brief
 
 

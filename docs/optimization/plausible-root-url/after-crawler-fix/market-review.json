@@ -1,0 +1,81 @@
+{
+  "stage": "positioning_competitors",
+  "rival_names": [
+    "Google Analytics (GA4)",
+    "Fathom Analytics",
+    "Simple Analytics",
+    "Matomo",
+    "PostHog",
+    "Umami"
+  ],
+  "readable_profiles": 5,
+  "profiles": [
+    {
+      "name": "Google Analytics (GA4)",
+      "verified": false,
+      "pages_read": 0,
+      "note": "their site returned no readable text"
+    },
+    {
+      "name": "Fathom Analytics",
+      "verified": true,
+      "pages_read": 5,
+      "note": "1 claim(s) the extractor reported were not on their pages and were discarded"
+    },
+    {
+      "name": "Simple Analytics",
+      "verified": true,
+      "pages_read": 5,
+      "note": "5 claim(s) the extractor reported were not on their pages and were discarded"
+    },
+    {
+      "name": "Matomo",
+      "verified": true,
+      "pages_read": 5,
+      "note": "9 claim(s) the extractor reported were not on their pages and were discarded"
+    },
+    {
+      "name": "PostHog",
+      "verified": true,
+      "pages_read": 5,
+      "note": "3 claim(s) the extractor reported were not on their pages and were discarded"
+    },
+    {
+      "name": "Umami",
+      "verified": true,
+      "pages_read": 5,
+      "note": "8 claim(s) the extractor reported were not on their pages and were discarded"
+    }
+  ],
+  "comparison_status_counts": {
+    "unknown": 269,
+    "potential_difference": 7
+  },
+  "assessment": "Relevant alternatives; partial evidence and unreliable raw scouting rationales/classification. Comparison-status safeguards remain honest about unknowns; no confirmed exclusive advantage.",
+  "defects": [
+    {
+      "issue": "Wrong public URL for incumbent",
+      "evidence": "analytics.google.com returned no readable text; no public-marketing/docs fallback captured."
+    },
+    {
+      "issue": "Scout rationale contradicts known product",
+      "evidence": "Matomo rationale invokes funnels/segments as greater depth; Plausible features and compiled ledger already document both.",
+      "source": "https://plausible.io/features"
+    },
+    {
+      "issue": "Misleading pricing contrast in scout rationale",
+      "evidence": "Fathom rationale contrasts flat-fee with Plausible pageview tiers, but Fathom pricing also uses pageview tiers.",
+      "source": "https://usefathom.com/pricing"
+    },
+    {
+      "issue": "Duration classification mistaken for performance",
+      "evidence": "SSO session timeout and one-week dashboard-lock policy are classified under speed."
+    }
+  ],
+  "safeguards": [
+    "Unread GA4 profile explicitly unverified",
+    "26 candidate rival claims dropped because quote not found",
+    "269 unknown comparisons and7potential differences; no confirmed-difference status"
+  ],
+  "input_preservation": "Raw scan output passed onward unchanged; no evaluator-supplied competitor facts or source URLs injected."
+}

@@ -5,6 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.marketing.gates import DEFAULT_MERGE_FIELDS
 
 PolicyPreset = Literal["fast", "balanced", "maximum"]
+StrategyMode = Literal["auto", "planned", "direct"]
 
 
 class ExecutionPolicy(BaseModel):
@@ -25,6 +26,10 @@ class ExecutionPolicy(BaseModel):
     #: Rewrites per email after the first draft. Two is the point where a
     #: rewrite stops fixing the draft and starts sanding it.
     model_config = ConfigDict(extra="forbid")
+
+    # Historical campaigns retain their selected review depth. New campaigns
+    # may opt into deterministic routing for a single, clearly specified job.
+    strategy_mode: StrategyMode = "planned"
 
     max_revisions: int = Field(default=2, ge=0, le=4)
     #: How many propositions are written for each email before one is chosen. The

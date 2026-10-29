@@ -1,0 +1,357 @@
+{
+  "status": "audit_in_progress",
+  "runs": [
+    {
+      "execution_id": "7f217580-283d-4294-a617-e701d691f7d7",
+      "campaign_id": "88b91c24-4e29-47c4-a18b-6c3c32eecf8b",
+      "status": "failed",
+      "launched_at": "2026-10-20T01:22:21.218715+00:00",
+      "code_revision": "working-tree",
+      "outcome_status": "failed",
+      "needs_review": false,
+      "review_reasons": [],
+      "last_checked_at": "2026-10-20T01:48:03.247673+00:00",
+      "result_dir": "docs\\optimization\\carrd-root-url-2026-10-19\\runs\\7f217580-283d-4294-a617-e701d691f7d7",
+      "estimated_cost_usd": 2.4603,
+      "completed_at": "2026-10-20T01:47:58.356051Z"
+    },
+    {
+      "execution_id": "0d35ff99-2970-42c5-8849-2f0f682c14c9",
+      "campaign_id": "88b91c24-4e29-47c4-a18b-6c3c32eecf8b",
+      "status": "failed",
+      "launched_at": "2026-10-20T01:49:20.123791+00:00",
+      "code_revision": "working-tree",
+      "outcome_status": "failed",
+      "needs_review": false,
+      "review_reasons": [],
+      "last_checked_at": "2026-10-20T16:03:54.043914+00:00",
+      "timeout_cancel_requested": true,
+      "result_dir": "docs\\optimization\\carrd-root-url-2026-10-19\\runs\\0d35ff99-2970-42c5-8849-2f0f682c14c9",
+      "estimated_cost_usd": 2.871,
+      "completed_at": "2026-10-20T02:37:36.971953Z"
+    }
+  ],
+  "steps": {
+    "create": {
+      "started_at": "20261019T012541688365Z",
+      "snapshot": "C:\\Users\\oussa\\Desktop\\Workspace\\projects\\MarketingOS\\docs\\optimization\\carrd-root-url-2026-10-19\\steps\\20261019T012541688365Z-create.json"
+    },
+    "ingest": {
+      "started_at": "20261019T012542790589Z",
+      "snapshot": "C:\\Users\\oussa\\Desktop\\Workspace\\projects\\MarketingOS\\docs\\optimization\\carrd-root-url-2026-10-19\\steps\\20261019T012542790589Z-ingest.json"
+    },
+    "compile": {
+      "started_at": "20261019T012601326313Z",
+      "snapshot": "C:\\Users\\oussa\\Desktop\\Workspace\\projects\\MarketingOS\\docs\\optimization\\carrd-root-url-2026-10-19\\steps\\20261019T012601326313Z-compile.json"
+    },
+    "ingest-content-headers": {
+      "started_at": "20261019T013403719448Z",
+      "snapshot": "C:\\Users\\oussa\\Desktop\\Workspace\\projects\\MarketingOS\\docs\\optimization\\carrd-root-url-2026-10-19\\steps\\20261019T013403719448Z-ingest.json"
+    },
+    "compile-content-headers": {
+      "started_at": "20261019T013441333472Z",
+      "snapshot": "C:\\Users\\oussa\\Desktop\\Workspace\\projects\\MarketingOS\\docs\\optimization\\carrd-root-url-2026-10-19\\steps\\20261019T013441333472Z-compile.json"
+    },
+    "scan": {
+      "started_at": "20261019T014109899644Z",
+      "snapshot": "C:\\Users\\oussa\\Desktop\\Workspace\\projects\\MarketingOS\\docs\\optimization\\carrd-root-url-2026-10-19\\steps\\20261019T014109899644Z-scan.json"
+    },
+    "map": {
+      "started_at": "20261019T014543716734Z",
+      "snapshot": "C:\\Users\\oussa\\Desktop\\Workspace\\projects\\MarketingOS\\docs\\optimization\\carrd-root-url-2026-10-19\\steps\\20261019T014543716734Z-map.json"
+    },
+    "map-quota-resume-2026-10-20": {
+      "started_at": "20261020T005451564404Z",
+      "snapshot": "C:\\Users\\oussa\\Desktop\\Workspace\\projects\\MarketingOS\\docs\\optimization\\carrd-root-url-2026-10-19\\steps\\20261020T005451564404Z-map.json"
+    },
+    "select-first": {
+      "started_at": "20261020T010820604026Z",
+      "snapshot": "C:\\Users\\oussa\\Desktop\\Workspace\\projects\\MarketingOS\\docs\\optimization\\carrd-root-url-2026-10-19\\steps\\20261020T010820604026Z-select-first.json"
+    },
+    "research": {
+      "started_at": "20261020T010826916736Z",
+      "snapshot": "C:\\Users\\oussa\\Desktop\\Workspace\\projects\\MarketingOS\\docs\\optimization\\carrd-root-url-2026-10-19\\steps\\20261020T010826916736Z-research.json"
+    },
+    "dossier": {
+      "started_at": "20261020T011359172255Z",
+      "snapshot": "C:\\Users\\oussa\\Desktop\\Workspace\\projects\\MarketingOS\\docs\\optimization\\carrd-root-url-2026-10-19\\steps\\20261020T011359172255Z-dossier.json"
+    },
+    "dossier-required-capabilities": {
+      "started_at": "20261020T011857259843Z",
+      "snapshot": "C:\\Users\\oussa\\Desktop\\Workspace\\projects\\MarketingOS\\docs\\optimization\\carrd-root-url-2026-10-19\\steps\\20261020T011857259843Z-dossier.json"
+    },
+    "campaign": {
+      "started_at": "20261020T012152664130Z",
+      "snapshot": "C:\\Users\\oussa\\Desktop\\Workspace\\projects\\MarketingOS\\docs\\optimization\\carrd-root-url-2026-10-19\\steps\\20261020T012152664130Z-campaign.json"
+    }
+  },
+  "quality_history": [
+    {
+      "iteration": 1,
+      "execution_id": "7f217580-283d-4294-a617-e701d691f7d7",
+      "score": null,
+      "comparable": true,
+      "remaining_defect": "No deliverable: numeric gate false positives",
+      "evidence": "numeric-gate-replay.json",
+      "next_action": "Rerun same campaign on corrected numeric gates"
+    },
+    {
+      "iteration": 2,
+      "execution_id": "0d35ff99-2970-42c5-8849-2f0f682c14c9",
+      "score": null,
+      "comparable": true,
+      "remaining_defect": "Quota failure during late critique discards a gated, cold-read champion; zero assets",
+      "evidence": "runs/0d35ff99-2970-42c5-8849-2f0f682c14c9/result.json",
+      "next_action": "Retain safe partial outcomes and stop immediately on hard quota; validate a fresh brand across every stage"
+    }
+  ],
+  "stage_reviews": [
+    {
+      "stage": "ingestion_baseline",
+      "score": 6.5,
+      "facts": [
+        "12 pages and 7058 words; detailed plans and signup-form guide discovered from homepage"
+      ],
+      "limitations": [
+        "Section headers removed product summary, annual price and Pro-only context from homepage",
+        "Several documents are indexes or template listings"
+      ],
+      "snapshot": "C:\\Users\\oussa\\Desktop\\Workspace\\projects\\MarketingOS\\docs\\optimization\\carrd-root-url-2026-10-19\\steps\\20261019T012542790589Z-ingest.json"
+    },
+    {
+      "stage": "knowledge_compilation_baseline",
+      "score": 8,
+      "facts": [
+        "122 of 122 quotations matched their documents",
+        "Annual prices 9/19/49 tied to Pro Lite/Standard/Plus",
+        "Free Basic and seven-day Pro trial distinguished; no customer proof or measured outcome invented"
+      ],
+      "limitations": [
+        "Five unverified candidate quotes dropped",
+        "Initial homepage scope missing upstream; detailed plans compensate"
+      ],
+      "calls": 11
+    },
+    {
+      "stage": "ingestion_corrected",
+      "score": 8,
+      "facts": [
+        "12 pages, 7440 words",
+        "Annual price and Pro-only context restored on homepage by normal crawl"
+      ],
+      "limitations": [
+        "Several indexes and template lists; bounded coverage",
+        "Three historical document versions preserved alongside reimported pages"
+      ],
+      "snapshot": "C:\\Users\\oussa\\Desktop\\Workspace\\projects\\MarketingOS\\docs\\optimization\\carrd-root-url-2026-10-19\\steps\\20261019T013403719448Z-ingest.json"
+    },
+    {
+      "stage": "knowledge_compilation_corrected",
+      "score": 8,
+      "facts": [
+        "135/135 source quotations matched",
+        "Detailed annual plans, free entry and seven-day trial distinguished",
+        "Newly preserved product headers included; voice exemplars and missing customer proof explicit"
+      ],
+      "limitations": [
+        "Homepage advertises Pro from 19/year although detailed Pro Lite plan costs 9/year: use named plans",
+        "Three historical page versions increase compilation context"
+      ],
+      "calls": 15,
+      "input_tokens": 199217,
+      "output_tokens": 105639
+    },
+    {
+      "stage": "competitors",
+      "score": 7,
+      "facts": [
+        "Six plausible alternatives discovered; four read, 105 claims verified",
+        "Unread Linktree/Wix explicitly marked unverified; rationale hypothesis separated"
+      ],
+      "limitations": [
+        "Two sites unread",
+        "Notion AI/agent feature noise exceeds site-builder comparison scope"
+      ],
+      "calls": 5
+    },
+    {
+      "stage": "positioning",
+      "score": 7,
+      "facts": [
+        "No false exclusivity asserted",
+        "21 unmatched propositions labelled for verification; customer proof deficit explicit"
+      ],
+      "limitations": [
+        "Broad lexical axes include irrelevant competitor features",
+        "No documented differentiator yet"
+      ]
+    },
+    {
+      "stage": "capability_catalogue",
+      "score": 7,
+      "facts": [
+        "56 atomic product capabilities, derived from Knowledge v2 with evidence links",
+        "No template demo person or third-party company misclassified as Carrd capability"
+      ],
+      "limitations": [
+        "Synonymous duplicates from different pages",
+        "Several documentation index statements carry limited plan restrictions"
+      ]
+    },
+    {
+      "stage": "audience_map",
+      "score": 6.5,
+      "facts": [
+        "Seven mapped audiences; exact first selected: pre-launch solo makers/newsletter writers",
+        "First audience product-compatible and publicly findable; limited evidence and material free-alternative counterevidence kept",
+        "No fabricated population or response-rate forecast"
+      ],
+      "limitations": [
+        "13 minutes 11 seconds; three actual calls for two logical stages",
+        "Only five fetched sources; most segments lack audience-side proof",
+        "Discovery narrative overstates some findings compared with validated assessment"
+      ],
+      "calls": 3,
+      "input_tokens": 458125,
+      "output_tokens": 54726,
+      "duration_seconds": 791.21
+    },
+    {
+      "stage": "audience_research",
+      "score": 7.5,
+      "facts": [
+        "Nine fetched sources, seven source-backed problems, two unverifiable items dropped",
+        "2020/2024 material explicitly downgraded with historical warnings; three 2026 forum posts retained",
+        "Problem about waitlist conversion distinguished from product capabilities"
+      ],
+      "limitations": [
+        "Most sources share Indie Hackers venue",
+        "Several single-source problems; some claims generalise one person",
+        "Carrd cannot resolve every researched issue: email sending, demand generation and form-level behavioural telemetry need careful dossier filtering"
+      ],
+      "calls": 2
+    },
+    {
+      "stage": "relevance_dossier_baseline",
+      "score": 7,
+      "facts": [
+        "Current dossier with 30 ranked facts; unsupported mailing/conversion/community outcomes silenced",
+        "Partial fit correctly distinguishes hosted page from embeddable form"
+      ],
+      "limitations": [
+        "Price omitted from model input despite affordability objection",
+        "Every catalogue capability marked mandatory: 60 facts bypass 48 cap, leaving no retrieval slots for named plan pricing"
+      ],
+      "calls": 1
+    },
+    {
+      "stage": "relevance_dossier_corrected",
+      "score": 8,
+      "facts": [
+        "Current v2 interpretation 7; 28 ranked facts, seven fits, three silences",
+        "Pro Standard 19/year now LEAD and signup-form tier explicit",
+        "No promise of mailing, demand validation or waitlist conversion; hosted-page versus embed gap kept"
+      ],
+      "limitations": [
+        "Most fit judgments remain partial",
+        "No customer outcome proof; wording on analytics must stay within documented scope"
+      ],
+      "calls": 1
+    },
+    {
+      "stage": "campaign_generation_baseline",
+      "score": 0,
+      "facts": [
+        "15 completed model calls; one expired attempt retried; 0/1 assets delivered"
+      ],
+      "limitations": [
+        "Documented Pro Standard annual price and seven-day trial incorrectly blocked"
+      ],
+      "execution_id": "7f217580-283d-4294-a617-e701d691f7d7"
+    }
+  ],
+  "skill": "marketingos-brand-audit",
+  "protocol": {
+    "homepage_only": true,
+    "audience_selection": "first",
+    "emails": 1,
+    "sending": false,
+    "stage_scale": "0–10 informed review of coverage, factual reliability and usefulness",
+    "email_grid": [
+      25,
+      20,
+      20,
+      15,
+      10,
+      10
+    ],
+    "corrections": "Fix generator mechanisms and preserve the baseline; no manual source, fact, CTA or asset repair",
+    "runtime": "Current-code ASGI application in a persistent session, actual routes/providers/DB, no listener or lifespan; old servers untouched",
+    "success_criterion": "Every stage must produce reliable useful paid-quality outputs; a good email alone is insufficient"
+  },
+  "last_snapshot": "C:\\Users\\oussa\\Desktop\\Workspace\\projects\\MarketingOS\\docs\\optimization\\carrd-root-url-2026-10-19\\steps\\20261020T014908893964Z-advice.json",
+  "corrections": [
+    {
+      "id": "content-headers",
+      "status": "validated_and_reimported",
+      "file": "backend/app/ingestion/loaders/html_extract.py",
+      "cause": "All header tags removed irrespective of content scope",
+      "targeted_tests": 124,
+      "replay": "extraction-replay.json",
+      "backend_tests": 1754,
+      "frontend_tests": 28,
+      "ruff": "passed",
+      "frontend_lint": "passed",
+      "typecheck": "passed"
+    },
+    {
+      "id": "relative-cta",
+      "status": "validated_loaded_for_live_audit",
+      "file": "backend/app/marketing/render_html.py",
+      "cause": "Renderer ignored brief-selected relative official action paths",
+      "targeted_tests": 59,
+      "ruff": "passed",
+      "full_backend": "passed",
+      "runtime": "Loaded in third audit session before market scan; no existing server reload",
+      "backend_tests": 1762
+    },
+    {
+      "id": "dossier-required-capabilities",
+      "status": "validated_and_regenerated",
+      "targeted_tests": 48,
+      "ruff": "passed",
+      "full_backend": "passed",
+      "before_selected": 60,
+      "after_selected": 48,
+      "interpretation_version": 7,
+      "backend_tests": 1764
+    },
+    {
+      "id": "numeric-gate-typography-and-plan",
+      "status": "validated_real_run_gates_passed_delivery_blocked_by_provider",
+      "targeted_tests": 76,
+      "backend_tests": 1771,
+      "ruff": "passed",
+      "replay": "numeric-gate-replay.json",
+      "cause": "Hyphen retained in duration unit; multiword price subject reduced to last token"
+    },
+    {
+      "id": "partial-craft-and-quota",
+      "status": "scripted_validation_passed_pending_new_brand_live_run",
+      "backend_tests": 1780,
+      "additional_targeted_tests": 27,
+      "ruff": "passed",
+      "cause": "Safe champion local to craft lost on late ProviderError; hard Codex quota classified as transient",
+      "effect": "Keep gated champion, explicitly incomplete review, no more pipeline calls; serialize same partial result in stepped runs"
+    }
+  ],
+  "blocker_history": [
+    {
+      "stage": "audience_map",
+      "at": "2026-10-19T01:45:55Z",
+      "error": "Claude Code session limit; resets 6am Europe/Paris",
+      "completed_calls": 0,
+      "resume": "map --revision quota-resume-2026-10-20"
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "id": "b2b-acquisition",
+  "source": "labelled synthetic fixture",
+  "split": "development",
+  "request": {
+    "name": "Repairboard",
+    "request": "Write exactly one email introducing the repair-status board to independent repair shop owners. Invite a relevant first evaluation, without assuming they already have a software project.",
+    "target_market": "Independent repair shop owners considering how customers can inspect repair stages.",
+    "intent": {
+      "objective": "acquisition",
+      "reader_relationship": "cold"
+    }
+  },
+  "artifacts": {
+    "business": {
+      "company_name": "Repairboard",
+      "what_it_does": "a shared repair-status board",
+      "category": "",
+      "business_model": "",
+      "facts": [],
+      "vocabulary": []
+    },
+    "offer": {
+      "plans": [],
+      "free_entry": "",
+      "guarantees": [],
+      "calls_to_action": [
+        {
+          "label": "View a sample repair board",
+          "intent": "View a sample repair board",
+          "url": "https://repairboard.example/sample",
+          "id": "",
+          "evidence_ids": [],
+          "provenance": null
+        }
+      ],
+      "purchase_motion": ""
+    },
+    "evidence": {
+      "entries": [
+        {
+          "id": "E1",
+          "kind": "feature",
+          "claim": "Repairboard displays each repair's current stage on a shared board.",
+          "verbatim": "Repairboard displays each repair's current stage on a shared board.",
+          "source": "https://repairboard.example/offer",
+          "document_id": "synthetic-source",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": null,
+          "context": {
+            "subject": "Repairboard",
+            "source_kind": "official_documentation",
+            "claim_scope": "documented_capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "fixture_exact_quote"
+          },
+          "source_references": []
+        },
+        {
+          "id": "E2",
+          "kind": "feature",
+          "claim": "A shop can share a read-only status link with its customer.",
+          "verbatim": "A shop can share a read-only status link with its customer.",
+          "source": "https://repairboard.example/offer",
+          "document_id": "synthetic-source",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": null,
+          "context": {
+            "subject": "Repairboard",
+            "source_kind": "official_documentation",
+            "claim_scope": "documented_capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "fixture_exact_quote"
+          },
+          "source_references": []
+        }
+      ]
+    },
+    "voice": {
+      "learned": false,
+      "tone": "plain and direct - one person writing to one person, no marketing register",
+      "rhythm": "short opening line, paragraphs of one to three lines, varied sentence length",
+      "person": "first person singular, signed by a name or the product team",
+      "greetings": [
+        "Hi there,"
+      ],
+      "sign_offs": [
+        "- the team"
+      ],
+      "exemplars": [],
+      "prefer_words": [],
+      "avoid_words": []
+    },
+    "audience": {
+      "segments": [
+        {
+          "name": "Independent repair shop owners considering how customers can inspect repair stages.",
+          "situation": "",
+          "situation_grounding": "inferred",
+          "situation_provenance": [],
+          "job_to_be_done": "",
+          "trigger": "",
+          "sophistication": "problem_aware",
+          "pains": []
+        }
+      ],
+      "objections": []
+    },
+    "gaps": {
+      "gaps": []
+    },
+    "version": 1,
+    "compiled_at": "2026-10-17T18:58:42.531815Z",
+    "source_document_ids": [],
+    "source_context_fingerprint": "",
+    "notes": []
+  },
+  "documents": [
+    {
+      "id": "synthetic-source",
+      "title": "Synthetic offer",
+      "source": "https://repairboard.example/offer",
+      "content": "Repairboard displays each repair's current stage on a shared board.\n\nA shop can share a read-only status link with its customer.\n\nView a sample repair board: https://repairboard.example/sample"
+    }
+  ],
+  "selected_audience": ""
+}

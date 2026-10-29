@@ -1,0 +1,79 @@
+INFO:     Started server process [11252]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+Knowledge compilation failed for e2d17c15-3beb-4ffb-b189-bd94c2096cf2
+Traceback (most recent call last):
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\runtime\model_session.py", line 347, in _send
+    response = await self._provider.generate(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\ai\routing_provider.py", line 52, in generate
+    return await self._backend(request.model).generate(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\ai\claude_provider.py", line 252, in generate
+    return await self._generate(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\ai\claude_provider.py", line 315, in _generate
+    raise _assistant_failure(error, final_text)
+app.ai.base.ProviderCallError: Claude Code rate limit: You've hit your session limit · resets 5:20am (Europe/Paris).
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\services\knowledge_compilation.py", line 110, in _compile
+    artifacts = await KnowledgeCompiler(session).compile(corpus, on_progress=progress)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\knowledge\compiler.py", line 181, in compile
+    audience = await self._audience(corpus, profile, ledger)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\knowledge\compiler.py", line 349, in _audience
+    result = await self._session.structured(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\runtime\model_session.py", line 277, in structured
+    response = await self._generate(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\runtime\model_session.py", line 453, in _generate
+    response = await self._send(request, role, model)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\runtime\model_session.py", line 380, in _send
+    raise ProviderError(
+app.runtime.exceptions.ProviderError: RoutingProvider call failed after 1 attempt(s): Claude Code rate limit: You've hit your session limit · resets 5:20am (Europe/Paris).
+knowledge compiler: one reading did not come back - RoutingProvider call failed after 1 attempt(s): Claude Code rate limit: You've hit your session limit · resets 5:20am (Europe/Paris).
+knowledge compiler: one reading did not come back - RoutingProvider call failed after 1 attempt(s): Claude Code rate limit: You've hit your session limit · resets 5:20am (Europe/Paris).
+knowledge compiler: one reading did not come back - RoutingProvider call failed after 1 attempt(s): Claude Code rate limit: You've hit your session limit · resets 5:20am (Europe/Paris).
+Knowledge compilation failed for 0a3d203e-8705-4184-aee8-49189c67f7f3
+Traceback (most recent call last):
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\runtime\model_session.py", line 347, in _send
+    response = await self._provider.generate(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\ai\routing_provider.py", line 52, in generate
+    return await self._backend(request.model).generate(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\ai\claude_provider.py", line 252, in generate
+    return await self._generate(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\ai\claude_provider.py", line 315, in _generate
+    raise _assistant_failure(error, final_text)
+app.ai.base.ProviderCallError: Claude Code rate limit: You've hit your session limit · resets 5:20am (Europe/Paris).
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\services\knowledge_compilation.py", line 110, in _compile
+    artifacts = await KnowledgeCompiler(session).compile(corpus, on_progress=progress)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\knowledge\compiler.py", line 181, in compile
+    audience = await self._audience(corpus, profile, ledger)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\knowledge\compiler.py", line 349, in _audience
+    result = await self._session.structured(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\runtime\model_session.py", line 277, in structured
+    response = await self._generate(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\runtime\model_session.py", line 453, in _generate
+    response = await self._send(request, role, model)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\runtime\model_session.py", line 380, in _send
+    raise ProviderError(
+app.runtime.exceptions.ProviderError: RoutingProvider call failed after 1 attempt(s): Claude Code rate limit: You've hit your session limit · resets 5:20am (Europe/Paris).

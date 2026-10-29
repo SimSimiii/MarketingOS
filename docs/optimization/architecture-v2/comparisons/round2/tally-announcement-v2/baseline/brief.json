@@ -1,0 +1,66 @@
+{
+  "interpretation": "Treat this as a one-email product launch announcement to cold prospects who have not bought Tally, not as an onboarding message or a newly released feature announcement. Within the selected audience, follow the current dossier and narrow the campaign to no-code automation agencies. The email should introduce Tally through its documented webhook capability without implying that the capability itself is new.",
+  "reader": "Selected audience: The ops or no-code person on a small team whose intake form is step one of an automation nobody owns.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): They inherited the form. It feeds something — a CRM record, a Slack channel, a billing step, an onboarding checklist — and the handoff between the form and the rest of the stack is currently a human. Someone exports a CSV on Mondays, or a scheduled job polls an API, or the form emails a shared inbox and a person retypes it. They have built the downstream half already in Make, Zapier or n8n and they are competent enough to read webhook docs, which means their evaluation is not about whether a form is pretty. It is about whether a delivery that fails at 2am gets retried, whether they will find out when it doesn't, whether they can verify a payload came from the vendor before it writes to a production database, and whether the vendor will move webhooks behind a seat-priced tier the quarter after they standardise on it. The failure they fear is specific and quiet: the form keeps accepting submissions and the records stop appearing.\nQualified campaign scope within that audience: no-code automation agencies.",
+  "reader_segment": "The ops or no-code person on a small team whose intake form is step one of an automation nobody owns",
+  "reader_profile_override": "",
+  "reader_scope": "no-code automation agencies",
+  "fixed_cta_url": "",
+  "promise": "A Tally form can hand each submission off as structured JSON to the endpoint that starts the rest of a client workflow.",
+  "orientation": "Tally is an online form builder that sends form submissions to automation endpoints and connects with no-code platforms used by small teams.",
+  "arc": "Announce Tally, connect it to the reader's form-to-workflow job, show the concrete JSON webhook handoff, and invite one small test with a real endpoint.",
+  "sequence_rationale": "A single launch email must stand alone, so it leads with what Tally is and the most relevant documented mechanism rather than manufacturing a crisis or assuming a particular installed platform. It earns the CTA by giving a solution-aware reader one bounded evaluation: create a form, submit a response, and inspect the handoff. The argument deliberately stops before destination-specific mapping, validation, redirects, replay behavior, or production reliability, none of which the available evidence establishes.",
+  "emails": [
+    {
+      "position": 1,
+      "job": "Get a cold no-code automation agency prospect to create one Tally form and test whether its webhook handoff fits an upcoming client intake workflow.",
+      "single_idea": "When an agency is building or replacing the form-to-system handoff for a client, Tally can serve as the form layer that sends each submission as structured JSON to the endpoint starting the downstream workflow.",
+      "felt_need": "Common form-to-CRM automation patterns write submissions directly into the contact database without checking for typos, blank required fields, or bot spam, so bad records accumulate and must be cleaned up by hand afterward.",
+      "status_quo": "",
+      "why_it_fails": "",
+      "mechanism": "When a Tally form is submitted, Tally sends the response data to a configured URL as JSON in a POST request. That webhook can start a route through tools such as Make, Zapier, or n8n to a CRM, database, billing tool, or messaging app.",
+      "alternative_ideas": [],
+      "alternative_arguments": [],
+      "belief_shift": "Before: Tally may look like another standalone form builder. After: Tally is worth testing as the form entry point for one automated client workflow because its documented handoff is structured JSON to a chosen HTTP endpoint.",
+      "evidence_ids": [
+        "E31",
+        "E22",
+        "E33"
+      ],
+      "must_not_say": [
+        "Do not claim that Tally supports downstream conditional responses or lets an automation control the respondent's redirect or confirmation state; this is unestablished.",
+        "Do not claim a documented representation for multi-choice labels, values, or reference identifiers in webhook payloads.",
+        "Do not claim that Tally resolves destination-specific field mapping or type coercion issues, including writes to Airtable.",
+        "Do not claim that instant webhook triggers replay or resend previously received submissions during testing.",
+        "Do not claim that Tally validates submissions, catches typos, filters bot spam, or prevents bad records from reaching a CRM.",
+        "Do not conflate a native connector, a generic automation module, and a custom HTTP webhook endpoint; describe only the webhook route established by the evidence.",
+        "Do not call the webhook capability new, newly launched, unique, effortless, or guaranteed reliable.",
+        "Do not promise conditional redirects, readable multi-choice values, automatic field correction, replay of historical submissions, or production performance from this test.",
+        "Keep pricing, unlimited free-plan claims, file uploads, AI or MCP features, GDPR claims, testimonials, and competitor comparisons out of this email; they are separate arguments and outside this campaign's current claim boundary.",
+        "Keep the connection route attached to its cited source. A native or prebuilt integration and a custom HTTP/webhook endpoint are separate setup paths unless the source explicitly equates them. A platform name alone establishes neither manual endpoint configuration nor a no-setup connector. Keep unknown setup requirements unknown; do not mix the steps or benefits of those paths."
+      ],
+      "forbidden_evidence_ids": [
+        "E111"
+      ],
+      "forbidden_capability_ids": [],
+      "objection": "Will this fit the particular downstream stack a client already uses? Answer narrowly: the webhook can send structured JSON to any HTTP endpoint, and documented examples include workflows through Make, Zapier, or n8n; compatibility with a specific destination still needs testing.",
+      "tone": "Warm, casual, and matter-of-fact—like a trusted peer sharing a useful tool, with short sentences and no launch-day theatrics.",
+      "call_to_action": "Create a free form",
+      "next_step_decision": "Decide whether Tally's webhook handoff is a workable starting point for one client intake workflow.",
+      "next_step_value": "Create a small test form, configure a webhook, submit one response, and inspect the structured JSON POST received at the chosen endpoint.",
+      "next_step_evidence_ids": [
+        "E31",
+        "E22"
+      ],
+      "next_step_limit": "This test does not establish destination-specific field mapping, submission validation, conditional respondent redirects, replay of earlier submissions, or production reliability.",
+      "subject_strategy": "Announce Tally by name and pair it with the concrete form-to-workflow payoff. Avoid vague “big news,” unsupported novelty, competitor bait, and a feature-list subject.",
+      "must_not_reuse": []
+    }
+  ],
+  "voice_notes": "Match Tally's plainspoken, slightly irreverent confidence. Use “we,” keep the explanation concrete, and avoid inflated automation language such as seamless, bulletproof, or set-and-forget.",
+  "contract": {
+    "kind": "single_email",
+    "count": 1,
+    "count_is_explicit": true,
+    "evidence": "1 email"
+  }
+}

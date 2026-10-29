@@ -14,18 +14,24 @@ import re
 from collections.abc import Iterable
 from datetime import UTC, datetime
 from enum import StrEnum
+from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
 from app.ai.model_router import ModelTier
 from app.knowledge.artifacts import Grounding, KnowledgeArtifacts, Objection
+from app.knowledge.corpus import fold
+from app.knowledge.decision_context import evidence_record, select_evidence
 from app.knowledge.ledger import (
     Evidence,
+    EvidenceContext,
     EvidenceIndex,
     EvidenceKind,
     EvidenceLedger,
+    EvidenceStrength,
     category_of,
+    context_of,
     value_of,
 )
 from app.market.audience_research import AudienceResearch
@@ -34,13 +40,14 @@ from app.market.capabilities import (
     ClaimVisibility,
     ProductCapabilityProfile,
 )
-from app.market.claims import ClaimAxis
+from app.market.claims import Claim, ClaimAxis, same_claim
 from app.market.positioning import PositioningMap, Territory, axis_for_evidence
 from app.market.qualification import CompanyQualification, QualificationClass
 from app.runtime.model_session import ModelSession
 
 ROLE_ID = "relevance_analyst"
 MAX_RANKED_EVIDENCE = 30
+INTERPRETATION_VERSION = 16
 
 
 class RelevanceBand(StrEnum):
@@ -90,10 +97,22 @@ class SilenceProposal(BaseModel):
     question: str = ""
 
 
+class DefiningNeedFit(BaseModel):
+    """Product support for the whole selected workflow, not a count of features."""
+
+    status: Literal["addressed", "partial", "unknown"] = "unknown"
+    evidence_ids: list[str] = Field(default_factory=list)
+    capability_ids: list[str] = Field(default_factory=list)
+    unverified_requirements: list[str] = Field(default_factory=list)
+    caveat: str = ""
+    why: str = ""
+
+
 class RelevanceProposal(BaseModel):
     """The model's untrusted structured answer."""
 
     orientation: str = ""
+    defining_need_fit: DefiningNeedFit | None = None
     ranked_relevance: list[RankedRelevanceProposal] = Field(default_factory=list)
     problem_fits: list[ProblemFitProposal] = Field(default_factory=list)
     segment_objections: list[ObjectionProposal] = Field(default_factory=list)
@@ -133,6 +152,9 @@ class DossierEvidence(BaseModel):
     claim: str
     verbatim: str
     source: str = ""
+    document_id: str | None = None
+    context: EvidenceContext | None = None
+    source_references: list[dict[str, str]] = Field(default_factory=list)
     strength: str
     category: str
     value_band: str
@@ -145,6 +167,9 @@ class DossierEvidence(BaseModel):
             claim=evidence.claim,
             verbatim=evidence.verbatim,
             source=evidence.source,
+            document_id=evidence.document_id,
+            context=context_of(evidence),
+            source_references=evidence.source_references,
             strength=str(evidence.strength),
             category=str(category_of(evidence)),
             value_band=str(value_of(evidence).band),
@@ -193,9 +218,9 @@ class ClaimContract(BaseModel):
     `campaign_allowed_claims` is the only one the writer is ever handed.
 
     The separation that matters is forbidden against withheld. Forbidden is
-    "this is not true of us": a scope boundary, or a capability nobody
-    verified. Withheld is "this may well be true and we are not spending it
-    here": contested territory, a WITHHOLD ranking, evidence with no
+    "this claim is not licensed": a scope boundary, or a capability nobody
+    verified. An unknown capability is not established as false. Withheld is
+    "this may well be true and we are not spending it here": a WITHHOLD ranking, evidence with no
     customer-copy licence, evidence irrelevant to any problem this audience
     has. Collapsing the two - which is what shipping both through one
     `forbidden_claims` list did - loses the distinction between a lie and a
@@ -309,6 +334,7 @@ class RelevanceDossier(BaseModel):
     #: Payload V1 stays readable. Only newly normalized capability-aware rows
     #: are V2, and campaign adapters branch on this rather than rewriting V1.
     schema_version: int = 1
+    interpretation_version: int = 1
     audience_research_id: UUID
     audience_name: str
     audience_research_version: int
@@ -321,6 +347,7 @@ class RelevanceDossier(BaseModel):
     qualification_fingerprint: str = ""
     built_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     orientation: str = ""
+    defining_need_fit: DefiningNeedFit | None = None
     ranked_relevance: list[RankedRelevanceItem] = Field(default_factory=list)
     problem_fits: list[ProblemFit] = Field(default_factory=list)
     segment_objections: list[Objection] = Field(default_factory=list)
@@ -380,6 +407,7 @@ class RelevanceAnalyst:
         capability_profile_version: int | None = None,
         company_qualifications: list[QualifiedCompanySnapshot] | None = None,
         qualification_fingerprint: str = "",
+        preferred_evidence_ids: list[str] | None = None,
     ) -> RelevanceDossier:
         proposal = await self._session.structured(
             role=ROLE_ID,
@@ -391,12 +419,18 @@ class RelevanceAnalyst:
                     knowledge_id,
                     knowledge_version,
                     capability_profile=capability_profile,
+                    required_capability_ids=research.definition.required_product_capabilities,
+                    preferred_evidence_ids=preferred_evidence_ids,
+                    query=f"{research.audience_name} " + " ".join(item.statement for item in research.problems),
+                    problem_queries=[research.audience_name,
+                                     *(item.description for item in research.definition.required_workflow_signals),
+                                     *(item.statement for item in research.problems)],
                 ),
                 "audience_context": _audience_context(
                     research, research_id, research_version
                 ),
                 "market_context": _market_context(
-                    positioning, market_scan_id, market_scan_version
+                    positioning, market_scan_id, market_scan_version, audience=research.audience_name
                 ),
             },
             task=(
@@ -510,8 +544,16 @@ def normalize_dossier(
             warnings.append(f"Normalized ranking for evidence {evidence.id!r}.")
 
     if len(ranked) > MAX_RANKED_EVIDENCE:
-        overflow = len(ranked) - MAX_RANKED_EVIDENCE
-        ranked = ranked[:MAX_RANKED_EVIDENCE]
+        # Negative licensing decisions must survive the display budget too.
+        # Otherwise a late WITHHOLD silently becomes campaign-safe again.
+        withheld = [item for item in ranked if item.band is RelevanceBand.WITHHOLD]
+        priority = {RelevanceBand.LEAD: 0, RelevanceBand.SUPPORT: 1,
+                    RelevanceBand.WITHHOLD: 2, RelevanceBand.CONTEXT: 3}
+        positives = sorted((item for item in ranked if item.band is not RelevanceBand.WITHHOLD),
+                           key=lambda item: priority[item.band])
+        retained = positives[:max(0, MAX_RANKED_EVIDENCE - len(withheld))] + withheld
+        overflow = len(ranked) - len(retained)
+        ranked = sorted(retained, key=lambda item: priority[item.band])
         counts.dropped_items += overflow
         warnings.append(f"Dropped {overflow} ranking(s) above the deterministic limit.")
 
@@ -629,7 +671,7 @@ def normalize_dossier(
         licensed = [item for item in evidence_ids if item not in unlicensed_for_copy]
         if licensed != evidence_ids:
             warnings.append(
-                f"Stripped withheld or contested evidence from the answer to {objection!r}: "
+                f"Stripped withheld evidence from the answer to {objection!r}: "
                 + ", ".join(sorted(set(evidence_ids) - set(licensed)))
                 + "."
             )
@@ -685,7 +727,27 @@ def normalize_dossier(
             "silence after deterministic validation. No dossier was saved."
         )
 
-    referenced = set()
+    need_fit = proposal.defining_need_fit or DefiningNeedFit(
+        why="Support for the complete selected audience need has not been assessed."
+    )
+    need_evidence, _ = _catalog_ids(need_fit.evidence_ids, set(evidence_by_id))
+    need_capabilities, _ = _catalog_ids(need_fit.capability_ids, capability_ids)
+    missing = list(dict.fromkeys(text.strip() for text in need_fit.unverified_requirements if text.strip()))[:8]
+    need_status = need_fit.status
+    if not (need_evidence or need_capabilities):
+        need_status = "unknown"
+    elif need_status == "addressed" and missing:
+        need_status = "partial"
+    if need_status == "partial" and not (missing or need_fit.caveat.strip()):
+        need_status = "unknown"
+    need_fit = need_fit.model_copy(update={
+        "status": need_status, "evidence_ids": need_evidence,
+        "capability_ids": need_capabilities, "unverified_requirements": missing,
+    })
+    if proposal.defining_need_fit is None or need_fit != proposal.defining_need_fit:
+        warnings.append("Defining audience need is unassessed or its references required normalization.")
+
+    referenced = set(need_evidence)
     referenced.update(item.evidence_id for item in ranked)
     for fit in fits:
         referenced.update(fit.evidence_ids)
@@ -696,6 +758,7 @@ def normalize_dossier(
     ]
 
     dossier = RelevanceDossier(
+        interpretation_version=INTERPRETATION_VERSION,
         schema_version=2 if capability_profile is not None else 1,
         audience_research_id=research_id,
         audience_name=research.audience_name,
@@ -708,6 +771,7 @@ def normalize_dossier(
         capability_profile_version=capability_profile_version,
         qualification_fingerprint=qualification_fingerprint,
         orientation=orientation,
+        defining_need_fit=need_fit,
         ranked_relevance=ranked,
         problem_fits=fits,
         segment_objections=objections,
@@ -728,17 +792,15 @@ def normalize_dossier(
 
 
 def withheld_evidence_ids(ranked: Iterable[RankedRelevanceItem]) -> set[str]:
-    """Evidence this dossier ranked as not worth spending, or contested.
+    """Only an explicit WITHHOLD ranking excludes evidence from this argument.
 
-    A free function because `normalize_dossier` needs it while it is still
-    building objections, long before any recommendation exists - and an
-    objection answered out of contested evidence is exactly the kind of
-    licensed-looking claim this contract is here to stop.
+    Competitive overlap is a positioning judgment, not a factual violation:
+    a documented price or function stays usable when a rival offers it too.
     """
     return {
         item.evidence_id
         for item in ranked
-        if item.band is RelevanceBand.WITHHOLD or item.territory is Territory.CONTESTED
+        if item.band is RelevanceBand.WITHHOLD
     }
 
 
@@ -763,8 +825,9 @@ def relevant_evidence_ids(
     ranking is the dossier's own judgment that a fact belongs in this
     conversation, so it counts on its own.
 
-    Everything else in the ledger is true and irrelevant. Shipping all of it
-    as usable copy material was the whole defect.
+    Other facts do not become arguments automatically. The contract separately
+    admits verified operational details and official offer terms as support;
+    unranked proof and outcomes remain unavailable.
     """
     relevant = {
         item.evidence_id
@@ -789,8 +852,6 @@ def _withhold_reason(evidence_id: str, ranked: Iterable[RankedRelevanceItem]) ->
     item = next((row for row in ranked if row.evidence_id == evidence_id), None)
     if item is None:
         return "Withheld from this campaign."
-    if item.territory is Territory.CONTESTED:
-        return "Contested territory: every rival makes this claim too."
     return "Ranked WITHHOLD for this audience."
 
 
@@ -810,6 +871,32 @@ def _unusable_reason(
 
 
 _UNUSED = "No addressed or partial problem for this audience uses it."
+
+
+def _supporting_fact(entry: Evidence, verified_capability_ids: set[str]) -> bool:
+    """License operational detail, never an unranked customer outcome.
+
+    Ranking chooses the argument. It must not erase the verified mechanism or
+    plan conditions a reader needs to evaluate that argument. Only an exact,
+    single ledger fact can use this path; explicit exclusions still win below.
+    """
+    if (
+        entry.kind in {EvidenceKind.FEATURE, EvidenceKind.INTEGRATION}
+        and entry.id in verified_capability_ids
+    ):
+        return True
+    context = entry.context
+    return bool(
+        entry.kind in {
+            EvidenceKind.FEATURE, EvidenceKind.INTEGRATION,
+            EvidenceKind.PRICE, EvidenceKind.GUARANTEE,
+        }
+        and entry.strength is EvidenceStrength.STRONG
+        and context
+        and context.source_kind == "official_documentation"
+        and context.claim_scope == "offer"
+        and context.subject.strip()
+    )
 
 
 def build_claim_contract(
@@ -834,6 +921,13 @@ def build_claim_contract(
     forbidden_evidence = _unverified_capability_evidence(profile) & valid_ids
     unusable = withheld_evidence | forbidden_evidence
     relevant = relevant_evidence_ids(ranked, fits)
+    verified_capability_ids = {
+        evidence.evidence_id
+        for capability in profile.capabilities
+        if capability.state is CapabilityState.VERIFIED
+        for evidence in capability.evidence
+        if evidence.evidence_id in valid_ids
+    }
 
     verified: list[ContractClaim] = []
     allowed: list[ContractClaim] = []
@@ -853,6 +947,7 @@ def build_claim_contract(
         )
 
         held = ""
+        supporting = False
         if claim.visibility is not ClaimVisibility.CUSTOMER:
             held = "Not licensed for customer-facing copy."
         elif not ids:
@@ -860,6 +955,8 @@ def build_claim_contract(
                 f"Customer claim {claim.text!r} names no ledger evidence that still exists."
             )
             held = "No surviving ledger evidence licenses this claim."
+        elif set(claim.evidence_ids) - valid_ids:
+            held = "Some referenced ledger evidence no longer exists."
         elif blocked := sorted(set(ids) & unusable):
             # Any blocked reference disqualifies the whole claim. Keeping a
             # claim because *some other* id survived is how a contested price
@@ -874,7 +971,14 @@ def build_claim_contract(
                 )
             )
         elif not set(ids) & relevant:
-            held = _UNUSED
+            entry = ledger.get(ids[0]) if len(ids) == 1 else None
+            supporting = bool(
+                entry
+                and claim_identity(claim.text) == claim_identity(entry.claim)
+                and _supporting_fact(entry, verified_capability_ids)
+            )
+            if not supporting:
+                held = _UNUSED
 
         target = withheld if held else allowed
         target.append(
@@ -882,7 +986,11 @@ def build_claim_contract(
                 id=identity,
                 text=claim.text,
                 evidence_ids=ids,
-                reason=held or claim.reason or "Licensed, relevant, and customer-safe.",
+                reason=held or (
+                    "Verified supporting fact: explain the mechanism or offer conditions; "
+                    "editorial ranking still chooses the primary argument."
+                    if supporting else claim.reason or "Licensed, relevant, and customer-safe."
+                ),
             )
         )
 
@@ -1000,7 +1108,11 @@ def recommend_campaign(
     required_unavailable = [
         capability_id
         for capability_id in research.definition.required_product_capabilities
-        if profile.state_of(capability_id) is not CapabilityState.VERIFIED
+        if profile.state_of(capability_id) is CapabilityState.UNSUPPORTED
+    ]
+    required_unknown = [
+        capability_id for capability_id in research.definition.required_product_capabilities
+        if profile.state_of(capability_id) is CapabilityState.UNKNOWN
     ]
     positive = [
         item
@@ -1018,16 +1130,27 @@ def recommend_campaign(
     if required_unavailable:
         state = RecommendationState.NOT_RECOMMENDED
         reasons.extend(
-            f"Required product capability is not verified: {capability_id}."
+            f"Required product capability is explicitly unsupported: {capability_id}."
             for capability_id in required_unavailable
         )
+    elif companies and not grouped[QualificationClass.QUALIFIED] and grouped[QualificationClass.EXCLUDED]:
+        state = RecommendationState.NOT_RECOMMENDED
+        reasons.append("No researched company qualified; one or more hard exclusions fired.")
+        reasons.extend(f"Product support also needs verification: {capability_id}." for capability_id in required_unknown)
+    elif required_unknown:
+        state = RecommendationState.DISCOVERY_ONLY
+        reasons.extend(f"Required product support is unknown: {capability_id}; verify targeted product documentation before deciding fit."
+                       for capability_id in required_unknown)
+    elif dossier.interpretation_version >= 13 and (
+        dossier.defining_need_fit is None or dossier.defining_need_fit.status != "addressed"
+    ):
+        state = RecommendationState.DISCOVERY_ONLY
+        reasons.append("The defining audience need is not fully supported by verified product evidence; a broader subsegment label does not resolve it.")
+        if dossier.defining_need_fit:
+            reasons.extend(dossier.defining_need_fit.unverified_requirements)
     elif companies and not grouped[QualificationClass.QUALIFIED]:
-        if grouped[QualificationClass.EXCLUDED]:
-            state = RecommendationState.NOT_RECOMMENDED
-            reasons.append("No researched company qualified; one or more hard exclusions fired.")
-        else:
-            state = RecommendationState.DISCOVERY_ONLY
-            reasons.append("No researched company has complete direct qualification evidence.")
+        state = RecommendationState.DISCOVERY_ONLY
+        reasons.append("No researched company has complete direct qualification evidence.")
     elif positive and not unsupported and not dossier.silences:
         if (
             partial
@@ -1093,7 +1216,8 @@ def recommend_campaign(
         )
     elif state is RecommendationState.DISCOVERY_ONLY:
         next_action = (
-            "Gather direct product and company evidence before treating this as an outreach list."
+            "Verify the required capabilities in product documentation: " + ", ".join(required_unknown) + "."
+            if required_unknown else "Gather direct product and company evidence before treating this as an outreach list."
         )
         risk = (
             "Generating now will require audience-level hypotheses and may produce a weak "
@@ -1101,7 +1225,10 @@ def recommend_campaign(
         )
     elif state is RecommendationState.RECOMMENDED_NARROW:
         next_action = (
-            f"Target only {eligible}." if eligible else "Target only companies classified QUALIFIED."
+            f"Target only {eligible}." if eligible
+            else "Target only companies classified QUALIFIED." if companies
+            else "Draft only around the addressed needs and the dossier's scope limits. "
+                 "No companies have been qualified; verify recipient fit before outreach."
         )
         risk = (
             "Generating outside the eligible slice risks writing to a structurally similar "
@@ -1140,12 +1267,44 @@ def _product_context(
     knowledge_version: int,
     *,
     capability_profile: ProductCapabilityProfile | None = None,
+    required_capability_ids: list[str] | None = None,
+    preferred_evidence_ids: list[str] | None = None,
+    query: str = "",
+    problem_queries: list[str] | None = None,
 ) -> str:
+    # The catalogue describes the whole product. Pinning every capability's
+    # references can consume (or exceed) the budget before pricing and other
+    # decision facts are retrieved. Only this audience's requirements are hard
+    # assignments; unrelated capabilities still compete on query relevance.
+    required = set(required_capability_ids or [])
+    preferred = sorted({ref.evidence_id for item in capability_profile.capabilities if item.id in required
+                        for ref in item.evidence[:2]}) if capability_profile else []
+    preferred.extend(item for item in (preferred_evidence_ids or [])[:12] if item in artifacts.evidence.ids)
+    # PRICE also includes trials and ancillary fees. One representative of
+    # that kind can therefore hide every actual plan. Anchor a small sample
+    # of the offer's plans to matching ledger quotations, never to the model's
+    # unsourced summary. Keep the ordinary selection cap and all conditions.
+    for plan in artifacts.offer.plans[:3]:
+        provenance = plan.provenance
+        if provenance is None or len(fold(provenance.quote)) < 12:
+            continue
+        fragments = [fold(part) for part in re.split(r"\.{3}|…", provenance.quote)
+                     if len(fold(part)) >= 12]
+        match = next((entry for entry in artifacts.evidence.entries
+                      if entry.kind is EvidenceKind.PRICE
+                      and context_of(entry).claim_scope not in {"customer_outcome", "comparison", "launch"}
+                      and (not provenance.source or entry.source == provenance.source)
+                      and any(fragment in fold(entry.verbatim) for fragment in fragments)), None)
+        if match is not None:
+            preferred.append(match.id)
+    selection = select_evidence(artifacts.evidence, query, preferred_ids=preferred, cap=48,
+                                problem_queries=problem_queries)
     evidence = []
-    for entry in artifacts.evidence.entries:
+    for entry in selection.ledger.entries:
         value = value_of(entry)
         evidence.append(
             {
+                **evidence_record(entry),
                 "id": entry.id,
                 "kind": str(entry.kind),
                 "shelf": str(category_of(entry)),
@@ -1154,6 +1313,8 @@ def _product_context(
                 "claim": entry.claim,
                 "verbatim_grounding": entry.verbatim,
                 "source": entry.source,
+                "document_id": entry.document_id,
+                "context": context_of(entry).model_dump(mode="json"),
                 "user_attested": entry.user_attested,
             }
         )
@@ -1166,11 +1327,23 @@ def _product_context(
                 "what_it_does": artifacts.business.what_it_does,
                 "category": artifacts.business.category,
             },
-            "complete_evidence_ledger": evidence,
+            "selected_evidence_ledger": evidence,
+            "evidence_selection": selection.render_manifest(),
             "capability_catalogue_available": capability_profile is not None,
             "constraint_catalogue_available": capability_profile is not None,
             "capability_profile": (
-                capability_profile.model_dump(mode="json")
+                {
+                    "capabilities": [{
+                        "id": item.id, "label": item.label, "description": item.description,
+                        "state": str(item.state), "aliases": item.aliases,
+                        "customer_copy_visibility": str(item.customer_copy_visibility),
+                        "evidence_ids": [ref.evidence_id for ref in item.evidence],
+                        "unlicensed_evidence_ids": item.unlicensed_evidence_ids, "note": item.note,
+                    } for item in capability_profile.capabilities],
+                    "constraints": [item.model_dump(mode="json") for item in capability_profile.constraints],
+                    "additional_claims": [item.model_dump(mode="json") for item in capability_profile.claims
+                                          if item.text not in {entry.claim for entry in artifacts.evidence.entries}],
+                }
                 if capability_profile is not None
                 else None
             ),
@@ -1195,13 +1368,13 @@ def _audience_context(
 
 
 def _market_context(
-    positioning: PositioningMap, market_scan_id: UUID, market_scan_version: int
+    positioning: PositioningMap, market_scan_id: UUID, market_scan_version: int, *, audience: str = ""
 ) -> str:
     return json.dumps(
         {
             "market_scan_id": str(market_scan_id),
             "market_scan_version": market_scan_version,
-            "positioning_map": positioning.model_dump(mode="json"),
+            "positioning_map": positioning.render_for_strategy(audience=audience),
         },
         ensure_ascii=False,
         indent=2,
@@ -1220,8 +1393,11 @@ def _territory_for(
     # asked to explain, which left the writer paraphrasing a testimonial.
     if axis is ClaimAxis.OTHER:
         return None
-    reading = next((item for item in positioning.readings if item.axis is axis), None)
-    return reading.territory if reading is not None else None
+    claim = Claim(text=evidence.claim, verbatim=evidence.verbatim, source=evidence.source, axis=axis,
+                  **({"context": evidence.context} if evidence.context else {}))
+    readings = [item for item in positioning.readings if item.axis is axis
+                and any(same_claim(claim, candidate) for candidate in item.ours)]
+    return readings[0].territory if len(readings) == 1 else None
 
 
 def _resolved_ids(proposed: list[str], valid: set[str]) -> tuple[list[str], bool]:
@@ -1252,8 +1428,11 @@ def _short_sentence(value: str, limit: int = 240) -> tuple[str, bool]:
     parts = _SENTENCE_SPLIT.split(text, maxsplit=1)
     if parts:
         text = parts[0]
-    if len(text) > limit:
-        text = text[:limit].rsplit(" ", 1)[0].rstrip(" ,;:")
+    # Keep a complete first sentence: cutting at a word boundary can remove a
+    # condition or turn "does not establish ..." into a different assertion.
+    # Reject pathological output instead of manufacturing an unfinished claim.
+    if len(text) > max(limit, 1200):
+        return "", True
     if text and text[-1] not in ".!?":
         text += "."
     return text, text != original.strip()

@@ -259,6 +259,13 @@ class KnowledgeService:
             digest = hashlib.sha256(ingested.content.encode("utf-8")).hexdigest()
             already = filed.get(digest)
             if already is not None:
+                if ingested.source == SourceType.WEBSITE and ingested.url == already.source_url:
+                    refreshed = dict(already.document_metadata or {})
+                    for key, default in (("content_issues", []), ("crawl_unreadable_urls", []), ("rendered", False)):
+                        refreshed[key] = metadata.get(key, default)
+                    if refreshed != already.document_metadata:
+                        already.document_metadata = refreshed
+                        self._documents.update(already)
                 logger.info(
                     "%s is already filed here word for word - keeping the copy from %s",
                     ingested.url or ingested.title,

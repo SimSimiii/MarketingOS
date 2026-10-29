@@ -12,6 +12,18 @@ import { API_URL } from "@/lib/config";
 
 type Mode = "login" | "register";
 
+/** `next` if it resolves on this origin, else the home page. A value `URL`
+ * cannot parse falls back too, rather than throwing after a successful
+ * sign-in and reporting it as an unreachable server. */
+function sameOriginPath(requested: string | null): string {
+  if (!requested) return "/";
+  try {
+    return new URL(requested, window.location.origin).origin === window.location.origin ? requested : "/";
+  } catch {
+    return "/";
+  }
+}
+
 /**
  * Sign in and sign up, in one component.
  *
@@ -69,14 +81,9 @@ export function AuthForm({ mode, allowSignup }: { mode: Mode; allowSignup: boole
       // Only a path from this origin: `next` is resolved against the current
       // origin and anything that lands elsewhere is dropped, so a crafted
       // ?next= cannot bounce somebody off the site after they sign in.
-      const requested = params.get("next");
-      const destination =
-        requested && new URL(requested, window.location.origin).origin === window.location.origin
-          ? requested
-          : "/";
       // A full load rather than a client navigation: the whole app starts
       // again with the cookies that were just set.
-      window.location.replace(destination);
+      window.location.replace(sameOriginPath(params.get("next")));
     } catch {
       setError("Could not reach the server. Is the API running?");
     } finally {

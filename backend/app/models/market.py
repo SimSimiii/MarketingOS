@@ -112,6 +112,8 @@ class ProofCandidateRow(SQLModel, table=True):
     attributed_to: str = ""
     venue: str = ""
     confidence: float = 0.5
+    verification_status: str = "not_checked"
+    context: dict | None = Field(default=None, sa_column=Column(JSON))
     caveat: str = ""
     #: `pending`, `approved` or `rejected`.
     status: str = Field(default="pending", index=True)

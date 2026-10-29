@@ -72,6 +72,20 @@ def test_reject_empty_and_unknown_brand(client):
     assert client.post(f"/api/brands/{uuid4()}/knowledge/compile").status_code == 404
 
 
+def test_model_choice_is_local_to_one_compilation(client, provider):
+    brand = brand_with_sources(client)
+    response = client.post(f"/api/brands/{brand}/knowledge/compile", json={"model": "gpt-5.6-sol"})
+    assert response.status_code == 202, response.text
+    assert wait_for_job(client, brand)["state"] == "completed"
+    assert provider.requests
+    assert {request.model for request in provider.requests} == {"gpt-5.6-sol"}
+    count = len(provider.requests)
+    client.post(f"/api/brands/{brand}/knowledge/compile", json={})
+    assert wait_for_job(client, brand)["state"] == "completed"
+    assert {request.model for request in provider.requests[count:]} <= {"haiku", "sonnet", "opus"}
+    assert client.post(f"/api/brands/{brand}/knowledge/compile", json={"model": "x" * 201}).status_code == 422
+
+
 def test_build_corpus_deduplicates_legacy_sources():
     from app.knowledge.store import build_corpus
     from app.models.knowledge_document import KnowledgeDocument

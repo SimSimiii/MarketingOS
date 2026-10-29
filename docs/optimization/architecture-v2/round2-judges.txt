@@ -1,0 +1,59 @@
+[tally-announcement-v2/comparison] 1 judgment calls completed
+[tally-announcement-v2/comparison] 2 judgment calls completed
+Saved: C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\docs\optimization\architecture-v2\comparisons\round2\tally-announcement-v2\judges
+[consumer-offer/comparison] 1 judgment calls completed
+[consumer-offer/comparison] 2 judgment calls completed
+[consumer-offer/comparison] 3 judgment calls completed
+[consumer-offer/comparison] 4 judgment calls completed
+Saved: C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\docs\optimization\architecture-v2\comparisons\round2\consumer-offer\judges
+[b2b-acquisition/comparison] 1 judgment calls completed
+[b2b-acquisition/comparison] 2 judgment calls completed
+[b2b-acquisition/comparison] 3 judgment calls completed
+[b2b-acquisition/comparison] 4 judgment calls completed
+Saved: C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\docs\optimization\architecture-v2\comparisons\round2\b2b-acquisition\judges
+[cart-recovery/comparison] 1 judgment calls completed
+[cart-recovery/comparison] 2 judgment calls completed
+[cart-recovery/comparison] 3 judgment calls completed
+[cart-recovery/comparison] 4 judgment calls completed
+Saved: C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\docs\optimization\architecture-v2\comparisons\round2\cart-recovery\judges
+[activation/comparison] 1 judgment calls completed
+[activation/comparison] 2 judgment calls completed
+[activation/comparison] 3 judgment calls completed
+[activation/comparison] 4 judgment calls completed
+Saved: C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\docs\optimization\architecture-v2\comparisons\round2\activation\judges
+[thin-service/comparison] 1 judgment calls completed
+[thin-service/comparison] 2 judgment calls completed
+[thin-service/comparison] 3 judgment calls completed
+Traceback (most recent call last):
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\runtime\model_session.py", line 336, in _send
+    permit.attempt()
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\docs\optimization\architecture-v2\judge_comparison.py", line 76, in attempt
+    raise WorkLimitError("Shared comparison ceiling reached")
+app.runtime.work_limits.WorkLimitError: Shared comparison ceiling reached
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\docs\optimization\architecture-v2\judge_comparison.py", line 141, in <module>
+    asyncio.run(main(parser.parse_args()))
+  File "C:\Users\oussa\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\asyncio\base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\docs\optimization\architecture-v2\judge_comparison.py", line 119, in main
+    response = await models.structured(role="preference_judge", tier=ModelTier.BALANCED, system_prompt=prompt,
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\runtime\model_session.py", line 273, in structured
+    response = await self._generate(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\runtime\model_session.py", line 449, in _generate
+    response = await self._send(request, role, model)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\runtime\model_session.py", line 338, in _send
+    raise ProviderError(
+app.runtime.exceptions.ProviderError: Shared comparison ceiling reached

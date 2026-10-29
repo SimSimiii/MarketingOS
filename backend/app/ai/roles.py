@@ -147,7 +147,7 @@ ROLE_CATALOG: dict[str, RoleSpec] = {
             blurb="Finds who else is making the same promise to the same buyer.",
             phase=RolePhase.MARKET,
             tier=ModelTier.BALANCED,
-            tools=_WEB,
+            tools=_SEARCH,
         ),
         RoleSpec(
             id="rival_profiler",
@@ -155,7 +155,6 @@ ROLE_CATALOG: dict[str, RoleSpec] = {
             blurb="Reads a competitor's pages and writes down what they actually claim.",
             phase=RolePhase.MARKET,
             tier=ModelTier.BALANCED,
-            tools=_WEB,
         ),
         RoleSpec(
             id="audience_cartographer",
@@ -170,7 +169,7 @@ ROLE_CATALOG: dict[str, RoleSpec] = {
             # to support teams is bought harder by parts distributors, which is
             # judgment and is the whole product of the pass.
             tier=ModelTier.DEEP,
-            tools=_WEB,
+            tools=_SEARCH,
         ),
         RoleSpec(
             id="audience_researcher",

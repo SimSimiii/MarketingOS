@@ -1,0 +1,24 @@
+{
+  "purpose": "Assess whether replacing remaining Claude stages with OpenAI is justified, without silently changing four-case baseline.",
+  "configuration_findings": {
+    "campaign_default": "gpt-5.6-sol wildcard in all presets; confirm actual run logs later",
+    "standalone_knowledge": "bare ModelRouter: haiku/sonnet/opus tiers, no public per-compilation model override",
+    "market": "bare per-job router; research/dossier explicit local model supported",
+    "web_fetch": "OpenAI adapter advertises web_search only; scan/rival/proof/prospect roles requiring fetch cannot be blindly switched"
+  },
+  "bounded_experiment": {
+    "kind": "diagnostic knowledge-profile comparison, not full-system A/B",
+    "cases": [
+      "cabaia",
+      "systeme"
+    ],
+    "candidate_model": "gpt-5.6-sol",
+    "candidate_calls": 2,
+    "same_inputs": "ArtifactStore current_documents and build_corpus, identical knowledge_profile template/task/digest",
+    "baseline": "successful resumed Claude compilation on same fingerprint; outputs already paid for",
+    "persist": "save candidate output, exact material digest, source fingerprint and role-call usage separately; never overwrite brand knowledge",
+    "review": "manual price/SKU bindings, conditions, unsupported scope, missing-data acknowledgment; compare latency cautiously; no automatic quality winner"
+  },
+  "decision_rule": "Recommend an all-OpenAI migration only if required tools are preserved and stage quality tested. Two profile tasks alone cannot justify universal quality or full-compile savings.",
+  "preferences": "No global settings changes, API-key billing or credits purchase."
+}

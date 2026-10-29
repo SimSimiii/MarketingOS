@@ -1,0 +1,133 @@
+{
+  "id": "activation",
+  "source": "labelled synthetic fixture",
+  "split": "development",
+  "request": {
+    "name": "Portway",
+    "request": "Write exactly one onboarding email helping a new account connect its first drive and understand when search becomes available.",
+    "target_market": "A new account administrator who has signed up but has not connected a drive.",
+    "intent": {
+      "objective": "activation",
+      "reader_relationship": "customer"
+    }
+  },
+  "artifacts": {
+    "business": {
+      "company_name": "Portway",
+      "what_it_does": "a searchable workspace for shared-drive files",
+      "category": "",
+      "business_model": "",
+      "facts": [],
+      "vocabulary": []
+    },
+    "offer": {
+      "plans": [],
+      "free_entry": "",
+      "guarantees": [],
+      "calls_to_action": [
+        {
+          "label": "Connect a drive",
+          "intent": "Connect a drive",
+          "url": "https://portway.example/connect",
+          "id": "",
+          "evidence_ids": [],
+          "provenance": null
+        }
+      ],
+      "purchase_motion": ""
+    },
+    "evidence": {
+      "entries": [
+        {
+          "id": "E1",
+          "kind": "feature",
+          "claim": "Connect a drive and Portway indexes it in the background.",
+          "verbatim": "Connect a drive and Portway indexes it in the background.",
+          "source": "https://portway.example/offer",
+          "document_id": "synthetic-source",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": null,
+          "context": {
+            "subject": "Portway",
+            "source_kind": "official_documentation",
+            "claim_scope": "documented_capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "fixture_exact_quote"
+          },
+          "source_references": []
+        },
+        {
+          "id": "E2",
+          "kind": "feature",
+          "claim": "Search works as soon as the first folder finishes indexing.",
+          "verbatim": "Search works as soon as the first folder finishes indexing.",
+          "source": "https://portway.example/offer",
+          "document_id": "synthetic-source",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": null,
+          "context": {
+            "subject": "Portway",
+            "source_kind": "official_documentation",
+            "claim_scope": "documented_capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "fixture_exact_quote"
+          },
+          "source_references": []
+        }
+      ]
+    },
+    "voice": {
+      "learned": false,
+      "tone": "plain and direct - one person writing to one person, no marketing register",
+      "rhythm": "short opening line, paragraphs of one to three lines, varied sentence length",
+      "person": "first person singular, signed by a name or the product team",
+      "greetings": [
+        "Hi there,"
+      ],
+      "sign_offs": [
+        "- the team"
+      ],
+      "exemplars": [],
+      "prefer_words": [],
+      "avoid_words": []
+    },
+    "audience": {
+      "segments": [
+        {
+          "name": "A new account administrator who has signed up but has not connected a drive.",
+          "situation": "",
+          "situation_grounding": "inferred",
+          "situation_provenance": [],
+          "job_to_be_done": "",
+          "trigger": "",
+          "sophistication": "problem_aware",
+          "pains": []
+        }
+      ],
+      "objections": []
+    },
+    "gaps": {
+      "gaps": []
+    },
+    "version": 1,
+    "compiled_at": "2026-10-17T18:58:42.531815Z",
+    "source_document_ids": [],
+    "source_context_fingerprint": "",
+    "notes": []
+  },
+  "documents": [
+    {
+      "id": "synthetic-source",
+      "title": "Synthetic offer",
+      "source": "https://portway.example/offer",
+      "content": "Connect a drive and Portway indexes it in the background.\n\nSearch works as soon as the first folder finishes indexing.\n\nConnect a drive: https://portway.example/connect"
+    }
+  ],
+  "selected_audience": ""
+}

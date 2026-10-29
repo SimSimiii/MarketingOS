@@ -418,7 +418,7 @@ async def test_damage_above_the_body_goes_to_the_inbox_and_not_to_a_duel(
     assert not provider.requests_for("preference_judge"), "no ballot is cast on this pair"
     assert provider.calls_by_role["inbox_scanner"] == 2, "one pass per listing order"
     assert pair.by_inbox and pair.caught
-    assert (pair.original_opens, pair.mutant_opens) == (60, 20)
+    assert (pair.original_assessment, pair.mutant_assessment) == (6, 2)
     assert report.by_inbox == [pair]
     assert report.judgment_only == [], "it does not inflate the rate it never measured"
     assert report.inbox_detection_rate == 1.0
@@ -465,7 +465,7 @@ async def test_the_listing_order_is_cancelled_rather_than_trusted(
     )
 
     pair = report.pairs[0]
-    assert pair.original_opens == pair.mutant_opens == 40
+    assert pair.original_assessment == pair.mutant_assessment == 4
     assert pair.caught is False
 
 

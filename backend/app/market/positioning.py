@@ -6,39 +6,40 @@ decides what is differentiated - a model asked that question answers from
 whichever claim was written more confidently, and it answers differently on
 Tuesday.
 
-The map sorts every axis of competition into four territories, and the
-distinction between them is the only strategic input a copywriter actually
-needs:
-
-- **Open ground** - no equivalent was captured, or ours is more specific.
-  This is a difference to investigate, not proof of an exclusive capability.
-- **Contested** - a few others claim it. Usable, but it has to be argued
-  rather than asserted, because the reader has heard it.
-- **Table stakes** - everybody claims it, us included. These sentences are not
-  false and they are not persuasive: they are the price of being considered.
-  Leading on one is how an email becomes invisible.
-- **Exposed** - they claim it and we cannot. Not a weakness to hide; a
-  comparison an email must not invite.
-
-One rule here is worth stating out loud, because it is the non-obvious half of
-the idea: **on a crowded axis, the only specific claim wins the axis.** If
-every competitor promises fast setup and exactly one of them says "first API
-call in under five minutes", that one is not competing on a crowded axis - it
-is the only one making a claim a reader can check, and the rest are noise
-around it. So specificity is scored, not just presence, and an axis where we
-are alone in carrying a figure comes back as open ground.
+Each reading concerns a proposition, not a whole category such as price or
+proof. Related propositions carry an explicit comparison and its limits.
+Territory identifiers remain compatible with saved artifacts: open means no
+related proposition captured, contested means related claims need inspection,
+table stakes means equivalent captured claims recur, and exposed means our
+captured material has no match. None establishes superiority or incapability.
 """
 
 import re
 from collections import Counter
 from enum import StrEnum
+from math import ceil
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
 from app.knowledge.artifacts import KnowledgeArtifacts
 from app.knowledge.corpus import fold
-from app.knowledge.ledger import Evidence, value_of
-from app.market.claims import Claim, ClaimAxis, ClaimSet, overlap, significant_words
+from app.knowledge.ledger import Evidence, EvidenceKind, category_of, context_of, value_of
+from app.knowledge.taxonomy import FactCategory
+from app.market.claims import (
+    Claim,
+    ClaimAxis,
+    ClaimSet,
+    ComparisonStatus,
+    comparable_claim,
+    compare_claims,
+    is_own_assertion,
+    monetary_outcome,
+    overlap,
+    proposition_words,
+    same_claim,
+    significant_words,
+)
 from app.market.rivals import RivalProfile
 
 
@@ -49,9 +50,8 @@ class Territory(StrEnum):
     EXPOSED = "exposed"
 
 
-#: The share of profiled rivals that has to claim an axis before it stops
-#: differentiating anybody. Half: with three competitors, two making the same
-#: promise is a category convention and one is a coincidence.
+#: Equivalent captured propositions must recur in at least half the profiles
+#: and at least two independent rivals before being labelled common.
 _TABLE_STAKES_SHARE = 0.5
 
 #: How many rivals have to spend a word before it counts as category
@@ -59,43 +59,54 @@ _TABLE_STAKES_SHARE = 0.5
 #: same reason: one competitor sharing your phrasing is a coincidence.
 _CROWD_WORD_RIVALS = 2
 
+MAX_STRATEGY_CHARS = 10_000
+MAX_STRATEGY_PROPOSITIONS = 18
+
 
 class AxisReading(BaseModel):
-    """One dimension of competition, and who holds it."""
+    """One captured proposition, grouped under a broad browsing axis."""
 
     axis: ClaimAxis
     territory: Territory
     ours: list[Claim] = Field(default_factory=list)
     #: Rival name -> the claims they make on this axis.
     theirs: dict[str, list[Claim]] = Field(default_factory=dict)
-    #: True when we are the only one carrying a checkable figure here. The
-    #: reason an axis several rivals claim can still be open ground.
+    #: Informational only. A figure never establishes superior performance.
     only_specific: bool = False
+    proposition: str = ""
+    comparison_status: Literal[
+        "equivalent", "documented_difference", "potential_difference", "unknown"
+    ] = "unknown"
+    comparisons: dict[str, ComparisonStatus] = Field(default_factory=dict)
+    comparison_notes: list[str] = Field(default_factory=list)
 
     @property
     def rivals_claiming(self) -> int:
         return len(self.theirs)
 
     def render(self) -> str:
-        ours = "; ".join(claim.text for claim in self.ours) or "we claim nothing here"
+        label = self.proposition or str(self.axis)
+        ours = "; ".join(claim.text for claim in self.ours) or "no matching claim in our captured material"
         if self.territory is Territory.EXPOSED:
             who = ", ".join(self.theirs)
-            return f"- **{self.axis}** - {who} claim this and we do not. {_EXPOSED_ADVICE}"
+            return f"- **{label}** - {who}: {ours}. {_EXPOSED_ADVICE}"
         crowd = (
-            f" ({self.rivals_claiming} competitor(s) also claim it)"
+            f" ({self.rivals_claiming} competitor(s) have related captured claims)"
             if self.rivals_claiming
-            else " (no competing claim captured on the pages read)"
+            else " (no competing claim captured on the pages read; rival capability remains unknown)"
         )
         specific = (
-            " Only our captured claims are marked specific on this axis."
+            " Only our captured proposition is marked specific; that is not superior performance."
             if self.only_specific
             else ""
         )
-        return f"- **{self.axis}** - {ours}{crowd}.{specific}"
+        notes = " ".join(self.comparison_notes)
+        return f"- **{label}** [{self.comparison_status}] - {ours}{crowd}.{specific} {notes}".rstrip()
 
 
 _EXPOSED_ADVICE = (
-    "Our captured material does not support a matching promise; avoid unsupported comparisons."
+    "Our captured material does not support a matching promise. Do not infer a missing "
+    "capability or competitor superiority; verify it before making a comparison."
 )
 
 
@@ -113,7 +124,7 @@ class PositioningMap(BaseModel):
     rivals_with_proof: int = 0
     rivals_profiled: int = 0
     we_have_proof: bool = False
-    #: Promises the field makes that we have no answer to at all.
+    #: Capture limitations and research questions.
     notes: list[str] = Field(default_factory=list)
 
     def of(self, territory: Territory) -> list[AxisReading]:
@@ -139,33 +150,35 @@ class PositioningMap(BaseModel):
 
     @property
     def proof_deficit(self) -> bool:
-        """Whether every competitor can show somebody who bought it and we
-        cannot. The single most expensive asymmetry in cold email, and the one
-        the user can actually fix in an afternoon by sending us three
-        customer names."""
+        """Whether rivals display customer evidence absent from our capture.
+
+        A source gap, never a verdict about product performance or suitability
+        for a functional campaign.
+        """
         return bool(self.rivals_with_proof) and not self.we_have_proof
 
     def summary(self) -> str:
         if self.is_empty:
             return "No competitors have been profiled, so the copy is written blind to the field"
-        open_axes = ", ".join(str(reading.axis) for reading in self.open_ground)
+        unmatched = len(self.open_ground)
+        documented = sum(row.comparison_status == "documented_difference" for row in self.readings)
         return (
             f"{self.rivals_profiled} competitor(s) read - "
-            + (f"potential open ground on {open_axes}" if open_axes else "no open ground found")
+            + f"{documented} documented difference(s); {unmatched} unmatched captured proposition(s) "
+            "need verification, not an exclusivity conclusion"
             + (
-                f"; {self.rivals_with_proof} of them show a named customer and we show none"
+                f"; {self.rivals_with_proof} show customer evidence; none captured for us"
                 if self.proof_deficit
                 else ""
             )
         )
 
-    def render_for_strategy(self) -> str:
-        """The section the Strategist plans against.
+    def render_for_strategy(self, audience: str = "") -> str:
+        """A bounded decision brief; the full map remains available for inspection.
 
-        Phrased as territory rather than as a competitor list on purpose. A
-        strategist handed five competitor profiles writes an email about the
-        competitors; a strategist handed "these two things are yours alone"
-        writes an email about the product, which is the one that converts.
+        Rank supported product propositions by the selected audience's words,
+        preserve coverage across dimensions, and keep only a few explicit
+        research gaps. This is selection of existing facts, not a new fit claim.
         """
         if self.is_empty:
             return (
@@ -184,70 +197,107 @@ class PositioningMap(BaseModel):
             ),
         ]
 
-        if open_ground := self.open_ground:
-            blocks.append(
-                "\n**Potential open ground - verify before using.** These captured claims "
-                "have no captured equivalent, or carry a more specific figure. Explain the "
-                "supported benefit without claiming that competitors cannot provide it:\n"
-                + "\n".join(reading.render() for reading in open_ground)
-            )
-        elif not self.readings:
-            # Profiled, but nobody's pages carried a claim we could compare -
-            # a field that sells on logos and adjectives. Silence here is a
-            # finding, and it is not the same as not having looked.
+        if not self.readings:
             blocks.append(
                 "\n**No comparable claims were captured.** The profiles may be incomplete. "
                 "Do not infer that competitors lack specific claims or capabilities. "
                 "Prefer a supported detail the reader can inspect in our own material."
             )
-        else:
+        elif not self.open_ground:
             blocks.append(
-                "\n**There is no open ground on the claims themselves.** Every axis this "
-                "company competes on is claimed by somebody else too. That does not mean the "
-                "email has to be generic - it means the difference has to come from "
-                "specificity rather than from the claim: the one competitor carrying a real "
-                "figure beats the four asserting the same thing without one."
-            )
-
-        if contested := self.of(Territory.CONTESTED):
-            blocks.append(
-                "\n**Contested - usable, but the reader has heard it.** Argue these, never "
-                "assert them:\n" + "\n".join(reading.render() for reading in contested)
-            )
-
-        if stakes := self.of(Territory.TABLE_STAKES):
-            blocks.append(
-                "\n**Common among the profiles read.** Several competitors claim these. "
-                "Use supported specifics rather than presenting the broad claim as unique:\n"
-                + "\n".join(reading.render() for reading in stakes)
-            )
-
-        if exposed := self.of(Territory.EXPOSED):
-            blocks.append(
-                "\n**Where the field is ahead of us.** Do not raise these:\n"
-                + "\n".join(reading.render() for reading in exposed)
+                "\n**No unmatched proposition was identified.** Inspect the individual "
+                "comparisons and their conditions. A more specific figure alone does not "
+                "establish superiority or a different capability."
             )
 
         if self.proof_deficit:
             blocks.append(
                 f"\n**Proof asymmetry.** {self.rivals_with_proof} of the "
                 f"{self.rivals_profiled} competitors read display a named customer or a "
-                "quotation on their own site, and this company displays none. A reader "
-                "comparing them is not comparing two sets of claims - they are comparing a "
-                "claim to a claim with somebody's name under it. Plan an email that does not "
-                "need to be believed on trust: something they can inspect or test. "
-                "Do not invent a duration for that test."
+                "quotation on their own site, and this company has no captured equivalent. "
+                "This is a gap in captured customer evidence, not product performance. "
+                "Official documentation can support a functional claim without a testimonial. "
+                "Outcome promises need evidence for that outcome, within its customer context."
             )
 
         if self.crowd_words:
             blocks.append(
-                "\n**The category's own words.** Two or more competitors spend these. A "
-                "sentence built only out of them says nothing about this company:\n- "
-                + ", ".join(self.crowd_words[:24])
+                "\n**Shared category vocabulary.** Two or more competitors use these. "
+                "Keep the words needed to explain the product; common vocabulary alone "
+                "does not make a proposition generic. Avoid unsupported superlatives:\n- "
+                + ", ".join(word for word in self.crowd_words[:16] if len(word) <= 60)
             )
 
-        blocks.extend(f"\n{note}" for note in self.notes)
+        blocks.extend(f"\n{note[:600]}" for note in self.notes[:3])
+        words = proposition_words(audience)
+        ranked = sorted(
+            self.readings,
+            key=lambda row: (
+                -len(words & proposition_words(" ".join(claim.text for claim in row.ours)
+                                               or row.proposition)),
+                not bool(row.ours),
+                row.comparison_status != "documented_difference",
+            ),
+        )
+        # The most relevant rows lead. A second pass gives each product axis
+        # a turn, so a long price list cannot consume the bounded brief.
+        own_rows = [row for row in ranked if row.ours]
+        grouped: dict[ClaimAxis, list[AxisReading]] = {}
+        for row in own_rows:
+            grouped.setdefault(row.axis, []).append(row)
+        selected: list[AxisReading] = []
+        depth = 0
+        while len(selected) < MAX_STRATEGY_PROPOSITIONS:
+            current = [items[depth] for items in grouped.values() if len(items) > depth]
+            if not current:
+                break
+            selected.extend(current[:MAX_STRATEGY_PROPOSITIONS - len(selected)])
+            depth += 1
+        missing = [row for row in ranked if not row.ours][:3]
+        sections = [
+            (("\n**Supported product propositions.** Use their stated conditions. "
+              "An unmatched capture is a question to verify, not exclusivity."), selected),
+            (("\n**Information missing from our captured material.** Research before comparing. "
+              "Do not infer a missing capability or competitor superiority."), missing),
+        ]
+        shown = 0
+        for heading, rows in sections:
+            if not rows:
+                continue
+            blocks.append(heading)
+            for reading in rows:
+                line = _strategy_line(reading)
+                # Leave room for an explicit omission count rather than cut a
+                # proposition's terms halfway through its sentence.
+                if sum(len(block) + 1 for block in blocks) + len(line) > MAX_STRATEGY_CHARS - 220:
+                    continue
+                blocks.append(line)
+                shown += 1
+        omitted = len(self.readings) - shown
+        if omitted:
+            blocks.append(f"\n{omitted} additional captured propositions remain in the full map. "
+                          "This brief prioritises product facts; omitted gaps are not evidence of incapability.")
         return "\n".join(blocks)
+
+
+def _strategy_line(reading: AxisReading) -> str:
+    label = reading.proposition or "; ".join(claim.text for claim in reading.ours) or str(reading.axis)
+    parts = [f"- **{label}** [{reading.axis}; {reading.comparison_status}]"]
+    if not reading.ours:
+        parts.append(_EXPOSED_ADVICE)
+    elif not reading.theirs:
+        parts.append("no competing claim captured; rival capability remains unknown.")
+    else:
+        names = list(reading.theirs)
+        parts.append("Related captures: " + ", ".join(names[:3])
+                     + (f" and {len(names) - 3} others." if len(names) > 3 else "."))
+        reasons = list(dict.fromkeys(note.partition(": ")[2] or note
+                                     for note in reading.comparison_notes))
+        parts.extend(reasons[:2])
+    for claim in reading.ours:
+        details = [claim.context.conditions, claim.context.temporal_scope, claim.context.limitations]
+        parts.extend(detail for detail in details if detail)
+    return " ".join(parts)
 
 
 def build(
@@ -266,7 +316,10 @@ def build(
             ),
         )
 
-    threshold = max(1, round(len(profiled) * _TABLE_STAKES_SHARE))
+    rival_names = tuple(rival.name for rival in rivals)
+    ours = ClaimSet(claims=[claim for claim in ours.claims
+                           if is_own_assertion(claim, rival_names=rival_names)])
+    threshold = max(2, ceil(len(profiled) * _TABLE_STAKES_SHARE))
     readings: list[AxisReading] = []
 
     for axis in ClaimAxis:
@@ -278,38 +331,63 @@ def build(
         }
         if not mine and not theirs:
             continue
-        if not mine:
-            readings.append(
-                AxisReading(axis=axis, territory=Territory.EXPOSED, theirs=theirs)
+        for own in mine:
+            related = {
+                name: [claim for claim in claims if comparable_claim(own, claim)]
+                for name, claims in theirs.items()
+            }
+            related = {name: claims for name, claims in related.items() if claims}
+            comparisons: dict[str, ComparisonStatus] = {}
+            notes: list[str] = []
+            for name, claims in related.items():
+                judged = [compare_claims(own, claim) for claim in claims]
+                # An equivalent is enough to show that this particular promise
+                # is shared; a different plan need not erase that match.
+                status, reason = min(judged, key=lambda item: {
+                    "equivalent": 0, "documented_difference": 1, "potential_difference": 2,
+                }[item[0]])
+                comparisons[name] = status
+                notes.append(f"{name}: {reason}")
+            equivalent = sum(status == "equivalent" for status in comparisons.values())
+            territory = (
+                Territory.TABLE_STAKES if equivalent >= threshold
+                else Territory.CONTESTED if related else Territory.OPEN
             )
-            continue
-
-        # The specificity rule. An axis half the field claims is still ours if
-        # we are the only one who put a number on it - see the module
-        # docstring for why that is the interesting case rather than an edge
-        # one.
-        we_are_specific = any(claim.is_specific for claim in mine)
-        they_are_specific = any(
-            claim.is_specific for claims in theirs.values() for claim in claims
-        )
-        only_specific = we_are_specific and not they_are_specific and bool(theirs)
-
-        if not theirs or only_specific:
-            territory = Territory.OPEN
-        elif len(theirs) >= threshold:
-            territory = Territory.TABLE_STAKES
-        else:
-            territory = Territory.CONTESTED
-
-        readings.append(
-            AxisReading(
-                axis=axis,
-                territory=territory,
-                ours=mine,
-                theirs=theirs,
-                only_specific=only_specific,
+            status = (
+                "potential_difference" if "potential_difference" in comparisons.values()
+                else "documented_difference" if "documented_difference" in comparisons.values()
+                else "equivalent" if comparisons else "unknown"
             )
-        )
+            readings.append(AxisReading(
+                axis=axis, proposition=own.text, territory=territory, ours=[own],
+                theirs=related, comparisons=comparisons, comparison_status=status,
+                comparison_notes=notes or [
+                    "No equivalent proposition captured; competitors' capabilities remain unknown."
+                ],
+                only_specific=(own.is_specific and bool(related) and not any(
+                    claim.is_specific for claims in related.values() for claim in claims
+                )),
+            ))
+        # Rival-only propositions are gaps in our information, never a
+        # capability verdict. Do not repeat claims already beside our row.
+        for name, claims in theirs.items():
+            for candidate in claims:
+                if any(comparable_claim(own, candidate) for own in mine):
+                    continue
+                existing = next((reading for reading in readings
+                                 if reading.axis is axis and not reading.ours
+                                 and reading.theirs and same_claim(
+                                     next(iter(reading.theirs.values()))[0], candidate)), None)
+                if existing is not None:
+                    existing.theirs.setdefault(name, []).append(candidate)
+                    continue
+                readings.append(AxisReading(
+                    axis=axis, proposition=candidate.text, territory=Territory.EXPOSED,
+                    theirs={name: [candidate]}, comparison_status="unknown",
+                    comparison_notes=[
+                        "No matching claim in our captured material; investigate rather than infer a weakness."
+                    ],
+                ))
 
     return PositioningMap(
         readings=readings,
@@ -349,8 +427,12 @@ def claims_from_knowledge(artifacts: KnowledgeArtifacts) -> ClaimSet:
     with is not part of that statement however true it is.
     """
     ranked = sorted(artifacts.evidence.entries, key=lambda entry: -value_of(entry).score)
-    claims: list[Claim] = []
+    candidates: list[Claim] = []
+    core_words = proposition_words(artifacts.business.what_it_does)
+    core: list[tuple[int, Claim]] = []
     for entry in ranked:
+        if category_of(entry) in {FactCategory.COMPANY, FactCategory.BRAND, FactCategory.MARKET}:
+            continue
         if _is_limitation(f"{entry.claim} {entry.verbatim}"):
             continue
         claim = Claim(
@@ -359,7 +441,10 @@ def claims_from_knowledge(artifacts: KnowledgeArtifacts) -> ClaimSet:
             source=entry.source or "our own material",
             axis=axis_for_evidence(entry),
             specific=None,
+            context=context_of(entry),
         )
+        if not is_own_assertion(claim, company_name=artifacts.business.company_name):
+            continue
         # A compiled ledger routinely holds the same fact several times over,
         # phrased slightly differently by different passes over different
         # pages - one real business had "Pro plan costs $29 per month",
@@ -367,14 +452,60 @@ def claims_from_knowledge(artifacts: KnowledgeArtifacts) -> ClaimSet:
         # entries. That is harmless in an inventory and ruinous on a map: it
         # buries the axis under one restated claim and spends the cap on it.
         if any(
-            other.axis is claim.axis and overlap(other.text, claim.text) >= _SAME_WORDING
-            for other in claims
+            other.axis is claim.axis and (
+                (other.source == claim.source and other.text == claim.text
+                 and other.verbatim == claim.verbatim and other.context == claim.context)
+                or (same_claim(other, claim)
+                    and overlap(other.text, claim.text) >= _SAME_WORDING)
+            )
+            for other in candidates
         ):
             continue
-        claims.append(claim)
-        if len(claims) >= MAX_OUR_CLAIMS:
+        candidates.append(claim)
+        relevance = len(core_words & proposition_words(claim.text))
+        if entry.kind is EvidenceKind.FEATURE and relevance >= 2:
+            core.append((relevance, claim))
+    # A price list must not consume the entire map before a documented
+    # capability is considered. Round-robin the existing broad browsing axes,
+    # retaining commercial ranking within each one and the same overall cap.
+    selected = _diverse_claims(candidates, MAX_OUR_CLAIMS)
+    protected: list[Claim] = []
+    for _, central in sorted(core, key=lambda pair: -pair[0])[:2]:
+        protected.append(central)
+        if central not in selected:
+            replace = next((index for index in reversed(range(len(selected)))
+                            if selected[index].axis is central.axis and selected[index] not in protected), None)
+            if replace is not None:
+                selected[replace] = central
+    return ClaimSet(claims=selected)
+
+
+def _diverse_claims(claims: list[Claim], limit: int) -> list[Claim]:
+    grouped: dict[ClaimAxis, list[Claim]] = {}
+    for claim in claims:
+        grouped.setdefault(claim.axis, []).append(claim)
+    selected: list[Claim] = []
+    depth = 0
+    while len(selected) < limit:
+        row = [items[depth] for items in grouped.values() if len(items) > depth]
+        if not row:
             break
-    return ClaimSet(claims=claims)
+        selected.extend(row[:limit - len(selected)])
+        depth += 1
+    return selected
+
+
+def build_current(
+    artifacts: KnowledgeArtifacts, rivals: list[RivalProfile], *, we_have_proof: bool = False,
+) -> PositioningMap:
+    """Current product facts against saved rival captures, without history writes."""
+    result = build(claims_from_knowledge(artifacts), rivals, we_have_proof=we_have_proof)
+    if rivals:
+        result.notes.append(
+            "Current product knowledge is compared with saved competitor pages; check "
+            "their capture dates before making time-sensitive comparisons."
+        )
+    return result
 
 
 # Limits and missing evidence belong in the knowledge gaps, not in a list of
@@ -397,7 +528,7 @@ _LIMITATION = re.compile(
 
 
 def _is_limitation(text: str) -> bool:
-    return bool(_LIMITATION.search(fold(text)))
+    return bool(_LIMITATION.search(fold(text))) or _negated_control(text)
 
 
 def _claims_on(claims: ClaimSet, axis: ClaimAxis) -> list[Claim]:
@@ -410,14 +541,19 @@ def _claims_on(claims: ClaimSet, axis: ClaimAxis) -> list[Claim]:
     for claim in claims.claims:
         if _is_limitation(f"{claim.text} {claim.verbatim}"):
             continue
-        if claim.axis is axis:
+        if monetary_outcome(claim):
+            if axis is not ClaimAxis.PROOF:
+                continue
+            candidate = claim.model_copy(update={"axis": ClaimAxis.PROOF})
+        elif claim.axis is axis:
             candidate = claim
-        elif axis is ClaimAxis.CONTROL and _explicit_portability(claim.verbatim):
+        elif axis is ClaimAxis.CONTROL and _explicit_control(claim.verbatim):
             candidate = claim.model_copy(update={"axis": axis})
         else:
             continue
-        if not any((item.text, item.source, item.verbatim) ==
-                   (candidate.text, candidate.source, candidate.verbatim) for item in matches):
+        if not any((item.text, item.source, item.verbatim, item.context) ==
+                   (candidate.text, candidate.source, candidate.verbatim, candidate.context)
+                   for item in matches):
             matches.append(candidate)
     return matches
 
@@ -426,9 +562,24 @@ def rebuild(positioning: PositioningMap, rivals: list[RivalProfile]) -> Position
     """Recompute arithmetic from saved claims without changing scan history.
 
     No current knowledge or new pages are mixed into the historical corpus.
-    Legacy snapshots without profiles cannot be reconstructed and stay intact.
+    Legacy snapshots without profiles cannot support proposition comparisons.
+    Preserve their own claims but mark the comparison unknown on read.
     """
     if not rivals:
+        if positioning.rivals_profiled and any(not row.proposition for row in positioning.readings):
+            note = (
+                "Legacy category comparisons have no saved competitor profiles. Rescan "
+                "before using competitive conclusions; proposition equivalence is unknown."
+            )
+            readings = [
+                AxisReading(axis=row.axis, proposition=claim.text, territory=Territory.CONTESTED,
+                            ours=[claim], comparison_status="unknown", comparison_notes=[note])
+                for row in positioning.readings for claim in row.ours
+            ]
+            return positioning.model_copy(update={
+                "readings": readings,
+                "notes": list(dict.fromkeys([*positioning.notes, note])),
+            })
         return positioning
     ours = ClaimSet(claims=[claim for reading in positioning.readings for claim in reading.ours])
     updated = build(ours, rivals, we_have_proof=positioning.we_have_proof)
@@ -449,6 +600,30 @@ def _explicit_portability(quote: str) -> bool:
         r"|\bcopy\b.{0,35}\b(?:text|content|email)\b.{0,25}"
         r"\b(?:for use|to use|into|to)\b.{0,25}\b(?:elsewhere|another|your own)\b",
         text,
+    ))
+
+
+def _explicit_control(quote: str) -> bool:
+    """Brand ownership and portability are control even when misfiled upstream."""
+    text = fold(quote)
+    if _negated_control(text):
+        return False
+    return _explicit_portability(quote) or bool(re.search(
+        r"\bcustom\s+(?:\(sub\)|sub)?domains?\b|\b(?:your\s+)?own\s+domains?\b|"
+        r"\bwhite[- ]label(?:ed|led|ing)?\b|"
+        r"\b(?:remove|removes|removing|hide|hides)\s+(?:[\w'-]+\s+){0,3}branding\b|"
+        r"\btransfer(?:ring)?\b.{0,35}\b(?:ownership|forms?|projects?|workspaces?)\b",
+        text,
+    ))
+
+
+def _negated_control(text: str) -> bool:
+    subject = r"(?:custom\s+(?:\(sub\)|sub)?domains?|branding|white[- ]label(?:ing)?)"
+    return bool(re.search(
+        r"\b(?:cannot|can't|does not|doesn't|do not|not supported|no support for)\b"
+        r"[^.!?;\n]{0,65}\b" + subject + r"\b|\b" + subject +
+        r"\b[^.!?;\n]{0,50}\b(?:not (?:yet )?(?:supported|available)|unsupported|unavailable)\b",
+        fold(text),
     ))
 
 
@@ -512,12 +687,34 @@ def axis_for_evidence(entry: Evidence) -> ClaimAxis:
     attach an existing territory to an evidence id.  It is classification of
     a product fact, never a new market claim.
     """
+    if monetary_outcome(Claim(text=entry.claim, verbatim=entry.verbatim, context=context_of(entry))):
+        return ClaimAxis.PROOF
+    if (str(entry.kind) == "metric"
+            and context_of(entry).claim_scope not in {"capability", "offer"}
+            and re.search(r"\b\d[\d,.+]*\s+(?:\w+\s+){0,5}"
+                          r"(?:creators?|companies|customers?|users?|businesses|teams?|freelancers?|agencies|organizations?)\b",
+                          entry.claim, re.IGNORECASE)
+            and re.search(r"\b(?:use|uses|using|trust|trusted|collect and share|serve|served)\b",
+                          entry.claim, re.IGNORECASE)):
+        return ClaimAxis.PROOF
+    text = f"{entry.claim} {entry.verbatim}".lower()
+    if re.search(r"\b(?:rate limit|requests? allowed|maximum.{0,20}requests?|api.{0,20}limit)\b", text):
+        return ClaimAxis.BREADTH
+    if str(entry.kind) == "feature" and _explicit_control(entry.verbatim):
+        return ClaimAxis.CONTROL
     kind = _AXIS_BY_KIND.get(str(entry.kind))
     if kind is not None:
         return kind
-    text = f"{entry.claim} {entry.verbatim}".lower()
+    # A policy duration is not product performance. Classify the policy before
+    # the broad time-unit hints, which otherwise turn SSO expiry into speed.
+    if re.search(r"\b(?:session|sso|password|salt)\b.{0,90}\b(?:expir|timeout|rotat)", text):
+        return ClaimAxis.SECURITY
+    if re.search(r"\b(?:overage|upgrade|subscription|billing)\b.{0,130}\b(?:lock|notice|week|days?)\b", text):
+        return ClaimAxis.PRICE
     for axis, markers in _AXIS_WORDS:
-        if any(marker in text for marker in markers):
+        if any((marker in text if marker in {"$", "€", "£"} else re.search(
+            r"(?<!\w)" + re.escape(marker.strip()) + r"(?!\w)", text,
+        )) for marker in markers):
             return axis
     return ClaimAxis.OTHER
 
@@ -536,6 +733,7 @@ def _crowd_words(rivals: list[RivalProfile]) -> list[str]:
         }
         counts.update(words)
     return sorted(
-        (word for word, seen in counts.items() if seen >= _CROWD_WORD_RIVALS),
+        (word for word, seen in counts.items()
+         if seen >= _CROWD_WORD_RIVALS and any(char.isalpha() for char in word)),
         key=lambda word: (-counts[word], word),
     )

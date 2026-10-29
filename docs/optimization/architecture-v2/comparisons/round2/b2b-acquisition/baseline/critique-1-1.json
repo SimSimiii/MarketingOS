@@ -1,0 +1,25 @@
+{
+  "verdict": "revise",
+  "failure_mode": "copy",
+  "strategy_gap": "",
+  "brief_drift": "",
+  "unspent_evidence": [
+    "E1",
+    "E2"
+  ],
+  "edits": [
+    {
+      "line": "The sample shows this presentation directly: the shared board, the repair stages, and the customer-facing view.",
+      "problem": "The supplied material confirms a sample repair board exists, but does not establish that its destination includes the customer-facing view; the sentence promises more than the documented sample contents support.",
+      "fix": "Limit the sample’s promised payoff to inspecting the shared board and its current-stage presentation, without claiming it demonstrates stage movement or the customer-facing view.",
+      "severity": "blocking"
+    },
+    {
+      "line": "That gives you something concrete to assess before considering anything further.",
+      "problem": "This repeats the preceding sentence’s reason to inspect the sample and adds an abstract closing between the practical payoff and the CTA.",
+      "fix": "Cut the line so the supported inspection payoff leads directly to the CTA.",
+      "severity": "minor"
+    }
+  ],
+  "summary": "Narrow the sample-description line to what the destination is documented to show, then remove the redundant closing sentence."
+}

@@ -31,6 +31,7 @@ class Campaign(SQLModel, table=True):
     product_url: str | None = None
     target_market: str | None = None
     goals: str | None = None
+    intent: dict | None = Field(default=None, sa_column=Column(JSON))
     #: Where the call to action points. The writer never knows this - it is
     #: told so, and told to write the words that go on the link rather than
     #: the link itself - so it is asked for here instead. Without it (and

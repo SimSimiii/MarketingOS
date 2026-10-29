@@ -1,0 +1,30 @@
+{
+  "verdict": "revise",
+  "failure_mode": "copy",
+  "strategy_gap": "",
+  "brief_drift": "",
+  "unspent_evidence": [
+    "E2"
+  ],
+  "edits": [
+    {
+      "line": "Subject: Connect your drive, then search",
+      "problem": "“Then search” can imply that search is available immediately after connection, obscuring the first-folder milestone that the email is supposed to establish.",
+      "fix": "Make the subject distinguish starting indexing from the later point when the first indexed folder becomes searchable, without suggesting a duration.",
+      "severity": "major"
+    },
+    {
+      "line": "The connection starts the process; it does not make the entire drive searchable immediately. There is no need to wait for the whole drive to finish before using search.",
+      "problem": "This repeats the preceding explanation and foregrounds the limitation at the exact point where the cold reader stopped.",
+      "fix": "Remove the repeated qualification; retain only the already established distinction that search begins after the first folder rather than after the entire drive.",
+      "severity": "major"
+    },
+    {
+      "line": "Start the connection when you are ready for the first folder to begin indexing.",
+      "problem": "The closing describes another indexing step instead of reinforcing the useful, supported consequence of taking the action.",
+      "fix": "Tie the requested connection to its documented payoff: it starts background indexing and leads to search availability after the first folder finishes, without adding claims about effort, timing, permissions or providers.",
+      "severity": "major"
+    }
+  ],
+  "summary": "Clarify the milestone in the subject, cut the repeated caveat, and make the closing connect the action to the supported search payoff."
+}

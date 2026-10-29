@@ -60,7 +60,9 @@ def email(body: str, **overrides) -> Email:
 
 
 def test_a_figure_that_matches_the_ledger_passes(index: EvidenceIndex):
-    assert evidence_gate("You are running in 10 minutes, for $29/month.", index).passed
+    assert evidence_gate(
+        "You are running in 10 minutes, for $29/month, billed annually.", index
+    ).passed
 
 
 def test_a_figure_the_ledger_contradicts_is_blocked(index: EvidenceIndex):
@@ -182,8 +184,26 @@ def test_shouting_and_punctuation_abuse_block():
 
 def test_known_acronyms_are_not_shouting():
     assert spam_gate(
-        email("We are SOC2 compliant and support SMTP.\n\nSecond.\n\nThird.")
+        email("We are SOC2 compliant and support SMTP.\n\nReview the DPIA before deployment.\n\nThird.")
     ).passed
+
+
+def test_canonical_uppercase_brand_is_not_shouting_but_other_caps_still_are():
+    assert spam_gate(email("CABAIA makes work bags."), company_name="CABAIA").passed
+    report = spam_gate(email("CABAIA makes AMAZING bags."), company_name="CABAIA")
+    assert "AMAZING" in report.render()
+    assert "CABAIA" not in report.render()
+
+
+def test_brand_exemption_requires_exact_spelling_and_word_boundaries():
+    assert not spam_gate(email("PAPIER planners."), company_name="Papier").passed
+    assert not spam_gate(email("CABAIASTORE bags."), company_name="CABAIA").passed
+    assert not spam_gate(email("BAGS are useful."), company_name="CABAIA BAGS").passed
+
+
+@pytest.mark.parametrize("method", ["POST", "PATCH", "HEAD", "OPTIONS", "DELETE", "TRACE", "CONNECT"])
+def test_documented_http_methods_are_vocabulary_not_shouting(method):
+    assert spam_gate(email(f"The endpoint accepts an HTTP {method} request.\n\nInspect the JSON example.")).passed
 
 
 def test_click_here_link_text_is_flagged():

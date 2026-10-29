@@ -14,6 +14,25 @@ from app.ingestion.loaders.site_crawler import SiteCrawler
 
 FILLER = "<p>" + ("Something worth reading about the product. " * 12) + "</p>"
 
+
+def test_pricing_priority_does_not_confuse_planner_products_with_billing():
+    assert priority_of("https://x.com/fr/pricing") == 100
+    assert priority_of("https://x.com/plans") == 100
+    assert priority_of("https://x.com/bold-plans-63402") < 100
+    assert priority_of("https://x.com/wedding/table-plans/") < 100
+
+
+@pytest.mark.asyncio
+async def test_small_budget_includes_linked_catalogues_before_repeated_skus():
+    links = ''.join(f'<a href="/products/variant-{i}">Variant</a>' for i in range(20))
+    pages = {"https://example.com/": FILLER + links + '<a href="/collections/backpacks">Backpacks</a>'}
+    pages.update({f"https://example.com/products/variant-{i}": FILLER for i in range(20)})
+    pages["https://example.com/collections/backpacks"] = FILLER
+    async with client(pages) as http:
+        documents = await SiteCrawler(http, max_pages=4).crawl("https://example.com/")
+    assert len(documents) == 4
+    assert any(document.source.endswith("/collections/backpacks") for document in documents)
+
 PAGES = {
     "https://example.com/": f"""
         <html><head><title>Home</title></head><body>
@@ -131,3 +150,105 @@ def test_legal_and_account_pages_are_not_worth_reading():
     assert not is_worth_reading("https://x.com/account/settings")
     assert not is_worth_reading("https://x.com/brochure.pdf")
     assert is_worth_reading("https://x.com/pricing")
+
+
+@pytest.mark.asyncio
+async def test_documentation_hub_is_followed_without_manual_guide_urls():
+    pages = {
+        "https://example.com/": f'{FILLER}<a href="/help">Help</a>',
+        "https://example.com/help": f'{FILLER}<a href="/help/install">Install</a>',
+        "https://example.com/help/install": f'{FILLER}<p>Add one script to your site.</p><a href="/help/install/more">More</a>',
+        "https://example.com/help/install/more": FILLER,
+    }
+    documents = await SiteCrawler(client=client(pages)).crawl("https://example.com/")
+    sources = {document.source for document in documents}
+    assert "https://example.com/help/install" in sources
+    assert "https://example.com/help/install/more" not in sources
+
+
+@pytest.mark.asyncio
+async def test_discovered_guides_precede_low_value_homepage_links_within_same_budget():
+    pages = {"https://example.com/": FILLER + '<a href="/docs">Documentation</a>' +
+             ''.join(f'<a href="/blog/post-{n}">Post</a>' for n in range(10)),
+             "https://example.com/docs": FILLER + '<a href="/docs/setup">Setup</a>',
+             "https://example.com/docs/setup": FILLER + '<p>Documented installation steps.</p>'}
+    pages.update({f"https://example.com/blog/post-{n}": FILLER for n in range(10)})
+    calls = []
+
+    def handler(request):
+        calls.append(str(request.url))
+        return httpx.Response(200, text=pages[str(request.url)])
+
+    transport = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    documents = await SiteCrawler(client=transport, max_pages=6).crawl("https://example.com/")
+    assert "https://example.com/docs/setup" in {document.source for document in documents}
+    assert len(calls) <= 6
+
+
+@pytest.mark.asyncio
+async def test_redirected_document_uses_final_url_for_relative_guide_links():
+    def handler(request):
+        url = str(request.url)
+        if url == "https://example.com/docs":
+            return httpx.Response(302, headers={"location": "/help/"})
+        if url == "https://example.com/":
+            return httpx.Response(200, text=FILLER + '<a href="/docs">Docs</a>')
+        if url == "https://example.com/help/":
+            return httpx.Response(200, text=FILLER + '<a href="setup">Setup</a>')
+        return httpx.Response(200, text=FILLER)
+
+    transport = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    documents = await SiteCrawler(client=transport).crawl("https://example.com/")
+    assert "https://example.com/help/setup" in {d.source for d in documents}
+
+
+@pytest.mark.asyncio
+async def test_child_redirect_does_not_import_another_companys_claims():
+    def handler(request):
+        if str(request.url) == "https://example.com/":
+            return httpx.Response(200, text=FILLER + '<a href="/pricing">Price</a>')
+        if str(request.url) == "https://example.com/pricing":
+            return httpx.Response(302, headers={"location": "https://another-company.com/plans"})
+        return httpx.Response(200, text=FILLER + '<p>Another company charges $999.</p>')
+
+    transport = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    documents = await SiteCrawler(client=transport).crawl("https://example.com/")
+    assert len(documents) == 1
+
+
+@pytest.mark.asyncio
+async def test_getting_started_guide_precedes_shorter_peripheral_help_page():
+    pages = {
+        "https://example.com/": FILLER + '<a href="/docs">Docs</a>',
+        "https://example.com/docs": FILLER + '<a href="/docs/2fa">2FA</a><a href="/docs/getting-started">Start</a>',
+        "https://example.com/docs/2fa": FILLER,
+        "https://example.com/docs/getting-started": FILLER,
+    }
+    documents = await SiteCrawler(client=client(pages), max_pages=3).crawl("https://example.com/")
+    assert "https://example.com/docs/getting-started" in {d.source for d in documents}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("guide", [
+    "https://support.example.com/how-do-i-get-started-with-tool-ab12",
+    "https://example.com/docs/getting-started",
+])
+async def test_first_onboarding_guide_survives_crowded_marketing_frontier(guide):
+    hub = "https://support.example.com/" if "support." in guide else "https://example.com/docs"
+    pages = {
+        "https://example.com/": FILLER + f'<a href="{hub}">Help</a>' +
+            ''.join(f'<a href="/testimonials-{i}">Testimonials</a>' for i in range(20)),
+        hub: FILLER + f'<a href="{guide}">Get started</a>',
+        guide: FILLER + '<p>Create your first form, publish it, and import a testimonial.</p>',
+        **{f"https://example.com/testimonials-{i}": FILLER for i in range(20)},
+    }
+    calls = []
+
+    def handler(request):
+        calls.append(str(request.url))
+        return httpx.Response(200, text=pages[str(request.url)])
+
+    transport = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    documents = await SiteCrawler(client=transport, max_pages=6).crawl("https://example.com/")
+    assert guide in {document.source for document in documents}
+    assert len(calls) <= 6

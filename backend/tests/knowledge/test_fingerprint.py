@@ -6,9 +6,11 @@ tests about identity: two rows holding the same words are one fact about the
 business, however many times it was filed.
 """
 
+from types import SimpleNamespace
+
 import pytest
 from sqlalchemy.pool import StaticPool
-from sqlmodel import Session, SQLModel, create_engine
+from sqlmodel import Session, SQLModel, create_engine, select
 
 from app.ingestion.documents import SourceType
 from app.knowledge.store import fingerprint_documents
@@ -17,6 +19,43 @@ from app.models.knowledge_document import KnowledgeDocument
 from app.services.knowledge_service import KnowledgeService
 
 SITE = "Notewright drafts a release note in about nine seconds. Team is $29/month."
+
+
+def test_identical_page_refreshes_collection_warnings_without_changing_facts(session, brand):
+    page = SimpleNamespace(content=SITE, source=SourceType.WEBSITE, url="https://example.test/",
+                           title="Home", metadata={"content_issues": ["partial_crawl"]})
+    first = KnowledgeService(session)._persist(page, None, brand.id, None)
+    original_date = first.created_at
+    assert first.document_metadata["content_issues"] == ["partial_crawl"]
+    page.metadata = {"content_issues": []}
+    refreshed = KnowledgeService(session)._persist(page, None, brand.id, None)
+    assert refreshed.id == first.id and refreshed.created_at == original_date
+    assert refreshed.content == SITE and refreshed.document_metadata["content_issues"] == []
+
+
+def test_cached_gap_rules_refresh_without_changing_saved_evidence_or_version(session, brand):
+    from app.knowledge.artifacts import Gap, GapReport, KnowledgeArtifacts
+    from app.knowledge.ledger import Evidence, EvidenceKind, EvidenceLedger
+    from app.knowledge.store import ArtifactScope, ArtifactStore
+    from app.models.knowledge_artifacts import KnowledgeArtifactSet
+
+    artifacts = KnowledgeArtifacts(
+        evidence=EvidenceLedger(entries=[Evidence(
+            id="E1", kind=EvidenceKind.PRICE, claim="Bag costs 45€.", verbatim="Bag 45€",
+        )]),
+        gaps=GapReport(gaps=[Gap(id="G-price", missing="No price found", impact="Cannot name a price")]),
+    )
+    store = ArtifactStore(session)
+    scope = ArtifactScope(brand_id=brand.id)
+    saved = store.save(scope, artifacts, "same-sources")
+    loaded = store.load(scope)
+    assert loaded is not None
+    assert loaded.version == saved.version == 1
+    assert loaded.fingerprint == "same-sources"
+    assert loaded.artifacts.evidence.model_dump() == saved.artifacts.evidence.model_dump()
+    assert "G-price" not in {gap.id for gap in loaded.artifacts.gaps.gaps}
+    row = session.exec(select(KnowledgeArtifactSet)).one()
+    assert row.payload["gaps"]["gaps"][0]["id"] == "G-price"
 
 
 def document(content: str) -> KnowledgeDocument:

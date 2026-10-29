@@ -230,7 +230,10 @@ async def test_a_rewrite_that_drops_the_proof_does_not_take_the_title(
     provider.push("preference_judge", *votes_for_the_challenger(2))
     provider.push(
         "email_writer",
-        email_draft(subject="The draft that argues from the material"),
+        email_draft(subject="The draft that argues from the material").replace(
+            "Notewright turns commits you already pushed into that paragraph, in about nine seconds.",
+            '"Notewright drafts a release note in about nine seconds."',
+        ),
         email_draft(
             subject="The rewrite that argues from nothing",
             body=(
@@ -552,16 +555,7 @@ async def test_a_run_with_nothing_checkable_asks_before_it_spends(
     and disbelieved again - all of it discoverable for nothing, before the
     first model call."""
     artifacts = artifacts_fixture()
-    artifacts.evidence = EvidenceLedger(
-        entries=[
-            Evidence(
-                id="E1",
-                kind=EvidenceKind.FEATURE,
-                claim="it has a dashboard",
-                verbatim="It has a dashboard.",
-            )
-        ]
-    )
+    artifacts.evidence = EvidenceLedger()
 
     pipeline, _ = build(provider, artifacts=artifacts)
     result = await pipeline.run(request_fixture)
@@ -570,6 +564,24 @@ async def test_a_run_with_nothing_checkable_asks_before_it_spends(
     assert result.report.questions
     assert provider.calls_by_role["strategist"] == 0
     assert provider.calls_by_role["email_writer"] == 0
+
+
+@pytest.mark.asyncio
+async def test_a_documented_function_without_testimonial_reaches_the_writer(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+):
+    """A functional statement can be checked in documentation without a customer quote."""
+    artifacts = artifacts_fixture()
+    artifacts.evidence = EvidenceLedger(entries=[Evidence(
+        id="E1", kind=EvidenceKind.FEATURE,
+        claim="Notewright drafts release notes from commits",
+        verbatim="Notewright drafts release notes from commits.", source="Product manual",
+    )])
+    pipeline, _ = build(provider, artifacts=artifacts)
+    result = await pipeline.run(request_fixture)
+    assert result.status != "needs_input"
+    assert provider.calls_by_role["strategist"] == 1
+    assert provider.calls_by_role["email_writer"] > 0
 
 
 @pytest.mark.asyncio

@@ -392,7 +392,7 @@ def test_the_activity_log_only_shows_your_own_runs(locked_client: TestClient):
     assert locked_client.get("/api/logs", headers=bob).json() == []
 
 
-def test_linkedin_mutations_are_closed_to_other_accounts(locked_client, engine):
+def test_linkedin_mutations_are_closed_to_other_accounts(locked_client, engine, provider):
     from uuid import UUID
 
     from sqlmodel import Session
@@ -408,10 +408,14 @@ def test_linkedin_mutations_are_closed_to_other_accounts(locked_client, engine):
     assert locked_client.get("/api/linkedin/runs", headers=bob).json() == []
     for path, data in [
         ("search", {"query": "Founders"}),
+        ("search", {"query": "Repair companies", "source": "web", "target": "companies"}),
+        ("search", {"query": "Operations leads", "source": "web", "target": "people"}),
+        ("search", {"query": "Family travel publications", "source": "web", "target": "venues"}),
         ("messages", {"recipient_name": "Alice", "recipient_url": "https://linkedin.com/in/alice", "objective": "Talk"}),
     ]:
         response = locked_client.post(f"/api/market/{brand_id}/linkedin/{path}", json=data, headers=bob)
         assert response.status_code == 404
+    assert not provider.requests
 
 
 def test_a_hash_made_with_an_explicit_pepper_verifies_where_that_pepper_is_configured():

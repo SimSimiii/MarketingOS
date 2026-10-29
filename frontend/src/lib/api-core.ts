@@ -14,6 +14,8 @@ import type {
   CreditBalance,
   AudienceRead,
   AudienceResearch,
+  MarketAudienceJobRequest,
+  MarketRelevanceJobRequest,
   RelevanceStatus,
   Brand,
   BrandCreateRequest,
@@ -54,6 +56,7 @@ import type {
   UserSettings,
   UserSettingsUpdate,
 } from "@/lib/types";
+import type { EmailAnalysis, EmailAnalysisCapabilities, EmailAnalysisRequest } from "@/lib/email-analysis-types";
 
 /** Where the bearer token comes from.
  *
@@ -220,8 +223,10 @@ export function createApi(auth: AuthSource) {
     writeLinkedInMessage: (brandId: string, data: LinkedInMessageRequest) => request<LinkedInRun>(`/market/${brandId}/linkedin/messages`, { method: "POST", body: JSON.stringify(data) }),
 
     listKnowledgeJobs: () => request<CompilationJob[]>("/knowledge/jobs"),
-    compileKnowledge: (brandId: string) =>
-      request<CompilationStatus>(`/brands/${brandId}/knowledge/compile`, { method: "POST" }),
+    compileKnowledge: (brandId: string, model?: string) =>
+      request<CompilationStatus>(`/brands/${brandId}/knowledge/compile`, {
+        method: "POST", body: JSON.stringify({ model }),
+      }),
     getKnowledgeCompilation: (brandId: string) =>
       request<CompilationStatus>(`/brands/${brandId}/knowledge/compile`),
     listCampaigns: (includeArchived = false, page?: { limit?: number; offset?: number; brandId?: string }) => {
@@ -409,10 +414,10 @@ export function createApi(auth: AuthSource) {
     /** Read the market. `discover` searches the web for competitors nobody has
      * named yet; off re-reads the existing list only, which is what a weekly
      * refresh wants. */
-    startMarketScan: (brandId: string, discover = true) =>
+    startMarketScan: (brandId: string, discover = true, model?: string) =>
       request<MarketJob>(`/market/${brandId}/scan`, {
         method: "POST",
-        body: JSON.stringify({ discover }),
+        body: JSON.stringify({ discover, model }),
       }),
     startProofHunt: (brandId: string) =>
       request<MarketJob>(`/market/${brandId}/proof/hunt`, { method: "POST" }),
@@ -478,10 +483,10 @@ export function createApi(auth: AuthSource) {
       }),
     /** Locate, process-fetch, synthesize and verify independent research for
      * one admitted mapped audience. Refreshes append a new persisted version. */
-    startAudienceResearch: (brandId: string, segment: string) =>
+    startAudienceResearch: (brandId: string, segment: string, model?: string | null) =>
       request<MarketJob>(`/market/${brandId}/audience/research`, {
         method: "POST",
-        body: JSON.stringify({ segment }),
+        body: JSON.stringify({ segment, model } satisfies MarketAudienceJobRequest),
       }),
     getAudienceResearch: (brandId: string, segment: string) =>
       request<AudienceResearch>(
@@ -504,12 +509,12 @@ export function createApi(auth: AuthSource) {
       }),
     /** Build from the latest persisted knowledge, audience research and market scan.
      * An unchanged exact triple is reused without spending another call. */
-    startRelevanceDossier: (brandId: string, segment: string, rebuild = false) =>
+    startRelevanceDossier: (brandId: string, segment: string, rebuild = false, model?: string | null, verifyProductGaps = false) =>
       request<MarketJob>(
         `/market/${brandId}/audience/relevance${rebuild ? "/rebuild" : ""}`,
         {
           method: "POST",
-          body: JSON.stringify({ segment }),
+          body: JSON.stringify({ segment, model, ...(verifyProductGaps ? { verify_product_gaps: true } : {}) } satisfies MarketRelevanceJobRequest),
         },
       ),
     getRelevanceStatus: (brandId: string, segment: string) =>
@@ -545,6 +550,12 @@ export function createApi(auth: AuthSource) {
 
     listRadar: (brandId: string, limit = 50) =>
       request<RadarEvent[]>(`/market/${brandId}/radar?limit=${limit}`),
+    listEmailAnalyses: (brandId: string) => request<EmailAnalysis[]>(`/market/${brandId}/email-analyses`),
+    getEmailAnalysisCapabilities: (brandId: string) => request<EmailAnalysisCapabilities>(`/market/${brandId}/email-analyses/capabilities`),
+    getEmailAnalysis: (brandId: string, id: string) => request<EmailAnalysis>(`/market/${brandId}/email-analyses/${id}`),
+    analyseEmail: (brandId: string, data: EmailAnalysisRequest) => request<EmailAnalysis>(`/market/${brandId}/email-analyses`, {
+      method: "POST", body: JSON.stringify(data),
+    }),
     markRadarSeen: (brandId: string) =>
       request<{ marked: number }>(`/market/${brandId}/radar/seen`, { method: "POST" }),
   };

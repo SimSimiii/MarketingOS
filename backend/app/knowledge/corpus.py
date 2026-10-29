@@ -53,10 +53,11 @@ class Chunk:
     index: int
     content: str
     heading: str = ""
+    source_aliases: tuple[str, ...] = ()
 
     def render(self) -> str:
         where = f"{self.document_title}" + (f" › {self.heading}" if self.heading else "")
-        return f"[{where}]\n{self.content}"
+        return f"[{where}; document_id={self.document_id}; source={self.source or 'unknown'}; aliases={', '.join(self.source_aliases)}; chunk={self.index}]\n{self.content}"
 
 
 @dataclass(frozen=True)
@@ -68,6 +69,8 @@ class Document:
     content: str
     source: str = ""
     source_type: str = ""
+    source_aliases: tuple[str, ...] = ()
+    source_issues: tuple[str, ...] = ()
 
     def render(self, limit: int | None = None) -> str:
         body = self.content if limit is None else self.content[:limit]
@@ -104,7 +107,8 @@ def split_document(document: Document) -> list[Chunk]:
         if not body:
             continue
         for piece in _pack(body):
-            if len(piece) < _MIN_CHUNK_CHARS and chunks and chunks[-1].heading == section_heading:
+            if (len(piece) < _MIN_CHUNK_CHARS and chunks and chunks[-1].heading == section_heading
+                    and len(chunks[-1].content) + len(piece) + 2 <= _MAX_CHUNK_CHARS):
                 merged = chunks.pop()
                 piece = f"{merged.content}\n\n{piece}"
             chunks.append(
@@ -115,6 +119,7 @@ def split_document(document: Document) -> list[Chunk]:
                     index=len(chunks),
                     content=piece,
                     heading=section_heading,
+                    source_aliases=document.source_aliases,
                 )
             )
     return chunks
@@ -130,6 +135,14 @@ def _pack(body: str) -> list[str]:
         paragraph = paragraph.strip()
         if not paragraph:
             continue
+        while len(paragraph) > _MAX_CHUNK_CHARS:
+            if current:
+                pieces.append("\n\n".join(current))
+                current, size = [], 0
+            boundary = paragraph.rfind(" ", _MAX_CHUNK_CHARS // 2, _MAX_CHUNK_CHARS)
+            boundary = boundary if boundary > 0 else _MAX_CHUNK_CHARS
+            pieces.append(paragraph[:boundary])
+            paragraph = paragraph[boundary:].lstrip()
         if size and size + len(paragraph) > _MAX_CHUNK_CHARS:
             pieces.append("\n\n".join(current))
             current, size = [], 0
@@ -218,9 +231,38 @@ class SourceCorpus:
             allowance = min(share, remaining)
             body = document.content
             truncated = len(body) > allowance
-            rendered = document.render(limit=allowance if truncated else None)
             if truncated:
-                rendered += f"\n… ({len(body) - allowance:,} more characters not shown)"
+                # Keep commercial sections late in a homepage within the same
+                # budget, instead of letting its identity/features consume it.
+                chunks = [chunk for chunk in self.chunks if chunk.document_id == document.id]
+                commercial = [chunk for chunk in chunks if re.search(
+                    r"(?:[$€£]\s?\d|\b(?:pricing|prices?|plans?|billing|tarifs?|"
+                    r"abonnements?|free trial|refund)\b)",
+                    f"{chunk.heading} {chunk.content}", re.IGNORECASE)]
+                if commercial:
+                    front = max(1, allowance // 3)
+                    room = max(0, allowance - front - 50)
+                    # Whole excerpts preserve price/limit/condition pairs.
+                    # Equal prefixes of every matching chunk can stop at
+                    # "$45/mo" and hide the quota immediately after it.
+                    prioritized = sorted(commercial, key=lambda chunk: -len(re.findall(
+                        r"[$€£]\s?\d", chunk.content)))
+                    sections: list[str] = []
+                    for chunk in prioritized:
+                        if len(chunk.content) + 3 <= room:
+                            sections.append(chunk.content)
+                            room -= len(chunk.content) + 3
+                    body = document.content[:front] + "\n[Selected commercial sections]\n" + "\n…\n".join(sections)
+                    view = Document(id=document.id, title=document.title, source=document.source,
+                                    source_type=document.source_type, content=body,
+                                    source_aliases=document.source_aliases)
+                    rendered = view.render(limit=allowance)
+                else:
+                    rendered = document.render(limit=allowance)
+            else:
+                rendered = document.render()
+            if truncated:
+                rendered += f"\n… (excerpt from {len(document.content):,} characters)"
             parts.append(rendered)
             spent += len(rendered)
         return "\n\n".join(parts)

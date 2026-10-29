@@ -40,6 +40,61 @@ async def public_resolver(_host: str) -> list[str]:
     return ["93.184.216.34"]
 
 
+@pytest.mark.asyncio
+async def test_failed_source_paths_and_errors_survive_without_query_credentials(provider, session):
+    provider.push("audience_research_locator", {"sources": [
+        {"url": "https://failed.example/thread?token=secret#private", "tier": 1},
+    ]})
+    provider.push("audience_research_locator", {"sources": []})
+    progress = []
+    async with httpx.AsyncClient(transport=httpx.MockTransport(lambda _: httpx.Response(503))) as client:
+        researcher = AudienceResearcher(session, fetcher=FixedURLFetcher(client=client, resolver=public_resolver))
+        with pytest.raises(AudienceResearchError, match="None of the located"):
+            await researcher.research(segment(), on_progress=progress.append)
+    log = "\n".join(progress)
+    assert "https://failed.example/thread" in log and "503" in log
+    assert "secret" not in log and "private" not in log
+    assert not provider.tools_used_by("audience_research_synthesis")
+
+
+@pytest.mark.asyncio
+async def test_empty_fetch_recovers_once_on_other_hosts_with_the_same_quote_checks(provider, session):
+    quote = "We write the warranty queue on paper before opening the workshop."
+    provider.push("audience_research_locator", {"sources": [{"url": "https://blocked.example/thread", "tier": 1}]})
+    provider.push("audience_research_locator", {"sources": [
+        {"url": "https://sub.blocked.example/alternate", "tier": 1},
+        {"url": "https://workshop.example/notes", "tier": 1},
+    ]})
+    provider.push("audience_research_synthesis", {"situation": {
+        "text": "The operator writes the warranty queue before opening.",
+        "evidence": [{"source_id": "S1", "quote": quote}],
+    }})
+    seen = []
+    def handler(request):
+        seen.append(request.url.host)
+        return httpx.Response(200, text=("<p>" + quote + "</p><p>" + "The operator explains the working routine in detail. " * 5 + "</p>") if request.url.host == "workshop.example" else
+                              "<title>Forum - Prove your humanity</title><p>" + "This public-looking page is an access check. " * 12 + "</p>",
+                              headers={"content-type": "text/html"})
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+        result = await AudienceResearcher(session, fetcher=FixedURLFetcher(client=client, resolver=public_resolver)).research(segment())
+    assert seen == ["blocked.example", "workshop.example"]
+    assert len(result.sources) == 1 and result.sources[0].final_url == "https://workshop.example/notes"
+    assert result.situation.evidence[0].quote == quote
+    assert any("unavailable URL" in item for item in result.interpretation_warnings)
+
+
+@pytest.mark.asyncio
+async def test_a_corpus_without_any_verified_observation_is_not_a_successful_research(provider, session):
+    provider.push("audience_research_locator", {"sources": [{"url": "https://workshop.example/page", "tier": 1}]})
+    provider.push("audience_research_synthesis", {})
+    async with httpx.AsyncClient(transport=httpx.MockTransport(lambda _: httpx.Response(
+        200, text="<p>" + "An ordinary readable page with no relevant audience findings. " * 8 + "</p>",
+        headers={"content-type": "text/html"},
+    ))) as client:
+        with pytest.raises(AudienceResearchError, match="no verified audience observations"):
+            await AudienceResearcher(session, fetcher=FixedURLFetcher(client=client, resolver=public_resolver)).research(segment())
+
+
 def segment(**overrides: object) -> AudienceSegment:
     payload: dict = {
         "name": "Repair shops answering warranty requests",

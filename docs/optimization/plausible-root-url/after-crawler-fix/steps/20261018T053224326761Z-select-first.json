@@ -1,0 +1,212 @@
+{
+  "index": 0,
+  "segment": {
+    "name": "An EU or UK public sector web team that must publish analytics without a consent banner",
+    "organization": "Government department, agency, municipality, public library, school/academy trust or other public body operating citizen-facing websites",
+    "workflow": "Runs citizen-facing sites under a published cookies/privacy page, completes a DPIA and vendor assessment before any measurement tool goes on, and reports usage to service owners",
+    "need": "Aggregate usage measurement that can be declared on the cookies page as non-consent, non-personal, EU/UK-resident processing, with a DPA that survives procurement",
+    "buyer_role": "Digital/communications lead or service owner, with DPO and procurement sign-off; often paid by invoice/bank transfer rather than card",
+    "user_role": "Web and content teams, service designers, comms staff reading traffic and search-query reports",
+    "current_alternative": "Google Analytics behind a consent banner, Matomo (often self-hosted on internal infrastructure), or no analytics at all after a privacy review forced removal",
+    "assessment": {
+      "compatibility": "unknown",
+      "evidence_strength": "supported",
+      "findability": "verified",
+      "usage_or_purchase": "captured",
+      "reachability": "venue_identified",
+      "counterevidence_summary": [
+        "The same site that uses Plausible also still uses Google Analytics and retains a consent interface. — Adoption here is additive, not a replacement, so the pitch that Plausible removes the banner and the GA dependency is contradicted by the only observed public-sector user. Review before prioritising.",
+        "A sibling Scottish government site declares Google Analytics with GA cookies behind an accept/reject banner and no Plausible. — Within the same administration the consent-banner-plus-GA pattern remains in place, so institutional approval of the incumbent is a live obstacle rather than a settled question. Review before prioritising.",
+        "A national government site runs Google Analytics plus advertising and retargeting pixels, accepting consent machinery rather than avoiding it. — A public body that deliberately runs retargeting cookies has requirements Plausible cannot serve, so the segment is not uniformly constrained to cookie-free, aggregate-only measurement. Review before prioritising."
+      ],
+      "counterevidence": 3,
+      "priority": "review_first",
+      "reasons": [
+        "Usage by this audience is directly observed: mygov.scot's own cookies statement names Plausible Analytics as a cookie-free statistical collector, i.e. a government service publicly declaring and justifying the tool.",
+        "Findability is verified through published cookies pages of named public bodies, and a concrete contact route is published on the same page (the gov.scot performance team email).",
+        "The core measurement requirement is covered by product truth — no cookies, no consent banner, aggregate-only data, EU-only storage, per-team sharing — so compatibility for the declared use is supported.",
+        "Counterevidence is substantial and comes from the same institutions: two of the three public-sector cookies pages fetched declare Google Analytics (one with ad and retargeting pixels), and the page that names Plausible also names Google Analytics."
+      ],
+      "unknowns": [
+        "Whether mygov.scot pays for Plausible Cloud or self-hosts; the cookies page shows use, not a purchase.",
+        "Whether procurement asks in the corpus (DPA, invoice billing, security questionnaire, certification, SLA) can be met — none of these appear in the supplied product truth or the fetched pages.",
+        "Why mygov.scot runs both tools, and whether Plausible is a pilot, a replacement in progress, or a permanent second source.",
+        "Whether any DPA or supervisory-authority finding actually forced a removal at these bodies; no such document was fetched.",
+        "No product requirement is mapped for this audience, so compatibility is unchecked rather than doubtful.",
+        "Review the counterevidence before prioritising this audience."
+      ],
+      "evidence": [
+        {
+          "claim": "A national government service publicly declares that it uses Plausible Analytics as a cookie-free statistical tool.",
+          "quote": "This site also uses Plausible Analytics, a statistical data collection tool which does not use cookies. See our privacy statement for more information.",
+          "url": "https://www.mygov.scot/cookies",
+          "kind": "usage",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-10-18T05:26:54.618233Z"
+        },
+        {
+          "claim": "Public-sector cookies pages must state that measurement cannot identify visitors, which is the constraint this situation is built on.",
+          "quote": "The cookies that we set on this site cannot be used to identify you personally.",
+          "url": "https://data.gov.scot/cookies/",
+          "kind": "need",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-10-18T05:26:54.554654Z"
+        },
+        {
+          "claim": "Public bodies measure traffic to decide where to improve services, so removing analytics entirely is not an option.",
+          "quote": "We use cookie tracking data to make informed decisions on whether the site is meeting your needs, which leads to us making improvements. For example, we monitor how much traffic each part of the site gets and work to improve areas which are not being found when they should be.",
+          "url": "https://www.mygov.scot/cookies",
+          "kind": "need",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-10-18T05:26:54.618233Z"
+        },
+        {
+          "claim": "A named performance team contact is published on the government cookies page, giving a concrete route to the owning function.",
+          "quote": "You can email the performance team for more information.",
+          "url": "https://www.mygov.scot/cookies",
+          "kind": "access",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-10-18T05:26:54.618233Z"
+        },
+        {
+          "claim": "The same site that uses Plausible also still uses Google Analytics and retains a consent interface.",
+          "quote": "We use Google Analytics to collect information about how you use this site.",
+          "url": "https://www.mygov.scot/cookies",
+          "kind": "counterevidence",
+          "impact": "material",
+          "impact_reason": "Adoption here is additive, not a replacement, so the pitch that Plausible removes the banner and the GA dependency is contradicted by the only observed public-sector user.",
+          "fetched_at": "2026-10-18T05:26:54.618233Z"
+        },
+        {
+          "claim": "A sibling Scottish government site declares Google Analytics with GA cookies behind an accept/reject banner and no Plausible.",
+          "quote": "Click 'Accept all cookies' to agree to all cookies that collect anonymous data.\nTo only allow the cookies that make the site work, click 'Use essential cookies only.' Visit 'Set cookie preferences' to control specific cookies.",
+          "url": "https://data.gov.scot/cookies/",
+          "kind": "counterevidence",
+          "impact": "material",
+          "impact_reason": "Within the same administration the consent-banner-plus-GA pattern remains in place, so institutional approval of the incumbent is a live obstacle rather than a settled question.",
+          "fetched_at": "2026-10-18T05:26:54.554654Z"
+        },
+        {
+          "claim": "A national government site runs Google Analytics plus advertising and retargeting pixels, accepting consent machinery rather than avoiding it.",
+          "quote": "To be able to unique identify a user for retargeting, conversion, or look-a-like purposes",
+          "url": "https://www.gov.wales/details-about-cookies-govwales",
+          "kind": "counterevidence",
+          "impact": "material",
+          "impact_reason": "A public body that deliberately runs retargeting cookies has requirements Plausible cannot serve, so the segment is not uniformly constrained to cookie-free, aggregate-only measurement.",
+          "fetched_at": "2026-10-18T05:26:54.676595Z"
+        }
+      ]
+    },
+    "kind": "core",
+    "added_by": "cartographer",
+    "who": "Digital teams at national, devolved and local government bodies, plus libraries, universities and schools in the EU/UK",
+    "why_them": "Hypothesis: this is the one buyer whose procurement rules make the no-cookie, EU-hosted, aggregate-only design the deciding feature rather than a preference — and whose published cookies page is observable proof of the choice. Peer imitation across public bodies is strong, and the no-consent declaration removes a banner the organisation is politically uncomfortable with.",
+    "trigger": "A DPIA, FOI question, accessibility/privacy audit or data protection authority finding against Google Analytics forces the team to justify or remove the existing tool before a site relaunch",
+    "pains": [
+      "A consent banner on a statutory service is both a compliance liability and a barrier to citizens who just need the page",
+      "A DPO or supervisory authority ruling makes EU–US transfer of visitor data indefensible, so the existing tool has to come off",
+      "With GA removed and nothing in its place, service owners lose any evidence about which pages citizens actually use",
+      "Procurement cannot buy on a card: it needs a DPA, invoice billing and a vendor assessment pack",
+      "SSO and seat counts for a department-sized team land on a custom-priced Enterprise conversation"
+    ],
+    "objection": "\"Our assurance process wants SOC 2 or ISO 27001, a named DPA, an SLA and a completed security questionnaire. A self-published security page and a 90-day uptime number will not pass, and the free-to-us incumbent already has institutional approval.\"",
+    "angle": "Lead with what a cookies page can actually say, and with peers who already publish it; be explicit that there is no third-party certification or SLA, and route the team size/SSO question to contact rather than inventing a workaround.",
+    "sophistication": "solution_aware",
+    "fit": 0.0,
+    "basis": "Newly evidenced this pass with independent, non-vendor sources: data.gov.scot's and mygov.scot's cookies pages and gov.wales' cookies page each declare Plausible as a statistical, cookie-free, aggregate-only collector — i.e. public bodies both buying and publicly justifying the choice. The vendor's own public-sector page corroborates (\"The Scottish and Welsh governments have been running Plausible for years\", plus \"ministries, municipalities, public libraries and schools across Europe\") and states a DPA applies to all subscribers, Falkenstein/Hetzner EU storage, invoice and bank transfer for larger annual plans, and reseller/procurement partner arrangements — vendor claims, not independent. German-language practitioner guides show the same reasoning (DSK: no cookies and no personal data means no banner) aimed at Kommunen and Schulen. Counterevidence: public bodies often standardise on self-hosted Matomo, and the evidence contains no SOC 2/ISO 27001, no SLA and no published Enterprise price, all of which are routine public-procurement asks. Missing product information: invoice billing, procurement partners, DPIA documentation and security-questionnaire support appear on vendor pages but not in the supplied capability catalogue.",
+    "population": "unknown",
+    "signals": [
+      "Published cookies or privacy page that names the analytics tool and states no consent is required for it",
+      "DPIA, data protection or transparency register entry listing a web analytics processor",
+      "Site relaunch or design-system guidance page describing the approved analytics approach",
+      "Public tender, framework award or contract register entry for web analytics",
+      "Removal of Google Analytics announced in a site privacy notice changelog"
+    ],
+    "where": [
+      "data.gov.scot/cookies/",
+      "gov.wales/details-about-cookies-govwales",
+      "mygov.scot/cookies",
+      "designsystem.gov.scot/guidance/analytics",
+      "about.publiccode.net/activities/tool-management/plausible-analytics.html",
+      "National/local government digital team blogs and public tender portals (TED, Contracts Finder)"
+    ],
+    "unobvious": false,
+    "researchable": true,
+    "researchability": "high",
+    "researchability_reasons": [
+      "5 useful observable signals and 6 specific research venues.",
+      "The audience is anchored in a concrete workflow or situation.",
+      "A clear trigger narrows the evidence to look for.",
+      "No population basis is stated."
+    ],
+    "definition": {
+      "schema_version": 2,
+      "required_structural_signals": [
+        {
+          "code": "org_type_public_sector_body",
+          "description": "Government department or agency, municipality, library, school/trust, university or other publicly funded body"
+        },
+        {
+          "code": "operates_in_eu_or_uk_jurisdiction",
+          "description": "Subject to GDPR/UK GDPR and PECR-equivalent consent rules"
+        }
+      ],
+      "required_workflow_signals": [
+        {
+          "code": "publishes_cookies_or_privacy_page_listing_analytics",
+          "description": "Maintains a public cookies/privacy page that must name and justify any measurement tool"
+        },
+        {
+          "code": "vendor_assessment_or_dpia_required_before_adoption",
+          "description": "Evidence of DPIA, procurement or data protection review gating website tooling"
+        }
+      ],
+      "required_product_capabilities": [],
+      "optional_signals": [
+        {
+          "code": "google_analytics_currently_declared_or_recently_removed",
+          "description": "Cookies page currently names Google Analytics, or a changelog shows its removal"
+        },
+        {
+          "code": "invoice_or_purchase_order_billing_required",
+          "description": "Cannot pay by card; needs invoice or bank transfer"
+        },
+        {
+          "code": "identity_provider_sso_in_use",
+          "description": "Staff access governed by Entra ID, Google Workspace or Okta"
+        }
+      ],
+      "hard_disqualifiers": [
+        {
+          "code": "requires_soc2_or_iso27001_certification",
+          "description": "Assurance process mandates a third-party certification the evidence does not support",
+          "outcome": "EXCLUDED"
+        },
+        {
+          "code": "mandated_onpremise_analytics_hosting",
+          "description": "Policy requires analytics hosted on the organisation's own infrastructure",
+          "outcome": "EXCLUDED"
+        },
+        {
+          "code": "requires_contractual_uptime_sla",
+          "description": "Contract requires a guaranteed uptime SLA",
+          "outcome": "EXCLUDED"
+        }
+      ],
+      "eligible_subsegments": [
+        "Devolved and national government digital teams",
+        "Municipalities and city web teams",
+        "Public libraries and archives",
+        "Schools, academy trusts and universities"
+      ],
+      "excluded_subsegments": [
+        "Bodies handling special-category data on authenticated pages requiring on-premise only"
+      ],
+      "max_team_size": null
+    }
+  }
+}

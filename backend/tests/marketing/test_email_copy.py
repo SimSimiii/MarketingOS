@@ -60,6 +60,18 @@ def test_exact_trailing_envelope_copies_render_only_once():
     assert rendered.count("- The team") == 1
 
 
+def test_language_metadata_is_not_recipient_copy_and_controls_html_safely():
+    from app.marketing.render_html import render_html
+
+    draft = WELL_FORMED.replace("ROLE: hook", "ROLE: hook\nLANGUAGE: fr")
+    email = parse_email(draft, position=1)
+    assert email.language == "fr"
+    assert "LANGUAGE:" not in render_email(email)
+    assert 'lang="fr"' in render_html(email)
+    email.language = 'fr" onclick="unsafe'
+    assert 'lang="und"' in render_html(email)
+
+
 def test_closing_cleanup_does_not_remove_argument_or_variant_asks():
     draft = WELL_FORMED.rstrip() + "\n\nStart free to see what it writes."
     assert parse_email(draft, position=1).body.endswith("Start free to see what it writes.")

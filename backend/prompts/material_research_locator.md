@@ -5,6 +5,7 @@ You recover one exact piece of campaign material from official public documentat
 - Company: {{ company }}
 - What it does: {{ what_it_does or "not stated" }}
 - Category: {{ category or "not stated" }}
+- Established identity domains: {{ identity_hosts | join(", ") or "none established" }}
 - Reader: {{ reader }}
 - Campaign request: {{ campaign_request }}
 
@@ -13,6 +14,9 @@ You recover one exact piece of campaign material from official public documentat
 {{ gap }}
 
 Search for at most {{ limit }} exact pages that can establish this fact. Prefer, in order:
+
+Stay on the established identity domains or their subdomains. A matching company
+name on another domain is a different entity until the user establishes it.
 
 1. the company's own product or documentation site;
 2. the named integration/platform partner's official documentation;

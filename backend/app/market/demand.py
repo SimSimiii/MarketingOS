@@ -214,7 +214,7 @@ class MapOptions(BaseModel):
     language: str = Field(default="", max_length=100)
     exclusions: str = Field(default="", max_length=1000)
     objective: Literal["customers", "partners", "both"] = "customers"
-    mode: Literal["refresh", "explore"] = "refresh"
+    mode: Literal["refresh", "explore", "reassess"] = "refresh"
 
 
 class MapEvidence(BaseModel):
@@ -223,7 +223,7 @@ class MapEvidence(BaseModel):
     claim: str
     quote: str
     url: str
-    kind: Literal["need", "alternative", "access", "counterevidence", "example"] = "need"
+    kind: Literal["need", "alternative", "access", "counterevidence", "example", "usage", "purchase"] = "need"
     impact: Literal["unknown", "minor", "material"] = "unknown"
     impact_reason: str = ""
     fetched_at: datetime | None = None
@@ -245,6 +245,9 @@ class MapAssessment(BaseModel):
     #: found. Its own axis rather than a sentence in `unknowns`, because an
     #: audience nobody can reach is a different problem from one nobody wants.
     findability: Literal["verified", "unknown"] = "unknown"
+    usage_or_purchase: Literal["captured", "unknown"] = "unknown"
+    reachability: Literal["venue_identified", "unknown"] = "unknown"
+    counterevidence_summary: list[str] = Field(default_factory=list)
     #: Unique source URLs arguing against this audience. Material or unassessed
     #: objections route to review; they never manufacture product incompatibility.
     counterevidence: int = 0
@@ -569,17 +572,17 @@ class AudienceSegment(BaseModel):
         lines = [
             f"- **{self.name}** [{self.kind}] - {self.assessment.priority}",
             f"    compatibility: {self.assessment.compatibility}; evidence: {self.assessment.evidence_strength}",
-            f"    who: {self.who or 'not described'}",
-            f"    why this product matters to them: {self.why_them or 'not established'}",
+            f"    proposed audience (hypothesis): {self.who or 'not described'}",
+            f"    proposed product relevance (hypothesis): {self.why_them or 'not established'}",
         ]
         if self.trigger:
-            lines.append(f"    what starts them looking: {self.trigger}")
+            lines.append(f"    proposed trigger (hypothesis): {self.trigger}")
         if self.pains:
-            lines.append(f"    what it costs them today: {'; '.join(self.pains)}")
+            lines.append(f"    proposed costs/pains (hypotheses): {'; '.join(self.pains)}")
         if self.objection:
             lines.append(f"    why they would say no: {self.objection}")
         if self.angle:
-            lines.append(f"    the line to open on: {self.angle}")
+            lines.append(f"    exploratory angle (not a campaign instruction): {self.angle}")
         if self.population:
             lines.append(f"    how many: {self.population}")
         if self.basis:
@@ -608,7 +611,7 @@ class AudienceSegment(BaseModel):
         return Segment(
             name=self.name,
             situation=self.who,
-            job_to_be_done=self.why_them,
+            job_to_be_done=self.need or self.why_them,
             trigger=self.trigger,
             sophistication=self.sophistication,
             pains=[
@@ -764,11 +767,35 @@ class DemandMap(BaseModel):
             ),
             "",
         ]
-        if self.reading:
-            lines.extend([self.reading, ""])
+        lines.extend([self.assessment_reading(), ""])
         for segment in self.ranked:
             mark = " <- THIS CAMPAIGN" if chosen and segment.name == chosen else ""
             lines.append(segment.render() + mark)
+        return "\n".join(lines)
+
+    def assessment_reading(self) -> str:
+        """The assessed map, without promoting the discovery turn's narrative.
+
+        `reading` remains archived on the map. It was written before fetching
+        and validation, so it cannot be the public or strategic conclusion.
+        """
+        if not self.segments:
+            return ""
+        lines = [
+            ("Assessment summary. Verified quotations do not establish demand or purchase intent; "
+             "commercial priority remains a hypothesis.")
+        ]
+        for segment in self.ranked:
+            assessment = segment.assessment
+            sources = {item.url.rstrip("/") for item in assessment.evidence if item.url}
+            lines.append(
+                f"- {segment.name}: {assessment.priority.replace('_', ' ')}; "
+                f"product compatibility {assessment.compatibility}; "
+                f"audience evidence {assessment.evidence_strength} "
+                f"({len(sources)} quoted source(s)); "
+                f"use or purchase {assessment.usage_or_purchase}; "
+                f"reachability {assessment.reachability.replace('_', ' ')}."
+            )
         return "\n".join(lines)
 
 
@@ -891,6 +918,16 @@ class AudienceCartographer:
         the product capability profile are checked separately before ranking.
         """
         options = options or MapOptions()
+        if options.mode == "reassess":
+            from app.market.audience_discovery import reassess_product_fit
+
+            if previous is None or capability_profile is None:
+                raise ValueError("Map audiences and derive current product capabilities before reassessing fit.")
+            if options.model_dump(exclude={"mode"}) != previous.options.model_dump(exclude={"mode"}):
+                raise ValueError("Rechecking product fit preserves search scope. Rescan to change scope.")
+            return await reassess_product_fit(
+                self._session, previous, capability_profile, progress=progress,
+            )
         progress("Discovering candidates and exact source URLs (stage 1 of 2)")
         answer = await self._session.structured(
             role=CARTOGRAPHER_ROLE_ID,
@@ -913,7 +950,8 @@ class AudienceCartographer:
                     else "Nobody has read this market's competitors yet."
                 ),
                 "limit": limit,
-                "capabilities": capability_profile.model_dump_json() if capability_profile else "Unknown; do not assume support.",
+                "capabilities": json.dumps(capability_profile.discovery_context(), ensure_ascii=False)
+                if capability_profile else "Unknown; do not assume support.",
                 "scope": options.model_dump_json(),
                 "previous": (
                     json.dumps([
@@ -928,7 +966,7 @@ class AudienceCartographer:
                 "audiences and exact source URLs to verify. Do not predict response rates."
             ),
             schema=_MapAnswer,
-            tools=[ResearchTool.WEB_SEARCH, ResearchTool.WEB_FETCH],
+            tools=[ResearchTool.WEB_SEARCH],
         )
         # Local import keeps the existing audience researcher free to use the
         # segment model while discovery reuses its bounded, safe URL fetcher.

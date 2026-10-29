@@ -40,7 +40,8 @@ from app.knowledge.artifacts import KnowledgeArtifacts
 from app.knowledge.compiler import find_gaps
 from app.knowledge.corpus import fold
 from app.knowledge.ledger import Evidence, EvidenceLedger
-from app.market.audience_research import AudienceResearch
+from app.knowledge.store import ArtifactScope, ArtifactStore
+from app.market.audience_research import AudienceResearch, review_research_interpretations
 from app.market.capabilities import ProductCapabilityProfile, normalize_capability_profile
 from app.market.demand import (
     AudienceSegment,
@@ -56,7 +57,7 @@ from app.market.proof import ProofCandidate, ProofKind, ProofStatus, next_eviden
 from app.market.qualification import CompanyQualification
 from app.market.radar import MarketSnapshot, RadarEvent, RadarSeverity
 from app.market.relevance import RelevanceDossier
-from app.market.rivals import RivalLead
+from app.market.rivals import RivalLead, review_rationale
 from app.models.market import (
     AudienceMapRow,
     AudienceResearchRow,
@@ -155,6 +156,7 @@ class MarketStore:
         if not row or not row.payload:
             return None
         snapshot = MarketSnapshot.model_validate(row.payload)
+        snapshot.rivals = [review_rationale(profile) for profile in snapshot.rivals]
         snapshot.positioning = rebuild(snapshot.positioning, snapshot.rivals)
         return snapshot
 
@@ -236,6 +238,8 @@ class MarketStore:
                 attributed_to=candidate.attributed_to,
                 venue=candidate.venue,
                 confidence=candidate.confidence,
+                verification_status=str(candidate.verification_status),
+                context=candidate.context.model_dump(mode="json") if candidate.context else None,
                 caveat=candidate.caveat,
                 found_at=candidate.found_at,
             )
@@ -273,6 +277,9 @@ class MarketStore:
                 attributed_to=row.attributed_to,
                 venue=row.venue,
                 confidence=row.confidence,
+                verification_status=row.verification_status,
+                context=row.context,
+                caveat=row.caveat,
             ).as_evidence(row.evidence_id)
             for row in self.proof_candidates(brand_id, ProofStatus.APPROVED)
             if row.evidence_id
@@ -334,7 +341,7 @@ class MarketStore:
         maps: dict[UUID, AudienceMapRow | None] = {}
         for row in self.latest_researches(brand_id):
             try:
-                research = AudienceResearch.model_validate(row.payload)
+                research = review_research_interpretations(AudienceResearch.model_validate(row.payload))
                 if row.source_map_id is not None:
                     if row.source_map_id not in maps:
                         maps[row.source_map_id] = self._session.get(AudienceMapRow, row.source_map_id)
@@ -474,7 +481,7 @@ class MarketStore:
         if row is None or not row.payload:
             return None
         try:
-            research = AudienceResearch.model_validate(row.payload)
+            research = review_research_interpretations(AudienceResearch.model_validate(row.payload))
             map_row = self._latest_map_row(brand_id)
             demand = DemandMap.model_validate(map_row.payload) if map_row else None
             user_row = self.user_audience(brand_id, audience)
@@ -597,8 +604,12 @@ class MarketStore:
         profile = ProductCapabilityProfile.model_validate(row.payload)
         knowledge = KnowledgeArtifactRepository(self._session).latest_for_brand(row.brand_id)
         ledger = EvidenceLedger()
+        company_name = ""
         if knowledge is not None:
-            ledger = KnowledgeArtifacts.model_validate(knowledge.payload).evidence
+            current = ArtifactStore(self._session).load(ArtifactScope(brand_id=row.brand_id))
+            if current is not None:
+                ledger = current.artifacts.evidence
+                company_name = current.artifacts.business.company_name
         ledger = ledger.model_copy(update={
             "entries": [*ledger.entries, *self.approved_evidence(row.brand_id)],
         })
@@ -607,6 +618,7 @@ class MarketStore:
             knowledge_id=knowledge.id if knowledge else profile.knowledge_id,
             knowledge_version=knowledge.version if knowledge else profile.knowledge_version,
             version=profile.version,
+            company_name=company_name,
         )
 
     def save_capability_profile(

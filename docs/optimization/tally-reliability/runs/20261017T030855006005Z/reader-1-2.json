@@ -1,0 +1,32 @@
+{
+  "reads": [
+    {
+      "opened": true,
+      "stopped_at": "",
+      "what_it_sells": "Tally is an online form builder that sends new submissions to automation endpoints, potentially replacing polling or CSV exports and giving me delivery inspection and retry tools.",
+      "understood": true,
+      "situation_matches": true,
+      "relevance_feedback": "The profile explicitly places me at a no-code automation agency and says people in this market may read webhook documentation before choosing a form tool, so a concise webhook guide is relevant. The email does not establish that I currently use Tally, am evaluating a form tool, or have webhook failures, so immediate applicability is unknown.",
+      "assumed_experiences": [
+        "Profile-supported: I build or support no-code automations for agency clients.",
+        "Email-only: I am currently considering Tally for a workflow.",
+        "Email-only: my workflows need form submissions pushed directly to an endpoint.",
+        "Email-only: delivery inspection, retries, or the 10-second limit are current concerns."
+      ],
+      "problem_now": "Reliable form-to-automation intake is important in this role, and webhook delivery, payload usability, and validation are plausible operational risks. The profile does not establish that I have a Tally implementation or an urgent failure today.",
+      "biggest_doubt": "I can see that the guide covers delivery events, retries, and a timeout, but I cannot tell whether it answers the implementation questions that usually decide whether a form webhook is usable: what the payload actually contains, how choice values are represented, and what response behavior is supported after submission.",
+      "would_act": false,
+      "to_click_it_would_have_to": "I would have clicked if this email had told me whether the guide includes a real submission payload and explains how choice fields and endpoint responses behave.",
+      "pull": 6,
+      "fixes": [
+        "Cut \"A new form submission can go straight to the next step in an automation.\" It is generic and adds nothing beyond the next paragraph.",
+        "Rewrite \"If processing takes longer, the documented approach is to call another service internally.\" as \"If your workflow may exceed 10 seconds, the guide shows the recommended asynchronous handoff pattern.\"",
+        "Rewrite \"Open the webhook guide to inspect that delivery flow, the available troubleshooting actions, and the timeout before deciding whether it suits the workflows your agency builds.\" as \"Open the guide to inspect a sample payload, delivery logs, retry controls, and the 10-second response rule—and check whether field values and post-submission responses fit your workflow.\""
+      ],
+      "persona": "Selected audience (explicit constraints): The ops or no-code person on a small team whose intake form is step one of an automation nobody owns.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): Operations and no-code builders at small teams and automation agencies who already run Make, Zapier or n8n scenarios and read webhook documentation before choosing a form tool\n\nProblem context: After a Tally form submits to a webhook, the respondent cannot be reliably redirected or shown a conditional response from the automation tool; the connection appears to be lost once the platform returns its own 'accepted' acknowledgement.; source: https://community.make.com/t/tally-form-submission-to-webhook-response-its-possible/22050\nProblem context: A multi-choice form answer passed through a webhook arrives as a reference/ID number rather than the actual answer text, requiring manual identification and correction before it can be used.; source: https://community.make.com/t/webhook-to-tally-forms-returning-multi-choice-answer-as-reference-number-and-not-actual-text/83391\nProblem context: A specific field type from a form webhook (here, email) can fail to write into the destination tool even though the same payload shows the value present and the extraction/logging confirms it is correctly read.; source: https://community.make.com/t/email-field-from-tally-not-showing-in-airtable-via-webhook-set-variable-all-other-fields-work-fine/88181\nProblem context: When testing a newly built scenario, an instant webhook trigger does not process previously received submissions and instead waits for a new one, which can read as the scenario being stuck or broken.; source: https://community.make.com/t/issue-tally-form-submission-not-processed-scenario-stuck-on-run-once/82511\nProblem context: Common form-to-CRM automation patterns write submissions directly into the contact database without checking for typos, blank required fields, or bot spam, so bad records accumulate and must be cleaned up by hand afterward.; source: https://community.n8n.io/t/free-workflow-json-a-validation-gate-for-form-to-crm-so-typos-and-bot-spam-stop-before-your-contact-database-6-nodes/319505\nQualified scope of the selected audience: no-code automation agencies. This narrows who you are; it does not establish installed tools, prior actions or desired reactions.",
+      "reported": true,
+      "opens_in_100": null,
+      "clicks_in_100": null
+    }
+  ]
+}

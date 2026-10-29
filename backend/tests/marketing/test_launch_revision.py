@@ -256,7 +256,12 @@ async def test_disputed_relevance_gets_a_comparison_without_erasing_the_warning(
     for request in provider.requests_for("preference_judge"):
         assert "Remove the unsupported team ownership assertion" not in request.system_prompt
         assert "full deployment questions unanswered" not in request.system_prompt
-        assert all(render_review(draft.email) in request.system_prompt for draft in observed.drafts)
+        assert all(
+            render_review(draft.email.model_copy(update={
+                "sign_off": f"- {launch_material.business.company_name}",
+            })) in request.system_prompt
+            for draft in observed.drafts
+        )
 
 
 @pytest.mark.asyncio

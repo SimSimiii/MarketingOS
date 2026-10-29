@@ -70,3 +70,38 @@ test('an optional resource is empty only when the server actually returns 404', 
     assert.throws(() => nullIfMissing(error), actual => actual === error);
   }
 });
+
+
+test('explicit research model is scoped to its request and dossier rebuild preserves it', async t => {
+  const previous = globalThis.fetch;
+  t.after(() => { globalThis.fetch = previous; });
+  const calls = [];
+  globalThis.fetch = async (url, init) => {
+    calls.push({ url, body: JSON.parse(init.body) });
+    return new Response(JSON.stringify({ state: 'running' }), { status: 202 });
+  };
+  const { api } = await client();
+  await api.startAudienceResearch('brand', 'Creators', 'gpt-5.6-sol');
+  await api.startAudienceResearch('brand', 'Creators');
+  await api.startRelevanceDossier('brand', 'Creators', true, 'opus');
+  assert.deepEqual(calls.map(call => call.body), [
+    { segment: 'Creators', model: 'gpt-5.6-sol' },
+    { segment: 'Creators' },
+    { segment: 'Creators', model: 'opus' },
+  ]);
+  assert.match(calls[2].url, /audience\/relevance\/rebuild$/);
+});
+
+test('product-gap verification is explicit and remains a dossier job', async t => {
+  const previous = globalThis.fetch;
+  t.after(() => { globalThis.fetch = previous; });
+  const calls = [];
+  globalThis.fetch = async (url, init) => {
+    calls.push({ url, body: JSON.parse(init.body) });
+    return new Response(JSON.stringify({ state: 'running' }), { status: 202 });
+  };
+  const { api } = await client();
+  await api.startRelevanceDossier('brand', 'Creators', true, 'gpt-5.6-sol', true);
+  assert.match(calls[0].url, /audience\/relevance\/rebuild$/);
+  assert.deepEqual(calls[0].body, { segment: 'Creators', model: 'gpt-5.6-sol', verify_product_gaps: true });
+});

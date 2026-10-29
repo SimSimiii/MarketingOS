@@ -1,0 +1,38 @@
+{
+  "arm": "baseline",
+  "case": "b2b-acquisition",
+  "input_sha256": "d143f95a2bbfcc58360a4943abaafe4c3aeaf5273c622b353d830bd2e4f07d21",
+  "policy": {
+    "max_revisions": 1,
+    "draft_candidates": 1,
+    "critic_enabled": true,
+    "reader_panel": false,
+    "tournament": false,
+    "subject_variants": 0,
+    "sequence_pass": false,
+    "max_sequence_reworks": 0,
+    "max_duration_seconds": 1200,
+    "max_total_tokens": 750000,
+    "merge_fields": [
+      "first_name",
+      "last_name",
+      "company",
+      "email"
+    ],
+    "force_recompile": false,
+    "require_proof": false,
+    "max_crawl_pages": 5,
+    "model_overrides": {
+      "*": "gpt-5.6-sol"
+    }
+  },
+  "source": "labelled synthetic fixture",
+  "split": "development",
+  "group_limits": {
+    "attempts": 24,
+    "tokens": 750000,
+    "seconds": 1800
+  },
+  "compiled_knowledge_reused": true,
+  "limitation": "One stochastic output per arm is a qualitative comparison, not a statistical conversion experiment."
+}

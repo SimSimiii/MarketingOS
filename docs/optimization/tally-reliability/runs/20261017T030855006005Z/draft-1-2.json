@@ -1,0 +1,13 @@
+{
+  "position": 1,
+  "role": "introduce Tally’s webhook capability and its limits",
+  "subject": "A closer look at Tally webhooks",
+  "preview_text": "Inspect new-submission delivery, failed retries, and the 10-second endpoint limit.",
+  "eyebrow": "TALLY WEBHOOKS",
+  "headline": "Send new form submissions to your endpoint",
+  "greeting": "Hi there,",
+  "body": "A new form submission can go straight to the next step in an automation.\n\nTally is an online form builder with webhooks that push submission data to your endpoint as soon as a new response arrives. That means no polling the Tally API or exporting CSVs to collect incoming responses.\n\nThe documentation also covers the operational details worth checking. You can list delivery events, inspect responses, and retry failed webhook attempts.\n\nThere’s one clear constraint: your endpoint has **10 seconds** to process and respond to each new submission. If processing takes longer, the documented approach is to call another service internally.\n\nOpen the webhook guide to inspect that delivery flow, the available troubleshooting actions, and the timeout before deciding whether it suits the workflows your agency builds.",
+  "call_to_action": "Explore Tally webhooks",
+  "sign_off": "— Team Tally",
+  "postscript": ""
+}

@@ -68,10 +68,8 @@ def test_one_rival_out_of_four_leaves_the_axis_contested() -> None:
     assert security.territory is Territory.CONTESTED
 
 
-def test_the_only_specific_claim_wins_a_crowded_axis() -> None:
-    """The non-obvious half of the idea. Everybody promises fast setup; the
-    one company that puts a number on it is not competing on a crowded axis,
-    it is the only checkable claim in the field."""
+def test_specificity_is_informational_and_does_not_establish_superiority() -> None:
+    """A number improves inspectability, not evidence of winning a category."""
     ours = ClaimSet(
         claims=[claim("first API call in under 5 minutes", ClaimAxis.SPEED, specific=True)]
     )
@@ -83,26 +81,26 @@ def test_the_only_specific_claim_wins_a_crowded_axis() -> None:
     positioning = build(ours, rivals)
 
     speed = next(r for r in positioning.readings if r.axis is ClaimAxis.SPEED)
-    assert speed.territory is Territory.OPEN
+    assert speed.territory is Territory.CONTESTED
     assert speed.only_specific
     assert speed.rivals_claiming == 3
+    assert speed.comparison_status == "potential_difference"
 
 
-def test_a_rival_with_a_figure_takes_the_axis_back() -> None:
-    """The mirror of the rule above: specificity only wins while it is
-    unique."""
+def test_different_measurements_do_not_count_as_equivalent_promises() -> None:
     ours = ClaimSet(
         claims=[claim("first API call in under 5 minutes", ClaimAxis.SPEED, specific=True)]
     )
     rivals = [
-        rival("alpha", claim("running in 4 minutes flat", ClaimAxis.SPEED, specific=True)),
+        rival("alpha", claim("first API call in 4 minutes", ClaimAxis.SPEED, specific=True)),
         rival("beta", claim("get going in no time", ClaimAxis.SPEED)),
     ]
     positioning = build(ours, rivals)
 
     speed = next(r for r in positioning.readings if r.axis is ClaimAxis.SPEED)
     assert not speed.only_specific
-    assert speed.territory is Territory.TABLE_STAKES
+    assert speed.territory is Territory.CONTESTED
+    assert speed.comparison_status == "potential_difference"
 
 
 def test_an_axis_only_they_claim_is_exposed() -> None:

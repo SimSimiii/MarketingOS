@@ -282,6 +282,23 @@ def test_no_price_anywhere_is_a_gap_because_it_decides_what_an_email_can_say():
     assert any(gap.severity == "blocking" for gap in report.gaps)
 
 
+def test_verified_price_outside_profile_still_closes_the_price_gap():
+    artifacts = KnowledgeArtifacts(evidence=EvidenceLedger(entries=[
+        Evidence(id="E1", kind=EvidenceKind.PRICE, claim="Travel bag costs 45€.",
+                 verbatim="Travel bag 45€", source="https://shop.example/products/bag"),
+    ]))
+    assert not artifacts.offer.plans
+    assert "G-price" not in {gap.id for gap in find_gaps(artifacts).gaps}
+    assert {"G-cta", "G-proof"} <= {gap.id for gap in find_gaps(artifacts).gaps}
+
+
+def test_a_nonprice_number_does_not_close_the_price_gap():
+    artifacts = KnowledgeArtifacts(evidence=EvidenceLedger(entries=[
+        Evidence(id="E1", kind=EvidenceKind.METRIC, claim="45 customers.", verbatim="45 customers"),
+    ]))
+    assert "G-price" in {gap.id for gap in find_gaps(artifacts).gaps}
+
+
 # ------------------------------------------------------- reading everything
 
 

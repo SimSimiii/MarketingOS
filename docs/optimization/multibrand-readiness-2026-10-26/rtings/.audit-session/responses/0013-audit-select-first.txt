@@ -1,0 +1,147 @@
+{
+  "index": 0,
+  "segment": {
+    "name": "A TV shopper with a shortlist who needs to know which model fits their specific room, size, and use case",
+    "organization": "Individual or household planning a high-cost television purchase",
+    "workflow": "Creates a shortlist, compares models by room brightness, viewing distance, screen size, content, gaming features, processing, and regional panel variants, then checks detailed reviews before purchasing.",
+    "need": "Comparable measurements and underlying results that expose consequential differences hidden by retailer specifications or overall scores.",
+    "buyer_role": "The household member authorizing or making the television purchase",
+    "user_role": "The person researching and comparing the shortlisted TVs",
+    "current_alternative": "YouTube reviewers such as HDTVTest, retailer pages, Reddit buying guides, manufacturer specifications, and free review articles",
+    "assessment": {
+      "compatibility": "supported",
+      "evidence_strength": "absent",
+      "findability": "unknown",
+      "usage_or_purchase": "unknown",
+      "reachability": "unknown",
+      "counterevidence_summary": [],
+      "counterevidence": 0,
+      "priority": "hypothesis",
+      "reasons": [
+        "The product truth confirms TV reviews, comparison and results-table tools, raw score data, consistent measurement, custom ratings, and a size-to-distance resource.",
+        "Compatibility remains unknown because the supplied descriptions do not establish whether the tools address room brightness, gaming, processing, regional panel variants, or other detailed constraints in this workflow.",
+        "The fetched corpus identifies a public review venue covering TVs but contains no observed member of this audience, product usage, or purchase."
+      ],
+      "unknowns": [
+        "Whether required TV models and regional variants are reviewed before purchase deadlines.",
+        "Whether comparison fields cover the audience's room, content, gaming, and processing requirements.",
+        "Whether this audience uses or purchases RTINGS membership.",
+        "Whether the identified review venue permits practical audience outreach.",
+        "1 unsupported or duplicate quotation(s) discarded.",
+        "No verified venue or example establishes findability yet."
+      ],
+      "evidence": []
+    },
+    "kind": "core",
+    "added_by": "cartographer",
+    "who": "Buyers choosing between two or more TVs, particularly expensive OLED or Mini-LED models, whose decision depends on room conditions, gaming, sports, streaming, viewing distance, or regional model differences.",
+    "why_them": "Public discussions show buyers bringing exact budgets, room conditions, distances, content mixes, and model shortlists to comparison venues. Other users explicitly describe RTINGS data as useful for reducing anxiety around expensive purchases.",
+    "trigger": "A planned replacement, a failing TV, a major sale, an expensive upgrade, or a shortlist that remains unresolved after reading free recommendations.",
+    "pains": [
+      "Headline ratings can conceal deal-breakers such as processing, glare, panel type, motion behavior, compatibility, or regional variants.",
+      "A wrong choice may involve thousands of dollars and be difficult to return or replace.",
+      "Reliability, firmware behavior, and quality control are not fully captured by controlled performance testing.",
+      "The detailed comparison data is now paywalled for some visitors."
+    ],
+    "objection": "Free video reviewers and community guides may be sufficient; RTINGS itself acknowledges that scoring cannot give every personal deal-breaker enough weight, while installers and owners question whether its tests represent reliability and real-world processing.",
+    "angle": "Use one month of access to inspect the measurements behind a high-cost shortlist, while separately checking owner reports and warranty or reliability evidence.",
+    "sophistication": "product_aware",
+    "fit": 0.0,
+    "basis": "A 2025 RTINGS television AMA contains concrete buyer questions involving bright rooms, viewing distance, sports, gaming, budgets, warranties, and regional panel variants, plus users saying the site informed prior TV purchases. A separate 2026 discussion says the comparison data is valuable for a roughly $3,000 purchase but objects to the paywall. Counterevidence from r/4kTV says reliability and installation experience require other sources. Missing product information includes exact-model and regional-variant coverage, update frequency, refund terms, and whether cancellation takes effect immediately.",
+    "population": "unknown",
+    "signals": [
+      "public_shortlist_of_two_or_more_tv_models",
+      "mentions_room_brightness_or_viewing_distance",
+      "mentions_gaming_sports_streaming_or_external_devices",
+      "purchase_budget_above_routine_household_spend",
+      "asks_whether_upgrade_is_worth_price_difference",
+      "encounters_member_only_comparison_data"
+    ],
+    "where": [
+      "Reddit r/4kTV",
+      "Reddit r/LGOLED",
+      "Reddit r/hometheater",
+      "AVS Forum television discussions",
+      "RTINGS television forums and review pipeline"
+    ],
+    "unobvious": false,
+    "researchable": true,
+    "researchability": "high",
+    "researchability_reasons": [
+      "6 useful observable signals and 5 specific research venues.",
+      "The audience is anchored in a concrete workflow or situation.",
+      "A clear trigger narrows the evidence to look for.",
+      "No population basis is stated."
+    ],
+    "definition": {
+      "schema_version": 2,
+      "required_structural_signals": [
+        {
+          "code": "consumer_planning_tv_purchase",
+          "description": "An individual or household is actively planning a television purchase or upgrade."
+        },
+        {
+          "code": "tv_shortlist_or_explicit_purchase_constraints",
+          "description": "Evidence names multiple models or provides constraints such as budget, size, room, distance, or usage."
+        }
+      ],
+      "required_workflow_signals": [
+        {
+          "code": "compares_tv_models_before_purchase",
+          "description": "The researcher compares performance or suitability across candidate televisions."
+        },
+        {
+          "code": "seeks_evidence_beyond_retailer_specs",
+          "description": "The workflow uses independent reviews, measurements, or specialist communities rather than retailer specifications alone."
+        }
+      ],
+      "required_product_capabilities": [
+        "fact_00c9031e7c258924",
+        "fact_6e27d41de3ad3d86",
+        "fact_6987d1353201c407",
+        "fact_e2f0f657e2d7e1b9",
+        "fact_9259fb85df12378b",
+        "fact_6f973bb31cf86703",
+        "fact_4033d696eb85cb4e"
+      ],
+      "optional_signals": [
+        {
+          "code": "high_cost_tv_purchase",
+          "description": "The purchase is financially consequential enough that additional research has clear value."
+        },
+        {
+          "code": "room_or_use_case_sensitive",
+          "description": "Room lighting, seating, gaming, sports, or source quality materially affects the choice."
+        },
+        {
+          "code": "paywall_encountered",
+          "description": "The researcher reports encountering member-only review or comparison details."
+        }
+      ],
+      "hard_disqualifiers": [
+        {
+          "code": "exact_tv_not_reviewed_before_deadline",
+          "description": "The decision depends on an exact model or regional variant for which no relevant test is available.",
+          "outcome": "EXCLUDED"
+        },
+        {
+          "code": "needs_guaranteed_long_term_reliability_prediction",
+          "description": "The buyer requires a guarantee of longevity or quality control that short-term standardized tests cannot establish.",
+          "outcome": "EXCLUDED"
+        }
+      ],
+      "eligible_subsegments": [
+        "OLED and Mini-LED buyers",
+        "Gaming-focused TV buyers",
+        "Bright-room and sports viewers",
+        "Buyers comparing regional panel variants"
+      ],
+      "excluded_subsegments": [
+        "Shoppers seeking only installation services",
+        "Buyers with no identifiable candidate model or purchase constraints"
+      ],
+      "max_team_size": null
+    }
+  }
+}
+Snapshot: C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\docs\optimization\multibrand-readiness-2026-10-26\rtings\steps\20261027T003432621421Z-select-first.json

@@ -1,0 +1,115 @@
+........................................................................ [  3%]
+........................................................................ [  7%]
+........................................................................ [ 10%]
+........................................................................ [ 14%]
+........................................................................ [ 17%]
+........................................................................ [ 21%]
+........................................................................ [ 25%]
+........................................................................ [ 28%]
+........................................................................ [ 32%]
+........................................................................ [ 35%]
+........................................................................ [ 39%]
+........................................................................ [ 43%]
+........................................................................ [ 46%]
+........................................................................ [ 50%]
+........................................................................ [ 53%]
+..................................F..................................... [ 57%]
+........................................................................ [ 60%]
+........................................................................ [ 64%]
+........................................................................ [ 68%]
+........................................................................ [ 71%]
+........................................................................ [ 75%]
+........................................................................ [ 78%]
+........................................................................ [ 82%]
+........................................................................ [ 86%]
+........................................................................ [ 89%]
+........................................................................ [ 93%]
+........................................................................ [ 96%]
+................................................................         [100%]
+================================== FAILURES ===================================
+________ test_source_failures_remain_visible_in_the_persisted_research ________
+
+    @pytest.mark.asyncio
+    async def test_source_failures_remain_visible_in_the_persisted_research():
+        from app.market.audience_research import FetchFailure, FetchResult, _corpus, _ResearchDraft
+        from tests.market.test_audience_research import fetched, segment
+    
+        source = fetched("https://forum.example/thread", SourceTier.BUYER_VOICE,
+                         "I collect feedback after course completion.")
+    
+        class Fetcher:
+            async def fetch(self, candidates):
+                return FetchResult(sources=[source], failures=[FetchFailure(
+                    url="https://unavailable.example/post", error="unavailable",
+                )])
+    
+        class Researcher(AudienceResearcher):
+            async def locate(self, chosen):
+                return [LocatedSource(url="https://forum.example/thread")]
+    
+            async def synthesise(self, chosen, sources):
+                return _ResearchDraft(), _corpus(sources)[1]
+    
+>       result = await Researcher(None, Fetcher()).research(segment())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\market\test_research_context.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <market.test_research_context.test_source_failures_remain_visible_in_the_persisted_research.<locals>.Researcher object at 0x00000163C13A4C80>
+segment = AudienceSegment(name='Repair shops answering warranty requests', organization='', workflow='', need='', buyer_role='',...=[], optional_signals=[], hard_disqualifiers=[], eligible_subsegments=[], excluded_subsegments=[], max_team_size=None))
+on_progress = None
+
+    async def research(
+        self,
+        segment: AudienceSegment,
+        *,
+        on_progress: Callable[[str], None] | None = None,
+    ) -> AudienceResearch:
+        progress = on_progress or (lambda _message: None)
+        progress("Locating first-party audience voices and behavioural sources")
+        located = await self.locate(segment)
+        progress(f"Fetching up to {min(len(located), MAX_ATTEMPTED_URLS)} exact source URLs")
+        fetched = await self._fetcher.fetch(located)
+        _report_fetch_failures(fetched.failures, progress)
+        if not fetched.sources and fetched.failures:
+            # One fresh search may find a public alternative to an unreadable
+            # forum or access wall. Never retry its subdomains or solve its
+            # challenge, and never loop on empty source discovery.
+            unavailable = {_source_host(item.url) for item in fetched.failures} - {""}
+            progress("No readable sources; searching once for public alternatives on other hosts")
+            alternatives = await self.locate(segment, unavailable_hosts=unavailable)
+            recovered = await self._fetcher.fetch(alternatives)
+            _report_fetch_failures(recovered.failures, progress)
+            fetched = FetchResult(sources=recovered.sources, failures=[*fetched.failures, *recovered.failures])
+        if not fetched.sources:
+            detail = f" ({len(fetched.failures)} URL(s) failed)" if fetched.failures else ""
+            raise AudienceResearchError(
+                "None of the located audience sources returned useful readable text" + detail
+            )
+        progress(
+            f"Synthesising from {len(fetched.sources)} fetched source(s); "
+            f"{len(fetched.failures)} fetch(es) failed"
+        )
+        draft, references = await self.synthesise(segment, fetched.sources)
+        verified = verify_research(segment, draft, fetched.sources, references)
+        if not any((verified.situation, verified.incumbent_behaviour, verified.sophistication_basis,
+                    verified.problems, verified.buyer_phrases, verified.triggers,
+                    verified.desired_outcomes, verified.signals, verified.where)):
+>           raise AudienceResearchError("The readable sources produced no verified audience observations; no research was saved")
+E           app.market.audience_research.AudienceResearchError: The readable sources produced no verified audience observations; no research was saved
+
+app\market\audience_research.py:450: AudienceResearchError
+============================== warnings summary ===============================
+.venv\Lib\site-packages\starlette\testclient.py:53
+  C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+tests/api/test_audience.py::test_an_unknown_decision_is_refused_rather_than_stored
+  C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:1100: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    result = context.run(func, *args)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/market/test_research_context.py::test_source_failures_remain_visible_in_the_persisted_research
+1 failed, 2007 passed, 2 warnings in 282.94s (0:04:42)

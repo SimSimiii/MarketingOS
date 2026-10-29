@@ -6,12 +6,13 @@ from datetime import UTC, datetime
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, Field, field_serializer
+from pydantic import BaseModel, Field, field_serializer, field_validator
 from sqlalchemy import Engine
 from sqlmodel import Session
 
 from app.ai.base import AIProvider
 from app.ai.model_router import ModelRouter
+from app.ai.roles import validate_overrides
 from app.core.config import PROMPTS_DIR, get_settings
 from app.knowledge.compiler import KnowledgeCompiler
 from app.knowledge.store import ArtifactScope, ArtifactStore, build_corpus, fingerprint_documents
@@ -27,6 +28,22 @@ logger = logging.getLogger(__name__)
 class CompilationStatus(BaseModel):
     state: Literal["idle", "running", "completed", "failed"] = "idle"
     message: str = ""
+
+
+class CompilationRequest(BaseModel):
+    model: str | None = Field(default=None, max_length=200)
+
+    @field_validator("model")
+    @classmethod
+    def validate_model(cls, value: str | None) -> str | None:
+        value = (value or "").strip()
+        if not value:
+            return None
+        if get_settings().credit_billing_enabled:
+            raise ValueError("Per-job model selection is unavailable with credit billing.")
+        if value in {"fast", "balanced", "deep"}:
+            raise ValueError("Choose a model name, not a tier.")
+        return validate_overrides({"knowledge_compiler": value}).get("knowledge_compiler")
 
 
 class CompilationJob(CompilationStatus):
@@ -68,14 +85,16 @@ tasks: set[asyncio.Task] = set()
 @admitted_job
 def start_compilation(
     brand_id: UUID, engine: Engine, provider: AIProvider, brand_name: str,
+    model: str | None = None,
 ) -> CompilationJob:
+    validate_overrides({"knowledge_compiler": model} if model else None)
     current = jobs.get(brand_id)
     if current is not None and current.state == "running":
         return current
     job = CompilationJob(state="running", brand_id=brand_id, brand_name=brand_name)
     job.say("Reading knowledge sources…")
     jobs[brand_id] = job
-    task = create_job_task(_compile(brand_id, engine, provider, job))
+    task = create_job_task(_compile(brand_id, engine, provider, job, model))
     tasks.add(task)
     task.add_done_callback(tasks.discard)
     return job
@@ -83,6 +102,7 @@ def start_compilation(
 
 async def _compile(
     brand_id: UUID, engine: Engine, provider: AIProvider, job: CompilationJob,
+    model: str | None = None,
 ) -> None:
     scope = ArtifactScope(brand_id=brand_id)
     try:
@@ -99,7 +119,9 @@ async def _compile(
             provider=provider,
             prompt_engine=get_prompt_engine(PROMPTS_DIR),
             events=EventBus(),
-            model_router=ModelRouter(),
+            model_router=ModelRouter(overrides=validate_overrides(
+                {"knowledge_compiler": model} if model else None
+            )),
             execution_id=f"knowledge:{brand_id}",
             on_call=job.record,
         )

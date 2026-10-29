@@ -1,0 +1,213 @@
+{
+  "date_client": "2026-10-26",
+  "purpose": "Decide whether to invite an ecommerce/affiliate friend to a supervised beta; assess generalization beyond Fathom, not universal sellability.",
+  "brands": [
+    {
+      "key": "cabaia",
+      "name": "CABAIA",
+      "homepage": "https://www.cabaia.fr/",
+      "scenario": "ecommerce",
+      "language": "fr"
+    },
+    {
+      "key": "papier",
+      "name": "Papier",
+      "homepage": "https://www.papier.com/",
+      "scenario": "ecommerce-personalisation",
+      "language": "en"
+    },
+    {
+      "key": "systeme",
+      "name": "systeme.io",
+      "homepage": "https://systeme.io/fr",
+      "scenario": "affiliate-promotion",
+      "language": "fr"
+    },
+    {
+      "key": "rtings",
+      "name": "RTINGS.com",
+      "homepage": "https://www.rtings.com/",
+      "scenario": "affiliate-publisher",
+      "language": "en"
+    }
+  ],
+  "inputs": "One homepage only. No product facts, help/docs URLs, proof or CTA added manually. First mapped audience exact. Auto strategy, balanced preset.",
+  "affiliate_scenario": "Explicit independent-affiliate sender role and disclosure, no invented commission, earnings, personal experience or tracking link. This is scenario context, not a fact supplied about the product.",
+  "baseline": "Inspect and preserve all four first attempts before correcting product behavior. Failures remain in denominator; no replacement brands or easier audiences.",
+  "beta_gate": {
+    "useful_case_score_min": 85,
+    "passing_cases_min": 3,
+    "required_scenarios": [
+      "at least one physical ecommerce",
+      "independent affiliate promotion"
+    ],
+    "critical_conditions": [
+      "No materially fabricated price, outcome, ownership or sender identity in delivered copy",
+      "Every claimed passing case has useful, sourced upstream stages; good email alone insufficient",
+      "Failures and needs_review accurately surfaced; no forced generate_anyway",
+      "Desktop/mobile renders and real CTA verified",
+      "Normal human review; no automated sending and no universal promise"
+    ]
+  },
+  "verdicts": [
+    "GO: supervised beta supported within tested scope",
+    "GO_SCOPED: supported cases only, excluded failures explicit",
+    "NO_GO: material unresolved defects in required ecommerce/affiliate scope"
+  ],
+  "email_grid": {
+    "facts": 25,
+    "audience_offer": 20,
+    "specificity_argument": 20,
+    "subject_body_cta": 15,
+    "rendering": 10,
+    "no_unsupported_promises_repetition": 10
+  },
+  "max_parallel_model_jobs": 2,
+  "billing": "configured subscription, no global model changes or purchased credits",
+  "communication": "No messages sent to the friend; provide verdict and a proposed invitation text only.",
+  "amendments": [
+    {
+      "id": "A1",
+      "before_full_campaigns": true,
+      "reason": "Observed common ingestion defect before any campaign: decorative image URLs inflate model readings; CABAIA hits the 240000-character ceiling and product purchase forms are removed with their actual price. Avoid paying two additional full noisy compilations.",
+      "preserved_baseline": "All four initial ingestion snapshots and the two already-started baseline compilations. CABAIA/systeme baseline compilation jobs are allowed to finish and counters captured before activation. Papier/RTINGS baseline downstream not run/not scored.",
+      "revised_sequence": "Generic extraction fix, free regression tests, then normal homepage-only re-ingestion and compilation for all four on one common code version. No manual source facts/URLs/CTA and no replacement brands. Passing thresholds unchanged.",
+      "conclusion_constraint": "Do not describe this as an unchanged-code 4-case baseline. Report the initial ingestion failures and the correction before validation."
+    },
+    {
+      "id": "A2",
+      "reason": "CABAIA verified priceE117 exists but gapG-price falsely says no price because bounded profile has no plan row.",
+      "local_correction": "find_gaps consults PRICE evidence; cached nonempty artifacts rederive pure gap rules on load.",
+      "validation": "1956 tests pass, Ruff clean; no new source facts or model preference changes.",
+      "activation": "Automatic approval review rejected backend restart: blocked by policy, no further reason. Continue real flows on existing epoch1 backend; do not claim correction loaded.",
+      "comparability": "Preserve real epoch1 outputs and separate free epoch2 replay. No alternate port/shell restart workaround."
+    },
+    {
+      "id": "A3",
+      "reason": "Quota recurred after successful Claude Knowledge/scan; user requests explicit OpenAI comparison.",
+      "new_mechanism": "Optional job-local compile/scan/map model; real search-only scout plus existing Python crawl/quote verification; profiler remains closed; cartographer actual search+Python fetch retained. Proof/prospect fetch requirements unchanged.",
+      "arm": "Preserve successful Claude Knowledge for CABAIA/systeme and Claude systeme scan; remaining stages GPT5.6sol. Papier/RTINGS planned default homepage-to-email full GPT arm. No global settings/billing changes.",
+      "comparison_limit": "Not four unchanged-provider baseline journeys; two profile probes do not establish full-system superiority.",
+      "activation": "Use supported no-listener ASGI audit worker, not a server restart; old listener remains untouched; no claim it reloaded."
+    },
+    {
+      "id": "A4",
+      "reason": "Pre-isolation CABAIA map note references local brand-audit skill, suggesting host instruction contamination.",
+      "correction": "Per-Codex-child configuration excludes host skills/project guidance, coding/app/memory/multi-agent tools; closed roles explicitly disable cached web search. Global user config/auth untouched.",
+      "validation": "1967 backend tests/Ruffclean; actual CLI effective feature settings verified, one bounded live self-report no local skills/project guidance; no universal isolation claim.",
+      "activation": "All four no-listener workers gracefully stopped with active=[] after terminal snapshots; future workers load epoch4. Existing generated outputs retained unchanged; no main-listener restart."
+    },
+    {
+      "id": "A5",
+      "reason": "User asks vendor comparison; GPT CABAIA research had zero usable pages.",
+      "test": "One Sonnet research job on identical selected first audience and reader; no manual URLs.",
+      "limitations": "Live source selection/time vary, not strict A/B. Preserve GPT failure; subsequent CABAIA scope explicitly mixed if control succeeds."
+    },
+    {
+      "id": "A6",
+      "reason": "First systeme email 79/100: known author/book context lost in alternative then copy despite correct brief.",
+      "correction": "Generic strategist and writer instructions preserve an audience object/task, conditionally for unknown personal circumstances; no unsupported capabilities licensed.",
+      "validation": "1967 backend tests, Ruff passed; systeme worker gracefully restarted idle.",
+      "comparison": "Same persisted campaign and inputs for systeme retest; other brands first emails use epoch5 prompts, not unchanged epoch4 baseline."
+    },
+    {
+      "id": "A7",
+      "reason": "CABAIA canonical uppercase brand blocked as shouting in failed 0/1 delivery",
+      "fix": "Exact canonical-name span exemption only, other caps and evidence checks retained",
+      "tests": "36 gates, 1969 suite, Ruff passed"
+    },
+    {
+      "id": "A8",
+      "reason": "Systeme 83/100 retest still signup before proof; contradictory prompt CTA requirements",
+      "fix": "Clarify optional licensed assigned-source CTA when user has not fixed action/URL; existing resolver unchanged",
+      "tests": "20 fresh strategy-contract/prompt tests passed; full suite A7 1969 passed"
+    },
+    {
+      "id": "A9",
+      "reason": "CTA resolver drops a selected licensed URL when known action has no canonical URL; observed CABAIA destination falls back to homepage",
+      "fix": "Retain selected URL when action has none, then enforce assigned-evidence/offer URL licensing. Canonical action and user-fixed URL keep priority.",
+      "limits": "No raw CABAIA plan saved: preservation bug is reproduced, not proven sole cause of actual missing destination. No historical asset edit or score uplift.",
+      "tests": "18 proposition-contract tests and Ruff pass; full suite pending"
+    },
+    {
+      "id": "A10",
+      "correction": "Defining-need fit and safe incomplete-fit recommendation",
+      "validation": "See journal.md and corrections-2026-10-28.md; real retests in progress"
+    },
+    {
+      "id": "A11",
+      "correction": "Exact CTA destination; no silent homepage fallback",
+      "validation": "See journal.md and corrections-2026-10-28.md; real retests in progress"
+    },
+    {
+      "id": "A12",
+      "correction": "Public narrative recovery, focused competitor crawl, explicit source gaps",
+      "validation": "See journal.md and corrections-2026-10-28.md; real retests in progress"
+    },
+    {
+      "id": "A13",
+      "correction": "Reader-facing copy without internal audit language",
+      "validation": "See journal.md and corrections-2026-10-28.md; real retests in progress"
+    },
+    {
+      "id": "A14",
+      "correction": "Correct HTML language",
+      "validation": "See journal.md and corrections-2026-10-28.md; real retests in progress"
+    },
+    {
+      "id": "A15",
+      "correction": "Optional bounded public browser rendering",
+      "validation": "See journal.md and corrections-2026-10-28.md; real retests in progress"
+    },
+    {
+      "id": "A16",
+      "correction": "Linked catalogue diversity",
+      "validation": "See journal.md and corrections-2026-10-28.md; real retests in progress"
+    },
+    {
+      "id": "A17",
+      "correction": "Pricing path segments, not substring plans",
+      "validation": "See journal.md and corrections-2026-10-28.md; real retests in progress"
+    },
+    {
+      "id": "A18",
+      "correction": "Collection warnings survive duplicate imports",
+      "validation": "See journal.md and corrections-2026-10-28.md; real retests in progress"
+    },
+    {
+      "id": "A19",
+      "correction": "Bilingual retrieval and actual required versus alternative needs",
+      "validation": "See journal.md and corrections-2026-10-28.md; real retests in progress"
+    },
+    {
+      "id": "A20",
+      "correction": "Mechanisms survive mandatory-condition saturation; interpretation15",
+      "validation": "See journal.md and corrections-2026-10-28.md; real retests in progress"
+    },
+    {
+      "id": "A21",
+      "correction": "Persist bounded source-failure diagnostics without URL credentials/query fragments",
+      "validation": "Journal, scripted tests and same-audience real retest; failures retained"
+    },
+    {
+      "id": "A22",
+      "correction": "One alternative-host research recovery only when no readable source; at most20 fetches and3 research calls",
+      "validation": "Journal, scripted tests and same-audience real retest; failures retained"
+    },
+    {
+      "id": "A23",
+      "correction": "Reject explicit access checks; never render/solve them; reject research with no verified observations",
+      "validation": "Journal, scripted tests and same-audience real retest; failures retained"
+    },
+    {
+      "id": "A24",
+      "correction": "Preserve editorial third-party scope and retrieve defining workflow evidence; interpretation16",
+      "validation": "checkpoint-2026-10-29.md; A25 real activation blocked, do not claim live validation"
+    },
+    {
+      "id": "A25",
+      "correction": "Explicit bounded official-product verification before generation; shared verified persistence",
+      "validation": "checkpoint-2026-10-29.md; A25 real activation blocked, do not claim live validation"
+    }
+  ]
+}

@@ -242,6 +242,28 @@ function EntryCard({ entry }: { entry: KnowledgeEntry }) {
           </p>
         )}
 
+        {entry.context ? (
+          <dl className="grid gap-1 text-xs text-muted-foreground">
+            {[
+              ["Subject", entry.context.subject],
+              ["Source nature", entry.context.source_kind],
+              ["Claim scope", entry.context.claim_scope],
+              ["Conditions", entry.context.conditions],
+              ["Time", entry.context.temporal_scope],
+              ["Limits", entry.context.limitations],
+            ].filter(([, value]) => value && value !== "unknown").map(([label, value]) => (
+              <div key={label}><dt className="inline font-medium">{label}: </dt><dd className="inline">{value.replaceAll("_", " ")}</dd></div>
+            ))}
+            {(entry.context.claim_scope === "unknown" || entry.context.source_kind === "unknown") && (
+              <div><dt className="sr-only">Context</dt><dd>Some source context is unknown. Check it before extending this claim.</dd></div>
+            )}
+          </dl>
+        ) : entry.citable && (
+          <p className="text-xs text-muted-foreground">
+            Context not recorded. Check the source before extending this claim to other plans, customers or periods.
+          </p>
+        )}
+
         <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
           <span>{GROUNDING_LABEL[entry.grounding] ?? entry.grounding}</span>
           {entry.source && (

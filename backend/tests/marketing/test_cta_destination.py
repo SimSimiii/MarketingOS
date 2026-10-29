@@ -22,6 +22,15 @@ HOMEPAGE = "https://example.test/"
 OFFER = OfferSheet(calls_to_action=[CallToAction(label="Start free", url=SIGNUP)])
 
 
+def test_planned_delivery_does_not_replace_a_missing_or_invented_destination_with_homepage():
+    for planned in ("View the product sheet", "https://invented.test/product"):
+        style = style_for_action(BrandStyle(cta_url=HOMEPAGE), explicit_url=None,
+                                 planned_action=planned, offer=OFFER, require_planned_destination=True)
+        assert style.cta_url == ""
+    assert style_for_action(BrandStyle(cta_url=HOMEPAGE), explicit_url=SIGNUP,
+                            planned_action="Missing", offer=OFFER, require_planned_destination=True).cta_url == SIGNUP
+
+
 def test_recovered_sources_do_not_replace_the_users_fixed_product_destination():
     product = "https://example.test/product"
     guide = "https://example.test/care-guide"
@@ -78,6 +87,22 @@ def test_selected_cta_keeps_any_cited_official_destination(proof_order):
     assert _recovered_next_step(
         artifacts=artifacts, evidence_ids=["R1", "R2"],
         next_step_evidence_ids=proof_order, call_to_action=action, next_step_value=payoff,
+    ) == (action, payoff)
+
+
+def test_recovered_fact_can_support_a_known_signup_with_a_reworded_label():
+    artifacts = KnowledgeArtifacts(
+        offer=OFFER,
+        evidence=EvidenceLedger(entries=[Evidence(
+            id="R1", kind=EvidenceKind.FEATURE, claim="Participants need no account.",
+            verbatim="Participants need no account.", source="https://example.test/guide",
+        )]),
+    )
+    action = f"Create your free account: {SIGNUP}"
+    payoff = "Try the collection workflow with a participant who needs no account."
+    assert _recovered_next_step(
+        artifacts=artifacts, evidence_ids=["R1"], next_step_evidence_ids=["R1"],
+        call_to_action=action, next_step_value=payoff,
     ) == (action, payoff)
 
 
@@ -141,6 +166,45 @@ def test_verified_evidence_source_can_be_the_pre_signup_destination():
         licensed_urls=[guide],
     )
     assert style.cta_url == guide
+
+
+@pytest.mark.parametrize("planned", ["/build", "https://carrd.com/build"])
+def test_licensed_relative_action_reaches_text_and_html(planned):
+    from app.knowledge.artifacts import CallToAction
+    from app.marketing.render_html import text_alternative
+
+    offer = OfferSheet(calls_to_action=[CallToAction(label="Choose a Starting Point", url="/build")])
+    style = style_for_action(
+        BrandStyle(cta_url="https://carrd.com/"), explicit_url=None,
+        planned_action=planned, offer=offer,
+    )
+    email = Email(position=1, subject="Build a page", preview_text="A starting point",
+                  greeting="Hi,", body="Choose a template.",
+                  call_to_action="Choose a starting point", sign_off="The team")
+    assert style.cta_url == "https://carrd.com/build"
+    assert 'href="https://carrd.com/build"' in render_html(email, EmailTier.PLAIN, style)
+    assert "→ https://carrd.com/build" in text_alternative(email, style)
+
+
+@pytest.mark.parametrize("planned", ["/invented", "//other.test/build", "/\\other.test/build", "/build /signup"])
+def test_relative_resolution_does_not_license_unknown_or_ambiguous_links(planned):
+    from app.knowledge.artifacts import CallToAction
+
+    offer = OfferSheet(calls_to_action=[CallToAction(label="Build", url="/build")])
+    fallback = BrandStyle(cta_url="https://carrd.com/")
+    assert style_for_action(
+        fallback, explicit_url=None, planned_action=planned, offer=offer,
+    ).cta_url == fallback.cta_url
+
+
+@pytest.mark.parametrize("base", ["", "https://[invalid"])
+def test_relative_offer_link_without_usable_origin_does_not_guess_a_host(base):
+    from app.knowledge.artifacts import CallToAction
+
+    offer = OfferSheet(calls_to_action=[CallToAction(label="Build", url="/build")])
+    assert style_for_action(
+        BrandStyle(cta_url=base), explicit_url=None, planned_action="/build", offer=offer,
+    ).cta_url == base
 
 
 @pytest.mark.parametrize("action", [

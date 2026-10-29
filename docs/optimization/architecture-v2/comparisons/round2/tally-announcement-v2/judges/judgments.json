@@ -1,0 +1,64 @@
+[
+  {
+    "opponent": "baseline",
+    "verdict": "incomplete",
+    "reason": "An arm produced no email."
+  },
+  {
+    "opponent": "simple",
+    "verdict": "simple",
+    "ballots": [
+      {
+        "order": [
+          "proposed",
+          "simple"
+        ],
+        "decoded_winner": "simple",
+        "winner": "B",
+        "reason": "B is the stronger launch email because it immediately explains what Tally is and how it works, then connects that product idea to the selected audience’s workflow: “works like a document” and “the front door to a bigger workflow.” Its next step is specific, useful, and low-risk: test one real intake without signing up and judge fit. The subject, body, and CTA all stay centered on building that first form. A is factually grounded and gives a more technical inspection path, but it reads like integration documentation, introduces an unsupported “client workflow” use case, and uses awkward phrases such as “client route” and “concrete source of submission data.” Neither email makes a particularly time-specific case for why the launch matters now, but B makes the practical relevance of the newly available product clearer and sounds substantially more friendly and conversational.",
+        "decisive_passages": [
+          "“Tally is officially here: an online form builder that works like a document. Type questions directly on the page, then add blocks for contact details, payments, signatures, file uploads, ratings, and more—without writing code.”",
+          "“That makes it useful when a form is the front door to a bigger workflow.”",
+          "“Start with one real intake. You can create the form without signing up, see how the builder feels, and decide whether it fits the workflow you’re putting together.”",
+          "A: “Create one free form and evaluate it as the intake layer for a client route you’re considering.”"
+        ],
+        "material_concerns_a": [
+          "“Automated client workflow” and “client route” narrow the use case beyond the supplied audience and evidence; the intake may be internal or otherwise unrelated to clients.",
+          "The subject, preview, and body emphasize HTTP endpoints and routing mechanics before giving a clear, approachable picture of the launched product.",
+          "“Evaluate it as the intake layer” and “concrete source of submission data” sound formal and technical rather than friendly, casual, and conversational.",
+          "The email does not clearly establish why the launch matters now beyond product availability."
+        ],
+        "material_concerns_b": [
+          "The case for “why it matters now” is mostly implicit in “officially here”; it explains present usefulness but gives no stronger time-sensitive reason.",
+          "“Another app or URL” is slightly less precise than the supported formulation of sending JSON to an HTTP endpoint, though the underlying capability is supported.",
+          "The broad block list is useful for product clarity but slightly dilutes the focus on an ops or no-code reader whose main concern is an intake-driven automation."
+        ]
+      },
+      {
+        "order": [
+          "simple",
+          "proposed"
+        ],
+        "decoded_winner": "simple",
+        "winner": "A",
+        "reason": "A is more usable for the requested friendly launch announcement. It clearly introduces the broader product—“an online form builder that works like a document”—then connects that idea to the selected audience’s workflow and gives a low-stakes next step: test one real intake without signing up. Its factual claims about blocks, no-code building, free webhooks, JSON submission delivery, and unlimited forms and submissions within fair-use guidelines are supported. B has stronger technical specificity around routing and field mapping, but reads more like integration documentation than a warm product announcement. It also unnecessarily narrows the use case to an “automated client workflow,” while the selected audience may manage many kinds of intake.",
+        "decisive_passages": [
+          "“Tally is officially here: an online form builder that works like a document.”",
+          "“That makes it useful when a form is the front door to a bigger workflow.”",
+          "“Start with one real intake. You can create the form without signing up, see how the builder feels, and decide whether it fits the workflow you’re putting together.”",
+          "B: “For a custom route, a Tally webhook sends every submission as structured JSON to an HTTP endpoint in real time.”",
+          "B: “You’ll have a concrete source of submission data to check against the destination and field mapping that workflow requires.”"
+        ],
+        "material_concerns_a": [
+          "“Officially here” implies present-day novelty even though Tally was founded in 2020; the supplied launch request makes the framing usable, but brand review should confirm it fits the actual announcement moment.",
+          "The body is warm and readable, though still somewhat polished rather than fully text-message casual."
+        ],
+        "material_concerns_b": [
+          "“Automated client workflow” introduces an unnecessary client-specific assumption not present in the selected audience.",
+          "Phrases such as “HTTP endpoint,” “structured JSON,” “defined input,” and “field mapping” make the email substantially more technical and less friendly or conversational than requested.",
+          "It explains the integration path well but gives little sense of Tally’s document-like building experience or broader offer, making it a narrower and less complete launch announcement."
+        ]
+      }
+    ]
+  }
+]

@@ -76,8 +76,13 @@ def run_summary(directory, entry):
         "result_available": True,
         "status": result.get("status", summary["status"]),
         "error_message": result.get("error_message"),
+        "outcome_status": result.get("outcome_status") or (result.get("result") or {}).get("run_status"),
+        "needs_review": result.get("needs_review"),
+        "review_reasons": result.get("review_reasons") or [],
         "estimated_cost_usd": result.get("estimated_cost_usd"),
-        "agent_calls": len(result.get("agent_executions") or []),
+        "agent_calls": None,
+        "model_calls": None,
+        "agent_groups": len(result.get("agent_executions") or []),
         "total_input_tokens": result.get("total_input_tokens"),
         "total_output_tokens": result.get("total_output_tokens"),
         "delivered": report.get("delivered"),
@@ -111,6 +116,9 @@ def run_summary(directory, entry):
     logs_path = run_dir / "logs.json"
     if logs_path.exists():
         logs = json.loads(logs_path.read_text(encoding="utf-8"))
+        finished = sum(log.get("event_type") == "model_call_finished" for log in logs)
+        summary["model_calls"] = finished if finished or not summary["agent_groups"] else None
+        summary["agent_calls"] = summary["model_calls"]
         summary["error_logs"] = [
             {"step": log.get("step"), "message": log.get("message")}
             for log in logs if log.get("level") == "error"
@@ -169,7 +177,8 @@ def main():
                 "estimated_cost_usd": result.get("estimated_cost_usd"),
                 "total_input_tokens": result.get("total_input_tokens"),
                 "total_output_tokens": result.get("total_output_tokens"),
-                "agent_calls": len(result.get("agent_executions") or []),
+                "agent_calls": run_summary(directory, {"execution_id": execution_id})["model_calls"],
+                "agent_groups": len(result.get("agent_executions") or []),
                 "report": report,
                 "assets": [
                     {"title": asset["title"], "content": asset["content"],
@@ -231,6 +240,9 @@ def main():
     while True:
         status = api(base, f"/executions/{execution_id}/status", token)
         entry["status"] = status["status"]
+        entry["outcome_status"] = status.get("outcome_status")
+        entry["needs_review"] = status.get("needs_review", False)
+        entry["review_reasons"] = status.get("review_reasons") or []
         entry["last_checked_at"] = datetime.now(timezone.utc).isoformat()
         save(state_path, state)
         if status["status"] in TERMINAL:

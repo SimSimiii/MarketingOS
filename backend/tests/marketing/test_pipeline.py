@@ -8,6 +8,7 @@ that ships an unsupported claim, a run that cannot stop.
 import json
 from dataclasses import replace
 from datetime import UTC, datetime
+from uuid import uuid4
 
 import pytest
 
@@ -18,6 +19,7 @@ from app.market.material_research import MaterialRecovery
 from app.marketing.cancellation import CancellationToken
 from app.marketing.contract import parse_contract
 from app.marketing.exceptions import StrategyError
+from app.marketing.forecast import forecast
 from app.marketing.observer import RunObserver
 from app.marketing.pipeline import EmailCampaignPipeline
 from app.marketing.policy import PRESETS, ExecutionPolicy
@@ -124,14 +126,18 @@ async def test_final_gate_failure_is_not_delivered(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("failure_mode", ["missing_material", "argument"])
 async def test_missing_material_is_researched_added_and_replanned_automatically(
-    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest, failure_mode: str,
 ):
     missing = json.dumps(
         {
             "verdict": "revise",
-            "failure_mode": "missing_material",
+            "failure_mode": failure_mode,
             "strategy_gap": "The exact SMTP integration path is absent.",
+            "research_question": (
+                "What is the documented SMTP integration path?" if failure_mode == "argument" else ""
+            ),
             "brief_drift": "",
             "unspent_evidence": [],
             "edits": [],
@@ -200,16 +206,23 @@ async def test_missing_material_is_researched_added_and_replanned_automatically(
     assert result.artifacts is not None and result.artifacts.evidence.get("R1") is not None
     assert len(result.outcomes) == 1
     assert not result.outcomes[0].unresolved_strategy
+    estimate = forecast(
+        pipeline._policy, parse_contract("Write me one launch email"), knowledge_reused=True,
+    )
+    # The stub replaces the two existing official locator/extractor calls.
+    assert sum(provider.calls_by_role.values()) + 2 <= estimate.high
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("failure_mode", ["missing_material", "argument"])
 async def test_unverified_material_replans_to_a_smaller_supported_decision(
-    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest, failure_mode: str,
 ):
     gap = "The proposed volume ceiling has no verified source."
     provider.push("conversion_critic", json.dumps({
-        "verdict": "revise", "failure_mode": "missing_material",
+        "verdict": "revise", "failure_mode": failure_mode,
         "strategy_gap": gap, "edits": [], "summary": "Narrow the decision.",
+        "research_question": "What is the documented volume ceiling?" if failure_mode == "argument" else "",
     }), CRITIQUE_SHIP)
     revised = json.loads(campaign_brief(1))
     revised["emails"][0].update({
@@ -243,38 +256,49 @@ async def test_unverified_material_replans_to_a_smaller_supported_decision(
 
 
 @pytest.mark.asyncio
-async def test_persistent_missing_material_is_not_delivered(
-    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+@pytest.mark.parametrize("failure_mode", ["missing_material", "argument"])
+async def test_persistent_critic_material_concern_keeps_clean_draft_for_review(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest, failure_mode: str,
 ):
     gap = "The promised queue reordering has no verified product source."
     provider.set_default("conversion_critic", json.dumps({
-        "verdict": "revise", "failure_mode": "missing_material",
+        "verdict": "revise", "failure_mode": failure_mode,
         "strategy_gap": gap, "edits": [], "summary": gap,
+        "research_question": "What queue reordering is documented?" if failure_mode == "argument" else "",
     }))
 
     class UnsuccessfulResearcher:
+        calls = 0
+
         async def recover(self, **_kwargs):
+            self.calls += 1
             return MaterialRecovery(gap=gap, note="No official source found.")
 
+    researcher = UnsuccessfulResearcher()
     pipeline, _ = build(
         provider, refine_only(max_revisions=0),
-        material_researcher=UnsuccessfulResearcher(),
+        material_researcher=researcher,
     )
 
     result = await pipeline.run(replace(request_fixture, request="Write one launch email"))
 
     assert provider.calls_by_role["strategist"] == 2
-    assert result.status == "needs_input"
-    assert result.outcomes == []
-    assert result.report.delivered == 0
-    assert gap in (result.abort_reason or "")
-    assert gap in result.report.what_would_help_most
-    assert result.report.questions == [f"Provide verified material to resolve: {gap}"]
+    assert researcher.calls == 1, "a repeated research question must never start a second recovery"
+    assert result.status == "degraded"
+    assert len(result.outcomes) == 1
+    assert result.outcomes[0].best.gates.passed
+    assert result.report.delivered == 1
+    assert result.report.emails[0].clean
+    assert not result.report.emails[0].landed
+    assert any(gap in issue for issue in result.report.emails[0].unresolved)
+    assert ("What queue reordering is documented?" if failure_mode == "argument" else gap) in result.report.what_would_help_most
+    assert not result.report.questions
+    assert not result.report.contract_violations
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("count", [1, 2])
-async def test_failed_recovery_keeps_only_emails_without_missing_material(
+async def test_failed_recovery_keeps_clean_emails_and_their_material_concerns(
     provider: RoleScriptedProvider, request_fixture: CampaignRequest, count: int,
 ):
     gap = "The guarantee exclusions are not verified."
@@ -293,9 +317,11 @@ async def test_failed_recovery_keeps_only_emails_without_missing_material(
     )
     result = await pipeline.run(replace(request_fixture, request=f"Write exactly {count} emails"))
 
-    assert result.status == ("needs_input" if count == 1 else "degraded")
-    assert [outcome.brief.position for outcome in result.outcomes] == ([] if count == 1 else [2])
-    assert result.report.delivered == count - 1
+    assert result.status == "degraded"
+    assert [outcome.brief.position for outcome in result.outcomes] == list(range(1, count + 1))
+    assert result.report.delivered == count
+    assert result.report.emails[0].unresolved
+    assert not result.report.questions
     assert gap in result.report.what_would_help_most
 
 
@@ -308,7 +334,11 @@ async def test_argument_gap_without_missing_material_remains_advisory(
         "strategy_gap": "The CTA could make the decision clearer.", "edits": [],
         "summary": "Improve the argument.",
     }))
-    pipeline, _ = build(provider, refine_only(max_revisions=0))
+    class NoResearch:
+        async def recover(self, **_kwargs):
+            raise AssertionError("an argument without a research question must not buy research")
+
+    pipeline, _ = build(provider, refine_only(max_revisions=0), material_researcher=NoResearch())
 
     result = await pipeline.run(replace(request_fixture, request="Write one launch email"))
 
@@ -317,24 +347,32 @@ async def test_argument_gap_without_missing_material_remains_advisory(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("evidence_id,structured", [("R1", False), ("E7", True), ("export_fact", True)])
+@pytest.mark.parametrize("still_revise", [False, True])
 async def test_argument_gap_citing_verified_fact_replans_without_web_search(
-    provider: RoleScriptedProvider, request_fixture: CampaignRequest
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest, evidence_id, structured,
+    still_revise,
 ):
     artifacts = artifacts_fixture()
     artifacts.evidence.entries.append(Evidence(
-        id="R1", kind=EvidenceKind.INTEGRATION,
+        id=evidence_id, kind=EvidenceKind.INTEGRATION,
         claim="The settings page shows whether the connector is enabled.",
         verbatim="Open Settings to see whether the connector is enabled.",
         source="https://docs.example.com/settings", strength=EvidenceStrength.STRONG,
     ))
-    gap = "The draft asks for a plan choice too early. R1 shows the first configuration check."
-    provider.push("conversion_critic", json.dumps({
+    gap = "The draft asks for a plan choice too early. " + (
+        "The settings fact shows the first configuration check." if structured else
+        "R1 shows the first configuration check."
+    )
+    critique = json.dumps({
         "verdict": "revise", "failure_mode": "argument", "strategy_gap": gap,
+        "supporting_evidence_ids": [evidence_id] if structured else [],
         "edits": [], "summary": "Make the configuration check the first decision.",
-    }), CRITIQUE_SHIP)
+    })
+    provider.push("conversion_critic", critique, critique if still_revise else CRITIQUE_SHIP)
     revised = json.loads(campaign_brief(1))
     revised["emails"][0].update({
-        "evidence_ids": ["R1"], "next_step_evidence_ids": ["R1"],
+        "evidence_ids": [evidence_id], "next_step_evidence_ids": [evidence_id],
         "call_to_action": "Review settings", "next_step_value": "Check the connector setting.",
     })
     provider.push("strategist", campaign_brief(1), json.dumps(revised))
@@ -351,12 +389,46 @@ async def test_argument_gap_citing_verified_fact_replans_without_web_search(
 
     assert provider.calls_by_role["strategist"] == 2
     assert gap in provider.requests_for("strategist")[1].system_prompt
+    assert "Open Settings to see whether the connector is enabled." in provider.requests_for("strategist")[1].system_prompt
     assert result.brief is not None
-    assert result.brief.emails[0].call_to_action.endswith(
-        "https://docs.example.com/settings"
-    )
+    if not structured:
+        assert result.brief.emails[0].call_to_action.endswith("https://docs.example.com/settings")
     assert len(result.outcomes) == 1
-    assert not result.outcomes[0].unresolved_strategy
+    assert bool(result.outcomes[0].unresolved_strategy) == still_revise
+    estimate = forecast(
+        pipeline._policy, parse_contract("Write one launch email"), knowledge_reused=True,
+    )
+    assert sum(provider.calls_by_role.values()) <= estimate.high
+
+
+@pytest.mark.asyncio
+async def test_provider_failure_during_known_fact_replan_keeps_the_initial_clean_email(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest,
+):
+    artifacts = artifacts_fixture()
+    artifacts.evidence.entries.append(Evidence(
+        id="E7", kind=EvidenceKind.FEATURE, claim="A documented export operation.",
+        verbatim="Download the submitted item.", source="https://docs.example.com/export",
+        strength=EvidenceStrength.STRONG,
+    ))
+    provider.set_default("conversion_critic", json.dumps({
+        "verdict": "revise", "failure_mode": "argument",
+        "strategy_gap": "The supported output operation needs to become the proposition.",
+        "supporting_evidence_ids": ["E7"], "summary": "Replan around the output operation.",
+    }))
+    provider.push("email_writer", email_draft(1), *([FAIL] * PROVIDER_ATTEMPTS))
+    revised = json.loads(campaign_brief(1))
+    revised["emails"][0].update(evidence_ids=["E7"], next_step_evidence_ids=["E7"])
+    provider.push("strategist", campaign_brief(1), json.dumps(revised))
+    pipeline, _ = build(provider, refine_only(max_revisions=0), artifacts=artifacts)
+
+    result = await pipeline.run(replace(request_fixture, request="Write one launch email"))
+
+    assert result.status == "provider_unavailable"
+    assert result.report.delivered == 1
+    assert result.report.emails[0].clean
+    assert result.report.emails[0].unresolved
+    assert "stopped answering" in result.abort_reason
 
 
 @pytest.mark.asyncio
@@ -579,6 +651,45 @@ async def test_the_critic_can_send_back_copy_a_cold_reader_liked(
     rewrite_prompt = provider.requests_for("email_writer")[1].messages[0].content
     assert "conversion critic" in rewrite_prompt
     assert "switching-cost objection" in rewrite_prompt
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("critic_answer,needs_review", [(CRITIQUE_REVISE, True), (CRITIQUE_SHIP, False)])
+async def test_final_critic_revision_remains_visible_even_when_the_reader_liked_the_email(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest, critic_answer, needs_review,
+):
+    from app.models.campaign_execution import CampaignExecution
+    from app.models.enums import ExecutionStatus
+
+    provider.set_default("strategist", campaign_brief(1))
+    provider.set_default("conversion_critic", critic_answer)
+    pipeline, _ = build(provider, refine_only(max_revisions=0))
+    result = await pipeline.run(replace(request_fixture, request="Write exactly one email"))
+
+    assert result.report.delivered == 1
+    assert result.report.emails[0].clean and result.report.emails[0].landed
+    assert any("Editorial review requested:" in note
+               for note in result.report.emails[0].unresolved) is needs_review
+    persisted = CampaignExecution(
+        campaign_id=uuid4(), status=ExecutionStatus.COMPLETED,
+        result={"report": result.report.model_dump(mode="json"), "run_status": result.status},
+    )
+    assert persisted.needs_review is needs_review
+
+
+@pytest.mark.asyncio
+async def test_a_later_approved_champion_does_not_retain_the_first_drafts_review_warning(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest,
+):
+    provider.set_default("strategist", campaign_brief(1))
+    provider.push("blind_reader", blind_read(pull=4), blind_read(pull=9))
+    provider.push("conversion_critic", CRITIQUE_REVISE, CRITIQUE_SHIP)
+    pipeline, _ = build(provider, refine_only(max_revisions=2))
+    result = await pipeline.run(replace(request_fixture, request="Write exactly one email"))
+
+    assert result.outcomes[0].best.attempt == 2
+    assert result.outcomes[0].best.critique.verdict == "ship"
+    assert not any("Editorial review requested:" in note for note in result.report.emails[0].unresolved)
 
 
 @pytest.mark.asyncio
@@ -809,7 +920,7 @@ async def test_cancelling_stops_between_emails_and_keeps_what_is_finished(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("blocked_position", [1, 2])
-async def test_cancellation_withholds_missing_material_but_keeps_unaffected_emails(
+async def test_cancellation_keeps_clean_drafts_with_their_material_warnings(
     provider: RoleScriptedProvider, request_fixture: CampaignRequest, blocked_position: int,
 ):
     gap = "The stated coverage exclusions are unverified."
@@ -833,10 +944,11 @@ async def test_cancellation_withholds_missing_material_but_keeps_unaffected_emai
     result = await pipeline.run(replace(request_fixture, request="Write exactly 3 emails"))
 
     assert result.status == "cancelled"
-    assert len(result.outcomes) == blocked_position - 1
-    assert result.report.delivered == blocked_position - 1
+    assert len(result.outcomes) == blocked_position
+    assert result.report.delivered == blocked_position
     assert gap in result.report.what_would_help_most
-    assert "Withheld emails" in result.report.notes[-1]
+    assert any(gap in issue for issue in result.report.emails[-1].unresolved)
+    assert not result.report.questions
 
 
 @pytest.mark.asyncio
@@ -1203,6 +1315,8 @@ async def test_a_brief_that_names_nobody_we_know_falls_back_and_says_so(
     assert result.brief is not None
     assert result.brief.reader_segment == ""
     assert seen and "the brief named no segment we know" in seen[0]
+    assert result.report.effective_audience == two_segments().audience.primary().name
+    assert any("Effective audience:" in note for note in result.report.notes)
 
 
 # ------------------------------------------------------ several openings
@@ -1422,7 +1536,7 @@ async def test_proof_that_exists_is_handed_over_to_be_spent(
     await pipeline.run(request_fixture)
 
     prompt = provider.requests_for("strategist")[0].system_prompt
-    assert "Spend these deliberately" in prompt
+    assert "Use these for the particular claims they support" in prompt
     assert "Do not plan an email around proof that does not exist" not in prompt
 
 
@@ -1451,3 +1565,42 @@ def test_a_segment_is_matched_by_description_when_the_name_is_paraphrased():
     assert audience.match("the support lead").name == SUPPORT_LEAD
     assert audience.match("", "a support lead buried in changelog questions").name == SUPPORT_LEAD
     assert audience.match("someone else entirely") is None
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("failed_role", ["conversion_critic", "email_writer", "final_critic"])
+async def test_late_provider_failure_keeps_checked_draft_and_stops(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest, failed_role: str,
+):
+    provider.set_default("strategist", campaign_brief(1))
+    policy = refine_only()
+    if failed_role == "email_writer":
+        provider.push("email_writer", email_draft(), *([FAIL] * PROVIDER_ATTEMPTS))
+        provider.set_default("blind_reader", READ_FAIL)
+        provider.set_default("conversion_critic", CRITIQUE_REVISE)
+    elif failed_role == "final_critic":
+        policy = refine_only(max_revisions=0)
+        provider.set_default("conversion_critic", FAIL)
+    else:
+        provider.set_default("conversion_critic", FAIL)
+    pipeline, _ = build(provider, policy)
+    result = await pipeline.run(request_fixture)
+    assert result.status == "provider_unavailable"
+    assert result.delivered == 1
+    assert result.outcomes[0].interruption
+    assert not result.outcomes[0].best.gates.blocking
+    assert result.report.emails[0].unresolved
+    assert not result.report.healthy
+    assert provider.calls_by_role.get("sequence_reviewer", 0) == 0
+
+
+@pytest.mark.asyncio
+async def test_provider_failure_cannot_rescue_a_factually_blocked_draft(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest,
+):
+    provider.set_default("strategist", campaign_brief(1))
+    provider.set_default("email_writer", email_draft(body="Our product guarantees 98765 percent growth."))
+    provider.set_default("conversion_critic", FAIL)
+    pipeline, _ = build(provider, refine_only())
+    result = await pipeline.run(request_fixture)
+    assert result.delivered == 0

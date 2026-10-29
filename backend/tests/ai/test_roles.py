@@ -82,9 +82,14 @@ def test_every_model_the_catalog_offers_agrees_with_its_provider():
         assert vendor_of(model) is spec.vendor, model
 
 
-def test_a_gpt_model_cannot_be_pinned_to_a_role_that_reads_the_web():
+def test_a_gpt_model_cannot_be_pinned_to_a_role_that_requires_fetch():
     with pytest.raises(InvalidOverrideError, match="web_fetch"):
-        validate_overrides({"rival_scout": "gpt-5.6-sol"})
+        validate_overrides({"proof_hunter": "gpt-5.6-sol"})
+
+
+@pytest.mark.parametrize("role", ["rival_scout", "rival_profiler", "audience_cartographer"])
+def test_search_or_process_fetched_roles_accept_openai(role):
+    assert validate_overrides({role: "gpt-5.6-sol"}) == {role: "gpt-5.6-sol"}
 
 
 def test_a_claude_model_can_run_any_role():

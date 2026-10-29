@@ -12,6 +12,7 @@ from app.core.database import engine, init_db
 from app.orchestration.execution_manager import reap_orphaned_executions
 from app.runtime.work_limits import WorkLimitError
 from app.services.credit_service import assert_payment_mode_safe
+from app.services.email_analysis_service import reap_email_analyses
 from app.services.linkedin_service import reap_linkedin_runs
 
 settings = get_settings()
@@ -27,6 +28,7 @@ async def lifespan(app: FastAPI):
                 session, live=settings.stripe_secret_key.startswith("sk_live_")
             )
     reap_linkedin_runs(engine)
+    reap_email_analyses(engine)
     # A run left RUNNING can only mean the previous process died mid-campaign
     # (crash, restart) - there is no in-memory registry entry for it in this
     # process, so it can never finish or be cancelled. Fail it explicitly
@@ -44,6 +46,41 @@ app = FastAPI(title="MarketingOS API", version="0.1.0", lifespan=lifespan)
 async def work_limit_error(request, exc: WorkLimitError):
     return JSONResponse({"detail": str(exc)}, status_code=exc.status_code)
 
+_SECURITY_HEADERS = (
+    (b"x-content-type-options", b"nosniff"),
+    (b"x-frame-options", b"DENY"),
+    (b"referrer-policy", b"no-referrer"),
+)
+
+
+class SecurityHeadersMiddleware:
+    """The back-office's hardening headers, on every API response.
+
+    Plain ASGI rather than `@app.middleware("http")`: that wrapper buffers
+    through a memory stream, and the execution SSE feed has to reach the
+    browser event by event.
+    """
+
+    def __init__(self, app) -> None:
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
+
+        async def with_headers(message):
+            if message["type"] == "http.response.start":
+                present = {name.lower() for name, _ in message.get("headers", [])}
+                message["headers"] = [
+                    *message.get("headers", []),
+                    *((name, value) for name, value in _SECURITY_HEADERS if name not in present),
+                ]
+            await send(message)
+
+        return await self.app(scope, receive, with_headers)
+
+
+app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list,

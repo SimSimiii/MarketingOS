@@ -16,6 +16,7 @@ They belong to the business, not to one campaign: the second campaign for the
 same product starts from everything the first one learned.
 """
 
+import hashlib
 import re
 from datetime import UTC, datetime
 from enum import StrEnum
@@ -24,7 +25,13 @@ from typing import Literal
 from pydantic import BaseModel, Field, model_validator
 
 from app.knowledge.corpus import fold
-from app.knowledge.ledger import MAX_EVIDENCE_IN_PROMPT, EvidenceKind, EvidenceLedger
+from app.knowledge.ledger import (
+    MAX_EVIDENCE_IN_PROMPT,
+    EvidenceKind,
+    EvidenceLedger,
+    EvidenceStrength,
+)
+from app.knowledge.product_scope import is_product_subject
 
 
 class Grounding(StrEnum):
@@ -137,6 +144,12 @@ class Plan(BaseModel):
     name: str
     price: str = ""
     includes: list[str] = Field(default_factory=list)
+    id: str = ""
+    provenance: Provenance | None = None
+
+    @property
+    def reference_id(self) -> str:
+        return self.id or "offer_" + hashlib.sha256(self.name.encode()).hexdigest()[:12]
 
 
 class CallToAction(BaseModel):
@@ -150,6 +163,15 @@ class CallToAction(BaseModel):
     label: str
     intent: str = ""
     url: str | None = None
+    id: str = ""
+    evidence_ids: list[str] = Field(default_factory=list)
+    provenance: Provenance | None = None
+
+    @property
+    def reference_id(self) -> str:
+        return self.id or "action_" + hashlib.sha256(
+            f"{self.label}\n{self.url or ''}".encode()
+        ).hexdigest()[:12]
 
 
 class OfferSheet(BaseModel):
@@ -159,14 +181,117 @@ class OfferSheet(BaseModel):
     calls_to_action: list[CallToAction] = Field(default_factory=list)
     purchase_motion: str = ""
 
+    def ground_guarantees(self, ledger: EvidenceLedger) -> tuple["OfferSheet", list[str]]:
+        """Keep source wording, including its conditions, instead of a free paraphrase.
+
+        A ledger claim is itself a summary. Only its actual quotation licenses
+        a guarantee; lexical similarity would accept inverted upgrade terms.
+        """
+        result = self.model_copy(deep=True)
+        result.guarantees = []
+        rejected: list[str] = []
+
+        def source_terms(entry):
+            context = entry.context
+            return "; ".join(dict.fromkeys(filter(None, (
+                entry.verbatim, context.conditions if context else "",
+                context.temporal_scope if context else "", context.limitations if context else "",
+            ))))
+
+        def quotation_matches(proposed, entry):
+            wanted = fold(proposed).rstrip(".! ")
+            quoted = fold(entry.verbatim)
+            if len(wanted) < 12:
+                return False
+            if wanted in quoted or wanted == fold(source_terms(entry)).rstrip(".! "):
+                return True
+            # Retrieval may recognise an ordinary paraphrase, but the output
+            # is ALWAYS the complete source wording, never the proposed text.
+            # The summary and the ledger's claim cannot license one another.
+            stop = {"the", "a", "an", "on", "for", "of", "and", "or", "our", "your", "its",
+                    "in", "to", "at", "is", "are", "be", "with"}
+
+            def words(text):
+                return {word[:-1] if len(word) > 4 and word.endswith("s") else word
+                        for word in re.findall(r"[a-z0-9]+", text) if word not in stop}
+
+            first, second = words(wanted), words(quoted)
+            negatives = {"no", "not", "never", "without", "unless", "except", "only"}
+            numbers = set(re.findall(r"\d+(?:[.,]\d+)?", wanted))
+            return (len(first) >= 3 and len(first & second) / len(first) >= 0.8
+                    and first & negatives <= second
+                    and numbers <= set(re.findall(r"\d+(?:[.,]\d+)?", quoted)))
+
+        for proposed in self.guarantees:
+            matches = [entry for entry in ledger.entries
+                       if quotation_matches(proposed, entry)
+                       and entry.kind in {EvidenceKind.GUARANTEE, EvidenceKind.PRICE,
+                                          EvidenceKind.FEATURE}
+                       and entry.context is not None
+                       and entry.context.claim_scope in {"offer", "capability"}
+                       and entry.context.source_kind not in {
+                           "third_party", "vendor_comparison", "customer_statement"}]
+            if not matches:
+                rejected.append(proposed)
+                continue
+            # Preserve the full source condition, even if the proposed summary
+            # quoted only the appealing clause before "if" or "unless".
+            entry = min(matches, key=lambda item: len(item.verbatim))
+            terms = source_terms(entry)
+            if terms not in result.guarantees:
+                result.guarantees.append(terms)
+        return result, rejected
+
+    def recover_prices(self, ledger: EvidenceLedger) -> "OfferSheet":
+        """Fill unambiguous blanks from cited prices, including older artifacts.
+
+        Never replace a published value, combine plans or invent a period.
+        """
+        result = self.model_copy(deep=True)
+        money = re.compile(r"(?:[$€£]\s?\d[\d,.]*(?:\s*(?:/\s*(?:month|mo|year|yr)|per\s+(?:month|year)))?)", re.IGNORECASE)
+        for plan in result.plans:
+            if plan.price or not plan.name.strip():
+                continue
+            candidates = []
+            for entry in ledger.entries:
+                if entry.kind is not EvidenceKind.PRICE:
+                    continue
+                if entry.context is None or entry.context.claim_scope != "offer":
+                    continue
+                matches = list(money.finditer(entry.verbatim))
+                if not matches:
+                    continue
+                prefix = entry.verbatim[:matches[0].start()]
+                named_plans = {other.name for other in result.plans if re.search(
+                    r"(?<!\w)" + re.escape(other.name) + r"(?!\w)", prefix, re.IGNORECASE)}
+                if named_plans != {plan.name}:
+                    continue
+                if entry.context and entry.context.source_kind in {"third_party", "vendor_comparison"}:
+                    continue
+                amounts = list(dict.fromkeys(match.group().rstrip(".,") for match in matches))
+                if len(amounts) == 1:
+                    candidates.append((amounts[0], entry))
+            if len({value for value, _ in candidates}) != 1:
+                continue
+            value, evidence = candidates[0]
+            conditions = "; ".join(dict.fromkeys(filter(None, (
+                evidence.context.conditions, evidence.context.temporal_scope,
+                evidence.context.limitations,
+            )))) if evidence.context else ""
+            plan.price = value + (f" ({conditions})" if conditions else "")
+            plan.provenance = Provenance(source=evidence.source, quote=evidence.verbatim,
+                                         document_id=evidence.document_id, evidence_id=evidence.id,
+                                         source_kind="vendor_copy")
+        return result
+
     def render(self) -> str:
         plans = "\n".join(
-            f"- {plan.name}: {plan.price or 'price not published'}"
+            f"- [{plan.reference_id}] {plan.name}: {plan.price or 'price not published'}"
             + (f" - includes {', '.join(plan.includes)}" if plan.includes else "")
             for plan in self.plans
         ) or "- no plans or prices found in the material"
         ctas = "\n".join(
-            f"- {cta.label}" + (f" ({cta.intent})" if cta.intent else "")
+            f"- [{cta.reference_id}] {cta.label}" + (f" ({cta.intent})" if cta.intent else "")
             + (f" -> {cta.url}" if cta.url else "")
             for cta in self.calls_to_action
         ) or "- none found - ask only for a reply"
@@ -462,12 +587,20 @@ class KnowledgeArtifacts(BaseModel):
     version: int = 1
     compiled_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     source_document_ids: list[str] = Field(default_factory=list)
+    source_context_fingerprint: str = ""
     #: Documents that existed but were not readable, so a thin profile is
     #: explainable rather than mysterious.
     notes: list[str] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def _verify_audience_provenance(self) -> "KnowledgeArtifacts":
+        self.offer = self.offer.recover_prices(self.evidence)
+        self.offer, rejected = self.offer.ground_guarantees(self.evidence)
+        if rejected:
+            note = (f"{len(rejected)} unverified offer guarantee summary item(s) omitted; "
+                    "consult the source-scoped Evidence Ledger for offer conditions.")
+            if note not in self.notes:
+                self.notes = [*self.notes, note]
         # Work on a copy: constructing artifacts must not mutate a caller's
         # audience or erase grounded research attached elsewhere afterwards.
         audience = self.audience.model_copy(deep=True)
@@ -519,6 +652,46 @@ class KnowledgeArtifacts(BaseModel):
         self.audience = audience
         return self
 
+    def for_claim_boundary(self, allowed_ids: set[str]) -> "KnowledgeArtifacts":
+        """A prompt view, never a stored rewrite of the compiled knowledge.
+
+        Summary fields have no claim-level links. Keeping them beside a closed
+        ledger silently restores prices, guarantees or features that its contract
+        excluded. Identity and action references survive; their terms must come
+        from the scoped ledger instead.
+        """
+        return self.model_copy(update={
+            "evidence": EvidenceLedger(entries=[
+                entry for entry in self.evidence.entries if entry.id in allowed_ids
+            ]),
+            "business": BusinessProfile(
+                company_name=self.business.company_name,
+                what_it_does="Use the licensed evidence below for product capabilities.",
+                category=self.business.category,
+                vocabulary=list(self.business.vocabulary),
+            ),
+            "offer": OfferSheet(
+                plans=[
+                    Plan(name=plan.name, id=plan.id, price="Terms only in the licensed evidence.")
+                    for plan in self.offer.plans
+                ],
+                free_entry="Entry conditions only in the licensed evidence.",
+                calls_to_action=[
+                    action.model_copy(update={"intent": ""})
+                    for action in self.offer.calls_to_action
+                ],
+            ),
+            "audience": self.audience.model_copy(update={
+                "objections": [
+                    objection.model_copy(update={
+                        "answer": "Use only the licensed evidence for the product answer.",
+                        "evidence_ids": [id_ for id_ in objection.evidence_ids if id_ in allowed_ids],
+                    })
+                    for objection in self.audience.objections
+                ],
+            }),
+        })
+
     def render_for_strategy(self) -> str:
         """Everything, for the one role that decides what the campaign says."""
         return (
@@ -529,6 +702,58 @@ class KnowledgeArtifacts(BaseModel):
             f"## How they sound\n{self.voice.render()}\n\n"
             f"## What we could not establish\n{self.gaps.render()}"
         )
+
+    def conditions_for_action(
+        self, action: str, *, excluded_ids: set[str] | frozenset[str] = frozenset(),
+    ) -> EvidenceLedger:
+        """Canonical terms for an unambiguous plan named by the actual CTA.
+
+        Plan summaries identify the name only; they cannot license inclusions.
+        Do not infer a plan from a generic signup URL or borrow a rival's terms.
+        """
+        plans = [plan for plan in self.offer.plans if plan.name.strip() and re.search(
+            rf"(?<!\w){re.escape(fold(plan.name))}(?!\w)", fold(action),
+        )]
+        if len(plans) != 1:
+            return EvidenceLedger()
+        name = fold(plans[0].name)
+        entries = []
+        for entry in self.evidence.entries:
+            context = entry.context
+            if (
+                entry.id not in excluded_ids and context is not None
+                and entry.kind in {EvidenceKind.PRICE, EvidenceKind.FEATURE, EvidenceKind.GUARANTEE}
+                and context.claim_scope in {"offer", "capability"}
+                and is_product_subject(context.subject, self.business.company_name)
+                and re.search(rf"(?<!\w){re.escape(name)}(?!\w)", fold(context.subject))
+                and re.search(r"\b(?:plan|tier|forfait|formule|offre)\b", fold(context.subject))
+                and (entry.user_attested or (
+                    entry.strength is not EvidenceStrength.WEAK
+                    and context.source_kind == "official_documentation"
+                ))
+            ):
+                entries.append(entry)
+        entries.sort(key=lambda entry: entry.kind is not EvidenceKind.PRICE)
+        return EvidenceLedger(entries=entries[:6])
+
+    def evidence_for_action(
+        self, destination: str, *, excluded_ids: set[str] | frozenset[str] = frozenset(),
+    ) -> EvidenceLedger:
+        """Source-backed access details for the exact selected destination."""
+        if not destination or destination not in {item.url for item in self.offer.calls_to_action}:
+            return EvidenceLedger()
+        entries = []
+        for entry in self.evidence.entries:
+            context = entry.context
+            urls = [url.rstrip(".,;") for url in re.findall(r'https?://[^\s<>"\)\]]+', entry.verbatim)]
+            if (entry.id not in excluded_ids and destination in urls and context is not None
+                    and context.claim_scope in {"offer", "capability"}
+                    and context.source_kind in {"official_documentation", "vendor_statement"}
+                    and context.verification == "quote_verified_in_material"
+                    and entry.strength is not EvidenceStrength.WEAK
+                    and is_product_subject(context.subject, self.business.company_name)):
+                entries.append(entry)
+        return EvidenceLedger(entries=entries[:3])
 
     def evidence_for_writing(
         self,

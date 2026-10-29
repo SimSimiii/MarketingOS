@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from app.marketing.intent import CampaignIntent, infer_intent
 from app.schemas.linkedin import LinkedInChannel
 
 
@@ -44,6 +45,11 @@ class CampaignRequest:
     #: chose "View live demo" from the offer sheet while the button it labelled
     #: opened the goal-conversions guide the user had picked.
     cta_url: str | None = None
+    intent: CampaignIntent | None = None
+
+    @property
+    def effective_intent(self) -> CampaignIntent:
+        return self.intent or infer_intent(self.request)
 
     @property
     def sender(self) -> str:
@@ -52,7 +58,7 @@ class CampaignRequest:
         return self.sender_name or self.sender_role
 
     def render_context(self) -> str:
-        lines = [f"Campaign: {self.name}"]
+        lines = [f"Campaign: {self.name}", self.effective_intent.render()]
         if self.product_description:
             lines.append(f"What the user says the product is: {self.product_description}")
         if self.target_market:

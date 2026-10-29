@@ -40,7 +40,9 @@ import re
 from collections.abc import Iterable
 from dataclasses import dataclass, replace
 from enum import StrEnum
-from urllib.parse import urlsplit
+from urllib.parse import urljoin, urlsplit
+
+from langdetect import LangDetectException, detect
 
 from app.knowledge.artifacts import OfferSheet
 from app.marketing.email_copy import CALLOUT_PREFIX, Email
@@ -66,6 +68,7 @@ _SANS = (
 def style_for_action(
     style: "BrandStyle", *, explicit_url: str | None, planned_action: str,
     offer: OfferSheet | None, licensed_urls: Iterable[str] = (),
+    require_planned_destination: bool = False,
 ) -> "BrandStyle":
     """Use the strategy's selected offer link only when the source licenses it.
 
@@ -74,16 +77,34 @@ def style_for_action(
     """
     if explicit_url:
         return replace(style, cta_url=explicit_url)
+
+    def absolute(value: str) -> str:
+        # HTML-derived offer links commonly start at the site's root. Resolve
+        # only those paths, never a guessed path or a protocol-relative host.
+        if value.startswith("/") and not value.startswith("//") and "\\" not in value:
+            try:
+                base = urlsplit(style.cta_url)
+            except ValueError:
+                return value
+            if base.scheme in {"http", "https"} and base.hostname:
+                return urljoin(style.cta_url, value)
+        return value
+
     selected = {
-        value.rstrip(".,;:)")
+        absolute(value.rstrip(".,;:)"))
         for value in re.findall(r'https?://[^\s<>"\]]+', planned_action)
     }
-    licensed = {url for url in licensed_urls if url}
+    path = planned_action.strip()
+    if path.startswith("/") and not re.search(r"\s", path):
+        resolved = absolute(path)
+        if resolved.startswith(("http://", "https://")):
+            selected.add(resolved)
+    licensed = {absolute(url) for url in licensed_urls if url}
     if offer is not None:
-        licensed.update(action.url for action in offer.calls_to_action if action.url)
+        licensed.update(absolute(action.url) for action in offer.calls_to_action if action.url)
     if len(selected) == 1 and selected <= licensed:
         return replace(style, cta_url=selected.pop())
-    return style
+    return replace(style, cta_url="") if require_planned_destination else style
 
 
 class EmailTier(StrEnum):
@@ -285,11 +306,18 @@ def render_html(
     if branded:
         blocks.append(_footer(style, scale))
 
+    language = email.language
+    if not language:
+        try:
+            language = detect(email.body) if len(email.body) >= 50 else "und"
+        except LangDetectException:
+            language = "und"
     return _document(
         subject=email.subject,
         preview=email.preview_text,
         inner="".join(blocks),
         scale=scale,
+        language=language,
     )
 
 
@@ -309,11 +337,12 @@ def text_alternative(email: Email, style: BrandStyle | None = None) -> str:
 # ------------------------------------------------------------------ internals
 
 
-def _document(subject: str, preview: str, inner: str, scale: _Scale) -> str:
+def _document(subject: str, preview: str, inner: str, scale: _Scale, language: str = "en") -> str:
+    language = language if re.fullmatch(r"[a-zA-Z]{2,3}(?:-[a-zA-Z0-9]{2,8})*", language) else "und"
     return (
         '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" '
         '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n'
-        '<html xmlns="http://www.w3.org/1999/xhtml" lang="en">\n'
+        f'<html xmlns="http://www.w3.org/1999/xhtml" lang="{language}">\n'
         "<head>\n"
         '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />\n'
         # Without this Outlook Mobile and Gmail on Android render at desktop

@@ -893,19 +893,22 @@ def test_map_route_passes_scope_without_spending_quota(client, monkeypatch):
     brand = make_brand(client, "Scoped discovery")
     captured = []
 
-    def launch(self, brand, provider, engine, options=None):
-        captured.append(options)
+    def launch(self, brand, provider, engine, options=None, *, model=None):
+        captured.append((options, model))
         return JobStatus(kind="audience", brand_id=brand.id)
 
     monkeypatch.setattr(MarketService, "launch_audience_map", launch)
     response = client.post(f"/api/market/{brand['id']}/audience/map", json={
         "geography": "France", "language": "Français", "objective": "partners",
         "exclusions": "Healthcare", "mode": "explore",
+        "model": "gpt-5.6-sol",
     })
     assert response.status_code == 202
-    assert captured[0].geography == "France"
-    assert captured[0].objective == "partners"
-    assert captured[0].mode == "explore"
+    assert captured[0][0].geography == "France"
+    assert captured[0][0].objective == "partners"
+    assert captured[0][0].mode == "explore"
+    assert captured[0][1] == "gpt-5.6-sol"
+    assert "model" not in captured[0][0].model_dump()
     bad = client.post(f"/api/market/{brand['id']}/audience/map", json={"objective": "invent"})
     assert bad.status_code == 422
     assert len(captured) == 1
@@ -914,6 +917,7 @@ def test_map_route_passes_scope_without_spending_quota(client, monkeypatch):
 def test_map_job_supplies_current_product_truth_and_persists_scope(
     client, engine, provider, monkeypatch
 ):
+    from app.ai.model_router import ModelTier
     from app.market.demand import AudienceCartographer
 
     brand = make_brand(client, "Validated discovery")
@@ -923,16 +927,21 @@ def test_map_job_supplies_current_product_truth_and_persists_scope(
     captured = []
 
     async def mapped(self, artifacts, **kwargs):
+        kwargs["routed_model"] = self._session._router.resolve("audience_cartographer", ModelTier.DEEP)
         captured.append(kwargs)
         kwargs["progress"]("Checked the test corpus")
         return DemandMap(segments=[segment()], options=kwargs["options"], validation_note="Checked")
 
     monkeypatch.setattr(AudienceCartographer, "map", mapped)
     status = JobStatus(kind="audience", brand_id=UUID(brand["id"]))
-    asyncio.run(_run_audience_map(UUID(brand["id"]), provider, engine, status, options))
+    asyncio.run(_run_audience_map(
+        UUID(brand["id"]), provider, engine, status, options,
+        {"audience_cartographer": "gpt-5.6-sol"},
+    ))
     assert status.state == "done", status.error
     assert captured[0]["capability_profile"].knowledge_id
     assert captured[0]["previous"].segments[0].name == segment().name
+    assert captured[0]["routed_model"] == "gpt-5.6-sol"
     body = client.get(f"/api/market/{brand['id']}/audience").json()
     assert body["map"]["options"]["geography"] == "France"
     assert body["map"]["validation_note"] == "Checked"

@@ -87,6 +87,7 @@ export function CampaignDetailView() {
                 productUrl: campaign.product_url,
                 targetMarket: campaign.target_market,
                 goals: campaign.goals,
+                intent: campaign.intent,
                 senderName: campaign.sender_name,
                 senderRole: campaign.sender_role,
               }}

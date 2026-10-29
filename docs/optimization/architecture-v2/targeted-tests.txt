@@ -1,0 +1,87 @@
+......FF....F.................................F..................F...... [  6%]
+...........................F............................................ [ 12%]
+........................................................................ [ 18%]
+........................................................................ [ 25%]
+........................................................................ [ 31%]
+........................................................................ [ 37%]
+...............................................F........................ [ 43%]
+........................................................................ [ 50%]
+........................................................................ [ 56%]
+........................................................................ [ 62%]
+........................................................................ [ 68%]
+........................................................................ [ 75%]
+........................................................................ [ 81%]
+........................................................................ [ 87%]
+..............................................................F......... [ 93%]
+........................................................................ [100%]
+================================== FAILURES ===================================
+_ test_captured_webhook_argument_loses_unlinked_problem_and_dependent_promises[stale] _
+tests\marketing\test_argument_integrity.py:104: in test_captured_webhook_argument_loses_unlinked_problem_and_dependent_promises
+    assert email.call_to_action.endswith(TALLY_SOURCE)
+E   AssertionError: assert False
+E    +  where False = <built-in method endswith of str object at 0x000001ED717D7E70>('https://tally.so/help/webhooks')
+E    +    where <built-in method endswith of str object at 0x000001ED717D7E70> = 'Create a free form'.endswith
+E    +      where 'Create a free form' = EmailBrief(problem_ids=[], offer_id='offering', action_id='', selection_reason='', next_step_url='', argument_issue='T...nd name only a supported proposition; do not imply novelty without user-provided or dated support.', must_not_reuse=[]).call_to_action
+_ test_captured_webhook_argument_loses_unlinked_problem_and_dependent_promises[current] _
+tests\marketing\test_argument_integrity.py:104: in test_captured_webhook_argument_loses_unlinked_problem_and_dependent_promises
+    assert email.call_to_action.endswith(TALLY_SOURCE)
+E   AssertionError: assert False
+E    +  where False = <built-in method endswith of str object at 0x000001ED717D7E70>('https://tally.so/help/webhooks')
+E    +    where <built-in method endswith of str object at 0x000001ED717D7E70> = 'Create a free form'.endswith
+E    +      where 'Create a free form' = EmailBrief(problem_ids=[], offer_id='offering', action_id='', selection_reason='', next_step_url='', argument_issue='T...nd name only a supported proposition; do not imply novelty without user-provided or dated support.', must_not_reuse=[]).call_to_action
+_ test_current_qualified_slice_reaches_strategy_and_effective_reader_without_an_extra_call _
+tests\marketing\test_argument_integrity.py:192: in test_current_qualified_slice_reaches_strategy_and_effective_reader_without_an_extra_call
+    assert provider.calls_by_role["strategist"] == 1
+E   assert 2 == 1
+------------------------------ Captured log call ------------------------------
+INFO     marketingos.marketing:strategist.py:541 strategist: correcting 1 plan defect(s)
+_ test_the_custom_audience_reaches_the_cold_panel_even_if_strategy_picks_another_segment _
+tests\marketing\test_audience_context.py:121: in test_the_custom_audience_reaches_the_cold_panel_even_if_strategy_picks_another_segment
+    assert phases and custom in phases[0][0]
+E   AssertionError: assert ([('Proposition selected for the requested campaign', {'pipeline_version': 2, 'intent': {'objective': 'custom', 'object...'Opted-in electronics hobbyists considering their first repair toolkit', 'matched': False, 'audience_source': 'user'})] and 'Opted-in electronics hobbyists considering their first repair toolkit' in 'Proposition selected for the requested campaign')
+_________ test_strategy_can_use_new_ledger_id_after_knowledge_change __________
+tests\marketing\test_campaign_intelligence.py:354: in test_strategy_can_use_new_ledger_id_after_knowledge_change
+    assert provider.calls_by_role == {"strategist": 1}
+E   AssertionError: assert defaultdict(<...rategist': 2}) == {'strategist': 1}
+E     
+E     Differing items:
+E     {'strategist': 2} != {'strategist': 1}
+E     Use -v to get more diff
+------------------------------ Captured log call ------------------------------
+INFO     marketingos.marketing:strategist.py:541 strategist: correcting 1 plan defect(s)
+_________ test_a_rewrite_that_drops_the_proof_does_not_take_the_title _________
+tests\marketing\test_choosing.py:253: in test_a_rewrite_that_drops_the_proof_does_not_take_the_title
+    assert outcome.versions[1].duel is None, "and was not even put to a vote"
+E   AssertionError: and was not even put to a vote
+E   assert Duel(challenger_votes=2, champion_votes=0, reasons=('it got to the point', 'it told me what it costs'), unreported=0) is None
+E    +  where Duel(challenger_votes=2, champion_votes=0, reasons=('it got to the point', 'it told me what it costs'), unreported=0) = EmailVersion(attempt=2, email=Email(position=1, role='hook', subject='The rewrite that argues from nothing', preview_t...sons=('it got to the point', 'it told me what it costs'), unreported=0), idea='idea number 1 that nothing else argues').duel
+------------------------------ Captured log call ------------------------------
+INFO     marketingos.marketing:craft.py:685 craft: email 1 attempt 1 did not land (pull 3/10, critic says ship) - revising
+________ test_a_brief_that_names_nobody_we_know_falls_back_and_says_so ________
+tests\marketing\test_pipeline.py:1205: in test_a_brief_that_names_nobody_we_know_falls_back_and_says_so
+    assert seen and "the brief named no segment we know" in seen[0]
+E   AssertionError: assert (['Proposition selected for the requested campaign', 'Drafts will be read cold by: a developer who ships weekly and writes release notes by hand (the brief named no segment we know)'] and 'the brief named no segment we know' in 'Proposition selected for the requested campaign')
+------------------------------ Captured log call ------------------------------
+INFO     marketingos.marketing:strategist.py:694 strategist: reader segment 'chief revenue officers in logistics' matches no segment in the audience model
+INFO     marketingos.marketing:strategist.py:541 strategist: correcting 1 plan defect(s)
+INFO     marketingos.marketing:strategist.py:694 strategist: reader segment 'chief revenue officers in logistics' matches no segment in the audience model
+____ test_one_deep_closed_world_call_gets_only_the_three_persisted_inputs _____
+tests\market\test_relevance.py:446: in test_one_deep_closed_world_call_gets_only_the_three_persisted_inputs
+    assert "complete_evidence_ledger" in prompt
+E   assert 'complete_evidence_ledger' in 'You are the Relevance Analyst. You make one campaign-independent judgment:\nwhich already-verified product facts matt...ionProposal"},"type":"array"},"silences":{"items":{"$ref":"#/$defs/SilenceProposal"},"type":"array"}},"type":"object"}'
+============================== warnings summary ===============================
+.venv\Lib\site-packages\starlette\testclient.py:53
+  C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/marketing/test_argument_integrity.py::test_captured_webhook_argument_loses_unlinked_problem_and_dependent_promises[stale]
+FAILED tests/marketing/test_argument_integrity.py::test_captured_webhook_argument_loses_unlinked_problem_and_dependent_promises[current]
+FAILED tests/marketing/test_argument_integrity.py::test_current_qualified_slice_reaches_strategy_and_effective_reader_without_an_extra_call
+FAILED tests/marketing/test_audience_context.py::test_the_custom_audience_reaches_the_cold_panel_even_if_strategy_picks_another_segment
+FAILED tests/marketing/test_campaign_intelligence.py::test_strategy_can_use_new_ledger_id_after_knowledge_change
+FAILED tests/marketing/test_choosing.py::test_a_rewrite_that_drops_the_proof_does_not_take_the_title
+FAILED tests/marketing/test_pipeline.py::test_a_brief_that_names_nobody_we_know_falls_back_and_says_so
+FAILED tests/market/test_relevance.py::test_one_deep_closed_world_call_gets_only_the_three_persisted_inputs
+8 failed, 1144 passed, 1 warning in 87.83s (0:01:27)

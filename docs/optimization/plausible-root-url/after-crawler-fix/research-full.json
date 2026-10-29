@@ -1,0 +1,566 @@
+{
+  "audience_name": "An EU or UK public sector web team that must publish analytics without a consent banner",
+  "audience_fingerprint": "4e3a06b685729774df217d0d007746648d1cafa868b2a22e5eefe8b4dc7689b4",
+  "candidate_kind": "core",
+  "definition": {
+    "schema_version": 2,
+    "required_structural_signals": [
+      {
+        "code": "org_type_public_sector_body",
+        "description": "Government department or agency, municipality, library, school/trust, university or other publicly funded body"
+      },
+      {
+        "code": "operates_in_eu_or_uk_jurisdiction",
+        "description": "Subject to GDPR/UK GDPR and PECR-equivalent consent rules"
+      }
+    ],
+    "required_workflow_signals": [
+      {
+        "code": "publishes_cookies_or_privacy_page_listing_analytics",
+        "description": "Maintains a public cookies/privacy page that must name and justify any measurement tool"
+      },
+      {
+        "code": "vendor_assessment_or_dpia_required_before_adoption",
+        "description": "Evidence of DPIA, procurement or data protection review gating website tooling"
+      }
+    ],
+    "required_product_capabilities": [],
+    "optional_signals": [
+      {
+        "code": "google_analytics_currently_declared_or_recently_removed",
+        "description": "Cookies page currently names Google Analytics, or a changelog shows its removal"
+      },
+      {
+        "code": "invoice_or_purchase_order_billing_required",
+        "description": "Cannot pay by card; needs invoice or bank transfer"
+      },
+      {
+        "code": "identity_provider_sso_in_use",
+        "description": "Staff access governed by Entra ID, Google Workspace or Okta"
+      }
+    ],
+    "hard_disqualifiers": [
+      {
+        "code": "requires_soc2_or_iso27001_certification",
+        "description": "Assurance process mandates a third-party certification the evidence does not support",
+        "outcome": "EXCLUDED"
+      },
+      {
+        "code": "mandated_onpremise_analytics_hosting",
+        "description": "Policy requires analytics hosted on the organisation's own infrastructure",
+        "outcome": "EXCLUDED"
+      },
+      {
+        "code": "requires_contractual_uptime_sla",
+        "description": "Contract requires a guaranteed uptime SLA",
+        "outcome": "EXCLUDED"
+      }
+    ],
+    "eligible_subsegments": [
+      "Devolved and national government digital teams",
+      "Municipalities and city web teams",
+      "Public libraries and archives",
+      "Schools, academy trusts and universities"
+    ],
+    "excluded_subsegments": [
+      "Bodies handling special-category data on authenticated pages requiring on-premise only"
+    ],
+    "max_team_size": null
+  },
+  "situation": {
+    "text": "Digital teams running national and devolved UK government web services (such as GOV.UK/GDS and Scottish Government Design System sites) operate web analytics tooling built on Google Analytics/GA4 and Google Tag Manager as part of normal service operation, and are in the middle of migrating from Universal Analytics to GA4.",
+    "grounding": "grounded",
+    "evidence": [
+      {
+        "source_id": "S1",
+        "quote": "We’ve also been comparing our UA and GA4 data sources and using GA4 data in reports and dashboards."
+      },
+      {
+        "source_id": "S8",
+        "quote": "Scottish Government Design System sites primarily use Google Tag Manager (GTM) and Google Analytics (GA)."
+      }
+    ],
+    "inference_basis": ""
+  },
+  "incumbent_behaviour": [
+    {
+      "text": "Government digital teams run Google Analytics via Google Tag Manager as their standard web analytics setup.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S8",
+          "quote": "Scottish Government Design System sites primarily use Google Tag Manager (GTM) and Google Analytics (GA)."
+        }
+      ],
+      "inference_basis": ""
+    },
+    {
+      "text": "GOV.UK began running GA4 in parallel with the existing Universal Analytics before fully switching over.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S1",
+          "quote": "In September 2022, we began tracking a small number of high priority events (a data point that is collected to track user behaviour on our website e.g. a button click) in GA4, alongside UA."
+        }
+      ],
+      "inference_basis": ""
+    },
+    {
+      "text": "GOV.UK uses Google Tag Manager's versioning and environments to control and test tracking changes before release.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S1",
+          "quote": "Using Google Tag Manager’s versioning and environments capabilities has enabled us to control which events are available in which environment (for example, testing, production)."
+        }
+      ],
+      "inference_basis": ""
+    },
+    {
+      "text": "GOV.UK has had to query raw GA4 data directly in BigQuery rather than relying on the GA4 interface.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S1",
+          "quote": "Due to the limitations of GA4, we’ve often had to rely on querying the raw GA4 data in BigQuery (Google’s data warehouse where they send raw GA data) to get the information we want."
+        }
+      ],
+      "inference_basis": ""
+    },
+    {
+      "text": "Some government and public-interest sites run cookie-free analytics tools (Plausible, Matomo) alongside Google Analytics.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S3",
+          "quote": "This site also uses Plausible Analytics, a statistical data collection tool which does not use cookies."
+        },
+        {
+          "source_id": "S6",
+          "quote": "Matomo operates without setting cookies and utilises cookieless tracking to gather anonymous data on user behaviour."
+        }
+      ],
+      "inference_basis": ""
+    },
+    {
+      "text": "Government sites publish a cookies page that audits and categorises all cookies, including analytics cookies, for users.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S10",
+          "quote": "You will need to audit the cookies on your site or service, so you can describe all the cookies to your users."
+        }
+      ],
+      "inference_basis": ""
+    }
+  ],
+  "sophistication": null,
+  "sophistication_basis": null,
+  "problems": [
+    {
+      "id": "P1",
+      "statement": "GOV.UK found that the GA4 reporting interface — including its lack of multiple reporting views and issues with reports/explorations — does not meet their needs the way Universal Analytics did.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S1",
+          "quote": "Unlike in UA, you can’t have multiple reporting views in GA4 — sub-properties, the most comparable feature, cost more and do not have the same functionality."
+        },
+        {
+          "source_id": "S1",
+          "quote": "Also, issues with the reports and explorations — for example, limited column widths, date ranges not updating — mean that the interface currently does not meet our needs."
+        }
+      ],
+      "corroboration": 1,
+      "cost": "",
+      "cost_evidence": null
+    },
+    {
+      "id": "P2",
+      "statement": "GOV.UK's use of the GA4 API for tools such as Looker Studio is constrained by strict API quota limits.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S1",
+          "quote": "Some tools, such as Looker Studio, rely on the GA4 API to retrieve data."
+        },
+        {
+          "source_id": "S1",
+          "quote": "hamper our ability to use additional tools for reporting and analysis."
+        }
+      ],
+      "corroboration": 1,
+      "cost": "",
+      "cost_evidence": null
+    },
+    {
+      "id": "P3",
+      "statement": "GA4's changed definitions of core concepts (such as sessions) and its batching of events make it hard for GOV.UK to compare GA4 data with their historical Universal Analytics data and to plot user journeys.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S1",
+          "quote": "However, definitions of key concepts such as sessions have changed, making comparison between the two data sets difficult."
+        },
+        {
+          "source_id": "S1",
+          "quote": "GA4 also groups events in batches when sending them, which causes issues plotting user journeys and comparing UA and GA4 data."
+        }
+      ],
+      "corroboration": 1,
+      "cost": "",
+      "cost_evidence": null
+    },
+    {
+      "id": "P4",
+      "statement": "GOV.UK expects GA4's larger daily data tables to increase their data storage costs compared with Universal Analytics.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S1",
+          "quote": "Changes to the data structure mean that our daily data tables are almost 20% larger in GA4, so we expect storage costs to increase."
+        }
+      ],
+      "corroboration": 1,
+      "cost": "Daily GA4 data tables are almost 20% larger, so storage costs are expected to increase",
+      "cost_evidence": {
+        "source_id": "S1",
+        "quote": "Changes to the data structure mean that our daily data tables are almost 20% larger in GA4, so we expect storage costs to increase."
+      }
+    },
+    {
+      "id": "P5",
+      "statement": "Character limits on data sent to GA4 constrain what GOV.UK is able to collect.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S1",
+          "quote": "Character limits on the data that we send to GA4 affect our ability to collect data."
+        }
+      ],
+      "corroboration": 1,
+      "cost": "",
+      "cost_evidence": null
+    }
+  ],
+  "buyer_phrases": [
+    {
+      "text": "Google Analytics",
+      "kind": "names_a_tool",
+      "evidence": {
+        "source_id": "S1",
+        "quote": "[Google Analytics](https://support.google.com/analytics/answer/12159447?hl=en) (GA)"
+      }
+    },
+    {
+      "text": "Plausible Analytics",
+      "kind": "names_a_tool",
+      "evidence": {
+        "source_id": "S2",
+        "quote": "Plausible Analytics is a simple, lightweight (< 1 KB), open source and privacy-friendly analytics tool."
+      }
+    },
+    {
+      "text": "doesn’t use cookies",
+      "kind": "avoided",
+      "evidence": {
+        "source_id": "S2",
+        "quote": "It doesn’t use cookies."
+      }
+    },
+    {
+      "text": "the interface currently does not meet our needs",
+      "kind": "complaint",
+      "evidence": {
+        "source_id": "S1",
+        "quote": "Also, issues with the reports and explorations — for example, limited column widths, date ranges not updating — mean that the interface currently does not meet our needs."
+      }
+    },
+    {
+      "text": "storage costs to increase",
+      "kind": "names_the_problem",
+      "evidence": {
+        "source_id": "S1",
+        "quote": "Changes to the data structure mean that our daily data tables are almost 20% larger in GA4, so we expect storage costs to increase."
+      }
+    },
+    {
+      "text": "hamper our ability to use additional tools for reporting and analysis",
+      "kind": "complaint",
+      "evidence": {
+        "source_id": "S1",
+        "quote": "hamper our ability to use additional tools for reporting and analysis."
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "text": "Google Analytics' underlying product is being retired and replaced (Universal Analytics to GA4), forcing an analytics implementation change.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S1",
+          "quote": "Google is replacing the current version of GA, Universal Analytics or UA, with a new version, GA4."
+        }
+      ],
+      "inference_basis": ""
+    },
+    {
+      "text": "Legal rules distinguish essential from non-essential cookies, requiring prior user consent only for non-essential ones, which forces an explicit tool-by-tool consent decision.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S10",
+          "quote": "You must get the user’s consent before you set any cookies that are not essential."
+        }
+      ],
+      "inference_basis": ""
+    }
+  ],
+  "desired_outcomes": [
+    {
+      "text": "An analytics tool whose design is described as compliant with GDPR, CCPA and cookie law.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S2",
+          "quote": "Plausible is designed to be GDPR, CCPA and cookie law compliant."
+        }
+      ],
+      "inference_basis": ""
+    },
+    {
+      "text": "Avoiding procurement overhead by using analytics setups already tested and based on free products.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S8",
+          "quote": "The setup outlined in the pages in this section has already been tested and approved for data security and is based on free products, so there’s no need to go through procurement."
+        }
+      ],
+      "inference_basis": ""
+    },
+    {
+      "text": "Collecting visit data without any personally identifiable or individually trackable information.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S2",
+          "quote": "Plausible doesn’t collect or store any personal or identifiable information."
+        }
+      ],
+      "inference_basis": ""
+    },
+    {
+      "text": "Using cookie-free analytics tools lets a site collect visit data without triggering the legal requirement to obtain prior consent that applies to non-essential cookies like Google Analytics.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S10",
+          "quote": "You must get the user’s consent before you set any cookies that are not essential."
+        },
+        {
+          "source_id": "S3",
+          "quote": "This site also uses Plausible Analytics, a statistical data collection tool which does not use cookies."
+        }
+      ],
+      "inference_basis": "Combines the design-system's legal rule that consent is required only for non-essential cookies with a cookie-policy page describing Plausible as not setting cookies; neither single source states this combined conclusion directly."
+    }
+  ],
+  "signals": [
+    {
+      "text": "Cookies/privacy pages on government sites explicitly name a cookie-free analytics tool as part of their published cookie statement.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S3",
+          "quote": "This site also uses Plausible Analytics, a statistical data collection tool which does not use cookies."
+        }
+      ],
+      "inference_basis": ""
+    },
+    {
+      "text": "A devolved government's privacy notice describes using a self-hosted, cookieless analytics tool alongside Google Analytics.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S6",
+          "quote": "Matomo operates without setting cookies and utilises cookieless tracking to gather anonymous data on user behaviour."
+        }
+      ],
+      "inference_basis": ""
+    },
+    {
+      "text": "A design-system guidance page for government sites lists cookie-free analytics tools as an alternative to consider.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S8",
+          "quote": "Analytics tools which do not rely on cookies are also available and should be considered when deciding on an analytics solution - these include"
+        }
+      ],
+      "inference_basis": ""
+    }
+  ],
+  "where": [
+    {
+      "text": "Scottish Government Design System publishes dedicated analytics guidance, including alternative cookie-free tools, at designsystem.gov.scot/guidance/analytics.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S8",
+          "quote": "Analytics tools which do not rely on cookies are also available and should be considered when deciding on an analytics solution - these include"
+        }
+      ],
+      "inference_basis": ""
+    },
+    {
+      "text": "The GDS technology blog publishes first-person accounts of GOV.UK's GA4 migration work and invites other departments to compare experiences.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S1",
+          "quote": "We’d love to learn from other departments’ experiences, and hear how others are managing the issues we’re facing with GA4."
+        }
+      ],
+      "inference_basis": ""
+    },
+    {
+      "text": "Scottish and Welsh government sites publish their analytics tool choices on dedicated cookies pages.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S3",
+          "quote": "This site also uses Plausible Analytics, a statistical data collection tool which does not use cookies."
+        },
+        {
+          "source_id": "S6",
+          "quote": "We use Plausible Analytics on this site to collect some anonymous usage data for statistical purposes."
+        }
+      ],
+      "inference_basis": ""
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "requested_url": "https://gds.blog.gov.uk/2023/03/27/sharing-data-and-lessons-from-our-google-analytics-4-upgrade/",
+      "final_url": "https://gds.blog.gov.uk/2023/03/27/sharing-data-and-lessons-from-our-google-analytics-4-upgrade/",
+      "title": "Sharing data and lessons from our Google Analytics 4 upgrade – Government Digital Service",
+      "tier": 1,
+      "venue": "Government Digital Service blog (GOV.UK)",
+      "fetched_at": "2026-10-18T05:33:34.259485Z",
+      "published_date": null,
+      "content_hash": "b93807fe1f5e156f6124168beec9a890cfa423b59bfacf9945f73a8140ff470d"
+    },
+    {
+      "id": "S2",
+      "requested_url": "https://about.publiccode.net/activities/tool-management/plausible-analytics.html",
+      "final_url": "https://about.publiccode.net/activities/tool-management/plausible-analytics.html",
+      "title": "Plausible Analytics, About the Foundation for Public Code",
+      "tier": 1,
+      "venue": "Foundation for Public Code",
+      "fetched_at": "2026-10-18T05:33:33.857937Z",
+      "published_date": null,
+      "content_hash": "28864d3fffef1ff497f511b41fec231e17ef165533ed8ee2c0878881ba6fb16a"
+    },
+    {
+      "id": "S3",
+      "requested_url": "https://www.mygov.scot/cookies",
+      "final_url": "https://www.mygov.scot/cookies",
+      "title": "Cookies - mygov.scot",
+      "tier": 2,
+      "venue": "mygov.scot",
+      "fetched_at": "2026-10-18T05:33:34.052645Z",
+      "published_date": null,
+      "content_hash": "1aa02b50a1b5785aff379cbbb2b0855710a4a65784fc8179a76a962b6d0d4315"
+    },
+    {
+      "id": "S4",
+      "requested_url": "https://data.gov.scot/cookies/",
+      "final_url": "https://data.gov.scot/cookies/",
+      "title": "Cookies - Data about Scotland",
+      "tier": 2,
+      "venue": "data.gov.scot",
+      "fetched_at": "2026-10-18T05:33:34.106188Z",
+      "published_date": null,
+      "content_hash": "11d7d2c6781277f1c6ed335b7a340907b43ce9e2828f1550a23c6a0e716474ba"
+    },
+    {
+      "id": "S5",
+      "requested_url": "https://www.gov.scot/cookies/",
+      "final_url": "https://www.gov.scot/cookies/",
+      "title": "Cookies - gov.scot",
+      "tier": 2,
+      "venue": "gov.scot",
+      "fetched_at": "2026-10-18T05:33:34.432464Z",
+      "published_date": null,
+      "content_hash": "accc8c32c037f5404f060443edeb165e78bca6436953d77a01e6bda7f78ac23e"
+    },
+    {
+      "id": "S6",
+      "requested_url": "https://www.gov.wales/details-about-cookies-govwales",
+      "final_url": "https://www.gov.wales/details-about-cookies-govwales",
+      "title": "Details about cookies on GOV.WALES | GOV.WALES",
+      "tier": 2,
+      "venue": "gov.wales",
+      "fetched_at": "2026-10-18T05:33:34.360528Z",
+      "published_date": null,
+      "content_hash": "a522f02ba61d3fb60aa2e049a211fbd81b98d655f23e8e2ff2da141a932fd22a"
+    },
+    {
+      "id": "S7",
+      "requested_url": "https://datamap.gov.wales/details-about-cookies/",
+      "final_url": "https://datamap.gov.wales/details-about-cookies/",
+      "title": "Details about cookies | DataMapWales",
+      "tier": 2,
+      "venue": "datamap.gov.wales",
+      "fetched_at": "2026-10-18T05:33:34.780577Z",
+      "published_date": null,
+      "content_hash": "3bd990348bb1904c08cf7d8ad2d40714cdd4fbded0d24f74d2ab1475cf068876"
+    },
+    {
+      "id": "S8",
+      "requested_url": "https://designsystem.gov.scot/guidance/analytics",
+      "final_url": "https://designsystem.gov.scot/guidance/analytics",
+      "title": "Analytics - Design System",
+      "tier": 2,
+      "venue": "Scottish Government Design System",
+      "fetched_at": "2026-10-18T05:33:34.727210Z",
+      "published_date": null,
+      "content_hash": "b2b343ee2292c98df80f525353d58b80a8af009f0c95bbeda9ca666c1a4cbe27"
+    },
+    {
+      "id": "S9",
+      "requested_url": "https://designsystem.gov.scot/guidance/analytics/google-analytics",
+      "final_url": "https://designsystem.gov.scot/guidance/analytics/google-analytics",
+      "title": "Google Analytics 4 (GA4) - Design System",
+      "tier": 2,
+      "venue": "Scottish Government Design System",
+      "fetched_at": "2026-10-18T05:33:34.671090Z",
+      "published_date": null,
+      "content_hash": "60353819c9508cb9522847bf8e14678beab67d223360f82d03aa415e7beda58f"
+    },
+    {
+      "id": "S10",
+      "requested_url": "https://designsystem.gov.scot/patterns/cookies-page",
+      "final_url": "https://designsystem.gov.scot/patterns/cookies-page",
+      "title": "Cookies page - Design System",
+      "tier": 2,
+      "venue": "Scottish Government Design System",
+      "fetched_at": "2026-10-18T05:33:34.987152Z",
+      "published_date": null,
+      "content_hash": "78d8d1bba6f3399ba5c1f21db34b0066ff6de8d3df90c016a304e9d9a571e84e"
+    }
+  ],
+  "dropped_claims": 5,
+  "interpretation_warnings": [],
+  "researched_at": "2026-10-18T05:38:56.629574Z",
+  "id": "4de3d4f1-fcea-44ca-8150-55f4e6111b01",
+  "brand_id": "0fb96935-bd69-47f5-9347-98f5ae32cc46",
+  "audience_key": "an eu or uk public sector web team that must publish analytics without a consent banner",
+  "version": 1,
+  "source_map_id": "4d186a54-8b46-4555-8d64-b97292c3a036",
+  "source_map_version": 1,
+  "created_at": "2026-10-18T05:38:56.657764"
+}

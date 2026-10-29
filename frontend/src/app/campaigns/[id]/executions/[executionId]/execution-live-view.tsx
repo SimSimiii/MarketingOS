@@ -31,7 +31,7 @@ import { ROLE_CATALOG } from "@/lib/specialists";
 import { cn } from "@/lib/utils";
 import type { ExecutionStatus, GeneratedAsset } from "@/lib/types";
 import { refreshPage } from "@/lib/page-data";
-import { activityLabel, problemText } from "@/lib/product-progress";
+import { activityLabel, executionReview, problemText } from "@/lib/product-progress";
 
 const TERMINAL: ExecutionStatus[] = ["completed", "failed", "cancelled"];
 
@@ -160,8 +160,8 @@ export function ExecutionLiveView({
   const isLive = !TERMINAL.includes(status);
   const currentFinal = finalSnapshot?.id === executionId ? finalSnapshot : null;
   const currentResult = currentFinal?.result ?? initialResult;
-  const needsReview = status === "completed" && (Boolean(errorMessage) ||
-    ["degraded", "budget_exhausted", "cancelled", "failed"].includes(String(currentResult?.run_status)));
+  const review = executionReview(status, currentResult, errorMessage);
+  const needsReview = review.needsReview;
   const report = reportFromResult(currentResult);
   const questions = report?.questions ?? [];
 
@@ -295,7 +295,7 @@ export function ExecutionLiveView({
             </span>
           ) : (
             <StatusBadge status={status} warning={needsReview}
-              label={status === "completed" && report && report.delivered < report.promised ? "Partial delivery" : undefined} />
+              label={review.label} />
           )}
           <span className="tabular-nums" title="Wall-clock time">
             {isLive ? "Running for" : "Took"} {formatDuration(elapsedMs)}
@@ -349,6 +349,10 @@ export function ExecutionLiveView({
           )}
         </>}
       />
+
+      {needsReview && <Notice tone="warning" title="Drafts need review">
+        <ul className="list-inside list-disc">{review.reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul>
+      </Notice>}
 
       {/* A run that stopped to ask is not a failure, and showing it as one -
           a red box with the questions crammed into an error string - is what

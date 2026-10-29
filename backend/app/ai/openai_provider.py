@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 from app.ai._win_loop import _needs_proactor_thread, _ProactorLoopThread
-from app.ai.base import AIProvider, AIRequest, AIResponse, AIUsage, ResearchTool
+from app.ai.base import AIProvider, AIRequest, AIResponse, AIUsage, ProviderCallError, ResearchTool
 from app.ai.models import OpenAIModel
 
 logger = logging.getLogger("marketingos.ai.openai")
@@ -46,6 +46,15 @@ _CALL_TIMEOUT_SECONDS = 600.0
 #: How much of the CLI's stderr is quoted back in an error. Enough to carry a
 #: rate-limit message or an auth failure, short enough not to bury it.
 _STDERR_EXCERPT_CHARS = 800
+
+
+def _turn_error(message: str) -> ProviderCallError:
+    # Hard subscription exhaustion cannot clear during a transport retry.
+    hard_limit = any(marker in message.casefold() for marker in (
+        "usage limit", "usage_limit_reached", "insufficient_quota",
+        "quota exceeded", "quota has been exceeded",
+    ))
+    return ProviderCallError(message, retryable=not hard_limit)
 
 
 class CodexNotInstalledError(RuntimeError):
@@ -211,6 +220,20 @@ class OpenAIProvider(AIProvider):
             # One JSON object per line on stdout: the only way to get the
             # answer and the token counts out of the same call.
             "--json",
+            # App roles must not inherit the host's coding skills or project
+            # guidance. These overrides affect this child call only.
+            "-c", "project_doc_max_bytes=0",
+            "-c", "skills.include_instructions=false",
+            "-c", "skills.bundled.enabled=false",
+            "-c", "features.skip_host_skill_discovery=true",
+            "-c", "features.skill_search=false",
+            "-c", "features.shell_tool=false",
+            "-c", "features.apps=false",
+            "-c", "features.plugins=false",
+            "-c", "features.memories=false",
+            "-c", "features.multi_agent=false",
+            # Without an explicit override, Codex still allows cached search.
+            "-c", 'web_search="live"' if wants_search else 'web_search="disabled"',
             # No session file per call. A campaign makes tens of calls and this
             # process is a server; without it every run leaves a trail of
             # transcripts in ~/.codex/sessions that nothing ever reads.
@@ -266,10 +289,10 @@ class OpenAIProvider(AIProvider):
 
         text, usage, model, failure = _read_stream(stdout.decode("utf-8", "replace"))
         if failure is not None:
-            raise RuntimeError(f"codex exec reported a failed turn: {failure}")
+            raise _turn_error(f"codex exec reported a failed turn: {failure}")
         if process.returncode != 0:
             detail = stderr.decode("utf-8", "replace").strip()[-_STDERR_EXCERPT_CHARS:]
-            raise RuntimeError(
+            raise _turn_error(
                 f"codex exec exited {process.returncode}: {detail or 'no output on stderr'}"
             )
         if not text.strip():

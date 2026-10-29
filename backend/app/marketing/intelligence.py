@@ -29,6 +29,8 @@ from app.market.audience_research import (
     BuyerPhrase,
     EvidenceReference,
     SourcedObservation,
+    interpretation_reversal,
+    review_research_interpretations,
 )
 from app.market.qualification import CompanyQualification, SignalGrounding
 from app.market.relevance import (
@@ -98,6 +100,7 @@ class IntelligenceObservation(BaseModel):
     text: str
     grounding: str
     evidence: list[EvidenceReference] = Field(default_factory=list)
+    inference_basis: str = ""
 
 
 class IntelligenceProblem(BaseModel):
@@ -107,6 +110,7 @@ class IntelligenceProblem(BaseModel):
     evidence: list[EvidenceReference] = Field(default_factory=list)
     corroboration: int = 0
     cost: str = ""
+    review_notes: list[str] = Field(default_factory=list)
 
 
 class IntelligencePhrase(BaseModel):
@@ -147,6 +151,7 @@ class CampaignIntelligenceTrace(BaseModel):
     dossier_schema_version: int = 1
     stale_reasons: list[str] = Field(default_factory=list)
     legacy_fallback_used: bool = True
+    qualified_subsegment: str = ""
     withhold_evidence_selected: list[str] = Field(default_factory=list)
     partial_caveats_injected: list[str] = Field(default_factory=list)
     validation_warnings: list[str] = Field(default_factory=list)
@@ -162,9 +167,10 @@ class CampaignIntelligenceTrace(BaseModel):
 
 
 class CampaignIntelligence(BaseModel):
-    """Only the selected audience's verified, campaign-independent context."""
+    """The selected audience, discovery hypotheses and verified context."""
 
     selected_audience: str
+    selected_need: str = ""
     situation: IntelligenceObservation | None = None
     problems: list[IntelligenceProblem] = Field(default_factory=list)
     incumbent_behaviour: list[IntelligenceObservation] = Field(default_factory=list)
@@ -182,6 +188,8 @@ class CampaignIntelligence(BaseModel):
     recommendation_state: RecommendationState | None = None
     readiness: CampaignReadiness | None = None
     recommendation_reasons: list[str] = Field(default_factory=list)
+    eligible_subsegment: str = ""
+    recommended_next_action: str = ""
     allowed_claims: list[str] = Field(default_factory=list)
     allowed_evidence_ids: list[str] = Field(default_factory=list)
     forbidden_claims: list[str] = Field(default_factory=list)
@@ -211,7 +219,7 @@ class CampaignIntelligence(BaseModel):
             "Source authority (highest first):",
             "1. Complete Evidence Ledger: final authority on every product claim.",
             "2. Current Relevance Dossier: ranking and product/problem fit judgment.",
-            "3. Verified Audience Research: authority on this buyer's reality.",
+            "3. Verified Audience Research: sourced observations about relevant market members.",
             "4. Positioning Map: authority on current market territory.",
             "5. Discovery map: hypotheses and fallback only.",
             "6. Compiled stated audience: the company's view and final fallback.",
@@ -219,6 +227,18 @@ class CampaignIntelligence(BaseModel):
             f"Selected audience: {self.selected_audience}",
             f"Audience resolution: {self.trace.audience_resolution_status}",
         ]
+        if self.selected_need:
+            lines.extend([
+                f"Discovery job hypothesis (not an additional campaign requirement): {self.selected_need}",
+                (
+                    "The exact selected audience above supplies the target constraints. This "
+                    "mapped hypothesis may mix a desired result with suggested methods. Those "
+                    "methods are optional, not user instructions or proof of buyer needs. Choose "
+                    "a supported approach from research and licensed product facts, preserving "
+                    "the selected audience's stated job or format. Do not infer recipient history, "
+                    "deadlines, tools or likely results."
+                ),
+            ])
         if not self.research_loaded:
             if self.trace.audience_resolution_status is AudienceResolution.AMBIGUOUS:
                 lines.append(
@@ -251,6 +271,7 @@ class CampaignIntelligence(BaseModel):
                 f"- [{item.id}] {item.statement} "
                 f"(grounding={item.grounding}, corroboration={item.corroboration}"
                 + (f", cost={item.cost}" if item.cost else "")
+                + (f"; limits={'; '.join(item.review_notes)}" if item.review_notes else "")
                 + f"; source references={item.evidence})"
                 for item in self.problems
             )
@@ -271,8 +292,10 @@ class CampaignIntelligence(BaseModel):
         )
         if self.trace.dossier_status is DossierPosture.MISSING:
             lines.append(
-                "No dossier exists. Derive product relevance from the complete ledger and "
-                "legacy inputs as before."
+                "No current dossier establishes a product/problem bridge. Audience problems "
+                "remain sourced context, not proof that the assigned product capability solves "
+                "them. A functional announcement or activation may proceed without a pain "
+                "or failing alternative. Preserve the facts and keep that limit explicit."
             )
             return "\n".join(lines)
         lines.append(f"Dossier: {self.trace.dossier_id} v{self.trace.dossier_version}")
@@ -281,6 +304,15 @@ class CampaignIntelligence(BaseModel):
             # printing both taught the reader there were two verdicts to weigh.
             lines.append(f"Campaign recommendation: {self.recommendation_state}")
             lines.extend(f"- {item}" for item in self.recommendation_reasons)
+            if self.dossier_current and self.eligible_subsegment:
+                lines.append("Qualified campaign scope: " + self.eligible_subsegment)
+                lines.append(
+                    "The selected map audience may be broader. Keep the argument and reader "
+                    "inside this qualified slice; do not present its fit as established for "
+                    "every member of the broader audience."
+                )
+            if self.dossier_current and self.recommended_next_action:
+                lines.append("Recommended next action: " + self.recommended_next_action)
             lines.append(
                 "The claims below are the complete set of product facts this campaign may "
                 "assert. Anything not listed is unavailable to you, however true it is "
@@ -289,6 +321,12 @@ class CampaignIntelligence(BaseModel):
             if self.allowed_claims:
                 lines.append("Campaign-safe product claims:")
                 lines.extend(f"- {item}" for item in self.allowed_claims)
+                lines.append(
+                    "This set includes verified supporting details, not only priority "
+                    "arguments. Use ranked evidence to choose the focus; use other licensed "
+                    "facts only to explain its mechanism, prerequisites or offer limits. "
+                    "An available feature does not establish a buyer outcome."
+                )
             else:
                 lines.append(
                     "Campaign-safe product claims: none. Do not assert a product fact."
@@ -345,7 +383,7 @@ class CampaignIntelligence(BaseModel):
             lines.append(
                 "Ranked ledger references: prefer LEAD, strengthen with SUPPORT, use CONTEXT "
                 + (
-                    "only to explain. Withheld and contested references are already gone "
+                    "only to explain. Withheld references are already gone "
                     "from this list and from the claims above; there is nothing here you "
                     "have to hold back by judgment."
                     if self.v2_claim_boundary
@@ -398,17 +436,98 @@ class CampaignIntelligence(BaseModel):
             (item.statement for item in self.problems if item.id == problem_id), ""
         )
 
-    def normalized_felt_need(self, proposed: str) -> str:
-        if not self.problems:
-            return proposed
-        matched = _one_text_match(proposed, [item.statement for item in self.problems])
-        return matched or self.problems[0].statement
+    def normalized_felt_need(
+        self, proposed: str, evidence_ids: list[str] | None = None,
+        problem_ids: list[str] | None = None,
+    ) -> str:
+        """Keep a supported need without substituting an unrelated first problem.
+
+        A dossier link is an interpretation, so a mismatch constrains the
+        argument and is reported; it does not become a factual blocking gate.
+        Empty need is valid for announcements, activation and functional copy.
+        """
+        if not proposed.strip() and not problem_ids:
+            return ""
+        if not self.dossier_current:
+            self.trace.warn(
+                "No current dossier establishes a link between the selected product evidence "
+                "and the proposed buyer problem. The sourced problem remains available as "
+                "audience context, but the argument must use the documented function without "
+                "claiming to resolve it."
+            )
+            return ""
+        supported_problems = [item for item in self.problems
+                              if item.grounding in {str(Grounding.GROUNDED), str(Grounding.USER_STATED)}
+                              or self._conditional_problem(item, evidence_ids or [])]
+        referenced = [item for item in supported_problems if item.id in (problem_ids or [])]
+        if problem_ids:
+            # Explicit references select a researched premise; the wording is
+            # canonicalized rather than treated as a new source assertion.
+            if len(referenced) != len(set(problem_ids)):
+                self.trace.warn("The proposition referenced an unknown or unsupported problem id.")
+                return ""
+            supported: list[str] = []
+            for problem in referenced:
+                linked = {item.evidence_id for item in self.ranked_evidence if problem.id in item.problem_ids}
+                linked.update(id_ for fit in self.problem_fits if fit.problem_id == problem.id
+                              and fit.verdict in {FitVerdict.SOLVED, FitVerdict.ADDRESSED, FitVerdict.PARTIAL}
+                              for id_ in fit.evidence_ids)
+                if not linked.intersection(evidence_ids or []):
+                    self.trace.warn(f"Problem {problem.id} has no supported link to the assigned evidence.")
+                    return ""
+                supported.append(problem.statement)
+            return " ".join(supported)
+        matched = _one_text_match(proposed, [item.statement for item in supported_problems])
+        if not matched and evidence_ids and self.dossier_current:
+            linked_problems = {problem_id for item in self.ranked_evidence
+                               if item.evidence_id in evidence_ids for problem_id in item.problem_ids}
+            linked_problems.update(fit.problem_id for fit in self.problem_fits
+                                   if set(fit.evidence_ids).intersection(evidence_ids)
+                                   and fit.verdict in {FitVerdict.SOLVED, FitVerdict.ADDRESSED, FitVerdict.PARTIAL})
+            candidates = [item for item in supported_problems if item.id in linked_problems]
+            if len(candidates) == 1:
+                matched = candidates[0].statement
+                self.trace.warn("The proposed buyer problem was replaced by the single researched problem linked to the selected product evidence: " + matched)
+        if not matched:
+            self.trace.warn("The proposed buyer problem was not established by the selected audience research; no substitute pain was inserted.")
+            return ""
+        problem = next(item for item in self.problems if item.statement == matched)
+        if evidence_ids is not None:
+            linked = {item.evidence_id for item in self.ranked_evidence if problem.id in item.problem_ids}
+            for fit in self.problem_fits:
+                if fit.problem_id == problem.id and fit.verdict in {FitVerdict.SOLVED, FitVerdict.ADDRESSED, FitVerdict.PARTIAL}:
+                    linked.update(fit.evidence_ids)
+            if not linked.intersection(evidence_ids):
+                self.trace.warn("The selected product evidence has no dossier link to the proposed buyer problem; describe the supported function without promising to solve that problem.")
+                return ""
+        return matched
 
     def normalized_status_quo(self, proposed: str) -> str:
-        choices = [item.text for item in self.incumbent_behaviour]
-        if not choices:
-            return proposed
-        return _one_text_match(proposed, choices) or choices[0]
+        choices = [item.text for item in self.incumbent_behaviour
+                   if item.grounding in {str(Grounding.GROUNDED), str(Grounding.USER_STATED)}]
+        if not proposed.strip():
+            return ""
+        matched = _one_text_match(proposed, choices)
+        if not matched:
+            self.trace.warn("The proposed current alternative was not established by audience research; it remains unknown.")
+        return matched
+
+    def _conditional_problem(self, problem: IntelligenceProblem, evidence_ids: list[str]) -> bool:
+        """An inferred audience need is a conditional angle, never a buyer fact."""
+        if (not self.dossier_current or not self.v2_claim_boundary
+                or problem.grounding != str(Grounding.INFERRED)
+                or not problem.evidence
+                or interpretation_reversal(problem.statement, problem.evidence)):
+            return False
+        licensed = (set(evidence_ids) & set(self.allowed_evidence_ids)
+                    - set(self.forbidden_evidence_ids))
+        return any(
+            fit.problem_id == problem.id
+            and fit.verdict in {FitVerdict.ADDRESSED, FitVerdict.PARTIAL, FitVerdict.SOLVED}
+            and bool(licensed.intersection(fit.evidence_ids))
+            and (fit.verdict is not FitVerdict.PARTIAL or bool(fit.caveat))
+            for fit in self.problem_fits
+        )
 
     def validate_against(self, ledger: EvidenceLedger) -> None:
         """Recheck every dossier reference at the campaign boundary."""
@@ -528,10 +647,19 @@ class CampaignIntelligence(BaseModel):
         """Safety constraints mechanically implied by selected, still-licensed ids."""
         selected = set(evidence_ids) & ledger.ids
         caveats: list[str] = []
+        for problem in self.problems:
+            if self._conditional_problem(problem, list(selected)):
+                caveats.append(
+                    f"Problem {problem.id} is an inferred audience hypothesis: {problem.statement} "
+                    "Use it only conditionally (if this is relevant to the reader), not as a "
+                    "known current pain, behavior or outcome of the recipient. Product fit "
+                    "does not establish current demand or a demonstrated customer outcome."
+                )
+                caveats.extend(problem.review_notes)
         for fit in self.problem_fits:
             valid_ids = set(fit.evidence_ids) & ledger.ids
             if (
-                fit.verdict is FitVerdict.PARTIAL
+                fit.verdict in {FitVerdict.PARTIAL, FitVerdict.ADDRESSED, FitVerdict.SOLVED}
                 and fit.caveat
                 and selected & valid_ids
             ):
@@ -641,7 +769,7 @@ def resolve_audience_research(
     parsed: list[tuple[AudienceResearchRow, AudienceResearch]] = []
     for row in rows:
         try:
-            parsed.append((row, AudienceResearch.model_validate(row.payload)))
+            parsed.append((row, review_research_interpretations(AudienceResearch.model_validate(row.payload))))
         except ValidationError:
             continue
 
@@ -677,19 +805,23 @@ def build_campaign_intelligence(
     match: AudienceResearchMatch,
     dossier_status: RelevanceStatus | None,
     ledger: EvidenceLedger,
+    selected_need: str = "",
 ) -> CampaignIntelligence:
     trace = CampaignIntelligenceTrace(
         selected_audience=selected_audience,
         audience_resolution_status=match.status,
     )
     if match.row is None or match.research is None:
-        return CampaignIntelligence(selected_audience=selected_audience, trace=trace)
+        return CampaignIntelligence(
+            selected_audience=selected_audience, selected_need=selected_need, trace=trace
+        )
 
-    research = match.research
+    research = review_research_interpretations(match.research)
     trace.audience_research_id = match.row.id
     trace.audience_research_version = match.row.version
     context = CampaignIntelligence(
         selected_audience=selected_audience,
+        selected_need=selected_need,
         situation=_observation(research.situation),
         problems=[_problem(item) for item in research.problems[:MAX_RESEARCH_PROBLEMS]],
         incumbent_behaviour=_observations(research.incumbent_behaviour),
@@ -701,6 +833,8 @@ def build_campaign_intelligence(
         where=_observations(research.where),
         trace=trace,
     )
+    for warning in research.interpretation_warnings:
+        trace.warn(warning)
     if dossier_status is None or dossier_status.dossier is None:
         return context
 
@@ -715,10 +849,10 @@ def build_campaign_intelligence(
     trace.legacy_fallback_used = trace.dossier_status is not DossierPosture.CURRENT
     dossier = dossier_status.dossier
     trace.dossier_schema_version = dossier.schema_version
-    if "knowledge_changed" in trace.stale_reasons:
+    if {"knowledge_changed", "interpretation_changed"}.intersection(trace.stale_reasons):
         # Recompilation can renumber every ledger id. A dossier's old claim
         # contract would then license or reject entirely different facts.
-        trace.warn("Ignored stale dossier claims and rankings after knowledge changed.")
+        trace.warn("Ignored stale dossier claims and rankings after knowledge or interpretation changed.")
         return context
     _add_dossier(context, dossier, ledger)
     context.admit_automatically_recovered(ledger)
@@ -782,7 +916,9 @@ def _add_dossier(
     valid_evidence = ledger.ids
     valid_problems = {item.id for item in context.problems}
     context.orientation = _compact(dossier.orientation)
-    context.trace.validation_warnings = _distinct(dossier.validation_warnings)[
+    context.trace.validation_warnings = _distinct([
+        *context.trace.validation_warnings, *dossier.validation_warnings,
+    ])[
         :MAX_VALIDATION_WARNINGS
     ]
     if dossier.schema_version >= 2 and dossier.recommendation is not None:
@@ -790,6 +926,11 @@ def _add_dossier(
         context.recommendation_state = recommendation.state
         context.readiness = recommendation.readiness
         context.recommendation_reasons = list(recommendation.reasons)
+        if context.dossier_current:
+            context.eligible_subsegment = recommendation.eligible_subsegment.strip()
+            context.recommended_next_action = recommendation.recommended_next_action.strip()
+            if recommendation.state is RecommendationState.RECOMMENDED_NARROW:
+                context.trace.qualified_subsegment = context.eligible_subsegment
         context.allowed_claims = list(recommendation.allowed_claims)
         context.allowed_evidence_ids = list(recommendation.allowed_evidence_ids)
         context.forbidden_claims = list(recommendation.forbidden_claims)
@@ -835,7 +976,10 @@ def _add_dossier(
                 f"Ignored dossier fit with unknown problem id {fit.problem_id}."
             )
             continue
-        if fit.verdict in {FitVerdict.ADDRESSED, FitVerdict.OFF_LIMITS}:
+        if (
+            not context.v2_claim_boundary
+            and fit.verdict in {FitVerdict.ADDRESSED, FitVerdict.OFF_LIMITS}
+        ):
             context.trace.warn(
                 f"Ignored unavailable {fit.verdict} fit for problem {fit.problem_id}."
             )
@@ -905,7 +1049,15 @@ def _add_dossier(
 def _observation(item: SourcedObservation | None) -> IntelligenceObservation | None:
     if item is None or not item.text.strip():
         return None
-    return IntelligenceObservation(text=_compact(item.text), grounding=str(item.grounding), evidence=item.evidence)
+    notes = re.findall(
+        r"Historical sources \([^)]{0,200}\); present applicability is not corroborated\."
+        r"|Publication date unknown; retrieval today does not establish current applicability\.",
+        item.inference_basis,
+    )
+    if "Review required:" in item.inference_basis:
+        notes.append("Review required: interpretation may reverse cited source meaning.")
+    return IntelligenceObservation(text=_compact(item.text), grounding=str(item.grounding),
+                                   evidence=item.evidence, inference_basis="; ".join(notes))
 
 
 def _observations(items: list[SourcedObservation]) -> list[IntelligenceObservation]:
@@ -924,6 +1076,7 @@ def _problem(item: AudienceProblem) -> IntelligenceProblem:
         evidence=item.evidence,
         corroboration=item.corroboration,
         cost=_compact(item.cost),
+        review_notes=list(item.review_notes),
     )
 
 
@@ -934,7 +1087,8 @@ def _phrase(item: BuyerPhrase) -> IntelligencePhrase:
 def _problem_fact(item: AudienceProblem, research: AudienceResearch) -> Fact:
     reference = item.evidence[0] if item.evidence else None
     return Fact(
-        statement=item.statement,
+        statement=item.statement + (" [Source limits: " + "; ".join(item.review_notes) + "]"
+                                    if item.review_notes else ""),
         grounding=item.grounding,
         provenance=_provenance(reference, research) if reference else None,
     )
@@ -1014,7 +1168,9 @@ def _render_observations(
 ) -> None:
     if observations:
         lines.append(label + ":")
-        lines.extend(f"- {item.text} (grounding={item.grounding}; source references={item.evidence})" for item in observations)
+        lines.extend(f"- {item.text} (grounding={item.grounding}; source references={item.evidence}"
+                     + (f"; interpretation: {item.inference_basis}" if item.inference_basis else "")
+                     + ")" for item in observations)
 
 
 def _forgiving_audience_match(left: str, right: str) -> bool:

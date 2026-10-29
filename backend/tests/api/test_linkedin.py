@@ -12,7 +12,7 @@ from app.market.demand import AudienceSegment, DemandMap
 from app.market.store import MarketStore
 from app.models.knowledge_artifacts import KnowledgeArtifactSet
 from app.models.linkedin import LinkedInRun
-from app.schemas.linkedin import MessageRequest, SearchRequest, linkedin_url
+from app.schemas.linkedin import MessageRequest, SearchRequest, linkedin_url, public_url
 from app.services.linkedin_service import reap_linkedin_runs
 
 
@@ -323,3 +323,95 @@ def test_overlong_connection_note_is_rewritten(client, provider, engine):
     assert row["state"] == "completed"
     assert row["calls"] == 2
     assert row["result"]["characters"] <= 200
+
+
+@pytest.mark.parametrize(("target", "kind", "url", "audience"), [
+    ("companies", "company", "https://repairs.example/about", "Synthetic repair cooperatives"),
+    ("people", "professional", "https://repairs.example/team/alex", "Synthetic workshop owners"),
+    ("venues", "venue", "https://families.example/partnerships", "Synthetic parents planning holidays"),
+])
+def test_public_prospect_search_saves_scope_and_filters_in_one_call(
+    client, provider, engine, monkeypatch, target, kind, url, audience,
+):
+    """Synthetic B2B and consumer cases share one bounded, unverified-lead path."""
+    monkeypatch.setattr(provider, "available_tools", lambda model=None: {ResearchTool.WEB_SEARCH})
+    brand_id = brand(client)
+    with Session(engine) as db:
+        MarketStore(db).save_map(UUID(brand_id), DemandMap(segments=[AudienceSegment(
+            name=audience, who="A synthetic buyer comparing options", buyer_role="Owner",
+            where=["Synthetic family travel publication"],
+        )]))
+    candidate = {"kind": kind, "name": "Synthetic public match", "url": url,
+                 "source_url": url, "excerpt": "Synthetic public description"}
+    provider.set_default("linkedin_research", json.dumps({
+        "candidates": [candidate, candidate], "note": "Search excerpts; review before use",
+    }))
+    started = client.post(f"/api/market/{brand_id}/linkedin/search", json={
+        "query": "Relevant public options", "source": "web", "target": target,
+        "segment_name": audience, "limit": 3,
+        "criteria": {"geographies": ["France"], "languages": ["French"],
+                     "exclusions": ["Unrelated directories"]},
+    })
+    assert started.status_code == 202, started.text
+    row = await_run(client, brand_id, started.json()["id"])
+    assert row["state"] == "completed", row
+    assert row["calls"] == 1
+    assert row["request"]["source"] == "web"
+    assert row["request"]["segment_name"] == audience
+    assert row["result"]["criteria"]["languages"] == ["French"]
+    assert len(row["result"]["candidates"]) == 1
+    assert row["result"]["candidates"][0]["kind"] == kind
+    prompt = provider.requests_for("linkedin_research")[0].system_prompt
+    assert "A synthetic buyer comparing options" in prompt
+    assert "French" in prompt and "France" in prompt
+    assert "at most three searches" in prompt
+    assert "search excerpts, not directly" in prompt
+    if target == "venues":
+        assert "Do not return individual consumers" in prompt
+        assert "Synthetic family travel publication" in prompt
+
+
+def test_unmapped_prospect_audience_is_refused_before_spending(client, provider, monkeypatch):
+    monkeypatch.setattr(provider, "available_tools", lambda model=None: {ResearchTool.WEB_SEARCH})
+    response = client.post(f"/api/market/{brand(client)}/linkedin/search", json={
+        "query": "Relevant public options", "source": "web", "segment_name": "Missing audience",
+    })
+    assert response.status_code == 409
+    assert "no longer on the map" in response.json()["detail"]
+    assert not provider.requests
+
+
+def test_venues_cannot_be_searched_as_linkedin_profiles(client, provider):
+    response = client.post(f"/api/market/{brand(client)}/linkedin/search", json={
+        "query": "Family travel", "target": "venues", "source": "linkedin",
+    })
+    assert response.status_code == 422
+    assert not provider.requests
+
+
+def test_consumer_search_drops_people_and_profile_urls(client, provider, monkeypatch):
+    monkeypatch.setattr(provider, "available_tools", lambda model=None: {ResearchTool.WEB_SEARCH})
+    provider.set_default("linkedin_research", json.dumps({"candidates": [
+        {"kind": "professional", "name": "Synthetic person", "url": "https://people.example/alex",
+         "source_url": "https://people.example/alex", "excerpt": "Synthetic person"},
+        {"kind": "venue", "name": "Mislabelled profile", "url": "https://www.linkedin.com/in/alex",
+         "source_url": "https://www.linkedin.com/in/alex", "excerpt": "Synthetic profile"},
+    ]}))
+    brand_id = brand(client)
+    started = client.post(f"/api/market/{brand_id}/linkedin/search", json={
+        "query": "Family travel publications", "source": "web", "target": "venues",
+    })
+    row = await_run(client, brand_id, started.json()["id"])
+    assert row["state"] == "completed", row
+    assert row["result"]["candidates"] == []
+
+
+@pytest.mark.parametrize("url", [
+    "javascript:alert(1)", "http://public.example/", "https://localhost/",
+    "https://127.0.0.1/", "https://192.168.1.1/", "https://host.internal/",
+    "https://user:password@public.example/", "https://public.example:8443/",
+    "https://bad..example/", "https://bad$host.example/",
+])
+def test_web_lead_urls_require_public_https(url):
+    with pytest.raises(ValueError):
+        public_url(url)

@@ -7,8 +7,16 @@ decide it, an operator could not re-derive a row by hand.
 
 from uuid import uuid4
 
+import pytest
+
 from app.knowledge.artifacts import Objection
-from app.knowledge.ledger import Evidence, EvidenceKind, EvidenceLedger
+from app.knowledge.ledger import (
+    Evidence,
+    EvidenceContext,
+    EvidenceKind,
+    EvidenceLedger,
+    EvidenceStrength,
+)
 from app.market.audience_research import AudienceProblem, AudienceResearch
 from app.market.capabilities import (
     CapabilityEvidence,
@@ -259,22 +267,15 @@ def test_the_resolution_is_recorded_rather_than_silent():
 # --- 2. contested pricing ----------------------------------------------------
 
 
-def test_contested_pricing_evidence_cannot_become_campaign_safe():
+def test_competitive_overlap_does_not_invalidate_a_documented_price():
     result = contract()
 
-    assert "Pro is $29 per month" not in texts(result.campaign_allowed_claims)
-    assert "Pro is $29 per month" in texts(result.withheld_claims)
-    held = next(row for row in result.withheld_claims if row.text == "Pro is $29 per month")
-    assert "Contested territory" in held.reason
+    assert "Pro is $29 per month" in texts(result.campaign_allowed_claims)
+    assert "Pro is $29 per month" not in texts(result.withheld_claims)
 
 
-def test_contested_pricing_evidence_cannot_license_an_objection_answer():
-    """A price answer sourced from contested ground is not an answer.
-
-    The stripping has to happen inside `normalize_dossier`, while objections
-    are still being built - the recommendation runs afterwards and would only
-    ever find an answer that already reads as licensed.
-    """
+def test_related_competitor_price_does_not_strip_a_supported_price_answer():
+    """Market similarity is separate from fact licensing and outcome proof."""
     proposal = RelevanceProposal(
         ranked_relevance=[
             RankedRelevanceProposal(
@@ -287,7 +288,7 @@ def test_contested_pricing_evidence_cannot_license_an_objection_answer():
         segment_objections=[
             ObjectionProposal(
                 objection="This will cost more than the hour it saves.",
-                answer="It is $29 per month, well under the hour it returns.",
+                answer="The published Pro price is $29 per month.",
                 evidence_ids=["E-price"],
             )
         ],
@@ -307,9 +308,8 @@ def test_contested_pricing_evidence_cannot_license_an_objection_answer():
     )
 
     answered = dossier.segment_objections[0]
-    assert answered.answer == ""
-    assert answered.evidence_ids == []
-    assert any("contested" in warning.lower() for warning in dossier.validation_warnings)
+    assert answered.answer == "The published Pro price is $29 per month."
+    assert answered.evidence_ids == ["E-price"]
 
 
 # --- 3. withheld stays withheld ----------------------------------------------
@@ -337,6 +337,93 @@ def test_irrelevant_product_truth_is_not_bulk_added():
     assert held.reason == "No addressed or partial problem for this audience uses it."
     # It is still on the record as product truth.
     assert "There is a dark mode" in texts(result.verified_product_claims)
+
+
+def supporting_profile(state=CapabilityState.VERIFIED, **kwargs):
+    return profile(capabilities=[ProductCapability(
+        id="appearance", label="dark mode", state=state,
+        evidence=[CapabilityEvidence(
+            evidence_id="E-unranked", claim="There is a dark mode", quote="There is a dark mode."
+        )],
+    )], **kwargs)
+
+
+def test_verified_atomic_capability_can_explain_a_ranked_argument_without_being_ranked():
+    result = contract(profile=supporting_profile())
+
+    row = next(item for item in result.campaign_allowed_claims if item.text == "There is a dark mode")
+    assert row.evidence_ids == ["E-unranked"]
+    assert "supporting fact" in row.reason
+    assert result.conflicts() == []
+
+
+@pytest.mark.parametrize("state", [CapabilityState.UNKNOWN, CapabilityState.UNSUPPORTED])
+def test_unverified_capability_cannot_use_the_supporting_fact_path(state):
+    assert "There is a dark mode" not in texts(
+        contract(profile=supporting_profile(state)).campaign_allowed_claims
+    )
+
+
+def test_explicit_withhold_still_beats_verified_supporting_capability():
+    result = build_claim_contract(
+        profile=supporting_profile(), ledger=ledger(), fits=fits(),
+        ranked=[*ranked(), RankedRelevanceItem(
+            evidence_id="E-unranked", band=RelevanceBand.WITHHOLD,
+            why="Not appropriate for this audience.",
+        )],
+    )
+    assert "There is a dark mode" not in texts(result.campaign_allowed_claims)
+    assert "There is a dark mode" in texts(result.withheld_claims)
+
+
+@pytest.mark.parametrize("change", [
+    {"text": "Dark mode improves customer retention"},
+    {"evidence_ids": ["E-unranked", "E-price"]},
+    {"evidence_ids": ["E-unranked", "missing"]},
+    {"visibility": ClaimVisibility.INTERNAL},
+])
+def test_supporting_licence_cannot_promote_composites_unknown_refs_or_internal_claims(change):
+    claim = claims()[-1].model_copy(update=change)
+    result = build_claim_contract(
+        profile=supporting_profile(product_claims=[claim]), ledger=ledger(),
+        fits=[], ranked=[],
+    )
+    assert result.campaign_allowed_claims == []
+
+
+@pytest.mark.parametrize("kind", [EvidenceKind.METRIC, EvidenceKind.TESTIMONIAL, EvidenceKind.CUSTOMER])
+def test_unranked_outcomes_stay_withheld_even_when_attached_to_a_verified_capability(kind):
+    facts = ledger()
+    facts.entries[-1].kind = kind
+    result = build_claim_contract(
+        profile=supporting_profile(), ledger=facts, fits=fits(), ranked=ranked(),
+    )
+    assert "There is a dark mode" not in texts(result.campaign_allowed_claims)
+
+
+@pytest.mark.parametrize("change,allowed", [
+    ({}, True),
+    ({"strength": EvidenceStrength.MODERATE}, False),
+    ({"context": EvidenceContext(subject="Pro", source_kind="vendor_statement", claim_scope="offer")}, False),
+    ({"context": EvidenceContext(subject="Pro", source_kind="official_documentation", claim_scope="customer_outcome")}, False),
+    ({"context": EvidenceContext(source_kind="official_documentation", claim_scope="offer")}, False),
+])
+def test_only_explicit_strong_official_offer_terms_are_supporting_facts(change, allowed):
+    facts = ledger()
+    facts.entries[1] = facts.entries[1].model_copy(update={
+        "strength": EvidenceStrength.STRONG,
+        "context": EvidenceContext(subject="Pro", source_kind="official_documentation", claim_scope="offer"),
+        **change,
+    })
+    result = build_claim_contract(profile=profile(), ledger=facts, fits=[], ranked=[])
+    assert ("Pro is $29 per month" in texts(result.campaign_allowed_claims)) is allowed
+
+
+def test_scope_boundary_still_beats_a_supporting_fact():
+    result = contract(profile=supporting_profile(constraints=[
+        ScopeBoundary(id="appearance", statement="There is a dark mode")
+    ]))
+    assert "There is a dark mode" not in texts(result.campaign_allowed_claims)
 
 
 def test_an_unused_duplicate_does_not_withhold_the_same_sentence_that_was_used():
@@ -378,24 +465,24 @@ def test_relevant_licensed_evidence_still_reaches_campaign_safe_claims():
     result = contract()
 
     assert texts(result.campaign_allowed_claims) == {
-        "Cuts warranty triage from 40 minutes to 9 seconds"
+        "Cuts warranty triage from 40 minutes to 9 seconds", "Pro is $29 per month"
     }
-    assert result.allowed_evidence_ids == ["E-relevant"]
+    assert set(result.allowed_evidence_ids) == {"E-relevant", "E-price"}
 
 
 def test_a_claim_survives_only_if_every_id_it_rests_on_survives():
     """Partial survival was the pricing bug: one good id carried a bad one in."""
     mixed = [
         ProductClaim(
-            text="Fast, and $29 per month",
+            text="Fast, with 25 models",
             visibility=ClaimVisibility.CUSTOMER,
-            evidence_ids=["E-relevant", "E-price"],
+            evidence_ids=["E-relevant", "E-models"],
         )
     ]
     result = contract(product_claims=mixed)
 
     assert result.campaign_allowed_claims == []
-    assert "Fast, and $29 per month" in texts(result.withheld_claims)
+    assert "Fast, with 25 models" in texts(result.withheld_claims)
 
 
 # --- 5. the invariant --------------------------------------------------------
@@ -430,7 +517,7 @@ def test_claim_sets_are_deduplicated_by_identity():
 
     ids = [row.id for row in result.campaign_allowed_claims]
     assert ids == list(dict.fromkeys(ids))
-    assert len(result.campaign_allowed_claims) == 1
+    assert len(result.campaign_allowed_claims) == 2
 
 
 def test_conflicts_reports_an_overlap_it_did_not_build():
@@ -494,7 +581,7 @@ def test_the_writer_receives_campaign_safe_claims_and_not_the_whole_ledger():
     # Everything true, ranked away, and not this campaign's to spend.
     for withheld in ("25 models across 9 providers", "Median latency is 200ms", "dark mode"):
         assert withheld not in rendered
-    assert "Pro is $29 per month" not in rendered
+    assert "Pro is $29 per month" in rendered
 
 
 def test_the_writer_is_told_the_allowed_set_is_exhaustive():

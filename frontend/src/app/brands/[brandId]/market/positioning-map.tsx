@@ -19,27 +19,27 @@ const TERRITORY: Record<
   { label: string; advice: string; tone: string; accent: string }
 > = {
   open: {
-    label: "Potential differences",
-    advice: "Verify these before using them. Captured claims do not establish exclusivity.",
+    label: "Unmatched captured claims",
+    advice: "Research potential differences. Missing captured claims do not establish exclusivity.",
     tone: "border-emerald-500/40 bg-emerald-500/5",
     accent: "text-emerald-400",
   },
   contested: {
-    label: "Contested",
-    advice: "Usable, but the reader has heard it. Argue these — never assert them.",
+    label: "Comparisons to inspect",
+    advice: "Check the proposition, terms and limits before drawing a comparison.",
     tone: "border-sky-500/30 bg-sky-500/5",
     accent: "text-sky-400",
   },
   table_stakes: {
-    label: "Table stakes",
+    label: "Equivalent captured claims",
     advice:
       "Common among the profiles read. Explain a supported detail rather than claiming uniqueness.",
     tone: "border-amber-500/30 bg-amber-500/5",
     accent: "text-amber-400",
   },
   exposed: {
-    label: "Claims to investigate",
-    advice: "Their material supports these; ours does not yet. Avoid unsupported comparisons.",
+    label: "Information to research",
+    advice: "Our captured material has no match. This does not establish a weakness or missing feature.",
     tone: "border-rose-500/30 bg-rose-500/5",
     accent: "text-rose-400",
   },
@@ -65,6 +65,13 @@ function axisLabel(axis: string) {
   return AXIS_LABEL[axis] ?? axis;
 }
 
+const COMPARISON_LABEL: Record<string, string> = {
+  equivalent: "Equivalent captured proposition",
+  documented_difference: "Different figures on matching stated terms",
+  potential_difference: "Scope or difference needs verification",
+  unknown: "No equivalent captured; capability unknown",
+};
+
 function ClaimLine({ claim }: { claim: Claim }) {
   return (
     <li className="flex items-start gap-2">
@@ -84,6 +91,8 @@ function AxisCard({ reading }: { reading: AxisReading }) {
   const [open, setOpen] = useState(false);
   const territory = TERRITORY[reading.territory];
   const rivals = Object.entries(reading.theirs);
+  const notes = reading.comparison_notes ?? [];
+  const comparisons = reading.comparisons ?? {};
 
   return (
     <div className={cn("rounded-lg border p-3", territory.tone)}>
@@ -94,21 +103,24 @@ function AxisCard({ reading }: { reading: AxisReading }) {
         className="flex w-full flex-wrap items-start justify-between gap-2 text-left"
       >
         <div className="min-w-0">
-          <p className="text-sm font-medium">{axisLabel(reading.axis)}</p>
+          <p className="text-xs text-muted-foreground">{axisLabel(reading.axis)}</p>
+          <p className="text-sm font-medium">{reading.proposition || reading.ours[0]?.text || axisLabel(reading.axis)}</p>
           <p className="text-xs text-muted-foreground">
-            {rivals.length === 0
-              ? "no competing claim captured"
-              : `${rivals.length} competitor${rivals.length === 1 ? "" : "s"} claim${
-                  rivals.length === 1 ? "s" : ""
-                } it too`}
+            {COMPARISON_LABEL[reading.comparison_status ?? "unknown"]}
           </p>
         </div>
         {reading.only_specific && (
           <Badge variant="outline" className={cn("shrink-0", territory.accent)}>
-            only captured specific claim
+            more specific captured wording
           </Badge>
         )}
       </button>
+
+      {notes.length > 0 && (
+        <p className="mt-2 text-xs text-muted-foreground">
+          {(open ? notes : notes.slice(0, 1)).join(" ")}
+        </p>
+      )}
 
       {reading.ours.length > 0 && (
         <>
@@ -134,6 +146,9 @@ function AxisCard({ reading }: { reading: AxisReading }) {
           {rivals.map(([name, claims]) => (
             <div key={name}>
               <p className="font-medium text-foreground/80">{name}</p>
+              {comparisons[name] && (
+                <p className="mt-1 text-muted-foreground">{COMPARISON_LABEL[comparisons[name]]}</p>
+              )}
               <ul className="mt-1 space-y-1">
                 {claims.map((claim) => (
                   <ClaimLine key={claim.text} claim={claim} />
@@ -166,6 +181,8 @@ function TerritoryColumn({
   readings: AxisReading[];
 }) {
   const meta = TERRITORY[territory];
+  const [showAll, setShowAll] = useState(false);
+  const visible = showAll ? readings : readings.slice(0, VISIBLE_CLAIMS);
   return (
     <div className="space-y-2">
       <div>
@@ -177,7 +194,19 @@ function TerritoryColumn({
           Nothing here.
         </p>
       ) : (
-        readings.map((reading) => <AxisCard key={reading.axis} reading={reading} />)
+        visible.map((reading, index) => (
+          <AxisCard key={`${reading.axis}:${reading.proposition ?? "legacy"}:${index}`} reading={reading} />
+        ))
+      )}
+      {readings.length > VISIBLE_CLAIMS && (
+        <button
+          type="button"
+          onClick={() => setShowAll((value) => !value)}
+          aria-expanded={showAll}
+          className="min-h-9 cursor-pointer rounded-lg border border-white/10 bg-white/[0.035] px-3 text-xs font-medium text-foreground"
+        >
+          {showAll ? "Show fewer propositions" : `Show ${readings.length - VISIBLE_CLAIMS} more propositions`}
+        </button>
       )}
     </div>
   );
@@ -195,9 +224,9 @@ function TerritoryColumn({
 export function positioningSentence(positioning: Positioning): string {
   const n = positioning.rivals_profiled;
   if (n === 0) return "No competitors read yet, so the copy is written blind to the field.";
-  const open = positioning.readings
+  const open = [...new Set(positioning.readings
     .filter((reading) => reading.territory === "open")
-    .map((reading) => (reading.axis === "other" ? "claims outside the usual categories" : axisLabel(reading.axis).toLowerCase()));
+    .map((reading) => (reading.axis === "other" ? "claims outside the usual categories" : axisLabel(reading.axis).toLowerCase())))];
   const ground = open.length > 0
     ? `Potential differences to verify: ${open.length === 1 ? open[0] : `${open.slice(0, -1).join(", ")} and ${open[open.length - 1]}`}.`
     : "No potential open ground identified in the captured claims.";
@@ -242,13 +271,13 @@ export function PositioningMap({ positioning }: { positioning: Positioning }) {
       {positioning.crowd_words.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">The category&rsquo;s own words</CardTitle>
+            <CardTitle className="text-base">Shared category vocabulary</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <p className="text-sm text-muted-foreground">
-              Two or more competitors spend these. A sentence built only out of them says nothing
-              about your company — and every draft is now checked against this list before anyone
-              reads it.
+              Two or more competitors use these words. Keep the vocabulary needed to explain your
+              product. Sharing a term does not make a claim generic; explain the supported action,
+              condition or benefit behind it.
             </p>
             <div className="flex flex-wrap gap-1.5">
               {positioning.crowd_words.map((word) => (

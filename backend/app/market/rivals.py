@@ -29,8 +29,12 @@ and useful thing to tell a user, and silently losing it is not.
 """
 
 import asyncio
+import hashlib
+import json
 import logging
+import re
 from datetime import UTC, datetime
+from urllib.parse import urldefrag, urlsplit, urlunsplit
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -39,8 +43,9 @@ from app.ai.model_router import ModelTier
 from app.ingestion.documents import RawDocument
 from app.ingestion.exceptions import LoaderError
 from app.ingestion.loaders.site_crawler import SiteCrawler
-from app.knowledge.artifacts import BusinessProfile
+from app.knowledge.artifacts import BusinessProfile, KnowledgeArtifacts
 from app.knowledge.corpus import fold
+from app.knowledge.decision_context import evidence_record, select_evidence
 from app.market.claims import Claim, ClaimSet
 from app.runtime.model_session import ModelSession
 
@@ -77,6 +82,7 @@ class RivalLead(BaseModel):
     #: everyone already has, or the thing they would do instead of buying
     #: anything.
     kind: str = "alternative"
+    public_urls: list[str] = Field(default_factory=list, max_length=2)
 
     @field_validator("url")
     @classmethod
@@ -94,6 +100,13 @@ class RivalProfile(BaseModel):
     url: str = ""
     kind: str = "alternative"
     why: str = ""
+    discovery_reason: str = ""
+    rationale_status: str = "unverified"
+    rationale_sources: list[str] = Field(default_factory=list)
+    our_evidence_ids: list[str] = Field(default_factory=list)
+    public_urls: list[str] = Field(default_factory=list)
+    source_fingerprint: str = ""
+    reused: bool = False
     #: How they describe themselves, in their words.
     one_liner: str = ""
     #: The single bet their home page makes.
@@ -154,6 +167,7 @@ class _LeadList(BaseModel):
     #: explainable - "we looked for these three things and this is all there
     #: was" is a finding; an empty list on its own is a bug report.
     searched: list[str] = Field(default_factory=list)
+    public_pages: dict[str, list[str]] = Field(default_factory=dict)
 
 
 class _ExtractedProfile(BaseModel):
@@ -167,6 +181,9 @@ class _ExtractedProfile(BaseModel):
     free_entry: str = ""
     icp: str = ""
     vocabulary: list[str] = Field(default_factory=list)
+    why: str = ""
+    why_sources: list[str] = Field(default_factory=list)
+    our_evidence_ids: list[str] = Field(default_factory=list)
 
 
 class RivalScout:
@@ -177,7 +194,8 @@ class RivalScout:
         self._crawler = crawler or SiteCrawler(max_pages=MAX_PAGES_PER_RIVAL)
 
     async def discover(
-        self, business: BusinessProfile, limit: int = 6, known: list[str] | None = None
+        self, business: BusinessProfile, limit: int = 6, known: list[str] | None = None,
+        public_page_requests: dict[str, str] | None = None,
     ) -> _LeadList:
         """Who else sells to this buyer. The one step that reads the open web.
 
@@ -196,6 +214,7 @@ class RivalScout:
                 "category": business.category,
                 "vocabulary": ", ".join(business.vocabulary[:20]),
                 "known": already,
+                "public_page_requests": json.dumps(public_page_requests or {}, ensure_ascii=False),
                 "limit": limit,
             },
             task=(
@@ -203,19 +222,27 @@ class RivalScout:
                 "deciding between. Every entry needs a real URL you found."
             ),
             schema=_LeadList,
-            tools=[ResearchTool.WEB_SEARCH, ResearchTool.WEB_FETCH],
+            # Discovery locates URLs; profile() crawls the pages itself and
+            # verifies every retained quotation against that fetched text.
+            tools=[ResearchTool.WEB_SEARCH],
         )
 
-    async def profile_all(self, leads: list[RivalLead]) -> list[RivalProfile]:
+    async def profile_all(self, leads: list[RivalLead], *, artifacts: KnowledgeArtifacts | None = None,
+                          previous: list[RivalProfile] | None = None) -> list[RivalProfile]:
         semaphore = asyncio.Semaphore(_PROFILE_CONCURRENCY)
 
         async def one(lead: RivalLead) -> RivalProfile:
             async with semaphore:
-                return await self.profile(lead)
+                old = next((item for item in previous or [] if _source_key(item.url) == _source_key(lead.url)
+                            and item.name.casefold() == lead.name.casefold()), None)
+                if old and not lead.public_urls:
+                    lead = lead.model_copy(update={"public_urls": old.public_urls})
+                return await self.profile(lead, artifacts=artifacts, previous=old)
 
         return list(await asyncio.gather(*(one(lead) for lead in leads)))
 
-    async def profile(self, lead: RivalLead) -> RivalProfile:
+    async def profile(self, lead: RivalLead, *, artifacts: KnowledgeArtifacts | None = None,
+                      previous: RivalProfile | None = None) -> RivalProfile:
         """Read one competitor's pages and record what they promise.
 
         No web tool is used here at all - the crawl is our own, and the model
@@ -228,17 +255,29 @@ class RivalScout:
                 why=lead.why,
                 note="no website was found for this one, so nothing could be read",
             )
+        focus = " ".join([
+            lead.why,
+            artifacts.business.what_it_does if artifacts else "",
+            *(entry.claim for entry in artifacts.evidence.entries if artifacts),
+        ]) if artifacts else lead.why
         try:
-            pages = await self._crawler.crawl(lead.url)
+            pages = await self._crawler.crawl(lead.url, focus=focus)
         except LoaderError as exc:
             logger.info("rivals: could not read %s (%s)", lead.url, exc)
-            return RivalProfile(
-                name=lead.name,
-                url=lead.url,
-                kind=lead.kind,
-                why=lead.why,
-                note="their site could not be read, so nothing here is from them",
-            )
+            pages = []
+
+        # Read only fallback URLs actually found in discovery, never guessed
+        # marketing paths. All crawls retain the public HTTP safety boundary.
+        if not _material(pages).strip():
+            for url in lead.public_urls[:2]:
+                if _source_key(url) == _source_key(lead.url):
+                    continue
+                try:
+                    pages = await self._crawler.crawl(url, focus=focus)
+                except LoaderError:
+                    continue
+                if _material(pages).strip():
+                    break
 
         material = _material(pages)
         if not material.strip():
@@ -246,22 +285,92 @@ class RivalScout:
                 name=lead.name,
                 url=lead.url,
                 kind=lead.kind,
-                why=lead.why,
-                note="their site returned no readable text",
+                discovery_reason=lead.why,
+                note="their site could not be read or returned no readable text",
+                public_urls=lead.public_urls,
             )
+
+        ours = select_evidence(
+            artifacts.evidence, lead.why or artifacts.business.what_it_does,
+            preferred_ids=[plan.provenance.evidence_id for plan in artifacts.offer.plans
+                           if plan.provenance and plan.provenance.evidence_id],
+            cap=12,
+        ).ledger if artifacts else None
+        our_context = json.dumps([evidence_record(entry) for entry in ours.entries], ensure_ascii=False) if ours else "[]"
+        fingerprint = hashlib.sha256(json.dumps({
+            "version": 3, "template": self._session.template_fingerprint("rival_profile"),
+            "schema": _ExtractedProfile.model_json_schema(),
+            "lead": lead.model_dump(exclude={"public_urls"}),
+            "ours": our_context, "material": material,
+        }, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+        if (previous and previous.verified and (previous.claims.claims or previous.proof_shown)
+                and previous.source_fingerprint == fingerprint):
+            return review_rationale(previous.model_copy(update={
+                "checked_at": datetime.now(UTC), "reused": True,
+                "discovery_reason": lead.why, "kind": lead.kind,
+            }))
 
         extracted = await self._session.structured(
             role=PROFILER_ROLE_ID,
             tier=ModelTier.BALANCED,
             template="rival_profile",
-            variables={"name": lead.name, "url": lead.url, "material": material},
+            variables={"name": lead.name, "url": lead.url, "material": material,
+                       "discovery_reason": lead.why, "our_context": our_context},
             task=(
                 "Read the pages above and report what this company promises. Quote them "
                 "verbatim for every claim."
             ),
             schema=_ExtractedProfile,
         )
-        return _verify(lead, extracted, material, len(pages))
+        verified = _verify(lead, extracted, pages)
+        valid_sources = {_source_key(claim.source) for claim in [*verified.claims.claims, *verified.proof_shown]}
+        refs = list(dict.fromkeys(extracted.our_evidence_ids))
+        rationale_sources = list(dict.fromkeys(extracted.why_sources))
+        own_sources = {_source_key(entry.source) for entry in ours.entries
+                       if entry.id in refs and entry.source} if ours else set()
+        cited_sources = {_source_key(url) for url in rationale_sources}
+        if (extracted.why.strip() and rationale_sources and refs and ours
+                and set(refs) <= ours.ids
+                and cited_sources & valid_sources
+                and cited_sources <= valid_sources | own_sources):
+            verified.why = extracted.why.strip()
+            verified.rationale_status = "source_linked_hypothesis"
+            verified.rationale_sources = rationale_sources
+            verified.our_evidence_ids = refs
+        else:
+            reason = (
+                "no comparison was returned" if not extracted.why.strip()
+                else "references to both products did not resolve to verified evidence"
+            )
+            verified.note = " ".join(filter(None, (
+                verified.note, f"Comparison hypothesis withheld: {reason}.",
+            )))
+        verified.source_fingerprint = fingerprint
+        return review_rationale(verified)
+
+
+def review_rationale(profile: RivalProfile) -> RivalProfile:
+    """Do not turn selected plan prices into a supposedly sourced range.
+
+    Finding both endpoint amounts somewhere in the capture does not license
+    a range covering the whole offer. Keep the capture; withhold the synthesis.
+    """
+    ranges = re.findall(r"[$€£]\s*\d+(?:[.,]\d+)?\s*[-–—]\s*(?:[$€£]\s*)?\d+(?:[.,]\d+)?",
+                        profile.why)
+    if not ranges:
+        return profile
+
+    def normalized(value: str) -> str:
+        return re.sub(r"\s+", "", re.sub(r"[–—]", "-", value))
+
+    quotes = [normalized(claim.verbatim) for claim in profile.claims.claims]
+    if all(any(normalized(value) in quote for quote in quotes) for value in ranges):
+        return profile
+    note = "Comparison hypothesis withheld: the quoted pages do not state the synthesized price range."
+    return profile.model_copy(update={
+        "why": "", "rationale_status": "unverified", "rationale_sources": [], "our_evidence_ids": [],
+        "note": " ".join(dict.fromkeys(filter(None, (profile.note, note)))),
+    })
 
 
 def _material(pages: list[RawDocument]) -> str:
@@ -282,7 +391,7 @@ def _material(pages: list[RawDocument]) -> str:
 
 
 def _verify(
-    lead: RivalLead, extracted: _ExtractedProfile, material: str, pages: int
+    lead: RivalLead, extracted: _ExtractedProfile, pages: list[RawDocument]
 ) -> RivalProfile:
     """Keep only what the pages actually said.
 
@@ -292,12 +401,28 @@ def _verify(
     exact test those are different strings, and a correctly quoted claim would
     be thrown away over one character.
     """
-    haystack = fold(material)
+    # Use exactly the same bound as the prompt. A quotation found on some
+    # other page is not verification of the citation the extractor supplied.
+    sources: dict[str, tuple[str, str]] = {}
+    budget = MAX_PROFILE_CHARS
+    for page in pages:
+        if budget <= 0:
+            break
+        body = page.content[:budget]
+        sources[_source_key(page.source)] = (page.source, fold(body))
+        budget -= len(body)
     kept: list[Claim] = []
     dropped = 0
     for claim in [*extracted.claims, *extracted.proof_shown]:
         quote = fold(claim.verbatim)
-        if len(quote) >= 12 and quote in haystack:
+        cited = sources.get(_source_key(claim.source)) if claim.source else None
+        if not claim.source:
+            matches = [source for source in sources.values() if quote and quote in source[1]]
+            cited = matches[0] if len(matches) == 1 else None
+        if len(quote) >= 12 and cited is not None and quote in cited[1]:
+            context = claim.context.model_copy(deep=True)
+            context.verification = "quote_verified_on_cited_page"
+            claim = claim.model_copy(update={"source": cited[0], "context": context})
             kept.append(claim)
         else:
             dropped += 1
@@ -307,7 +432,8 @@ def _verify(
         name=lead.name,
         url=lead.url,
         kind=lead.kind,
-        why=lead.why,
+        discovery_reason=lead.why,
+        public_urls=lead.public_urls,
         one_liner=extracted.one_liner,
         promise=extracted.promise,
         claims=ClaimSet(claims=[c for c in kept if c.text not in proof_texts]),
@@ -317,7 +443,7 @@ def _verify(
         icp=extracted.icp,
         vocabulary=[word for word in extracted.vocabulary if word.strip()][:30],
         verified=True,
-        pages_read=pages,
+        pages_read=len(pages),
         unverified_claims=dropped,
         note=(
             f"{dropped} claim(s) the extractor reported were not on their pages and were "
@@ -326,3 +452,9 @@ def _verify(
             else ""
         ),
     )
+
+
+def _source_key(url: str) -> str:
+    parsed = urlsplit(urldefrag(url.strip())[0])
+    return urlunsplit((parsed.scheme.lower(), parsed.netloc.lower(), parsed.path.rstrip("/"),
+                       parsed.query, ""))

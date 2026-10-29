@@ -31,9 +31,10 @@ def enabled():
 
 
 def supports(function):
-    return (function.__module__ == "app.services.market_service" and function.__name__ in MARKET_ACTIONS
-            or function.__module__ == "app.services.knowledge_compilation" and function.__name__ == "start_compilation"
-            or function.__module__ == "app.services.linkedin_service" and function.__name__ == "launch")
+    return ((function.__module__ == "app.services.market_service" and function.__name__ in MARKET_ACTIONS)
+            or (function.__module__ == "app.services.knowledge_compilation" and function.__name__ == "start_compilation")
+            or (function.__module__ in {"app.services.linkedin_service", "app.services.email_analysis_service"}
+            and function.__name__ == "launch"))
 
 
 def lambda_client():
@@ -87,16 +88,23 @@ def enqueue(function, arguments):
             user.runs_used += 1
             db.add(user)
         name = function.__name__
-        category = "linkedin" if function.__module__ == "app.services.linkedin_service" else ("market" if name in MARKET_ACTIONS else "knowledge")
+        category = ("email_analysis" if function.__module__ == "app.services.email_analysis_service"
+                    else "linkedin" if function.__module__ == "app.services.linkedin_service"
+                    else "market" if name in MARKET_ACTIONS else "knowledge")
         from app.services.knowledge_compilation import CompilationJob
         from app.services.market_service import JobStatus
-        if category == "linkedin":
-            from app.models.linkedin import LinkedInRun
-            from app.services.linkedin_service import validate_request
+        if category in {"linkedin", "email_analysis"}:
             request = arguments["request"]
-            kind = validate_request(db, brand.id, arguments["provider"], request)
-            status = LinkedInRun(brand_id=brand.id, kind=kind, active_key=str(brand.id), request=request.model_dump(mode="json"))
-            db.add(status)
+            if category == "linkedin":
+                from app.models.linkedin import LinkedInRun
+                from app.services.linkedin_service import validate_request
+                kind = validate_request(db, brand.id, arguments["provider"], request)
+                status = LinkedInRun(brand_id=brand.id, kind=kind, active_key=str(brand.id), request=request.model_dump(mode="json"))
+                db.add(status)
+            else:
+                from app.services.email_analysis_service import _save, validate_request
+                validate_request(db, brand.id, request)
+                status = _save(db, brand.id, request, commit=False)
             payload = {"run_id": str(status.id)}
         else:
             status = (CompilationJob(state="running", brand_id=brand.id, brand_name=brand.name)
@@ -119,7 +127,7 @@ def enqueue(function, arguments):
             }:
                 fail(engine, job.id, "The job could not be dispatched.")
                 raise WorkLimitError("The job could not be dispatched.", 503) from exc
-        if category == "linkedin":
+        if category in {"linkedin", "email_analysis"}:
             db.refresh(status)
             db.expunge(status)
         return status
@@ -168,13 +176,15 @@ def fail(engine, job_id, message="The job was interrupted. Saved results remain 
             return
         job.status = {**job.status, "state": "failed", "message": message,
                       "finished_at": datetime.now(UTC).isoformat()}
-        if job.category == "linkedin":
+        if job.category in {"linkedin", "email_analysis"}:
             from uuid import UUID
 
+            from app.models.email_analysis import EmailAnalysis
             from app.models.linkedin import LinkedInRun
-            run = db.get(LinkedInRun, UUID(job.payload["run_id"]))
+            model = LinkedInRun if job.category == "linkedin" else EmailAnalysis
+            run = db.get(model, UUID(job.payload["run_id"]))
             if run and run.state == "running":
-                run.state, run.error, run.active_key = "failed", message, None
+                run.state, run.error, run.active_key = ("degraded" if job.category == "email_analysis" else "failed"), message, None
                 run.completed_at = datetime.now(UTC)
                 db.add(run)
         if job.category == "market":
@@ -230,15 +240,19 @@ async def execute(engine, job_id, provider, context):
         brand = db.get(Brand, job.brand_id)
         token = current_work.set(Permit(engine, job_id, getattr(context, "get_remaining_time_in_millis", None)))
         try:
-            if job.category == "linkedin":
+            if job.category in {"linkedin", "email_analysis"}:
                 from uuid import UUID
 
+                from app.models.email_analysis import EmailAnalysis
                 from app.models.linkedin import LinkedInRun
+                from app.services.email_analysis_service import run_job as analyse_job
                 from app.services.linkedin_service import run_job
                 run_id = UUID(job.payload["run_id"])
-                await run_job(engine, run_id, provider)
+                runner = run_job if job.category == "linkedin" else analyse_job
+                await runner(engine, run_id, provider)
                 db.expire_all()
-                persist(engine, job_id, db.get(LinkedInRun, run_id), finished=True)
+                model = LinkedInRun if job.category == "linkedin" else EmailAnalysis
+                persist(engine, job_id, db.get(model, run_id), finished=True)
                 return
             if job.category == "knowledge":
                 knowledge.jobs.pop(brand.id, None)

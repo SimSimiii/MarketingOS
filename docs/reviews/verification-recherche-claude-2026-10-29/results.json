@@ -1,0 +1,225 @@
+{
+  "scope": "Production pure functions only; no server, database session or model calls.",
+  "brands": [
+    {
+      "name": "Elan",
+      "clarity_blocking": false,
+      "run_all_clarity": [],
+      "note": "Other structural issues in deliberately short probe are not assessed."
+    },
+    {
+      "name": "Élan",
+      "clarity_blocking": true,
+      "run_all_clarity": [
+        {
+          "gate": "clarity",
+          "detail": "the email never names Élan anywhere the reader is reading - not in the subject, not in the body, not on the link. It is under the sign-off, which tells them who sent this and not what it is. A stranger finishes this with nothing to attach the click to: name the thing once, plainly, before the ask",
+          "severity": "blocking"
+        }
+      ],
+      "note": "Other structural issues in deliberately short probe are not assessed."
+    },
+    {
+      "name": "Café Crème",
+      "clarity_blocking": true,
+      "run_all_clarity": [
+        {
+          "gate": "clarity",
+          "detail": "the email never names Café Crème anywhere the reader is reading - not in the subject, not in the body, not on the link. It is under the sign-off, which tells them who sent this and not what it is. A stranger finishes this with nothing to attach the click to: name the thing once, plainly, before the ask",
+          "severity": "blocking"
+        }
+      ],
+      "note": "Other structural issues in deliberately short probe are not assessed."
+    }
+  ],
+  "claims": [
+    {
+      "text": "29 € par mois",
+      "extracted": [
+        {
+          "kind": "quantity",
+          "text": "29",
+          "normalized": "29"
+        }
+      ],
+      "unsupported_empty": [
+        {
+          "claim": {
+            "kind": "quantity",
+            "text": "29",
+            "normalized": "29"
+          },
+          "reason": "no evidence entry or source document contains this figure - use a number from the evidence or drop the claim"
+        }
+      ]
+    },
+    {
+      "text": "9 € par mois",
+      "extracted": [],
+      "unsupported_empty": []
+    },
+    {
+      "text": "29,90 € par mois",
+      "extracted": [
+        {
+          "kind": "quantity",
+          "text": "29",
+          "normalized": "29"
+        },
+        {
+          "kind": "quantity",
+          "text": "90",
+          "normalized": "90"
+        }
+      ],
+      "unsupported_empty": [
+        {
+          "claim": {
+            "kind": "quantity",
+            "text": "29",
+            "normalized": "29"
+          },
+          "reason": "no evidence entry or source document contains this figure - use a number from the evidence or drop the claim"
+        },
+        {
+          "claim": {
+            "kind": "quantity",
+            "text": "90",
+            "normalized": "90"
+          },
+          "reason": "no evidence entry or source document contains this figure - use a number from the evidence or drop the claim"
+        }
+      ]
+    },
+    {
+      "text": "en 3 jours",
+      "extracted": [],
+      "unsupported_empty": []
+    },
+    {
+      "text": "en 3 minutes",
+      "extracted": [
+        {
+          "kind": "duration",
+          "text": "3 minutes",
+          "normalized": "3 minutes"
+        }
+      ],
+      "unsupported_empty": [
+        {
+          "claim": {
+            "kind": "duration",
+            "text": "3 minutes",
+            "normalized": "3 minutes"
+          },
+          "reason": "no evidence entry or source document contains this figure - use a number from the evidence or drop the claim"
+        }
+      ]
+    },
+    {
+      "text": "« Cette solution a changé notre façon de travailler ensemble. »",
+      "extracted": [],
+      "unsupported_empty": []
+    },
+    {
+      "text": "\"Cette solution a changé notre façon de travailler ensemble.\"",
+      "extracted": [
+        {
+          "kind": "quote",
+          "text": "Cette solution a changé notre façon de travailler ensemble.",
+          "normalized": "cette solution a changé notre façon de travailler ensemble."
+        }
+      ],
+      "unsupported_empty": [
+        {
+          "claim": {
+            "kind": "quote",
+            "text": "Cette solution a changé notre façon de travailler ensemble.",
+            "normalized": "cette solution a changé notre façon de travailler ensemble."
+          },
+          "reason": "this is presented as something a real person said, but it appears nowhere in the material - cut it or replace it with a testimonial from the evidence"
+        }
+      ]
+    },
+    {
+      "source": "29 modèles disponibles",
+      "text": "29 € par mois",
+      "unsupported": []
+    },
+    {
+      "source": "29,90 euros par mois",
+      "text": "2990 euros par mois",
+      "unsupported": []
+    }
+  ],
+  "acronyms": [
+    {
+      "text": "RGPD",
+      "issues": [
+        {
+          "gate": "spam",
+          "detail": "RGPD is set in capitals - inbox filters read shouting as promotion, and so do people",
+          "severity": "blocking"
+        }
+      ]
+    },
+    {
+      "text": "CNIL",
+      "issues": [
+        {
+          "gate": "spam",
+          "detail": "CNIL is set in capitals - inbox filters read shouting as promotion, and so do people",
+          "severity": "blocking"
+        }
+      ]
+    },
+    {
+      "text": "SIRET",
+      "issues": [
+        {
+          "gate": "spam",
+          "detail": "SIRET is set in capitals - inbox filters read shouting as promotion, and so do people",
+          "severity": "blocking"
+        }
+      ]
+    },
+    {
+      "text": "HTTP",
+      "issues": []
+    }
+  ],
+  "contracts": [
+    {
+      "request": "Écris cinq emails",
+      "result": {
+        "kind": "email_sequence",
+        "count": 3,
+        "count_is_explicit": false,
+        "evidence": ""
+      }
+    },
+    {
+      "request": "Écris 5 emails",
+      "result": {
+        "kind": "email_sequence",
+        "count": 5,
+        "count_is_explicit": true,
+        "evidence": "5 emails"
+      }
+    },
+    {
+      "request": "Write five emails",
+      "result": {
+        "kind": "email_sequence",
+        "count": 5,
+        "count_is_explicit": true,
+        "evidence": "five emails"
+      }
+    }
+  ],
+  "source_sha256": {
+    "backend/app/knowledge/ledger.py": "b90864f6fb1767d22bcdf2ba965b9ec784c15134be80759858c931bd778ba37f",
+    "backend/app/marketing/gates.py": "485baf3e212dc0dc4d1804fa03ebce3e2cc11a046ea0f8f28bd6db044122122c",
+    "backend/app/marketing/contract.py": "9a29e6771bdfa2b4a1d8352315cec169faa243b45814533ee156c7b2f1b3ca86"
+  }
+}

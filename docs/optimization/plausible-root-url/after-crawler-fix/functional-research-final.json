@@ -1,0 +1,603 @@
+{
+  "audience_name": "An EU or UK public sector web team that must publish analytics without a consent banner",
+  "audience_fingerprint": "543746e8df01b2e7915faa29e827d9e6af97111ecc48437a00f4ae9c89e34877",
+  "candidate_kind": "core",
+  "definition": {
+    "schema_version": 2,
+    "required_structural_signals": [
+      {
+        "code": "public_sector_or_publicly_funded_body",
+        "description": "Government, municipality, library, school trust or agency in the EU/UK/EEA"
+      },
+      {
+        "code": "citizen_facing_website_operated",
+        "description": "Operates at least one public information or service website"
+      }
+    ],
+    "required_workflow_signals": [
+      {
+        "code": "publishes_cookies_or_privacy_notice_listing_analytics",
+        "description": "Has a published notice that must state what analytics is used and whether consent is needed"
+      },
+      {
+        "code": "dpia_or_vendor_assessment_precedes_tool_adoption",
+        "description": "Formal data-protection assessment gates new measurement tools"
+      }
+    ],
+    "required_product_capabilities": [
+      "fact_f11ae149767a1dd3",
+      "fact_9e4c00431e370dca",
+      "fact_a0967c6dd6283e40",
+      "fact_23a0e78e7f8f2c88",
+      "fact_d26e37b9754133c2",
+      "fact_3c61580464d77676"
+    ],
+    "optional_signals": [
+      {
+        "code": "ga4_present_with_consent_banner",
+        "description": "Current GA4 plus banner, i.e. the situation under review"
+      },
+      {
+        "code": "digital_sovereignty_policy_published",
+        "description": "Stated intent to prefer European or open source suppliers"
+      },
+      {
+        "code": "peer_institution_already_using_cookieless_analytics",
+        "description": "Comparable body has published the same choice"
+      }
+    ],
+    "hard_disqualifiers": [
+      {
+        "code": "procurement_requires_certified_audit_or_sla",
+        "description": "Mandatory SOC 2 / ISO 27001 or contractual uptime SLA, unsupported by evidence",
+        "outcome": "EXCLUDED"
+      },
+      {
+        "code": "data_residency_must_be_in_country_outside_germany_eu",
+        "description": "Requirement for UK-only or specific national residency that EU/German hosting does not satisfy",
+        "outcome": "EXCLUDED"
+      },
+      {
+        "code": "mandated_self_hosting_on_internal_infrastructure",
+        "description": "Policy requires on-premise analytics",
+        "outcome": "ADJACENT"
+      }
+    ],
+    "eligible_subsegments": [
+      "national and devolved government digital teams",
+      "municipalities and city councils",
+      "public libraries and cultural institutions",
+      "schools, academy trusts and universities",
+      "public health and transport agencies"
+    ],
+    "excluded_subsegments": [
+      "bodies handling special-category data on the measured pages",
+      "US federal agencies under FedRAMP requirements"
+    ],
+    "max_team_size": null
+  },
+  "situation": {
+    "text": "UK and EU public sector web teams operate under a legal requirement to obtain consent before setting non-essential cookies such as analytics cookies, and some teams' service-build workflows embed an Information Governance review of analytics plus a cookie-banner implementation step before a site goes live.",
+    "grounding": "inferred",
+    "evidence": [
+      {
+        "source_id": "S7",
+        "quote": "You must have consent to set all other types of cookie."
+      },
+      {
+        "source_id": "S6",
+        "quote": "Ensure Privacy Impact Assessment covers usage of analytics data"
+      },
+      {
+        "source_id": "S6",
+        "quote": "Add cookie banner to site, ensuring analytics respects user opt-in/opt-outs"
+      }
+    ],
+    "inference_basis": "S7 states the UK legal consent requirement for non-essential cookies (tier 2 guidance); S6 shows a Scottish Government design-system workflow table (tier 2) that assigns a Privacy Impact Assessment check and a cookie-banner step specifically to analytics before a site launches. Combining these two distinct sources into one situation statement is an inference about how teams' build process relates to the consent requirement, not a single buyer's first-person account.; Publication date unknown; retrieval today does not establish current applicability."
+  },
+  "incumbent_behaviour": [
+    {
+      "text": "GOV.UK's Government Digital Service runs Google Analytics, migrating its tracking from Universal Analytics to GA4, and queries the raw GA4 data directly in BigQuery and reports on it through Looker Studio.",
+      "grounding": "inferred",
+      "evidence": [
+        {
+          "source_id": "S1",
+          "quote": "Google is replacing the current version of GA, Universal Analytics or UA, with a new version, GA4."
+        },
+        {
+          "source_id": "S1",
+          "quote": "we’ve often had to rely on querying the raw GA4 data in BigQuery"
+        },
+        {
+          "source_id": "S1",
+          "quote": "We use it to build reports using our Google Analytics data."
+        }
+      ],
+      "inference_basis": "Historical sources (2023-03-27); present applicability is not corroborated."
+    },
+    {
+      "text": "GOV.WALES runs Google Analytics alongside Plausible Analytics (described as aggregate-only with no personal data collected), self-hosted Matomo (described as cookieless), Crazy Egg page tagging, and a StackAdapt advertising pixel.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S2",
+          "quote": "We use Plausible Analytics on this site to collect some anonymous usage data for statistical purposes."
+        },
+        {
+          "source_id": "S2",
+          "quote": "All the data is in aggregate only. No personal data is collected to Plausible."
+        },
+        {
+          "source_id": "S2",
+          "quote": "To better understand site usage while respecting user privacy, we use Matomo Analytics, a self-hosted analytics solution. Matomo operates without setting cookies and utilises cookieless tracking to gather anonymous data on user behaviour."
+        },
+        {
+          "source_id": "S2",
+          "quote": "Crazy Egg page tagging keeps a record of user clicks through our web site, identifying how often links are clicked and if users scroll on pages so that we may identify and make improvements where needed."
+        }
+      ],
+      "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+    },
+    {
+      "text": "gov.scot runs Google Analytics but anonymises the last three digits of visitor IP addresses, and presents a cookie banner offering 'Accept all cookies' or 'Use essential cookies only' choices.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S3",
+          "quote": "We use Google Analytics to collect information about how you use gov.scot."
+        },
+        {
+          "source_id": "S3",
+          "quote": "We anonymise the last 3 digits of all gov.scot user IP addresses for Google Analytics, so that we can ensure that you are protected"
+        },
+        {
+          "source_id": "S3",
+          "quote": "Click 'Accept all cookies' to agree to all cookies that collect anonymous data. To only allow the cookies that make the site work, click 'Use essential cookies only.'"
+        }
+      ],
+      "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+    },
+    {
+      "text": "Scottish Government Design System sites primarily use Google Tag Manager and Google Analytics, and the design system guidance also surfaces cookieless analytics tools for teams to consider as an alternative.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S5",
+          "quote": "Scottish Government Design System sites primarily use Google Tag Manager (GTM) and Google Analytics (GA)."
+        },
+        {
+          "source_id": "S5",
+          "quote": "Analytics tools which do not rely on cookies are also available and should be considered when deciding on an analytics solution"
+        }
+      ],
+      "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+    },
+    {
+      "text": "Scottish Government's documented new-website workflow assigns Information Governance to confirm the Privacy Impact Assessment covers analytics and confirm no special-category data is collected via URLs/page titles, and assigns a Front End Developer to add a cookie banner that respects analytics opt-in/opt-out before launch.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S6",
+          "quote": "Ensure Privacy Impact Assessment covers usage of analytics data"
+        },
+        {
+          "source_id": "S6",
+          "quote": "Confirm URLs /Page Titles are not collecting any special category data under GDPR"
+        },
+        {
+          "source_id": "S6",
+          "quote": "Add cookie banner to site, ensuring analytics respects user opt-in/opt-outs"
+        }
+      ],
+      "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+    },
+    {
+      "text": "GDS makes its GA4 tracking schema and Data Protection Impact Assessment available to other UK government departments so they can reuse the schema or DPIA for their own GA4 implementations.",
+      "grounding": "inferred",
+      "evidence": [
+        {
+          "source_id": "S1",
+          "quote": "to share our schema and Data Protection Impact Assessment (DPIA) with other government departments."
+        },
+        {
+          "source_id": "S1",
+          "quote": "We also hope departments may be able to learn from our approach and use our schema or our DPIA to support their own GA4 implementations. Increasing standardisation would create efficiencies across government, and hopefully save departments a lot of time and resource."
+        }
+      ],
+      "inference_basis": "Historical sources (2023-03-27); present applicability is not corroborated."
+    },
+    {
+      "text": "A municipal council (Tewkesbury Borough Council) also runs Google Analytics on its own site to gather information about how it is used.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S4",
+          "quote": "Tewkesbury Borough Council uses Google Analytics to gather information about how you use our site."
+        }
+      ],
+      "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+    }
+  ],
+  "sophistication": "product_aware",
+  "sophistication_basis": {
+    "text": "Public sector teams are already running specific named analytics products in production — Google Analytics alongside Plausible Analytics and self-hosted Matomo on gov.wales — rather than merely discussing analytics as a category, and Scottish Government design-system guidance explicitly names competing products (Simple Analytics, Fathom, Plausible) for teams to weigh against Google Analytics.",
+    "grounding": "grounded",
+    "evidence": [
+      {
+        "source_id": "S2",
+        "quote": "we use Matomo Analytics, a self-hosted analytics solution"
+      },
+      {
+        "source_id": "S5",
+        "quote": "Analytics tools which do not rely on cookies are also available and should be considered when deciding on an analytics solution"
+      }
+    ],
+    "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+  },
+  "problems": [
+    {
+      "id": "P1",
+      "statement": "Teams that migrated GOV.UK's analytics from Universal Analytics to GA4 report that GA4's interface and data handling limit routine reporting: large volumes of event data get grouped into an unusable '(other)' category, strict API quota limits restrict additional reporting tools, multiple reporting views are no longer available (the comparable sub-properties cost more), and character limits with event batching disrupt plotting user journeys.",
+      "grounding": "inferred",
+      "evidence": [
+        {
+          "source_id": "S1",
+          "quote": "data is currently grouped into one line and labelled (other)"
+        },
+        {
+          "source_id": "S1",
+          "quote": "hamper our ability to use additional tools for reporting and analysis."
+        },
+        {
+          "source_id": "S1",
+          "quote": "Unlike in UA, you can’t have multiple reporting views in GA4 — sub-properties, the most comparable feature, cost more and do not have the same functionality."
+        },
+        {
+          "source_id": "S1",
+          "quote": "Character limits on the data that we send to GA4 affect our ability to collect data. GA4 also groups events in batches when sending them, which causes issues plotting user journeys and comparing UA and GA4 data."
+        }
+      ],
+      "corroboration": 1,
+      "cost": "Daily GA4 data tables are described as almost 20% larger than under Universal Analytics, which the team expects to increase storage costs.",
+      "cost_evidence": {
+        "source_id": "S1",
+        "quote": "Changes to the data structure mean that our daily data tables are almost 20% larger in GA4, so we expect storage costs to increase."
+      },
+      "source_count": 1,
+      "review_notes": [
+        "Historical sources (2023-03-27); present applicability is not corroborated.",
+        "Single-source problem; independent corroboration is not established."
+      ]
+    }
+  ],
+  "buyer_phrases": [
+    {
+      "text": "Google Analytics to collect information about how you use gov.scot",
+      "kind": "names_a_tool",
+      "evidence": {
+        "source_id": "S3",
+        "quote": "We use Google Analytics to collect information about how you use gov.scot."
+      }
+    },
+    {
+      "text": "Matomo Analytics, a self-hosted analytics solution",
+      "kind": "names_a_tool",
+      "evidence": {
+        "source_id": "S2",
+        "quote": "To better understand site usage while respecting user privacy, we use Matomo Analytics, a self-hosted analytics solution. Matomo operates without setting cookies and utilises cookieless tracking to gather anonymous data on user behaviour."
+      }
+    },
+    {
+      "text": "No personal data is collected to Plausible",
+      "kind": "avoided",
+      "evidence": {
+        "source_id": "S2",
+        "quote": "All the data is in aggregate only. No personal data is collected to Plausible."
+      }
+    },
+    {
+      "text": "we never receive your name or address",
+      "kind": "avoided",
+      "evidence": {
+        "source_id": "S3",
+        "quote": "for example, we never receive your name or address"
+      }
+    },
+    {
+      "text": "data is currently grouped into one line and labelled (other)",
+      "kind": "names_the_problem",
+      "evidence": {
+        "source_id": "S1",
+        "quote": "data is currently grouped into one line and labelled (other)"
+      }
+    },
+    {
+      "text": "hamper our ability to use additional tools for reporting and analysis",
+      "kind": "complaint",
+      "evidence": {
+        "source_id": "S1",
+        "quote": "hamper our ability to use additional tools for reporting and analysis."
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "text": "Google deprecating Universal Analytics in favour of GA4 forced GOV.UK's analytics team into a tracking migration and a rebuild of its GA accounts, properties and views.",
+      "grounding": "inferred",
+      "evidence": [
+        {
+          "source_id": "S1",
+          "quote": "Google is replacing the current version of GA, Universal Analytics or UA, with a new version, GA4."
+        }
+      ],
+      "inference_basis": "Historical sources (2023-03-27); present applicability is not corroborated."
+    },
+    {
+      "text": "Scotland's digital service standard requires services to define success and publish performance data, which is a documented reason teams set up web analytics tooling.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S5",
+          "quote": "‘Define what success looks like and publish performance data’ criteria"
+        }
+      ],
+      "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+    },
+    {
+      "text": "A regulatory decision finding that Google Analytics cookies are not exempt from consent requirements can be a trigger for organisations to reassess their analytics vendor and cookie setup.",
+      "grounding": "inferred",
+      "evidence": [
+        {
+          "source_id": "S8",
+          "quote": "la formation restreinte de la CNIL a relevé dans sa décision n° SAN-2020-008 du 18 novembre que les *«*cookies [Google Analytics] n’ont pas pour finalité exclusive de permettre ou de faciliter la communication par voie électronique et ne sont pas strictement nécessaires à la fourniture du service*»*."
+        }
+      ],
+      "inference_basis": "S8 is CNIL (tier 3) guidance reporting a regulatory decision about Google Analytics cookies not qualifying for the measurement exemption; this is a third party's interpretation of the law, not a tier-1 buyer statement of being triggered, so presenting it as a cause of buyer action is an inference rather than a grounded buyer-reported trigger.; Publication date unknown; retrieval today does not establish current applicability."
+    }
+  ],
+  "desired_outcomes": [
+    {
+      "text": "Public sector web teams want analytics that does not identify individual visitors or collect personal data while still measuring traffic and behaviour.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S2",
+          "quote": "All the data is in aggregate only. No personal data is collected to Plausible."
+        },
+        {
+          "source_id": "S3",
+          "quote": "make any attempt to find out the identities of people visiting gov.scot"
+        }
+      ],
+      "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+    },
+    {
+      "text": "Some web operators may want their audience-measurement tools to qualify for a regulatory consent exemption rather than requiring a cookie banner.",
+      "grounding": "inferred",
+      "evidence": [
+        {
+          "source_id": "S8",
+          "quote": "Certains traceurs de mesure d’audience peuvent être exemptés de consentement."
+        }
+      ],
+      "inference_basis": "S8 is CNIL (tier 3) guidance describing when measurement trackers can be exempted from consent under French law. This is the regulator's description of a legal possibility, not a direct statement from a buyer that this is their goal, so it is presented as an inferred desired outcome rather than buyer-stated language.; Publication date unknown; retrieval today does not establish current applicability."
+    }
+  ],
+  "signals": [
+    {
+      "text": "Cookie/privacy pages on gov.wales and gov.scot name specific analytics vendors and describe aggregate-only or anonymised collection.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S2",
+          "quote": "We use Plausible Analytics on this site to collect some anonymous usage data for statistical purposes."
+        },
+        {
+          "source_id": "S2",
+          "quote": "All the data is in aggregate only. No personal data is collected to Plausible."
+        },
+        {
+          "source_id": "S3",
+          "quote": "We use Google Analytics to collect information about how you use gov.scot."
+        }
+      ],
+      "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+    },
+    {
+      "text": "Design-system and service-standard guidance explicitly addresses web analytics tooling and criteria for publishing performance data.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S5",
+          "quote": "Scottish Government Design System sites primarily use Google Tag Manager (GTM) and Google Analytics (GA)."
+        },
+        {
+          "source_id": "S5",
+          "quote": "‘Define what success looks like and publish performance data’ criteria"
+        }
+      ],
+      "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+    },
+    {
+      "text": "A statutory service page presents a consent banner distinguishing full acceptance from essential-only cookies before analytics runs.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S3",
+          "quote": "Click 'Accept all cookies' to agree to all cookies that collect anonymous data. To only allow the cookies that make the site work, click 'Use essential cookies only.'"
+        }
+      ],
+      "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+    }
+  ],
+  "where": [
+    {
+      "text": "Scottish Government's Design System publishes dedicated analytics guidance pages covering tool choice and workflow.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S5",
+          "quote": "Scottish Government Design System sites primarily use Google Tag Manager (GTM) and Google Analytics (GA)."
+        }
+      ],
+      "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+    },
+    {
+      "text": "gov.wales and gov.scot each publish their own cookies/privacy pages describing the analytics vendors they run.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S2",
+          "quote": "We use Plausible Analytics on this site to collect some anonymous usage data for statistical purposes."
+        },
+        {
+          "source_id": "S3",
+          "quote": "We use Google Analytics to collect information about how you use gov.scot."
+        }
+      ],
+      "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+    },
+    {
+      "text": "Municipal council websites such as Tewkesbury Borough Council publish their own cookie policy pages naming Google Analytics.",
+      "grounding": "grounded",
+      "evidence": [
+        {
+          "source_id": "S4",
+          "quote": "Tewkesbury Borough Council uses Google Analytics to gather information about how you use our site."
+        }
+      ],
+      "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "requested_url": "https://gds.blog.gov.uk/2023/03/27/sharing-data-and-lessons-from-our-google-analytics-4-upgrade/",
+      "final_url": "https://gds.blog.gov.uk/2023/03/27/sharing-data-and-lessons-from-our-google-analytics-4-upgrade/",
+      "title": "Sharing data and lessons from our Google Analytics 4 upgrade – Government Digital Service",
+      "tier": 1,
+      "venue": "GDS Blog (gov.uk)",
+      "fetched_at": "2026-10-18T16:09:51.468479Z",
+      "published_date": "2023-03-27",
+      "publication_date_basis": "dated_url",
+      "content_hash": "b93807fe1f5e156f6124168beec9a890cfa423b59bfacf9945f73a8140ff470d"
+    },
+    {
+      "id": "S2",
+      "requested_url": "https://www.gov.wales/details-about-cookies-govwales",
+      "final_url": "https://www.gov.wales/details-about-cookies-govwales",
+      "title": "Details about cookies on GOV.WALES | GOV.WALES",
+      "tier": 1,
+      "venue": "GOV.WALES",
+      "fetched_at": "2026-10-18T16:09:50.237133Z",
+      "published_date": null,
+      "publication_date_basis": "unknown",
+      "content_hash": "a522f02ba61d3fb60aa2e049a211fbd81b98d655f23e8e2ff2da141a932fd22a"
+    },
+    {
+      "id": "S3",
+      "requested_url": "https://www.gov.scot/cookies/",
+      "final_url": "https://www.gov.scot/cookies/",
+      "title": "Cookies - gov.scot",
+      "tier": 1,
+      "venue": "gov.scot",
+      "fetched_at": "2026-10-18T16:09:50.179156Z",
+      "published_date": null,
+      "publication_date_basis": "unknown",
+      "content_hash": "accc8c32c037f5404f060443edeb165e78bca6436953d77a01e6bda7f78ac23e"
+    },
+    {
+      "id": "S4",
+      "requested_url": "https://tewkesbury.gov.uk/cookie-policy/",
+      "final_url": "https://tewkesbury.gov.uk/cookie-policy/",
+      "title": "Cookie policy - Tewkesbury Borough Council",
+      "tier": 1,
+      "venue": "Tewkesbury Borough Council",
+      "fetched_at": "2026-10-18T16:09:51.228168Z",
+      "published_date": null,
+      "publication_date_basis": "unknown",
+      "content_hash": "e4be2bbb80026f985587a27e2fc61265ed39d93af401edb9269c5cfd23af496b"
+    },
+    {
+      "id": "S5",
+      "requested_url": "https://designsystem.gov.scot/guidance/analytics",
+      "final_url": "https://designsystem.gov.scot/guidance/analytics",
+      "title": "Analytics - Design System",
+      "tier": 2,
+      "venue": "Scottish Government Design System",
+      "fetched_at": "2026-10-18T16:09:50.567143Z",
+      "published_date": null,
+      "publication_date_basis": "unknown",
+      "content_hash": "b2b343ee2292c98df80f525353d58b80a8af009f0c95bbeda9ca666c1a4cbe27"
+    },
+    {
+      "id": "S6",
+      "requested_url": "https://designsystem.gov.scot/guidance/analytics/new-website",
+      "final_url": "https://designsystem.gov.scot/guidance/analytics/new-website",
+      "title": "Setting up any analytics tool for a new website - Design System",
+      "tier": 2,
+      "venue": "Scottish Government Design System",
+      "fetched_at": "2026-10-18T16:09:50.761389Z",
+      "published_date": null,
+      "publication_date_basis": "unknown",
+      "content_hash": "a7d3a4ee1916030538b1e0d5092473ffa28ce9d324dea3f4aa5ab7dc1ed89aa7"
+    },
+    {
+      "id": "S7",
+      "requested_url": "https://www.gov.wales/cookie-consent-govwales-products",
+      "final_url": "https://www.gov.wales/cookie-consent-govwales-products",
+      "title": "Cookie consent for GOV.WALES products | GOV.WALES",
+      "tier": 2,
+      "venue": "GOV.WALES",
+      "fetched_at": "2026-10-18T16:09:50.943851Z",
+      "published_date": null,
+      "publication_date_basis": "unknown",
+      "content_hash": "1f22d5e6cca7a5c746b76842311ce75acd40b173a39812b9b77b8fed19981578"
+    },
+    {
+      "id": "S8",
+      "requested_url": "https://www.cnil.fr/fr/mesurer-la-frequentation-de-vos-sites-web-et-de-vos-applications",
+      "final_url": "https://www.cnil.fr/fr/mesurer-la-frequentation-de-vos-sites-web-et-de-vos-applications",
+      "title": "Mesurer la fréquentation de vos sites web et de vos applications | CNIL",
+      "tier": 3,
+      "venue": "CNIL (France)",
+      "fetched_at": "2026-10-18T16:09:51.398073Z",
+      "published_date": null,
+      "publication_date_basis": "unknown",
+      "content_hash": "f2c6852a472a06de1005b0cf2e4536181f6c6d5f085b43086a6b04f8086be1bf"
+    }
+  ],
+  "dropped_claims": 4,
+  "interpretation_warnings": [
+    "Publication date unknown; retrieval today does not establish current applicability. UK and EU public sector web teams operate under a legal requirement to obtain consent before setting non-essential cookies such as analytics cookies, and some teams' service-build workflows embed an Information Governance review of analytics plus a cookie-banner implementation step before a site goes live.",
+    "Publication date unknown; retrieval today does not establish current applicability. Public sector teams are already running specific named analytics products in production — Google Analytics alongside Plausible Analytics and self-hosted Matomo on gov.wales — rather than merely discussing analytics as a category, and Scottish Government design-system guidance explicitly names competing products (Simple Analytics, Fathom, Plausible) for teams to weigh against Google Analytics.",
+    "Historical sources (2023-03-27); present applicability is not corroborated. GOV.UK's Government Digital Service runs Google Analytics, migrating its tracking from Universal Analytics to GA4, and queries the raw GA4 data directly in BigQuery and reports on it through Looker Studio.",
+    "Publication date unknown; retrieval today does not establish current applicability. GOV.WALES runs Google Analytics alongside Plausible Analytics (described as aggregate-only with no personal data collected), self-hosted Matomo (described as cookieless), Crazy Egg page tagging, and a StackAdapt advertising pixel.",
+    "Publication date unknown; retrieval today does not establish current applicability. gov.scot runs Google Analytics but anonymises the last three digits of visitor IP addresses, and presents a cookie banner offering 'Accept all cookies' or 'Use essential cookies only' choices.",
+    "Publication date unknown; retrieval today does not establish current applicability. Scottish Government Design System sites primarily use Google Tag Manager and Google Analytics, and the design system guidance also surfaces cookieless analytics tools for teams to consider as an alternative.",
+    "Publication date unknown; retrieval today does not establish current applicability. Scottish Government's documented new-website workflow assigns Information Governance to confirm the Privacy Impact Assessment covers analytics and confirm no special-category data is collected via URLs/page titles, and assigns a Front End Developer to add a cookie banner that respects analytics opt-in/opt-out before launch.",
+    "Historical sources (2023-03-27); present applicability is not corroborated. GDS makes its GA4 tracking schema and Data Protection Impact Assessment available to other UK government departments so they can reuse the schema or DPIA for their own GA4 implementations.",
+    "Publication date unknown; retrieval today does not establish current applicability. A municipal council (Tewkesbury Borough Council) also runs Google Analytics on its own site to gather information about how it is used.",
+    "Historical sources (2023-03-27); present applicability is not corroborated. Google deprecating Universal Analytics in favour of GA4 forced GOV.UK's analytics team into a tracking migration and a rebuild of its GA accounts, properties and views.",
+    "Publication date unknown; retrieval today does not establish current applicability. Scotland's digital service standard requires services to define success and publish performance data, which is a documented reason teams set up web analytics tooling.",
+    "Publication date unknown; retrieval today does not establish current applicability. A regulatory decision finding that Google Analytics cookies are not exempt from consent requirements can be a trigger for organisations to reassess their analytics vendor and cookie setup.",
+    "Publication date unknown; retrieval today does not establish current applicability. Public sector web teams want analytics that does not identify individual visitors or collect personal data while still measuring traffic and behaviour.",
+    "Publication date unknown; retrieval today does not establish current applicability. Some web operators may want their audience-measurement tools to qualify for a regulatory consent exemption rather than requiring a cookie banner.",
+    "Publication date unknown; retrieval today does not establish current applicability. Cookie/privacy pages on gov.wales and gov.scot name specific analytics vendors and describe aggregate-only or anonymised collection.",
+    "Publication date unknown; retrieval today does not establish current applicability. Design-system and service-standard guidance explicitly addresses web analytics tooling and criteria for publishing performance data.",
+    "Publication date unknown; retrieval today does not establish current applicability. A statutory service page presents a consent banner distinguishing full acceptance from essential-only cookies before analytics runs.",
+    "Publication date unknown; retrieval today does not establish current applicability. Scottish Government's Design System publishes dedicated analytics guidance pages covering tool choice and workflow.",
+    "Publication date unknown; retrieval today does not establish current applicability. gov.wales and gov.scot each publish their own cookies/privacy pages describing the analytics vendors they run.",
+    "Publication date unknown; retrieval today does not establish current applicability. Municipal council websites such as Tewkesbury Borough Council publish their own cookie policy pages naming Google Analytics.",
+    "P1: Historical sources (2023-03-27); present applicability is not corroborated.",
+    "P1: Single-source problem; independent corroboration is not established."
+  ],
+  "researched_at": "2026-10-18T16:15:06.658336Z",
+  "id": "0d811d81-d49f-4ea4-8d83-5177246db79c",
+  "brand_id": "0fb96935-bd69-47f5-9347-98f5ae32cc46",
+  "audience_key": "an eu or uk public sector web team that must publish analytics without a consent banner",
+  "version": 2,
+  "source_map_id": "70f3637c-9495-49ee-a452-289925c4b66b",
+  "source_map_version": 2,
+  "created_at": "2026-10-18T16:15:06.665673"
+}

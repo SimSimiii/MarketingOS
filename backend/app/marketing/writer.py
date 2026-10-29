@@ -53,6 +53,7 @@ class EmailWriter:
         opening_move: str = "",
         idea_override: str = "",
         history: str = "",
+        source_context: str = "",
     ) -> Email:
         """One draft of one email.
 
@@ -77,6 +78,8 @@ class EmailWriter:
             sections.append(_opening_constraint(opening_move))
         if history:
             sections.append(history)
+        if source_context:
+            sections.append(source_context)
         sections.append(_already_sent(previous))
         return await self._write(
             brief=brief,
@@ -182,19 +185,29 @@ class EmailWriter:
         # business. See EvidenceLedger.slice_for: the full ledger in a writing
         # prompt is both the largest cost in a run and the standing temptation
         # that the brief's `must_not_say` exists to resist.
+        action_evidence = artifacts.evidence_for_action(
+            request.cta_url or brief.next_step_url,
+            excluded_ids=frozenset(brief.forbidden_evidence_ids),
+        )
         slice_ = artifacts.evidence_for_writing(
-            brief.evidence_ids,
+            list(dict.fromkeys([*brief.evidence_ids, *brief.next_step_evidence_ids, *(entry.id for entry in action_evidence.entries)])),
             brief.objection,
             offering=campaign.orientation,
             excluded_ids=frozenset(brief.forbidden_evidence_ids),
+        )
+        prompt_artifacts = (
+            artifacts.for_claim_boundary(
+                artifacts.evidence.ids - set(brief.forbidden_evidence_ids)
+            )
+            if brief.forbidden_evidence_ids else artifacts
         )
         segment = artifacts.audience.match(campaign.reader_segment, campaign.reader)
         system_prompt = self._session.render(
             "writer",
             {
                 "request": request.request,
-                "campaign_intent": campaign.interpretation,
-                "cta_destination": request.cta_url or "No fixed destination; use the supported brief.",
+                "campaign_intent": request.effective_intent.render() + "\n" + campaign.interpretation,
+                "cta_destination": request.cta_url or brief.next_step_url or "No fixed destination; use the supported brief.",
                 "reader": campaign.reader or "one person who has never heard of this company",
                 "segment": (
                     segment.render_for_writing()
@@ -202,20 +215,29 @@ class EmailWriter:
                     else "Nothing was established about this person beyond the line above. "
                     "Write to the situation the brief describes and claim nothing about them."
                 ),
-                "objection_detail": artifacts.objection_detail(brief.objection),
+                "objection_detail": prompt_artifacts.objection_detail(brief.objection),
                 "promise": campaign.promise,
-                "orientation": _orientation(campaign, artifacts),
+                "orientation": _orientation(campaign, prompt_artifacts),
                 "arc": campaign.render_arc(),
                 "brief": brief.render(),
                 "evidence": _evidence_for(brief, artifacts),
-                "knowledge": artifacts.render_for_writing(slice_),
+                "knowledge": prompt_artifacts.render_for_writing(slice_),
                 "voice": artifacts.voice.render(),
                 "voice_notes": campaign.voice_notes or "nothing beyond the brand voice above",
                 "sender": _sender(request, artifacts),
             },
         )
 
-        message = task
+        terms = artifacts.conditions_for_action(
+            brief.call_to_action, excluded_ids=frozenset(brief.forbidden_evidence_ids),
+        )
+        message = task + (
+            "\n\nApplicable plan conditions for this CTA (licensed context, not extra arguments):\n"
+            + terms.render()
+            + "\nExplain inclusions and limits material to the promised evaluation. "
+            "Do not copy every term or introduce unrelated features."
+            if terms.entries else ""
+        )
         last_error: EmailCopyError | None = None
         response = ""
         for repair in range(_REPAIR_ATTEMPTS):
@@ -226,7 +248,10 @@ class EmailWriter:
                 task=message,
             )
             try:
-                return parse_email(response, brief.position)
+                email = parse_email(response, brief.position)
+                if not request.sender and artifacts.business.company_name.strip():
+                    email = email.model_copy(update={"sign_off": f"- {artifacts.business.company_name.strip()}"})
+                return email
             except EmailCopyError as exc:
                 last_error = exc
                 # Said out loud, because a repair is a whole extra deep-tier
@@ -345,8 +370,8 @@ def _sender(request: CampaignRequest, artifacts: KnowledgeArtifacts) -> str:
             "is somebody to be."
         )
     return (
-        f"Nobody has told us who this is from, so sign it as {company} and a role that exists "
-        "in the material above. Never invent a person's name: a made-up sender is the one "
+        f"Nobody has told us who this is from, so sign it only as {company}. "
+        "Do not choose a department or role from product documentation. Never invent a person's name: a made-up sender is the one "
         "thing on the page a reader can catch you out on for certain."
     )
 
@@ -366,7 +391,7 @@ def _evidence_for(brief: EmailBrief, artifacts: KnowledgeArtifacts) -> str:
             "has nothing that fits, make no factual claim at all rather than a vague one."
         )
     return "\n".join(
-        f"- [{entry.id}] {entry.claim}\n      the source says: \"{entry.verbatim}\""
+        f"- [{entry.id}] {entry.claim} (full source and scope in the evidence inventory below)"
         for entry in entries
     )
 

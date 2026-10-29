@@ -6,6 +6,8 @@ then go and look. They are separate calls because they are separate questions -
 map, while "who exists" is answered from the open web. Running them as one call
 lets a search engine's results decide who the buyer is, which is backwards.
 """
+from urllib.parse import urlsplit
+
 from app.ai.base import ResearchTool
 from app.ai.model_router import ModelTier
 from app.knowledge.artifacts import KnowledgeArtifacts
@@ -114,6 +116,14 @@ async def search(
     seen: set[str] = set()
     candidates = []
     for candidate in result.candidates:
+        if public_web:
+            expected = {"companies": "company", "people": "professional", "venues": "venue"}
+            if candidate.kind != expected[request.target]:
+                continue
+            if request.target == "venues":
+                parts = urlsplit(candidate.url)
+                if (parts.hostname or "").endswith("linkedin.com") and parts.path.startswith("/in/"):
+                    continue
         if (not public_web and prefix not in candidate.url) or candidate.url.casefold() in seen:
             continue
         seen.add(candidate.url.casefold())

@@ -1,0 +1,53 @@
+{
+  "isolated": true,
+  "knowledge_reused": true,
+  "evidence_count": 380,
+  "audience": "The ops or no-code person on a small team whose intake form is step one of an automation nobody owns",
+  "research_warnings": [
+    "Review required: this interpretation may reverse the cited source's meaning. Builders are advised to use the generic Webhook trigger module instead of the native Tally app module, because the native module simplifies the payload in a way that complicates handling it downstream."
+  ],
+  "strategy_positioning_chars": 5591,
+  "policy": {
+    "max_revisions": 1,
+    "draft_candidates": 1,
+    "critic_enabled": true,
+    "reader_panel": false,
+    "tournament": false,
+    "subject_variants": 0,
+    "sequence_pass": false,
+    "max_sequence_reworks": 0,
+    "max_duration_seconds": 1200,
+    "max_total_tokens": 350000,
+    "merge_fields": [
+      "first_name",
+      "last_name",
+      "company",
+      "email"
+    ],
+    "force_recompile": false,
+    "require_proof": false,
+    "max_crawl_pages": 5,
+    "model_overrides": {
+      "*": "gpt-5.6-sol"
+    }
+  },
+  "limits": {
+    "name": "Tally reliability: bounded qualitative replay",
+    "source_snapshot": "docs/reviews/tally-retest-2026-10-16/inputs",
+    "brand_id": "9aea70bb-c22d-4bdc-9be2-edecf9c76f37",
+    "campaign_id": "5b8bb5c5-9587-4524-9c62-a133fa5ac28c",
+    "execution_mode": "isolated_snapshot_evaluation",
+    "max_provider_attempts": 12,
+    "max_duration_seconds": 1200,
+    "max_total_tokens": 350000,
+    "purpose": "Assess whether repaired source interpretation, argument selection and editorial review produce a more usable email on the original Tally request. Scripted tests establish code behavior; this optional bounded run assesses model behavior only."
+  },
+  "comparison": "Qualitative only; limited review policy and current dossier differ from historical run.",
+  "pipeline_forecast": {
+    "low": 4,
+    "high": 18,
+    "compile_low": 0,
+    "compile_high": 0
+  },
+  "additional_dossier_calls": 1
+}

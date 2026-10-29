@@ -23,6 +23,7 @@ logger = logging.getLogger("marketingos.marketing")
 #: "Subject:" is never mistaken for a field.
 _FIELD_NAMES = (
     "ROLE",
+    "LANGUAGE",
     "SUBJECT",
     "PREVIEW",
     "EYEBROW",
@@ -188,6 +189,7 @@ class Email(BaseModel):
 
     position: int
     role: str = ""
+    language: str = ""
     subject: str
     preview_text: str
     #: Two or three words in small capitals above the headline - "YOUR CART",
@@ -232,6 +234,7 @@ def parse_email(text: str, position: int) -> Email:
     email = Email(
         position=position,
         role=fields.get("ROLE", ""),
+        language=fields.get("LANGUAGE", "").strip(),
         subject=fields["SUBJECT"],
         preview_text=fields["PREVIEW"],
         eyebrow=fields.get("EYEBROW", ""),

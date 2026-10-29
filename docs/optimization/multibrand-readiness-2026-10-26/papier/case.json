@@ -1,0 +1,35 @@
+{
+  "name": "Papier",
+  "website_url": "https://www.papier.com/",
+  "api_base": "http://127.0.0.1:8000",
+  "campaign_name": "Papier — multi-brand homepage-only validation 2026-10-26",
+  "campaign_request": "Write one acquisition email in English for the selected audience. Choose the strategy and a documented next action from the compiled brand knowledge.",
+  "intent": {
+    "objective": "acquisition",
+    "objective_source": "user",
+    "reader_relationship": "unknown",
+    "relationship_source": "inferred"
+  },
+  "policy_preset": "balanced",
+  "strategy_mode": "auto",
+  "scenario": "ecommerce-personalisation",
+  "batch_protocol": "../protocol.json",
+  "brand_id": "93d48905-fb8a-4366-a7ef-f3460ae7af44",
+  "compile_model": "gpt-5.6-sol",
+  "research_model": "gpt-5.6-sol",
+  "dossier_model": "gpt-5.6-sol",
+  "model_overrides": {
+    "*": "gpt-5.6-sol"
+  },
+  "market_scan_options": {
+    "model": "gpt-5.6-sol"
+  },
+  "audience_map_options": {
+    "model": "gpt-5.6-sol",
+    "mode": "reassess"
+  },
+  "validation_arm": "explicit job-local OpenAI continuation",
+  "audience_segment": "A goal-driven professional starting a focused 16-week push and wanting planning away from screens",
+  "campaign_id": "1c67cc76-15c2-4607-8b29-8260d0b6a00c",
+  "research_comparison_arm": "Sol with A23 access-wall filtering and one other-host recovery; Terra corpus retained as weak contextual research"
+}

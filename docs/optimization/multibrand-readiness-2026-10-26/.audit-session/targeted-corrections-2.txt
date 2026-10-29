@@ -1,0 +1,165 @@
+.........................F....FFFFFF...FFFFFFF.FF.......FF.............. [ 51%]
+..................F...................F....F..F................F...      [100%]
+================================== FAILURES ===================================
+_ test_current_qualified_slice_reaches_strategy_and_effective_reader_without_an_extra_call _
+tests\marketing\test_argument_integrity.py:196: in test_current_qualified_slice_reaches_strategy_and_effective_reader_without_an_extra_call
+    assert provider.calls_by_role["strategist"] == 1
+E   assert 2 == 1
+_ test_missing_material_is_researched_added_and_replanned_automatically[missing_material] _
+tests\marketing\test_pipeline.py:198: in test_missing_material_is_researched_added_and_replanned_automatically
+    assert researcher.calls == 1
+E   assert 0 == 1
+E    +  where 0 = <test_pipeline.test_missing_material_is_researched_added_and_replanned_automatically.<locals>.AutomaticResearcher object at 0x000002C107AD2810>.calls
+------------------------------ Captured log call ------------------------------
+WARNING  marketingos.marketing:pipeline.py:421 pipeline: run failed - The strategy promises a next-step payoff without any assigned proof.
+_ test_missing_material_is_researched_added_and_replanned_automatically[argument] _
+tests\marketing\test_pipeline.py:198: in test_missing_material_is_researched_added_and_replanned_automatically
+    assert researcher.calls == 1
+E   assert 0 == 1
+E    +  where 0 = <test_pipeline.test_missing_material_is_researched_added_and_replanned_automatically.<locals>.AutomaticResearcher object at 0x000002C107B70710>.calls
+------------------------------ Captured log call ------------------------------
+WARNING  marketingos.marketing:pipeline.py:421 pipeline: run failed - The strategy promises a next-step payoff without any assigned proof.
+_ test_unverified_material_replans_to_a_smaller_supported_decision[missing_material] _
+tests\marketing\test_pipeline.py:249: in test_unverified_material_replans_to_a_smaller_supported_decision
+    assert provider.calls_by_role["strategist"] == 2
+E   assert 4 == 2
+_ test_unverified_material_replans_to_a_smaller_supported_decision[argument] __
+tests\marketing\test_pipeline.py:249: in test_unverified_material_replans_to_a_smaller_supported_decision
+    assert provider.calls_by_role["strategist"] == 2
+E   assert 4 == 2
+_ test_persistent_critic_material_concern_keeps_clean_draft_for_review[missing_material] _
+tests\marketing\test_pipeline.py:285: in test_persistent_critic_material_concern_keeps_clean_draft_for_review
+    assert provider.calls_by_role["strategist"] == 2
+E   assert 4 == 2
+_ test_persistent_critic_material_concern_keeps_clean_draft_for_review[argument] _
+tests\marketing\test_pipeline.py:285: in test_persistent_critic_material_concern_keeps_clean_draft_for_review
+    assert provider.calls_by_role["strategist"] == 2
+E   assert 4 == 2
+_ test_argument_gap_citing_verified_fact_replans_without_web_search[False-R1-False] _
+tests\marketing\test_pipeline.py:390: in test_argument_gap_citing_verified_fact_replans_without_web_search
+    assert provider.calls_by_role["strategist"] == 2
+E   assert 4 == 2
+------------------------------ Captured log call ------------------------------
+WARNING  marketingos.marketing:pipeline.py:421 pipeline: run failed - The recovery strategy ignored every newly verified fact after its one combined correction.
+_ test_argument_gap_citing_verified_fact_replans_without_web_search[False-E7-True] _
+tests\marketing\test_pipeline.py:390: in test_argument_gap_citing_verified_fact_replans_without_web_search
+    assert provider.calls_by_role["strategist"] == 2
+E   assert 4 == 2
+------------------------------ Captured log call ------------------------------
+WARNING  marketingos.marketing:pipeline.py:421 pipeline: run failed - The recovery strategy ignored every newly verified fact after its one combined correction.
+_ test_argument_gap_citing_verified_fact_replans_without_web_search[False-export_fact-True] _
+tests\marketing\test_pipeline.py:390: in test_argument_gap_citing_verified_fact_replans_without_web_search
+    assert provider.calls_by_role["strategist"] == 2
+E   assert 4 == 2
+------------------------------ Captured log call ------------------------------
+WARNING  marketingos.marketing:pipeline.py:421 pipeline: run failed - The recovery strategy ignored every newly verified fact after its one combined correction.
+_ test_argument_gap_citing_verified_fact_replans_without_web_search[True-R1-False] _
+tests\marketing\test_pipeline.py:390: in test_argument_gap_citing_verified_fact_replans_without_web_search
+    assert provider.calls_by_role["strategist"] == 2
+E   assert 4 == 2
+------------------------------ Captured log call ------------------------------
+WARNING  marketingos.marketing:pipeline.py:421 pipeline: run failed - The recovery strategy ignored every newly verified fact after its one combined correction.
+_ test_argument_gap_citing_verified_fact_replans_without_web_search[True-E7-True] _
+tests\marketing\test_pipeline.py:390: in test_argument_gap_citing_verified_fact_replans_without_web_search
+    assert provider.calls_by_role["strategist"] == 2
+E   assert 4 == 2
+------------------------------ Captured log call ------------------------------
+WARNING  marketingos.marketing:pipeline.py:421 pipeline: run failed - The recovery strategy ignored every newly verified fact after its one combined correction.
+_ test_argument_gap_citing_verified_fact_replans_without_web_search[True-export_fact-True] _
+tests\marketing\test_pipeline.py:390: in test_argument_gap_citing_verified_fact_replans_without_web_search
+    assert provider.calls_by_role["strategist"] == 2
+E   assert 4 == 2
+------------------------------ Captured log call ------------------------------
+WARNING  marketingos.marketing:pipeline.py:421 pipeline: run failed - The recovery strategy ignored every newly verified fact after its one combined correction.
+_ test_provider_failure_during_known_fact_replan_keeps_the_initial_clean_email _
+tests\marketing\test_pipeline.py:427: in test_provider_failure_during_known_fact_replan_keeps_the_initial_clean_email
+    assert result.status == "provider_unavailable"
+E   AssertionError: assert 'degraded' == 'provider_unavailable'
+E     
+E     - provider_unavailable
+E     + degraded
+------------------------------ Captured log call ------------------------------
+WARNING  marketingos.marketing:pipeline.py:421 pipeline: run failed - The recovery strategy ignored every newly verified fact after its one combined correction.
+_______ test_next_step_proof_is_kept_when_omitted_from_general_evidence _______
+tests\marketing\test_pipeline.py:476: in test_next_step_proof_is_kept_when_omitted_from_general_evidence
+    assert provider.calls_by_role["strategist"] == 1
+E   assert 2 == 1
+____________ test_three_emails_asked_for_is_three_emails_delivered ____________
+tests\marketing\test_pipeline.py:489: in test_three_emails_asked_for_is_three_emails_delivered
+    assert result.status == "completed"
+E   AssertionError: assert 'degraded' == 'completed'
+E     
+E     - completed
+E     + degraded
+_ test_final_critic_revision_remains_visible_even_when_the_reader_liked_the_email[{"verdict": "revise", "failure_mode": "copy", "strategy_gap": "", "brief_drift": "argues speed, but the brief assigned the switching-cost objection", "unspent_evidence": ["E1"], "edits": [{"line": "Most people ask whether it sounds like them.", "problem": "answers a doubt the reader did not have", "fix": "answer the switching cost instead", "severity": "major"}], "summary": "Right voice, wrong argument."}-True] _
+tests\marketing\test_pipeline.py:670: in test_final_critic_revision_remains_visible_even_when_the_reader_liked_the_email
+    assert result.report.emails[0].clean and result.report.emails[0].landed
+E   assert (True and False)
+E    +  where True = EmailReportLine(position=1, subject='Release notes, written before you sit down', single_idea='idea number 1 that noth...l or experience, or infer the campaign's desired reaction. Read the email cold as this person.", pull=8)], sameness=[]).clean
+E    +  and   False = EmailReportLine(position=1, subject='Release notes, written before you sit down', single_idea='idea number 1 that noth...l or experience, or infer the campaign's desired reaction. Read the email cold as this person.", pull=8)], sameness=[]).landed
+_ test_final_critic_revision_remains_visible_even_when_the_reader_liked_the_email[{"verdict": "ship", "failure_mode": "none", "strategy_gap": "", "edits": [], "summary": "Ready to send."}-False] _
+tests\marketing\test_pipeline.py:670: in test_final_critic_revision_remains_visible_even_when_the_reader_liked_the_email
+    assert result.report.emails[0].clean and result.report.emails[0].landed
+E   assert (True and False)
+E    +  where True = EmailReportLine(position=1, subject='Release notes, written before you sit down', single_idea='idea number 1 that noth...l or experience, or infer the campaign's desired reaction. Read the email cold as this person.", pull=8)], sameness=[]).clean
+E    +  and   False = EmailReportLine(position=1, subject='Release notes, written before you sit down', single_idea='idea number 1 that noth...l or experience, or infer the campaign's desired reaction. Read the email cold as this person.", pull=8)], sameness=[]).landed
+_____ test_a_draft_most_of_the_panel_would_click_ships_without_a_rewrite ______
+tests\marketing\test_pipeline.py:1454: in test_a_draft_most_of_the_panel_would_click_ships_without_a_rewrite
+    assert result.status == "completed"
+E   AssertionError: assert 'degraded' == 'completed'
+E     
+E     - completed
+E     + degraded
+_ test_discovery_hypothesis_reaches_strategy_without_becoming_writer_biography _
+tests\marketing\test_campaign_intelligence.py:527: in test_discovery_hypothesis_reaches_strategy_without_becoming_writer_biography
+    assert provider.calls_by_role == {"strategist": 1}
+E   AssertionError: assert defaultdict(<...rategist': 2}) == {'strategist': 1}
+E     
+E     Differing items:
+E     {'strategist': 2} != {'strategist': 1}
+E     Use -v to get more diff
+_ test_current_dossier_and_research_change_the_normalized_brief_without_an_extra_call _
+tests\marketing\test_campaign_intelligence.py:644: in test_current_dossier_and_research_change_the_normalized_brief_without_an_extra_call
+    assert provider.calls_by_role == {"strategist": 1}
+E   AssertionError: assert defaultdict(<...rategist': 2}) == {'strategist': 1}
+E     
+E     Differing items:
+E     {'strategist': 2} != {'strategist': 1}
+E     Use -v to get more diff
+____ test_researched_strategy_omits_unverified_biographies_and_objections _____
+tests\marketing\test_campaign_intelligence.py:712: in test_researched_strategy_omits_unverified_biographies_and_objections
+    assert provider.calls_by_role == {"strategist": 1}
+E   AssertionError: assert defaultdict(<...rategist': 2}) == {'strategist': 1}
+E     
+E     Differing items:
+E     {'strategist': 2} != {'strategist': 1}
+E     Use -v to get more diff
+_ test_pipeline_emits_and_persists_intelligence_trace_without_research_or_relevance_calls _
+tests\marketing\test_campaign_intelligence.py:1133: in test_pipeline_emits_and_persists_intelligence_trace_without_research_or_relevance_calls
+    assert provider.calls_by_role["strategist"] == 1
+E   assert 2 == 1
+=========================== short test summary info ===========================
+FAILED tests/marketing/test_argument_integrity.py::test_current_qualified_slice_reaches_strategy_and_effective_reader_without_an_extra_call
+FAILED tests/marketing/test_pipeline.py::test_missing_material_is_researched_added_and_replanned_automatically[missing_material]
+FAILED tests/marketing/test_pipeline.py::test_missing_material_is_researched_added_and_replanned_automatically[argument]
+FAILED tests/marketing/test_pipeline.py::test_unverified_material_replans_to_a_smaller_supported_decision[missing_material]
+FAILED tests/marketing/test_pipeline.py::test_unverified_material_replans_to_a_smaller_supported_decision[argument]
+FAILED tests/marketing/test_pipeline.py::test_persistent_critic_material_concern_keeps_clean_draft_for_review[missing_material]
+FAILED tests/marketing/test_pipeline.py::test_persistent_critic_material_concern_keeps_clean_draft_for_review[argument]
+FAILED tests/marketing/test_pipeline.py::test_argument_gap_citing_verified_fact_replans_without_web_search[False-R1-False]
+FAILED tests/marketing/test_pipeline.py::test_argument_gap_citing_verified_fact_replans_without_web_search[False-E7-True]
+FAILED tests/marketing/test_pipeline.py::test_argument_gap_citing_verified_fact_replans_without_web_search[False-export_fact-True]
+FAILED tests/marketing/test_pipeline.py::test_argument_gap_citing_verified_fact_replans_without_web_search[True-R1-False]
+FAILED tests/marketing/test_pipeline.py::test_argument_gap_citing_verified_fact_replans_without_web_search[True-E7-True]
+FAILED tests/marketing/test_pipeline.py::test_argument_gap_citing_verified_fact_replans_without_web_search[True-export_fact-True]
+FAILED tests/marketing/test_pipeline.py::test_provider_failure_during_known_fact_replan_keeps_the_initial_clean_email
+FAILED tests/marketing/test_pipeline.py::test_next_step_proof_is_kept_when_omitted_from_general_evidence
+FAILED tests/marketing/test_pipeline.py::test_three_emails_asked_for_is_three_emails_delivered
+FAILED tests/marketing/test_pipeline.py::test_final_critic_revision_remains_visible_even_when_the_reader_liked_the_email[{"verdict": "revise", "failure_mode": "copy", "strategy_gap": "", "brief_drift": "argues speed, but the brief assigned the switching-cost objection", "unspent_evidence": ["E1"], "edits": [{"line": "Most people ask whether it sounds like them.", "problem": "answers a doubt the reader did not have", "fix": "answer the switching cost instead", "severity": "major"}], "summary": "Right voice, wrong argument."}-True]
+FAILED tests/marketing/test_pipeline.py::test_final_critic_revision_remains_visible_even_when_the_reader_liked_the_email[{"verdict": "ship", "failure_mode": "none", "strategy_gap": "", "edits": [], "summary": "Ready to send."}-False]
+FAILED tests/marketing/test_pipeline.py::test_a_draft_most_of_the_panel_would_click_ships_without_a_rewrite
+FAILED tests/marketing/test_campaign_intelligence.py::test_discovery_hypothesis_reaches_strategy_without_becoming_writer_biography
+FAILED tests/marketing/test_campaign_intelligence.py::test_current_dossier_and_research_change_the_normalized_brief_without_an_extra_call
+FAILED tests/marketing/test_campaign_intelligence.py::test_researched_strategy_omits_unverified_biographies_and_objections
+FAILED tests/marketing/test_campaign_intelligence.py::test_pipeline_emits_and_persists_intelligence_trace_without_research_or_relevance_calls
+23 failed, 116 passed in 20.79s

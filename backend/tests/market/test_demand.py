@@ -105,6 +105,18 @@ def map_payload(**overrides: object) -> dict:
     return payload
 
 
+@pytest.mark.parametrize("need", ["", "Collect a recorded account of the repair result."])
+def test_selected_segment_uses_structured_need_with_legacy_fallback(need):
+    mapped = segment(need=need, workflow="An unverified workflow hypothesis")
+
+    selected = mapped.as_segment()
+
+    assert selected.job_to_be_done == (need or mapped.why_them)
+    assert selected.situation == mapped.who
+    assert all(pain.grounding is Grounding.INFERRED for pain in selected.pains)
+    assert "unverified workflow" not in selected.situation
+
+
 def read_payload(**overrides: object) -> dict:
     payload: dict = {
         "what_they_do": "refurbishes and resells business laptops",
@@ -143,7 +155,6 @@ async def test_the_cartographer_reads_the_web(provider: ScriptedProvider, sessio
     assert next(item.name for item in demand.ranked).startswith("Independent repair shops")
     assert provider.tools_used_by("audience_map") == [
         ResearchTool.WEB_SEARCH,
-        ResearchTool.WEB_FETCH,
     ]
 
 

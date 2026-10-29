@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { CampaignIntentFields } from "@/components/campaign-intent-fields";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -9,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/lib/api-client";
 import { refreshPage } from "@/lib/page-data";
-import type { Campaign } from "@/lib/types";
+import type { Campaign, CampaignIntent } from "@/lib/types";
 
 const optionalFields = [
   ["product_url", "Product website", 2048],
@@ -24,6 +25,7 @@ const optionalFields = [
 export function EditBriefDialog({ campaign }: { campaign: Campaign }) {
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [intent, setIntent] = useState<CampaignIntent | null>(campaign.intent ?? null);
 
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -37,6 +39,7 @@ export function EditBriefDialog({ campaign }: { campaign: Campaign }) {
         product_url: value("product_url") || null, cta_url: value("cta_url") || null,
         target_market: value("target_market") || null, goals: value("goals") || null,
         sender_name: value("sender_name") || null, sender_role: value("sender_role") || null,
+        intent: intent ? { ...intent, desired_action: value("goals") } : null,
       });
       setOpen(false);
       toast.success("Brief updated. No generation was started.");
@@ -59,6 +62,7 @@ export function EditBriefDialog({ campaign }: { campaign: Campaign }) {
         <div className="space-y-2"><Label htmlFor="edit-name">Campaign name</Label><Input id="edit-name" name="name" required maxLength={256} defaultValue={campaign.name} /></div>
         <div className="space-y-2"><Label htmlFor="edit-request">Instructions</Label><Textarea id="edit-request" name="request" required minLength={10} maxLength={100000} rows={6} defaultValue={campaign.request} /></div>
         <div className="space-y-2"><Label htmlFor="edit-product">Offer description</Label><Textarea id="edit-product" name="product_description" maxLength={100000} rows={3} defaultValue={campaign.product_description} /></div>
+        <CampaignIntentFields value={intent} onChange={setIntent} />
         <div className="grid gap-4 sm:grid-cols-2">
           {optionalFields.map(([field, label, maxLength]) => <div key={field} className="space-y-2">
             <Label htmlFor={`edit-${field}`}>{label} <span className="text-muted-foreground">(optional)</span></Label>

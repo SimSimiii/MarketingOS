@@ -35,6 +35,11 @@ export interface ScoredEmail {
   /** Interchangeable openings and category boilerplate the free check found
    * in the shipped copy. */
   sameness?: string[];
+  selection_reason?: string;
+  next_step_decision?: string;
+  next_step_value?: string;
+  next_step_url?: string;
+  next_step_limit?: string;
 }
 
 /** Why an email scored what it scored.
@@ -146,6 +151,14 @@ function EmailVerdicts({ email }: { email: ScoredEmail }) {
 
       {open && (
         <div className="space-y-4 border-t border-hairline p-3.5">
+          {(email.selection_reason || email.next_step_value) && <div className="space-y-1 rounded-md bg-white/[0.03] p-3 text-sm">
+            <p className="font-medium">Selected proposition</p>
+            {email.selection_reason && <p>{email.selection_reason}</p>}
+            {email.next_step_decision && <p className="text-muted-foreground">Decision: {email.next_step_decision}</p>}
+            {email.next_step_value && <p>Next step: {email.next_step_value}</p>}
+            {email.next_step_url && <p className="break-all text-xs text-muted-foreground">Destination: {email.next_step_url}</p>}
+            {email.next_step_limit && <p className="text-xs text-amber-300">Limits: {email.next_step_limit}</p>}
+          </div>}
           {verdicts.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               No cold reader reported back on this one, so the score is a placeholder rather than

@@ -1,0 +1,96 @@
+[
+  {
+    "opponent": "baseline",
+    "verdict": "mixed",
+    "ballots": [
+      {
+        "order": [
+          "proposed",
+          "baseline"
+        ],
+        "decoded_winner": "baseline",
+        "winner": "B",
+        "reason": "B more clearly explains the activation sequence and sets the right expectation: connecting starts background indexing, search becomes available after the first folder finishes, and the rest of the drive may still be indexing. Its subject, body, and CTA form a direct connect-then-search progression. A is factually supported but more repetitive and less natural, especially its vague instruction to “check whether your first available search is ready to use.”",
+        "decisive_passages": [
+          "“Connect your drive, then search”",
+          "“Search becomes available as soon as the first folder finishes indexing. You can begin searching at that point while Portway continues indexing beyond that folder.”",
+          "“The connection starts the process; it does not make the entire drive searchable immediately.”",
+          "A: “That gives you a clear point to check whether your first available search is ready to use.”"
+        ],
+        "material_concerns_a": [
+          "The phrase “your first available search is ready to use” is awkward and obscures the otherwise simple timing condition.",
+          "The email repeats the connect, indexing, and first-folder sequence several times without adding useful guidance."
+        ],
+        "material_concerns_b": []
+      },
+      {
+        "order": [
+          "baseline",
+          "proposed"
+        ],
+        "decoded_winner": "proposed",
+        "winner": "B",
+        "reason": "B more directly serves a new administrator who has not connected a drive: it identifies connecting the first drive as the required first step, explains that indexing then runs in the background, states exactly when search becomes available, and closes with an action that matches the subject and CTA. A is factually supported but more repetitive and slightly less direct about onboarding the reader’s first drive.",
+        "decisive_passages": [
+          "“To start making those files available for search, the first step is connecting a drive.”",
+          "“Search becomes available as soon as the first folder finishes indexing.”",
+          "“Open the connection page to connect your first drive and begin background indexing.”"
+        ],
+        "material_concerns_a": [
+          "“Your first drive connection puts Portway to work” is vague introductory language rather than useful guidance.",
+          "The explanation repeats the same timing distinction across several paragraphs, making the email less concise than necessary.",
+          "“Start the connection when you are ready for the first folder to begin indexing” is less direct and natural than simply asking the administrator to connect the drive."
+        ],
+        "material_concerns_b": [
+          "“That gives you a clear point to check whether your first available search is ready to use” is awkward and adds little beyond the preceding timing statement.",
+          "“You can start searching the files indexed so far” is a reasonable inference from search becoming available after the first folder finishes, but the supplied evidence does not explicitly define the searchable scope at that stage."
+        ]
+      }
+    ]
+  },
+  {
+    "opponent": "simple",
+    "verdict": "simple",
+    "ballots": [
+      {
+        "order": [
+          "proposed",
+          "simple"
+        ],
+        "decoded_winner": "simple",
+        "winner": "B",
+        "reason": "B is more natural and direct while fully answering the onboarding request: it tells the new administrator to connect a drive, explains that indexing then runs in the background, and identifies the exact search-availability threshold. Its subject, body, and CTA maintain a single continuous action. A is also factually supported, but phrases such as “check whether your first available search is ready to use” are awkward and add friction without useful information.",
+        "decisive_passages": [
+          "“Once a drive is connected, Portway indexes it in the background.”",
+          "“Search becomes available as soon as the first folder finishes indexing.”",
+          "“Connect your first drive to start background indexing. Search will follow when that first folder is finished.”"
+        ],
+        "material_concerns_a": [
+          "“That gives you a clear point to check whether your first available search is ready to use” is cumbersome and less clear than the established fact it restates."
+        ],
+        "material_concerns_b": []
+      },
+      {
+        "order": [
+          "simple",
+          "proposed"
+        ],
+        "decoded_winner": "simple",
+        "winner": "A",
+        "reason": "A is slightly more usable because it states the supported timing condition precisely and turns it into a concrete, low-stakes checkpoint: the administrator can connect a drive, let indexing continue in the background, and try search once the first folder finishes. Its subject, explanation, and CTA remain tightly aligned. B is also clear, but “you can start searching the files indexed so far” adds a scope detail not explicitly established by the supplied evidence, and “check whether your first available search is ready to use” is less natural.",
+        "decisive_passages": [
+          "“Search becomes available as soon as the first folder finishes indexing.”",
+          "“The point to watch is the first folder finishing, rather than the entire drive reaching the end.”",
+          "B: “After the first folder finishes, you can start searching the files indexed so far.”"
+        ],
+        "material_concerns_a": [
+          "The timing point is repeated several times, making the body slightly more repetitive than necessary."
+        ],
+        "material_concerns_b": [
+          "“The files indexed so far” is a plausible inference, but the supplied evidence establishes when search becomes available, not the precise scope of searchable files at that moment.",
+          "“Check whether your first available search is ready to use” is awkward and less direct than A’s checkpoint language."
+        ]
+      }
+    ]
+  }
+]

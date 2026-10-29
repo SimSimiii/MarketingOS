@@ -125,10 +125,10 @@ export function MarketView({
   );
 
   const buildDossier = useCallback(
-    async (segment: string, rebuild: boolean) => {
+    async (segment: string, rebuild: boolean, verifyProductGaps = false) => {
       setStarting(true);
       try {
-        const started = await api.startRelevanceDossier(brand.id, segment, rebuild);
+        const started = await api.startRelevanceDossier(brand.id, segment, rebuild, undefined, verifyProductGaps);
         setJob(started);
         // Exact-triple reuse finishes inside the request and therefore never
         // enters the polling effect. Refresh the server data here too.

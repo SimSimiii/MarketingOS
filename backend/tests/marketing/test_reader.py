@@ -11,10 +11,10 @@ reader whose score no rewrite could move.
 from app.core.config import PROMPTS_DIR
 from app.knowledge.artifacts import AudienceModel, Segment
 from app.marketing.reader import (
-    _PULL_BY_CLICKS,
     PULL_THRESHOLD,
     BlindRead,
     PanelRead,
+    ReaderAssessment,
     personas_for,
     pull_from_clicks,
 )
@@ -46,38 +46,24 @@ SEGMENT = Segment(
 
 
 def test_the_floor_is_a_number_the_reader_was_told_the_meaning_of():
-    """The floor is only meaningful if the reader's scale puts the same event
-    at the same number.
-
-    It did not, twice over. The ladder used to anchor 7 at "you would click if
-    the week were calmer" while `landed` also required "would click today", so
-    a reader answering both honestly could never satisfy them at once. And the
-    event it asked about - would this one person click today - is one a real
-    recipient declines about ninety-seven times in a hundred whatever the copy
-    says, so the floor sat above what any email could reach and every score
-    piled up at the bottom.
-
-    Now the threshold is a click frequency, and the prompt has to state the
-    same frequency in the same units or the reader is aiming at a number
-    nobody described to them.
-    """
+    """The decision threshold belongs to the stated editorial rubric."""
     prompt = PromptEngine(PROMPTS_DIR).render(
         "reader", {"reader_profile": SEGMENT.name, "email": "Subject: anything"}
     )
-    floor = next(clicks for clicks, score in _PULL_BY_CLICKS if score == PULL_THRESHOLD)
+    assert PULL_THRESHOLD == 7
+    assert "7–8" in prompt
+    assert "uncalibrated" in prompt
+    assert "opens_in_100" not in prompt
+    assert "clicks_in_100" not in prompt
 
-    assert f"**{floor} in a hundred**" in prompt
 
-
-def test_the_floor_sits_where_a_good_cold_email_actually_lands():
-    """A guard on the calibration itself. Cold email is clicked by 1-3 of a
-    hundred when it works at all, so a floor set anywhere near the middle of
-    the 0-10 scale in click terms would be a floor nothing reaches - which is
-    the failure this whole scale was rebuilt to remove."""
-    floor = next(clicks for clicks, score in _PULL_BY_CLICKS if score == PULL_THRESHOLD)
-
-    assert 4 <= floor <= 10, "the floor has to be reachable by an email that works"
-    assert pull_from_clicks(2) < PULL_THRESHOLD, "ordinary cold copy is not a pass"
+def test_new_reader_contract_does_not_request_predicted_open_or_click_counts():
+    properties = ReaderAssessment.model_json_schema()["properties"]
+    assert "pull" in properties
+    assert "opens_in_100" not in properties
+    assert "clicks_in_100" not in properties
+    # Historical data stays readable without making the old scale a prediction.
+    assert pull_from_clicks(2) == 4
     assert pull_from_clicks(0) == 0
 
 
@@ -187,14 +173,14 @@ def test_readers_who_never_came_back_do_not_count_against_the_majority():
 # ------------------------------------------------------------ how it is reported
 
 
-def test_one_reader_is_reported_as_a_person_not_a_tally():
-    assert PanelRead(reads=[read(8)]).verdict_line() == "they would click today"
-    assert PanelRead(reads=[read(3)]).verdict_line() == "they would not click"
+def test_one_reader_is_reported_as_an_uncalibrated_editorial_assessment():
+    assert PanelRead(reads=[read(8)]).verdict_line() == "AI simulation assessment 8/10 (uncalibrated)"
+    assert PanelRead(reads=[read(3)]).verdict_line() == "AI simulation assessment 3/10 (uncalibrated)"
 
 
-def test_a_panel_is_reported_as_how_many_of_them_would_click():
+def test_a_panel_reports_its_editorial_median_without_prediction():
     panel = PanelRead(reads=[read(8), read(8), read(3)])
-    assert panel.verdict_line() == "2 of 3 would click today"
+    assert panel.verdict_line() == "AI simulation assessment 8/10 (uncalibrated)"
 
 
 def test_a_panel_nobody_read_says_so_rather_than_reporting_a_refusal():
@@ -240,6 +226,16 @@ def test_a_custom_audience_controls_every_reader_without_compiled_biography():
     assert len(personas) == 3
     assert all(custom in persona for persona in personas)
     assert all(SEGMENT.name not in persona and SEGMENT.situation not in persona for persona in personas)
+
+
+def test_qualified_scope_reaches_the_reader_but_does_not_override_explicit_user_audience():
+    scope = "Teams choosing a form before any automation is installed"
+    personas = personas_for(AudienceModel(segments=[SEGMENT]), SEGMENT, False, reader_scope=scope)
+    assert scope in personas[0]
+    custom = personas_for(AudienceModel(segments=[SEGMENT]), SEGMENT, False,
+                          "An explicitly selected audience", reader_scope=scope)
+    assert "An explicitly selected audience" in custom[0]
+    assert scope not in custom[0]
 
 
 def test_no_reader_is_defined_by_rejecting_the_medium():

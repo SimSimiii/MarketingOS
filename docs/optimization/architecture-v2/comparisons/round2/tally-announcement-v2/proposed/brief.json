@@ -1,0 +1,83 @@
+{
+  "interpretation": "Treat this as a single launch-announcement email for non-buyers whose prior relationship with Tally is unknown. Within the selected audience, target only no-code automation agencies, as required by the current relevance dossier. The launch is Tally’s availability as a form builder that can feed submissions into automated workflows; do not invent a release date or present the documented webhook capability as newly added.",
+  "pipeline_version": 2,
+  "intent": {
+    "objective": "announcement",
+    "objective_source": "inferred",
+    "reader_relationship": "unknown",
+    "relationship_source": "inferred",
+    "announcement": "",
+    "reason_now": "",
+    "desired_action": ""
+  },
+  "reader": "Selected audience: The ops or no-code person on a small team whose intake form is step one of an automation nobody owns.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): They inherited the form. It feeds something — a CRM record, a Slack channel, a billing step, an onboarding checklist — and the handoff between the form and the rest of the stack is currently a human. Someone exports a CSV on Mondays, or a scheduled job polls an API, or the form emails a shared inbox and a person retypes it. They have built the downstream half already in Make, Zapier or n8n and they are competent enough to read webhook docs, which means their evaluation is not about whether a form is pretty. It is about whether a delivery that fails at 2am gets retried, whether they will find out when it doesn't, whether they can verify a payload came from the vendor before it writes to a production database, and whether the vendor will move webhooks behind a seat-priced tier the quarter after they standardise on it. The failure they fear is specific and quiet: the form keeps accepting submissions and the records stop appearing.\nQualified campaign scope within that audience: no-code automation agencies.",
+  "reader_segment": "The ops or no-code person on a small team whose intake form is step one of an automation nobody owns",
+  "reader_profile_override": "",
+  "reader_scope": "no-code automation agencies",
+  "fixed_cta_url": "",
+  "promise": "Tally can give a no-code agency a form-based starting point for automated client workflows by sending each submission as structured JSON to an HTTP endpoint in real time.",
+  "orientation": "Tally is an online form builder that sends form submissions to automation endpoints and connects with no-code platforms used by small teams.",
+  "arc": "Because there is exactly one email, it must complete the full movement in one pass: establish that Tally has launched, connect its form-to-automation mechanism to agency work, answer whether it fits common no-code routing setups, and invite one concrete first build.",
+  "sequence_rationale": "A single announcement cannot defer proof or objections to later emails. Lead with the launch and the operationally relevant mechanism, then support it with documented routing examples and close on a low-friction creation step. Avoid a manufactured pain story because the dossier does not establish that every recipient has suffered a failed workflow, and the product evidence does not license promises to fix the researched redirect, mapping, replay, or validation problems.",
+  "emails": [
+    {
+      "problem_ids": [],
+      "offer_id": "offering",
+      "action_id": "action_1d1a40b963ea",
+      "selection_reason": "This is the strongest campaign-safe launch proposition for no-code automation agencies: it makes Tally relevant to the reader’s known job by showing how a form submission can become the input to a wider workflow, without assuming a particular installed platform or unsupported failure.",
+      "next_step_url": "https://tally.so/create",
+      "argument_issue": "",
+      "position": 1,
+      "job": "Get a non-buying no-code agency operator to create one Tally form and consider it as the intake layer for an upcoming automated client workflow.",
+      "single_idea": "Tally has launched as a form builder that can do more than collect answers: each submission can be sent as structured JSON to an HTTP endpoint in real time, giving an automated workflow a clear starting point.",
+      "felt_need": "",
+      "status_quo": "",
+      "why_it_fails": "",
+      "mechanism": "A Tally webhook sends every form submission as structured JSON to an HTTP endpoint in real time. Tally forms can also trigger automation platforms such as Make, Zapier, or n8n, which can route that data onward to CRMs, billing tools, databases, or messaging apps. Present those platforms as documented examples, not as the reader’s assumed stack.",
+      "alternative_ideas": [],
+      "alternative_arguments": [],
+      "belief_shift": "Before: Tally may sound like another standalone form builder. After: Tally is worth testing as the form-based entry point to a broader client automation workflow.",
+      "evidence_ids": [
+        "E31",
+        "E33"
+      ],
+      "must_not_say": [
+        "Current product material does not establish support for downstream conditional responses or respondent redirects.",
+        "Current product material does not define the webhook representation of multi-choice answers.",
+        "Current product material does not explain destination-specific type mapping into Airtable.",
+        "Current product material does not establish whether instant webhook triggers replay earlier submissions during testing.",
+        "Do not promise that Tally validates submissions, blocks typos or bot spam, or prevents bad records from reaching a CRM.",
+        "Do not claim every recipient currently uses Make, Zapier, n8n, a CRM, a custom endpoint, or any other named tool.",
+        "Do not imply that the webhook capability itself is newly released; the user supplied a product-launch objective, not a dated feature announcement.",
+        "Do not invent a launch date, deadline, scarcity, measured time saving, conversion lift, reliability outcome, or guaranteed client result.",
+        "Do not discuss Tally Pro or Business pricing; the supplied sources conflict on Pro pricing and the selected action is to create a free form.",
+        "Do not broaden the email into Tally’s security, accessibility, payments, file uploads, AI, MCP, analytics, or full integration catalogue.",
+        "Do not claim setup is instant, effortless, one-click, or code-free for a custom webhook route.",
+        "Keep the connection route attached to its cited source. A native or prebuilt integration and a custom HTTP/webhook endpoint are separate setup paths unless the source explicitly equates them. A platform name alone establishes neither manual endpoint configuration nor a no-setup connector. Keep unknown setup requirements unknown; do not mix the steps or benefits of those paths."
+      ],
+      "forbidden_evidence_ids": [
+        "E111"
+      ],
+      "forbidden_capability_ids": [],
+      "objection": "Will this fit the kinds of no-code workflows I build for clients? Answer narrowly: Tally documents routing through Make, Zapier, or n8n to systems such as CRMs, billing tools, databases, and messaging apps, while leaving compatibility with the reader’s exact route for them to verify.",
+      "tone": "Warm, casual, and confident—like a trusted peer sharing a useful new tool. Short sentences, plain language, and no launch-day hype.",
+      "call_to_action": "Create a free form",
+      "next_step_decision": "Decide whether a Tally form is a suitable intake layer to test in an upcoming client automation workflow.",
+      "next_step_value": "The destination lets the reader start building a Tally form that can be evaluated as the source of structured submission data for an HTTP endpoint and, where relevant, a no-code routing workflow.",
+      "next_step_evidence_ids": [
+        "E31",
+        "E33"
+      ],
+      "next_step_limit": "Creating the form does not by itself establish compatibility with a particular destination, field-mapping behavior, validation logic, conditional respondent redirects, replay of earlier submissions, or production reliability.",
+      "subject_strategy": "Make the launch clear and tie it immediately to the reader’s operational lens: a form that can start an automated workflow. Keep it conversational and specific; avoid generic excitement, unsupported novelty claims, competitor comparisons, or naming a platform as though every reader uses it.",
+      "must_not_reuse": []
+    }
+  ],
+  "voice_notes": "Sound like the small team behind Tally writing directly to a capable peer. Use “we” naturally, keep technical language concise, and avoid explaining basic automation concepts. Friendly should mean relaxed and useful, not bubbly or overfamiliar.",
+  "contract": {
+    "kind": "single_email",
+    "count": 1,
+    "count_is_explicit": true,
+    "evidence": "1 email"
+  }
+}

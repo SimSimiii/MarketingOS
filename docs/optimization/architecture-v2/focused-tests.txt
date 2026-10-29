@@ -1,0 +1,18 @@
+...............................................F........................ [ 59%]
+..................................................                       [100%]
+================================== FAILURES ===================================
+_________ test_a_rewrite_that_drops_the_proof_does_not_take_the_title _________
+tests\marketing\test_choosing.py:257: in test_a_rewrite_that_drops_the_proof_does_not_take_the_title
+    assert outcome.versions[1].duel is None, "and was not even put to a vote"
+E   AssertionError: and was not even put to a vote
+E   assert Duel(challenger_votes=2, champion_votes=0, reasons=('it got to the point', 'it told me what it costs'), unreported=0) is None
+E    +  where Duel(challenger_votes=2, champion_votes=0, reasons=('it got to the point', 'it told me what it costs'), unreported=0) = EmailVersion(attempt=2, email=Email(position=1, role='hook', subject='It already knows how you write', preview_text='w...sons=('it got to the point', 'it told me what it costs'), unreported=0), idea='idea number 1 that nothing else argues').duel
+============================== warnings summary ===============================
+.venv\Lib\site-packages\starlette\testclient.py:53
+  C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/marketing/test_choosing.py::test_a_rewrite_that_drops_the_proof_does_not_take_the_title
+1 failed, 121 passed, 1 warning in 10.30s

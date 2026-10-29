@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-16",
+  "brand_name": "Tally--Test",
+  "brand_id": "9aea70bb-c22d-4bdc-9be2-edecf9c76f37",
+  "campaign_id": "5b8bb5c5-9587-4524-9c62-a133fa5ac28c",
+  "branch": "master",
+  "commit": "667074e7607809ae2e79d43677c65cbed8cb7b91",
+  "working_tree_changes_present": true,
+  "method": "Read-only SQLite exports and deterministic replays. No product code changed during retest.",
+  "model_calls": 0,
+  "source_database_modified": false,
+  "source_database_migrated": false,
+  "code_sha256": {
+    "backend/app/market/claims.py": "8afdb7ce5402ff126c35348a53f6f12368e5c0e014a4d21a35fa37d2e289ec1d",
+    "backend/app/market/positioning.py": "f31c058324b82d760f31c125c3b63c95550d0ff9e0e6ee73fa7fa78f54e70be7",
+    "backend/app/market/relevance.py": "2aaa275c48a35b7e29a7e1058224d42fa85c5f8d621b48552b444e52dd622723",
+    "backend/app/knowledge/ledger.py": "d226f84ad99c7fbfa8566d0d2bbfd079fd141458c367c5ccd1a3fcdce0626fe7",
+    "backend/app/marketing/intelligence.py": "9a4b4e488596be0184cce245364ee168435ea667e5408cf97dd731d776023c44",
+    "backend/app/marketing/strategist.py": "4d953f279a208124ffbc62b49c99ad85b4a276f341de86ffc69a6a0b74c99ce2",
+    "backend/app/marketing/pipeline.py": "28b41a9450f8cde54b909c989628c64c6ab40f9ef6a857fa72b839088a126f35",
+    "backend/prompts/reader.md": "663132eb79dd31cccca49b3ab9246be5e5be567dc47fee034cc8d48a08e4f855"
+  },
+  "snapshot_sha256": {
+    "assets.json": "bfff77202f2a38d942f216c0f1eca9577b29dcef7ee0c88eb45e5477e2256a20",
+    "audiencemaprow.json": "0a7cc7f640980c31453f2e16336c0a32604925121c72cdbcea0cac370bb1c97d",
+    "audienceresearchrow.json": "df6883ead15c1f2e96775a7a803d5c17febd1815776c595d1525bf3218b711b1",
+    "campaign.json": "b0f570a12e9af8335c942d95cd8e201417ae9bf071e27c3c03951a100f473a71",
+    "executions.json": "06b304ecf7bcabdf853bedf7750897508d0fc5cec74103db72d88c47ec1389e5",
+    "knowledgeartifactset.json": "f0d7512c94af78f9e461c2405c1f87ab92556c0342ec0056dd6086ec3e6887c3",
+    "knowledgedocument.json": "49d91964b92a7a82e980be8aafe83bf296650dbefb03c16f34976216b94defd0",
+    "marketscan.json": "6856eeb412a7df54a802a4c57959285e094d69cd8f2ecdcfef72b524d971acfb",
+    "proofcandidaterow.json": "c2c13abde44464ff3180b9b12129d7fdcfa9ffd49e2c3f7a64344f651ae389ba",
+    "relevancedossierrow.json": "76abd67052427ab3162e01b4ff0f27c8702eb59ce8cb6d712b154d13a185298e"
+  },
+  "regression_results": {
+    "backend": {
+      "passed": 1608,
+      "warnings": 2,
+      "seconds": 177.15
+    },
+    "frontend": {
+      "passed": 24,
+      "lint": "passed",
+      "typecheck": "passed",
+      "production_build": "passed"
+    },
+    "ruff": "passed",
+    "generated_contract": "passed",
+    "disposable_migrations": "passed"
+  }
+}

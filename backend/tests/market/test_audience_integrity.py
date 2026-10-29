@@ -168,6 +168,30 @@ def test_copied_quotes_on_different_domains_do_not_create_corroboration():
     assert segment.assessment.evidence_strength == "limited"
 
 
+def test_synthetic_directory_is_findability_without_proving_product_purchase_or_reach():
+    segment = candidate(assessment=MapAssessment(evidence=[MapEvidence(
+        claim="An independent shop exists", quote="Example shop repairs bicycles",
+        url="https://directory.example/shop", kind="example",
+    )]))
+    rank_assessment(segment)
+    assert segment.assessment.findability == "verified"
+    assert segment.assessment.usage_or_purchase == "unknown"
+    assert segment.assessment.reachability == "unknown"
+    segment.assessment.evidence.append(MapEvidence(
+        claim="The association hosts owners", quote="Join our public repair owners meeting",
+        url="https://association.example/meeting", kind="access",
+    ))
+    rank_assessment(segment)
+    assert segment.assessment.reachability == "venue_identified"
+    assert segment.assessment.usage_or_purchase == "unknown"
+
+
+def test_synthetic_counterevidence_summary_carries_its_consequence():
+    segment = assessed_with_counterevidence("material", "Migration exceeds the buying deadline")
+    assert any("Migration exceeds" in text and "Review before" in text
+               for text in segment.assessment.counterevidence_summary)
+
+
 def capability_with_quote(quote, claim="Guardrails", **changes):
     capability = ProductCapability(
         id="guardrails", label="Guardrails", state="verified",

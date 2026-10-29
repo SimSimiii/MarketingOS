@@ -181,7 +181,7 @@ async def test_a_rescan_reports_what_moved(provider: ScriptedProvider, session) 
         *ALPHA_PROFILE["claims"],
         {
             "text": "30 models across 10 providers",
-            "verbatim": "Live in under 10 minutes.",
+            "verbatim": "30 models across 10 providers.",
             "source": "https://alpha.example",
             "axis": "breadth",
             "specific": True,
@@ -189,7 +189,10 @@ async def test_a_rescan_reports_what_moved(provider: ScriptedProvider, session) 
     ]
     provider.push("rival_profile", moved)
 
-    second = await scanner_for(provider, session, PAGES).scan(
+    changed_pages = {**PAGES, "https://alpha.example": [
+        ("https://alpha.example", ALPHA_PAGE + "\n30 models across 10 providers.")
+    ]}
+    second = await scanner_for(provider, session, changed_pages).scan(
         artifacts=artifacts(), known=known, previous=first.snapshot, discover=False
     )
 

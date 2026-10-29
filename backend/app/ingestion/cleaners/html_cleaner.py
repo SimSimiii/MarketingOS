@@ -1,6 +1,7 @@
 import re
 
 from app.ingestion.cleaners.base import Cleaner
+from app.ingestion.cleaners.code_regions import preserve_code
 
 _TAG_RE = re.compile(r"<[^>]+>")
 
@@ -11,4 +12,5 @@ class HtmlCleaner(Cleaner):
     leak inline markup, and this is a no-op on tag-free text either way."""
 
     def clean(self, text: str) -> str:
-        return _TAG_RE.sub("", text)
+        # Literal markup in documentation is content, not residual HTML.
+        return preserve_code(text, lambda prose: _TAG_RE.sub("", prose))

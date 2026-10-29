@@ -1,4 +1,3 @@
-import hashlib
 import logging
 import time
 from datetime import UTC, datetime
@@ -11,13 +10,13 @@ from app.ai.base import AIProvider
 from app.ai.model_router import ModelRouter
 from app.ai.roles import WILDCARD_ROLE
 from app.core.config import PROMPTS_DIR
-from app.ingestion.documents import SourceType
 from app.knowledge.artifacts import KnowledgeArtifacts
 from app.knowledge.corpus import SourceCorpus
+from app.knowledge.recovery import persist_recovered_material
 from app.knowledge.store import ArtifactScope, ArtifactStore, StoredArtifacts, fingerprint_documents
 from app.market.demand import DemandMap
 from app.market.material_research import MaterialRecovery
-from app.market.positioning import PositioningMap
+from app.market.positioning import PositioningMap, build_current
 from app.market.store import (
     MarketStore,
     merge_audience,
@@ -36,6 +35,7 @@ from app.marketing.intelligence import (
     build_campaign_intelligence,
     resolve_audience_research,
 )
+from app.marketing.intent import CampaignIntent
 from app.marketing.linkedin import ROLE_ID as LINKEDIN_WRITER_ROLE
 from app.marketing.observer import RunObserver
 from app.marketing.pipeline import (
@@ -44,6 +44,7 @@ from app.marketing.pipeline import (
     KnowledgeGateway,
 )
 from app.marketing.policy import ExecutionPolicy, resolve_policy
+from app.marketing.preflight import PROOF_KINDS
 from app.marketing.reader import PanelRead
 from app.marketing.render_html import (
     MAX_EMAIL_BYTES,
@@ -61,7 +62,6 @@ from app.models.campaign import Campaign
 from app.models.campaign_execution import CampaignExecution
 from app.models.enums import AssetType, ExecutionStatus, LogLevel
 from app.models.generated_asset import GeneratedAsset
-from app.models.knowledge_document import KnowledgeDocument
 from app.models.market import ProspectRow
 from app.orchestration.event_emitter import ExecutionEventEmitter
 from app.orchestration.live_broker import broker
@@ -71,7 +71,6 @@ from app.repositories.campaign_execution_repository import CampaignExecutionRepo
 from app.repositories.campaign_repository import CampaignRepository
 from app.repositories.execution_log_repository import ExecutionLogRepository
 from app.repositories.generated_asset_repository import GeneratedAssetRepository
-from app.repositories.knowledge_repository import KnowledgeDocumentRepository
 from app.runtime.events import (
     EventBus,
     ModelCallFinished,
@@ -153,56 +152,11 @@ class _DbKnowledgeGateway(KnowledgeGateway):
     ) -> StoredArtifacts:
         """File verified pages and the enriched ledger without another compile."""
 
-        repository = KnowledgeDocumentRepository(self._session)
-        enriched = artifacts.model_copy(deep=True)
-        by_hash = {
-            hashlib.sha256(document.content.encode("utf-8")).hexdigest(): document
-            for document in self._documents
-        }
-        persisted_ids: list[str] = []
-        source_documents: dict[str, str] = {}
-        for source in recovery.sources:
-            document = by_hash.get(source.content_hash)
-            if document is None:
-                document = repository.create(
-                    KnowledgeDocument(
-                        owner_id=self._campaign.owner_id,
-                        brand_id=self._scope.brand_id,
-                        campaign_id=self._scope.campaign_id,
-                        title=source.title or source.final_url,
-                        source_type=SourceType.WEBSITE,
-                        content=source.content,
-                        source_url=source.final_url,
-                        word_count=len(source.content.split()),
-                        document_metadata={
-                            "automatically_discovered": True,
-                            "recovered_for": recovery.gap,
-                            "content_hash": source.content_hash,
-                        },
-                    )
-                )
-                self._documents.append(document)
-                by_hash[source.content_hash] = document
-            document_id = str(document.id)
-            persisted_ids.append(document_id)
-            source_documents[source.final_url.rstrip("/").lower()] = document_id
-
-        enriched.source_document_ids = [
-            item for item in enriched.source_document_ids if not item.startswith("auto:")
-        ]
-        for document_id in persisted_ids:
-            if document_id not in enriched.source_document_ids:
-                enriched.source_document_ids.append(document_id)
-        for entry in enriched.evidence.entries:
-            if document_id := source_documents.get(entry.source.rstrip("/").lower()):
-                entry.document_id = document_id
-
-        self._corpus = self._store.corpus_for(self._scope)
-        stored = self._store.save(
-            self._scope,
-            enriched,
-            fingerprint_documents(self._documents),
+        stored = persist_recovered_material(
+            self._session, self._scope, recovery, artifacts,
+            owner_id=self._campaign.owner_id, documents=self._documents,
         )
+        self._corpus = self._store.corpus_for(self._scope)
         return self._with_market(stored) or stored
 
     def positioning(self) -> PositioningMap | None:
@@ -215,7 +169,14 @@ class _DbKnowledgeGateway(KnowledgeGateway):
         if self._market is None or self._campaign.brand_id is None:
             return None
         snapshot = self._market.latest_scan(self._campaign.brand_id)
-        return snapshot.positioning if snapshot is not None else None
+        if snapshot is None:
+            return None
+        if (stored := self.load()) is None:
+            return snapshot.positioning
+        return build_current(
+            stored.artifacts, snapshot.rivals,
+            we_have_proof=bool(stored.artifacts.evidence.of_kind(*PROOF_KINDS)),
+        )
 
     def demand(self) -> DemandMap | None:
         """The latest audience map for this brand, if there is one.
@@ -249,8 +210,10 @@ class _DbKnowledgeGateway(KnowledgeGateway):
             dossier_status = MarketService(self._session).relevance_status(
                 self._campaign.brand_id, match.research.audience_name
             )
+        selected_segment = self._market.segment_named(self._campaign.brand_id, selected)
         context = build_campaign_intelligence(
             selected_audience=selected,
+            selected_need=selected_segment.need if selected_segment is not None else "",
             match=match,
             dossier_status=dossier_status,
             ledger=artifacts.evidence,
@@ -504,6 +467,11 @@ class _PersistenceObserver(RunObserver):
                         "position": item.position,
                         "job": item.job,
                         "single_idea": item.single_idea,
+                        "selection_reason": item.selection_reason,
+                        "problem_ids": item.problem_ids,
+                        "action_id": item.action_id,
+                        "next_step_url": item.next_step_url,
+                        "argument_issue": item.argument_issue,
                         "objection": item.objection,
                         "evidence_ids": item.evidence_ids,
                         "must_not_say": item.must_not_say,
@@ -662,6 +630,7 @@ class _PersistenceObserver(RunObserver):
                 "strategy_gap": critique.strategy_gap,
                 "brief_drift": critique.brief_drift,
                 "unspent_evidence": critique.unspent_evidence,
+                "supporting_evidence_ids": critique.supporting_evidence_ids,
                 "critique_summary": critique.summary,
                 "edits": [
                     {
@@ -885,6 +854,7 @@ class CampaignOrchestrator:
             product_url=campaign.product_url,
             target_market=campaign.target_market,
             goals=campaign.goals,
+            intent=CampaignIntent.model_validate(campaign.intent) if campaign.intent else None,
             sender_name=campaign.sender_name or "",
             sender_role=campaign.sender_role or "",
             cta_url=campaign.cta_url,
@@ -970,10 +940,12 @@ class CampaignOrchestrator:
                 continue
             style = style_for_action(
                 brand, explicit_url=campaign.cta_url,
-                planned_action=outcome.selected_brief.call_to_action,
+                planned_action=outcome.selected_brief.next_step_url or outcome.selected_brief.call_to_action,
                 offer=result.artifacts.offer if result.artifacts else None,
+                require_planned_destination=True,
                 licensed_urls=(
-                    [entry.source for entry in result.artifacts.evidence.entries]
+                    [entry.source for entry in result.artifacts.evidence.entries
+                     if entry.id in outcome.selected_brief.evidence_ids]
                     if result.artifacts else []
                 ),
             )
@@ -1301,6 +1273,7 @@ def build_stepped_pipeline(
         product_url=campaign.product_url,
         target_market=campaign.target_market,
         goals=campaign.goals,
+        intent=CampaignIntent.model_validate(campaign.intent) if campaign.intent else None,
         sender_name=campaign.sender_name or "",
         sender_role=campaign.sender_role or "",
         cta_url=campaign.cta_url,

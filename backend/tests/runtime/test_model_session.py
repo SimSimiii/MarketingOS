@@ -229,3 +229,28 @@ async def test_a_terminal_provider_failure_is_not_pointlessly_resent(prompts_dir
     assert len(provider.calls) == 1
     assert excinfo.value.details["attempts"] == 1
     assert "OAuth session expired" in str(excinfo.value)
+
+
+@pytest.mark.asyncio
+async def test_codex_subscription_quota_failure_spawns_only_once(monkeypatch, prompts_dir):
+    from unittest.mock import AsyncMock
+
+    from app.ai.openai_provider import OpenAIProvider
+
+    class Process:
+        returncode = 1
+
+        async def communicate(self, prompt):
+            return b'{"type":"turn.failed","error":{"message":"You hit your usage limit. Try again tomorrow."}}', b""
+
+    spawn = AsyncMock(return_value=Process())
+    monkeypatch.setattr("app.ai.openai_provider.asyncio.create_subprocess_exec", spawn)
+    monkeypatch.setattr("app.ai.openai_provider._needs_proactor_thread", lambda: False)
+    monkeypatch.setattr(OpenAIProvider, "_command", lambda self, request: ["fake-codex"])
+    with pytest.raises(ProviderError) as error:
+        await session(OpenAIProvider(), prompts_dir).text(
+            role="strategist", tier=ModelTier.DEEP, system_prompt="x", task="Go.",
+        )
+    assert error.value.details["attempts"] == 1
+    assert spawn.await_count == 1
+    assert "usage limit" in str(error.value)

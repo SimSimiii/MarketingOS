@@ -42,7 +42,7 @@ import re
 from pydantic import BaseModel, Field
 
 from app.market.claims import significant_words
-from app.market.positioning import PositioningMap, Territory
+from app.market.positioning import PositioningMap
 
 #: Argument frames that arrive in every inbox, matched loosely enough to catch
 #: the rewording and tightly enough not to catch ordinary sentences. Each entry
@@ -152,6 +152,15 @@ SWAP_TEST_THRESHOLD = 0.8
 #: mean anything, and rhythm depends on short lines existing.
 _MIN_WORDS_FOR_SWAP_TEST = 6
 
+# Shared nouns describe the category and are often indispensable. A high
+# vocabulary overlap is actionable only beside a hollow marketing assertion;
+# it is not evidence that an ordinary feature explanation lacks value.
+_HOLLOW_MARKETING = re.compile(
+    r"\b(?:seamless|enterprise[- ]grade|world[- ]class|best[- ]in[- ]class|"
+    r"revolutionary|unparalleled|next[- ]generation|game[- ]changing|cutting[- ]edge)\b",
+    re.IGNORECASE,
+)
+
 
 class SamenessFinding(BaseModel):
     """One place the copy could have been sent by somebody else."""
@@ -171,7 +180,7 @@ class SamenessFinding(BaseModel):
         return (
             f"\"{self.quote}\" is {self.frame} - {self.instead}"
             if self.blocking
-            else f"\"{self.quote}\" says nothing a competitor could not also say - {self.instead}"
+            else f"\"{self.quote}\" contains a broad marketing assertion - {self.instead}"
         )
 
 
@@ -203,13 +212,13 @@ class SamenessReport(BaseModel):
             return (
                 "nothing interchangeable found"
                 if self.blind
-                else f"{self.distinctiveness:.0%} of the copy is this company's own"
+                else "no interchangeable frame or hollow shared assertion found"
             )
         blocking = len(self.blocking)
         return (
             f"{blocking} interchangeable opening(s)"
             if blocking
-            else f"only {self.distinctiveness:.0%} of the copy is this company's own"
+            else f"{len(self.advisory)} broad marketing assertion(s) to inspect"
         )
 
 
@@ -287,16 +296,16 @@ def _swap_test(
         distinctive += len(mine)
         if len(words) < _MIN_WORDS_FOR_SWAP_TEST:
             continue
-        shared = 1 - (len(mine) / len(words))
-        if shared >= SWAP_TEST_THRESHOLD:
+        shared = len(words & crowd) / len(words)
+        if shared >= SWAP_TEST_THRESHOLD and _HOLLOW_MARKETING.search(paragraph):
             findings.append(
                 SamenessFinding(
                     quote=_first_sentence(paragraph),
-                    frame="built entirely out of the category's own words",
+                    frame="a broad marketing assertion using shared category language",
                     instead=(
-                        "every distinctive word here is one competitors also use. Put "
-                        "something in it only this company could have written - a figure, a "
-                        "name, a limit, the specific thing that happens"
+                        "keep the category words needed for comprehension. Replace the "
+                        "broad assertion with a supported figure, example, limit or "
+                        "specific action the product performs"
                     ),
                     blocking=False,
                 )
@@ -306,18 +315,13 @@ def _swap_test(
 
 
 def _our_words(positioning: PositioningMap | None) -> set[str]:
-    """The vocabulary this company has earned - its open and contested ground.
-
-    Table stakes are deliberately excluded: those are the axes where using the
-    category's words really does make the copy interchangeable.
-    """
+    """Product vocabulary stays useful even when competitors document it too."""
     if positioning is None:
         return set()
     words: set[str] = set()
     for reading in positioning.readings:
-        if reading.territory in (Territory.OPEN, Territory.CONTESTED):
-            for claim in reading.ours:
-                words |= significant_words(f"{claim.text} {claim.verbatim}")
+        for claim in reading.ours:
+            words |= significant_words(f"{claim.text} {claim.verbatim}")
     return words
 
 

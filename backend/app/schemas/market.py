@@ -7,15 +7,25 @@ make the page's shape depend on how claims happen to be stored.
 """
 
 from datetime import datetime
+from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, field_serializer, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_serializer,
+    field_validator,
+    model_validator,
+)
 
+from app.ai.roles import validate_overrides
 from app.core.config import get_settings
 from app.knowledge.artifacts import Sophistication
-from app.market.audience_research import AudienceResearch
+from app.knowledge.ledger import EvidenceContext
+from app.market.audience_research import AudienceResearch, review_research_interpretations
 from app.market.capabilities import CapabilityProfileDraft, ProductCapabilityProfile
-from app.market.claims import Claim
+from app.market.claims import Claim, ClaimAxis, ComparisonStatus
 from app.market.demand import (
     AudienceAdmission,
     AudienceSegment,
@@ -25,7 +35,8 @@ from app.market.demand import (
     Researchability,
     SegmentKind,
 )
-from app.market.positioning import PositioningMap
+from app.market.positioning import PositioningMap, Territory
+from app.market.proof import ProofStatus
 from app.market.qualification import CompanyQualification
 from app.market.radar import MarketSnapshot
 from app.market.relevance import RelevanceStatus
@@ -69,8 +80,9 @@ class ClaimRead(BaseModel):
     text: str
     verbatim: str = ""
     source: str = ""
-    axis: str
+    axis: ClaimAxis
     specific: bool
+    context: EvidenceContext = Field(default_factory=EvidenceContext)
 
     @classmethod
     def of(cls, claim: Claim) -> "ClaimRead":
@@ -80,6 +92,7 @@ class ClaimRead(BaseModel):
             source=claim.source,
             axis=str(claim.axis),
             specific=claim.is_specific,
+            context=claim.context,
         )
 
 
@@ -88,6 +101,11 @@ class RivalProfileRead(BaseModel):
     url: str
     kind: str
     why: str
+    discovery_reason: str = ""
+    rationale_status: str = "unverified"
+    rationale_sources: list[str] = Field(default_factory=list)
+    our_evidence_ids: list[str] = Field(default_factory=list)
+    reused: bool = False
     one_liner: str
     promise: str
     pricing: str
@@ -107,7 +125,12 @@ class RivalProfileRead(BaseModel):
             name=profile.name,
             url=profile.url,
             kind=profile.kind,
-            why=profile.why,
+            why=profile.why if profile.rationale_status == "source_linked_hypothesis" else "",
+            discovery_reason=profile.discovery_reason or (profile.why if profile.rationale_status == "unverified" else ""),
+            rationale_status=profile.rationale_status,
+            rationale_sources=profile.rationale_sources,
+            our_evidence_ids=profile.our_evidence_ids,
+            reused=profile.reused,
             one_liner=profile.one_liner,
             promise=profile.promise,
             pricing=profile.pricing,
@@ -124,9 +147,13 @@ class RivalProfileRead(BaseModel):
 
 
 class AxisReadingRead(BaseModel):
-    axis: str
-    territory: str
+    axis: ClaimAxis
+    territory: Territory
     only_specific: bool
+    proposition: str = ""
+    comparison_status: Literal["equivalent", "documented_difference", "potential_difference", "unknown"] = "unknown"
+    comparisons: dict[str, ComparisonStatus] = Field(default_factory=dict)
+    comparison_notes: list[str] = Field(default_factory=list)
     ours: list[ClaimRead] = Field(default_factory=list)
     #: Rival name -> what they claim on this axis.
     theirs: dict[str, list[ClaimRead]] = Field(default_factory=dict)
@@ -160,6 +187,10 @@ class PositioningRead(BaseModel):
                     axis=str(reading.axis),
                     territory=str(reading.territory),
                     only_specific=reading.only_specific,
+                    proposition=reading.proposition,
+                    comparison_status=reading.comparison_status,
+                    comparisons=reading.comparisons,
+                    comparison_notes=reading.comparison_notes,
                     ours=[ClaimRead.of(claim) for claim in reading.ours],
                     theirs={
                         name: [ClaimRead.of(claim) for claim in claims]
@@ -233,8 +264,10 @@ class ProofCandidateRead(BaseModel):
     attributed_to: str
     venue: str
     confidence: float
+    verification_status: str = "not_checked"
+    context: EvidenceContext | None = None
     caveat: str
-    status: str
+    status: ProofStatus
     evidence_id: str
     found_at: datetime
     decided_at: datetime | None
@@ -293,6 +326,12 @@ class ScanRequest(BaseModel):
     #: Whether to search the web for competitors nobody has named yet. Off
     #: re-reads the existing list only, which is what a weekly refresh wants.
     discover: bool = True
+    model: str | None = Field(default=None, max_length=200)
+
+    @field_validator("model")
+    @classmethod
+    def validate_model(cls, value: str | None) -> str | None:
+        return _market_job_model("rival_scout", value)
 
 
 
@@ -393,7 +432,7 @@ class DemandMapRead(BaseModel):
             summary=demand.summary(),
             options=demand.options,
             validation_note=demand.validation_note,
-            reading=demand.reading,
+            reading=demand.assessment_reading(),
             note=demand.note,
             searched=demand.searched[:12],
             mapped_at=demand.mapped_at,
@@ -495,10 +534,11 @@ class CapabilityProfileRead(ProductCapabilityProfile):
     created_at: datetime
 
     @classmethod
-    def of(cls, row: ProductCapabilityProfileRow) -> "CapabilityProfileRead":
+    def of(cls, row: ProductCapabilityProfileRow,
+           checked: ProductCapabilityProfile | None = None) -> "CapabilityProfileRead":
         return cls.model_validate(
             {
-                **row.payload,
+                **(checked.model_dump(mode="json") if checked is not None else row.payload),
                 "id": row.id,
                 "brand_id": row.brand_id,
                 "version": row.version,
@@ -520,9 +560,10 @@ class AudienceResearchRead(AudienceResearch):
 
     @classmethod
     def of(cls, row: AudienceResearchRow) -> "AudienceResearchRead":
+        reviewed = review_research_interpretations(AudienceResearch.model_validate(row.payload))
         return cls.model_validate(
             {
-                **row.payload,
+                **reviewed.model_dump(mode="json"),
                 "id": row.id,
                 "brand_id": row.brand_id,
                 "audience_key": row.audience_key,
@@ -549,6 +590,13 @@ class AudienceRead(BaseModel):
 
 class MapAudienceRequest(MapOptions):
     """Optional search scope; an empty body keeps the one-click workflow."""
+
+    model: str | None = Field(default=None, max_length=200, exclude=True)
+
+    @field_validator("model")
+    @classmethod
+    def validate_model(cls, value: str | None) -> str | None:
+        return _market_job_model("audience_cartographer", value)
 
 
 class UserAudienceRequest(BaseModel):
@@ -635,10 +683,40 @@ class UserAudienceRequest(BaseModel):
 
 class ResearchAudienceRequest(BaseModel):
     segment: str = Field(min_length=1)
+    model: str | None = Field(default=None, max_length=200)
+
+    @field_validator("model")
+    @classmethod
+    def validate_model(cls, value: str | None) -> str | None:
+        return _market_job_model("audience_researcher", value)
 
 
 class RelevanceDossierRequest(BaseModel):
     segment: str = Field(min_length=1)
+    model: str | None = Field(default=None, max_length=200)
+    verify_product_gaps: bool = False
+
+    @field_validator("model")
+    @classmethod
+    def validate_model(cls, value: str | None) -> str | None:
+        return _market_job_model("relevance_analyst", value)
+
+    @model_validator(mode="after")
+    def validate_recovery_model(self) -> "RelevanceDossierRequest":
+        if self.verify_product_gaps and self.model:
+            _market_job_model("material_researcher", self.model)
+        return self
+
+
+def _market_job_model(role: str, value: str | None) -> str | None:
+    value = (value or "").strip()
+    if not value:
+        return None
+    if get_settings().credit_billing_enabled:
+        raise ValueError("Per-job model selection is unavailable with credit billing.")
+    if value in {"fast", "balanced", "deep"}:
+        raise ValueError("Choose a model name, not a tier.")
+    return validate_overrides({role: value}).get(role)
 
 
 class CapabilityProfileRequest(CapabilityProfileDraft):

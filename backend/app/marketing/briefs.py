@@ -12,12 +12,32 @@ already spent the two strongest proofs is how sequences end up with a good
 opener and four pieces of filler.
 """
 
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 from app.marketing.contract import DeliverableContract
+from app.marketing.intent import CampaignIntent
 
 
-class ArgumentOption(BaseModel):
+class PropositionLinks(BaseModel):
+    problem_ids: list[str] = Field(default_factory=list)
+    offer_id: str = ""
+    action_id: str = ""
+    selection_reason: str = ""
+    next_step_url: str = ""
+    destination_kind: Literal["web", "reply", "offline"] = "web"
+    argument_issue: str = Field(
+        default="",
+        description=(
+            "An unresolved dependency that prevents the proposed argument or next-step payoff "
+            "from being supported. Empty when the proposition is supported within stated "
+            "limits; known exclusions belong in must_not_say or next_step_limit."
+        ),
+    )
+
+
+class ArgumentOption(PropositionLinks):
     """One complete commercial bet for an email slot.
 
     An alternative is useful only when everything that makes the claim true and
@@ -68,10 +88,13 @@ class ArgumentOption(BaseModel):
         )
 
 
-class EmailBrief(BaseModel):
+class EmailBrief(PropositionLinks):
     """One slot in the sequence, decided before any of it is written."""
 
     position: int = 1
+    #: Pinned by normalization from the selected audience, never chosen by the
+    #: planner or changed by switching to another proposition.
+    target_audience: str = ""
     #: What this email is for. "Get them to connect a data source", not
     #: "introduce the product".
     job: str = ""
@@ -176,6 +199,7 @@ class EmailBrief(BaseModel):
 
     def primary_argument(self) -> ArgumentOption:
         return ArgumentOption(
+            **self.model_dump(include=set(PropositionLinks.model_fields)),
             single_idea=self.single_idea,
             felt_need=self.felt_need,
             status_quo=self.status_quo,
@@ -197,6 +221,7 @@ class EmailBrief(BaseModel):
         """Return this slot with one whole argument applied atomically."""
         return self.model_copy(
             update={
+                **argument.model_dump(include=set(PropositionLinks.model_fields)),
                 "single_idea": argument.single_idea,
                 "felt_need": argument.felt_need,
                 "status_quo": argument.status_quo,
@@ -277,6 +302,17 @@ class EmailBrief(BaseModel):
         # arguments this email could have used gestures at all of them; the
         # alternatives belong to the loop, and each draft receives one only.
         return (
+            (
+                f"Selected audience constraint (campaign target, not observed biography): {self.target_audience}\n"
+                "Its stated job or format constrains the proposed idea. Discovery suggestions "
+                "are not additional requirements. Product evidence limits still apply. Correct "
+                "a plan that changes this target; do not promise the target outcome.\n"
+                if self.target_audience else ""
+            )
+            + f"Proposition references: problems={', '.join(self.problem_ids) or 'none required'}; offer={self.offer_id or 'unspecified'}; action={self.action_id or 'unspecified'}\n"
+            f"Why this proposition: {self.selection_reason or 'not supplied'}\n"
+            f"Destination: {self.next_step_url or 'not fixed'}\n"
+            + (f"Unresolved argument: {self.argument_issue}\n" if self.argument_issue else "") +
             f"Position: {self.position}\n"
             f"Its job: {self.job}\n"
             f"The one idea it owns: {self.single_idea}\n"
@@ -306,6 +342,9 @@ class CampaignBrief(BaseModel):
     #: a sales request, and getting that wrong silently is how a run produces
     #: five well-written emails aimed at the wrong person.
     interpretation: str = ""
+    pipeline_version: int = 2
+    strategy_mode: Literal["planned", "direct"] = "planned"
+    intent: CampaignIntent | None = None
     #: Audience context reconstructed from the selected segment and user input.
     #: The strategist's expanded persona is not evidence about the recipient.
     reader: str = ""
@@ -317,6 +356,8 @@ class CampaignBrief(BaseModel):
     reader_segment: str = ""
     #: Set in code from the user's custom audience, never from model biography.
     reader_profile_override: str = ""
+    #: Current dossier-qualified scope, distinct from the user's audience choice.
+    reader_scope: str = ""
     #: Set from the user request in code; evidence sources cannot replace it.
     fixed_cta_url: str = ""
     #: The one promise the whole campaign makes.
@@ -355,8 +396,11 @@ class CampaignBrief(BaseModel):
             f"### Email {brief.position}\n{brief.render()}" for brief in self.emails
         )
         return (
+            (self.intent.render() + "\n" if self.intent else "") +
             f"How the request was read: {self.interpretation}\n"
             f"Writing to: {self.reader}\n"
+            + (f"Qualified scope: {self.reader_scope}\n" if self.reader_scope else "")
+            +
             f"What we are selling them, in one sentence: {self.orientation}\n"
             f"The promise: {self.promise}\n"
             f"The arc: {self.arc}\n"

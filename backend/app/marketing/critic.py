@@ -70,6 +70,12 @@ class Critique(BaseModel):
     #: The exact unsupported decision or missing resource. Persisted on the
     #: outcome and receipt when another writing pass cannot resolve it.
     strategy_gap: str = ""
+    #: An argument can benefit from a specific official fact without making
+    #: an unsupported promise. Research is an opportunity, not a factual veto.
+    research_question: str = Field(default="", max_length=800)
+    #: Existing campaign-safe facts needed to answer the panel's obstacle.
+    #: Craft resolves ids against the current ledger before the rewrite.
+    supporting_evidence_ids: list[str] = Field(default_factory=list, max_length=6)
     #: Where the draft executes something other than its brief. The failure
     #: that is invisible from inside the copy.
     brief_drift: str = ""
@@ -107,6 +113,8 @@ class Critique(BaseModel):
             parts.append(f"{label}: {self.strategy_gap or self.summary or 'not specified'}")
         if self.brief_drift:
             parts.append(f"Brief drift: {self.brief_drift}")
+        if self.research_question.strip():
+            parts.append("Official-source research question: " + self.research_question.strip())
         if self.unspent_evidence:
             parts.append(f"Evidence assigned but unused: {', '.join(self.unspent_evidence)}")
         shown = self.for_this_pass
@@ -157,6 +165,10 @@ class CritiqueDecision(Critique):
     @model_validator(mode="after")
     def _consistent_route(self) -> "CritiqueDecision":
         gap = self.strategy_gap.strip()
+        if self.research_question.strip() and (
+            self.verdict != "revise" or self.failure_mode != "argument"
+        ):
+            raise ValueError("a research_question is only available for an argument revision")
         if self.verdict == "ship":
             if self.failure_mode != "none" or gap:
                 raise ValueError("a shipping email must use failure_mode=none and no strategy_gap")
@@ -184,9 +196,17 @@ class ConversionCritic:
         read: PanelRead,
         gates: GateReport,
         substantiation: Substantiation | None = None,
+        source_context: str = "",
     ) -> Critique:
         segment = artifacts.audience.match(campaign.reader_segment, campaign.reader)
-        return await self._session.structured(
+        terms = artifacts.conditions_for_action(
+            brief.call_to_action, excluded_ids=frozenset(brief.forbidden_evidence_ids),
+        )
+        action_evidence = artifacts.evidence_for_action(
+            campaign.fixed_cta_url or brief.next_step_url,
+            excluded_ids=frozenset(brief.forbidden_evidence_ids),
+        )
+        critique = await self._session.structured(
             role=ROLE_ID,
             tier=ModelTier.DEEP,
             template="critic",
@@ -195,8 +215,8 @@ class ConversionCritic:
                 "brief": brief.render(),
                 "reader": campaign.reader,
                 "segment": segment.render_for_writing() if segment else "Not established.",
-                "campaign_intent": campaign.interpretation,
-                "cta_destination": campaign.fixed_cta_url or "No fixed destination; use the supported brief.",
+                "campaign_intent": (campaign.intent.render() + "\n" if campaign.intent else "") + campaign.interpretation,
+                "cta_destination": campaign.fixed_cta_url or brief.next_step_url or "No fixed destination; use the supported brief.",
                 "orientation": campaign.orientation,
                 "promise": campaign.promise,
                 # The same slice the writer wrote from. The critic's job here
@@ -206,7 +226,7 @@ class ConversionCritic:
                 # another sentence. It is the additive ratchet with a budget
                 # line attached.
                 "evidence": artifacts.evidence_for_writing(
-                    brief.evidence_ids,
+                    list(dict.fromkeys([*brief.evidence_ids, *brief.next_step_evidence_ids, *(entry.id for entry in action_evidence.entries)])),
                     brief.objection,
                     offering=campaign.orientation,
                     excluded_ids=frozenset(brief.forbidden_evidence_ids),
@@ -228,9 +248,22 @@ class ConversionCritic:
             task=(
                 "Decide whether this email ships as it stands, and if not, name the lines that "
                 "have to change and what each change has to achieve."
+                + (
+                    "\n\nApplicable plan conditions for this CTA (licensed context):\n"
+                    + terms.render()
+                    + "\nResolve material uncertainty about the promised evaluation from these "
+                    "facts; do not require every term or turn the email into a pricing table."
+                    if terms.entries else ""
+                )
+                + ("\n\n" + source_context if source_context else "")
             ),
             schema=CritiqueDecision,
         )
+        usable = artifacts.evidence.ids - set(brief.forbidden_evidence_ids)
+        critique.supporting_evidence_ids = list(dict.fromkeys(
+            id_ for id_ in critique.supporting_evidence_ids if id_ in usable
+        ))
+        return critique
 
 
 def _unspent(substantiation: Substantiation | None) -> str:

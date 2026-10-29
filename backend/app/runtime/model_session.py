@@ -215,6 +215,10 @@ class ModelSession:
         whole prompt is the email it must react to)."""
         return self._prompts.render(template, variables)
 
+    def template_fingerprint(self, template: str) -> str:
+        """Let source caches invalidate when the extraction instructions change."""
+        return self._prompts.fingerprint(template)
+
     async def text(
         self,
         *,

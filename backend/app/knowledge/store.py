@@ -8,13 +8,15 @@ unchanged reads last time's work instead of paying for it again.
 """
 
 import hashlib
+import json
 from dataclasses import dataclass
 from uuid import UUID
 
 from sqlmodel import Session
 
+from app.ingestion.documents import SourceType
 from app.knowledge.artifacts import KnowledgeArtifacts
-from app.knowledge.corpus import Document, SourceCorpus
+from app.knowledge.corpus import Document, SourceCorpus, fold
 from app.models.campaign import Campaign
 from app.models.knowledge_artifacts import KnowledgeArtifactSet
 from app.models.knowledge_document import KnowledgeDocument
@@ -53,6 +55,25 @@ class StoredArtifacts:
     fingerprint: str
 
 
+def current_documents(documents: list[KnowledgeDocument]) -> list[KnowledgeDocument]:
+    """Read the latest fetched version of each URL, keeping stored history."""
+    latest: dict[tuple, KnowledgeDocument] = {}
+    others: list[KnowledgeDocument] = []
+    for doc in documents:
+        if doc.source_type != SourceType.WEBSITE or not doc.source_url:
+            others.append(doc)
+            continue
+        key = (doc.brand_id, doc.campaign_id, doc.source_url)
+        existing = latest.get(key)
+        if existing is None or (doc.created_at.replace(tzinfo=None), str(doc.id)) > (
+            existing.created_at.replace(tzinfo=None), str(existing.id)
+        ):
+            latest[key] = doc
+    return [doc for doc in documents if doc in others or latest.get(
+        (doc.brand_id, doc.campaign_id, doc.source_url)
+    ) is doc]
+
+
 def fingerprint_documents(documents: list[KnowledgeDocument]) -> str:
     """Identity of the material, not of the rows.
 
@@ -67,10 +88,41 @@ def fingerprint_documents(documents: list[KnowledgeDocument]) -> str:
     """
     digest = hashlib.sha256()
     for content_hash in sorted(
-        {hashlib.sha256(document.content.encode("utf-8")).hexdigest() for document in documents}
+        {hashlib.sha256(document.content.encode("utf-8")).hexdigest() for document in current_documents(documents)}
     ):
         digest.update(content_hash.encode())
     return digest.hexdigest()
+
+
+def fingerprint_source_context(documents: list[KnowledgeDocument]) -> str:
+    """Cheap provenance identity, separate from expensive content extraction."""
+    rows = sorted({(hashlib.sha256(doc.content.encode("utf-8")).hexdigest(),
+                    doc.source_url or doc.title, str(doc.source_type),
+                    json.dumps(doc.document_metadata or {}, sort_keys=True, default=str)) for doc in current_documents(documents)})
+    return hashlib.sha256(json.dumps(rows, ensure_ascii=False).encode("utf-8")).hexdigest()
+
+
+def refresh_provenance(artifacts: KnowledgeArtifacts, documents: list[KnowledgeDocument]) -> KnowledgeArtifacts:
+    documents = current_documents(documents)
+    fingerprint = fingerprint_source_context(documents)
+    if artifacts.source_context_fingerprint == fingerprint:
+        return artifacts
+    updated = artifacts.model_copy(deep=True)
+    material = [(doc, fold(doc.content)) for doc in documents]
+    metadata_changed = bool(artifacts.source_context_fingerprint)
+    for entry in updated.evidence.entries:
+        quote = fold(entry.verbatim)
+        matching = [doc for doc, text in material if len(quote) >= 12 and quote in text]
+        entry.source_references = [{"document_id": str(doc.id), "source": doc.source_url or doc.title,
+                                    "source_type": str(doc.source_type)}
+                                   for doc in sorted(matching, key=lambda doc: (doc.source_url or doc.title, str(doc.id)))]
+        original = next((doc for doc in matching if str(doc.id) == entry.document_id), None)
+        if original is not None:
+            entry.source = original.source_url or original.title
+        if metadata_changed and matching and entry.context is not None:
+            entry.context.verification = "source_metadata_changed_review_required"
+    updated.source_context_fingerprint = fingerprint
+    return updated
 
 
 class ArtifactStore:
@@ -83,9 +135,9 @@ class ArtifactStore:
 
     def source_documents(self, scope: ArtifactScope) -> list[KnowledgeDocument]:
         if scope.brand_id is not None:
-            return self._documents.list_for_brand(scope.brand_id)
+            return current_documents(self._documents.list_for_brand(scope.brand_id))
         assert scope.campaign_id is not None
-        return self._documents.list_for_campaign(scope.campaign_id)
+        return current_documents(self._documents.list_for_campaign(scope.campaign_id))
 
     def corpus_for(self, scope: ArtifactScope) -> SourceCorpus:
         return build_corpus(self.source_documents(scope))
@@ -98,8 +150,17 @@ class ArtifactStore:
         )
         if row is None or not row.payload:
             return None
+        artifacts = refresh_provenance(
+            KnowledgeArtifacts.model_validate(row.payload), self.source_documents(scope)
+        )
+        if not artifacts.is_empty:
+            # Gaps are derived rules, not model output. Cached knowledge must
+            # use the same rules as a fresh compile without buying new calls.
+            from app.knowledge.compiler import find_gaps
+
+            artifacts.gaps = find_gaps(artifacts, sources=self.corpus_for(scope).documents)
         return StoredArtifacts(
-            artifacts=KnowledgeArtifacts.model_validate(row.payload),
+            artifacts=artifacts,
             version=row.version,
             fingerprint=row.source_fingerprint,
         )
@@ -110,6 +171,7 @@ class ArtifactStore:
         previous = self.load(scope)
         version = (previous.version + 1) if previous else 1
         artifacts.version = version
+        artifacts = refresh_provenance(artifacts, self.source_documents(scope))
         self._artifacts.create(
             KnowledgeArtifactSet(
                 brand_id=scope.brand_id,
@@ -133,9 +195,11 @@ def build_corpus(documents: list[KnowledgeDocument]) -> SourceCorpus:
     # Legacy imports can contain duplicates even though ingestion now deduplicates.
     # Match the fingerprint's content identity and preserve the first citation source.
     unique: dict[str, KnowledgeDocument] = {}
-    for document in documents:
+    aliases: dict[str, set[str]] = {}
+    for document in current_documents(documents):
         if document.content.strip():
             unique.setdefault(document.content, document)
+            aliases.setdefault(document.content, set()).add(document.source_url or document.title)
     return SourceCorpus.from_documents(
         [
             Document(
@@ -144,6 +208,8 @@ def build_corpus(documents: list[KnowledgeDocument]) -> SourceCorpus:
                 content=document.content,
                 source=document.source_url or document.title,
                 source_type=str(document.source_type),
+                source_aliases=tuple(sorted(aliases[document.content])),
+                source_issues=tuple((document.document_metadata or {}).get("content_issues", [])),
             )
             for document in unique.values()
         ]

@@ -1,0 +1,194 @@
+{
+  "status": "degraded",
+  "abort_reason": null,
+  "report": {
+    "request": "Write exactly 1 email announcing the launch of this product to people who have not bought it yet - make the case for why it matters now and what to do next.\n\nTone of voice: Friendly and casual - warm and conversational, like a text from someone the reader trusts.",
+    "effective_audience": "The ops or no-code person on a small team whose intake form is step one of an automation nobody owns",
+    "audience_scope": "no-code automation agencies",
+    "assessment_method": "Simulated editorial assessment, uncalibrated; no response or conversion prediction",
+    "delivered": 1,
+    "promised": 1,
+    "contract_violations": [],
+    "emails": [
+      {
+        "position": 1,
+        "subject": "A closer look at Tally webhooks",
+        "single_idea": "Instead of polling the Tally API or exporting CSVs, webhooks push data the moment a form is submitted.",
+        "pull": 6.0,
+        "revisions": 1,
+        "clean": true,
+        "landed": false,
+        "rewrites_stopped_helping": false,
+        "read_reported": true,
+        "understood": true,
+        "relevant": true,
+        "evidence_assigned": [
+          "E32",
+          "E35",
+          "E23"
+        ],
+        "evidence_spent": [
+          "E32",
+          "E23"
+        ],
+        "attributions": 8,
+        "unresolved": [],
+        "reader_verdicts": [
+          {
+            "what_it_sells": "Tally is an online form builder that sends new submissions to automation endpoints, potentially replacing polling or CSV exports and giving me delivery inspection and retry tools.",
+            "understood": true,
+            "situation_matches": true,
+            "relevance_feedback": "The profile explicitly places me at a no-code automation agency and says people in this market may read webhook documentation before choosing a form tool, so a concise webhook guide is relevant. The email does not establish that I currently use Tally, am evaluating a form tool, or have webhook failures, so immediate applicability is unknown.",
+            "assumed_experiences": [
+              "Profile-supported: I build or support no-code automations for agency clients.",
+              "Email-only: I am currently considering Tally for a workflow.",
+              "Email-only: my workflows need form submissions pushed directly to an endpoint.",
+              "Email-only: delivery inspection, retries, or the 10-second limit are current concerns."
+            ],
+            "problem_now": "Reliable form-to-automation intake is important in this role, and webhook delivery, payload usability, and validation are plausible operational risks. The profile does not establish that I have a Tally implementation or an urgent failure today.",
+            "stopped_at": "",
+            "biggest_doubt": "I can see that the guide covers delivery events, retries, and a timeout, but I cannot tell whether it answers the implementation questions that usually decide whether a form webhook is usable: what the payload actually contains, how choice values are represented, and what response behavior is supported after submission.",
+            "to_click_it_would_have_to": "I would have clicked if this email had told me whether the guide includes a real submission payload and explains how choice fields and endpoint responses behave.",
+            "fixes": [
+              "Cut \"A new form submission can go straight to the next step in an automation.\" It is generic and adds nothing beyond the next paragraph.",
+              "Rewrite \"If processing takes longer, the documented approach is to call another service internally.\" as \"If your workflow may exceed 10 seconds, the guide shows the recommended asynchronous handoff pattern.\"",
+              "Rewrite \"Open the webhook guide to inspect that delivery flow, the available troubleshooting actions, and the timeout before deciding whether it suits the workflows your agency builds.\" as \"Open the guide to inspect a sample payload, delivery logs, retry controls, and the 10-second response rule—and check whether field values and post-submission responses fit your workflow.\""
+            ],
+            "opens_in_100": null,
+            "clicks_in_100": null,
+            "persona": "Selected audience (explicit constraints): The ops or no-code person on a small team whose intake form is step one of an automation nobody owns.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): Operations and no-code builders at small teams and automation agencies who already run Make, Zapier or n8n scenarios and read webhook documentation before choosing a form tool\n\nProblem context: After a Tally form submits to a webhook, the respondent cannot be reliably redirected or shown a conditional response from the automation tool; the connection appears to be lost once the platform returns its own 'accepted' acknowledgement.; source: https://community.make.com/t/tally-form-submission-to-webhook-response-its-possible/22050\nProblem context: A multi-choice form answer passed through a webhook arrives as a reference/ID number rather than the actual answer text, requiring manual identification and correction before it can be used.; source: https://community.make.com/t/webhook-to-tally-forms-returning-multi-choice-answer-as-reference-number-and-not-actual-text/83391\nProblem context: A specific field type from a form webhook (here, email) can fail to write into the destination tool even though the same payload shows the value present and the extraction/logging confirms it is correctly read.; source: https://community.make.com/t/email-field-from-tally-not-showing-in-airtable-via-webhook-set-variable-all-other-fields-work-fine/88181\nProblem context: When testing a newly built scenario, an instant webhook trigger does not process previously received submissions and instead waits for a new one, which can read as the scenario being stuck or broken.; source: https://community.make.com/t/issue-tally-form-submission-not-processed-scenario-stuck-on-run-once/82511\nProblem context: Common form-to-CRM automation patterns write submissions directly into the contact database without checking for typos, blank required fields, or bot spam, so bad records accumulate and must be cleaned up by hand afterward.; source: https://community.n8n.io/t/free-workflow-json-a-validation-gate-for-form-to-crm-so-typos-and-bot-spam-stop-before-your-contact-database-6-nodes/319505\nQualified scope of the selected audience: no-code automation agencies. This narrows who you are; it does not establish installed tools, prior actions or desired reactions.",
+            "pull": 6
+          }
+        ],
+        "sameness": []
+      }
+    ],
+    "limiting_gaps": [],
+    "what_would_help_most": "Resolve this simulated next-step obstacle: I would have clicked if this email had told me whether the guide includes a real submission payload and explains how choice fields and endpoint responses behave. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.",
+    "questions": [],
+    "sequence_summary": "",
+    "knowledge_version": 1,
+    "notes": [
+      "Effective audience: The ops or no-code person on a small team whose intake form is step one of an automation nobody owns. Qualified scope: no-code automation agencies",
+      "Audience context: audience_research_loaded",
+      "Review required: this interpretation may reverse the cited source's meaning. Builders are advised to use the generic Webhook trigger module instead of the native Tally app module, because the native module simplifies the payload in a way that complicates handling it downstream.",
+      "Normalized fit for problem 'P1'.",
+      "Ignored unavailable dossier ranking E273.",
+      "The proposed buyer problem was not established by the selected audience research; no substitute pain was inserted.",
+      "The proposed current alternative was not established by audience research; it remains unknown.",
+      "Reframed an unlinked buyer-problem argument as the documented function or offer (E32, E35, E23); its old benefit, alternative failure story and evaluation payoff were not retained.",
+      "1 email(s) came in under the floor on a run configured without more than one opening per email, a panel of cold readers rather than one, alternative subject lines, more than one rewrite. Those are the mechanisms the quality rests on - this run wrote one draft and kept it. Before concluding the copy cannot be better, try the same request on a preset that buys them."
+    ],
+    "reads_expected": true
+  },
+  "brief": {
+    "interpretation": "A single launch-announcement email for prospects who have not bought Tally, not an onboarding email. I’m treating the product as Tally and narrowing the selected audience to no-code automation agencies, as required by the current relevance dossier.",
+    "reader": "Selected audience: The ops or no-code person on a small team whose intake form is step one of an automation nobody owns.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): Operations and no-code builders at small teams and automation agencies who already run Make, Zapier or n8n scenarios and read webhook documentation before choosing a form tool\nQualified campaign scope within that audience: no-code automation agencies.",
+    "reader_segment": "The ops or no-code person on a small team whose intake form is step one of an automation nobody owns",
+    "reader_profile_override": "",
+    "reader_scope": "no-code automation agencies",
+    "fixed_cta_url": "",
+    "promise": "Instead of polling the Tally API or exporting CSVs, webhooks push data the moment a form is submitted.",
+    "orientation": "Tally is an online form builder that can send submissions into small-team automation workflows through webhooks and no-code integrations.",
+    "arc": "Explain the assigned function and the bounded next step; the original problem fit is unestablished.",
+    "sequence_rationale": "The product/problem link was not established for email(s) 1. Those slots explain the assigned facts with their limits; they do not promise to resolve the original buyer problem.",
+    "emails": [
+      {
+        "position": 1,
+        "job": "Explain the assigned function and the bounded next step; the original problem fit is unestablished.",
+        "single_idea": "Instead of polling the Tally API or exporting CSVs, webhooks push data the moment a form is submitted.",
+        "felt_need": "",
+        "status_quo": "",
+        "why_it_fails": "",
+        "mechanism": "Instead of polling the Tally API or exporting CSVs, webhooks push data the moment a form is submitted.",
+        "alternative_ideas": [],
+        "alternative_arguments": [],
+        "belief_shift": "",
+        "evidence_ids": [
+          "E32",
+          "E35",
+          "E23"
+        ],
+        "must_not_say": [
+          "Do not claim Tally can replay historical submissions into a newly listening scenario or make “Run once” process existing responses.",
+          "Do not promise that Tally fixes multiple-choice ID-to-text mapping or field-specific Airtable write failures.",
+          "Do not claim a downstream automation can return a conditional redirect after submission; only form-side conditional logic and redirect behavior are documented.",
+          "Do not claim Tally provides a built-in validation gate for blank fields or a human-review branch.",
+          "Do not generalize this proposition beyond no-code automation agencies.",
+          "Do not conflate a native connector, a generic automation module, and a custom HTTP webhook endpoint.",
+          "Do not omit the webhook endpoint’s 10-second processing-and-response limit.",
+          "Do not add pricing, security, AI, file uploads, the wider integration catalog, or customer logos; they distract from the operational test.",
+          "Do not manufacture urgency, a recent failure, or an installed Make, Zapier, or n8n stack for the recipient.",
+          "Keep the connection route attached to its cited source. A native or prebuilt integration and a custom HTTP/webhook endpoint are separate setup paths unless the source explicitly equates them. A platform name alone establishes neither manual endpoint configuration nor a no-setup connector. Keep unknown setup requirements unknown; do not mix the steps or benefits of those paths.",
+          "No verified link connects this argument to the proposed buyer problem. Explain only the documented function; do not invent a pain, a switching story or a promised outcome.",
+          "Tally documents form-side conditional logic and redirect-on-completion, but the ledger does not show that a downstream automation can return a conditional redirect after webhook submission; webhook processing is also subject to a 10-second.",
+          "Webhooks push data when a new submission occurs, and failed attempts can be inspected and retried, but the ledger does not document replaying previously received submissions into a newly listening scenario.",
+          "The assigned evidence does not establish that this function resolves the proposed buyer problem. Inspecting its source or starting an account does not demonstrate that outcome, a completed integration, or a result for this recipient."
+        ],
+        "forbidden_evidence_ids": [
+          "E273"
+        ],
+        "forbidden_capability_ids": [],
+        "objection": "",
+        "tone": "Warm, casual, and operator-to-operator; confident but unhurried, with short sentences and no launch hype.",
+        "call_to_action": "Read the documented capability: https://tally.so/help/webhooks",
+        "next_step_decision": "Inspect the documented capability and its limits.",
+        "next_step_value": "Instead of polling the Tally API or exporting CSVs, webhooks push data the moment a form is submitted.",
+        "next_step_evidence_ids": [
+          "E32"
+        ],
+        "next_step_limit": "The assigned evidence does not establish that this function resolves the proposed buyer problem. Inspecting its source or starting an account does not demonstrate that outcome, a completed integration, or a result for this recipient.",
+        "subject_strategy": "Name the documented capability or offer without implying a new launch or an unproved buyer outcome.",
+        "must_not_reuse": []
+      }
+    ],
+    "voice_notes": "Write like a trusted peer sharing a useful new tool. Plain words, short beats, one concrete test, and no breathless superlatives.",
+    "contract": {
+      "kind": "single_email",
+      "count": 1,
+      "count_is_explicit": true,
+      "evidence": "1 email"
+    }
+  },
+  "emails": [
+    {
+      "position": 1,
+      "role": "introduce Tally’s webhook capability and its limits",
+      "subject": "A closer look at Tally webhooks",
+      "preview_text": "Inspect new-submission delivery, failed retries, and the 10-second endpoint limit.",
+      "eyebrow": "TALLY WEBHOOKS",
+      "headline": "Send new form submissions to your endpoint",
+      "greeting": "Hi there,",
+      "body": "A new form submission can go straight to the next step in an automation.\n\nTally is an online form builder with webhooks that push submission data to your endpoint as soon as a new response arrives. That means no polling the Tally API or exporting CSVs to collect incoming responses.\n\nThe documentation also covers the operational details worth checking. You can list delivery events, inspect responses, and retry failed webhook attempts.\n\nThere’s one clear constraint: your endpoint has **10 seconds** to process and respond to each new submission. If processing takes longer, the documented approach is to call another service internally.\n\nOpen the webhook guide to inspect that delivery flow, the available troubleshooting actions, and the timeout before deciding whether it suits the workflows your agency builds.",
+      "call_to_action": "Explore Tally webhooks",
+      "sign_off": "— Team Tally",
+      "postscript": ""
+    }
+  ],
+  "intelligence": {
+    "selected_audience": "The ops or no-code person on a small team whose intake form is step one of an automation nobody owns",
+    "audience_resolution_status": "audience_research_loaded",
+    "audience_research_id": "15ec56d2-d506-4860-9128-c551fb38ab94",
+    "audience_research_version": 1,
+    "dossier_status": "current",
+    "dossier_id": "924b8949-beb0-458f-b6b3-35f0183081b1",
+    "dossier_version": 2,
+    "dossier_schema_version": 2,
+    "stale_reasons": [],
+    "legacy_fallback_used": false,
+    "qualified_subsegment": "no-code automation agencies",
+    "withhold_evidence_selected": [],
+    "partial_caveats_injected": [
+      "Tally documents form-side conditional logic and redirect-on-completion, but the ledger does not show that a downstream automation can return a conditional redirect after webhook submission; webhook processing is also subject to a 10-second.",
+      "Webhooks push data when a new submission occurs, and failed attempts can be inspected and retried, but the ledger does not document replaying previously received submissions into a newly listening scenario."
+    ],
+    "validation_warnings": [
+      "Review required: this interpretation may reverse the cited source's meaning. Builders are advised to use the generic Webhook trigger module instead of the native Tally app module, because the native module simplifies the payload in a way that complicates handling it downstream.",
+      "Normalized fit for problem 'P1'.",
+      "Ignored unavailable dossier ranking E273.",
+      "The proposed buyer problem was not established by the selected audience research; no substitute pain was inserted.",
+      "The proposed current alternative was not established by audience research; it remains unknown.",
+      "Reframed an unlinked buyer-problem argument as the documented function or offer (E32, E35, E23); its old benefit, alternative failure story and evaluation payoff were not retained."
+    ]
+  }
+}

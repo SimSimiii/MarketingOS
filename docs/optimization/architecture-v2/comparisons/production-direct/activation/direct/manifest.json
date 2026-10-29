@@ -1,0 +1,39 @@
+{
+  "arm": "direct",
+  "case": "activation",
+  "input_sha256": "8d3828fddfc52dce3e934af9cf06834a96744573e34b65bfb6eabf465edfe249",
+  "policy": {
+    "strategy_mode": "direct",
+    "max_revisions": 1,
+    "draft_candidates": 1,
+    "critic_enabled": true,
+    "reader_panel": false,
+    "tournament": false,
+    "subject_variants": 0,
+    "sequence_pass": false,
+    "max_sequence_reworks": 0,
+    "max_duration_seconds": 1200,
+    "max_total_tokens": 750000,
+    "merge_fields": [
+      "first_name",
+      "last_name",
+      "company",
+      "email"
+    ],
+    "force_recompile": false,
+    "require_proof": false,
+    "max_crawl_pages": 5,
+    "model_overrides": {
+      "*": "gpt-5.6-sol"
+    }
+  },
+  "source": "labelled synthetic fixture",
+  "split": "development",
+  "group_limits": {
+    "attempts": 4,
+    "tokens": 150000,
+    "seconds": 300
+  },
+  "compiled_knowledge_reused": true,
+  "limitation": "One stochastic output per arm is a qualitative comparison, not a statistical conversion experiment."
+}

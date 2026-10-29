@@ -1,0 +1,205 @@
+{
+  "index": 0,
+  "segment": {
+    "name": "A technical founder who built the site himself and gave up on GA4 somewhere around the third Explore report",
+    "organization": "Bootstrapped software company or indie SaaS, 1-10 people, where the founder also owns the marketing site, docs and changelog (self-deployed Next/Nuxt/Laravel/Ghost stack)",
+    "workflow": "Ships a feature or writes a launch post, then wants to see within seconds which page or link brought signups; today that means opening GA4, landing in report configuration, and closing the tab unanswered",
+    "need": "A one-screen read on whether this week's shipping brought anyone, with no consent banner in front of his own launch page and no analytics administration",
+    "buyer_role": "Founder (same person signs up and pays on a card, self-serve)",
+    "user_role": "Founder / solo developer",
+    "current_alternative": "GA4 left installed by inertia, sometimes alongside a cookie consent manager; free self-hosted options (GoatCounter, Umami, Plausible CE) are the live competing choice in this crowd",
+    "assessment": {
+      "compatibility": "supported",
+      "evidence_strength": "limited",
+      "findability": "verified",
+      "usage_or_purchase": "captured",
+      "reachability": "venue_identified",
+      "counterevidence_summary": [
+        "Technically literate site owners in this crowd default to free hosted or self-hosted analytics when volume is low and the site is non-commercial. \u2014 A no-cost substitute that satisfies the same 'is anyone reading this' need directly competes with a paid subscription that has no free plan. Review before prioritising.",
+        "The no-consent-banner argument is openly contested in this audience on ePrivacy grounds, so it cannot be assumed to close the sale. \u2014 For this segment the dominant stated driver is GA's complexity and distrust, not banner removal, so a disputed banner claim is an argument to avoid rather than a blocker. Minor condition; does not exclude this audience."
+      ],
+      "counterevidence": 1,
+      "priority": "hypothesis",
+      "reasons": [
+        "OpenCage \u2014 a small, founder-run geocoding API business whose engineer writes the stack posts \u2014 publicly documents stopping Google Analytics and paying for Fathom, which is both usage and a stated paid relationship from a member of this exact segment.",
+        "The stated reasons match the candidate's hypothesised need almost word for word: GA grew too complex, and a single page answering basic questions was the deciding feature.",
+        "Product truth supplies every required capability for this workflow: one-line header install (fact_7dd83c7d9d826647), single-page dashboard (fact_5a6a507e2ebb14bd), real-time install verification (fact_db7edad49bb507cf), never uses cookies (fact_213fb3b9ea5024ba), framework integrations (fact_27803407292d4b6d), and running alongside existing analytics during a trial (fact_cd04dd2d3fd37001).",
+        "Hacker News is a verified public venue where this audience discusses and compares analytics tooling."
+      ],
+      "unknowns": [
+        "The captured purchase dates from 2018 and was partly justified by open-source/self-host optionality that the current hosted-only product no longer offers; whether today's version of this buyer still converts is untested.",
+        "No evidence in the corpus about how many such founders pay versus install a free tool.",
+        "Nothing in the corpus about install-to-first-insight time or about funnel/cohort needs surfacing after the switch.",
+        "1 unsupported or duplicate quotation(s) discarded.",
+        "Review the counterevidence before prioritising this audience."
+      ],
+      "evidence": [
+        {
+          "claim": "A founder-run small software company publicly documents removing Google Analytics and running Fathom instead \u2014 observed use by a member of this segment.",
+          "quote": "A few days ago we stopped using Google analytics on our site.",
+          "url": "https://blog.opencagedata.com/post/privacy-update-switching-from-google-analytics-to-fathom",
+          "kind": "usage",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-10-23T02:54:12.709058Z"
+        },
+        {
+          "claim": "The same post states a paid customer relationship with Fathom, not a trial or evaluation.",
+          "quote": "We pay them to run a service built around privacy for us.",
+          "url": "https://blog.opencagedata.com/post/privacy-update-switching-from-google-analytics-to-fathom",
+          "kind": "purchase",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-10-23T02:54:12.709058Z"
+        },
+        {
+          "claim": "The buyer's stated pain is GA's accumulating complexity versus wanting basic numbers on one screen \u2014 the hypothesised need, in the buyer's own words.",
+          "quote": "I kept finding myself lost in sub-menu 27 when all I wanted was basic information. Fathom quickly and clearly gives us the info we need to make decisions - all on single page.",
+          "url": "https://blog.opencagedata.com/post/privacy-update-switching-from-google-analytics-to-fathom",
+          "kind": "need",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-10-23T02:54:12.709058Z"
+        },
+        {
+          "claim": "Technically literate site owners in this crowd default to free hosted or self-hosted analytics when volume is low and the site is non-commercial.",
+          "quote": "Because I'm very low volume and non-commercial, I can use their free hosted service without guilt.",
+          "url": "https://news.ycombinator.com/item?id=34265127",
+          "kind": "counterevidence",
+          "impact": "material",
+          "impact_reason": "A no-cost substitute that satisfies the same 'is anyone reading this' need directly competes with a paid subscription that has no free plan.",
+          "fetched_at": "2026-10-23T02:54:13.726860Z"
+        },
+        {
+          "claim": "The no-consent-banner argument is openly contested in this audience on ePrivacy grounds, so it cannot be assumed to close the sale.",
+          "quote": "the site claims you don't need a \"cookie popup\" since it doesn't use cookies. That's false. The ePrivacy directive states that reading or writing any data from the user device other than for the purpose of serving the site needs permission.",
+          "url": "https://news.ycombinator.com/item?id=34265127",
+          "kind": "counterevidence",
+          "impact": "minor",
+          "impact_reason": "For this segment the dominant stated driver is GA's complexity and distrust, not banner removal, so a disputed banner claim is an argument to avoid rather than a blocker.",
+          "fetched_at": "2026-10-23T02:54:13.726860Z"
+        },
+        {
+          "claim": "Hacker News threads on analytics tools are a concrete public venue where this audience gathers and compares options.",
+          "quote": "One of the best parts of HN is if you kind of just wait long enough you'll see a post for something you low key need/were looking for.",
+          "url": "https://news.ycombinator.com/item?id=34265127",
+          "kind": "access",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-10-23T02:54:13.726860Z"
+        }
+      ]
+    },
+    "kind": "core",
+    "added_by": "cartographer",
+    "who": "Developer-founders and technical bloggers who publicly document their own stack decisions and have written 'why I left Google Analytics' posts in their own ecosystems (Laravel, Vue, Rails, indie SaaS, Jamstack)",
+    "why_them": "Hypothesis: the published switch posts show the decision is made on distrust of the incumbent plus the cost of GA4's interface, not on a missing feature \u2014 which is exactly what a one-page cookieless dashboard with a one-line install answers. The same posts show they buy it themselves, in minutes, without a procurement step.",
+    "trigger": "A launch, Show HN/Product Hunt post, redesign or press mention lands and real-time GA4 reporting fails him; or a peer in his ecosystem publishes a switch post",
+    "pains": [
+      "GA4 is unpleasant enough that checking his own traffic stops being a habit",
+      "A cookie banner he never wanted is the first thing a visitor meets on his landing page",
+      "Another tag on a page he spent weeks making fast",
+      "His time is the scarce resource: anything needing configuration before it reports stays half-done",
+      "Distrust of the incumbent's motives, not a feature gap, is why he is shopping"
+    ],
+    "objection": "Google Analytics is free and does more, and if I am leaving Google anyway I can self-host GoatCounter, Umami or Plausible CE for nothing \u2014 why pay $15/month for one page?",
+    "angle": "Hypothesis only: the parallel-run trial (keep GA4 installed, add one line, compare for a week) turns the 'less for money' argument into something he can settle empirically instead of arguing about.",
+    "sophistication": "product_aware",
+    "fit": 0.0,
+    "basis": "Public buyer-voice switch posts from named technical operators (OpenCage Data's engineering blog, several developer blogs) describe the GA4-to-Fathom move in the buyer's own words, citing privacy, single-page simplicity and no cookie banner. Counterevidence from Hacker News threads: this same audience strongly favours free, open-source and self-hostable analytics, and Fathom is closed-source and hosted-only (fact_b0e6b74058ab1d54). Missing from supplied product material: no figures on install-to-first-insight time, no benchmark against GA4's script weight, and no answer at all for funnels/cohorts/paths if he turns out to want them.",
+    "population": "unknown",
+    "signals": [
+      "published_blog_post_leaving_google_analytics",
+      "self_deployed_marketing_site_with_docs_and_changelog",
+      "cookie_consent_banner_on_own_marketing_site",
+      "ga4_script_present_alongside_launch_traffic_spikes",
+      "founder_is_sole_site_maintainer"
+    ],
+    "where": [
+      "blog.opencagedata.com",
+      "news.ycombinator.com (Ask HN / Show HN analytics threads)",
+      "Laravel, Vue and Jamstack community blogs and newsletters",
+      "indie SaaS 'my stack' and changelog posts",
+      "dev.to analytics discussions"
+    ],
+    "unobvious": false,
+    "researchable": true,
+    "researchability": "high",
+    "researchability_reasons": [
+      "5 useful observable signals and 5 specific research venues.",
+      "The audience is anchored in a concrete workflow or situation.",
+      "A clear trigger narrows the evidence to look for.",
+      "No population basis is stated."
+    ],
+    "definition": {
+      "schema_version": 2,
+      "required_structural_signals": [
+        {
+          "code": "company_size_1_to_10",
+          "description": "Founder-operated software company or solo product business"
+        },
+        {
+          "code": "public_marketing_site_self_deployed",
+          "description": "Marketing site, docs or blog deployed by the founder, not by an outside agency"
+        }
+      ],
+      "required_workflow_signals": [
+        {
+          "code": "ga4_or_other_js_analytics_installed",
+          "description": "An analytics script is already live on the site"
+        },
+        {
+          "code": "founder_owns_analytics_decision",
+          "description": "No analytics team or data owner between the founder and the tag"
+        },
+        {
+          "code": "frequent_content_or_release_launches",
+          "description": "Changelog, blog or launch posts published regularly enough to need real-time reads"
+        }
+      ],
+      "required_product_capabilities": [
+        "fact_7dd83c7d9d826647",
+        "fact_5a6a507e2ebb14bd",
+        "fact_db7edad49bb507cf",
+        "fact_213fb3b9ea5024ba",
+        "fact_27803407292d4b6d",
+        "fact_cd04dd2d3fd37001"
+      ],
+      "optional_signals": [
+        {
+          "code": "cookie_consent_banner_present",
+          "description": ""
+        },
+        {
+          "code": "public_post_criticising_google_analytics",
+          "description": ""
+        },
+        {
+          "code": "nextjs_nuxt_ghost_or_laravel_stack",
+          "description": ""
+        }
+      ],
+      "hard_disqualifiers": [
+        {
+          "code": "requires_self_hosted_or_on_prem_analytics",
+          "description": "Fathom is hosted only",
+          "outcome": "EXCLUDED"
+        },
+        {
+          "code": "requires_funnels_cohorts_or_user_level_paths",
+          "description": "Single-page dashboard; no funnel, cohort or session-path capability in the catalogue",
+          "outcome": "EXCLUDED"
+        },
+        {
+          "code": "requires_free_tier_no_card",
+          "description": "No free plan; card required for the 7-day trial",
+          "outcome": "EXCLUDED"
+        }
+      ],
+      "eligible_subsegments": [],
+      "excluded_subsegments": [],
+      "max_team_size": 10
+    }
+  }
+}
+Snapshot: C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\docs\optimization\fathom-root-url-2026-10-22\steps\20261023T033339838025Z-select-first.json

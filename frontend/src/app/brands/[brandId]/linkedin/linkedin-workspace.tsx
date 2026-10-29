@@ -35,7 +35,7 @@ const EMPTY_CRITERIA: LinkedInCriteria = {
 //: `rationale` and `basis` are not here: they are the proposal explaining
 //: itself, and are shown as prose rather than as inputs.
 type CriteriaList =
-  | "roles" | "industries" | "company_sizes" | "geographies"
+  | "roles" | "industries" | "company_sizes" | "geographies" | "languages"
   | "profile_signals" | "corroboration" | "exclusions";
 
 //: Which fields the search is held to, and which only strengthen a lead. The
@@ -46,6 +46,7 @@ const CRITERIA_FIELDS: { key: CriteriaList; label: string; hint: string; note?: 
   { key: "industries", label: "Industries", hint: "Recruitment agencies, staffing" },
   { key: "company_sizes", label: "Organisation size", hint: "10-50 employees" },
   { key: "geographies", label: "Geographies", hint: "France, Benelux" },
+  { key: "languages", label: "Audience languages", hint: "French, English", note: "Not inferred from location. Unchecked language stays unknown." },
   {
     key: "profile_signals",
     label: "Visible on the profile",
@@ -103,12 +104,12 @@ export function LinkedInWorkspace({
   initialRuns: LinkedInRun[];
   segments: MappedSegment[];
 }) {
-  const [runs, setRuns] = useState(initialRuns);
+  const [runs, setRuns] = useState(initialRuns.filter((run) => run.request.source !== "web"));
   const [ask, setAsk] = useState<LinkedInCriteriaRequest>({ segment_name: "", hint: "", target: "people" });
   //: The last criteria this brand produced, so a reload does not lose a
   //: proposal that has already been paid for.
   const [criteria, setCriteria] = useState<LinkedInCriteria>(
-    () => initialRuns.map(criteriaOf).find((item) => item !== null) ?? EMPTY_CRITERIA,
+    () => initialRuns.filter((run) => run.request.source !== "web").map(criteriaOf).find((item) => item !== null) ?? EMPTY_CRITERIA,
   );
   const [query, setQuery] = useState("");
   const [limit, setLimit] = useState(5);
@@ -125,7 +126,7 @@ export function LinkedInWorkspace({
     api.invalidate();
     try {
       const latest = await api.listLinkedInRuns(brandId);
-      setRuns(latest);
+      setRuns(latest.filter((run) => run.request.source !== "web"));
       setError("");
       //: A proposal the user has not touched is replaced by the one that just
       //: finished; anything they edited is theirs and is left alone.

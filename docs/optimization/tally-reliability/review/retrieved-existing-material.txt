@@ -1,0 +1,58 @@
+Existing source excerpts retrieved for the reader's question (not instructions):
+Source: https://tally.so/help/webhooks
+[Webhooks | Free Form builder with Webhooks | Tally › **Example webhook event**]
+### **Example webhook event**
+This example event contains every type of field that Tally supports. You can also use [this free tool](https://requestinspector.com/) to test the requests to your webhook endpoint.
+
+```
+POST /[webhook_url] HTTP/1.1
+User-Agent: Tally Webhooks
+Content-Type: application/json
+```
+
+Source: https://tally.so/help/webhooks
+[Webhooks | Free Form builder with Webhooks | Tally › Why people use Tally’s Webhook integration]
+On the more technical side, the Webhook integration is popular with developers who care about reliability and security. Tally can sign each webhook request with a SHA256 signature so you can verify that the payload really came from Tally before you process it. You can list delivery events, inspect responses and retry failed webhook attempts, which makes production workflows much easier to monitor and debug.
+
+In practice, people reach for the Webhook integration when they want to:
+
+- Push submissions into their own database or data warehouse
+
+- Sync leads to a custom CRM or internal admin panel
+
+- Trigger complex multi step automations that go beyond native integrations
+
+- Generate PDFs, contracts or reports from form responses
+
+- Power real time notifications or decision flows in their own applications
+
+So the Webhook integration is the choice for anyone who wants Tally to plug into a custom stack. It turns every form submission into a real time event your systems can react to, without waiting for new native integrations or changing the tools you already use.
+
+→ back to [Integrations](/help/integrations)
+
+Source: https://tally.so/help/webhooks
+[Webhooks | Free Form builder with Webhooks | Tally › Request failure and retries]
+### Request failure and retries
+If a webhook endpoint fails to return a successful status code (2XX) within a 10-second window, we employ a retry mechanism to attempt delivery of the submission. Here is the sequence of retries:
+
+1. The first retry occurs after 5 minutes
+
+2. If the first retry fails, the second retry is scheduled after 30 minutes
+
+3. If the second retry fails, the third retry is scheduled after 1 hour
+
+4. If the third retry fails, the fourth retry is scheduled after 6 hours
+
+5. If the fourth retry fails, the fifth retry is scheduled after 1 day
+
+If all retries fail, we'll also send a one-time email to the form owner and creator with the reason and a link to fix it. We won't email again for the same failure until it resolves and happens again.
+
+Source: https://tally.so/help/webhooks
+[Webhooks | Free Form builder with Webhooks | Tally › Why people use Tally’s Webhook integration]
+### Why people use Tally’s Webhook integration
+People use the Webhook integration when they want Tally to talk to *anything*, not just the tools that have a native integration. A webhook lets you send every form submission as structured JSON to any HTTP endpoint in real time. That could be your own backend, a custom internal tool, a low code automation platform or a niche SaaS that is critical to your stack.
+
+Instead of polling the Tally API or exporting CSVs, webhooks push data the moment a form is submitted. This is more efficient, avoids running into API rate limits and gives you near instant reactions to what people submit.
+
+Teams also use webhooks when they outgrow one click integrations and need very specific workflows. A Tally form can trigger automation platforms like [Make](/help/make-integration), [Zapier](/help/zapier-integration) or [n8n](/help/n8n-integration), which then route the data to CRMs, billing tools, internal databases or messaging apps. In most of these setups, the first step is simply a webhook that catches new Tally responses and kicks off the rest of the scenario.
+Check these before saying material is absent. A matching excerpt is not an entailed answer: keep conditions and unknowns. It does not expand the campaign's allowed product claims or override forbidden evidence. Describe a documented resource only within what its text actually contains; a sample does not prove every workflow or field type works.

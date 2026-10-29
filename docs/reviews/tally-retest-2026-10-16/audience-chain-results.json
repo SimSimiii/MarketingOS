@@ -1,0 +1,364 @@
+{
+  "scope": "Read-only current-code normalization of original saved Tally artifacts; no regenerated text and no live models.",
+  "model_calls": 0,
+  "original_execution": {
+    "execution_id": "905534e6392f442e927bc1a132458c1d",
+    "run_status": "degraded",
+    "report_emails": [
+      {
+        "position": 1,
+        "subject": "Put Tally before your automation",
+        "single_idea": "Tally is now available as a form front end for automations: it can push new submissions into workflows built with Make, Zapier, or n8n, and the webhook route is free to use.",
+        "pull": 5.0,
+        "revisions": 0,
+        "clean": true,
+        "landed": false,
+        "rewrites_stopped_helping": false,
+        "read_reported": true,
+        "understood": true,
+        "relevant": true,
+        "evidence_assigned": [
+          "E21",
+          "E33",
+          "E32"
+        ],
+        "evidence_spent": [
+          "E21",
+          "E33",
+          "E32"
+        ],
+        "attributions": 8,
+        "unresolved": [
+          "Unresolved strategy/material gap: The email asks the reader to create a form to judge whether “the form itself is worth wiring up,” but its evidence establishes only webhook availability and transport, not why evaluating the form alone resolves this audience’s operational concern. The argument must instead make form creation the first bounded step toward testing supported webhook behavior—such as structured JSON delivery and documented failure handling—without implying that creating the form validates the integration."
+        ],
+        "reader_verdicts": [
+          {
+            "what_it_sells": "Tally is a form builder that can send new intake submissions into Make, Zapier, or n8n through a free webhook, potentially replacing a separate paid form front end.",
+            "understood": true,
+            "situation_matches": true,
+            "relevance_feedback": "The profile explicitly makes intake forms the first step of an ownerless automation, so the premise is relevant. The email additionally assumes I have a forthcoming workflow and may use Make, Zapier, or n8n; those tools and timing are plausible but not established.",
+            "assumed_experiences": [
+              "Profile-supported: I handle an intake form that begins an automation nobody owns.",
+              "Email-only: I am preparing a next automation that needs a new form front end.",
+              "Email-only: I use or would choose Make, Zapier, or n8n.",
+              "Email-only: avoiding API polling or CSV exports is important in this workflow.",
+              "Email-only: I am ready to configure an endpoint and send a fresh test submission."
+            ],
+            "problem_now": "A dependable form-to-automation handoff matters for this role, but no active build, failure, or deadline is established. Payload quality, delivery behavior, validation, and downstream mapping are plausible operational risks that the email does not address.",
+            "stopped_at": "Once the webhook is connected, Tally pushes each new submission when it arrives.",
+            "biggest_doubt": "I cannot tell whether the webhook sends stable, usable field values or how failures and awkward field types are handled; merely pushing each submission is not enough for an intake automation I may have to maintain.",
+            "to_click_it_would_have_to": "I would have clicked if this email had shown a sample webhook payload demonstrating exactly how multi-choice and email fields arrive.",
+            "fixes": [
+              "Rewrite “Once the webhook is connected, Tally pushes each new submission when it arrives.” to specify what the payload contains and link to a concrete sample payload.",
+              "Cut “Your automation can then route the data to a CRM, billing tool, internal database, or messaging app—without polling the API or exporting a CSV first.” It is generic and does not answer whether the submitted values will be usable downstream.",
+              "Rewrite “Endpoint configuration and a fresh test submission can come next.” to say what I can inspect before creating a form, such as the payload format, delivery behavior, or field mapping documentation."
+            ],
+            "opens_in_100": 27,
+            "clicks_in_100": 3,
+            "persona": "Selected audience (explicit constraints): The ops or no-code person on a small team whose intake form is step one of an automation nobody owns.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): Operations and no-code builders at small teams and automation agencies who already run Make, Zapier or n8n scenarios and read webhook documentation before choosing a form tool\n\nProblem context: After a Tally form submits to a webhook, the respondent cannot be reliably redirected or shown a conditional response from the automation tool; the connection appears to be lost once the platform returns its own 'accepted' acknowledgement.; source: https://community.make.com/t/tally-form-submission-to-webhook-response-its-possible/22050\nProblem context: A multi-choice form answer passed through a webhook arrives as a reference/ID number rather than the actual answer text, requiring manual identification and correction before it can be used.; source: https://community.make.com/t/webhook-to-tally-forms-returning-multi-choice-answer-as-reference-number-and-not-actual-text/83391\nProblem context: A specific field type from a form webhook (here, email) can fail to write into the destination tool even though the same payload shows the value present and the extraction/logging confirms it is correctly read.; source: https://community.make.com/t/email-field-from-tally-not-showing-in-airtable-via-webhook-set-variable-all-other-fields-work-fine/88181\nProblem context: When testing a newly built scenario, an instant webhook trigger does not process previously received submissions and instead waits for a new one, which can read as the scenario being stuck or broken.; source: https://community.make.com/t/issue-tally-form-submission-not-processed-scenario-stuck-on-run-once/82511\nProblem context: Common form-to-CRM automation patterns write submissions directly into the contact database without checking for typos, blank required fields, or bot spam, so bad records accumulate and must be cleaned up by hand afterward.; source: https://community.n8n.io/t/free-workflow-json-a-validation-gate-for-form-to-crm-so-typos-and-bot-spam-stop-before-your-contact-database-6-nodes/319505",
+            "pull": 5
+          },
+          {
+            "what_it_sells": "Tally is a form-building front end that sends new submissions by webhook into automations, potentially replacing a more manual intake handoff.",
+            "understood": true,
+            "situation_matches": true,
+            "relevance_feedback": "The profile explicitly establishes an ops or no-code person whose intake form begins an ownerless automation, so a webhook-capable form front end is relevant. The email additionally mentions Make, Zapier, and n8n, but whether I use any of them, need a new form, or plan to replace an existing intake is unknown.",
+            "assumed_experiences": [
+              "Profile-supported: an intake form is the first step of an automation that nobody owns.",
+              "Email-only: I am preparing a next automation that needs a new form front end.",
+              "Email-only: Make, Zapier, or n8n is an applicable destination for me.",
+              "Email-only: avoiding API polling or CSV exports is useful in my current process."
+            ],
+            "problem_now": "Reliable intake into an ownerless automation is a documented concern for this audience, and webhook payload or testing failures are plausible risks. Whether I need to build or replace a form now, and whether Tally addresses those risks, is unknown.",
+            "stopped_at": "Your automation can then route the data to a CRM, billing tool, internal database, or messaging app—without polling the API or exporting a CSV first.",
+            "biggest_doubt": "Creating and wiring a form is more work than this email acknowledges, and it gives me no evidence that the webhook payload will contain usable field values or behave predictably enough to justify that work.",
+            "to_click_it_would_have_to": "I would have clicked if this email had shown one example webhook payload, including a multi-choice and email field, plus the approximate time needed to send a fresh test submission.",
+            "fixes": [
+              "Rewrite “Tally is now available as the form front end for your next automation” to plainly say “Build an intake form in Tally and send every new submission to a webhook for Make, Zapier, or n8n.”",
+              "Cut “Your automation can then route the data to a CRM, billing tool, internal database, or messaging app—without polling the API or exporting a CSV first.” It is generic and does not reduce my implementation uncertainty.",
+              "Replace “The first decision is smaller: is the form itself worth wiring up? Endpoint configuration and a fresh test submission can come next.” with a concrete preview of the setup effort and the fields included in the webhook payload.",
+              "Replace “Create a free form →” with a lower-effort link such as “See a sample webhook payload →”."
+            ],
+            "opens_in_100": 24,
+            "clicks_in_100": 3,
+            "persona": "Selected audience (explicit constraints): The ops or no-code person on a small team whose intake form is step one of an automation nobody owns.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): Operations and no-code builders at small teams and automation agencies who already run Make, Zapier or n8n scenarios and read webhook documentation before choosing a form tool\n\nProblem context: After a Tally form submits to a webhook, the respondent cannot be reliably redirected or shown a conditional response from the automation tool; the connection appears to be lost once the platform returns its own 'accepted' acknowledgement.; source: https://community.make.com/t/tally-form-submission-to-webhook-response-its-possible/22050\nProblem context: A multi-choice form answer passed through a webhook arrives as a reference/ID number rather than the actual answer text, requiring manual identification and correction before it can be used.; source: https://community.make.com/t/webhook-to-tally-forms-returning-multi-choice-answer-as-reference-number-and-not-actual-text/83391\nProblem context: A specific field type from a form webhook (here, email) can fail to write into the destination tool even though the same payload shows the value present and the extraction/logging confirms it is correctly read.; source: https://community.make.com/t/email-field-from-tally-not-showing-in-airtable-via-webhook-set-variable-all-other-fields-work-fine/88181\nProblem context: When testing a newly built scenario, an instant webhook trigger does not process previously received submissions and instead waits for a new one, which can read as the scenario being stuck or broken.; source: https://community.make.com/t/issue-tally-form-submission-not-processed-scenario-stuck-on-run-once/82511\nProblem context: Common form-to-CRM automation patterns write submissions directly into the contact database without checking for typos, blank required fields, or bot spam, so bad records accumulate and must be cleaned up by hand afterward.; source: https://community.n8n.io/t/free-workflow-json-a-validation-gate-for-form-to-crm-so-typos-and-bot-spam-stop-before-your-contact-database-6-nodes/319505\nReading emphasis: weigh the effort of the next step against its usefulness. Do not assume an installed tool, a switching project or an existing workflow beyond the profile.",
+            "pull": 5
+          },
+          {
+            "what_it_sells": "Tally is a form builder I could use as the intake front end for a Make, Zapier, or n8n automation, replacing the need to poll an API or export submissions manually.",
+            "understood": true,
+            "situation_matches": true,
+            "relevance_feedback": "The premise fits the profile-supported job: an intake form is the first step of a small-team automation. The email conditionally proposes Tally for a future workflow, but whether I currently use Make, Zapier, or n8n, need a new form, or have an automation ready to wire up remains unknown.",
+            "assumed_experiences": [
+              "Profile-supported: I am responsible for an intake form that begins an automation nobody clearly owns.",
+              "Email-only: I am preparing a next automation now.",
+              "Email-only: I use or would choose Make, Zapier, or n8n.",
+              "Email-only: avoiding API polling or CSV exports is a current concern."
+            ],
+            "problem_now": "Reliable intake is important to my role, and webhook payload or delivery problems are plausible operational risks. The profile does not establish that I need a new form or am building this workflow today.",
+            "stopped_at": "",
+            "biggest_doubt": "The email establishes that submissions can be pushed, but not that the resulting payload is predictable and usable enough to trust as the first step of an automation; I cannot see how field values are represented or what happens when delivery fails.",
+            "to_click_it_would_have_to": "I would have clicked if this email had shown one real webhook payload, including how multiple-choice and email fields are represented.",
+            "fixes": [
+              "Rewrite “Tally is now available as the form front end for your next automation.” to say plainly that Tally is a form builder that can send each submission to a webhook.",
+              "Cut “Your automation can then route the data to a CRM, billing tool, internal database, or messaging app—without polling the API or exporting a CSV first.” and use that space for a representative payload or a link to its schema.",
+              "Rewrite “Once the webhook is connected, Tally pushes each new submission when it arrives.” to state what delivery behavior and failure handling, if any, I can verify before relying on it.",
+              "Replace “The first decision is smaller: is the form itself worth wiring up?” with a concrete low-effort evaluation step, such as previewing an example form and its webhook payload before creating anything."
+            ],
+            "opens_in_100": 27,
+            "clicks_in_100": 3,
+            "persona": "Selected audience (explicit constraints): The ops or no-code person on a small team whose intake form is step one of an automation nobody owns.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): Operations and no-code builders at small teams and automation agencies who already run Make, Zapier or n8n scenarios and read webhook documentation before choosing a form tool\n\nProblem context: After a Tally form submits to a webhook, the respondent cannot be reliably redirected or shown a conditional response from the automation tool; the connection appears to be lost once the platform returns its own 'accepted' acknowledgement.; source: https://community.make.com/t/tally-form-submission-to-webhook-response-its-possible/22050\nProblem context: A multi-choice form answer passed through a webhook arrives as a reference/ID number rather than the actual answer text, requiring manual identification and correction before it can be used.; source: https://community.make.com/t/webhook-to-tally-forms-returning-multi-choice-answer-as-reference-number-and-not-actual-text/83391\nProblem context: A specific field type from a form webhook (here, email) can fail to write into the destination tool even though the same payload shows the value present and the extraction/logging confirms it is correctly read.; source: https://community.make.com/t/email-field-from-tally-not-showing-in-airtable-via-webhook-set-variable-all-other-fields-work-fine/88181\nProblem context: When testing a newly built scenario, an instant webhook trigger does not process previously received submissions and instead waits for a new one, which can read as the scenario being stuck or broken.; source: https://community.make.com/t/issue-tally-form-submission-not-processed-scenario-stuck-on-run-once/82511\nProblem context: Common form-to-CRM automation patterns write submissions directly into the contact database without checking for typos, blank required fields, or bot spam, so bad records accumulate and must be cleaned up by hand afterward.; source: https://community.n8n.io/t/free-workflow-json-a-validation-gate-for-form-to-crm-so-typos-and-bot-spam-stop-before-your-contact-database-6-nodes/319505\nReading emphasis: scrutinise whether the claims earn trust for the requested next step. Do not invent a prior purchase, failed tool or bad experience; distinguish trying the product from adopting it in production.",
+            "pull": 5
+          }
+        ],
+        "sameness": []
+      }
+    ],
+    "report_notes": []
+  },
+  "original_brief": {
+    "single_idea": "Tally is now available as a form front end for automations: it can push new submissions into workflows built with Make, Zapier, or n8n, and the webhook route is free to use.",
+    "felt_need": "After a Tally form submits to a webhook, the respondent cannot be reliably redirected or shown a conditional response from the automation tool; the connection appears to be lost once the platform returns its own 'accepted' acknowledgement.",
+    "status_quo": "Builders are advised to use the generic Webhook trigger module instead of the native Tally app module, because the native module simplifies the payload in a way that complicates handling it downstream.",
+    "why_it_fails": "",
+    "mechanism": "Once a Tally form is connected through a webhook, a new submission can trigger Make, Zapier, or n8n and continue to a CRM, billing tool, internal database, or messaging app. The submission is pushed when it arrives rather than waiting for polling or a CSV export, and webhook access is available free to all Tally users.",
+    "evidence_ids": [
+      "E21",
+      "E33",
+      "E32"
+    ],
+    "must_not_say": [
+      "Do not claim Tally’s webhook response can redirect a respondent or display an automation-generated conditional response.",
+      "Do not claim Tally fixes field-level mapping failures, including a missing email value in Airtable.",
+      "Do not claim an instant trigger processes historical submissions or that a successfully delivered submission can be replayed.",
+      "Do not claim Tally resolves multiple-choice IDs into readable labels; P2 is unsupported.",
+      "Do not claim Tally validates typos, blank fields, or every bad CRM record before write-through.",
+      "Do not describe what endpoint-response details the delivery-history view exposes or make the CTA depend on seeing that view.",
+      "Do not imply that creating a form completes or proves the automation; an endpoint must still be configured and tested with a new submission.",
+      "Do not promise no setup, flawless delivery, or end-to-end reliability.",
+      "Do not add the full feature list, security posture, customer count, paid-plan pricing, or broad integration catalog.",
+      "Do not use the unlimited-forms-and-submissions proposition in this version; reserve it for the complete alternative argument."
+    ],
+    "call_to_action": "Create a free form",
+    "next_step_value": "The reader can start the form that would sit before a Make, Zapier, or n8n workflow, while knowing the webhook route itself is available free.",
+    "next_step_limit": "Creating the form does not demonstrate webhook delivery, payload shape, field mapping, respondent redirects, historical-submission behavior, or the downstream result; those require configuring an endpoint and sending a new test submission."
+  },
+  "actual_current_replay": {
+    "dossier_status": "stale",
+    "stale_reasons": [
+      "interpretation_changed"
+    ],
+    "fields": {
+      "single_idea": "A Tally form can trigger automation platforms like Make, Zapier, or n8n, which then route the data to CRMs, billing tools, internal databases, or messaging apps.",
+      "felt_need": "",
+      "status_quo": "",
+      "why_it_fails": "",
+      "mechanism": "A Tally form can trigger automation platforms like Make, Zapier, or n8n, which then route the data to CRMs, billing tools, internal databases, or messaging apps.",
+      "evidence_ids": [
+        "E21",
+        "E33",
+        "E32"
+      ],
+      "must_not_say": [
+        "Do not claim Tally’s webhook response can redirect a respondent or display an automation-generated conditional response.",
+        "Do not claim Tally fixes field-level mapping failures, including a missing email value in Airtable.",
+        "Do not claim an instant trigger processes historical submissions or that a successfully delivered submission can be replayed.",
+        "Do not claim Tally resolves multiple-choice IDs into readable labels; P2 is unsupported.",
+        "Do not claim Tally validates typos, blank fields, or every bad CRM record before write-through.",
+        "Do not describe what endpoint-response details the delivery-history view exposes or make the CTA depend on seeing that view.",
+        "Do not imply that creating a form completes or proves the automation; an endpoint must still be configured and tested with a new submission.",
+        "Do not promise no setup, flawless delivery, or end-to-end reliability.",
+        "Do not add the full feature list, security posture, customer count, paid-plan pricing, or broad integration catalog.",
+        "Do not use the unlimited-forms-and-submissions proposition in this version; reserve it for the complete alternative argument.",
+        "Keep the connection route attached to its cited source. A native or prebuilt integration and a custom HTTP/webhook endpoint are separate setup paths unless the source explicitly equates them. A platform name alone establishes neither manual endpoint configuration nor a no-setup connector. Keep unknown setup requirements unknown; do not mix the steps or benefits of those paths.",
+        "No verified link connects this argument to the proposed buyer problem. Explain only the documented function; do not invent a pain, a switching story or a promised outcome.",
+        "The assigned evidence does not establish that this function resolves the proposed buyer problem. Inspecting its source or starting an account does not demonstrate that outcome, a completed integration, or a result for this recipient."
+      ],
+      "call_to_action": "Read the documented capability: https://tally.so/help/webhooks",
+      "next_step_value": "A Tally form can trigger automation platforms like Make, Zapier, or n8n, which then route the data to CRMs, billing tools, internal databases, or messaging apps.",
+      "next_step_limit": "The assigned evidence does not establish that this function resolves the proposed buyer problem. Inspecting its source or starting an account does not demonstrate that outcome, a completed integration, or a result for this recipient."
+    },
+    "warnings": [
+      "Review required: this interpretation may reverse the cited source's meaning. Builders are advised to use the generic Webhook trigger module instead of the native Tally app module, because the native module simplifies the payload in a way that complicates handling it downstream.",
+      "Ignored stale dossier claims and rankings after knowledge or interpretation changed.",
+      "No current dossier establishes a link between the selected product evidence and the proposed buyer problem. The sourced problem remains available as audience context, but the argument must use the documented function without claiming to resolve it.",
+      "The proposed current alternative was not established by audience research; it remains unknown.",
+      "Reframed an unlinked buyer-problem argument as the documented function or offer (E272); its old benefit, alternative failure story and evaluation payoff were not retained.",
+      "Reframed an unlinked buyer-problem argument as the documented function or offer (E21, E33, E32); its old benefit, alternative failure story and evaluation payoff were not retained."
+    ],
+    "redirect_need_retained_with_free_webhook_argument": false,
+    "inverted_status_quo_retained": false
+  },
+  "synthetic_fresh_dossier_same_links": {
+    "fields": {
+      "single_idea": "A Tally form can trigger automation platforms like Make, Zapier, or n8n, which then route the data to CRMs, billing tools, internal databases, or messaging apps.",
+      "felt_need": "",
+      "status_quo": "",
+      "why_it_fails": "",
+      "mechanism": "A Tally form can trigger automation platforms like Make, Zapier, or n8n, which then route the data to CRMs, billing tools, internal databases, or messaging apps.",
+      "evidence_ids": [
+        "E21",
+        "E33",
+        "E32"
+      ],
+      "must_not_say": [
+        "Do not claim Tally’s webhook response can redirect a respondent or display an automation-generated conditional response.",
+        "Do not claim Tally fixes field-level mapping failures, including a missing email value in Airtable.",
+        "Do not claim an instant trigger processes historical submissions or that a successfully delivered submission can be replayed.",
+        "Do not claim Tally resolves multiple-choice IDs into readable labels; P2 is unsupported.",
+        "Do not claim Tally validates typos, blank fields, or every bad CRM record before write-through.",
+        "Do not describe what endpoint-response details the delivery-history view exposes or make the CTA depend on seeing that view.",
+        "Do not imply that creating a form completes or proves the automation; an endpoint must still be configured and tested with a new submission.",
+        "Do not promise no setup, flawless delivery, or end-to-end reliability.",
+        "Do not add the full feature list, security posture, customer count, paid-plan pricing, or broad integration catalog.",
+        "Do not use the unlimited-forms-and-submissions proposition in this version; reserve it for the complete alternative argument.",
+        "Keep the connection route attached to its cited source. A native or prebuilt integration and a custom HTTP/webhook endpoint are separate setup paths unless the source explicitly equates them. A platform name alone establishes neither manual endpoint configuration nor a no-setup connector. Keep unknown setup requirements unknown; do not mix the steps or benefits of those paths.",
+        "No verified link connects this argument to the proposed buyer problem. Explain only the documented function; do not invent a pain, a switching story or a promised outcome.",
+        "The assigned evidence does not establish that this function resolves the proposed buyer problem. Inspecting its source or starting an account does not demonstrate that outcome, a completed integration, or a result for this recipient."
+      ],
+      "call_to_action": "Read the documented capability: https://tally.so/help/webhooks",
+      "next_step_value": "A Tally form can trigger automation platforms like Make, Zapier, or n8n, which then route the data to CRMs, billing tools, internal databases, or messaging apps.",
+      "next_step_limit": "The assigned evidence does not establish that this function resolves the proposed buyer problem. Inspecting its source or starting an account does not demonstrate that outcome, a completed integration, or a result for this recipient."
+    },
+    "warnings": [
+      "Review required: this interpretation may reverse the cited source's meaning. Builders are advised to use the generic Webhook trigger module instead of the native Tally app module, because the native module simplifies the payload in a way that complicates handling it downstream.",
+      "Orientation was shortened or removed by deterministic validation.",
+      "Dropped 10 ranking(s) above the deterministic limit.",
+      "Normalized fit for problem 'P1'.",
+      "Normalized fit for problem 'P3'.",
+      "Normalized fit for problem 'P4'.",
+      "Normalized fit for problem 'P5'.",
+      "Normalized objection 'Nobody owns this pipeline, so if a delivery fails we will find out weeks later from a missing record.'.",
+      "Normalized silence for problem 'P2'.",
+      "The selected product evidence has no dossier link to the proposed buyer problem; describe the supported function without promising to solve that problem.",
+      "The proposed current alternative was not established by audience research; it remains unknown.",
+      "Reframed an unlinked buyer-problem argument as the documented function or offer (E272); its old benefit, alternative failure story and evaluation payoff were not retained.",
+      "Reframed an unlinked buyer-problem argument as the documented function or offer (E21, E33, E32); its old benefit, alternative failure story and evaluation payoff were not retained."
+    ],
+    "unlinked_need_removed": true,
+    "main_argument_and_mechanism_still_retained": false,
+    "eligible_slice_original": "no-code automation agencies",
+    "eligible_slice_in_strategy_context": true
+  },
+  "source_interpretation": {
+    "original_claim": "Builders are advised to use the generic Webhook trigger module instead of the native Tally app module, because the native module simplifies the payload in a way that complicates handling it downstream.",
+    "original_quote": "Using the app, you’ll receive the data in a simplified version which is easier to handle within Make.",
+    "synthetic_quote_wrapper_accepts_opposite_interpretation": true,
+    "original_observation_accepted_as_current_alternative": ""
+  },
+  "synthetic_unobserved_csv_mutation": {
+    "status_quo": "",
+    "why_it_fails": "",
+    "unknown_current_workflow_removed": true,
+    "unsupported_failure_story_remains": false
+  },
+  "synthetic_native_vs_custom_route": {
+    "text": "Use Tally's native Make integration by configuring a custom HTTP endpoint.",
+    "evidence_gate_blocking": [],
+    "all_gate_issues": [],
+    "limitation": "No route-consistency signal here; existing subjective readers/critic could still catch it. This is not a claim that a full run would pass."
+  },
+  "audience_cards_current_projection": {
+    "name": "The ops or no-code person on a small team whose intake form is step one of an automation nobody owns",
+    "assessment": {
+      "compatibility": "supported",
+      "evidence_strength": "supported",
+      "findability": "verified",
+      "usage_or_purchase": "unknown",
+      "reachability": "unknown",
+      "counterevidence_summary": [
+        "Signature verification is opt-in, so an endpoint can silently accept anything if the builder never sets a secret. — The same source gives a direct workaround — always set a signing secret and verify the header — so this is a configuration default to argue about, not a capability gap for a team that already reads webhook docs. Minor condition; does not exclude this audience.",
+        "The instant-trigger module cannot be edited, and the two-scenario workaround failed for this builder; the thread ends unresolved. — Where the automation has to answer the respondent — conditional redirect after submit — the builder reports the documented workaround does not work and no resolution is reached, so a whole class of ops workflows stalls. Review before prioritising."
+      ],
+      "counterevidence": 2,
+      "priority": "review_first",
+      "reasons": [
+        "An independent webhook-infrastructure guide states the job this audience is hiring the form for — reacting to submissions in real time instead of polling — and documents the exact delivery semantics the candidate claims they evaluate on (10-second acknowledgement, the retry ladder, HMAC-SHA256 signature, free on all plans).",
+        "A no-code automation community thread shows a real builder wiring a Tally form into Make and hitting the edge of what the webhook can do, which is buyer-adjacent behaviour in a named venue.",
+        "Both Hookdeck guides and the Make community are in the candidate's `where` list and both produced matching material, so findability is verified.",
+        "The required capability `rest_api` is verified in the supplied ledger (E31: submissions as structured JSON to any HTTP endpoint)."
+      ],
+      "unknowns": [
+        "No corpus evidence of who pays or how the tool is chosen inside a 5-50 person team; the buying role is still inferred.",
+        "The corpus does not state whether a delivery log with manual retry is a product feature or something the third-party gateway supplies.",
+        "No uptime, rate-limit or duplicate-delivery guarantees appear anywhere in the corpus; the guide's advice to use responseId as an idempotency key implies consumers must handle repeats.",
+        "Whether per-seat pricing sensitivity actually drives this choice is untested in the corpus.",
+        "Review the counterevidence before prioritising this audience."
+      ],
+      "evidence": [
+        {
+          "claim": "An independent infrastructure vendor frames the exact downstream use this segment is defined by.",
+          "quote": "If you're routing form submissions into a CRM, a database, or a downstream workflow, webhooks are how you react in real time without polling.",
+          "url": "https://hookdeck.com/webhooks/platforms/guide-to-tally-webhooks-features-and-best-practices",
+          "kind": "need",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-10-16T04:22:16.307091Z"
+        },
+        {
+          "claim": "The delivery semantics this audience evaluates on are published and verifiable by a third party, including the retry ladder and the free-on-all-plans position.",
+          "quote": "| Retries | 5 min, 30 min, 1 hr, 6 hr, 1 day |",
+          "url": "https://hookdeck.com/webhooks/platforms/guide-to-tally-webhooks-features-and-best-practices",
+          "kind": "example",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-10-16T04:22:16.307091Z"
+        },
+        {
+          "claim": "Signature verification is opt-in, so an endpoint can silently accept anything if the builder never sets a secret.",
+          "quote": "**The Problem:** If no secret is set, deliveries are unsigned, and an endpoint that assumes a signature will either reject everything or (worse) accept anything. Any POST to an unsigned webhook URL looks legitimate.",
+          "url": "https://hookdeck.com/webhooks/platforms/guide-to-tally-webhooks-features-and-best-practices",
+          "kind": "counterevidence",
+          "impact": "minor",
+          "impact_reason": "The same source gives a direct workaround — always set a signing secret and verify the header — so this is a configuration default to argue about, not a capability gap for a team that already reads webhook docs.",
+          "fetched_at": "2026-10-16T04:22:16.307091Z"
+        },
+        {
+          "claim": "A builder in the Make community is trying to route the respondent conditionally on their answers via the webhook and cannot make it work.",
+          "quote": "I have a question, from tally form I can redirect users to a link after filling out the form… Is it possible to forward to the tally trigger webhook and make a webhook response depending on their answers? help please, thanks.",
+          "url": "https://community.make.com/t/tally-form-submission-to-webhook-response-its-possible/22050",
+          "kind": "need",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-10-16T04:22:16.077282Z"
+        },
+        {
+          "claim": "The instant-trigger module cannot be edited, and the two-scenario workaround failed for this builder; the thread ends unresolved.",
+          "quote": "If I point the form to the tally webhook (acid instant) module, there is no way to edit this webhook.",
+          "url": "https://community.make.com/t/tally-form-submission-to-webhook-response-its-possible/22050",
+          "kind": "counterevidence",
+          "impact": "material",
+          "impact_reason": "Where the automation has to answer the respondent — conditional redirect after submit — the builder reports the documented workaround does not work and no resolution is reached, so a whole class of ops workflows stalls.",
+          "fetched_at": "2026-10-16T04:22:16.077282Z"
+        },
+        {
+          "claim": "The helper's recommended pattern requires two scenarios and a sleep, i.e. a workaround rather than a supported path.",
+          "quote": "Hi! Yes, that’s generally possible but you’ll need to use two scenarios.",
+          "url": "https://community.make.com/t/tally-form-submission-to-webhook-response-its-possible/22050",
+          "kind": "alternative",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-10-16T04:22:16.077282Z"
+        }
+      ]
+    },
+    "fit_legacy": 0.0,
+    "pipeline_still_emits_estimated_bite_percentage": false,
+    "would_emit": "Written to The ops or no-code person on a small team whose intake form is step one of an automation nobody owns - 0% of them are estimated to bite"
+  },
+  "synthetic_final_fallback_visibility": {
+    "reported_notes": [
+      "Effective audience: A freelance designer or one-person studio who spends the first two weeks of every project chasing brand assets out of a client's inbox",
+      "Audience context: audience_research_missing; legacy fallback used"
+    ],
+    "effective_reader": "A freelance designer or one-person studio who spends the first two weeks of every project chasing brand assets out of a client's inbox",
+    "reader_persona": "Selected audience (explicit constraints): A freelance designer or one-person studio who spends the first two weeks of every project chasing brand assets out of a client's inbox.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): Every new engagement starts the same way: they need the logo in a usable format, the old brand guidelines PDF, photography the client owns, a rough brief, the billing details and whoever's sign-off they'll need later. None of it arrives in one place. It comes back as a reply-all thread, a file-transfer link that expires before they've downloaded it, a shared-drive invite the client's IT blocks, and a 'can you just pull it off our website?'. They almost certainly have a form somewhere already — a Google Form, a free Typeform, a page on their Squarespace site — and each one failed in its own way: the client couldn't upload without signing into an account, or the packaged InDesign file was too big for the free tier, or the form itself carried someone else's logo at the bottom, which reads badly on the one document where they are selling their own taste in branding. They are not short of tooling and they are not technical; they are short of a single link they can paste into a kickoff email and trust. If the brief is thin, the first round of work is wrong, and the rework is unbilled.\n\nProblem context: The people who owe them files will not create an account in a tool just to hand over an attachment, so collection falls back to email (inferred); source: Collect free file uploads | Free Form Builder | Tally (https://tally.so/help/file-uploads)\nProblem context: Project briefs, reference files and onboarding details arrive scattered across channels instead of in one place (inferred); source: Collect free file uploads | Free Form Builder | Tally (https://tally.so/help/file-uploads)\nProblem context: The incumbent tools charge a monthly subscription before they will accept a file upload at all, which is hard to justify for a handful of kickoffs a year (inferred); source: Compare Tally: Free Form Builder vs Typeform, Jotform & More (https://tally.so/help/compare)\nProblem context: Design source files and asset packs are routinely larger than the file-size ceiling on any free form tier, so the one thing they most need collected is the thing that fails (inferred); source: unknown\nProblem context: A client-facing intake form that carries another company's name and favicon reads as borrowed rather than as part of the studio's own process (inferred); source: unknown",
+    "effective_name_in_final_notes": true,
+    "limitation": "Current selected-audience Tally identity is preserved; this probes the no-explicit-audience fallback path only."
+  },
+  "limits": [
+    "This does not run strategy, writers, readers or critique with a real model.",
+    "Version mismatch only is replayed; full DB readiness and capability-profile changes are outside this script.",
+    "The original saved email is unchanged. New code labels/constraints cannot establish that a newly generated Tally email would be convincing."
+  ]
+}

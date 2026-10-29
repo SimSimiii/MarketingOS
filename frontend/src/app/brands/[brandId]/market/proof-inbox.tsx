@@ -6,8 +6,30 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { api } from "@/lib/api-client";
+import { Input } from "@/components/ui/input";
+import { api, nullIfMissing } from "@/lib/api-client";
+import { refreshPage, usePageData } from "@/lib/page-data";
+import { rankForArgument } from "@/lib/proof-relevance";
 import type { ProofCandidate } from "@/lib/types";
+
+const sourceChecks: Record<string, { label: string; detail: string }> = {
+  quote_verified: {
+    label: "Quote found on page",
+    detail: "The quotation matches fetched page text. Check the attribution, conditions and meaning before approving.",
+  },
+  page_unavailable: {
+    label: "Page could not be checked",
+    detail: "Open the source and confirm the exact quotation yourself. A search excerpt is not a verified quotation.",
+  },
+  quote_not_found: {
+    label: "Quotation not found",
+    detail: "The fetched page did not contain this quotation. Approve only if you can confirm the exact words in the source.",
+  },
+  not_checked: {
+    label: "Source review needed",
+    detail: "This older candidate has no automatic source check. Open the page and verify its quotation and context.",
+  },
+};
 
 /** The approval queue.
  *
@@ -30,6 +52,7 @@ function ProofCard({
   onDecided: (decided: ProofCandidate) => void;
 }) {
   const [deciding, setDeciding] = useState(false);
+  const sourceCheck = sourceChecks[candidate.verification_status] || sourceChecks.not_checked;
 
   async function decide(approved: boolean) {
     setDeciding(true);
@@ -58,17 +81,33 @@ function ProofCard({
             {candidate.venue ? ` · ${candidate.venue}` : ""}
           </p>
         </div>
-        <Badge variant={candidate.confidence >= 0.7 ? "secondary" : "outline"}>
-          {Math.round(candidate.confidence * 100)}% sure
+        <Badge variant={candidate.verification_status === "quote_verified" ? "secondary" : "outline"}>
+          {sourceCheck.label}
         </Badge>
       </CardHeader>
       <CardContent className="space-y-3 text-sm">
+        <p className="text-xs text-muted-foreground">{sourceCheck.detail}</p>
         {/* The verbatim is the thing being approved. Approving this card
             licenses these exact words in a finished email, so it is the
             largest text on the card rather than a footnote. */}
         <blockquote className="border-l-2 border-violet-400/40 pl-3 text-foreground/90 italic">
           &ldquo;{candidate.verbatim}&rdquo;
         </blockquote>
+
+        {candidate.context && (
+          <dl className="grid gap-1 text-xs text-muted-foreground">
+            {[
+              ["Subject", candidate.context.subject],
+              ["Source", candidate.context.source_kind],
+              ["Supports", candidate.context.claim_scope],
+              ["Conditions", candidate.context.conditions],
+              ["Time", candidate.context.temporal_scope],
+              ["Limits", candidate.context.limitations],
+            ].filter(([, value]) => value && value !== "unknown").map(([label, value]) => (
+              <div key={label}><dt className="inline font-medium">{label}: </dt><dd className="inline">{value.replaceAll("_", " ")}</dd></div>
+            ))}
+          </dl>
+        )}
 
         {candidate.caveat && (
           <p className="rounded-md bg-amber-500/10 p-2 text-xs text-amber-300">
@@ -95,7 +134,7 @@ function ProofCard({
               Not us
             </Button>
             <Button size="sm" disabled={deciding} onClick={() => decide(true)}>
-              This is real
+              I checked the source
             </Button>
           </div>
         </div>
@@ -118,13 +157,21 @@ export function ProofInbox({
   busy: boolean;
 }) {
   const [rows, setRows] = useState(candidates);
-  const pending = rows.filter((row) => row.status === "pending");
+  const [argument, setArgument] = useState("");
+  const known = usePageData(() => api.getKnowledgeBase({ brandId }).catch(nullIfMissing), [brandId]);
+  const pending = rankForArgument(rows.filter((row) => row.status === "pending"), argument,
+    (row) => `${row.claim} ${row.verbatim} ${row.context?.claim_scope ?? ""} ${row.context?.conditions ?? ""}`);
   const approved = rows.filter((row) => row.status === "approved");
+  const entries = known.status === "ready" ? known.data?.shelves.flatMap((shelf) => shelf.entries)
+    .filter((entry) => entry.citable && entry.origin === "evidence") ?? [] : [];
+  const ranked = rankForArgument(entries, argument,
+    (entry) => `${entry.statement} ${entry.verbatim} ${entry.context?.conditions ?? ""}`);
 
   function replace(updated: ProofCandidate) {
     setRows((current) =>
       current.map((row) => (row.id === updated.id ? updated : row)),
     );
+    refreshPage();
   }
 
   return (
@@ -160,11 +207,51 @@ export function ProofInbox({
         )}
       </Card>
 
+      <div className="space-y-2">
+        <label htmlFor="proof-argument" className="text-sm font-medium">Argument you want to support</label>
+        <Input id="proof-argument" value={argument} onChange={(event) => setArgument(event.target.value)}
+          placeholder="e.g. custom domains for client forms" />
+        <p className="text-xs text-muted-foreground">
+          Sort known evidence and new candidates by matching words. Official documentation can support
+          capabilities; customer outcomes keep their attribution and conditions. This is a browsing aid, not a fit assessment.
+        </p>
+      </div>
+
+      <Card>
+        <CardHeader><CardTitle className="text-base">Already in your knowledge ({entries.length})</CardTitle></CardHeader>
+        <CardContent className="space-y-3 text-sm">
+          {known.status === "loading" && <p className="text-muted-foreground">Loading known evidence…</p>}
+          {known.status === "failed" && <p className="text-amber-300">Known evidence could not be loaded. Refresh to try again.</p>}
+          {known.status === "ready" && !entries.length && <p className="text-muted-foreground">No compiled evidence yet. Add and compile product sources first.</p>}
+          {ranked.length > 0 && (
+            <details open={!!argument.trim()}>
+              <summary className="cursor-pointer text-muted-foreground">Browse existing facts and sources</summary>
+              <div className="mt-3 max-h-[36rem] space-y-4 overflow-auto">
+                {ranked.map((entry) => (
+                  <article key={entry.id} className="space-y-2 border-t border-white/10 pt-3">
+                    <p className="font-medium">[{entry.id}] {entry.statement}</p>
+                    <Badge variant="outline">{entry.kind.replaceAll("_", " ")} · compiled source</Badge>
+                    <blockquote className="border-l-2 border-violet-400/40 pl-3 italic text-foreground/80">{entry.verbatim}</blockquote>
+                    {entry.context && <p className="text-xs text-muted-foreground">{[
+                      entry.context.subject, entry.context.claim_scope, entry.context.conditions,
+                      entry.context.temporal_scope, entry.context.limitations,
+                    ].filter((item) => item && item !== "unknown").join(" · ")}</p>}
+                    <p className="text-xs text-muted-foreground">{entry.source.startsWith("https://") || entry.source.startsWith("http://")
+                      ? <a href={entry.source} target="_blank" rel="noreferrer noopener" className="underline">Read the source</a>
+                      : entry.source || "Source not recorded"}</p>
+                  </article>
+                ))}
+              </div>
+            </details>
+          )}
+        </CardContent>
+      </Card>
+
       {pending.length === 0 ? (
         <Card>
           <CardContent className="p-6 text-sm text-muted-foreground">
             {rows.length === 0
-              ? "Nothing found yet. If a search comes back empty, that is itself the answer: nobody outside your own site has written about you, and three customer names would change your copy more than any rewrite."
+              ? "No candidates yet. Search for public evidence to review. An empty search means nothing was found in the sources checked; it does not establish that nobody has written about you."
               : "Nothing left to decide."}
           </CardContent>
         </Card>

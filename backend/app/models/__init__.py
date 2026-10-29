@@ -17,6 +17,7 @@ from app.models.credit import (
     CreditTransaction,
     ReversedStripePayment,
 )
+from app.models.email_analysis import EmailAnalysis
 from app.models.enums import (
     AdminRole,
     AssetType,
@@ -62,6 +63,7 @@ __all__ = [
     "CreditAccount",
     "CreditCheckout",
     "CreditTransaction",
+    "EmailAnalysis",
     "ExecutionLog",
     "ExecutionStatus",
     "GeneratedAsset",

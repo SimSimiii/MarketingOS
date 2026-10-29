@@ -35,7 +35,8 @@ Return the actual company website where available. A matching company is an unve
 not proof that it needs the product. Do not invent or infer contact details.
 {% endif %}
 
-For each result return name, actual url, headline describing its public activity, a concise
+For each result return kind (company, professional, or venue), name, actual url,
+headline describing its public activity, a concise
 reason explaining which criteria are supported and what remains unknown, source_url, and the
 relevant source excerpt. Excerpts from search results remain search excerpts, not directly
 verified quotations. Corroboration criteria are optional: absence must not exclude a lead.

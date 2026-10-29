@@ -12,7 +12,7 @@ from app.knowledge.ledger import Evidence, EvidenceKind, EvidenceLedger
 from app.knowledge.store import ArtifactScope, ArtifactStore
 from app.market.audience_research import AudienceProblem, AudienceResearch
 from app.market.capabilities import CapabilityProfileDraft, ScopeBoundary
-from app.market.claims import ClaimAxis
+from app.market.claims import Claim, ClaimAxis
 from app.market.positioning import AxisReading, PositioningMap, Territory, axis_for_evidence
 from app.market.radar import MarketSnapshot
 from app.market.relevance import (
@@ -83,11 +83,18 @@ def research() -> AudienceResearch:
 
 
 def positioning() -> PositioningMap:
+    entries = ledger().entries
     return PositioningMap(
         readings=[
-            AxisReading(axis=ClaimAxis.SPEED, territory=Territory.OPEN),
-            AxisReading(axis=ClaimAxis.BREADTH, territory=Territory.TABLE_STAKES),
-            AxisReading(axis=ClaimAxis.PRICE, territory=Territory.CONTESTED),
+            AxisReading(axis=ClaimAxis.SPEED, territory=Territory.OPEN, ours=[
+                Claim(text=entries[0].claim, verbatim=entries[0].verbatim, axis=ClaimAxis.SPEED),
+            ]),
+            AxisReading(axis=ClaimAxis.BREADTH, territory=Territory.TABLE_STAKES, ours=[
+                Claim(text=entries[1].claim, verbatim=entries[1].verbatim, axis=ClaimAxis.BREADTH),
+            ]),
+            AxisReading(axis=ClaimAxis.PRICE, territory=Territory.CONTESTED, ours=[
+                Claim(text=entries[2].claim, verbatim=entries[2].verbatim, axis=ClaimAxis.PRICE),
+            ]),
         ],
         rivals_profiled=2,
     )
@@ -436,7 +443,8 @@ async def test_one_deep_closed_world_call_gets_only_the_three_persisted_inputs(
     assert request.model == "opus", "the relevance role is deep-tier"
     prompt = (request.system_prompt or "") + request.messages[0].content
     assert str(knowledge_id) in prompt and str(research_id) in prompt and str(scan_id) in prompt
-    assert "complete_evidence_ledger" in prompt
+    assert "selected_evidence_ledger" in prompt
+    assert "Omission is retrieval, not absence" in prompt
     assert "positioning_map" in prompt
     for forbidden in (
         "SECRET CAMPAIGN REQUEST",
@@ -641,6 +649,20 @@ def test_an_exact_current_triple_is_reused_before_a_model_call():
     assert status.calls == 0
     assert f"v{saved.generation_version}" in status.summary
     assert provider.requests == []
+
+
+def test_legacy_interpretation_is_stale_without_losing_paid_artifacts():
+    engine, brand_id = database()
+    saved = save_current_dossier(engine, brand_id)
+    with Session(engine) as session:
+        row = session.get(type(saved), saved.id)
+        row.payload = {key: value for key, value in row.payload.items() if key != "interpretation_version"}
+        session.add(row)
+        session.commit()
+        status = MarketService(session).relevance_status(brand_id, research().audience_name)
+    assert status.status is DossierState.STALE
+    assert "interpretation_changed" in status.stale_reasons
+    assert status.dossier is not None
 
 
 def test_an_exact_v2_input_set_is_reused_before_a_model_call():

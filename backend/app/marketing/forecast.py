@@ -163,6 +163,7 @@ def forecast(
     contract: DeliverableContract,
     material_chars: int = 0,
     knowledge_reused: bool = False,
+    direct_eligible: bool | None = False,
 ) -> Forecast:
     """Every model call one run of this campaign can make.
 
@@ -171,6 +172,8 @@ def forecast(
     emails, which is a failure rather than a step.
     """
     total = compile_forecast(policy, material_chars, knowledge_reused)
+    if direct_eligible is True:
+        return total + Forecast(low=2, high=2)
     if contract.kind is DeliverableKind.LINKEDIN_MESSAGE:
         # Knowledge, one Strategist call, and the writer - which buys a second
         # turn when its own draft failed a check. No cold read, no duel, no
@@ -189,13 +192,20 @@ def forecast(
     per_email = email_forecast(policy)
     total += Forecast(low=per_email.low * emails, high=per_email.high * emails)
     total += rework_forecast(policy, emails)
-    # The strategist: one call, plus the correction turn at worst.
+    # The strategist: one call, plus one combined correction for count, payoff
+    # support or an invalid problem/action proposition. No separate agent.
     total += Forecast(low=1, high=2)
     if policy.critic_enabled:
-        # A missing-material verdict can buy exactly one recovery pass: one
+        # An argument with cited existing facts, a missing-material verdict,
+        # or an explicit research question can buy exactly one recovery pass: one
         # locating call with web search, one closed-world extraction call, a
         # fresh strategy, and one fresh craft pass for every email. The floor
         # stays unchanged because a landed campaign does none of this. The
         # pipeline never invokes recovery twice, so this ceiling is bounded.
         total += Forecast(low=0, high=2 + 2 + per_email.high * emails)
+    if direct_eligible is None and policy.strategy_mode != "planned" and contract.kind is DeliverableKind.SINGLE_EMAIL:
+        # Before compilation the licensed actions are unknown. Keep the full
+        # planned ceiling; do not sell a two-call promise we cannot yet know.
+        total = Forecast(low=total.compile_low + 2, high=total.high,
+                         compile_low=total.compile_low, compile_high=total.compile_high)
     return total

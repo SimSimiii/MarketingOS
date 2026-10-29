@@ -1,0 +1,194 @@
+{
+  "at": "2026-10-27T01:04:35.634651+00:00",
+  "status": "corrections_retesting",
+  "verdict": "NO_GO_validated_autonomous_beta",
+  "friend_invitation": "exploratory_supervised_test_yes",
+  "universal_compatibility": "not_supported",
+  "planned_cases": 4,
+  "completed_corrected_compilations": 4,
+  "completed_maps": 4,
+  "completed_dossiers": 4,
+  "brands_with_actual_email": 4,
+  "email_run_attempts": 8,
+  "delivered_email_assets": 7,
+  "failed_email_runs": 1,
+  "email_model_calls_finished": 225,
+  "upstream_model_calls_finished_including_baselines_and_retries": 136,
+  "separate_profile_probes": 2,
+  "separate_isolation_probe": 1,
+  "emails_above_editorial_threshold": 1,
+  "complete_cases_passed": 0,
+  "beta_gate_passed": false,
+  "backend_tests_passed": 2003,
+  "frontend_tests_passed": 29,
+  "ruff_exit_code": 0,
+  "main_server_current_code_loaded": true,
+  "latest_deterministic_cta_fix_live_campaign_retested": false,
+  "models_recommendation": "retain per-stage choice; OpenAI supported for tested text flow, Claude option for research; not all capabilities validated",
+  "cases": {
+    "cabaia": {
+      "brand_id": "0a3d203e-8705-4184-aee8-49189c67f7f3",
+      "stage_scores": {
+        "import_initial": 4,
+        "import_epoch1": 7,
+        "compilation": 7,
+        "catalogue": 7.5,
+        "concurrents": 7.5,
+        "positionnement": 8,
+        "audiences": 5,
+        "recherche": 6,
+        "dossier": 8,
+        "livraison": 6,
+        "consultation": 5
+      },
+      "best_email_score": 71,
+      "latest_execution_id": "8c17fb09-c07e-4537-8a07-7cf9e9988124",
+      "case_pass": false,
+      "needs_review": true,
+      "diagnostic_despite_negative_advice": false,
+      "correction_retest": {
+        "dossier_generation": 3,
+        "interpretation_version": 16,
+        "defining_need": "partial",
+        "new_email_score": null,
+        "complete_case_pass": false,
+        "blocker": "One-bag conjunction unverified; A25 official verification not active"
+      }
+    },
+    "papier": {
+      "brand_id": "93d48905-fb8a-4366-a7ef-f3460ae7af44",
+      "stage_scores": {
+        "import_initial": 6,
+        "import_epoch1": 7,
+        "compilation": 8.5,
+        "catalogue": 8,
+        "concurrents": 8,
+        "positionnement": 7.5,
+        "audiences": 6,
+        "recherche": 5,
+        "dossier": 8,
+        "livraison": 7,
+        "consultation": 8
+      },
+      "best_email_score": 84,
+      "latest_execution_id": "a4e390d6-795c-410d-9ef6-b00d44521e6d",
+      "case_pass": false,
+      "needs_review": true,
+      "diagnostic_despite_negative_advice": false
+    },
+    "systeme": {
+      "brand_id": "e2d17c15-3beb-4ffb-b189-bd94c2096cf2",
+      "stage_scores": {
+        "import_initial": 6.5,
+        "import_epoch1": 6.5,
+        "compilation": 7.5,
+        "catalogue": 8,
+        "concurrents": 8,
+        "positionnement": 7.5,
+        "audiences": 7.5,
+        "recherche": 8,
+        "audiences_after_recheck": 7.5,
+        "livraison": 8,
+        "consultation": 8,
+        "dossier": 8.5
+      },
+      "best_email_score": 84,
+      "latest_execution_id": "58dd52d4-0560-4313-9023-dd6a0f7dc7a5",
+      "case_pass": false,
+      "needs_review": true,
+      "diagnostic_despite_negative_advice": false,
+      "correction_retest": {
+        "execution_id": "2ed75af1-d151-4761-a5b2-c1302ed043c2",
+        "email_score": 88,
+        "needs_review": false,
+        "outcome_status": "completed",
+        "comparison_track": "homepage-current-crawl-A20",
+        "complete_case_pass": true,
+        "stage_scores": {
+          "import": 8,
+          "compilation": 8,
+          "catalogue": 8,
+          "concurrents_reused": 8,
+          "positionnement_reused": 7.5,
+          "audiences": 7.5,
+          "recherche": 8,
+          "dossier": 9,
+          "livraison": 9,
+          "consultation": 9
+        },
+        "limitations": [
+          "Billing period for captured paid-plan amounts remains unassigned",
+          "Advanced logistics and author contractual rights are outside established product support"
+        ],
+        "dossier_current_generation": 6,
+        "dossier_current_interpretation": 16
+      }
+    },
+    "rtings": {
+      "brand_id": "78b5b0c5-293b-4d18-a055-062cdd082fcf",
+      "stage_scores": {
+        "import_initial": 4,
+        "import_epoch1": 4,
+        "compilation": 8,
+        "catalogue": 7,
+        "concurrents": 4.5,
+        "positionnement": 6,
+        "audiences": 6,
+        "recherche": 2,
+        "dossier": 7,
+        "livraison": 7,
+        "consultation": 8
+      },
+      "best_email_score": 86,
+      "latest_execution_id": "f7f36279-dca7-47c4-bb69-8e7f8b79aa1b",
+      "case_pass": false,
+      "needs_review": true,
+      "diagnostic_despite_negative_advice": true,
+      "correction_retest": {
+        "dossier_generation": 3,
+        "interpretation_version": 16,
+        "defining_need": "partial",
+        "research_sources": 6,
+        "research_problems": 4,
+        "source_venues": "Five AVForums threads plus RTINGS tool; not six independent venues",
+        "new_email_score": null,
+        "complete_case_pass": false,
+        "blocker": "Official comparison/size-distance/results-table operation unverified; A25 activation blocked"
+      }
+    }
+  },
+  "correction_phase": {
+    "status": "retesting",
+    "reopened_by": "corrige toussa / continue",
+    "date_client": "2026-10-29",
+    "baseline_scores": {
+      "cabaia": 71,
+      "papier": 84,
+      "systeme": 84,
+      "rtings": 86
+    },
+    "new_scores": {
+      "systeme": 88,
+      "papier": "pending actual asset inspection",
+      "cabaia": null,
+      "rtings": null
+    },
+    "code_manifest": "code-manifest-corrections-A25.json",
+    "technical_report": "corrections-2026-10-28.md",
+    "passed_cases_so_far": [
+      "systeme"
+    ],
+    "main_active_code": "A24",
+    "disk_code": "A25",
+    "activation_blocker": "Automatic approval review rejected backup/restart command: blocked by policy. No restart or bypass.",
+    "technical_validation": {
+      "backend_passed": 2013,
+      "ruff": "passed",
+      "frontend_lint": "passed",
+      "frontend_typecheck": "passed",
+      "frontend_tests_passed": 30
+    },
+    "current_report": "checkpoint-2026-10-29.md"
+  },
+  "last_validated_verdict": "NO_GO_validated_autonomous_beta"
+}

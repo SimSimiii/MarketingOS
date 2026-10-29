@@ -1,0 +1,382 @@
+{
+  "catalogue": {
+    "old": [
+      [
+        "knowledge_base",
+        "Knowledge base / RAG context"
+      ],
+      [
+        "agent_api_keys",
+        "Per-agent API keys and usage caps"
+      ]
+    ],
+    "new_count": 200,
+    "has_agent_api_keys": false,
+    "has_knowledge_base": false,
+    "examples": [
+      {
+        "id": "fact_d26e37b9754133c2",
+        "label": "Plausible generates a daily changing identifier from the visitor's IP address and User-Agent, anonymized by running them through a hash function with a rotating salt.",
+        "description": "subject: Plausible; source nature: official_documentation; scope: capability; source check: quote_verified_in_material",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E4",
+            "claim": "Plausible generates a daily changing identifier from the visitor's IP address and User-Agent, anonymized by running them through a hash function with a rotating salt.",
+            "quote": "We generate a daily changing identifier utilizing the visitor’s IP address and User-Agent. To anonymize these data points and make them impossible to relate to the user, we run them through a hash function with a rotating salt.",
+            "source_identifier": "https://plausible.io/security"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_f2539ebbc792deeb",
+        "label": "Plausible measures drop-off across a fixed sequence of steps and lets users explore the paths visitors actually take.",
+        "description": "subject: Plausible funnels and user journeys; source nature: official_documentation; scope: capability; source check: quote_verified_in_material",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E309",
+            "claim": "Plausible measures drop-off across a fixed sequence of steps and lets users explore the paths visitors actually take.",
+            "quote": "Measure drop-off across a fixed sequence of steps. Or explore the paths visitors actually take to discover flows you didn't predict.",
+            "source_identifier": "https://plausible.io/"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_d8eac73173760438",
+        "label": "Plausible does not use cookies, persistent identifiers, or cross-site/cross-device tracking, and does not use site data for any other purposes.",
+        "description": "subject: Plausible privacy design; source nature: vendor_statement; scope: capability; source check: quote_verified_in_material",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E324",
+            "claim": "Plausible does not use cookies, persistent identifiers, or cross-site/cross-device tracking, and does not use site data for any other purposes.",
+            "quote": "No cookies, no persistent identifiers, no cross-site or cross-device tracking. Your site data is not used for any other purposes.",
+            "source_identifier": "https://plausible.io/"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_65912c59b058d989",
+        "label": "All visitor data is exclusively processed on servers owned and operated by European companies and never leaves the EU.",
+        "description": "subject: Plausible data processing; source nature: vendor_statement; scope: capability; source check: quote_verified_in_material",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E325",
+            "claim": "All visitor data is exclusively processed on servers owned and operated by European companies and never leaves the EU.",
+            "quote": "All visitor data is exclusively processed on servers owned and operated by European companies and never leaves the EU.",
+            "source_identifier": "https://plausible.io/"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      }
+    ]
+  },
+  "prices_before": [
+    {
+      "name": "Starter",
+      "price": "",
+      "includes": [
+        "one site",
+        "solo use",
+        "no team or sharing needed"
+      ],
+      "id": "",
+      "provenance": {
+        "source": "https://plausible.io/docs/subscription-plans",
+        "quote": "Starter: one site, solo use, no team or sharing needed",
+        "document_id": null,
+        "evidence_id": "",
+        "source_kind": "vendor_copy"
+      }
+    },
+    {
+      "name": "Growth",
+      "price": "",
+      "includes": [
+        "multiple sites",
+        "share dashboards with clients",
+        "invite team members"
+      ],
+      "id": "",
+      "provenance": {
+        "source": "https://plausible.io/docs/subscription-plans",
+        "quote": "Growth: multiple sites, or need to share dashboards with clients or invite team members",
+        "document_id": null,
+        "evidence_id": "",
+        "source_kind": "vendor_copy"
+      }
+    },
+    {
+      "name": "Business",
+      "price": "",
+      "includes": [
+        "funnels",
+        "user journeys",
+        "revenue tracking",
+        "custom properties",
+        "Stats API",
+        "Data Studio (build custom dashboards and blend Plausible data with other sources like ad spend or CRM data)"
+      ],
+      "id": "",
+      "provenance": {
+        "source": "https://plausible.io/docs/subscription-plans",
+        "quote": "Business: need funnels, user journeys, revenue tracking, custom properties, Stats API or Data Studio",
+        "document_id": null,
+        "evidence_id": "",
+        "source_kind": "vendor_copy"
+      }
+    },
+    {
+      "name": "Enterprise",
+      "price": "custom",
+      "includes": [
+        "everything in Business",
+        "SSO (SAML 2.0)",
+        "Sites API",
+        "managed proxy",
+        "scheduled raw event data exports",
+        "increased monthly pageview volume",
+        "increased number of sites",
+        "increased number of team members",
+        "increased API rate limits",
+        "increased data retention"
+      ],
+      "id": "",
+      "provenance": {
+        "source": "https://plausible.io/docs/subscription-plans",
+        "quote": "Enterprise includes everything in Business plus additional features and higher limits. ... Enterprise plans are not self-serve like Growth or Business. Contact us with your requirements",
+        "document_id": null,
+        "evidence_id": "",
+        "source_kind": "vendor_copy"
+      }
+    }
+  ],
+  "prices_after": [
+    {
+      "name": "Starter",
+      "price": "$9 /month (Price shown applies to the 'Up to 10k monthly pageviews' tier per the pricing slider; a separate 'Custom' price is shown but its terms are not specified in the text.)",
+      "includes": [
+        "one site",
+        "solo use",
+        "no team or sharing needed"
+      ],
+      "id": "",
+      "provenance": {
+        "source": "https://plausible.io/",
+        "quote": "### Starter /year /month $9 /month Custom Start free trial - One site - 3 years of data retention",
+        "document_id": "70f0f4d8-d639-41a0-ac56-3c7e117baf5a",
+        "evidence_id": "E328",
+        "source_kind": "vendor_copy"
+      }
+    },
+    {
+      "name": "Growth",
+      "price": "$14 /month (Price shown applies to the 'Up to 10k monthly pageviews' tier per the pricing slider; a separate 'Custom' price is shown but its terms are not specified in the text.)",
+      "includes": [
+        "multiple sites",
+        "share dashboards with clients",
+        "invite team members"
+      ],
+      "id": "",
+      "provenance": {
+        "source": "https://plausible.io/",
+        "quote": "### Growth /year /month $14 /month Custom Start free trial - Everything in Starter - Up to 3 sites - Up to 3 team members",
+        "document_id": "70f0f4d8-d639-41a0-ac56-3c7e117baf5a",
+        "evidence_id": "E329",
+        "source_kind": "vendor_copy"
+      }
+    },
+    {
+      "name": "Business",
+      "price": "$19 /month (Price shown applies to the 'Up to 10k monthly pageviews' tier per the pricing slider; a separate 'Custom' price is shown but its terms are not specified in the text.)",
+      "includes": [
+        "funnels",
+        "user journeys",
+        "revenue tracking",
+        "custom properties",
+        "Stats API",
+        "Data Studio (build custom dashboards and blend Plausible data with other sources like ad spend or CRM data)"
+      ],
+      "id": "",
+      "provenance": {
+        "source": "https://plausible.io/",
+        "quote": "### Business /year /month $19 /month Custom Start free trial - Everything in Growth - Up to 10 sites - Up to 10 team members - 5 years of data retention - Custom Properties - Stats API (600 requests per hour)",
+        "document_id": "70f0f4d8-d639-41a0-ac56-3c7e117baf5a",
+        "evidence_id": "E330",
+        "source_kind": "vendor_copy"
+      }
+    },
+    {
+      "name": "Enterprise",
+      "price": "custom",
+      "includes": [
+        "everything in Business",
+        "SSO (SAML 2.0)",
+        "Sites API",
+        "managed proxy",
+        "scheduled raw event data exports",
+        "increased monthly pageview volume",
+        "increased number of sites",
+        "increased number of team members",
+        "increased API rate limits",
+        "increased data retention"
+      ],
+      "id": "",
+      "provenance": {
+        "source": "https://plausible.io/docs/subscription-plans",
+        "quote": "Enterprise includes everything in Business plus additional features and higher limits. ... Enterprise plans are not self-serve like Growth or Business. Contact us with your requirements",
+        "document_id": null,
+        "evidence_id": "",
+        "source_kind": "vendor_copy"
+      }
+    }
+  ],
+  "research_sources": [
+    [
+      "S1",
+      "2023-03-27",
+      "dated_url"
+    ],
+    [
+      "S2",
+      "None",
+      "unknown"
+    ],
+    [
+      "S3",
+      "None",
+      "unknown"
+    ],
+    [
+      "S4",
+      "None",
+      "unknown"
+    ],
+    [
+      "S5",
+      "None",
+      "unknown"
+    ],
+    [
+      "S6",
+      "None",
+      "unknown"
+    ],
+    [
+      "S7",
+      "None",
+      "unknown"
+    ],
+    [
+      "S8",
+      "None",
+      "unknown"
+    ],
+    [
+      "S9",
+      "None",
+      "unknown"
+    ],
+    [
+      "S10",
+      "None",
+      "unknown"
+    ]
+  ],
+  "research_warnings": [
+    "Publication date unknown; retrieval today does not establish current applicability. Government digital teams run Google Analytics via Google Tag Manager as their standard web analytics setup.",
+    "Historical sources (2023-03-27); present applicability is not corroborated. GOV.UK began running GA4 in parallel with the existing Universal Analytics before fully switching over.",
+    "Historical sources (2023-03-27); present applicability is not corroborated. GOV.UK uses Google Tag Manager's versioning and environments to control and test tracking changes before release.",
+    "Historical sources (2023-03-27); present applicability is not corroborated. GOV.UK has had to query raw GA4 data directly in BigQuery rather than relying on the GA4 interface.",
+    "Publication date unknown; retrieval today does not establish current applicability. Some government and public-interest sites run cookie-free analytics tools (Plausible, Matomo) alongside Google Analytics.",
+    "Publication date unknown; retrieval today does not establish current applicability. Government sites publish a cookies page that audits and categorises all cookies, including analytics cookies, for users.",
+    "Historical sources (2023-03-27); present applicability is not corroborated. Google Analytics' underlying product is being retired and replaced (Universal Analytics to GA4), forcing an analytics implementation change.",
+    "Publication date unknown; retrieval today does not establish current applicability. Legal rules distinguish essential from non-essential cookies, requiring prior user consent only for non-essential ones, which forces an explicit tool-by-tool consent decision.",
+    "Publication date unknown; retrieval today does not establish current applicability. An analytics tool whose design is described as compliant with GDPR, CCPA and cookie law.",
+    "Publication date unknown; retrieval today does not establish current applicability. Avoiding procurement overhead by using analytics setups already tested and based on free products.",
+    "Publication date unknown; retrieval today does not establish current applicability. Collecting visit data without any personally identifiable or individually trackable information.",
+    "Publication date unknown; retrieval today does not establish current applicability. Using cookie-free analytics tools lets a site collect visit data without triggering the legal requirement to obtain prior consent that applies to non-essential cookies like Google Analytics.",
+    "Publication date unknown; retrieval today does not establish current applicability. Cookies/privacy pages on government sites explicitly name a cookie-free analytics tool as part of their published cookie statement.",
+    "Publication date unknown; retrieval today does not establish current applicability. A devolved government's privacy notice describes using a self-hosted, cookieless analytics tool alongside Google Analytics.",
+    "Publication date unknown; retrieval today does not establish current applicability. A design-system guidance page for government sites lists cookie-free analytics tools as an alternative to consider.",
+    "Publication date unknown; retrieval today does not establish current applicability. Scottish Government Design System publishes dedicated analytics guidance, including alternative cookie-free tools, at designsystem.gov.scot/guidance/analytics.",
+    "Historical sources (2023-03-27); present applicability is not corroborated. The GDS technology blog publishes first-person accounts of GOV.UK's GA4 migration work and invites other departments to compare experiences.",
+    "Publication date unknown; retrieval today does not establish current applicability. Scottish and Welsh government sites publish their analytics tool choices on dedicated cookies pages.",
+    "P1: Historical sources (2023-03-27); present applicability is not corroborated.",
+    "P1: Single-source problem; independent corroboration is not established.",
+    "P2: Historical sources (2023-03-27); present applicability is not corroborated.",
+    "P2: Single-source problem; independent corroboration is not established.",
+    "P3: Historical sources (2023-03-27); present applicability is not corroborated.",
+    "P3: Single-source problem; independent corroboration is not established.",
+    "P4: Historical sources (2023-03-27); present applicability is not corroborated.",
+    "P4: Single-source problem; independent corroboration is not established.",
+    "P5: Historical sources (2023-03-27); present applicability is not corroborated.",
+    "P5: Single-source problem; independent corroboration is not established.",
+    "All 5 problems rely on one source; problem count is not corroboration."
+  ],
+  "research_problems": [
+    [
+      "P1",
+      1,
+      1,
+      "inferred"
+    ],
+    [
+      "P2",
+      1,
+      1,
+      "inferred"
+    ],
+    [
+      "P3",
+      1,
+      1,
+      "inferred"
+    ],
+    [
+      "P4",
+      1,
+      1,
+      "inferred"
+    ],
+    [
+      "P5",
+      1,
+      1,
+      "inferred"
+    ]
+  ],
+  "policy_axes": [
+    [
+      "E69",
+      "SSO session timeout can be configured up to a maximum of 12 hours, with a default of 360 minutes (6 hours).",
+      "security"
+    ],
+    [
+      "E294",
+      "If a customer doesn't upgrade within a week of the overage notice, their dashboards are temporarily locked, though stats continue to be collected in the background and the customer retains full access to site settings and account settings.",
+      "price"
+    ]
+  ]
+}

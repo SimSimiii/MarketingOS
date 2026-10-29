@@ -7,7 +7,8 @@ from app.api.public_output import public_output
 from app.core.config import get_settings
 from app.market.qualification import CompanyQualification
 from app.market.relevance import CampaignReadiness, CampaignRecommendation
-from app.marketing.policy import PolicyPreset
+from app.marketing.intent import CampaignIntent
+from app.marketing.policy import PolicyPreset, StrategyMode
 from app.marketing.render_html import EmailTier
 from app.models.enums import AssetType, CampaignStatus, ExecutionStatus
 from app.schemas.linkedin import LinkedInChannel
@@ -28,6 +29,7 @@ class CampaignCreateRequest(BaseModel):
     product_url: str | None = None
     target_market: str | None = None
     goals: str | None = None
+    intent: CampaignIntent | None = None
     #: Who the emails are from - a person and their job. Optional, and the
     #: cheapest conversion in the form: without it every email is signed by a
     #: team, which reads as a broadcast because it is one.
@@ -60,6 +62,7 @@ class CampaignCreateRequest(BaseModel):
     email_tier: EmailTier | None = None
     #: One of "fast" / "balanced" (default) / "maximum" - see app.marketing.policy.
     policy_preset: PolicyPreset | None = None
+    strategy_mode: StrategyMode | None = None
     #: Per-role model overrides, e.g. {"email_writer": "opus"} or {"*": "haiku"}.
     model_overrides: dict[str, str] | None = None
     #: Re-read and recompile the brand's knowledge even if nothing has
@@ -82,6 +85,7 @@ class CampaignBriefUpdate(BaseModel):
     product_url: str | None = Field(default=None, max_length=2048)
     target_market: str | None = Field(default=None, max_length=20_000)
     goals: str | None = Field(default=None, max_length=20_000)
+    intent: CampaignIntent | None = None
     sender_name: str | None = Field(default=None, max_length=256)
     sender_role: str | None = Field(default=None, max_length=256)
     cta_url: str | None = Field(default=None, max_length=2048)
@@ -100,6 +104,7 @@ class CampaignRead(BaseModel):
     product_url: str | None
     target_market: str | None
     goals: str | None
+    intent: CampaignIntent | None = None
     sender_name: str | None = None
     sender_role: str | None = None
     brand_id: UUID | None = None
@@ -283,6 +288,8 @@ class CampaignExecutionRead(BaseModel):
     campaign_id: UUID
     status: ExecutionStatus
     needs_review: bool = False
+    outcome_status: str = "pending"
+    review_reasons: list[str] = Field(default_factory=list)
     error_message: str | None
     started_at: UtcDatetime | None
     completed_at: UtcDatetime | None

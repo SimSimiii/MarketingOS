@@ -13,11 +13,13 @@ studies found", and no rewrite has ever added a proof the material did not
 contain.
 """
 
+import httpx
 import pytest
 
 from app.knowledge.artifacts import BusinessProfile, KnowledgeArtifacts
 from app.knowledge.compiler import find_gaps
 from app.knowledge.ledger import Evidence, EvidenceKind, EvidenceLedger
+from app.market.audience_research import FixedURLFetcher
 from app.market.proof import ProofCandidate, ProofHunter, ProofKind, next_evidence_id
 from app.market.store import merge_proof
 from app.marketing.preflight import assess
@@ -97,7 +99,16 @@ async def test_a_hunt_keeps_only_what_it_can_quote_and_source(
         },
     )
 
-    hunt = await ProofHunter(session).hunt(BusinessProfile(company_name="orqAgent"))
+    async def resolver(_host):
+        return ["93.184.216.34"]
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(lambda _request: httpx.Response(
+        200, text=QUOTE + " The post continues with the customer's qualification of that result.",
+        headers={"content-type": "text/plain"},
+    ))) as client:
+        hunt = await ProofHunter(session, FixedURLFetcher(client, resolver=resolver)).hunt(
+            BusinessProfile(company_name="orqAgent")
+        )
 
     assert len(hunt.candidates) == 1
     assert hunt.candidates[0].attributed_to == "Ramp"
@@ -192,8 +203,11 @@ def test_a_found_proof_is_never_recorded_as_strong() -> None:
     Strong is for a specific fact the company states and is accountable for."""
     from app.knowledge.ledger import EvidenceStrength
 
-    assert candidate(confidence=0.95).as_evidence("P1").strength is EvidenceStrength.MODERATE
+    assert candidate(confidence=0.95).as_evidence("P1").strength is EvidenceStrength.WEAK
     assert candidate(confidence=0.4).as_evidence("P1").strength is EvidenceStrength.WEAK
+    assert candidate(confidence=0.1, verification_status="quote_verified").as_evidence(
+        "P1"
+    ).strength is EvidenceStrength.MODERATE
 
 
 def test_a_candidate_without_a_quote_is_not_usable() -> None:

@@ -1,0 +1,489 @@
+[
+  {
+    "id": "15ec56d2d50648609128c551fb38ab94",
+    "brand_id": "9aea70bbc22d4bdc9be2edecf9c76f37",
+    "audience_key": "the ops or no-code person on a small team whose intake form is step one of an automation nobody owns",
+    "audience_name": "The ops or no-code person on a small team whose intake form is step one of an automation nobody owns",
+    "source_map_id": "53fecc0fed7a416f8f992aba8773aca2",
+    "source_map_version": 1,
+    "version": 1,
+    "payload": {
+      "audience_name": "The ops or no-code person on a small team whose intake form is step one of an automation nobody owns",
+      "audience_fingerprint": "68c915a4a07bf32ebbea8c8b73302aa091ea8463099e7b4386a361fc26519e55",
+      "candidate_kind": "core",
+      "definition": {
+        "schema_version": 2,
+        "required_structural_signals": [
+          {
+            "code": "small_or_mid_team_with_automation_stack",
+            "description": "5-50 people using Make, Zapier or n8n"
+          },
+          {
+            "code": "no_dedicated_engineering_owner_for_integrations",
+            "description": "Ops or no-code person owns the pipeline"
+          }
+        ],
+        "required_workflow_signals": [
+          {
+            "code": "form_submission_triggers_downstream_system",
+            "description": "Form is step one of a CRM, billing or onboarding automation"
+          },
+          {
+            "code": "manual_export_or_retyping_step_present",
+            "description": "Current handoff depends on a person"
+          }
+        ],
+        "required_product_capabilities": [
+          "rest_api"
+        ],
+        "optional_signals": [
+          {
+            "code": "webhook_signature_verification_required",
+            "description": ""
+          },
+          {
+            "code": "delivery_failure_incident_previously_experienced",
+            "description": ""
+          },
+          {
+            "code": "per_seat_pricing_sensitivity_stated",
+            "description": ""
+          }
+        ],
+        "hard_disqualifiers": [
+          {
+            "code": "certification_gated_procurement",
+            "description": "Requires SOC 2/ISO evidence or a signed DPA before any tool writes to production",
+            "outcome": "EXCLUDED"
+          },
+          {
+            "code": "no_automation_platform_in_use",
+            "description": "No downstream system to deliver into",
+            "outcome": "ADJACENT"
+          }
+        ],
+        "eligible_subsegments": [
+          "no-code automation agencies",
+          "ops teams at small SaaS",
+          "revenue-ops contractors"
+        ],
+        "excluded_subsegments": [
+          "enterprise IT with vendor review boards"
+        ],
+        "max_team_size": 50
+      },
+      "situation": null,
+      "incumbent_behaviour": [
+        {
+          "text": "Builders are advised to use the generic Webhook trigger module instead of the native Tally app module, because the native module simplifies the payload in a way that complicates handling it downstream.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S3",
+              "quote": "Using the app, you’ll receive the data in a simplified version which is easier to handle within Make."
+            }
+          ],
+          "inference_basis": ""
+        },
+        {
+          "text": "To redirect a respondent after submission, builders are told to skip the Tally module entirely, use a general webhook module, look up a stored response, and send a separate webhook response.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S1",
+              "quote": "you don’t use the tally module to redirect the user. You use a general webhook module, search for the response (saved somewhere) and once you find it, you send a webhook response."
+            }
+          ],
+          "inference_basis": ""
+        },
+        {
+          "text": "When a form platform returns reference numbers instead of readable text for multiple-choice answers, a builder worked around it by building a manual Excel lookup table to translate the codes before using them in later steps.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S2",
+              "quote": "for now i have made a bypass and created an excel with all names of activities and the referrence numbers to match them and generate a name to be used on further steps but would be good to have it done properly and also learn the right way."
+            }
+          ],
+          "inference_basis": ""
+        },
+        {
+          "text": "No-code builders insert a Code node after the Webhook node specifically to reformat incoming form data so it matches the destination database's structure before writing a record.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S7",
+              "quote": "Formats the incoming data to match your Notion database structure."
+            }
+          ],
+          "inference_basis": ""
+        },
+        {
+          "text": "A builder reported constructing their mapping expression using the webhook's field key/label/value structure directly, extracting a specific field with a get(map(...)) function rather than relying on a simplified app module.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S3",
+              "quote": "{{get(map(1.data.fields; \"key\"; \"value\"); \"question_QRZ8Gp\")}}"
+            }
+          ],
+          "inference_basis": ""
+        },
+        {
+          "text": "Most publicly shared form-to-CRM automation templates write every incoming submission straight into the CRM with no validation step at all.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S5",
+              "quote": "Most form-to-CRM templates going around push whatever arrives straight into the CRM. No check at all."
+            }
+          ],
+          "inference_basis": ""
+        }
+      ],
+      "sophistication": "solution_aware",
+      "sophistication_basis": {
+        "text": "These builders are already constructing multi-node automation chains with explicit mapping functions, conditional validation, and CRM upsert logic rather than being unfamiliar with the concept of automation — their stated problems are implementation-level (field mapping, redirects, trigger behavior), not 'what is a webhook'.",
+        "grounding": "grounded",
+        "evidence": [
+          {
+            "source_id": "S3",
+            "quote": "{{get(map(1.data.fields; \"key\"; \"value\"); \"question_QRZ8Gp\")}}"
+          }
+        ],
+        "inference_basis": ""
+      },
+      "problems": [
+        {
+          "id": "P1",
+          "statement": "After a Tally form submits to a webhook, the respondent cannot be reliably redirected or shown a conditional response from the automation tool; the connection appears to be lost once the platform returns its own 'accepted' acknowledgement.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S1",
+              "quote": "the automatic response message is (accepted), from then on the connection with make would be lost."
+            },
+            {
+              "source_id": "S1",
+              "quote": "how do you ensure that the user does not lose the connection with make once the form is filled out?"
+            }
+          ],
+          "corroboration": 1,
+          "cost": "",
+          "cost_evidence": null
+        },
+        {
+          "id": "P2",
+          "statement": "A multi-choice form answer passed through a webhook arrives as a reference/ID number rather than the actual answer text, requiring manual identification and correction before it can be used.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S2",
+              "quote": "Webhook to Tally forms returning multi choice answer as reference number and not actual text"
+            },
+            {
+              "source_id": "S2",
+              "quote": "looks like you mapped the ID instead of the text."
+            }
+          ],
+          "corroboration": 1,
+          "cost": "",
+          "cost_evidence": null
+        },
+        {
+          "id": "P3",
+          "statement": "A specific field type from a form webhook (here, email) can fail to write into the destination tool even though the same payload shows the value present and the extraction/logging confirms it is correctly read.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S3",
+              "quote": "Only the **email field** is not showing up in Airtable, even though:"
+            },
+            {
+              "source_id": "S3",
+              "quote": "Logging the variable → email **is printed correctly** in logs"
+            }
+          ],
+          "corroboration": 1,
+          "cost": "",
+          "cost_evidence": null
+        },
+        {
+          "id": "P4",
+          "statement": "When testing a newly built scenario, an instant webhook trigger does not process previously received submissions and instead waits for a new one, which can read as the scenario being stuck or broken.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S4",
+              "quote": "the scenario doesn’t seem to process any submissions. Instead, it just hangs in an endless loop without handling any data."
+            }
+          ],
+          "corroboration": 1,
+          "cost": "",
+          "cost_evidence": null
+        },
+        {
+          "id": "P5",
+          "statement": "Common form-to-CRM automation patterns write submissions directly into the contact database without checking for typos, blank required fields, or bot spam, so bad records accumulate and must be cleaned up by hand afterward.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S5",
+              "quote": "Typos, blank names and bot spam land in your contact database, and somebody cleans it up by hand later."
+            }
+          ],
+          "corroboration": 1,
+          "cost": "",
+          "cost_evidence": null
+        }
+      ],
+      "buyer_phrases": [
+        {
+          "text": "how do you ensure that the user does not lose the connection with make once the form is filled out?",
+          "kind": "complaint",
+          "evidence": {
+            "source_id": "S1",
+            "quote": "how do you ensure that the user does not lose the connection with make once the form is filled out?"
+          }
+        },
+        {
+          "text": "the connection with make would be lost",
+          "kind": "complaint",
+          "evidence": {
+            "source_id": "S1",
+            "quote": "the automatic response message is (accepted), from then on the connection with make would be lost."
+          }
+        },
+        {
+          "text": "made a bypass and created an excel",
+          "kind": "complaint",
+          "evidence": {
+            "source_id": "S2",
+            "quote": "for now i have made a bypass and created an excel with all names of activities and the referrence numbers to match them and generate a name to be used on further steps but would be good to have it done properly and also learn the right way."
+          }
+        },
+        {
+          "text": "is not showing up in Airtable",
+          "kind": "complaint",
+          "evidence": {
+            "source_id": "S3",
+            "quote": "Only the **email field** is not showing up in Airtable, even though:"
+          }
+        },
+        {
+          "text": "it just hangs in an endless loop without handling any data",
+          "kind": "complaint",
+          "evidence": {
+            "source_id": "S4",
+            "quote": "the scenario doesn’t seem to process any submissions. Instead, it just hangs in an endless loop without handling any data."
+          }
+        },
+        {
+          "text": "Typos, blank names and bot spam land in your contact database",
+          "kind": "names_the_problem",
+          "evidence": {
+            "source_id": "S5",
+            "quote": "Typos, blank names and bot spam land in your contact database, and somebody cleans it up by hand later."
+          }
+        },
+        {
+          "text": "push whatever arrives straight into the CRM. No check at all",
+          "kind": "complaint",
+          "evidence": {
+            "source_id": "S5",
+            "quote": "Most form-to-CRM templates going around push whatever arrives straight into the CRM. No check at all."
+          }
+        }
+      ],
+      "triggers": [
+        {
+          "text": "Testing a newly built scenario with a manual 'Run once' before going live, and finding the instant webhook trigger does not surface any existing submissions until a new one arrives.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S4",
+              "quote": "when I click **“Run once”**, the scenario doesn’t seem to process any submissions."
+            }
+          ],
+          "inference_basis": ""
+        },
+        {
+          "text": "Building or replacing a form-to-CRM workflow is the point where someone decides to add a validation step, because the templates in circulation write everything through unchecked.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S5",
+              "quote": "Most form-to-CRM templates going around push whatever arrives straight into the CRM. No check at all."
+            }
+          ],
+          "inference_basis": ""
+        }
+      ],
+      "desired_outcomes": [
+        {
+          "text": "Wants the webhook to send a conditional response or redirect back to the respondent based on their form answers, rather than only the platform's own generic acknowledgement.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S1",
+              "quote": "Is it possible to forward to the tally trigger webhook and make a webhook response depending on their answers? help please, thanks."
+            }
+          ],
+          "inference_basis": ""
+        },
+        {
+          "text": "Wants submissions that fail validation to be routed to a place a human can review rather than being silently dropped or silently written into the CRM.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S5",
+              "quote": "Submissions that pass get upserted and post a “new lead” message in Slack. Submissions that fail go to a separate Slack channel for a human to glance at, so nothing is silently dropped and nothing unchecked is written to the CRM."
+            }
+          ],
+          "inference_basis": ""
+        }
+      ],
+      "signals": [
+        {
+          "text": "Zapier's own integration page frames Tally as a form tool whose job is to feed submissions into CRMs, spreadsheets, or databases and trigger notifications — i.e., Tally-as-automation-trigger is a recognized, catalogued use pattern.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S8",
+              "quote": "Tally connects with Zapier to automate form submission workflows. Teams use this integration to route submissions, create records in other apps, and notify stakeholders."
+            }
+          ],
+          "inference_basis": ""
+        }
+      ],
+      "where": [
+        {
+          "text": "Make Community threads specifically about Tally form triggers, webhook responses, and field mapping into Airtable.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S1",
+              "quote": "I have a question, from tally form I can redirect users to a link after filling out the form…"
+            }
+          ],
+          "inference_basis": ""
+        },
+        {
+          "text": "n8n community forum threads and 'Built with n8n' shared workflow posts covering form-to-CRM validation gates.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S5",
+              "quote": "Run on a live n8n instance (2.35.5) with sample leads: a valid lead reaches the CRM step with the exact upsert request above, and a blank name or a malformed email goes to `leads-review` without touching the CRM."
+            }
+          ],
+          "inference_basis": ""
+        },
+        {
+          "text": "Zapier's app directory page for Tally, listing paired integrations and typical use cases for routing form submissions.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S8",
+              "quote": "Tally Integrations"
+            }
+          ],
+          "inference_basis": ""
+        }
+      ],
+      "sources": [
+        {
+          "id": "S1",
+          "requested_url": "https://community.make.com/t/tally-form-submission-to-webhook-response-its-possible/22050",
+          "final_url": "https://community.make.com/t/tally-form-submission-to-webhook-response-its-possible/22050",
+          "title": "Tally form submission to webhook response - its possible? - Questions - Make Community",
+          "tier": 1,
+          "venue": "Make Community",
+          "fetched_at": "2026-10-16T04:53:48.821954Z",
+          "published_date": null,
+          "content_hash": "bcc2eecc82c643b7ed08a63c25abdf03ad9450f7a690b2d02152f14684e64cd7"
+        },
+        {
+          "id": "S2",
+          "requested_url": "https://community.make.com/t/webhook-to-tally-forms-returning-multi-choice-answer-as-reference-number-and-not-actual-text/83391",
+          "final_url": "https://community.make.com/t/webhook-to-tally-forms-returning-multi-choice-answer-as-reference-number-and-not-actual-text/83391",
+          "title": "Webhook to Tally forms returning multi choice answer as reference number and not actual text - Questions - Make Community",
+          "tier": 1,
+          "venue": "Make Community",
+          "fetched_at": "2026-10-16T04:53:48.868181Z",
+          "published_date": null,
+          "content_hash": "b9c52471bc753c0001c38bf66db0c0b0fd06ecf5aa8a13fc47d6c26303318762"
+        },
+        {
+          "id": "S3",
+          "requested_url": "https://community.make.com/t/email-field-from-tally-not-showing-in-airtable-via-webhook-set-variable-all-other-fields-work-fine/88181",
+          "final_url": "https://community.make.com/t/email-field-from-tally-not-showing-in-airtable-via-webhook-set-variable-all-other-fields-work-fine/88181",
+          "title": "Email field from Tally not showing in Airtable via webhook + Set variable (all other fields work fine) - Beginner Questions - Make Community",
+          "tier": 1,
+          "venue": "Make Community",
+          "fetched_at": "2026-10-16T04:53:49.065257Z",
+          "published_date": null,
+          "content_hash": "933273b40ea8428cd0712eaa2a23e53266c2947b888a834467fe580bb4811ef7"
+        },
+        {
+          "id": "S4",
+          "requested_url": "https://community.make.com/t/issue-tally-form-submission-not-processed-scenario-stuck-on-run-once/82511",
+          "final_url": "https://community.make.com/t/issue-tally-form-submission-not-processed-scenario-stuck-on-run-once/82511",
+          "title": "Issue: Tally Form Submission Not Processed – Scenario Stuck on \"Run Once\" - Questions - Make Community",
+          "tier": 1,
+          "venue": "Make Community",
+          "fetched_at": "2026-10-16T04:53:49.103016Z",
+          "published_date": null,
+          "content_hash": "07db28ea5a514f42d93fac9600e454b1b6cf4fa875287142a9a2c323462224ea"
+        },
+        {
+          "id": "S5",
+          "requested_url": "https://community.n8n.io/t/free-workflow-json-a-validation-gate-for-form-to-crm-so-typos-and-bot-spam-stop-before-your-contact-database-6-nodes/319505",
+          "final_url": "https://community.n8n.io/t/free-workflow-json-a-validation-gate-for-form-to-crm-so-typos-and-bot-spam-stop-before-your-contact-database-6-nodes/319505",
+          "title": "Free workflow JSON: a validation gate for form-to-CRM, so typos and bot spam stop before your contact database (6 nodes) - Built with n8n - n8n Community",
+          "tier": 1,
+          "venue": "n8n Community",
+          "fetched_at": "2026-10-16T04:53:49.125131Z",
+          "published_date": null,
+          "content_hash": "3b0327d3f38a6e352bfac215e17814d1622c827f467f421cb870da5c7ad23b4c"
+        },
+        {
+          "id": "S6",
+          "requested_url": "https://community.n8n.io/t/n8n-form-trigger-node-respond-to-webhook/32329",
+          "final_url": "https://community.n8n.io/t/n8n-form-trigger-node-respond-to-webhook/32329",
+          "title": "N8n form trigger node, respond to Webhook - Questions - n8n Community",
+          "tier": 1,
+          "venue": "n8n Community",
+          "fetched_at": "2026-10-16T04:53:49.398117Z",
+          "published_date": null,
+          "content_hash": "e8f16cc42e221b0770c2cb385fb6555e0ffc7a70e93504443a239af06b858c34"
+        },
+        {
+          "id": "S7",
+          "requested_url": "https://n8n.io/workflows/5505-capture-website-form-submissions-to-notion-crm-database/",
+          "final_url": "https://n8n.io/workflows/5505-capture-website-form-submissions-to-notion-crm-database/",
+          "title": "Capture website form submissions to Notion CRM database | n8n workflow template",
+          "tier": 2,
+          "venue": "n8n.io workflow templates",
+          "fetched_at": "2026-10-16T04:53:49.526099Z",
+          "published_date": null,
+          "content_hash": "d3fed4a3aa7ee0483b64363be1c1d74e94de5a6072fb1da6fecf3edfc55bf0f9"
+        },
+        {
+          "id": "S8",
+          "requested_url": "https://zapier.com/apps/tally/integrations",
+          "final_url": "https://zapier.com/apps/tally/integrations",
+          "title": "Tally Integrations | Connect Your Apps with Zapier",
+          "tier": 2,
+          "venue": "Zapier app directory",
+          "fetched_at": "2026-10-16T04:53:49.984202Z",
+          "published_date": null,
+          "content_hash": "ed55dd9ddbc07ebb573a87a1b86fb88f301722559e6651847584088e15a55818"
+        }
+      ],
+      "dropped_claims": 8,
+      "researched_at": "2026-10-16T04:55:54.183920Z"
+    },
+    "created_at": "2026-10-16 04:55:54.189925"
+  }
+]

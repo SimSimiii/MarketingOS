@@ -50,13 +50,13 @@ def test_pinning_a_web_reading_agent_to_gpt_is_refused_with_a_reason(client: Tes
             "name": "Doomed",
             "request": "three emails",
             "product_description": "a thing",
-            "model_overrides": {"rival_scout": "gpt-5.6-sol"},
+            "model_overrides": {"proof_hunter": "gpt-5.6-sol"},
         },
     )
 
     assert response.status_code == 422
     detail = response.json()["detail"]
-    assert "Rival scout" in detail and "web_fetch" in detail
+    assert "Proof hunter" in detail and "web_fetch" in detail
 
 
 def test_a_typo_in_an_agent_name_is_refused_rather_than_ignored(client: TestClient):

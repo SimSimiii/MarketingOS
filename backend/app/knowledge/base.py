@@ -36,7 +36,7 @@ from enum import StrEnum
 from pydantic import BaseModel, Field
 
 from app.knowledge.artifacts import Grounding, KnowledgeArtifacts
-from app.knowledge.ledger import Evidence, category_of, value_of
+from app.knowledge.ledger import Evidence, EvidenceContext, category_of, context_of, value_of
 from app.knowledge.taxonomy import (
     CATEGORY_ORDER,
     SHELVES,
@@ -83,6 +83,7 @@ class KnowledgeEntry(BaseModel):
     verbatim: str = ""
     source: str = ""
     document_id: str | None = None
+    context: EvidenceContext | None = None
     origin: EntryOrigin
     #: The compiler's own label where it had one (`metric`, `testimonial`), or
     #: what this entry is when it came from elsewhere (`plan`, `objection`).
@@ -355,9 +356,10 @@ def _from_evidence(artifacts: KnowledgeArtifacts) -> list[KnowledgeEntry]:
                 id=item.id,
                 category=category_of(item),
                 statement=_collapse(item.claim),
-                verbatim=_collapse(item.verbatim, 400),
+                verbatim=_collapse(item.verbatim),
                 source=item.source,
                 document_id=item.document_id,
+                context=context_of(item),
                 origin=EntryOrigin.EVIDENCE,
                 kind=str(item.kind),
                 grounding=(

@@ -15,6 +15,13 @@ class EmailAnalysisRequest(BaseModel):
     cold_read: bool = False
 
 
+class EmailAnalysisCapabilities(BaseModel):
+    cold_read_available: bool
+    reason: str = ""
+    expected_calls: int = 1
+    schema_attempts: int = 2
+
+
 class AnalysisFinding(BaseModel):
     category: Literal["verification", "editorial", "context"]
     check: str

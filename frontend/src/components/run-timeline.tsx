@@ -440,6 +440,9 @@ function EmailArgument({
 }: {
   email: {
     felt_need?: string;
+    selection_reason?: string;
+    next_step_url?: string;
+    argument_issue?: string;
     status_quo?: string;
     why_it_fails?: string;
     mechanism?: string;
@@ -449,6 +452,7 @@ function EmailArgument({
   };
 }) {
   const beats = [
+    ["Why this proposition", email.selection_reason],
     ["Living with", email.felt_need],
     ["Does today", email.status_quo],
     ["Why that fails", email.why_it_fails],
@@ -456,6 +460,8 @@ function EmailArgument({
     ["CTA helps decide", email.next_step_decision],
     ["CTA delivers", email.next_step_value],
     ["CTA does not prove", email.next_step_limit],
+    ["Destination", email.next_step_url],
+    ["Needs review", email.argument_issue],
   ].filter(([, value]) => value) as [string, string][];
   if (beats.length === 0) return null;
   return (

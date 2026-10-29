@@ -1,0 +1,229 @@
+{
+  "scope": "Saved Tally campaign, exact 380-entry ledger and all 11 exported source documents; no current web claims",
+  "model_calls": 0,
+  "network_calls": 0,
+  "source_database_writes": 0,
+  "source_documents": 11,
+  "source_corpus_chars": 107194,
+  "knowledge_version": 1,
+  "asset_id": "27e786d51c9647b5bf74d35dd5ed259b",
+  "exact_asset_evidence_check": {
+    "text": "Subject: Put Tally before your automation\nPreview text: New submissions can trigger Make, Zapier, or n8n—and webhook access is free.\n\nStart your next automation with a Tally form\n\nHi there,\n\nTally is now available as the form front end for your next automation. Build the intake in Tally, then connect new submissions to Make, Zapier, or n8n.\n\nOnce the webhook is connected, Tally pushes each new submission when it arrives. Your automation can then route the data to a CRM, billing tool, internal database, or messaging app—without polling the API or exporting a CSV first.\n\nBetter yet, webhook access is free for every Tally user. So you don’t need to pay for a form tool just to decide whether its webhook route fits your workflow.\n\nThe first decision is smaller: is the form itself worth wiring up? Endpoint configuration and a fresh test submission can come next.\n\nCreate a free form →\n\n— Team Tally",
+    "blocking": [],
+    "advisory": [
+      "A launch or novelty is asserted without dated launch evidence. Confirm the release and its timing, or describe the documented capability without 'new'."
+    ]
+  },
+  "acceptance_counts": {
+    "corrected": 8,
+    "missing": 0
+  },
+  "acceptance_probes": [
+    {
+      "id": "exact_now_available",
+      "expectation": "Caution about unsubstantiated novelty",
+      "result": "corrected",
+      "observed": {
+        "text": "Tally is now available as the form front end for your next automation.",
+        "blocking": [],
+        "advisory": [
+          "A launch or novelty is asserted without dated launch evidence. Confirm the release and its timing, or describe the documented capability without 'new'."
+        ]
+      }
+    },
+    {
+      "id": "monthly_amount_reused_as_yearly",
+      "expectation": "Reject the incompatible billing period",
+      "result": "corrected",
+      "observed": {
+        "text": "Tally Pro costs $29/year.",
+        "blocking": [
+          "\"$29\" - this amount is documented for a different billing period; preserve the source terms"
+        ],
+        "advisory": [
+          "The source lists this feature inside the priced 'Frequently Asked Questions About Form Builder Comparisons' offer. State that it is included in the plan and preserve the plan's terms; the subscription amount does not establish a separate feature price."
+        ]
+      }
+    },
+    {
+      "id": "feature_price_vs_subscription",
+      "expectation": "Flag treating the plan amount as an independent feature price",
+      "result": "corrected",
+      "observed": {
+        "text": "Custom domains cost $29/month.",
+        "blocking": [],
+        "advisory": [
+          "The source lists this feature inside the priced 'Tally Pro' offer. State that it is included in the plan and preserve the plan's terms; the subscription amount does not establish a separate feature price."
+        ]
+      }
+    },
+    {
+      "id": "vendor_comparison_without_attribution",
+      "expectation": "Flag an unqualified rival price licensed by Tally's comparison pages",
+      "result": "corrected",
+      "observed": {
+        "text": "Typeform costs $39/month.",
+        "blocking": [],
+        "advisory": [
+          "The figure $39 is supported by a published comparison (https://tally.so/help/compare). Attribute that source or verify the named rival's current offer directly; quotation presence does not independently validate a competitor claim.",
+          "The source lists this feature inside the priced 'Frequently Asked Questions About Form Builder Comparisons' offer. State that it is included in the plan and preserve the plan's terms; the subscription amount does not establish a separate feature price."
+        ]
+      }
+    },
+    {
+      "id": "customer_result_transferred_to_integrations",
+      "expectation": "Flag transferring Flylighter's feedback result into a general automation result",
+      "result": "corrected",
+      "observed": {
+        "text": "Tally gets you 30%+ response rates with Make, Zapier or n8n.",
+        "blocking": [],
+        "advisory": [
+          "The figure 30 % is an attributed customer result (Thomas Frank); keep its named subject, use case and conditions instead of promising that result to every buyer or transferring it to another workflow."
+        ]
+      }
+    },
+    {
+      "id": "customer_result_generic_you_will",
+      "expectation": "Flag generalizing the saved customer result even when legacy context is absent",
+      "result": "corrected",
+      "observed": {
+        "text": "You will increase your response rate to 30%.",
+        "blocking": [],
+        "advisory": [
+          "The figure 30 % is an attributed customer result (Thomas Frank); keep its named subject, use case and conditions instead of promising that result to every buyer or transferring it to another workflow."
+        ]
+      }
+    },
+    {
+      "id": "documented_function_without_testimonial",
+      "expectation": "Allow the documented webhook function without requiring a testimonial",
+      "result": "corrected",
+      "observed": {
+        "has_proof": false,
+        "has_checkable": true,
+        "nothing_to_argue_from": false
+      }
+    },
+    {
+      "id": "legacy_context_explicitly_unknown",
+      "expectation": "Keep legacy context unknown and visible instead of silently certifying it",
+      "result": "corrected",
+      "observed": {
+        "missing_context": 380,
+        "total_entries": 380,
+        "unknown_context_visible": true
+      }
+    }
+  ],
+  "controls": {
+    "synthetic_novelty_wording_control": {
+      "text": "We just launched our new feature: webhooks.",
+      "blocking": [],
+      "advisory": [
+        "A launch or novelty is asserted without dated launch evidence. Confirm the release and its timing, or describe the documented capability without 'new'."
+      ]
+    },
+    "synthetic_metadata_added_to_real_customer_quote": {
+      "metadata_is_synthetic_not_a_recompile": true,
+      "covered_wording": {
+        "text": "You will increase your response rate to 30%.",
+        "blocking": [],
+        "advisory": [
+          "The figure 30 % is an attributed customer result (Thomas Frank / Flylighter); keep its named subject, use case and conditions instead of promising that result to every buyer or transferring it to another workflow."
+        ]
+      },
+      "uncovered_wording": {
+        "text": "Tally gets you 30%+ response rates with Make, Zapier or n8n.",
+        "blocking": [],
+        "advisory": [
+          "The figure 30 % is an attributed customer result (Thomas Frank / Flylighter); keep its named subject, use case and conditions instead of promising that result to every buyer or transferring it to another workflow."
+        ]
+      }
+    }
+  },
+  "source_passages": [
+    {
+      "id": "E21",
+      "claim": "Webhooks are available for free to all Tally users.",
+      "quote": "Webhooks are available **for free** to all Tally users.",
+      "source": "https://tally.so/help/webhooks",
+      "context": null
+    },
+    {
+      "id": "E32",
+      "claim": "Instead of polling the Tally API or exporting CSVs, webhooks push data the moment a form is submitted.",
+      "quote": "Instead of polling the Tally API or exporting CSVs, webhooks push data the moment a form is submitted.",
+      "source": "https://tally.so/help/webhooks",
+      "context": null
+    },
+    {
+      "id": "E33",
+      "claim": "A Tally form can trigger automation platforms like Make, Zapier, or n8n, which then route the data to CRMs, billing tools, internal databases, or messaging apps.",
+      "quote": "A Tally form can trigger automation platforms like [Make](/help/make-integration), [Zapier](/help/zapier-integration) or [n8n](/help/n8n-integration), which then route the data to CRMs, billing tools, internal databases or messaging apps.",
+      "source": "https://tally.so/help/webhooks",
+      "context": null
+    },
+    {
+      "id": "E68",
+      "claim": "Tally offers custom domains for $29/month",
+      "quote": "| **Custom Domains** | ✅ $29/mo | ❌ $99+/mo | ❌ $39+/mo | ❌ No |",
+      "source": "https://tally.so/help/compare",
+      "context": null
+    },
+    {
+      "id": "E102",
+      "claim": "Tally Pro costs $29/month",
+      "quote": "Tally Pro at $29/month is more affordable than Typeform ($39/mo for only 100 responses), Jotform ($34/mo for 1,000 responses), or Paperform ($20/mo with limits).",
+      "source": "https://tally.so/help/compare",
+      "context": null
+    },
+    {
+      "id": "E241",
+      "claim": "Tally Pro costs $29/month or $290/year",
+      "quote": "✔️ **$29/month or $290/year**",
+      "source": "https://tally.so/features",
+      "context": null
+    },
+    {
+      "id": "E265",
+      "claim": "Thomas Frank used Tally forms to achieve 30%+ response rates collecting product feedback for his web clipper tool, Flylighter",
+      "quote": "Learn how entrepreneur and creator Thomas Frank uses Tally forms to collect critical product feedback, achieve 30%+ response rates, and make informed development decisions for his web clipper tool, Flylighter.",
+      "source": "https://tally.so/customers",
+      "context": null
+    }
+  ],
+  "proof_view": {
+    "saved_candidates": 8,
+    "approved_candidates": 0,
+    "legacy_candidates_not_checked": 8,
+    "known_customer_result_in_corpus": "Thomas Frank used Tally forms to achieve 30%+ response rates collecting product feedback for his web clipper tool, Flylighter",
+    "transport_confidence_still_exists": true,
+    "synthetic_in_memory_approval_probe": {
+      "scenario": "First saved pending candidate approved only in a temporary object; no real approval or database write",
+      "before": 380,
+      "after": 381,
+      "known_E265_retained": true,
+      "added_proof_appended": true,
+      "unverified_legacy_strength": "weak",
+      "automatic_verification": "human approved; automatic source check: not_checked"
+    },
+    "code_findings": [
+      "ProofHunter.hunt receives business, website, limit; no campaign argument or audience.",
+      "MarketService.artifacts_for merges known and human-approved new evidence; merge_proof appends without relevance ranking.",
+      "Relevance dossier inputs consume the merged ledger and its UI shows ranked_relevance; rebuilding can rank approved proof for an audience.",
+      "ProofInbox receives candidate rows only, showing pending cards and approved count; corpus E265 is not part of that view.",
+      "Proof badges show explicit quote-check status; identity and use-for-this-argument are not independent validated status fields.",
+      "The empty-hunt fallback in _run_hunt still asserts nobody outside the site mentions the brand if no note is returned."
+    ]
+  },
+  "simulated_metrics": {
+    "saved_report_opening_rendered_now": [
+      "Request: Write exactly 1 email announcing the launch of this product to people who have not bought it yet - make the case for why it matters now and what to do next.",
+      ""
+    ],
+    "current_render_says_uncalibrated": true,
+    "internal_six_clicks_still_maps_to": 7,
+    "current_reader_render": "- Would they have opened it? no\n- What they think it sells: they could not say\n- Where they stopped reading: they read to the end\n- What would stop them clicking: nothing they named\n- AI simulation assessment (uncalibrated): 7/10",
+    "interpretation": "Presentation corrected; internal frequency estimates and six-to-seven mapping remain. No empirical click calibration was demonstrated."
+  }
+}

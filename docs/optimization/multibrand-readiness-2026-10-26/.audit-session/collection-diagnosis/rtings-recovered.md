@@ -1,0 +1,37 @@
+# The 4 Best Cheap and Budget Cameras of 2026
+
+When looking for an affordable camera, it's important to pick one that fits your budget and needs. Thankfully, almost any modern digital camera can capture excellent images in the right hands, but cameras can quickly veer into very expensive territory, especially if you're set on buying brand new. That's not even considering the added cost of lenses and accessories like memory cards and camera bags.
+
+Thankfully, cameras generally don't depreciate in value or performance as quickly as other technologies, so if you're on a really tight budget, you can always shop around for an older used model on eBay or at retailers like [Adorama](https://www.adorama.com/Used), [B&H Photo Video](https://www.bhphotovideo.com/c/browse/Used-Equipment/ci/2870/N/4294247188), [KEH](https://www.keh.com/), and [MPB](https://www.mpb.com/en-us). Many digital cameras released within the last five to 10 years still hold their own for photography and can be found for relatively cheap. An older camera body will also give you ample room to grow as a photographer and can still yield excellent results when paired with a good lens. As a general rule, it's better to invest in a less expensive camera body and higher-quality lenses than it is to invest in an expensive camera body and cheap lenses.
+
+We've bought and tested over 125 cameras, and below, you'll find the best cheap and budget cameras that we've tested. This article focuses on interchangeable lens models, but if you're after a point-and-shoot camera, check out our [best point-and-shoot cameras](/camera/reviews/best/point-and-shoot) for compact models or the [best bridge cameras](/camera/reviews/best/by-type/bridge) for more affordable superzoom cameras. If you have a set budget, you can also see our recommendations for the [best cameras under $1,000](/camera/reviews/best/by-price/under-1000) and the [best cameras under $500](/camera/reviews/best/by-price/under-500). Otherwise, you'll find the best overall cameras we've tested in our list of the [best digital cameras](/camera/reviews/best/digital).
+
+## Best Budget Camera
+
+If you'd prefer to buy new, the Canon EOS R50 is the best overall budget camera we've tested. It isn't the absolute cheapest option, but it offers the best bang for your buck if you're after a modern mirrorless camera with a lot of value. It's a highly portable camera that's a breeze to take on the go, and it features a high-resolution APS-C sensor that delivers excellent image quality. It also has a fully articulated screen and records 4k video with a decent range of frame rate options, making it a solid choice for vloggers and beginner video shooters.
+
+Though its auto mode takes a lot of the guesswork out of photography for beginners, this camera also uses the same RF lens mount as Canon's latest high-end cameras, so you can eventually upgrade to a more advanced body without buying into a whole new system. If you're looking for a camera that you'll mostly use for video, the Sony ZV-E10 is another solid option. It delivers similar performance to the Canon, while using Sony's E-Mount, which has a much more mature lens ecosystem.
+
+## Best Cheap Camera
+
+If you're set on mirrorless but on a very tight budget, the Canon EOS R100 is the cheapest mirrorless camera that Canon offers. Because it's newer and mirrorless, it has a more portable design, akin to the Canon EOS R50, as well as a more effective autofocus system. However, unlike the pricier R50, this model lacks an articulating touchscreen, and its 4K video features are very limited.
+
+Although RF lenses are relatively few and far between, the kit lens will be enough to get you started. Because this model has the same lens mount as Canon's high-end mirrorless cameras, it's also a solid long-term investment since you can eventually upgrade bodies without needing to replace your lenses. Despite its pared-down design, this is a decent entryway into mirrorless cameras for those on the tightest of budgets who don't want to buy used. If you can afford it, though, we recommend going for the R50 over this model, as it offers significant improvements in areas like autofocus and video at a relatively small premium in price.
+
+## Best Cheap Compact Camera
+
+If you're working with a tighter budget, the small but mighty Olympus OM-D E-M10 Mark IV delivers plenty of value for the price. It uses an MFT sensor, which helps keep the overall kit compact and affordable. While it doesn't handle low-light noise as well as cameras with larger sensors, you can still get excellent results with the right lenses, and the MFT system offers plenty of affordable options. The inclusion of an in-body image-stabilization system also helps somewhat alleviate this issue. This feature helps reduce camera shake, which makes it easier to capture sharp handheld shots at slower shutter speeds. Overall, it's a great choice for beginners, thanks to its simple controls and wide range of creative shooting modes that let you experiment with different photography styles.
+
+However, the E-M10 Mark IV doesn't offer the most reliable autofocus, especially if you expect to rely on tracking. If autofocus performance matters to you, consider the Canon options above. They use a more effective AF system that'll be helpful if you shoot a lot of moving subjects. Keep in mind, though, that Canon's RF mount has fewer lens options, and its lenses tend to be larger and more expensive.
+
+## Best Cheap DSLR Camera
+
+If you want something truly cheap and prefer to avoid buying used, the Canon EOS Rebel T7/2000D is the most affordable DSLR Canon offers. It's an excellent camera for beginners on a very tight budget. While the price is the real draw here, this is a very back-to-basics camera with few bells and whistles, so you won't find a tilting screen or even 4k video recording here, let alone more advanced features.
+
+Why are we recommending this ultra-basic DSLR from 2018? Because if this is the only camera on the list that you can afford, then it's worth it if it gets you out there shooting. It may not have features like IBIS or advanced subject detection modes, but it does have a high-resolution APS-C sensor that captures beautiful photos, along with a well-established lens ecosystem that the newer mirrorless Canon cameras don't have access to out of the box. Many of Canon's EF/EF-S lenses are also quite affordable for beginners and budget shooters, making it easier to upgrade whenever you outgrow the kit lens. If you do end up feeling the urge to upgrade to a more performant camera down the line, you'll be able to grab Canon's EF-to-RF lens adapter to keep using the lenses you've already got.
+
+## All Reviews
+
+Our recommendations above are what we think are currently the best cheap and budget cameras for most people to buy, according to their needs. We factor in the price, feedback from our visitors, and availability (no cameras that are difficult to find or almost out of stock in the U.S.).
+
+If you would like to choose for yourself, here's the list of all our budget cameras. Be careful not to get caught up in the details. There is no single perfect camera. Personal taste, preference, and shooting habits will matter more in your selection.

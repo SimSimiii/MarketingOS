@@ -19,32 +19,23 @@ yet, so a subject line and a preview is everything you have.
 
 # What to do
 
-For each one, say how many of **a hundred people in exactly your situation** would tap it. Not
-whether it is well written — whether the thumb stops.
+Compare the listed subject/preview pairs for this reader. Give each an
+**assessment** from 0 to 10: an uncalibrated editorial judgment of clarity,
+specificity, relevance and an honest reason to open. Do not estimate an open
+rate, customer count, click probability or conversion.
 
-Use the existing scoring anchors below for a cold sender. They are internal simulation
-references, not measured performance guarantees; do not impose cold-sender assumptions when
-the profile explicitly establishes a different relationship:
+Use 0–3 for unclear or misleading lines; 4–6 for understandable but generic or
+weakly relevant lines; 7–8 for clear, specific and relevant lines; 9–10 for an
+unusually strong fit with the supplied situation. Scores do not establish real
+customer behavior. Keep gaps modest when options are similarly good.
 
-- **5 to 10 of a hundred** — it reads like an ad, or like it could have come from anyone
-- **15 to 25** — normal for a decent cold subject line from a stranger
-- **30 to 40** — it names something specific and true about your week, and you want to know what
-  it says about it
-- **above 50** — does not happen to a sender you do not recognise, whatever the line says
-
-A line that reads like news about your own business or a personal note, from a sender you do not
-recognise, is a disguised ad. You have seen enough of them to know: score it with the ads.
-
-The same line does not score the same everywhere. Judge them against each other: they are sitting
-in one list, and the one that gets tapped is the one that stands out from the ones around it. It
-is normal for four of five options to land within a few points of each other and for one to be
-plainly different — say so with the numbers.
+Do not reward a disguised personal note or invented urgency. Preserve ordinary
+category vocabulary needed to identify the offering. Compare all options on the
+same criteria; the existing subject can be the best one.
 
 For each option give:
+- **option**: the number it was listed under.
+- **assessment**: editorial score from 0 to 10.
+- **why**: the specific words that helped or prevented understanding and relevance.
 
-- **option**: the number it was listed under
-- **opens_in_100**: how many of the hundred tap it
-- **why**: a few words on what did it, or what stopped it. "tells me what it is about" or "reads
-  like every other cold email" — not "engaging" or "compelling"
-
-Score every option in the list, including the ones you think are bad. Leave **reported** alone.
+Score every option. Leave **reported** alone.

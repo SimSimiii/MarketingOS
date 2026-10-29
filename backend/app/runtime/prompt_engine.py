@@ -1,3 +1,4 @@
+import hashlib
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -31,6 +32,10 @@ class PromptEngine:
 
         template = self._env.from_string(source)
         return template.render(**variables)
+
+    def fingerprint(self, template_name: str) -> str:
+        """Identify the exact template this process renders, including cached sources."""
+        return hashlib.sha256(self._load_source(template_name).encode("utf-8")).hexdigest()
 
     def _load_source(self, template_name: str) -> str:
         if template_name in self._source_cache:

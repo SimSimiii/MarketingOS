@@ -1,0 +1,863 @@
+{
+  "isolated_experiment": true,
+  "tier": "balanced",
+  "duration_seconds": 145.71900000004098,
+  "calls": [
+    {
+      "role": "knowledge_compiler",
+      "model": "sonnet",
+      "tier": "balanced",
+      "input_tokens": 2,
+      "output_tokens": 13361,
+      "duration_ms": 145683.09810000937,
+      "cache_creation_input_tokens": 85627,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.540968
+    }
+  ],
+  "audience": {
+    "segments": [
+      {
+        "name": "A privacy-conscious independent creator weighing whether to drop Google Analytics",
+        "situation": "Runs their own blog, newsletter, or small creative business site themselves, has grown uneasy with how mainstream analytics tools and big tech handle visitor data, and has started looking at what else is out there before committing to anything new.",
+        "situation_grounding": "inferred",
+        "situation_provenance": [],
+        "job_to_be_done": "Stop feeling like the site they run is quietly working against the people who visit it",
+        "trigger": "After one too many stories or moments noticing how much data big tech collects, they decide this is the point they stop running the same analytics setup as everyone else",
+        "sophistication": "solution_aware",
+        "pains": [
+          {
+            "statement": "Feels that big tech companies are abusing visitor privacy and wants an analytics provider they can actually trust",
+            "grounding": "grounded",
+            "provenance": {
+              "source": "https://usefathom.com/",
+              "quote": "Today, so many big tech corps are abusing our privacy. This is why I use Fathom. They're an analytics company I can trust.",
+              "document_id": "c81f30e8-f945-4557-bf01-e46135ad2aad",
+              "evidence_id": "E31",
+              "source_kind": "customer_voice"
+            }
+          },
+          {
+            "statement": "Wanted an analytics tool that felt ethical and trustworthy, not just functional",
+            "grounding": "grounded",
+            "provenance": {
+              "source": "https://usefathom.com/",
+              "quote": "I switched to Fathom because it's an ethical analytics tool that I trust. It gives me everything I want to know about my site's performance.",
+              "document_id": "c81f30e8-f945-4557-bf01-e46135ad2aad",
+              "evidence_id": "E26",
+              "source_kind": "customer_voice"
+            }
+          },
+          {
+            "statement": "Values their own time and their visitors' right to privacy enough to switch tools over it",
+            "grounding": "grounded",
+            "provenance": {
+              "source": "https://usefathom.com/",
+              "quote": "I value my time and my website visitors right to privacy. That's why I've switched to Fathom Analytics.",
+              "document_id": "c81f30e8-f945-4557-bf01-e46135ad2aad",
+              "evidence_id": "E29",
+              "source_kind": "customer_voice"
+            }
+          },
+          {
+            "statement": "Running a cookie-consent banner undercuts the stripped-down, trustworthy feel they want their site to have",
+            "grounding": "inferred",
+            "provenance": null
+          }
+        ]
+      },
+      {
+        "name": "A developer or founder running several small web properties who's tired of Google Analytics' clutter",
+        "situation": "Maintains more than one live site or product (a SaaS tool, a docs site, an open-source project page), and keeps needing to check traffic and basic conversion numbers across them without wanting to relearn a sprawling reporting tool for each one.",
+        "situation_grounding": "inferred",
+        "situation_provenance": [],
+        "job_to_be_done": "Get a fast, trustworthy read on whether each site is working without burning time digging through reports",
+        "trigger": "Just added another site or product to the stack and doesn't want to set up a heavyweight analytics tool for it again",
+        "sophistication": "solution_aware",
+        "pains": [
+          {
+            "statement": "Wanted a tool that was simple, speedy and accurate for understanding what's happening with their website traffic",
+            "grounding": "grounded",
+            "provenance": {
+              "source": "https://usefathom.com/",
+              "quote": "I consider Fathom a must have tool if you want to understand what's happening with your website traffic. It's simple, speedy, and accurate.",
+              "document_id": "c81f30e8-f945-4557-bf01-e46135ad2aad",
+              "evidence_id": "E8",
+              "source_kind": "customer_voice"
+            }
+          },
+          {
+            "statement": "Loved a beautifully simple interface enough to make it part of their default toolkit",
+            "grounding": "grounded",
+            "provenance": {
+              "source": "https://usefathom.com/",
+              "quote": "Privacy-protections aside, I love the beautifully simple interface. Fathom is now part of my default stack.",
+              "document_id": "c81f30e8-f945-4557-bf01-e46135ad2aad",
+              "evidence_id": "E32",
+              "source_kind": "customer_voice"
+            }
+          },
+          {
+            "statement": "Wanted to see what they needed right away rather than digging through a complex tool",
+            "grounding": "grounded",
+            "provenance": {
+              "source": "https://usefathom.com/",
+              "quote": "Fathom is a beautiful, fast piece of software built on Laravel and it lets us see what we need right away.",
+              "document_id": "c81f30e8-f945-4557-bf01-e46135ad2aad",
+              "evidence_id": "E28",
+              "source_kind": "customer_voice"
+            }
+          },
+          {
+            "statement": "Checking several sites' numbers one at a time, in a tool built around one big property, is busywork they'd rather not repeat",
+            "grounding": "inferred",
+            "provenance": null
+          }
+        ]
+      },
+      {
+        "name": "A site owner who needs to clear GDPR/cookie-consent obligations without adding more friction to their site",
+        "situation": "Operates a site with EU visitors, or is otherwise aware that privacy-law compliance and cookie-consent banners are an ongoing obligation rather than a one-time fix, but hasn't fully audited what their current analytics setup actually requires of them.",
+        "situation_grounding": "inferred",
+        "situation_provenance": [],
+        "job_to_be_done": "Stop worrying that their analytics setup is a compliance liability",
+        "trigger": "A compliance review, a legal update, or a visitor question about the cookie banner put this on their list this week",
+        "sophistication": "problem_aware",
+        "pains": [
+          {
+            "statement": "Aware that any website owner can be fined a percentage of yearly revenue for data/privacy breaches under GDPR",
+            "grounding": "vendor_claim",
+            "provenance": {
+              "source": "https://usefathom.com/features/vs-matomo",
+              "quote": "And, because any website owner can be fined a percentage of their yearly revenue for data/privacy breaches, compliance with the EU's GDPR (Article 83) is essential.",
+              "document_id": "e2beac41-976d-4e8d-958f-01a50bb9f6c3",
+              "evidence_id": "E47",
+              "source_kind": "vendor_copy"
+            }
+          },
+          {
+            "statement": "DIY compliance features on other analytics tools require setup and knowledge most site owners don't have time to get right",
+            "grounding": "vendor_claim",
+            "provenance": {
+              "source": "https://usefathom.com/features/vs-matomo",
+              "quote": "Matomo's software has a GDPR manager and IP anonymization; most importantly, the data is not used for other purposes (unlike Google Analytics). However, these features require setup and knowledge to be used correctly.",
+              "document_id": "e2beac41-976d-4e8d-958f-01a50bb9f6c3",
+              "evidence_id": "E48",
+              "source_kind": "vendor_copy"
+            }
+          },
+          {
+            "statement": "Other analytics tools still require a cookie consent notice unless several specific steps are taken",
+            "grounding": "vendor_claim",
+            "provenance": {
+              "source": "https://usefathom.com/features/vs-matomo",
+              "quote": "Matomo, being that it's a full-blown Google Analytics-like website analysis tool, uses cookies and requires GDPR consent notices unless you take several steps to avoid it",
+              "document_id": "e2beac41-976d-4e8d-958f-01a50bb9f6c3",
+              "evidence_id": "E72",
+              "source_kind": "vendor_copy"
+            }
+          },
+          {
+            "statement": "Not fully sure whether their current cookie banner is doing its legal job, or whether changing tools would even remove the need for one",
+            "grounding": "inferred",
+            "provenance": null
+          }
+        ]
+      }
+    ],
+    "objections": [
+      {
+        "objection": "Google Analytics is free; why pay $15+/month for something that does the same job?",
+        "severity": "blocking",
+        "answer": "The evidence only gives a philosophical answer, not a cost-benefit one: Fathom frames itself as selling software instead of selling visitor data, and argues that's why GA can be free, but nothing in the record quantifies what the switch is worth versus staying on a free tool.",
+        "grounding": "inferred",
+        "evidence_ids": [
+          "E240",
+          "E241",
+          "E38",
+          "E192"
+        ],
+        "provenance": []
+      },
+      {
+        "objection": "Switching will leave my analytics history messy or incomplete, and I'll lose report types I'm used to",
+        "severity": "strong",
+        "answer": "Partially answered: Fathom's GA4 importer is described as a few simple steps and free of extra charge, but the same material admits it only brings in supported daily analytics available through Google's API, doesn't recreate every GA4 report, doesn't import GA events, and can't recover Universal Analytics data Google already deleted in July 2024 — so some gaps are real regardless of which tool is used.",
+        "grounding": "inferred",
+        "evidence_ids": [
+          "E22",
+          "E59",
+          "E226",
+          "E227",
+          "E229",
+          "E230"
+        ],
+        "provenance": []
+      },
+      {
+        "objection": "I can't talk to a salesperson or sit through a demo to get my specific questions answered before I commit",
+        "severity": "mild",
+        "answer": "Fathom confirms it skips sales calls by design but offers a self-serve path instead: an ~8-10 minute walkthrough video, a live click-around demo dashboard, a 7-day trial that can run alongside existing analytics, and email support from a real person for specific questions.",
+        "grounding": "inferred",
+        "evidence_ids": [
+          "E191",
+          "E63",
+          "E181"
+        ],
+        "provenance": []
+      },
+      {
+        "objection": "This is a small, bootstrapped Canadian company — can I trust them with data and compliance long-term?",
+        "severity": "strong",
+        "answer": "The record offers reassurance but not independent proof: Fathom states it has no VC funding or shareholders to answer to (reducing exit/acquisition pressure), is a Canadian corporation covered by Canada's EU adequacy decision, and is used (per logo placement, not detailed case studies) by organizations like Microsoft, IBM, GitHub and the New York Times.",
+        "grounding": "inferred",
+        "evidence_ids": [
+          "E37",
+          "E102",
+          "E4",
+          "E23",
+          "E108",
+          "E114"
+        ],
+        "provenance": []
+      },
+      {
+        "objection": "I could just add a cookie-consent banner to my existing Google Analytics setup instead of switching tools entirely",
+        "severity": "strong",
+        "answer": "Fathom's own comparison table marks Google Analytics 'No' on protecting visitor personal data, anonymising logs, and processing EU traffic in the EU — implying a banner doesn't fix those underlying issues — and separately claims no cookie notice is required on Fathom at all because it never uses cookies. This is Fathom's own comparison framing, not an independently verified audit.",
+        "grounding": "inferred",
+        "evidence_ids": [
+          "E100",
+          "E17",
+          "E71",
+          "E78"
+        ],
+        "provenance": []
+      },
+      {
+        "objection": "Extra site packs and higher pageview tiers could get expensive once I'm running or managing many sites",
+        "severity": "mild",
+        "answer": "Pricing for this scenario is specific: every plan already includes at least 50 sites, extra packs of 50 sites cost $10/month or $100/year each (up to 15 packs), and agencies specifically get up to 50 client dashboards with a small added fee beyond that — so the cost of scaling sites is disclosed, even if whether it's 'worth it' isn't addressed.",
+        "grounding": "inferred",
+        "evidence_ids": [
+          "E184",
+          "E189",
+          "E93",
+          "E39"
+        ],
+        "provenance": []
+      },
+      {
+        "objection": "I'm not a developer — installing a tracking script myself feels risky or beyond me",
+        "severity": "strong",
+        "answer": "Documentation states installation doesn't require editing WordPress template code, can be done through an integration instead of touching templates, and in the simplest case is one script tag with a Site ID — though this describes the mechanics, not how a non-technical reader will feel doing it.",
+        "grounding": "inferred",
+        "evidence_ids": [
+          "E96",
+          "E133",
+          "E20",
+          "E225"
+        ],
+        "provenance": []
+      }
+    ]
+  },
+  "deep_baseline": {
+    "segments": [
+      {
+        "name": "A developer-founder who owns the product and the marketing site, and hasn't opened the analytics tab since he was forced onto GA4",
+        "situation": "He wrote the site, he deploys it, and he is the only person who would notice if the tracking broke. Analytics is item nine on a list of nine: the GA4 property he set up during the Universal Analytics sunset is still technically installed, but he cannot find the answer to 'did the launch post do anything?' in it, so he stopped looking. He knows what his own script budget looks like, because he is the one who gets the PageSpeed complaints, and he knows the consent banner he bolted on is a thing he added to his own site to satisfy a tracker he doesn't even read. People like him in the Laravel/Vue/Alpine orbit talk about Fathom in public — Evan You put it on the Vue.js site because it was lightweight and respected user privacy; James Brooks at Laravel liked that it let them see what they needed right away; Caleb Porzio says that after switching he became more attentive to his sites because he was always aware of who was on them. So he has heard the name, repeatedly, from people he trusts, and still has not put a card down.",
+        "situation_grounding": "inferred",
+        "situation_provenance": [
+          {
+            "source": "https://usefathom.com/",
+            "quote": "Our new Vue.js website has been using Fathom because I like how it's lightweight and respects user privacy.",
+            "document_id": null,
+            "evidence_id": "E27",
+            "source_kind": "customer_voice"
+          },
+          {
+            "source": "https://usefathom.com/",
+            "quote": "Fathom is a beautiful, fast piece of software built on Laravel and it lets us see what we need right away.",
+            "document_id": null,
+            "evidence_id": "E28",
+            "source_kind": "customer_voice"
+          },
+          {
+            "source": "https://usefathom.com/",
+            "quote": "After switching to Fathom for my web properties, I find I'm more attentive to my sites because I'm always aware of how many people are on them and which pages are most popular.",
+            "document_id": null,
+            "evidence_id": "E35",
+            "source_kind": "customer_voice"
+          }
+        ],
+        "job_to_be_done": "Know whether the thing he shipped is actually being used, in the ten seconds he can spare between support tickets — and stop being the person who put a surveillance script and a consent pop-up on his own users.",
+        "trigger": "A question he couldn't answer from the dashboard he has — a launch, a press mention, a post that spiked — or a complaint about page weight and the cookie banner on a site he's proud of.",
+        "sophistication": "product_aware",
+        "pains": [
+          {
+            "statement": "One developer-founder reports that before switching he wasn't paying attention to his own sites at all, and only became attentive once he was always aware of how many people were on them and which pages were popular — the dashboard he had didn't earn a visit.",
+            "grounding": "grounded",
+            "provenance": {
+              "source": "https://usefathom.com/",
+              "quote": "After switching to Fathom for my web properties, I find I'm more attentive to my sites because I'm always aware of how many people are on them and which pages are most popular.",
+              "document_id": null,
+              "evidence_id": "E35",
+              "source_kind": "customer_voice"
+            }
+          },
+          {
+            "statement": "A developer choosing analytics for a high-traffic open-source site states his criteria as script weight and respect for user privacy — the things he is personally accountable for, not the report count.",
+            "grounding": "grounded",
+            "provenance": {
+              "source": "https://usefathom.com/",
+              "quote": "Our new Vue.js website has been using Fathom because I like how it's lightweight and respects user privacy.",
+              "document_id": null,
+              "evidence_id": "E27",
+              "source_kind": "customer_voice"
+            }
+          },
+          {
+            "statement": "A founder in this group frames the choice as distrust of big-platform analytics rather than as a features comparison: he wants an analytics company he can trust with his visitors.",
+            "grounding": "grounded",
+            "provenance": {
+              "source": "https://usefathom.com/",
+              "quote": "Today, so many big tech corps are abusing our privacy. This is why I use Fathom. They're an analytics company I can trust.",
+              "document_id": null,
+              "evidence_id": "E31",
+              "source_kind": "customer_voice"
+            }
+          },
+          {
+            "statement": "What he actually wants from a dashboard is to see what he needs right away, not to navigate to it — a founder at Laravel describes the value as exactly that.",
+            "grounding": "grounded",
+            "provenance": {
+              "source": "https://usefathom.com/",
+              "quote": "Fathom is a beautiful, fast piece of software built on Laravel and it lets us see what we need right away.",
+              "document_id": null,
+              "evidence_id": "E28",
+              "source_kind": "customer_voice"
+            }
+          },
+          {
+            "statement": "Fathom asserts that short retention windows are a buyer problem — that 7 or even 30 days of history doesn't tell you whether your site is trending up or down. This is the vendor's framing of the need, not a customer saying it.",
+            "grounding": "vendor_claim",
+            "provenance": {
+              "source": "https://usefathom.com/",
+              "quote": "How long do you store my analytics data? Forever, as long as you are a customer. You can access your data all the way back to when you signed up. 7 days, or even 30 days, doesn't show you if your site is trending up or down, which is why we keep your analytics history. Export it before you cancel if you leave.",
+              "document_id": null,
+              "evidence_id": "E40",
+              "source_kind": "vendor_copy"
+            }
+          },
+          {
+            "statement": "He maintains a consent banner and a tag setup on his own site to serve a tool he no longer reads, and treats both as technical debt he introduced. Hypothesis — no supplied evidence has a buyer saying this.",
+            "grounding": "inferred",
+            "provenance": null
+          }
+        ]
+      },
+      {
+        "name": "An independent creator whose site is her livelihood — newsletter, podcast, portfolio — who installed Google Analytics years ago and now dreads opening it",
+        "situation": "Her audience is the business. A post, an episode, a press mention, a client enquiry: she needs to know what happened this week, and the tool she has was built for someone running paid acquisition at scale. She opens it, lands in a report she didn't ask for, and closes it. The privacy question is not abstract for her, because her readers are the relationship — she has publicly taken a position on how she treats them, and a cookie banner on her own site contradicts it. Creators in exactly this position are on the record about what changed for them: Huberman Lab's analytics are run solely on Fathom and described as a pleasure compared to Google Analytics, with 'just the right number of features'; Charli Marie switched because she wanted an ethical tool she trusted that still told her everything she wanted about her site's performance; Marshall Shorts framed it as valuing his time and his visitors' right to privacy. She is not comparison-shopping vendors; she doesn't know the cookieless-analytics category exists as a category.",
+        "situation_grounding": "inferred",
+        "situation_provenance": [
+          {
+            "source": "https://usefathom.com/",
+            "quote": "Analytics for Huberman Lab are solely powered by Fathom. It's such a pleasure to use compared to Google Analytics. There's just the right number of features, and their platform is incredibly intuitive.",
+            "document_id": null,
+            "evidence_id": "E7",
+            "source_kind": "customer_voice"
+          },
+          {
+            "source": "https://usefathom.com/",
+            "quote": "I switched to Fathom because it's an ethical analytics tool that I trust. It gives me everything I want to know about my site's performance.",
+            "document_id": null,
+            "evidence_id": "E26",
+            "source_kind": "customer_voice"
+          },
+          {
+            "source": "https://usefathom.com/",
+            "quote": "I value my time and my website visitors right to privacy. That's why I've switched to Fathom Analytics.",
+            "document_id": null,
+            "evidence_id": "E29",
+            "source_kind": "customer_voice"
+          }
+        ],
+        "job_to_be_done": "Find out whether anyone actually read it, this week, without losing an hour to a reporting tool — and be able to say honestly that she doesn't sell out her readers.",
+        "trigger": "A week that mattered: a launch, an episode that got shared, a mention somewhere. She goes to compare it with last year, and either can't get the answer out of the dashboard or finds the old history is gone — Google deleted Universal Analytics data in July 2024.",
+        "sophistication": "problem_aware",
+        "pains": [
+          {
+            "statement": "A creator running a large site reports that Google Analytics was not a pleasure to use and that the alternative had 'just the right number of features' — i.e. the tool she has is pitched past her, not under her.",
+            "grounding": "grounded",
+            "provenance": {
+              "source": "https://usefathom.com/",
+              "quote": "Analytics for Huberman Lab are solely powered by Fathom. It's such a pleasure to use compared to Google Analytics. There's just the right number of features, and their platform is incredibly intuitive.",
+              "document_id": null,
+              "evidence_id": "E7",
+              "source_kind": "customer_voice"
+            }
+          },
+          {
+            "statement": "A creator in this segment says the switch was driven by wanting an analytics tool she could trust ethically while still learning everything she wants about her site's performance — the two were previously in tension for her.",
+            "grounding": "grounded",
+            "provenance": {
+              "source": "https://usefathom.com/",
+              "quote": "I switched to Fathom because it's an ethical analytics tool that I trust. It gives me everything I want to know about my site's performance.",
+              "document_id": null,
+              "evidence_id": "E26",
+              "source_kind": "customer_voice"
+            }
+          },
+          {
+            "statement": "A founder-creator names his own time and his visitors' right to privacy as the two things that drove him to switch — the cost he was paying was both effort and discomfort.",
+            "grounding": "grounded",
+            "provenance": {
+              "source": "https://usefathom.com/",
+              "quote": "I value my time and my website visitors right to privacy. That's why I've switched to Fathom Analytics.",
+              "document_id": null,
+              "evidence_id": "E29",
+              "source_kind": "customer_voice"
+            }
+          },
+          {
+            "statement": "Another independent site owner describes the previous state as analysing site performance being a task to be simplified, and respecting visitor privacy as something he had to hold onto at the same time.",
+            "grounding": "grounded",
+            "provenance": {
+              "source": "https://usefathom.com/",
+              "quote": "Fathom simplifies the task of analyzing site performance while simultaneously respecting my visitors' privacy. Also, it's a joy to use.",
+              "document_id": null,
+              "evidence_id": "E30",
+              "source_kind": "customer_voice"
+            }
+          },
+          {
+            "statement": "She cannot compare this year's launch with the equivalent week two years ago because the historical data was deleted by her previous provider. Plausible from the evidence that UA data was deleted in July 2024, but no supplied evidence has a buyer reporting this loss.",
+            "grounding": "inferred",
+            "provenance": null
+          },
+          {
+            "statement": "She waits a day or more to find out whether something worked, because her current reporting isn't live. Inferred from Fathom's positioning of real-time data against 24-to-48-hour reporting; not a buyer statement.",
+            "grounding": "inferred",
+            "provenance": null
+          }
+        ]
+      },
+      {
+        "name": "A freelance web designer or small-agency owner carrying analytics for dozens of client sites, who is the person clients ask 'are we compliant?'",
+        "situation": "Every site she builds ends up with her name on its analytics. Each new client is another property to configure, another banner conversation, another login the client will never use, and another set of numbers someone expects in an email at the start of the month. Clients don't want a dashboard; they want to be told whether last month was better than the month before — and when they do get handed a login, they bounce off it and ask her instead. The compliance question lands on her desk by default, because she chose the tools, and any website owner can be fined a percentage of yearly revenue for data and privacy breaches under GDPR. An SEO practitioner in the same position describes the win as a simple dashboard with clear metrics that makes it easy to understand what's happening across all web properties. Fathom's own copy aims directly at her: it tells agencies they can add up to 50 client dashboards.",
+        "situation_grounding": "inferred",
+        "situation_provenance": [
+          {
+            "source": "https://usefathom.com/features/vs-matomo",
+            "quote": "They are the best Google Analytics alternative who really care about privacy and simplicity. Fathom's simple dashboard with clear metrics makes it easy to understand what's happening across all web properties.",
+            "document_id": null,
+            "evidence_id": "E33",
+            "source_kind": "customer_voice"
+          },
+          {
+            "source": "https://usefathom.com/features/vs-matomo",
+            "quote": "And as an agency, you can add up to 50 client dashboards (if you need more, you can quickly add more for a small additional fee).",
+            "document_id": null,
+            "evidence_id": "E93",
+            "source_kind": "vendor_copy"
+          }
+        ],
+        "job_to_be_done": "Hand every client a number they understand without becoming the agency that spends the first Monday of the month in spreadsheets, or the one that gets a client a regulator's letter.",
+        "trigger": "Onboarding client site number thirty-something and realising it means another property, another banner and another monthly report — or a client asking her to get rid of the cookie notice, or asking point-blank whether their site is compliant.",
+        "sophistication": "solution_aware",
+        "pains": [
+          {
+            "statement": "A practitioner managing many sites describes the value as being able to understand what's happening across all web properties from one simple dashboard with clear metrics — which is the thing she currently cannot do.",
+            "grounding": "inferred",
+            "provenance": {
+              "source": "https://usefathom.com/features/vs-matomo",
+              "quote": "They are the best Google Analytics alternative who really care about privacy and simplicity. Fathom's simple dashboard with clear metrics makes it easy to understand what's happening across all web properties.",
+              "document_id": null,
+              "evidence_id": "E33",
+              "source_kind": "customer_voice"
+            }
+          },
+          {
+            "statement": "Fathom asserts that agencies need many client dashboards under one account — up to 50, with more available for a fee. This is the vendor describing the buyer, not a buyer describing herself.",
+            "grounding": "vendor_claim",
+            "provenance": {
+              "source": "https://usefathom.com/features/vs-matomo",
+              "quote": "And as an agency, you can add up to 50 client dashboards (if you need more, you can quickly add more for a small additional fee).",
+              "document_id": null,
+              "evidence_id": "E93",
+              "source_kind": "vendor_copy"
+            }
+          },
+          {
+            "statement": "Fathom asserts that running multiple client websites on one plan with a shared pageview pool is a recognised need it answers in its FAQ — implying prospects ask whether one subscription can cover all their sites.",
+            "grounding": "vendor_claim",
+            "provenance": {
+              "source": "https://usefathom.com/",
+              "quote": "## Frequently asked questions Can I use the same plan for multiple websites? Yes. Sites on a plan share your monthly pageviews. The larger pageview plans include more sites, and you can add extra site packs from billing if you need them.",
+              "document_id": null,
+              "evidence_id": "E39",
+              "source_kind": "vendor_copy"
+            }
+          },
+          {
+            "statement": "The compliance exposure she inherits is real in kind: any website owner can be fined a percentage of yearly revenue for data and privacy breaches under GDPR. That is a regulatory fact, not an observation about her behaviour.",
+            "grounding": "vendor_claim",
+            "provenance": {
+              "source": "https://usefathom.com/features/vs-matomo",
+              "quote": "And, because any website owner can be fined a percentage of their yearly revenue for data/privacy breaches, compliance with the EU's GDPR ([Article 83](https://gdpr.fan/a28)) is essential.",
+              "document_id": null,
+              "evidence_id": "E47",
+              "source_kind": "vendor_copy"
+            }
+          },
+          {
+            "statement": "Clients will not log in to a reporting tool and ask her for the numbers instead, so the reporting work stays manual. Hypothesis — no supplied evidence has an agency buyer saying this.",
+            "grounding": "inferred",
+            "provenance": null
+          },
+          {
+            "statement": "Per-site analytics pricing doesn't survive contact with a portfolio of small client sites, so most of them end up with whatever is free and unexamined. Hypothesis; the evidence covers Fathom's own site-pack pricing, not what she pays today.",
+            "grounding": "inferred",
+            "provenance": null
+          }
+        ]
+      }
+    ],
+    "objections": [
+      {
+        "objection": "\"Google Analytics is free, Cloudflare's analytics are free, and you're asking me to pay every month, forever, for less data.\"",
+        "severity": "blocking",
+        "answer": "The only answer in the evidence is a business-model argument, and it should be used as one rather than dressed up as a feature win. Fathom states plainly that there is no free plan, that it has invested in infrastructure it won't run on cheap servers, and that it sells software rather than visitor data; it acknowledges in the same breath that Cloudflare's analytics are free and that its own product is paid. Its framing of why GA is free (that Google makes enough from the personal data customers hand over) is Fathom's characterisation of a rival, not independent verification. Nothing in the evidence shows that paying produces better or more accurate data than a free tool — so this objection is answered on ethics, sustainability and who owns the data, and is not answered on value-for-money.",
+        "grounding": "vendor_claim",
+        "evidence_ids": [
+          "E192",
+          "E240",
+          "E241",
+          "E38",
+          "E91",
+          "E92",
+          "E138"
+        ],
+        "provenance": [
+          {
+            "source": "https://usefathom.com/pricing",
+            "quote": "Do you offer a free plan? Nope, and here's why: we've invested heavily in fast, reliable infrastructure (we don't host Fathom on cheap servers that go offline). Our business model is selling software, not your data, so we've priced Fathom to be sustainable for a very long time.",
+            "document_id": null,
+            "evidence_id": "E192",
+            "source_kind": "vendor_copy"
+          },
+          {
+            "source": "https://usefathom.com/",
+            "quote": "Why isn't Fathom free like Google Analytics? If you aren't paying for a product, you are the product. That's why Google Analytics is free, because they make enough money off the personal data their customers give them by using their analytics service. We charge a small and sustainable fee for Fathom because our business model is selling software, not data. Our customers gladly pay for our service because they know their data is safe with us and their visitors' privacy is protected.",
+            "document_id": null,
+            "evidence_id": "E240",
+            "source_kind": "vendor_copy"
+          }
+        ]
+      },
+      {
+        "objection": "\"My site is small. $15/month is $180 a year to learn roughly what I already know, and the cheapest plan is sized for someone with a hundred thousand pageviews I don't have.\"",
+        "severity": "blocking",
+        "answer": "Not answered. The lowest tier in the evidence is $15/month for up to 100,000 monthly pageviews, there is no free plan by explicit policy, and nothing in the material offers a hobby, low-traffic or annual-discount entry point below that (the only discount evidence is an unqualified 'Get 2 months free (switch to yearly)' link, with no terms established). All the evidence can do is lower the risk of trying — 7-day trial, card not charged until the trial ends, an email before billing starts, cancel from account settings with no contracts — not the price. For a reader whose traffic is a rounding error against the entry tier, this objection stands and copy should not pretend otherwise; it should sell the 50 sites and the kept history that come with the same $15, or leave this reader alone.",
+        "grounding": "inferred",
+        "evidence_ids": [
+          "E159",
+          "E170",
+          "E192",
+          "E171",
+          "E185",
+          "E186",
+          "E244"
+        ],
+        "provenance": []
+      },
+      {
+        "objection": "\"Switching analytics means starting from zero. I'm not throwing away years of history to get a prettier dashboard.\"",
+        "severity": "strong",
+        "answer": "Largely answerable. Fathom imports supported GA4 data into the dashboard, doesn't charge extra for historical imports, keeps the imported history viewable and exportable while the subscription is active, and the import is a few steps — authorise the Google account, pick the sites, run it — with an email when it finishes. Name the limits before the reader finds them: the importer brings in supported daily analytics available through Google's API and explicitly does not recreate every GA4 report or import GA events, and Universal Analytics data was deleted by Google in July 2024, so anything that lived only there is not recoverable by anyone.",
+        "grounding": "vendor_claim",
+        "evidence_ids": [
+          "E22",
+          "E142",
+          "E226",
+          "E227",
+          "E59",
+          "E239",
+          "E229",
+          "E230",
+          "E131"
+        ],
+        "provenance": [
+          {
+            "source": "https://usefathom.com/features",
+            "quote": "Can I import Google Analytics into Fathom? Yes. Our [GA importer](/features/ga-importer) brings GA4 data into Fathom so you can keep the history after Google deletes it. The import is done in a privacy-focused way.",
+            "document_id": null,
+            "evidence_id": "E142",
+            "source_kind": "vendor_copy"
+          }
+        ]
+      },
+      {
+        "objection": "\"One page of data is too thin. The first real question I ask — where did this cohort drop out of the funnel, what path did that user take — sends me straight back to the tool I was leaving.\"",
+        "severity": "blocking",
+        "answer": "Partly answered, and the unanswered part is structural. On the yes side: the single-page dashboard is a deliberate design choice against tools with twelve sections and seventy-plus reports; it covers live and total visitors, pageviews, top pages, referrers, countries, devices, browsers, events and UTM campaigns; filters drill into a campaign, country or single page in a click; saved views and date comparisons persist the questions you ask repeatedly; events carry a monetary value and currency so conversions and revenue sit beside pageviews; Search Console adds search terms, clicks, impressions and positions; and CSV export plus the Analytics API let you take the data elsewhere. On the no side: nothing in the evidence offers funnels, cohort analysis, session recordings or individual user journeys, and Fathom states it does not track individuals and anonymises with hashes and salts — so per-person paths are not a missing feature, they are precluded by the design. A reader who genuinely needs funnels should not be told otherwise.",
+        "grounding": "vendor_claim",
+        "evidence_ids": [
+          "E61",
+          "E62",
+          "E60",
+          "E120",
+          "E121",
+          "E123",
+          "E124",
+          "E141",
+          "E125",
+          "E143",
+          "E130",
+          "E179",
+          "E139"
+        ],
+        "provenance": [
+          {
+            "source": "https://usefathom.com/features/vs-matomo",
+            "quote": "That's why our dashboard is a single page of data. It's manageable, without metrics most website owners don't need or care about.",
+            "document_id": null,
+            "evidence_id": "E61",
+            "source_kind": "vendor_copy"
+          }
+        ]
+      },
+      {
+        "objection": "\"Our reporting runs through Google — Ads, BigQuery, Looker. Analytics that doesn't plug into the ad platforms breaks our attribution, whatever else it does.\"",
+        "severity": "blocking",
+        "answer": "Not answered. There is nothing in the evidence about Google Ads integration, conversion import back to ad platforms, BigQuery export or BI connectors. The closest the material gets is UTM tagging to tell newsletters, ads and social campaigns apart with campaign-level filtering, Google Search Console linkage, and CSV export plus an Analytics API on every plan — plus the fact that Fathom can be run alongside existing analytics during the trial, which is a way to defer the decision rather than resolve it. For a buyer whose job is managing paid spend, this objection cannot be beaten with what we currently know.",
+        "grounding": "inferred",
+        "evidence_ids": [
+          "E125",
+          "E143",
+          "E130",
+          "E179",
+          "E185",
+          "E191"
+        ],
+        "provenance": []
+      },
+      {
+        "objection": "\"Our policy is that EU visitor data stays in the EU. You're a Canadian company storing analytics on US infrastructure.\"",
+        "severity": "strong",
+        "answer": "Strongly answerable for most buyers, with one caveat to state rather than hide. EU isolation is on by default for every customer on every plan with nothing to set up, EU visitor traffic is routed through European-owned infrastructure, the IP address — personal data under GDPR — is stripped inside the EU and never reaches US infrastructure, EU servers are in Falkenstein, Helsinki and Nuremberg, the UK, Switzerland, Norway, Iceland and Liechtenstein are treated as EU, Canada is covered by the EU adequacy decision, privacy lawyers vetted how data is collected and stored, and the feature was built with EU legal experts. For a hard EU-only mandate, the honest position is that anonymised analytics are stored on US servers by default, and the route to all-traffic-through-the-EU is Extreme EU Isolation via the cdn-eu script URL. Everything here is Fathom's own statement; the EU-only comparison claim and the 'up to 50% faster than EU-only infrastructure' figure are the vendor's framing with no methodology given.",
+        "grounding": "vendor_claim",
+        "evidence_ids": [
+          "E214",
+          "E215",
+          "E216",
+          "E217",
+          "E218",
+          "E9",
+          "E103",
+          "E106",
+          "E98",
+          "E107",
+          "E99",
+          "E110",
+          "E10",
+          "E102",
+          "E118",
+          "E105",
+          "E41",
+          "E97",
+          "E109"
+        ],
+        "provenance": [
+          {
+            "source": "https://usefathom.com/",
+            "quote": "Why is Fathom better than European-only providers? Our [data isolation](/features/data-isolation) routes EU visitor traffic through EU infrastructure. Visitors elsewhere are routed through our global infrastructure, so they can connect closer to home. This helps keep analytics fast for visitors around the world.",
+            "document_id": null,
+            "evidence_id": "E41",
+            "source_kind": "vendor_copy"
+          }
+        ]
+      },
+      {
+        "objection": "\"Procurement needs a signed DPA, a SOC 2 or ISO report, a sub-processor list and a pen test. I can't buy on a vendor's assurance that lawyers looked at it.\"",
+        "severity": "blocking",
+        "answer": "Not answered. The evidence contains compliance assertions — GDPR, CCPA, ePrivacy, PECR 'and more' — a statement that privacy lawyers vetted how data is collected and stored, that Data Isolation was built in collaboration with EU legal experts, that Canada is covered by the EU adequacy decision, and one named sub-processor (Bunny.net as the EU-owned CDN). There is no independent audit, certification, attestation, DPA or security report anywhere in the ledger, and no sales call or live demo is available to walk a security reviewer through it. For an enterprise or regulated buyer this is a dead end with current knowledge; the logo wall (Microsoft, IBM, GitHub, NYT, banks and governments as unnamed categories) is logo-only attribution and will not survive a security questionnaire.",
+        "grounding": "inferred",
+        "evidence_ids": [
+          "E11",
+          "E117",
+          "E118",
+          "E105",
+          "E10",
+          "E49",
+          "E50"
+        ],
+        "provenance": []
+      },
+      {
+        "objection": "\"You won't even get on a call, and I have to hand over a card just to look around. Seven days is not an evaluation.\"",
+        "severity": "strong",
+        "answer": "Partly answered, and the gap is deliberate on Fathom's side. Fathom states outright that it doesn't do sales calls or live demos, and offers instead a 10-minute dashboard walkthrough video, a live demo dashboard you can click around without signing up, full documentation and email support from real humans. On the card: the trial is 7 days, the card isn't charged until it ends, Fathom emails before billing starts, cancellation is self-serve in account settings with no contracts, and the trial can be run alongside existing analytics — plus install is verifiable in minutes because the dashboard is real-time, so the evaluation starts the same day rather than on day three. What the evidence does not offer is a longer trial, an extension, or any human walkthrough for a buyer who needs to bring colleagues along.",
+        "grounding": "vendor_claim",
+        "evidence_ids": [
+          "E191",
+          "E63",
+          "E171",
+          "E185",
+          "E186",
+          "E181",
+          "E219",
+          "E2"
+        ],
+        "provenance": [
+          {
+            "source": "https://usefathom.com/pricing",
+            "quote": "Can I explore Fathom before signing up? We don't do sales calls or live demos, but our software is ridiculously easy to use. You can watch our [10-minute walkthrough](/video/dashboard-walkthrough), click around the [live dashboard](https://app.usefathom.com/demo) or give Fathom a 7-day free trial alongside your existing analytics. Every feature is [documented](/docs), and if you have specific questions, we're here by [email](/about/contact).",
+            "document_id": null,
+            "evidence_id": "E191",
+            "source_kind": "vendor_copy"
+          }
+        ]
+      },
+      {
+        "objection": "\"Pricing by pageviews means a good month costs me money, or my dashboard gets switched off mid-launch.\"",
+        "severity": "strong",
+        "answer": "Answerable, and the policy is unusually specific. Occasional traffic spikes are never charged for, accounts aren't shut off on first hitting a limit, and for sustained overage Fathom emails about a larger plan, sends several reminders plus extra time before pausing dashboard and API access, and keeps collecting data throughout. Tier changes need two consecutive months over the limit before Fathom gets in touch, and two consecutive months under before you can move down yourself from billing settings. Pageviews are pooled across all sites, and traffic you block — blocked pages, and local, staging and test environments excluded via allowed domains — does not count against the allotment. One cost to disclose rather than bury: custom events, whether fired on the site or sent through the API, each count towards the monthly pageview allowance, so heavy event tracking consumes the plan.",
+        "grounding": "vendor_claim",
+        "evidence_ids": [
+          "E42",
+          "E187",
+          "E190",
+          "E183",
+          "E145",
+          "E221",
+          "E144",
+          "E188",
+          "E136"
+        ],
+        "provenance": [
+          {
+            "source": "https://usefathom.com/pricing",
+            "quote": "What happens if I hit my pageview limit? We'll never turn your analytics off for occasional traffic spikes. If you stay well over your limit, we'll email you about a larger plan, and you decide whether to upgrade or cancel (no hard feelings either way). We send a few friendly reminders and extra time before we pause dashboard and API access, and we keep collecting your data throughout. See our [plan-limits guide](/docs/account/limits) for the details.",
+            "document_id": null,
+            "evidence_id": "E187",
+            "source_kind": "vendor_copy"
+          }
+        ]
+      },
+      {
+        "objection": "\"I'd rather self-host — Matomo or similar on a box I control, data genuinely mine, no monthly bill.\"",
+        "severity": "strong",
+        "answer": "Partly answered, and the first half must be conceded: Fathom cannot be self-hosted, and says so directly, because it processes pageviews on a global CDN and EU visitor data in the EU. What the evidence offers against self-hosting is work avoided and vendor-claimed comparisons: GDPR compliance with no setup or knowledge required, by default on every plan, versus a self-hosted tool whose GDPR manager and IP anonymisation need configuration and knowledge to use correctly; cookie consent still required unless several steps are taken; a GA import that needs an API key generated in Google Cloud's console; your own CDN to host the script for comparable global speed; a 20KB-plus script against a few-KB deferred one; and a hosted/cloud retention cap of 24 months against retention for as long as you're a customer. Every one of those comparisons is Fathom's own characterisation of a rival, not independent verification — do not present it as a benchmark.",
+        "grounding": "vendor_claim",
+        "evidence_ids": [
+          "E137",
+          "E51",
+          "E78",
+          "E99",
+          "E48",
+          "E72",
+          "E58",
+          "E68",
+          "E67",
+          "E64",
+          "E53",
+          "E54",
+          "E55",
+          "E40"
+        ],
+        "provenance": [
+          {
+            "source": "https://usefathom.com/features",
+            "quote": "Can I host the data locally? No. Fathom is a hosted product so we can process pageviews on a global CDN, keep dashboards fast, and process EU visitor data in the EU. Everyone else is routed to the closest region.",
+            "document_id": null,
+            "evidence_id": "E137",
+            "source_kind": "vendor_copy"
+          }
+        ]
+      },
+      {
+        "objection": "\"My history only exists while I keep paying, and cancelling queues it for deletion. That's lock-in — from a two-person bootstrapped company I'd be trusting with a decade of data.\"",
+        "severity": "strong",
+        "answer": "Half answered. Exit is real and self-serve: data can be exported from the day you started until now, even decades of it, via CSV download or the Analytics API, exports and email reports are unlimited on every plan, and you can export before cancelling with no contracts and no phone call. But the terms are exactly as the objection states — retention is forever only as long as you are a paying customer, and cancellation queues the data for deletion, with the obligation to export sitting on the customer. On vendor durability, the evidence says Fathom is independent and bootstrapped with no VC, bank loans or outside shareholders and was started by two creators; that is the whole of it. Nothing in the evidence speaks to business continuity, escrow or what happens to data if Fathom stops operating, so the 'what if you fold' half of this objection cannot be beaten with what we know.",
+        "grounding": "inferred",
+        "evidence_ids": [
+          "E19",
+          "E130",
+          "E180",
+          "E186",
+          "E56",
+          "E40",
+          "E55",
+          "E174",
+          "E135",
+          "E37",
+          "E94"
+        ],
+        "provenance": []
+      },
+      {
+        "objection": "\"I'd have to get into the site's head tag, and my developer is booked for weeks — or it's me and I'd rather not touch the template.\"",
+        "severity": "mild",
+        "answer": "Fully answerable. Installation is one line of JavaScript in the header — a script tag pointing at cdn.usefathom.com/script.js with your Site ID and defer — or an integration if you'd rather not touch templates; the WordPress route needs no template editing at all, and there are documented integrations for WordPress, Ghost, Webflow, Next.js, Nuxt, Vue, Gatsby, Drupal, Carrd, Discourse and more. Because the dashboard is real-time, verification is visiting your own site and watching the Realtime count move. Nothing here requires a sprint ticket.",
+        "grounding": "inferred",
+        "evidence_ids": [
+          "E225",
+          "E20",
+          "E133",
+          "E96",
+          "E132",
+          "E21",
+          "E219",
+          "E44",
+          "E134",
+          "E64"
+        ],
+        "provenance": []
+      },
+      {
+        "objection": "\"How would I know the numbers are even real? My last dashboard was full of bot referrals and my own visits.\"",
+        "severity": "mild",
+        "answer": "Answerable. Bots, crawlers, DDoS junk and other non-human traffic are filtered out so the dashboard reflects people who actually visited, with automatic bot filtering on every plan, and data appears in real time rather than a day or two later. The site firewall blocks or allows by page, IP (including IPv4 wildcards), referrer, domain, country and event name, and allowed domains filter out any hostname not on the list, including local, staging and test environments. Your own visits can be excluded by IP, or per-browser by running fathom.blockTrackingForMe() in the console, or by honouring DNT. Spam already in the reports is removed through Data removals in the site's Manage settings — the firewall only stops future visits. Note that an empty block or allow list filters nothing, and a tight allow list of exact event names will silently drop dynamically named events.",
+        "grounding": "vendor_claim",
+        "evidence_ids": [
+          "E119",
+          "E178",
+          "E144",
+          "E145",
+          "E148",
+          "E149",
+          "E150",
+          "E220",
+          "E222",
+          "E223",
+          "E140",
+          "E139",
+          "E157",
+          "E158",
+          "E155"
+        ],
+        "provenance": [
+          {
+            "source": "https://usefathom.com/features",
+            "quote": "How do I opt out of being counted? Fathom doesn't track individuals. We anonymise data with [hashes and salts](/docs/troubleshooting/hashes-salts). If you still don't want your own visits on a dashboard, [block your IP](/docs/script/firewall#ip) or run a small script from your browser console. You can also set Fathom to [honour DNT](/docs/script/script-advanced#dnt).",
+            "document_id": null,
+            "evidence_id": "E139",
+            "source_kind": "vendor_copy"
+          }
+        ]
+      }
+    ]
+  },
+  "note": "No application artifact or campaign updated by this experiment.",
+  "review": {
+    "adopted": false,
+    "reason": "Faster preliminary profile, but omits the distinct agency segment explicitly supported by the source material and replaces it with a broader compliance segment overlapping the privacy segment. Insufficient evidence of equal commercial coverage on this single comparison. Keep deep in production.",
+    "observed_balanced_seconds": 145.719,
+    "production_tier_unchanged": true,
+    "strict_ab": false,
+    "timing_caveat": "The saved artifact includes additional source-reference metadata absent before initial persistence; this is not a strict isolation of the tier effect. No production speed gain inferred."
+  }
+}

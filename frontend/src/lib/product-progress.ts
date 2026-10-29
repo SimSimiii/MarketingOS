@@ -1,5 +1,20 @@
 /** Presentation only: keep diagnostics intact, but describe work in customer terms.
  * Used for both saved history and current progress, including older job receipts. */
+export function executionReview(status: string, result: Record<string, unknown> | null, error: string | null) {
+  const report = (result?.report ?? {}) as { delivered?: number; promised?: number; emails?: { clean?: boolean; landed?: boolean; understood?: boolean; unresolved?: unknown[] }[] };
+  const reasons: string[] = [];
+  const partial = (report.delivered ?? 0) < (report.promised ?? 0);
+  if (status === "completed") {
+    if (error) reasons.push("The run retained drafts after an interrupted step.");
+    if (partial) reasons.push("Some requested deliverables are missing.");
+    if (report.emails?.some((email) => email.clean === false)) reasons.push("Some drafts retain unresolved automatic checks.");
+    else if (report.emails?.some((email) => email.unresolved?.length)) reasons.push("Some drafts retain unresolved strategy or review findings.");
+    if (report.emails?.some((email) => email.landed === false || email.understood === false)) reasons.push("Some drafts still need editorial review.");
+    if (["degraded", "budget_exhausted", "cancelled", "failed"].includes(String(result?.run_status)) && !reasons.length) reasons.push("The run finished with unresolved review requirements.");
+  }
+  return { needsReview: reasons.length > 0, label: reasons.length ? (partial ? "Partial delivery" : "Drafts need review") : undefined, reasons };
+}
+
 const ACTIVITIES: Record<string, string> = {
   knowledge_compiler: "Preparing brand knowledge",
   strategist: "Planning the campaign",
@@ -31,6 +46,8 @@ const DIAGNOSTIC = /\b(?:input_tokens|output_tokens|cache_read_tokens|prompt_cha
 
 export function progressText(message: string | null | undefined, fallback = "Preparing the next step…"): string {
   if (!message) return fallback;
+  message = message.replace(/\s*[-–—]\s*\d+(?:[.,]\d+)?% of them are estimated to bite\b/gi,
+    " — selected audience hypothesis; response is unmeasured");
   return RECEIPT.test(message) || DIAGNOSTIC.test(message) ? fallback : message;
 }
 

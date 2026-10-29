@@ -273,6 +273,7 @@ async def test_the_run_stores_the_report_and_the_brief_it_worked_from(
     session: Session, provider: RoleScriptedProvider
 ):
     campaign = make_campaign(session)
+    campaign.cta_url = "https://notewright.test/signup"
     execution = await CampaignOrchestrator(session, provider).run(campaign)
 
     assert execution.result is not None

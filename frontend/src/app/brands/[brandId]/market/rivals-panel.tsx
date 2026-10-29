@@ -45,6 +45,16 @@ function ProfileDetail({ profile }: { profile: RivalProfile }) {
   }
   return (
     <div className="space-y-2 text-xs">
+      {profile.why && profile.rationale_status === "source_linked_hypothesis" && (
+        <p><span className="text-muted-foreground">Fit hypothesis based on read pages: </span>{profile.why}</p>
+      )}
+      {!!profile.rationale_sources?.length && (
+        <div className="flex flex-wrap gap-2">
+          {profile.rationale_sources.map((url) => <a key={url} href={url} target="_blank" rel="noreferrer noopener" className="underline">Source</a>)}
+        </div>
+      )}
+      {profile.discovery_reason && <p className="text-muted-foreground">Original discovery hypothesis, unverified: {profile.discovery_reason}</p>}
+      {profile.reused && <p className="text-muted-foreground">Pages checked again; unchanged extraction reused.</p>}
       {profile.promise && (
         <p>
           <span className="text-muted-foreground">They promise: </span>
@@ -155,7 +165,7 @@ function RivalRow({
           </div>
           <span className="mt-2 inline-flex items-center gap-1.5 text-xs text-violet-300">{open ? "Hide competitor details" : "View competitor details"}<ChevronDown className={cn("size-3.5", open && "rotate-180")} /></span>
         </button>
-        {rival.why && <div className="order-3 w-full"><ExpandableText text={rival.why} className="text-xs text-muted-foreground" limit={180} /></div>}
+        {(profile?.why || rival.why) && <div className="order-3 w-full"><ExpandableText text={profile?.why ? `Fit hypothesis: ${profile.why}` : "Discovery hypothesis — open details to review the sources."} className="text-xs text-muted-foreground" limit={180} /></div>}
 
         <div className="order-last flex w-full shrink-0 justify-end gap-1 sm:order-none sm:w-auto">
           <Button size="sm" variant="ghost" disabled={busy} onClick={toggleMute}>
@@ -168,6 +178,7 @@ function RivalRow({
       </div>
       {open && (
         <div className="mt-3 border-t border-hairline pt-3">
+          {!profile?.verified && rival.why && <p className="mb-2 text-xs text-muted-foreground">Original discovery hypothesis, unverified: {rival.why}</p>}
           {profile ? (
             <ProfileDetail profile={profile} />
           ) : (

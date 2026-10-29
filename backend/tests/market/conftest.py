@@ -96,7 +96,7 @@ class ScriptedCrawler:
         self._pages = pages
         self.crawled: list[str] = []
 
-    async def crawl(self, start_url: str) -> list[RawDocument]:
+    async def crawl(self, start_url: str, *, focus: str = "") -> list[RawDocument]:
         self.crawled.append(start_url)
         if start_url not in self._pages:
             raise LoaderError(f"Failed to fetch '{start_url}'", url=start_url)

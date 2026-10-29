@@ -5,7 +5,7 @@ from uuid import uuid4
 import pytest
 
 import app.market.qualification as qualification_module
-from app.knowledge.ledger import Evidence, EvidenceKind, EvidenceLedger
+from app.knowledge.ledger import Evidence, EvidenceContext, EvidenceKind, EvidenceLedger
 from app.market.audience_research import AudienceProblem, AudienceResearch
 from app.market.capabilities import (
     UNLICENSED_NOTE,
@@ -283,6 +283,7 @@ def test_capability_profile_derives_positive_support_only_from_ledger_evidence()
                 claim="A hosted text agent uses a reusable per-client configuration.",
                 verbatim="Deploy a text agent with reusable per-client configuration.",
                 source="product.md",
+                context=EvidenceContext(subject="Text agent", claim_scope="capability"),
             )
         ]
     )
@@ -291,11 +292,16 @@ def test_capability_profile_derives_positive_support_only_from_ledger_evidence()
         ledger, knowledge_id=knowledge_id, knowledge_version=4
     )
 
-    assert profile.state_of("text_chat_agent") is CapabilityState.VERIFIED
-    assert profile.state_of("per_client_configuration") is CapabilityState.VERIFIED
+    assert len(profile.capabilities) == 1
+    assert profile.capabilities[0].label == ledger.entries[0].claim
+    assert profile.capabilities[0].state is CapabilityState.VERIFIED
     assert profile.capability("voice_telephony") is None
     assert profile.state_of("voice_telephony") is CapabilityState.UNKNOWN
-    assert profile.capability("text_chat_agent").evidence[0].quote == ledger.entries[0].verbatim
+    assert profile.capabilities[0].evidence[0].quote == ledger.entries[0].verbatim
+    unscoped = EvidenceLedger(entries=[ledger.entries[0].model_copy(update={"context": None})])
+    assert not derive_capability_profile(
+        unscoped, knowledge_id=knowledge_id, knowledge_version=4
+    ).capabilities
 
 
 def test_profile_editor_cannot_create_verified_capability_or_customer_claim_without_evidence() -> None:
@@ -601,7 +607,7 @@ def test_recommendation_excludes_withheld_evidence_from_writer_allowlist() -> No
     assert "The product handles voice calls." not in result.forbidden_claims
 
 
-def test_recommendation_excludes_contested_evidence_even_when_ranked_support() -> None:
+def test_recommendation_keeps_valid_evidence_even_with_competitive_overlap() -> None:
     ledger = _ledger()
     profile = derive_capability_profile(ledger, knowledge_id=uuid4(), knowledge_version=1)
     research = AudienceResearch(
@@ -618,13 +624,44 @@ def test_recommendation_excludes_contested_evidence_even_when_ranked_support() -
         dossier, profile=profile, research=research, companies=[], ledger=ledger
     )
 
-    assert "E-withheld" in result.forbidden_evidence_ids
-    assert "E-withheld" not in result.allowed_evidence_ids
+    assert "E-withheld" not in result.forbidden_evidence_ids
+    assert "E-withheld" in result.allowed_evidence_ids
+
+
+def test_narrow_segment_recommendation_does_not_imply_a_nonexistent_prospect_list():
+    ledger = _ledger()
+    profile = derive_capability_profile(ledger, knowledge_id=uuid4(), knowledge_version=1)
+    research = AudienceResearch(audience_name="Founders", candidate_kind="core")
+    dossier = _dossier()
+    dossier.problem_fits.append(ProblemFit(
+        problem_id="P2", verdict=FitVerdict.PARTIAL, evidence_ids=["E-allowed"],
+        caveat="A workflow is supported; customer outcomes are unmeasured.",
+    ))
+    result = recommend_campaign(dossier, profile=profile, research=research, companies=[], ledger=ledger)
+    assert result.state is RecommendationState.RECOMMENDED_NARROW
+    assert result.qualified_companies == []
+    assert "No companies have been qualified" in result.recommended_next_action
+    assert "scope limits" in result.recommended_next_action
 
 
 def test_required_unsupported_capability_forces_no_go_even_with_positive_problem_fit() -> None:
     ledger = _ledger()
     profile = derive_capability_profile(ledger, knowledge_id=uuid4(), knowledge_version=1)
+    # Synthetic product boundary explicitly maintained in the profile. Missing
+    # documentation alone must not manufacture this unsupported capability.
+    profile = normalize_capability_profile(
+        profile.model_copy(update={"capabilities": [
+            *profile.capabilities,
+            ProductCapability(
+                id="full_saas_backend", label="Hosted SaaS backend",
+                state=CapabilityState.UNSUPPORTED,
+                note="Synthetic fixture: the product supplies text agents, not a hosted SaaS backend.",
+            ),
+        ]}),
+        ledger=ledger, knowledge_id=profile.knowledge_id,
+        knowledge_version=profile.knowledge_version,
+    )
+    assert profile.state_of("full_saas_backend") is CapabilityState.UNSUPPORTED
     research = AudienceResearch(
         audience_name="Voice-first dental practices",
         candidate_kind="adjacent",
@@ -667,3 +704,19 @@ def test_company_groups_are_persistable_recommendation_inputs() -> None:
 
     assert result.state is RecommendationState.DISCOVERY_ONLY
     assert [item.name for item in result.adjacent_companies] == ["Example Agency"]
+
+
+def test_synthetic_unknown_product_support_requests_research_instead_of_rejecting_audience() -> None:
+    ledger = _ledger()
+    profile = derive_capability_profile(ledger, knowledge_id=uuid4(), knowledge_version=1)
+    research = AudienceResearch(
+        audience_name="Synthetic multilingual training centres",
+        candidate_kind="adjacent",
+        definition=AudienceDefinition(required_product_capabilities=["undocumented_translation"]),
+        problems=[AudienceProblem(id="P1", statement="Translate intake forms")],
+    )
+    result = recommend_campaign(_dossier(), profile=profile, research=research, companies=[], ledger=ledger)
+    assert result.state is RecommendationState.DISCOVERY_ONLY
+    assert result.readiness != "NO_GO"
+    assert "undocumented_translation" in result.recommended_next_action
+    assert any("unknown" in reason for reason in result.reasons)

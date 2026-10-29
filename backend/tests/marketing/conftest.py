@@ -240,22 +240,14 @@ def varied_draft(call: int) -> str:
 
 
 def blind_read(pull: int = 8, would_act: bool = True, **overrides: Any) -> str:
-    """One cold reader's report, written the way the real one answers.
-
-    `pull` is stated as the score the test means and turned back into the click
-    frequency that produces it, because that frequency is what the reader
-    actually reports now and what `BlindRead` derives the score from - see
-    `app.marketing.reader.pull_from_clicks`. A fixture that sets `pull`
-    directly would be testing a field the validator overwrites.
-    """
+    """One current simulated reading, with a direct editorial assessment."""
     payload = {
         "opened": True,
         "stopped_at": "",
         "what_it_sells": "a faster way to write my release notes",
         "biggest_doubt": "whether my team would switch",
         "would_act": would_act,
-        "opens_in_100": 30,
-        "clicks_in_100": clicks_for(pull),
+        "pull": pull,
         "to_click_it_would_have_to": "tell me what it costs once the credits run out",
         "fixes": [],
     }
@@ -324,7 +316,7 @@ def inbox_verdict(*opens: int) -> str:
     return json.dumps(
         {
             "scores": [
-                {"option": index, "opens_in_100": value, "why": "specific"}
+                {"option": index, "assessment": value / 10, "why": "specific"}
                 for index, value in enumerate(opens, start=1)
             ]
         }
@@ -421,7 +413,8 @@ def artifacts_fixture() -> KnowledgeArtifacts:
         offer=OfferSheet(
             plans=[Plan(name="Team", price="$29/month")],
             free_entry="1,500 free credits, no card",
-            calls_to_action=[CallToAction(label="Start the trial", intent="self-serve signup")],
+            calls_to_action=[CallToAction(label="Start the trial", intent="self-serve signup",
+                                         url="https://notewright.test/signup")],
             purchase_motion="self-serve",
         ),
         evidence=EvidenceLedger(

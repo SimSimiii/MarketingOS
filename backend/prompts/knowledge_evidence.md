@@ -16,6 +16,11 @@ you out on it: a number, a price, a named customer, an integration, a guarantee,
 a specific capability. "Powerful and easy to use" is not a fact — it is an adjective, and no
 email needs your permission to be vague.
 
+Keep the company's identity and relevant company-wide facts, but do not inventory every
+employee, their location, team-directory filters, sharing buttons or article navigation.
+An implementation built by a customer is not a native product capability. Keep its actual
+owner in subject and use third_party when describing the third-party tool itself.
+
 Prefer the specific. "25 models across 9 providers" is worth ten entries about flexibility.
 "1,500 free credits, no card" is worth every sentence ever written about value.
 
@@ -46,6 +51,10 @@ cost the plan's price. If the page says “Pro $29/month, billed annually, inclu
 record that as a Pro offer with those terms; never “exports cost $29/month”. If different
 pages disagree, retain their distinct subjects/conditions/dates and note the conflict; do
 not silently select a current price. A retrieval date does not prove the terms are current.
+Do not omit the base price of a named plan while extracting its included features. When
+the name is a heading above the amount, copy the contiguous Markdown block, including
+its original newlines and heading markers. Do not reconstruct “Plan: $29/month” when the
+source does not contain that punctuation. Keep any billing conditions in the same block.
 
 Vendor comparison pages describe the vendor's assertions about rivals. Keep rival claims
 attributed and scoped to that comparison; do not turn them into facts about this product or
@@ -55,6 +64,13 @@ supports what the product does, not faster work, more sales or other unmeasured 
 Only record novelty or a launch when dated launch evidence actually supports it; “new” on an
 undated marketing page does not establish a recent release. A real quotation is necessary,
 but does not by itself entail a stronger paraphrase.
+
+For `customer_outcome`, name the customer in `subject` and retain the actual workflow,
+population, tools and measurement period in `conditions`. A response rate from a feedback
+campaign is not evidence of an integration's performance. In comparison tables, include
+enough header text to identify the company and plan for each amount. When a table cell or
+short excerpt cannot establish those bindings, record the ambiguity in `limitations`
+instead of reconstructing a standalone feature price.
 
 **`kind`** — `metric` for measurable results, `price` for costs and plans, `testimonial` for
 something a customer said, `customer` for a named user, `integration` for what it connects to,

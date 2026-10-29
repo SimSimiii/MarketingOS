@@ -1,0 +1,137 @@
+{
+  "status": "implementation_validated",
+  "date": "2026-10-18",
+  "source_case": "docs/optimization/tally-reliability",
+  "proposal": "docs/reviews/proposition-architecture-qualite-2026-10-17.md",
+  "baseline_archive": "docs/optimization/architecture-v2/baseline-code.zip",
+  "baseline_sha256": "7551be87a3ac482bdfe2c6973115d17e162f76472ab107ca340a23b51d9f1498",
+  "quality_history": [
+    {
+      "iteration": 2,
+      "execution_id": "round2/b2b-acquisition/proposed",
+      "track": "b2b-planned",
+      "score": 86,
+      "grid": [
+        25,
+        18,
+        15,
+        12,
+        7,
+        9
+      ],
+      "comparable": false,
+      "strengths": [
+        "Read-only customer repair-stage view is specific and supported",
+        "Sample board is a concrete next step"
+      ],
+      "remaining_defect": "Procedural wording can be shortened during ordinary brand review.",
+      "evidence": "comparisons/round2/b2b-acquisition/proposed/email-1.txt",
+      "next_action": "Accepted for observed scope after ordinary brand review; no further model calls."
+    },
+    {
+      "iteration": 3,
+      "execution_id": "production-direct/activation/direct",
+      "track": "activation-direct",
+      "score": 88,
+      "grid": [
+        25,
+        18,
+        16,
+        13,
+        7,
+        9
+      ],
+      "comparable": false,
+      "strengths": [
+        "Customer relationship and first-folder indexing limit preserved",
+        "Known connect-drive destination; two calls"
+      ],
+      "remaining_defect": "Indexing explanation repeats; permissions and providers remain unknown rather than invented.",
+      "evidence": "comparisons/production-direct/activation/direct/email-1.txt",
+      "next_action": "Accepted for observed scope after ordinary brand review; no further model calls."
+    },
+    {
+      "iteration": 4,
+      "execution_id": "production-direct/consumer-offer/direct",
+      "track": "consumer-direct",
+      "score": 89,
+      "grid": [
+        24,
+        19,
+        17,
+        13,
+        7,
+        9
+      ],
+      "comparable": false,
+      "strengths": [
+        "Clear beginner hand-building offer and scope limits",
+        "Coherent programme CTA and verified rendering"
+      ],
+      "remaining_defect": "Tighten weekend headline; session details remain unknown.",
+      "evidence": "comparisons/production-direct/consumer-offer/direct/email-1.txt",
+      "next_action": "Accepted for observed scope after ordinary brand review; no further model calls."
+    }
+  ],
+  "next_action": "Implementation complete. Use Automatic for eligible single emails and Planned for sequences or ambiguous actions. Supply real announcement/service facts where material is insufficient.",
+  "validation": {
+    "backend_full_passed": 1709,
+    "backend_warnings": 2,
+    "final_targeted_passed": [
+      70,
+      75,
+      19
+    ],
+    "targeted_counts_overlap": true,
+    "frontend_passed": 27,
+    "frontend_typecheck": "passed",
+    "frontend_lint": "passed",
+    "frontend_build": "passed",
+    "api_schema": "current",
+    "ruff": "passed",
+    "migration": "applied with verified backup; existing rows unchanged",
+    "ui": "1280/390 px, no overflow; intent and mode payload intercepted; CTA destinations checked"
+  },
+  "report": "docs/reviews/architecture-quality-implementation-2026-10-18.md",
+  "quality_best": {
+    "by_track": {
+      "b2b-planned": {
+        "score": 86,
+        "iteration": 2,
+        "execution_id": "round2/b2b-acquisition/proposed"
+      },
+      "activation-direct": {
+        "score": 88,
+        "iteration": 3,
+        "execution_id": "production-direct/activation/direct"
+      },
+      "consumer-direct": {
+        "score": 89,
+        "iteration": 4,
+        "execution_id": "production-direct/consumer-offer/direct"
+      }
+    }
+  },
+  "quality_verdict": "Usable after ordinary brand review in inspected B2B, activation and B2C cases; broader sellability and conversion unproven.",
+  "evaluation_usage": {
+    "provider_attempts": 117,
+    "reported_tokens": 2861510,
+    "includes": [
+      "common dossier",
+      "excluded initial diagnostic",
+      "three-arm comparison",
+      "anonymous swapped-order judgments",
+      "two production-direct runs"
+    ],
+    "billing": "subscription quota; catalogue estimates are not API charges"
+  },
+  "comparison_limitations": [
+    "One stochastic output per arm/case; qualitative not statistical.",
+    "Tally baseline blocked by subsequently fixed POST gate.",
+    "Thin-service proposed contaminated by homonym; excluded, identity guard fixed.",
+    "Thin-service judging stopped at 24-attempt ceiling; no retry.",
+    "Cart reminder fixture count ambiguous; frozen original preserved.",
+    "No full balanced-preset comparison; selected model and limited policies.",
+    "Final deterministic corrections have regression coverage; frozen outputs are not all final-code outputs."
+  ]
+}

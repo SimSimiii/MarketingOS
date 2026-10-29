@@ -1,0 +1,22 @@
+{
+  "verdict": "revise",
+  "failure_mode": "copy",
+  "strategy_gap": "",
+  "brief_drift": "The “PRODUCT LAUNCH” and “Today, we’re introducing Tally” framing drifts from the brief by presenting the documented capability as a new launch without evidence of novelty.",
+  "unspent_evidence": [],
+  "edits": [
+    {
+      "line": "PRODUCT LAUNCH / Today, we’re introducing Tally: an online form builder that can send new submissions into your automation workflows through webhooks.",
+      "problem": "The combined framing makes an unsupported time-sensitive launch claim, even though the evidence establishes only an existing documented capability.",
+      "fix": "Remove the novelty claim while preserving the early orientation that Tally is an online form builder and that webhooks send new submissions into automation workflows.",
+      "severity": "blocking"
+    },
+    {
+      "line": "The webhook documentation covers the capability, delivery details, and timeout so you can decide whether it fits the workflows your agency builds.",
+      "problem": "“Delivery details” is vague and can suggest that the documentation answers payload-format, authentication, replay, or response-handling questions that the supplied evidence does not establish.",
+      "fix": "Limit the promised inspection payoff to the supported questions: new-submission delivery, event and response inspection, failed-attempt retries, and the 10-second endpoint constraint.",
+      "severity": "major"
+    }
+  ],
+  "summary": "Keep the documented webhook proposition, but remove the unsupported launch framing and bound the documentation promise to the implementation details the evidence actually supports."
+}

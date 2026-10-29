@@ -1,0 +1,85 @@
+{
+  "status": "bounded_work_complete_quality_gap_remains",
+  "date": "2026-10-17",
+  "source_snapshot": "docs/reviews/tally-retest-2026-10-16/inputs",
+  "provider_attempt_budget": 12,
+  "provider_attempts_spent": 7,
+  "product_database_modified": false,
+  "quality_history": [
+    {
+      "iteration": 1,
+      "execution_id": "20261017T030855006005Z",
+      "score": 76,
+      "comparable": true,
+      "comparison_track": "current-dossier-limited-review-20261017",
+      "strengths": [
+        "Documented webhook capability, bounded timeout and source-licensed guide CTA",
+        "No unsupported launch, installed stack, native connector setup or maintenance outcome in the delivered rewrite",
+        "Desktop and real 390px viewport rendering inspected; CTA points to saved official guide"
+      ],
+      "remaining_defect": "Weak buyer decision and technical inventory; the paid run missed an existing example payload resource. Historical replay and guaranteed field compatibility remain unestablished.",
+      "evidence": "docs/optimization/tally-reliability/review/quality-review.json",
+      "next_action": "Correct existing-source retrieval before another generation.",
+      "comparable_to_historical": false
+    },
+    {
+      "iteration": 2,
+      "execution_id": null,
+      "score": null,
+      "comparable": false,
+      "reason": "Deterministic source retrieval and receipt correction after the bounded model run; no new generation, no score increase.",
+      "next_action": "Finish full regression suite; a future bounded qualitative check is needed to assess the new source context effect.",
+      "score_change": null
+    }
+  ],
+  "quality_best": {
+    "score": 76,
+    "iteration": 1,
+    "execution_id": "20261017T030855006005Z",
+    "comparison_track": "current-dossier-limited-review-20261017"
+  },
+  "next_action": "The generator corrections are implemented and scripted checks pass. A future bounded real-model replay is needed to assess the final source-retrieval change; retain the known unknowns about historical replay and field compatibility. Before using new persistent features in the app, plan a backed-up schema migration; the original local DB remains unchanged.",
+  "interpretation_version": 3,
+  "qualitative_trial": "completed_degraded",
+  "validation": {
+    "positioning_acceptance": {
+      "passed": 15,
+      "failed": 0
+    },
+    "facts_scope_acceptance": {
+      "corrected": 8,
+      "missing": 0
+    },
+    "frontend_prior_pass": {
+      "tests": 25,
+      "lint": "passed",
+      "typecheck": "passed",
+      "build": "passed"
+    },
+    "new_proof_browser_checks": "passed",
+    "full_backend": {
+      "passed": 1671,
+      "failed": 0,
+      "warnings": 2,
+      "seconds": 141.07
+    },
+    "migration_tempdb": "passed",
+    "api_contract": "passed",
+    "frontend": {
+      "tests_passed": 27,
+      "lint": "passed",
+      "typecheck": "passed",
+      "build": "passed"
+    },
+    "ruff": "passed",
+    "existing_sources_and_forecast": {
+      "passed": 27,
+      "failed": 0,
+      "model_calls": 0
+    },
+    "code_diff_check": "passed"
+  },
+  "reported_tokens": 335136,
+  "latest_run": "docs/optimization/tally-reliability/runs/20261017T030855006005Z",
+  "sellable_result": false
+}

@@ -28,7 +28,9 @@ def _bearer(authorization: str | None) -> str | None:
     if not authorization:
         return None
     scheme, _, token = authorization.partition(" ")
-    return token.strip() or None if scheme.lower() == "bearer" else None
+    if scheme.lower() != "bearer":
+        return None
+    return token.strip() or None
 
 
 def get_principal(

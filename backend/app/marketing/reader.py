@@ -32,35 +32,11 @@ logger = logging.getLogger("marketingos.marketing")
 
 ROLE_ID = "blind_reader"
 
-#: What a draft has to make a cold reader feel to ship untouched. Below it the
-#: copy earns a rewrite against the reader's own words.
-#:
-#: The number means something because `_PULL_BY_CLICKS` says what it is in
-#: units somebody could check against a real send: 7 is "six or more of a
-#: hundred people like me would click", which is a top-decile cold email and a
-#: routine one for a list that already signed up.
-#:
-#: It used to mean "this one person, asked point blank, says they would click
-#: today" - an event a real recipient declines about ninety-seven times in a
-#: hundred however good the email is. A floor placed on a 3% event is not a
-#: high standard, it is a floor no copy can clear, and everything downstream
-#: that compared one draft's score to another's was comparing two saturated
-#: numbers. In a measured run three openings scored 2, 1 and 2, a rewrite came
-#: back at 2, and the loop stopped - not because rewriting had stopped helping
-#: but because the instrument could not tell the drafts apart.
+#: Editorial adequacy threshold for a simulated reader, never a send prediction.
 PULL_THRESHOLD = 7
 
-#: How many of a hundred people like this reader have to click for the copy to
-#: score each point. Read as "at least this many clicks buys this score", worst
-#: first from the bottom.
-#:
-#: The anchors are cold-email arithmetic rather than taste. Ordinary cold copy
-#: lands 1-3 clicks per hundred; 6 is the top of the range a good list sees; 25
-#: is a number no cold send reaches and which only an onboarding email to
-#: people who already signed up ever earns. Spacing the scale on that means
-#: each point up is a real multiple of results, and a model estimating "how
-#: many of a hundred" is answering a frequency question - the kind it is
-#: measurably better calibrated on than "how much did you want it, out of ten".
+#: Historical serialization compatibility only. New reader calls do not ask
+#: for frequencies and never use this scale to produce an assessment.
 _PULL_BY_CLICKS: tuple[tuple[int, int], ...] = (
     (25, 10),
     (14, 9),
@@ -74,17 +50,12 @@ _PULL_BY_CLICKS: tuple[tuple[int, int], ...] = (
 
 
 def pull_from_clicks(clicks_in_100: int) -> int:
-    """The 0-10 score a click frequency is worth.
-
-    In code and not in the prompt because it is a mapping, and a mapping has a
-    correct answer. Asking each reader to apply the rubric itself is asking
-    every call to re-derive the same table, slightly differently.
-    """
+    """Read the historical score scale without reinterpreting old snapshots."""
     return next((score for floor, score in _PULL_BY_CLICKS if clicks_in_100 >= floor), 0)
 
 
-class BlindRead(BaseModel):
-    """What happened to a person who read the email and knew nothing else."""
+class ReaderAssessment(BaseModel):
+    """Current model response: editorial feedback with no invented frequencies."""
 
     opened: bool = False
     stopped_at: str = ""
@@ -110,17 +81,12 @@ class BlindRead(BaseModel):
     problem_now: str = ""
     biggest_doubt: str = ""
     would_act: bool = False
-    #: Out of a hundred people in exactly this situation, how many open it on
-    #: the subject and preview, and how many then click. `None` means this read
-    #: was built by hand rather than reported, and `pull` stands as given.
-    opens_in_100: int | None = Field(default=None, ge=0, le=100)
-    clicks_in_100: int | None = Field(default=None, ge=0, le=100)
     #: What the email would have had to say for this reader to click. The one
     #: generative question in the system: everything else the loop collects is
     #: a verdict on what was written, and this is the only field that says what
     #: to write instead - in the reader's own words rather than a critic's.
     to_click_it_would_have_to: str = ""
-    #: Derived from `clicks_in_100`, never reported. See `pull_from_clicks`.
+    #: Uncalibrated editorial assessment. No probability or performance unit.
     pull: int = Field(default=0, ge=0, le=10)
     fixes: list[str] = Field(default_factory=list)
     #: Which reader this was, when a panel read the same draft.
@@ -131,16 +97,16 @@ class BlindRead(BaseModel):
     #: lie in whichever direction it was rounded.
     reported: bool = True
 
+
+class BlindRead(ReaderAssessment):
+    """A persisted assessment, also able to read historical frequency fields."""
+
+    opens_in_100: int | None = Field(default=None, ge=0, le=100)
+    clicks_in_100: int | None = Field(default=None, ge=0, le=100)
+
     @model_validator(mode="after")
     def _derive_pull(self) -> "BlindRead":
-        """Frequencies decide the score, and they have to agree with each other.
-
-        A reader cannot be clicked by more people than opened it, and one that
-        answers as though it can has given two numbers of which only the first
-        is about the subject line. Clamping rather than rejecting: the rest of
-        the report is still worth having, and a read thrown away costs a whole
-        pass.
-        """
+        """Preserve the old interpretation only when loading historical fields."""
         if self.clicks_in_100 is None:
             return self
         if self.opens_in_100 is not None and self.clicks_in_100 > self.opens_in_100:
@@ -150,7 +116,7 @@ class BlindRead(BaseModel):
 
     @property
     def landed(self) -> bool:
-        """Whether this reader would have clicked.
+        """Whether this simulated reading clears the editorial threshold.
 
         Comprehension first, and as a veto rather than as a term. A click
         estimate on an email the reader could not parse is not a low score -
@@ -227,13 +193,7 @@ class PanelRead(BaseModel):
 
     @property
     def clicks_in_100(self) -> float:
-        """The panel's estimate of how many of a hundred people click.
-
-        The number `pull` is derived from, kept because it is the one figure on
-        the receipt a user can compare against a real send they have done -
-        "3 in 100" means something to somebody who has mailed a list, and
-        "5.0/10" does not.
-        """
+        """Historical payload compatibility; new reads never supply this value."""
         estimates = [
             read.clicks_in_100 for read in self.reported if read.clicks_in_100 is not None
         ]
@@ -309,12 +269,7 @@ class PanelRead(BaseModel):
                 if len(reported) > 1
                 else "they could not say what it was"
             )
-        if any(read.clicks_in_100 is not None for read in reported):
-            return f"AI simulation assessment {self.pull:.0f}/10 (uncalibrated)"
-        clicked = sum(1 for read in reported if read.would_act)
-        if len(reported) == 1:
-            return "they would click today" if clicked else "they would not click"
-        return f"{clicked} of {len(reported)} would click today"
+        return f"AI simulation assessment {self.pull:.0f}/10 (uncalibrated)"
 
     def render(self) -> str:
         if len(self.reads) == 1:
@@ -352,13 +307,14 @@ class BlindReader:
             "reader", {"reader_profile": persona, "email": render_review(email)}
         )
         try:
-            read = await self._session.structured(
+            assessment = await self._session.structured(
                 role=ROLE_ID,
                 tier=ModelTier.BALANCED,
                 system_prompt=system_prompt,
                 task="React now, as the person described above, reading this for the first time.",
-                schema=BlindRead,
+                schema=ReaderAssessment,
             )
+            read = BlindRead.model_validate(assessment.model_dump())
         except ModelRuntimeError as exc:
             # A reader who could not report is not a reason to throw away a
             # draft: it is no verdict, and the copy stands on the other
@@ -390,6 +346,8 @@ _FALLBACK_PERSONA = "a busy professional who has never heard of this company"
 
 def personas_for(
     audience: AudienceModel, chosen: Segment | None, panel: bool, explicit_audience: str = "",
+    reader_scope: str = "",
+    reader_relationship: str = "unknown",
 ) -> list[str]:
     """Who reads the draft cold.
 
@@ -434,6 +392,13 @@ def personas_for(
             "market segment, invent an installed tool or experience, or infer the "
             "campaign's desired reaction. Read the email cold as this person."
         )
+    elif reader_scope.strip():
+        person += (
+            "\nQualified scope of the selected audience: " + reader_scope.strip()
+            + ". This narrows who you are; it does not establish installed tools, prior actions or desired reactions."
+        )
+    if reader_relationship != "unknown":
+        person += f"\nEstablished relationship to the sender: {reader_relationship}. This establishes no particular installed tools or desired reaction."
     if not panel:
         return [person]
     # The variants are dispositions the same person turns up in. The hard one

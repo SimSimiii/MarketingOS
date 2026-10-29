@@ -7,6 +7,7 @@ import { Search, ChevronDown, Users, SlidersHorizontal } from "lucide-react";
 import { BrandDisclosure, BrandSectionHeader } from "../../brand-ui";
 import { ExpandableText } from "@/components/expandable-text";
 import { Input } from "@/components/ui/input";
+import { ProspectSearchDialog } from "./prospect-search-dialog";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -42,7 +43,7 @@ import { formatAbsolute, formatDate } from "@/lib/format";
  * segments they already knew has learned nothing; these say, per row, which
  * ones came from somewhere their own website could not have. */
 const KIND_LABELS: Record<SegmentKind, string> = {
-  core: "who you already sell to",
+  core: "core audience described in your material",
   adjacent: "same problem, different industry",
   influencer: "feels the pain, does not sign",
   channel: "would resell you to their own clients",
@@ -56,10 +57,6 @@ const CONTACT_ICONS: Record<Contact["kind"], string> = {
   form: "▤",
   social: "◎",
 };
-
-function percent(fit: number): string {
-  return `${Math.round(fit * 100)}%`;
-}
 
 function researchabilityLabel(value: MappedSegment["researchability"]): string {
   return value === "unresearchable" ? "Unresearchable" : `${value} researchability`;
@@ -115,6 +112,15 @@ function ResearchResult({ research }: { research: AudienceResearch }) {
           {research.dropped_claims === 1 ? "" : "s"} dropped
         </p>
 
+        {!!research.interpretation_warnings?.length && (
+          <details className="space-y-1 rounded-lg bg-amber-500/10 p-3 text-amber-300">
+            <summary className="cursor-pointer font-medium">Research limitations ({research.interpretation_warnings.length})</summary>
+            {research.interpretation_warnings.map((warning) => (
+              <p key={warning}>{warning}</p>
+            ))}
+          </details>
+        )}
+
         {research.situation && (
           <div>
             <p className="font-medium text-foreground/80">Sourced situation</p>
@@ -127,15 +133,16 @@ function ResearchResult({ research }: { research: AudienceResearch }) {
 
         {research.problems.length > 0 && (
           <div>
-            <p className="font-medium text-foreground/80">Verified problems</p>
+            <p className="font-medium text-foreground/80">Source-backed problems · check dates and corroboration</p>
             <ul className="mt-1 space-y-1">
               {research.problems.map((problem) => (
                 <li key={problem.id}>
                   <span className="font-medium text-foreground/70">{problem.id}</span>{" "}
-                  {problem.statement} · {problem.corroboration} domain
+                  {problem.statement} · {problem.corroboration} distinct cited publisher domain
                   {problem.corroboration === 1 ? "" : "s"}
                   <ResearchEvidenceLinks evidence={problem.evidence} research={research} />
                   {problem.cost && <span> · {problem.cost}</span>}
+                  {!!problem.review_notes?.length && <p className="mt-1 text-amber-300">{problem.review_notes.join(" ")}</p>}
                 </li>
               ))}
             </ul>
@@ -144,7 +151,7 @@ function ResearchResult({ research }: { research: AudienceResearch }) {
 
         {research.incumbent_behaviour.length > 0 && (
           <div>
-            <p className="font-medium text-foreground/80">What they do now</p>
+            <p className="font-medium text-foreground/80">What the sources report</p>
             <ul className="mt-1 space-y-1">
               {research.incumbent_behaviour.map((item, index) => (
                 <li key={`${index}-${item.text}`}>
@@ -205,8 +212,10 @@ function ResearchResult({ research }: { research: AudienceResearch }) {
 const BAND_ORDER: RelevanceBand[] = ["LEAD", "SUPPORT", "CONTEXT", "WITHHOLD"];
 const STALE_REASON: Record<string, string> = {
   knowledge_changed: "Product Knowledge changed",
+  knowledge_context_changed: "Source context changed; review the evidence and rebuild this dossier",
   audience_research_changed: "Audience Research changed",
   market_scan_changed: "Market Scan changed",
+  interpretation_changed: "Comparison and relevance rules improved; rebuild this dossier before using its recommendation",
   capability_profile_changed: "Product Capability Profile changed",
   company_qualification_changed: "Company qualifications changed",
 };
@@ -773,6 +782,7 @@ function DossierResult({
         </Badge>
       </summary>
       <div className="mt-3 space-y-4 text-muted-foreground">
+        {relevance.status === "stale" && <p className="rounded-md bg-amber-500/10 p-3 text-amber-200">This is a historical recommendation. Rebuild the dossier to use current sources and comparison rules.</p>}
         {dossier.recommendation && (
           <div
             className={cn(
@@ -844,6 +854,21 @@ function DossierResult({
         )}
         {dossier.orientation && (
           <p className="text-sm font-medium text-foreground">{dossier.orientation}</p>
+        )}
+
+        {dossier.defining_need_fit && (
+          <div className="space-y-2 rounded-md border border-border p-3 text-sm">
+            <p className="font-medium">Fit for the complete audience need: {dossier.defining_need_fit.status}</p>
+            {dossier.defining_need_fit.why && <p>{dossier.defining_need_fit.why}</p>}
+            {dossier.defining_need_fit.caveat && <p>{dossier.defining_need_fit.caveat}</p>}
+            {dossier.defining_need_fit.unverified_requirements.length > 0 && (
+              <ul className="list-disc space-y-1 pl-4 text-amber-300">
+                {dossier.defining_need_fit.unverified_requirements.map((requirement) => (
+                  <li key={requirement}>Needs verification: {requirement}</li>
+                ))}
+              </ul>
+            )}
+          </div>
         )}
 
         <div className="space-y-1 font-mono text-[10px]">
@@ -1476,7 +1501,7 @@ function SegmentCard({
   onSelect: () => void;
   onProspect: () => void;
   onResearch: () => void;
-  onDossier: (rebuild: boolean) => void;
+  onDossier: (rebuild: boolean, verifyProductGaps?: boolean) => void;
   onChanged: () => void;
   busy: boolean;
 }) {
@@ -1530,7 +1555,7 @@ function SegmentCard({
           <CardTitle className="text-base">{segment.name}</CardTitle>
           <p className="text-xs text-muted-foreground">
             {KIND_LABELS[segment.kind] ?? segment.kind}
-            {segment.population ? ` · ${segment.population}` : ""}
+            {segment.population ? ` · Population: ${segment.population}` : ""}
           </p>
         </button>
         <div className="flex shrink-0 flex-col items-end gap-1">
@@ -1549,12 +1574,18 @@ function SegmentCard({
 
       <CardContent className="space-y-3 text-sm">
         {(segment.who || segment.organization) && (
-          <ExpandableText text={segment.who || segment.organization} className="text-foreground/90" limit={200} />
+          <div><p className="mb-1 text-xs text-muted-foreground">Audience hypothesis — validate against the assessment below</p><ExpandableText text={segment.who || segment.organization} className="text-foreground/90" limit={200} /></div>
         )}
-        <dl className="grid grid-cols-3 gap-2 rounded-xl bg-black/20 ring-1 ring-white/[0.06] p-3 text-xs">
-          {[{ label: "Product fit", value: segment.assessment.compatibility }, { label: "Evidence", value: segment.assessment.evidence_strength }, { label: "Findability", value: segment.assessment.findability }].map((item) => <div key={item.label} className="min-w-0"><dt className="text-[10px] text-muted-foreground">{item.label}</dt><dd className="mt-1 break-words font-medium capitalize">{item.value.replaceAll("_", " ")}</dd></div>)}
+        <dl className="grid grid-cols-2 gap-3 rounded-xl bg-black/20 ring-1 ring-white/[0.06] p-3 text-xs sm:grid-cols-3">
+          {[
+            { label: "Product fit", value: segment.assessment.compatibility },
+            { label: "Problem evidence", value: segment.assessment.evidence_strength },
+            { label: "Usage or purchase", value: segment.assessment.usage_or_purchase === "captured" ? "Evidence captured" : "Not established" },
+            { label: "Searchability", value: segment.assessment.findability },
+            { label: "Reachability", value: segment.assessment.reachability === "venue_identified" ? "Venue identified · access to check" : "Not established" },
+          ].map((item) => <div key={item.label} className="min-w-0"><dt className="text-[10px] text-muted-foreground">{item.label}</dt><dd className="mt-1 break-words font-medium capitalize">{item.value.replaceAll("_", " ")}</dd></div>)}
         </dl>
-        {segment.assessment.counterevidence > 0 && <p className="text-xs text-amber-300">{segment.assessment.counterevidence} source{segment.assessment.counterevidence === 1 ? "" : "s"} against this fit. Review before proceeding.</p>}
+        {segment.assessment.counterevidence_summary?.length > 0 ? <div className="rounded-lg bg-amber-500/10 p-3 text-xs text-amber-200"><p className="font-medium">Counterevidence and its consequence</p><ul className="mt-1 space-y-1">{segment.assessment.counterevidence_summary.map((item, index) => <li key={index}>{item}</li>)}</ul></div> : segment.assessment.counterevidence > 0 && <p className="text-xs text-amber-300">Counterevidence was captured, but its consequence was not assessed in this older map. Review the sources before proceeding.</p>}
         <Button
           type="button"
           variant="outline"
@@ -1568,7 +1599,7 @@ function SegmentCard({
         <div id={detailsId} hidden={!expanded} className="space-y-3 rounded-2xl bg-black/20 p-4 ring-1 ring-white/[0.06]">
           {expanded && <div className="space-y-3">
             {segment.organization && (
-              <p className="text-xs">Who they are: {segment.organization}</p>
+              <p className="text-xs">Proposed organization: {segment.organization}</p>
             )}
             {segment.workflow && (
               <p className="text-xs">What they are doing: {segment.workflow}</p>
@@ -1578,10 +1609,10 @@ function SegmentCard({
             {segment.buyer_role && <p className="text-xs">Decision maker: {segment.buyer_role}</p>}
             {segment.current_alternative && <p className="text-xs">Current workaround: {segment.current_alternative}</p>}
             {segment.why_them && (
-              <p className="text-muted-foreground">Why them: {segment.why_them}</p>
+              <p className="text-muted-foreground">Relevance hypothesis: {segment.why_them}</p>
             )}
             {segment.trigger && (
-              <p className="text-muted-foreground">What starts them looking: {segment.trigger}</p>
+              <p className="text-muted-foreground">Proposed trigger: {segment.trigger}</p>
             )}
             {segment.angle && (
               <p className="rounded-md bg-muted/40 p-2 text-xs">
@@ -1741,6 +1772,13 @@ function SegmentCard({
                     : "Generate relevance dossier"}
               </Button>
             )}
+            {relevance?.status === "current" && Boolean(relevance.dossier?.defining_need_fit?.unverified_requirements.length) && (
+              <Button size="sm" variant="outline" disabled={busy}
+                title="Verify missing product facts in official sources, then rebuild this dossier. Up to three model calls."
+                onClick={() => onDossier(true, true)}>
+                Verify product gaps
+              </Button>
+            )}
             <Button
               size="sm"
               disabled={busy || !segment.researchable}
@@ -1756,15 +1794,11 @@ function SegmentCard({
             <Button
               size="sm"
               variant="outline"
-              disabled={busy || !segment.researchable}
-              title={
-                segment.researchable
-                  ? undefined
-                  : "This audience needs a concrete signal, venue, and situation before research"
-              }
+              disabled={busy}
+              title="Choose companies, professional people, or places to reach a consumer audience"
               onClick={onProspect}
             >
-              {busy ? "Working…" : "Find these companies"}
+              {busy ? "Working…" : "Find prospects"}
             </Button>
           </div>
         </div>
@@ -1822,12 +1856,8 @@ function ProspectCard({
           <Badge variant={QUALIFICATION_VARIANT[prospect.qualification.classification]}>
             {prospect.qualification.classification}
           </Badge>
-        ) : prospect.fit !== null ? (
-          <Badge variant={prospect.fit >= 0.7 ? "secondary" : "outline"}>
-            {percent(prospect.fit)} legacy match estimate
-          </Badge>
         ) : (
-          <Badge variant="outline">UNVERIFIED</Badge>
+          <Badge variant="outline">Qualification needed</Badge>
         )}
       </CardHeader>
 
@@ -1920,7 +1950,7 @@ export function AudiencePanel({
   onMap: (options: MapOptions) => void;
   onProspect: (segment: string) => void;
   onResearch: (segment: string) => void;
-  onDossier: (segment: string, rebuild: boolean) => void;
+  onDossier: (segment: string, rebuild: boolean, verifyProductGaps?: boolean) => void;
   busy: boolean;
   runningKind: string | null;
 }) {
@@ -1930,6 +1960,7 @@ export function AudiencePanel({
   const [priority, setPriority] = useState("all");
   const [rows, setRows] = useState(audience.prospects);
   const [selected, setSelected] = useState<string | null>(null);
+  const [prospectAudience, setProspectAudience] = useState<MappedSegment | null>(null);
   const [options, setOptions] = useState<MapOptions>(audience.map?.options ?? {
     geography: "", language: "", exclusions: "", objective: "customers", mode: "refresh",
   });
@@ -2026,8 +2057,9 @@ export function AudiencePanel({
 
   return (
     <div className="space-y-4">
-      <BrandSectionHeader title="Your audiences" description={`${demand.segments.length} audiences mapped. Compare fit, review evidence and find organisations.`} actions={<>
+      <BrandSectionHeader title="Your audiences" description={`${demand.segments.length} audiences mapped. Compare fit, review evidence and find prospects or reach channels.`} actions={<>
         <Button size="sm" variant="outline" onClick={() => onMap({ ...options, mode: "refresh" })} disabled={busy}>{busy && runningKind === "audience" ? "Working…" : "Rescan audiences"}</Button>
+        <Button size="sm" variant="outline" onClick={() => onMap({ ...options, mode: "reassess" })} disabled={busy} title="Recheck the same audiences against current Knowledge with one model call. Keeps existing market evidence.">Recheck product fit</Button>
         <Button size="sm" onClick={() => onMap({ ...options, mode: "explore" })} disabled={busy}>Explore other audiences</Button>
       </>} />
       <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Audience workspace view">
@@ -2074,9 +2106,9 @@ export function AudiencePanel({
             onSelect={() =>
               { setSelected(segment.name); setOrganisationQuery(""); setView("organisations"); }
             }
-            onProspect={() => onProspect(segment.name)}
+            onProspect={() => setProspectAudience(segment)}
             onResearch={() => onResearch(segment.name)}
-            onDossier={(rebuild) => onDossier(segment.name, rebuild)}
+            onDossier={(rebuild, verifyProductGaps) => onDossier(segment.name, rebuild, verifyProductGaps)}
             onChanged={() => refreshPage()}
             busy={busy}
           />
@@ -2127,7 +2159,7 @@ export function AudiencePanel({
         </Card>
       )}
 
-      {visible.length === 0 && <div className="surface rounded-2xl p-8 text-center"><p className="font-medium">{rows.length === 0 ? "No organisations found yet" : "No matching organisations"}</p><p className="mt-2 text-sm text-muted-foreground">{rows.length === 0 ? "Choose an audience, then use Find these companies to start a search." : "Try another search or clear your audience selection."}</p><Button className="mt-4" variant="outline" size="sm" onClick={() => { setView("audiences"); setSelected(null); setOrganisationQuery(""); }}>Back to audiences</Button></div>}
+      {visible.length === 0 && <div className="surface rounded-2xl p-8 text-center"><p className="font-medium">{rows.length === 0 ? "No organisations found yet" : "No matching organisations"}</p><p className="mt-2 text-sm text-muted-foreground">{rows.length === 0 ? "Choose an audience, open Find prospects, then choose the company qualification workflow to find verified published contacts." : "Try another search or clear your audience selection."}</p><Button className="mt-4" variant="outline" size="sm" onClick={() => { setView("audiences"); setSelected(null); setOrganisationQuery(""); }}>Back to audiences</Button></div>}
       <div className="space-y-3">
         {visible.map((prospect) => (
           <ProspectCard
@@ -2139,6 +2171,7 @@ export function AudiencePanel({
         ))}
       </div>
       </div>
+      {prospectAudience && <ProspectSearchDialog key={prospectAudience.name} brandId={brandId} segment={prospectAudience} scope={options} busy={busy} onClose={() => setProspectAudience(null)} onQualifyCompanies={() => onProspect(prospectAudience.name)} />}
     </div>
   );
 }

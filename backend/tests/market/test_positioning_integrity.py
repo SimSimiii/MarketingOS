@@ -9,6 +9,7 @@ from app.market.positioning import (
     AxisReading,
     PositioningMap,
     Territory,
+    axis_for_evidence,
     build,
     claims_from_knowledge,
     rebuild,
@@ -136,3 +137,28 @@ def test_multi_axis_quotes_are_not_duplicated_when_rebuilding_twice():
     updated = rebuild(original, [_rival()])
     control = next(row for row in updated.readings if row.axis is ClaimAxis.CONTROL)
     assert len(control.ours) == 1
+
+
+@pytest.mark.parametrize("claim", [
+    "20,000 creators, SaaS companies and freelancers use Example.",
+    "Over 50,000 businesses trust Example.",
+])
+def test_adoption_count_does_not_inherit_speed_from_vendor_tagline(claim):
+    entry = Evidence(id="E1", kind=EvidenceKind.METRIC, claim=claim,
+                     verbatim=claim + " They are growing faster with us.")
+    assert axis_for_evidence(entry) is ClaimAxis.PROOF
+
+
+def test_timed_multi_user_capability_is_still_speed():
+    entry = Evidence(id="E1", kind=EvidenceKind.METRIC,
+                     claim="20 users can get a report in 10 seconds.",
+                     verbatim="20 users can get a report in 10 seconds.")
+    assert axis_for_evidence(entry) is ClaimAxis.SPEED
+
+
+def test_category_vocabulary_excludes_bare_counts_but_keeps_named_standards():
+    first = _rival(_claim("SOC2 certified. 500 customers. 000+ 600 reports.", ClaimAxis.SECURITY))
+    second = first.model_copy(update={"name": "Another"})
+    result = build(ClaimSet(), [first, second])
+    assert "soc2" in result.crowd_words
+    assert not {"500", "000+", "600"}.intersection(result.crowd_words)

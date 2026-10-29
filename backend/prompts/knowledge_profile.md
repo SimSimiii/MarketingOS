@@ -41,5 +41,14 @@ words, and carry its `url` when one is shown.
   "from €500", "custom") and what each includes, when stated. Leave `price` empty if the
   material does not publish one.
 - **free_entry**: the trial, free tier or free credits, in their exact terms, or empty.
-- **guarantees**: refunds, SLAs, cancellation terms, security commitments — as stated.
+- **guarantees**: refunds, SLAs, cancellation terms, security commitments. Copy the full
+  source sentence verbatim, including exceptions, conditions and upgrade billing terms.
+  Omit it when the source does not state it; a paraphrase will not be licensed.
 - **purchase_motion**: self-serve, book-a-demo, sales-led — whichever the material shows.
+
+Preserve disagreements between sources about plan entitlements, limits and prices.
+A marketing overview saying unlimited does not erase a documentation page giving
+different per-plan limits. Keep the conflicting statements and their source scope
+explicit in the relevant plan includes and grounded facts; do not silently pick a
+current winner or present the broader term as unrestricted. Retrieval time alone
+does not establish which source supersedes the other.

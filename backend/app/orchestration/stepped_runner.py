@@ -279,9 +279,11 @@ async def craft(session: Session, execution_id: UUID, ai_provider: AIProvider) -
     state.accepted = _EMAILS.dump_python([*previous, outcome.email], mode="json")
     state.outcomes = _OUTCOMES.dump_python([*result.outcomes, outcome], mode="json")
     state.next_position = position + 1
+    if outcome.interruption:
+        state.abort_reason = "Provider unavailable; the retained draft needs review: " + outcome.interruption
     _save(session, state)
 
-    more = state.next_position <= state.total_positions
+    more = not state.abort_reason and state.next_position <= state.total_positions
     logger.info("stepped: wrote email %s/%s for %s", position, state.total_positions, execution_id)
     return StepResult(
         execution_id=str(execution_id),

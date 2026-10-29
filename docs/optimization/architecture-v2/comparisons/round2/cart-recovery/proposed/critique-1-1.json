@@ -1,0 +1,28 @@
+{
+  "verdict": "revise",
+  "failure_mode": "copy",
+  "strategy_gap": "",
+  "brief_drift": "",
+  "unspent_evidence": [],
+  "edits": [
+    {
+      "line": "The bag costs EUR 80. Shipping charges are shown at checkout, so you can see them as you move through the purchase path.",
+      "problem": "The only practical reason to return—the opportunity to reveal the remaining shipping cost before deciding—is described passively instead of being connected to the click.",
+      "fix": "Make clear that resuming checkout lets the reader see the shipping charge and then decide, without implying that the basket immediately shows a final delivered total.",
+      "severity": "blocking"
+    },
+    {
+      "line": "If you would like to continue deciding, the basket is the place to pick up again.",
+      "problem": "This merely explains what a basket is and adds no reason to click before the CTA repeats the same instruction.",
+      "fix": "Remove the sentence so the opening moves directly from recognizing the abandoned item to the documented price and checkout disclosure.",
+      "severity": "major"
+    },
+    {
+      "line": "You can return when you’re ready, look over what is in your basket, and decide whether you want to complete the purchase. This reminder is simply a way back to the choice you had already started considering, in your own time.",
+      "problem": "The closing restates the same permission and decision several times, which caused attention to expire before the CTA.",
+      "fix": "Condense the closing to one direct transition into the single basket CTA, preserving the unhurried tone without repeating the proposition.",
+      "severity": "major"
+    }
+  ],
+  "summary": "Make the shipping disclosure the concrete payoff of returning, then cut the repeated explanations so the reader reaches the basket link promptly."
+}

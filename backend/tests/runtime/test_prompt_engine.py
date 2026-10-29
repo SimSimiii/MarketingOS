@@ -40,3 +40,11 @@ def test_source_is_cached_after_first_read(prompts_dir: Path):
     (prompts_dir / "dummy.md").write_text("changed", encoding="utf-8")
     result = engine.render("dummy", variables)
     assert "changed" not in result
+
+
+def test_fingerprint_identifies_the_source_actually_rendered(prompts_dir: Path):
+    engine = PromptEngine(prompts_dir)
+    before = engine.fingerprint("dummy")
+    (prompts_dir / "dummy.md").write_text("changed", encoding="utf-8")
+    assert engine.fingerprint("dummy") == before  # running process still renders its cache
+    assert PromptEngine(prompts_dir).fingerprint("dummy") != before

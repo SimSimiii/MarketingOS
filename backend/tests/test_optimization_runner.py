@@ -80,14 +80,18 @@ def test_summary_reads_latest_snapshot_without_api_or_generation(runner, monkeyp
     module.save(run_dir / "logs.json", [
         {"level": "info", "message": "normal"},
         {"level": "error", "step": "writer", "message": "failed once"},
+        *[{"level": "info", "event_type": "model_call_finished", "message": "Finished"}] * 3,
     ])
     monkeypatch.setattr(sys, "argv", [sys.argv[0], "summary", "--case", str(directory / "case.json")])
 
     assert module.main() == 0
     summary = json.loads(capsys.readouterr().out)
     assert summary["execution_id"] == "3"
-    assert summary["agent_calls"] == 2
+    assert summary["agent_calls"] == summary["model_calls"] == 3
+    assert summary["agent_groups"] == 2
     assert summary["emails"][0]["reader_doubts"] == ["Setup effort is unclear."]
     assert summary["error_logs"] == [{"step": "writer", "message": "failed once"}]
     assert "Full email body" not in json.dumps(summary)
     assert calls == []
+    module.save(run_dir / "logs.json", [])
+    assert module.run_summary(directory, {"execution_id": "3"})["model_calls"] is None

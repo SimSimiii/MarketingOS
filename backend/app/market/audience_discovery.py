@@ -305,6 +305,72 @@ class AssessedMap(BaseModel):
     candidates: list[CandidateAssessment] = Field(default_factory=list)
 
 
+class ProductFitBinding(BaseModel):
+    candidate_id: int = Field(ge=0)
+    required_product_capabilities: list[str] = Field(default_factory=list)
+    reason: str = ""
+
+
+class ProductFitBindings(BaseModel):
+    candidates: list[ProductFitBinding] = Field(default_factory=list)
+
+
+async def reassess_product_fit(
+    session: ModelSession, previous: DemandMap, profile: ProductCapabilityProfile,
+    *, progress: Callable[[str], None] = lambda _: None,
+) -> DemandMap:
+    """Rebind existing buyer workflows without buying a new market search."""
+    current = previous.model_copy(deep=True)
+    known = {item.id for item in profile.capabilities}
+    if previous.product_fingerprint == product_fingerprint(profile) and all(
+        item.definition.required_product_capabilities
+        and set(item.definition.required_product_capabilities) <= known
+        for item in current.segments
+    ):
+        return current_map(current, profile)
+    progress("Rechecking product fit for the same audiences; market evidence is retained")
+    answer = await session.structured(
+        role=CARTOGRAPHER_ROLE_ID, tier=ModelTier.DEEP,
+        template="audience_product_fit",
+        variables={
+            "candidates": "\n".join(
+                f"Candidate {index}: {item.model_dump_json()}"
+                for index, item in enumerate(current.segments)
+            ),
+            "capabilities": profile.model_dump_json(),
+        },
+        task="Map existing audience requirements to the current product catalogue only.",
+        schema=ProductFitBindings, tools=[],
+    )
+    processed: set[int] = set()
+    for binding in answer.candidates:
+        index = binding.candidate_id
+        if index >= len(current.segments) or index in processed:
+            continue
+        processed.add(index)
+        ids = list(dict.fromkeys(binding.required_product_capabilities))
+        if not ids or not set(ids) <= known or not binding.reason.strip():
+            continue
+        segment = current.segments[index]
+        segment.definition = segment.definition.model_copy(update={"required_product_capabilities": ids})
+        segment.assessment.reasons = [
+            reason for reason in segment.assessment.reasons
+            if not reason.startswith(("Compatibility:", "Product fit rechecked:"))
+        ]
+        segment.assessment.reasons.append("Product fit rechecked: " + binding.reason.strip())
+    for segment in current.segments:
+        product_check(segment, profile)
+        rank_assessment(segment)
+    current.product_fingerprint = product_fingerprint(profile)
+    current.options = current.options.model_copy(update={"mode": "reassess"})
+    current.mapped_at = datetime.now(UTC)
+    current.validation_note = (
+        "Product requirements rechecked against current Knowledge in one closed-world call. "
+        "Audience identities and market evidence are retained; market sources were not refetched."
+    )
+    return current
+
+
 def identity(segment: AudienceSegment) -> str:
     """Structured situation first; names remain the stable legacy fallback."""
     parts = [segment.organization, segment.workflow, segment.need]
@@ -398,9 +464,21 @@ def rank_assessment(segment: AudienceSegment) -> None:
     )
     reachable = any(item.kind in {"access", "example"} for item in assessment.evidence)
     assessment.findability = "verified" if reachable else "unknown"
+    assessment.usage_or_purchase = (
+        "captured" if any(item.kind in {"usage", "purchase"} for item in assessment.evidence) else "unknown"
+    )
+    assessment.reachability = (
+        "venue_identified" if any(item.kind == "access" for item in assessment.evidence) else "unknown"
+    )
     contrary = [item for item in assessment.evidence if item.kind == "counterevidence"]
     assessment.counterevidence = len({item.url for item in contrary})
     review = any(item.impact != "minor" or not item.impact_reason.strip() for item in contrary)
+    assessment.counterevidence_summary = list(dict.fromkeys(
+        f"{item.claim} — {item.impact_reason or 'Impact not assessed.'} "
+        + ("Review before prioritising." if item.impact != "minor" or not item.impact_reason.strip()
+           else "Minor condition; does not exclude this audience.")
+        for item in contrary
+    ))
     if assessment.compatibility == "incompatible":
         assessment.priority = "incompatible"
     elif (

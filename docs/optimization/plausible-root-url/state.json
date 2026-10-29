@@ -1,0 +1,110 @@
+{
+  "runs": [],
+  "steps": {
+    "create": {
+      "started_at": "20261018T000133406189Z",
+      "snapshot": "docs\\optimization\\plausible-root-url\\steps\\20261018T000133406189Z-create.json"
+    },
+    "ingest": {
+      "started_at": "20261018T000135783479Z",
+      "snapshot": "docs\\optimization\\plausible-root-url\\steps\\20261018T000135783479Z-ingest.json"
+    },
+    "compile": {
+      "started_at": "20261018T000147528392Z",
+      "snapshot": "docs\\optimization\\plausible-root-url\\steps\\20261018T000147528392Z-compile.json"
+    }
+  },
+  "last_snapshot": "docs\\optimization\\plausible-root-url\\steps\\20261018T002011347425Z-capture.json",
+  "status": "audit_completed_with_remaining_product_defects",
+  "quality_history": [
+    {
+      "iteration": 1,
+      "execution_id": "9c56d23a-0931-4411-9218-e09d8804be14",
+      "score": 74,
+      "grid": {
+        "factual_support": 24,
+        "audience_offer_clarity": 16,
+        "specific_argument": 7,
+        "subject_body_cta_continuity": 9,
+        "polish_rendering": 9,
+        "no_unsupported_promises_or_repetition": 9
+      },
+      "comparable": true,
+      "strengths": [
+        "Supported claims, clear product and single documented CTA",
+        "Desktop/mobile rendering verified without overflow"
+      ],
+      "remaining_defect": "Generic invitation built on an SEO opinion rather than source-backed mechanism relevant to public-sector need.",
+      "evidence": [
+        "runs/9c56d23a-0931-4411-9218-e09d8804be14/result.json",
+        "runs/9c56d23a-0931-4411-9218-e09d8804be14/render-check.json"
+      ],
+      "next_action": "Correct retrieval scope/rank truncation and rebuild dossier, then regenerate unchanged campaign.",
+      "score_nature": "Internal informed review; not customer outcome or model measurement"
+    },
+    {
+      "iteration": 2,
+      "execution_id": "8ff9a800-0e38-4ada-80ae-36869fca4544",
+      "score": 85,
+      "grid": {
+        "factual_support": 24,
+        "audience_offer_clarity": 18,
+        "specific_argument": 13,
+        "subject_body_cta_continuity": 13,
+        "polish_rendering": 8,
+        "no_unsupported_promises_or_repetition": 9
+      },
+      "comparable": true,
+      "strengths": [
+        "Relevant documented privacy design and concrete reporting fields replace unrelated SEO opinion",
+        "One supported low-effort CTA, live dashboard verified accessible without account, desktop/mobile render checked"
+      ],
+      "remaining_defect": "Some repetition and formal tone; technical/legal assurance still needed at later evaluation. Simulated6/10 and needs_review retained.",
+      "evidence": [
+        "runs/8ff9a800-0e38-4ada-80ae-36869fca4544/result.json",
+        "runs/8ff9a800-0e38-4ada-80ae-36869fca4544/render-check.json",
+        "runs/8ff9a800-0e38-4ada-80ae-36869fca4544/cta-live-demo.json"
+      ],
+      "next_action": "Stop billed optimization for this case; draft usable after ordinary brand review and minor personalization. Broader product defects remain tracked.",
+      "score_nature": "Coordinator informed review, not simulated score or customer outcome"
+    }
+  ],
+  "next_action": "Stop paid optimization; normal backend reload needed to serve last gate/prompt updates (lifecycle actions rejected).",
+  "baseline_knowledge_review": "baseline-knowledge-review.json",
+  "corrected_case": "docs/optimization/plausible-root-url/after-crawler-fix/case.json",
+  "validation": {
+    "backend_full_passed": 1720,
+    "warnings": 2,
+    "targeted_passed": 38,
+    "ruff": "passed",
+    "diff_check": "passed"
+  },
+  "quality_verdict": "Selected-case sellable-result bar met for a first-touch discovery draft after ordinary review/personalization; no general sellability claim. Application remains degraded/needs_review with simulated6/10. Broader catalogue, research dates, pricing digest and market accuracy defects remain.",
+  "blocker_history": [
+    {
+      "type": "provider_session_limit",
+      "provider": "Claude subscription",
+      "error": "RoutingProvider call failed after 1 attempt(s): Claude Code rate limit: You've hit your session limit · resets 7am (Europe/Paris).",
+      "resets_at": "2026-10-18T07:00:00+02:00",
+      "timezone": "Europe/Paris",
+      "resume_action": "After quota reset, rerun only audience map with an explicit revision, then select-first/research/dossier/campaign. Do not reimport, recompile or rescan rivals.",
+      "resume_command": "backend/.venv/Scripts/python.exe scripts/audit_brand_flow.py map --case docs/optimization/plausible-root-url/after-crawler-fix/case.json --revision after-session-reset",
+      "resolved_by": "User quota reset; full chain completed, now correction iteration2."
+    }
+  ],
+  "quality_best": {
+    "score": 85,
+    "iteration": 2,
+    "execution_id": "8ff9a800-0e38-4ada-80ae-36869fca4544"
+  },
+  "final_execution_id": "8ff9a800-0e38-4ada-80ae-36869fca4544",
+  "final_email": "after-crawler-fix/runs/8ff9a800-0e38-4ada-80ae-36869fca4544/email-1.html",
+  "functional_followup": {
+    "case": "after-crawler-fix/case.json",
+    "execution_id": "e14d43af-13ea-4f5c-8063-4a9511033dab",
+    "score": 89,
+    "comparison_track": "functional-reliability",
+    "status": "implemented_validated_runtime_reload_pending",
+    "report": "../../reviews/plausible-fiabilite-2026-10-18.md"
+  }
+}

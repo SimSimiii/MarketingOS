@@ -1,0 +1,679 @@
+{
+  "email_attempts": 9,
+  "email_assets": 8,
+  "email_model_calls_finished": 261,
+  "upstream_model_calls_observed_at_least": 229,
+  "upstream_without_terminal_receipt": [
+    {
+      "case": "cabaia",
+      "kind": "knowledge",
+      "started_at": "2026-10-27T02:01:19.495749Z",
+      "state": "running",
+      "calls": 11,
+      "terminal_receipt": false,
+      "snapshot": "cabaia\\steps\\20261027T020733955132Z-poll.json"
+    },
+    {
+      "case": "cabaia",
+      "kind": "audience_research",
+      "started_at": "2026-10-28T00:32:25.847855Z",
+      "state": "running",
+      "calls": 0,
+      "terminal_receipt": false,
+      "snapshot": "cabaia\\steps\\20261028T003225357596Z-research.json"
+    },
+    {
+      "case": "papier",
+      "kind": "knowledge",
+      "started_at": "2026-10-28T00:25:58.097571Z",
+      "state": "running",
+      "calls": 9,
+      "terminal_receipt": false,
+      "snapshot": "papier\\steps\\20261028T003226397712Z-poll.json"
+    }
+  ],
+  "limits": "Interrupted in-process jobs may have finished more calls after their last snapshot; upstream total is a lower bound. Separate profile/isolation probes are excluded.",
+  "upstream_jobs": [
+    {
+      "case": "cabaia",
+      "kind": "knowledge",
+      "started_at": "2026-10-25T23:23:29.940235Z",
+      "state": "completed",
+      "calls": 21,
+      "terminal_receipt": true,
+      "snapshot": "cabaia\\steps\\20261025T234056988504Z-poll.json"
+    },
+    {
+      "case": "cabaia",
+      "kind": "knowledge",
+      "started_at": "2026-10-25T23:45:22.745646Z",
+      "state": "failed",
+      "calls": 11,
+      "terminal_receipt": true,
+      "snapshot": "cabaia\\steps\\20261025T235440651384Z-poll.json"
+    },
+    {
+      "case": "cabaia",
+      "kind": "knowledge",
+      "started_at": "2026-10-26T17:04:38.638960Z",
+      "state": "completed",
+      "calls": 15,
+      "terminal_receipt": true,
+      "snapshot": "cabaia\\steps\\20261026T172659690338Z-poll.json"
+    },
+    {
+      "case": "cabaia",
+      "kind": "scan",
+      "started_at": "2026-10-26T17:25:50.020599Z",
+      "state": "failed",
+      "calls": 0,
+      "terminal_receipt": true,
+      "snapshot": "cabaia\\steps\\20261026T172659690338Z-poll.json"
+    },
+    {
+      "case": "cabaia",
+      "kind": "scan",
+      "started_at": "2026-10-26T17:40:21.381471Z",
+      "state": "done",
+      "calls": 5,
+      "terminal_receipt": true,
+      "snapshot": "cabaia\\steps\\20261026T174345762069Z-poll.json"
+    },
+    {
+      "case": "cabaia",
+      "kind": "audience",
+      "started_at": "2026-10-26T17:47:02.724195Z",
+      "state": "done",
+      "calls": 2,
+      "terminal_receipt": true,
+      "snapshot": "cabaia\\steps\\20261026T175238195692Z-poll.json"
+    },
+    {
+      "case": "cabaia",
+      "kind": "audience_research",
+      "started_at": "2026-10-26T18:06:23.597673Z",
+      "state": "failed",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "cabaia\\steps\\20261026T180808130307Z-poll.json"
+    },
+    {
+      "case": "cabaia",
+      "kind": "audience_research",
+      "started_at": "2026-10-27T00:17:05.965463Z",
+      "state": "done",
+      "calls": 2,
+      "terminal_receipt": true,
+      "snapshot": "cabaia\\steps\\20261027T003006866502Z-poll.json"
+    },
+    {
+      "case": "cabaia",
+      "kind": "relevance_dossier",
+      "started_at": "2026-10-27T00:31:44.778316Z",
+      "state": "done",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "cabaia\\steps\\20261027T003307053575Z-poll.json"
+    },
+    {
+      "case": "cabaia",
+      "kind": "knowledge",
+      "started_at": "2026-10-27T02:01:19.495749Z",
+      "state": "running",
+      "calls": 11,
+      "terminal_receipt": false,
+      "snapshot": "cabaia\\steps\\20261027T020733955132Z-poll.json"
+    },
+    {
+      "case": "cabaia",
+      "kind": "knowledge",
+      "started_at": "2026-10-28T00:10:52.265253Z",
+      "state": "completed",
+      "calls": 18,
+      "terminal_receipt": true,
+      "snapshot": "cabaia\\steps\\20261028T001857064464Z-poll.json"
+    },
+    {
+      "case": "cabaia",
+      "kind": "audience",
+      "started_at": "2026-10-28T00:30:15.330427Z",
+      "state": "done",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "cabaia\\steps\\20261028T003200536505Z-poll.json"
+    },
+    {
+      "case": "cabaia",
+      "kind": "audience_research",
+      "started_at": "2026-10-28T00:32:25.847855Z",
+      "state": "running",
+      "calls": 0,
+      "terminal_receipt": false,
+      "snapshot": "cabaia\\steps\\20261028T003225357596Z-research.json"
+    },
+    {
+      "case": "cabaia",
+      "kind": "relevance_dossier",
+      "started_at": "2026-10-29T01:33:20.686884Z",
+      "state": "done",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "cabaia\\steps\\20261029T013528154670Z-poll.json"
+    },
+    {
+      "case": "cabaia",
+      "kind": "relevance_dossier",
+      "started_at": "2026-10-29T02:46:04.410302Z",
+      "state": "done",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "cabaia\\steps\\20261029T024804549142Z-poll.json"
+    },
+    {
+      "case": "papier",
+      "kind": "knowledge",
+      "started_at": "2026-10-26T17:44:59.795170Z",
+      "state": "completed",
+      "calls": 10,
+      "terminal_receipt": true,
+      "snapshot": "papier\\steps\\20261026T175238367399Z-poll.json"
+    },
+    {
+      "case": "papier",
+      "kind": "scan",
+      "started_at": "2026-10-26T18:16:03.446133Z",
+      "state": "done",
+      "calls": 6,
+      "terminal_receipt": true,
+      "snapshot": "papier\\steps\\20261027T000829905981Z-poll.json"
+    },
+    {
+      "case": "papier",
+      "kind": "audience",
+      "started_at": "2026-10-27T00:09:27.637307Z",
+      "state": "done",
+      "calls": 2,
+      "terminal_receipt": true,
+      "snapshot": "papier\\steps\\20261027T001640204445Z-poll.json"
+    },
+    {
+      "case": "papier",
+      "kind": "audience_research",
+      "started_at": "2026-10-27T00:30:18.005615Z",
+      "state": "done",
+      "calls": 2,
+      "terminal_receipt": true,
+      "snapshot": "papier\\steps\\20261027T003108545299Z-poll.json"
+    },
+    {
+      "case": "papier",
+      "kind": "relevance_dossier",
+      "started_at": "2026-10-27T00:33:27.149662Z",
+      "state": "done",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "papier\\steps\\20261027T003417245928Z-poll.json"
+    },
+    {
+      "case": "papier",
+      "kind": "knowledge",
+      "started_at": "2026-10-28T00:25:58.097571Z",
+      "state": "running",
+      "calls": 9,
+      "terminal_receipt": false,
+      "snapshot": "papier\\steps\\20261028T003226397712Z-poll.json"
+    },
+    {
+      "case": "papier",
+      "kind": "audience",
+      "started_at": "2026-10-29T01:35:40.127009Z",
+      "state": "done",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "papier\\steps\\20261029T013711221676Z-poll.json"
+    },
+    {
+      "case": "papier",
+      "kind": "audience_research",
+      "started_at": "2026-10-29T01:37:35.510569Z",
+      "state": "failed",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "papier\\steps\\20261029T013855181959Z-poll.json"
+    },
+    {
+      "case": "papier",
+      "kind": "audience_research",
+      "started_at": "2026-10-29T01:43:39.329310Z",
+      "state": "failed",
+      "calls": 0,
+      "terminal_receipt": true,
+      "snapshot": "papier\\steps\\20261029T014450391778Z-poll.json"
+    },
+    {
+      "case": "papier",
+      "kind": "audience_research",
+      "started_at": "2026-10-29T01:46:08.286583Z",
+      "state": "failed",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "papier\\steps\\20261029T014648072253Z-poll.json"
+    },
+    {
+      "case": "papier",
+      "kind": "audience_research",
+      "started_at": "2026-10-29T01:53:01.075364Z",
+      "state": "done",
+      "calls": 2,
+      "terminal_receipt": true,
+      "snapshot": "papier\\steps\\20261029T015522700682Z-poll.json"
+    },
+    {
+      "case": "papier",
+      "kind": "audience_research",
+      "started_at": "2026-10-29T02:01:37.223846Z",
+      "state": "done",
+      "calls": 3,
+      "terminal_receipt": true,
+      "snapshot": "papier\\steps\\20261029T020438794283Z-poll.json"
+    },
+    {
+      "case": "papier",
+      "kind": "audience_research",
+      "started_at": "2026-10-29T02:15:55.075658Z",
+      "state": "done",
+      "calls": 2,
+      "terminal_receipt": true,
+      "snapshot": "papier\\steps\\20261029T024337746627Z-poll.json"
+    },
+    {
+      "case": "papier",
+      "kind": "relevance_dossier",
+      "started_at": "2026-10-29T02:44:46.382271Z",
+      "state": "done",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "papier\\steps\\20261029T024553732541Z-poll.json"
+    },
+    {
+      "case": "rtings",
+      "kind": "knowledge",
+      "started_at": "2026-10-26T17:53:17.740040Z",
+      "state": "completed",
+      "calls": 5,
+      "terminal_receipt": true,
+      "snapshot": "rtings\\steps\\20261026T175735739485Z-poll.json"
+    },
+    {
+      "case": "rtings",
+      "kind": "scan",
+      "started_at": "2026-10-27T00:24:06.433493Z",
+      "state": "done",
+      "calls": 4,
+      "terminal_receipt": true,
+      "snapshot": "rtings\\steps\\20261027T003006584734Z-poll.json"
+    },
+    {
+      "case": "rtings",
+      "kind": "audience",
+      "started_at": "2026-10-27T00:30:19.860591Z",
+      "state": "done",
+      "calls": 2,
+      "terminal_receipt": true,
+      "snapshot": "rtings\\steps\\20261027T003417250955Z-poll.json"
+    },
+    {
+      "case": "rtings",
+      "kind": "audience_research",
+      "started_at": "2026-10-27T00:34:43.574743Z",
+      "state": "done",
+      "calls": 2,
+      "terminal_receipt": true,
+      "snapshot": "rtings\\steps\\20261027T003600098708Z-poll.json"
+    },
+    {
+      "case": "rtings",
+      "kind": "relevance_dossier",
+      "started_at": "2026-10-27T00:36:06.635463Z",
+      "state": "done",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "rtings\\steps\\20261027T003641271907Z-poll.json"
+    },
+    {
+      "case": "rtings",
+      "kind": "knowledge",
+      "started_at": "2026-10-28T00:22:44.634406Z",
+      "state": "completed",
+      "calls": 6,
+      "terminal_receipt": true,
+      "snapshot": "rtings\\steps\\20261028T002549963542Z-poll.json"
+    },
+    {
+      "case": "rtings",
+      "kind": "scan",
+      "started_at": "2026-10-29T01:33:26.585904Z",
+      "state": "done",
+      "calls": 3,
+      "terminal_receipt": true,
+      "snapshot": "rtings\\steps\\20261029T013607470192Z-poll.json"
+    },
+    {
+      "case": "rtings",
+      "kind": "audience",
+      "started_at": "2026-10-29T01:37:10.184073Z",
+      "state": "done",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "rtings\\steps\\20261029T013850758092Z-poll.json"
+    },
+    {
+      "case": "rtings",
+      "kind": "scan",
+      "started_at": "2026-10-29T01:43:40.668316Z",
+      "state": "done",
+      "calls": 10,
+      "terminal_receipt": true,
+      "snapshot": "rtings\\steps\\20261029T015025109488Z-poll.json"
+    },
+    {
+      "case": "rtings",
+      "kind": "audience_research",
+      "started_at": "2026-10-29T01:53:02.581356Z",
+      "state": "done",
+      "calls": 3,
+      "terminal_receipt": true,
+      "snapshot": "rtings\\steps\\20261029T015814109803Z-poll.json"
+    },
+    {
+      "case": "rtings",
+      "kind": "relevance_dossier",
+      "started_at": "2026-10-29T02:01:39.128624Z",
+      "state": "done",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "rtings\\steps\\20261029T020353236627Z-poll.json"
+    },
+    {
+      "case": "rtings",
+      "kind": "relevance_dossier",
+      "started_at": "2026-10-29T02:15:50.713056Z",
+      "state": "done",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "rtings\\steps\\20261029T021723854777Z-poll.json"
+    },
+    {
+      "case": "systeme",
+      "kind": "knowledge",
+      "started_at": "2026-10-25T23:23:30.117639Z",
+      "state": "completed",
+      "calls": 11,
+      "terminal_receipt": true,
+      "snapshot": "systeme\\steps\\20261025T234056988504Z-poll.json"
+    },
+    {
+      "case": "systeme",
+      "kind": "knowledge",
+      "started_at": "2026-10-25T23:45:22.721037Z",
+      "state": "failed",
+      "calls": 8,
+      "terminal_receipt": true,
+      "snapshot": "systeme\\steps\\20261025T235209503854Z-poll.json"
+    },
+    {
+      "case": "systeme",
+      "kind": "knowledge",
+      "started_at": "2026-10-26T17:04:38.633463Z",
+      "state": "completed",
+      "calls": 9,
+      "terminal_receipt": true,
+      "snapshot": "systeme\\steps\\20261026T172659673608Z-poll.json"
+    },
+    {
+      "case": "systeme",
+      "kind": "scan",
+      "started_at": "2026-10-26T17:13:58.451080Z",
+      "state": "done",
+      "calls": 6,
+      "terminal_receipt": true,
+      "snapshot": "systeme\\steps\\20261026T172228030994Z-poll.json"
+    },
+    {
+      "case": "systeme",
+      "kind": "audience",
+      "started_at": "2026-10-26T17:25:48.541124Z",
+      "state": "failed",
+      "calls": 0,
+      "terminal_receipt": true,
+      "snapshot": "systeme\\steps\\20261026T172659673608Z-poll.json"
+    },
+    {
+      "case": "systeme",
+      "kind": "audience",
+      "started_at": "2026-10-26T17:40:18.269985Z",
+      "state": "done",
+      "calls": 2,
+      "terminal_receipt": true,
+      "snapshot": "systeme\\steps\\20261026T174636957442Z-poll.json"
+    },
+    {
+      "case": "systeme",
+      "kind": "audience_research",
+      "started_at": "2026-10-26T17:53:00.655137Z",
+      "state": "done",
+      "calls": 2,
+      "terminal_receipt": true,
+      "snapshot": "systeme\\steps\\20261026T175735790501Z-poll.json"
+    },
+    {
+      "case": "systeme",
+      "kind": "relevance_dossier",
+      "started_at": "2026-10-26T18:06:20.059485Z",
+      "state": "done",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "systeme\\steps\\20261026T180808123557Z-poll.json"
+    },
+    {
+      "case": "systeme",
+      "kind": "audience",
+      "started_at": "2026-10-26T18:15:59.367420Z",
+      "state": "done",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "systeme\\steps\\20261026T181814148457Z-poll.json"
+    },
+    {
+      "case": "systeme",
+      "kind": "audience_research",
+      "started_at": "2026-10-26T18:21:17.654092Z",
+      "state": "done",
+      "calls": 2,
+      "terminal_receipt": true,
+      "snapshot": "systeme\\steps\\20261027T000829905981Z-poll.json"
+    },
+    {
+      "case": "systeme",
+      "kind": "relevance_dossier",
+      "started_at": "2026-10-27T00:09:00.022123Z",
+      "state": "done",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "systeme\\steps\\20261027T001209438028Z-poll.json"
+    },
+    {
+      "case": "systeme",
+      "kind": "knowledge",
+      "started_at": "2026-10-27T02:00:49.983529Z",
+      "state": "completed",
+      "calls": 9,
+      "terminal_receipt": true,
+      "snapshot": "systeme\\steps\\20261027T020639537078Z-poll.json"
+    },
+    {
+      "case": "systeme",
+      "kind": "audience",
+      "started_at": "2026-10-28T00:09:55.932143Z",
+      "state": "done",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "systeme\\steps\\20261028T001046131684Z-poll.json"
+    },
+    {
+      "case": "systeme",
+      "kind": "audience_research",
+      "started_at": "2026-10-28T00:11:02.558846Z",
+      "state": "done",
+      "calls": 2,
+      "terminal_receipt": true,
+      "snapshot": "systeme\\steps\\20261028T001252291729Z-poll.json"
+    },
+    {
+      "case": "systeme",
+      "kind": "relevance_dossier",
+      "started_at": "2026-10-28T00:12:59.206535Z",
+      "state": "done",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "systeme\\steps\\20261028T001327608655Z-poll.json"
+    },
+    {
+      "case": "systeme",
+      "kind": "relevance_dossier",
+      "started_at": "2026-10-28T00:17:49.836372Z",
+      "state": "done",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "systeme\\steps\\20261028T001856587178Z-poll.json"
+    },
+    {
+      "case": "systeme",
+      "kind": "relevance_dossier",
+      "started_at": "2026-10-28T00:22:43.259609Z",
+      "state": "done",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "systeme\\steps\\20261028T002316040616Z-poll.json"
+    },
+    {
+      "case": "systeme",
+      "kind": "relevance_dossier",
+      "started_at": "2026-10-29T02:44:37.663023Z",
+      "state": "done",
+      "calls": 1,
+      "terminal_receipt": true,
+      "snapshot": "systeme\\steps\\20261029T024629635512Z-poll.json"
+    }
+  ],
+  "email_runs": [
+    {
+      "case": "cabaia",
+      "execution_id": "8c17fb09-c07e-4537-8a07-7cf9e9988124",
+      "status": "completed",
+      "outcome": "degraded",
+      "needs_review": true,
+      "calls": 23,
+      "seconds": 258.48,
+      "score": 71,
+      "delivered": 1,
+      "result": "cabaia\\runs\\8c17fb09-c07e-4537-8a07-7cf9e9988124\\result.json"
+    },
+    {
+      "case": "cabaia",
+      "execution_id": "ef8e19b8-cecd-4324-8e57-563d953cbfb5",
+      "status": "failed",
+      "outcome": "failed",
+      "needs_review": false,
+      "calls": 19,
+      "seconds": 239.04,
+      "score": null,
+      "delivered": 0,
+      "result": "cabaia\\runs\\ef8e19b8-cecd-4324-8e57-563d953cbfb5\\result.json"
+    },
+    {
+      "case": "papier",
+      "execution_id": "31856963-f69a-49ae-88da-6ad91e64e642",
+      "status": "completed",
+      "outcome": "degraded",
+      "needs_review": true,
+      "calls": 26,
+      "seconds": 203.31,
+      "score": 82,
+      "delivered": 1,
+      "result": "papier\\runs\\31856963-f69a-49ae-88da-6ad91e64e642\\result.json"
+    },
+    {
+      "case": "papier",
+      "execution_id": "a4e390d6-795c-410d-9ef6-b00d44521e6d",
+      "status": "completed",
+      "outcome": "degraded",
+      "needs_review": true,
+      "calls": 35,
+      "seconds": 310.93,
+      "score": 84,
+      "delivered": 1,
+      "result": "papier\\runs\\a4e390d6-795c-410d-9ef6-b00d44521e6d\\result.json"
+    },
+    {
+      "case": "systeme",
+      "execution_id": "2ed75af1-d151-4761-a5b2-c1302ed043c2",
+      "status": "completed",
+      "outcome": "completed",
+      "needs_review": false,
+      "calls": 36,
+      "seconds": 275.5,
+      "score": 88,
+      "delivered": 1,
+      "result": "systeme\\runs\\2ed75af1-d151-4761-a5b2-c1302ed043c2\\result.json"
+    },
+    {
+      "case": "systeme",
+      "execution_id": "3c159c4d-beb3-4216-af7b-68d54cb09b8e",
+      "status": "completed",
+      "outcome": "degraded",
+      "needs_review": true,
+      "calls": 35,
+      "seconds": 320.48,
+      "score": 83,
+      "delivered": 1,
+      "result": "systeme\\runs\\3c159c4d-beb3-4216-af7b-68d54cb09b8e\\result.json"
+    },
+    {
+      "case": "systeme",
+      "execution_id": "40a5e629-91ac-476d-8e7c-ae6354b6a975",
+      "status": "completed",
+      "outcome": "degraded",
+      "needs_review": true,
+      "calls": 35,
+      "seconds": 331.1,
+      "score": 79,
+      "delivered": 1,
+      "result": "systeme\\runs\\40a5e629-91ac-476d-8e7c-ae6354b6a975\\result.json"
+    },
+    {
+      "case": "systeme",
+      "execution_id": "58dd52d4-0560-4313-9023-dd6a0f7dc7a5",
+      "status": "completed",
+      "outcome": "degraded",
+      "needs_review": true,
+      "calls": 24,
+      "seconds": 249.22,
+      "score": 84,
+      "delivered": 1,
+      "result": "systeme\\runs\\58dd52d4-0560-4313-9023-dd6a0f7dc7a5\\result.json"
+    },
+    {
+      "case": "rtings",
+      "execution_id": "f7f36279-dca7-47c4-bb69-8e7f8b79aa1b",
+      "status": "completed",
+      "outcome": "degraded",
+      "needs_review": true,
+      "calls": 28,
+      "seconds": 300.24,
+      "score": 86,
+      "delivered": 1,
+      "result": "rtings\\runs\\f7f36279-dca7-47c4-bb69-8e7f8b79aa1b\\result.json"
+    }
+  ]
+}

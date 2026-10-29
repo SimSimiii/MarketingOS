@@ -39,8 +39,33 @@ class CampaignExecution(SQLModel, table=True):
     @property
     def needs_review(self) -> bool:
         """A completed process can still have an incomplete delivery."""
+        return self.status == ExecutionStatus.COMPLETED and bool(self.review_reasons)
+
+    @property
+    def review_reasons(self) -> list[str]:
         result = self.result or {}
-        return self.status == ExecutionStatus.COMPLETED and (
-            bool(self.error_message)
-            or result.get("run_status") in {"degraded", "budget_exhausted", "cancelled", "failed"}
-        )
+        if self.status != ExecutionStatus.COMPLETED:
+            return []
+        reasons: list[str] = []
+        if self.error_message:
+            reasons.append("The run retained drafts after an interrupted step.")
+        report = result.get("report") or {}
+        if report.get("delivered", 0) < report.get("promised", 0):
+            reasons.append("Some requested deliverables are missing.")
+        emails = report.get("emails") or []
+        if any(email.get("clean") is False for email in emails):
+            reasons.append("Some drafts retain unresolved automatic checks.")
+        elif any(email.get("unresolved") for email in emails):
+            reasons.append("Some drafts retain unresolved strategy or review findings.")
+        if any(email.get("landed") is False or email.get("understood") is False for email in emails):
+            reasons.append("Some drafts still need editorial review.")
+        if result.get("run_status") in {"degraded", "budget_exhausted", "cancelled", "failed"} and not reasons:
+            reasons.append("The run finished with unresolved review requirements.")
+        return reasons
+
+    @property
+    def outcome_status(self) -> str:
+        """Delivery outcome, separate from the process state used by polling."""
+        if self.needs_review:
+            return "degraded"
+        return self.status.value

@@ -49,14 +49,14 @@ def test_losing_open_ground_is_the_loudest_row() -> None:
     lost = next(e for e in events if e.axis is ClaimAxis.CONTROL)
 
     assert lost.severity is RadarSeverity.ACTS_ON_COPY
-    assert "no longer own" in lost.headline, "one rival in four leaves it contested"
+    assert "Related captured claim" in lost.headline
     assert "beta" in lost.detail.lower()
     assert lost.what_to_do
     # And it sorts above the routine noise.
     assert events[0].severity is RadarSeverity.ACTS_ON_COPY
 
 
-def test_half_the_field_taking_an_axis_makes_it_table_stakes() -> None:
+def test_one_of_two_rivals_does_not_establish_a_category_convention() -> None:
     ours = ClaimSet(claims=[claim("self-hosted, your VPC", ClaimAxis.CONTROL)])
     before = snapshot(ours, [rival("alpha"), rival("beta")])
     after = snapshot(
@@ -65,7 +65,7 @@ def test_half_the_field_taking_an_axis_makes_it_table_stakes() -> None:
     )
 
     lost = next(e for e in diff(before, after) if e.axis is ClaimAxis.CONTROL)
-    assert "table stakes" in lost.headline
+    assert "Related captured claim" in lost.headline
     assert lost.severity is RadarSeverity.ACTS_ON_COPY
 
 
@@ -81,7 +81,8 @@ def test_gaining_ground_is_reported_but_quieter() -> None:
     after = snapshot(ours, [rival("alpha", claim("fast", ClaimAxis.SPEED))])
 
     opened = next(e for e in diff(before, after) if e.axis is ClaimAxis.CONTROL)
-    assert "opened up" in opened.headline
+    assert "Fewer matching claims captured" in opened.headline
+    assert "does not prove" in opened.what_to_do
     assert opened.severity is RadarSeverity.NOTABLE
 
 
@@ -160,7 +161,7 @@ def test_the_proof_gap_widening_acts_on_copy() -> None:
 
     widened = next(e for e in diff(before, after) if "naming customers" in e.headline)
     assert widened.severity is RadarSeverity.ACTS_ON_COPY
-    assert "afternoon" in widened.what_to_do
+    assert "functional claims do not require a testimonial" in widened.what_to_do
 
 
 def test_a_rival_that_stopped_answering_is_only_routine() -> None:

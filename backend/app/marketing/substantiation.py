@@ -44,6 +44,7 @@ editing.
 """
 
 import re
+from collections import Counter
 from dataclasses import dataclass
 
 from app.knowledge.ledger import (
@@ -193,6 +194,14 @@ class Substantiation:
     attributions: int = 0
     #: Distinct checkable values from the material that appear in the copy.
     specifics: int = 0
+    #: Exact quoted support only. None means an older record never measured
+    #: this; it must not acquire a new veto from its old lexical counts.
+    explicit: tuple[str, ...] | None = None
+
+    def loses_explicit_support(self, other: "Substantiation") -> bool:
+        if self.explicit is None or other.explicit is None:
+            return False
+        return bool(other.explicit) and set(self.explicit) < set(other.explicit)
 
     @property
     def assigned(self) -> int:
@@ -231,7 +240,10 @@ class Substantiation:
         )
 
 
-def _carries(entry: Evidence, values: set[str], names: set[str], flat: str) -> bool:
+def _carries(
+    entry: Evidence, values: set[str], names: set[str], flat: str,
+    background_names: frozenset[str] = frozenset(),
+) -> bool:
     """Is this entry's support visible in the copy?
 
     Three ways, and an entry only needs one:
@@ -248,14 +260,28 @@ def _carries(entry: Evidence, values: set[str], names: set[str], flat: str) -> b
     well-written email.
     """
     licensing = entry.licensing_text
-    if _values(licensing) & values:
+    quoted = any(quote in flat for quote in _quotations(licensing))
+    if quoted:
         return True
-    if names_in(licensing) & names:
-        return True
-    return any(quote in flat for quote in _quotations(licensing))
+    distinctive_names = (names_in(licensing) & names) - background_names
+    if entry.kind in ATTRIBUTABLE_KINDS:
+        # A sender's name or unrelated shared number is not a testimonial.
+        # This remains a lexical hint, never a semantic attribution guarantee.
+        return bool(distinctive_names)
+    licensed_values = _values(licensing)
+    if licensed_values:
+        return bool(licensed_values & values)
+    terms = set(re.findall(r"[a-z]{4,}", licensing.casefold())) - _SUPPORT_STOPWORDS - background_names
+    return len(terms & set(re.findall(r"[a-z]{4,}", flat))) >= 3
 
 
-def assess(email: Email, assigned: list[Evidence], ledger: list[Evidence]) -> Substantiation:
+_SUPPORT_STOPWORDS = frozenset({
+    "this", "that", "with", "from", "your", "their", "have", "will", "they",
+    "more", "into", "when", "then", "only", "also", "about", "there", "which",
+})
+
+
+def assess(email: Email, assigned: list[Evidence], ledger: list[Evidence], *, company_name: str = "") -> Substantiation:
     """Read one draft against the facts behind it. Costs no model call.
 
     `assigned` is what the brief said this email is built on; `ledger` is
@@ -263,10 +289,10 @@ def assess(email: Email, assigned: list[Evidence], ledger: list[Evidence]) -> Su
     `attributions` are counted against - a writer that reached past its
     assignment for a stronger fact has not failed, it has edited.
     """
-    return assess_text(render_email(email), assigned, ledger)
+    return assess_text(render_email(email), assigned, ledger, company_name=company_name)
 
 
-def assess_text(text: str, assigned: list[Evidence], ledger: list[Evidence]) -> Substantiation:
+def assess_text(text: str, assigned: list[Evidence], ledger: list[Evidence], *, company_name: str = "") -> Substantiation:
     """The same reading, of any finished draft rather than an email.
 
     A LinkedIn message has no subject and no position, and none of the work
@@ -275,6 +301,13 @@ def assess_text(text: str, assigned: list[Evidence], ledger: list[Evidence]) -> 
     values = _values(text)
     names = names_in(text)
     flat = _flat(text)
+    draft_quotes = _quotations(text)
+    frequency: Counter[str] = Counter()
+    for entry in ledger:
+        if entry.kind not in ATTRIBUTABLE_KINDS:
+            frequency.update(names_in(entry.licensing_text))
+    background_names = frozenset({name for name, count in frequency.items() if count >= 2}
+                                 | names_in("Sender " + company_name))
 
     # Ids for what was carried and whole entries for what was not: the first
     # is a key the loop compares versions on, the second is what a correction
@@ -282,7 +315,7 @@ def assess_text(text: str, assigned: list[Evidence], ledger: list[Evidence]) -> 
     carried: list[str] = []
     unspent: list[Evidence] = []
     for entry in assigned:
-        if _carries(entry, values, names, flat):
+        if _carries(entry, values, names, flat, background_names):
             carried.append(entry.id)
         else:
             unspent.append(entry)
@@ -292,7 +325,7 @@ def assess_text(text: str, assigned: list[Evidence], ledger: list[Evidence]) -> 
     for entry in ledger:
         licensing = entry.licensing_text
         licensed_values |= _values(licensing)
-        if entry.kind in ATTRIBUTABLE_KINDS and _carries(entry, values, names, flat):
+        if entry.kind in ATTRIBUTABLE_KINDS and _carries(entry, values, names, flat, background_names):
             attributions += 1
 
     return Substantiation(
@@ -300,6 +333,9 @@ def assess_text(text: str, assigned: list[Evidence], ledger: list[Evidence]) -> 
         unspent=tuple(unspent),
         attributions=attributions,
         specifics=len(licensed_values & values),
+        explicit=tuple(entry.id for entry in assigned
+                       if any(len(quote.split()) >= 5 and quote in flat for quote in _quotations(entry.licensing_text))
+                       or any(len(quote.split()) >= 5 and quote in _flat(entry.licensing_text) for quote in draft_quotes)),
     )
 
 

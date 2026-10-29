@@ -6,6 +6,11 @@ For autonomous optimization from real campaigns, load
 `.agents/skills/campaign-optimization/SKILL.md`, then the relevant
 `docs/optimization/<case>/state.json` and `journal.md`.
 
+For a live homepage-only brand audit (ingestion, compilation, market scan,
+audience mapping/research, relevance dossier, one email), follow
+`docs/operations/brand-audit.md` and use `scripts/audit_brand_flow.py` for durable
+step snapshots. Do not supply extra help/docs URLs on the system's behalf.
+
 This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
 ## Branch policy

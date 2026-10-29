@@ -66,6 +66,15 @@ def public_client() -> httpx.AsyncClient:
 
 async def fetch_page(client: httpx.AsyncClient, url: str) -> httpx.Response:
     """Limits also apply to injected transports; every redirect is rechecked."""
+    return await _fetch_document(client, url, render_resource=False)
+
+
+async def fetch_render_resource(client: httpx.AsyncClient, url: str) -> httpx.Response:
+    """Browser dependencies use the same pinned transport and response limits."""
+    return await _fetch_document(client, url, render_resource=True)
+
+
+async def _fetch_document(client: httpx.AsyncClient, url: str, *, render_resource: bool) -> httpx.Response:
     try:
         async with asyncio.timeout(30):
             for _ in range(MAX_REDIRECTS + 1):
@@ -80,9 +89,12 @@ async def fetch_page(client: httpx.AsyncClient, url: str) -> httpx.Response:
                         continue
                     response.raise_for_status()
                     content_type = response.headers.get("content-type", "").split(";")[0]
-                    if content_type and content_type not in (
+                    allowed_types = (
                         "text/html", "text/plain", "application/xhtml+xml", "text/markdown",
-                    ):
+                    ) + (("text/javascript", "application/javascript", "application/x-javascript",
+                          "text/ecmascript", "application/ecmascript", "text/css", "application/json")
+                         if render_resource else ())
+                    if content_type and content_type not in allowed_types:
                         raise LoaderError("The URL did not return a text document")
                     if response.headers.get("content-encoding", "identity") != "identity":
                         raise LoaderError("Compressed HTTP responses are not accepted")

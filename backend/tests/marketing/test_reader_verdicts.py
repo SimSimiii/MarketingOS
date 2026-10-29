@@ -47,10 +47,10 @@ async def test_the_receipt_carries_what_the_reader_actually_said(
     assert verdict.biggest_doubt
     assert verdict.stopped_at == "orqAgent skips the build."
     assert verdict.fixes
-    # The frequencies, not only the derived score - "3 in 100" means something
-    # to somebody who has mailed a list and "5/10" does not.
-    assert verdict.opens_in_100 == 30
-    assert verdict.clicks_in_100 is not None
+    assert verdict.pull == 8
+    assert verdict.opens_in_100 is None
+    assert verdict.clicks_in_100 is None
+    assert "uncalibrated" in result.report.assessment_method
 
     # And the one line that says what to write instead, surfaced on its own.
     assert line.what_would_have_worked == [
@@ -189,8 +189,9 @@ async def test_a_starved_run_says_so_instead_of_blaming_the_copy(
 
     note = " ".join(result.report.notes)
     assert "under the floor" in note
-    assert "one draft" in note
-    assert "preset that buys them" in note
+    assert "review depth" in note
+    assert "cannot supply missing evidence" in note
+    assert "preset that buys them" not in note
 
 
 @pytest.mark.asyncio

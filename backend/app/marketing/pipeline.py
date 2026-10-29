@@ -55,6 +55,7 @@ from app.marketing.contract import (
 )
 from app.marketing.craft import CraftLoop, EmailOutcome
 from app.marketing.critic import ConversionCritic
+from app.marketing.direct import direct_brief
 from app.marketing.email_copy import Email
 from app.marketing.exceptions import CampaignError, CraftError
 from app.marketing.intelligence import (
@@ -353,22 +354,52 @@ class EmailCampaignPipeline:
                         intelligence,
                         recovery,
                     )
+                    fallbacks = list(result.outcomes)
+                    retained = [outcome for outcome in result.outcomes
+                                if not outcome.unresolved_strategy
+                                and not outcome.selected_brief.argument_issue
+                                and not outcome.best.gates.blocking]
+                    retained_by_position = {outcome.brief.position: outcome for outcome in retained}
+                    recovered_brief.emails = [
+                        retained_by_position[item.position].selected_brief
+                        if item.position in retained_by_position else item
+                        for item in recovered_brief.emails
+                    ]
                     brief = recovered_brief
-                    result.outcomes.clear()
+                    result.outcomes = retained
                     result.sequence = None
-                    if (guard := self._guard()) is not None:
-                        return self._stopped(request, contract, result, guard)
-                    guard = await self._phase_craft(
-                        request, brief, artifacts, corpus, result, positioning
-                    )
+                    guard = self._guard()
+                    try:
+                        if guard is None:
+                            guard = await self._phase_craft(
+                                request, brief, artifacts, corpus, result, positioning
+                            )
+                    finally:
+                        # A replan does not revoke a finished draft. If its
+                        # replacement is interrupted, keep the original only
+                        # after checking it against current evidence and every
+                        # replacement already accepted. Its review gap survives.
+                        checker = self._craft_loop(artifacts, corpus, brief, positioning)
+                        positions = {item.brief.position for item in result.outcomes}
+                        for fallback in fallbacks:
+                            if fallback.brief.position in positions:
+                                continue
+                            gates, _ = checker._check(
+                                fallback.email, fallback.selected_brief,
+                                [item.email for item in result.outcomes],
+                            )
+                            if not gates.blocking:
+                                result.outcomes.append(fallback)
+                                positions.add(fallback.brief.position)
+                                self._observer.on_phase(
+                                    "craft", "Keeping the prior checked draft after an interrupted replan",
+                                    {"position": fallback.brief.position, "reused": True},
+                                )
+                        result.outcomes.sort(key=lambda item: item.brief.position)
                     if guard is not None:
                         return self._stopped(request, contract, result, guard)
 
-                if stopped := self._stop_for_unresolved_material(request, contract, result):
-                    return stopped
                 await self._phase_sequence(request, brief, artifacts, corpus, result)
-                if stopped := self._stop_for_unresolved_material(request, contract, result):
-                    return stopped
         except _RunStopped as stop:
             # A deliberate stop - cancelled, out of time, or nothing to argue
             # from. Already a finished result; it is not a failure.
@@ -389,8 +420,6 @@ class EmailCampaignPipeline:
         except CampaignError as exc:
             logger.warning("pipeline: run failed - %s", exc)
             self._observer.on_role_failed(exc.details.get("role", "pipeline"), str(exc))
-            if stopped := self._stop_for_unresolved_material(request, contract, result):
-                return stopped
             # A failure that arrives with finished emails behind it is a
             # degraded run, not a failed one. Three good emails out of five
             # are three good emails, and reporting them under a red banner is
@@ -422,8 +451,8 @@ class EmailCampaignPipeline:
             return result
         self._observer.on_phase(
             "finished",
-            f"{result.report.delivered} email(s) produced - average cold-reader pull "
-            f"{result.report.average_pull:.1f}/10"
+            f"{result.report.delivered} email(s) produced - average AI editorial assessment "
+            f"{result.report.average_pull:.1f}/10 (uncalibrated)"
             + (
                 f" - {len(below)} still under the {PULL_THRESHOLD}/10 floor when the loop "
                 "stopped rewriting"
@@ -525,7 +554,7 @@ class EmailCampaignPipeline:
                 "audience",
                 f"Written to {chosen}"
                 + (
-                    f" - {round(mapped.fit * 100)}% of them are estimated to bite"
+                    " - selected audience hypothesis; response is unmeasured"
                     if mapped is not None
                     else " - which is not on this brand's audience map"
                 ),
@@ -632,10 +661,11 @@ class EmailCampaignPipeline:
         outcome = await loop.craft(
             brief=email_brief, campaign=brief, request=request, previous=previous
         )
-        if outcome.unresolved_failure_mode == "missing_material":
+        if outcome.best.gates.blocking:
             raise CraftError(
-                f"Email {position} still needs verified material: {outcome.unresolved_strategy}",
-                role="conversion_critic",
+                f"Email {position} failed automatic checks after repair: "
+                + "; ".join(issue.detail for issue in outcome.best.gates.blocking),
+                role="email_writer",
                 position=position,
             )
         return outcome
@@ -655,6 +685,8 @@ class EmailCampaignPipeline:
         the sequence pass reads them together, which is the whole point of it,
         and reworks the ones the others break.
         """
+        if any(outcome.interruption for outcome in result.outcomes):
+            return self._stopped(request, contract, result, "provider_unavailable")
         await self._phase_sequence(request, brief, context.artifacts, context.corpus, result)
         result.report = self._build_report(request, contract, result)
         if result.status not in ("cancelled", "needs_input"):
@@ -739,22 +771,31 @@ class EmailCampaignPipeline:
         intelligence: CampaignIntelligence | None = None,
         recovery: MaterialRecovery | None = None,
     ) -> CampaignBrief:
-        self._observer.on_role_started(
-            STRATEGIST_ROLE, "Deciding what this campaign says, and in what order"
-        )
-        brief = await Strategist(self._session).build(
-            request=request,
-            artifacts=artifacts,
-            corpus=corpus,
-            contract=contract,
-            prior_learnings=self._knowledge.prior_learnings(),
-            positioning=positioning,
-            demand=demand,
-            chosen_segment=chosen_segment,
-            intelligence=intelligence,
-            recovery=recovery,
-        )
+        strategist = Strategist(self._session)
+        brief = direct_brief(request, artifacts, contract, self._policy, intelligence, chosen_segment)
+        if brief is None:
+            self._observer.on_role_started(
+                STRATEGIST_ROLE, "Deciding what this campaign says, and in what order"
+            )
+            brief = await strategist.build(
+                request=request,
+                artifacts=artifacts,
+                corpus=corpus,
+                contract=contract,
+                prior_learnings=self._knowledge.prior_learnings(),
+                positioning=positioning,
+                demand=demand,
+                chosen_segment=chosen_segment,
+                intelligence=intelligence,
+                recovery=recovery,
+            )
         result.brief = brief
+        self._observer.on_phase("strategy_plan", "Proposition selected for the requested campaign", {
+            "pipeline_version": brief.pipeline_version,
+            "strategy_mode": brief.strategy_mode,
+            "intent": request.effective_intent.model_dump(mode="json"),
+            "plan_history": strategist.audit,
+        })
         if intelligence is not None:
             attach_selected_dossier_objection(
                 artifacts,
@@ -768,11 +809,12 @@ class EmailCampaignPipeline:
                 "Campaign intelligence applied to the normalized brief",
                 intelligence.trace.model_dump(mode="json"),
             )
-        self._observer.on_role_finished(
-            STRATEGIST_ROLE,
-            f"{len(brief.emails)} email(s) to {brief.reader or 'the target reader'}",
-            {"emails": [item.summary() for item in brief.emails]},
-        )
+        if brief.strategy_mode == "planned":
+            self._observer.on_role_finished(
+                STRATEGIST_ROLE,
+                f"{len(brief.emails)} email(s) to {brief.reader or 'the target reader'}",
+                {"emails": [item.summary() for item in brief.emails]},
+            )
 
         # Announced rather than left implicit: who grades the copy decides
         # what every rewrite in the run is aiming at, and it is the one
@@ -814,6 +856,14 @@ class EmailCampaignPipeline:
         accepted: list[Email] = []
 
         for email_brief in brief.emails:
+            retained = next((item for item in result.outcomes if item.brief.position == email_brief.position), None)
+            if retained is not None:
+                gates, _ = loop._check(retained.email, retained.selected_brief, accepted)
+                if not gates.blocking:
+                    accepted.append(retained.email)
+                    self._observer.on_phase("craft", f"Keeping unaffected email {email_brief.position}; no new writing or reading call", {"position": email_brief.position, "reused": True})
+                    continue
+                result.outcomes.remove(retained)
             if (guard := self._guard()) is not None:
                 # Stop between emails, never inside one: a half-written email
                 # is worse than one fewer email.
@@ -835,7 +885,13 @@ class EmailCampaignPipeline:
                     position=email_brief.position,
                 )
             result.outcomes.append(outcome)
+            result.outcomes.sort(key=lambda item: item.brief.position)
+            if email_brief.argument_issue and not outcome.unresolved_strategy:
+                outcome.unresolved_strategy = email_brief.argument_issue
+                outcome.unresolved_failure_mode = "argument"
             accepted.append(outcome.email)
+            if outcome.interruption:
+                return "provider_unavailable"
         return None
 
     async def _phase_material_recovery(
@@ -849,11 +905,19 @@ class EmailCampaignPipeline:
     ) -> tuple[KnowledgeArtifacts, SourceCorpus, MaterialRecovery] | None:
         """Replan from cited proof or resolve missing material, at most once."""
 
+        if brief.strategy_mode == "direct":
+            return None
+
         gaps: list[str] = []
         argument_gaps: list[str] = []
+        supporting_ids: list[str] = []
+        excluded_ids: set[str] = set()
         for outcome in result.outcomes:
             if not outcome.unresolved_strategy:
                 continue
+            excluded_ids.update(outcome.selected_brief.forbidden_evidence_ids)
+            if outcome.selected_brief.argument_issue:
+                argument_gaps.append(outcome.selected_brief.argument_issue)
             missing = next(
                 (
                     version.critique
@@ -876,7 +940,12 @@ class EmailCampaignPipeline:
                 None,
             )
             if argument is not None:
-                argument_gaps.append(argument.strategy_gap or outcome.unresolved_strategy)
+                if argument.research_question.strip():
+                    gaps.append(argument.research_question.strip())
+                else:
+                    argument_gaps.append(argument.strategy_gap or outcome.unresolved_strategy)
+                    supporting_ids.extend(argument.supporting_evidence_ids)
+        recovery_artifacts = artifacts.for_claim_boundary(artifacts.evidence.ids - excluded_ids)
         gaps = list(dict.fromkeys(gap.strip() for gap in gaps if gap.strip()))
         if not gaps:
             argument_gaps = list(dict.fromkeys(
@@ -885,9 +954,11 @@ class EmailCampaignPipeline:
             if not argument_gaps:
                 return None
             gap = "\n".join(f"- {item}" for item in argument_gaps)
-            recovery = cited_recovery(gap=gap, artifacts=artifacts)
+            recovery = cited_recovery(
+                gap=gap, artifacts=recovery_artifacts, evidence_ids=supporting_ids,
+            )
             if recovery is None:
-                recovery = existing_recovery(gap=gap, artifacts=artifacts)
+                recovery = existing_recovery(gap=gap, artifacts=recovery_artifacts)
             if recovery is None:
                 return None
             self._observer.on_phase(
@@ -905,7 +976,7 @@ class EmailCampaignPipeline:
             return enriched, enlarged_corpus, recovery
 
         gap = "\n".join(f"- {item}" for item in gaps)
-        if recovery := existing_recovery(gap=gap, artifacts=artifacts):
+        if recovery := existing_recovery(gap=gap, artifacts=recovery_artifacts):
             self._observer.on_phase(
                 "material_recovery",
                 (
@@ -939,6 +1010,7 @@ class EmailCampaignPipeline:
                 artifacts=artifacts,
                 reader=brief.reader,
                 request=request.request,
+                identity_url=request.product_url,
             )
         except ModelRuntimeError as exc:
             # Research is a recovery path.  If search is unavailable, preserve
@@ -1118,26 +1190,35 @@ class EmailCampaignPipeline:
         brief: CampaignBrief,
         positioning: PositioningMap | None = None,
     ) -> CraftLoop:
+        policy = self._policy
+        if brief.strategy_mode == "direct":
+            policy = policy.model_copy(update={
+                "max_revisions": 0, "draft_candidates": 1, "critic_enabled": False,
+                "reader_panel": False, "tournament": False, "subject_variants": 0,
+            })
         return CraftLoop(
             writer=EmailWriter(self._session, self._observer),
             reader=BlindReader(self._session),
-            critic=ConversionCritic(self._session) if self._policy.critic_enabled else None,
-            judge=PreferenceJudge(self._session) if self._policy.tournament else None,
+            critic=ConversionCritic(self._session) if policy.critic_enabled else None,
+            judge=PreferenceJudge(self._session) if policy.tournament else None,
             subjects=(
-                SubjectBakeOff(self._session) if self._policy.subject_variants else None
+                SubjectBakeOff(self._session) if policy.subject_variants else None
             ),
-            subject_variants=self._policy.subject_variants,
+            subject_variants=policy.subject_variants,
             artifacts=artifacts,
             evidence=EvidenceIndex(artifacts.evidence, corpus.text),
+            corpus=corpus,
             personas=personas_for(
                 artifacts.audience,
                 artifacts.audience.match(brief.reader_segment, brief.reader),
-                panel=self._policy.reader_panel,
+                panel=policy.reader_panel,
                 explicit_audience=brief.reader_profile_override,
+                reader_scope=getattr(brief, "reader_scope", ""),
+                reader_relationship=brief.intent.reader_relationship if brief.intent else "unknown",
             ),
-            merge_fields=self._policy.merge_fields,
-            max_revisions=self._policy.max_revisions,
-            candidates=self._policy.draft_candidates,
+            merge_fields=policy.merge_fields,
+            max_revisions=policy.max_revisions,
+            candidates=policy.draft_candidates,
             positioning=positioning,
             observer=self._observer,
             cancel_token=self._cancel_token,
@@ -1153,48 +1234,6 @@ class EmailCampaignPipeline:
             return "budget_exhausted"
         return None
 
-    @staticmethod
-    def _withhold_unresolved_material(result: CampaignRunResult) -> list[EmailOutcome]:
-        blocked = [
-            outcome for outcome in result.outcomes
-            if outcome.unresolved_failure_mode == "missing_material"
-            and outcome.unresolved_strategy
-        ]
-        blocked_ids = {id(outcome) for outcome in blocked}
-        result.outcomes = [
-            outcome for outcome in result.outcomes if id(outcome) not in blocked_ids
-        ]
-        return blocked
-
-    def _stop_for_unresolved_material(
-        self,
-        request: CampaignRequest,
-        contract: DeliverableContract,
-        result: CampaignRunResult,
-    ) -> CampaignRunResult | None:
-        """Keep verified emails, but do not deliver a typed missing-material gap."""
-        blocked = self._withhold_unresolved_material(result)
-        if not blocked:
-            return None
-        result.status = "degraded" if result.outcomes else "needs_input"
-        result.abort_reason = "; ".join(
-            f"Email {outcome.brief.position} still needs verified material: "
-            f"{outcome.unresolved_strategy}"
-            for outcome in blocked
-        )
-        result.report = self._build_report(request, contract, result)
-        material_questions = list(dict.fromkeys(
-            f"Provide verified material to resolve: {outcome.unresolved_strategy}"
-            for outcome in blocked
-        ))
-        result.report.questions = material_questions
-        result.report.what_would_help_most = material_questions[0]
-        self._observer.on_report(result.report)
-        self._observer.on_phase(
-            "stopped", result.abort_reason, {"status": result.status}
-        )
-        return result
-
     def _stopped(
         self,
         request: CampaignRequest,
@@ -1206,20 +1245,9 @@ class EmailCampaignPipeline:
         whatever is finished. Degrading to "here are three of the five, and
         here is why" beats failing a campaign that has minutes of good work
         in it."""
-        blocked = self._withhold_unresolved_material(result)
         result.status = guard  # type: ignore[assignment]
         result.abort_reason = _GUARD_MESSAGES.get(guard, guard)
         result.report = self._build_report(request, contract, result)
-        if blocked:
-            result.report.questions = list(dict.fromkeys(
-                f"Provide verified material to resolve: {outcome.unresolved_strategy}"
-                for outcome in blocked
-            ))
-            result.report.what_would_help_most = result.report.questions[0]
-            result.report.notes.append(
-                "Withheld emails needing verified material: "
-                + ", ".join(str(outcome.brief.position) for outcome in blocked)
-            )
         self._observer.on_report(result.report)
         self._observer.on_phase("stopped", result.abort_reason, {"status": guard})
         return result
@@ -1314,12 +1342,14 @@ class EmailCampaignPipeline:
             delivered=len(lines),
             promised=contract.count,
             reads_expected=False,
+            effective_audience=self._effective_audience(result),
+            audience_scope=getattr(result.brief, "reader_scope", ""),
             contract_violations=[violation.detail for violation in violations],
             emails=lines,
             limiting_gaps=[f"{gap.missing} - {gap.impact}" for gap in gaps],
             what_would_help_most=posture.asks[0] if posture and posture.asks else "",
             knowledge_version=result.artifacts.version if result.artifacts else 0,
-            notes=[result.abort_reason] if result.abort_reason else [],
+            notes=([result.abort_reason] if result.abort_reason else []) + self._audience_notes(result),
         )
 
     def _build_report(
@@ -1335,10 +1365,17 @@ class EmailCampaignPipeline:
                 position=outcome.brief.position,
                 subject=outcome.email.subject,
                 single_idea=outcome.selected_brief.single_idea,
+                selection_reason=outcome.selected_brief.selection_reason,
+                problem_ids=outcome.selected_brief.problem_ids,
+                action_id=outcome.selected_brief.action_id,
+                next_step_decision=outcome.selected_brief.next_step_decision,
+                next_step_value=outcome.selected_brief.next_step_value,
+                next_step_url=outcome.selected_brief.next_step_url,
+                next_step_limit=outcome.selected_brief.next_step_limit,
                 pull=outcome.best.read.pull,
                 revisions=len(outcome.versions) - 1,
                 clean=not outcome.best.gates.blocking,
-                landed=outcome.best.read.landed and not outcome.unresolved_strategy,
+                landed=outcome.best.read.landed and not outcome.unresolved_strategy and not outcome.selected_brief.argument_issue,
                 rewrites_stopped_helping=outcome.stopped_early,
                 read_reported=outcome.best.read.has_verdict,
                 understood=outcome.best.read.understood,
@@ -1346,7 +1383,12 @@ class EmailCampaignPipeline:
                 evidence_assigned=outcome.selected_brief.evidence_ids,
                 evidence_spent=list(outcome.best.substantiation.carried),
                 attributions=outcome.best.substantiation.attributions,
-                unresolved=[issue.detail for issue in outcome.best.gates.blocking]
+                unresolved=(["Review interrupted: " + outcome.interruption] if outcome.interruption else [])
+                + (["Editorial review requested: " + (
+                    outcome.best.critique.summary or "The critic still requests changes to this draft."
+                )] if outcome.best.critique is not None and outcome.best.critique.verdict == "revise" else [])
+                + [issue.detail for issue in outcome.best.gates.blocking]
+                + ([outcome.selected_brief.argument_issue] if outcome.selected_brief.argument_issue else [])
                 + (["Unresolved strategy/material gap: " + outcome.unresolved_strategy] if outcome.unresolved_strategy else [])
                 + (["Unresolved audience mismatch: " + "; ".join(r.relevance_feedback for r in outcome.best.read.reported if r.situation_matches is False)] if not outcome.best.read.relevant else []),
                 reader_verdicts=ReaderVerdict.from_panel(outcome.best.read),
@@ -1365,33 +1407,64 @@ class EmailCampaignPipeline:
             request=request.request,
             delivered=len(result.outcomes),
             promised=contract.count,
+            effective_audience=self._effective_audience(result),
+            audience_scope=getattr(result.brief, "reader_scope", ""),
             contract_violations=[violation.detail for violation in violations],
             emails=lines,
             limiting_gaps=[f"{gap.missing} - {gap.impact}" for gap in gaps],
-            what_would_help_most=_reader_recommendation(lines) or (posture.asks[0] if posture and posture.asks else ""),
+            # A critic can request more material and trigger bounded research,
+            # but cannot erase a draft. Keep the concern on the receipt and
+            # require review; deterministic gates still control delivery.
+            what_would_help_most=next((
+                "Verify before sending: " + outcome.unresolved_strategy
+                for outcome in result.outcomes
+                if outcome.unresolved_failure_mode == "missing_material"
+                and outcome.unresolved_strategy
+            ), "") or next((
+                "Official-source question still open: " + version.critique.research_question.strip()
+                for outcome in result.outcomes
+                if outcome.unresolved_failure_mode == "argument"
+                for version in reversed(outcome.versions)
+                if version.critique is not None and version.critique.research_question.strip()
+            ), "") or _reader_recommendation(lines) or (posture.asks[0] if posture and posture.asks else ""),
             sequence_summary=result.sequence.verdict.summary if result.sequence else "",
             knowledge_version=result.artifacts.version if result.artifacts else 0,
             notes=(
                 ([result.abort_reason] if result.abort_reason else [])
-                + self._economy_note(lines)
+                + self._audience_notes(result)
+                + (["Audience context: " + result.intelligence.audience_resolution_status
+                    + ("; legacy fallback used" if result.intelligence.legacy_fallback_used else "")]
+                   + result.intelligence.validation_warnings if result.intelligence else [])
+                + (["Direct approach: one draft and one independent read; factual gates remain active. Editorial concerns are reported without automatic rewriting."]
+                   if result.brief and result.brief.strategy_mode == "direct"
+                   else self._economy_note(lines))
             ),
         )
 
+    @staticmethod
+    def _effective_audience(result: CampaignRunResult) -> str:
+        if result.brief is None:
+            return ""
+        if result.brief.reader_profile_override.strip():
+            return result.brief.reader_profile_override.strip()
+        audience = result.artifacts.audience if result.artifacts else None
+        selected = audience.match(result.brief.reader_segment, result.brief.reader) if audience else None
+        selected = selected or (audience.primary() if audience else None)
+        return selected.name if selected else "Audience unspecified; no recipient situation was established"
+
+    def _audience_notes(self, result: CampaignRunResult) -> list[str]:
+        effective = self._effective_audience(result)
+        if not effective:
+            return []
+        scope = getattr(result.brief, "reader_scope", "")
+        return ["Effective audience: " + effective + (". Qualified scope: " + scope if scope else "")]
+
     def _economy_note(self, lines: list[EmailReportLine]) -> list[str]:
-        """Say when the copy scored badly because of what the run was allowed
-        to buy, rather than because of the material.
+        """Describe review depth without attributing a weak result to spend.
 
-        A preset is presented as a speed choice and is really a quality one:
-        the cheapest configuration writes one draft instead of several,
-        reads it with one stranger instead of three, skips the critic, skips
-        the subject bake-off and allows one rewrite. Every mechanism this
-        system's quality rests on is off.
-
-        A user who picked it and got a 4/10 has no way to know that, and the
-        number they are shown looks like a verdict on their product. It is a
-        verdict on a run that was not allowed to do any of the work. Naming it
-        is free and it is the difference between "this tool is not very good"
-        and "spend forty cents more".
+        A simulated reader asking for unavailable product evidence cannot be
+        satisfied by a larger panel or another rewrite. Establish the cause
+        before recommending more paid work.
         """
         below = [line for line in lines if line.read_reported and not line.landed]
         if not below:
@@ -1412,9 +1485,9 @@ class EmailCampaignPipeline:
         return [
             f"{len(below)} email(s) came in under the floor on a run configured without "
             + ", ".join(starved)
-            + ". Those are the mechanisms the quality rests on - this run wrote one draft "
-            "and kept it. Before concluding the copy cannot be better, try the same "
-            "request on a preset that buys them."
+            + ". These settings describe review depth, not the cause of the weak result. "
+            "Check the audience fit and verified support for the reported obstacle first; "
+            "additional readers or rewrites cannot supply missing evidence."
         ]
 
 
@@ -1424,7 +1497,12 @@ def _reader_recommendation(lines: list[EmailReportLine]) -> str:
     mismatches = [v for v in verdicts if v.situation_matches is False]
     if mismatches:
         return "Recheck the selected audience situation: " + mismatches[0].relevance_feedback
-    blockers = [v.to_click_it_would_have_to or v.biggest_doubt for v in verdicts if v.biggest_doubt or v.to_click_it_would_have_to]
+    # A reader may answer the counterfactual with "which it did". A landed
+    # deliverable with no unresolved finding must not turn that satisfied
+    # condition into a new request for material or another paid rewrite.
+    pending = [v for line in lines if not line.landed or line.unresolved
+               or line.pull < PULL_THRESHOLD or not line.understood for v in line.reader_verdicts]
+    blockers = [v.to_click_it_would_have_to or v.biggest_doubt for v in pending if v.biggest_doubt or v.to_click_it_would_have_to]
     if not blockers:
         return ""
     priority = max(dict.fromkeys(blockers), key=blockers.count)

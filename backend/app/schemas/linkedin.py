@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 from ipaddress import ip_address
 from typing import Annotated, Literal
@@ -30,7 +31,8 @@ def public_url(value: str) -> str:
     try:
         address = ip_address(host)
     except ValueError:
-        pass
+        if not re.fullmatch(r"[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?", host) or ".." in host:
+            raise ValueError("A public HTTPS hostname is required") from None
     else:
         if not address.is_global:
             raise ValueError("A public HTTPS URL is required")
@@ -194,6 +196,7 @@ class PublicProspectCandidate(BaseModel):
     """A search lead or a public audience venue, never verified buyer evidence."""
 
     name: str = Field(min_length=1, max_length=200)
+    kind: Literal["company", "professional", "venue"]
     url: str
     headline: str = Field(default="", max_length=500)
     reason: str = Field(default="", max_length=1000)
@@ -212,6 +215,10 @@ class PublicProspectAnswer(BaseModel):
 
 
 class SearchResult(PublicProspectAnswer):
+    # Legacy LinkedIn sources also allow HTTP; keep paid historical results readable.
+    candidates: list[LinkedInCandidate | PublicProspectCandidate] = Field(
+        default_factory=list, max_length=10,
+    )
     #: The criteria this search was actually run against, echoed back so the
     #: saved job says who it was looking for and not only what it found.
     criteria: TargetingCriteria | None = None

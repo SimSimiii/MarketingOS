@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Compass, Files, LayoutDashboard, Palette } from "lucide-react";
+import { BookOpen, Compass, Files, LayoutDashboard, Palette, MailCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { normalizePath } from "@/lib/paths";
 
@@ -14,13 +14,14 @@ export function BrandNav({ brandId, counts }: { brandId: string; counts: { sourc
     { href: `${base}/knowledge`, label: "Sources", hint: "Your material", icon: Files, badge: counts.sources },
     { href: `${base}/knowledge/base`, label: "Knowledge", hint: "Facts & evidence", icon: BookOpen, badge: counts.facts },
     { href: `${base}/market`, label: "Market", hint: "Buyers & competitors", icon: Compass, badge: counts.alerts || counts.rivals },
+    { href: `${base}/email-analysis`, label: "Email review", hint: "Analyse your draft", icon: MailCheck, badge: null },
     { href: `${base}/identity`, label: "Identity", hint: "Email appearance", icon: Palette, badge: null },
   ];
   const active = items.filter((item) => item.exact ? pathname === item.href : pathname === item.href || pathname.startsWith(`${item.href}/`)).sort((a, b) => b.href.length - a.href.length)[0]?.href;
   return (
     <nav
       aria-label="Brand workspace"
-      className="grid grid-cols-2 gap-1.5 rounded-2xl bg-black/25 p-1.5 shadow-[inset_0_1px_2px_0_oklch(0_0_0/30%)] ring-1 ring-white/[0.06] sm:grid-cols-3 xl:grid-cols-5"
+      className="grid grid-cols-2 gap-1.5 rounded-2xl bg-black/25 p-1.5 shadow-[inset_0_1px_2px_0_oklch(0_0_0/30%)] ring-1 ring-white/[0.06] sm:grid-cols-3 xl:grid-cols-6"
     >
       {items.map(({ icon: Icon, ...item }) => {
         const current = item.href === active;

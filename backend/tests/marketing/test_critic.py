@@ -85,3 +85,26 @@ def test_a_copy_revision_cannot_hide_a_strategy_gap():
             failure_mode="copy",
             strategy_gap="The linked page does not answer the SMTP question.",
         )
+
+
+@pytest.mark.parametrize("verdict,mode,gap", [
+    ("ship", "none", ""), ("revise", "copy", ""),
+    ("revise", "missing_material", "An asserted limit is unverified."),
+])
+def test_only_an_argument_revision_may_request_opportunity_research(verdict, mode, gap):
+    with pytest.raises(ValidationError, match="research_question"):
+        CritiqueDecision(
+            verdict=verdict, failure_mode=mode, strategy_gap=gap,
+            research_question="What are the participant submission steps?",
+        )
+
+
+def test_research_question_is_recorded_without_becoming_a_material_violation():
+    critique = CritiqueDecision(
+        verdict="revise", failure_mode="argument",
+        strategy_gap="The collection workflow does not earn the signup ask yet.",
+        research_question="What are the documented participant submission steps?",
+    )
+    assert critique.requires_new_strategy
+    assert critique.failure_mode == "argument"
+    assert critique.research_question in critique.render()

@@ -9,9 +9,13 @@ from sqlmodel import Session, SQLModel, create_engine, select
 
 from app.knowledge.artifacts import (
     AudienceModel,
+    CallToAction,
+    Fact,
     Grounding,
     KnowledgeArtifacts,
     Objection,
+    OfferSheet,
+    Plan,
     Provenance,
     Segment,
     Sophistication,
@@ -30,6 +34,7 @@ from app.market.audience_research import (
 from app.market.demand import AudienceSegment, DemandMap
 from app.market.radar import MarketSnapshot
 from app.market.relevance import (
+    INTERPRETATION_VERSION,
     CampaignReadiness,
     CampaignRecommendation,
     ClaimContract,
@@ -44,6 +49,7 @@ from app.market.relevance import (
     RelevanceStatus,
 )
 from app.market.store import MarketStore
+from app.marketing.briefs import ArgumentOption
 from app.marketing.contract import parse_contract
 from app.marketing.intelligence import (
     AudienceResolution,
@@ -189,6 +195,7 @@ def dossier_status(
 ) -> RelevanceStatus:
     dossier_id = uuid4()
     dossier = RelevanceDossier(
+        interpretation_version=INTERPRETATION_VERSION,
         audience_research_id=row.id,
         audience_name=row.audience_name,
         audience_research_version=row.version,
@@ -349,7 +356,7 @@ async def test_strategy_can_use_new_ledger_id_after_knowledge_change():
     )
 
     assert brief.emails[0].evidence_ids == ["E2"]
-    assert provider.calls_by_role == {"strategist": 1}
+    assert provider.calls_by_role == {"strategist": 2}, "One bounded proposition repair preserves the new ledger fact; a stale dossier must not license its old problem bridge."
 
 
 def artifacts() -> KnowledgeArtifacts:
@@ -453,6 +460,153 @@ def test_researched_segment_replaces_only_the_selected_primary_and_drives_person
     )[0]
 
 
+def test_selected_audience_survives_research_without_promoting_a_discovery_method():
+    row = research_row()
+    need = "Collect recorded repair results for the public portfolio."
+    intelligence = build_campaign_intelligence(
+        selected_audience=row.audience_name,
+        selected_need=need,
+        match=resolve_audience_research(row.audience_name, [row]),
+        dossier_status=dossier_status(row),
+        ledger=ledger(),
+    )
+    original = artifacts()
+    adapted = adapt_researched_audience(original, research(), intelligence)
+    selected = adapted.audience.primary()
+
+    assert selected.name == intelligence.selected_audience
+    assert selected.job_to_be_done == research().desired_outcomes[0].text
+    assert selected.situation == research().situation.text
+    assert selected.situation_grounding is Grounding.GROUNDED
+    assert selected.situation_provenance
+    assert intelligence.desired_outcomes[0].text != need
+    assert original.audience.primary().job_to_be_done == "Legacy product relevance"
+    rendered = intelligence.render_for_strategy()
+    assert need in rendered
+    assert "not an additional campaign requirement" in rendered
+    assert intelligence.desired_outcomes[0].text in rendered
+
+
+@pytest.mark.parametrize("ambiguous", [False, True])
+def test_selected_job_without_resolved_research_carries_no_borrowed_observations(ambiguous):
+    name = "Repair shops answering warranty requests in Leeds"
+    rows = [research_row(), research_row("Shops answering warranty requests in Leeds")] if ambiguous else []
+    intelligence = build_campaign_intelligence(
+        selected_audience=name,
+        selected_need="Collect recorded repair results.",
+        match=resolve_audience_research(name, rows),
+        dossier_status=None,
+        ledger=ledger(),
+    )
+
+    assert intelligence.selected_need == "Collect recorded repair results."
+    assert intelligence.trace.audience_resolution_status is (
+        AudienceResolution.AMBIGUOUS if ambiguous else AudienceResolution.MISSING
+    )
+    assert intelligence.situation is None
+    assert intelligence.problems == intelligence.desired_outcomes == []
+    assert intelligence.selected_need in intelligence.render_for_strategy()
+
+
+@pytest.mark.asyncio
+async def test_discovery_hypothesis_reaches_strategy_without_becoming_writer_biography():
+    intelligence, _ = context()
+    intelligence.selected_need = "Collect recorded repair results for the public portfolio."
+    adapted = adapt_researched_audience(artifacts(), research(), intelligence)
+    provider = RoleScriptedProvider({"strategist": strategist_answer()})
+
+    await Strategist(make_session(provider)).build(
+        request=request(), artifacts=adapted, corpus=SourceCorpus(),
+        contract=parse_contract(request().request), intelligence=intelligence,
+    )
+
+    strategy = next(item for item in provider.requests if item.template == "strategist")
+    assert intelligence.selected_need in strategy.system_prompt
+    assert intelligence.selected_audience in adapted.audience.primary().render_for_writing()
+    assert intelligence.selected_need not in adapted.audience.primary().render_for_writing()
+    assert provider.calls_by_role == {"strategist": 1}
+
+
+@pytest.mark.asyncio
+async def test_target_assignment_is_pinned_in_the_brief_and_survives_argument_switch():
+    intelligence, _ = context()
+    intelligence.selected_need = "Collect recorded repair results for the public portfolio."
+    answer = json.loads(strategist_answer())
+    answer["emails"][0]["target_audience"] = "An invented replacement job"
+    provider = RoleScriptedProvider({"strategist": json.dumps(answer)})
+
+    brief = await Strategist(make_session(provider)).build(
+        request=request(), artifacts=artifacts(), corpus=SourceCorpus(),
+        contract=parse_contract(request().request), intelligence=intelligence,
+    )
+    selected = brief.emails[0]
+    alternative = selected.with_argument(ArgumentOption(single_idea="Another supported route"))
+
+    assert selected.target_audience == alternative.target_audience == intelligence.selected_audience
+    for item in (selected, alternative):
+        rendered = item.render()
+        assert rendered.index(intelligence.selected_audience) < rendered.index("The one idea it owns")
+        assert intelligence.selected_need not in rendered
+        assert "An invented replacement job" not in rendered
+        assert "campaign target, not observed biography" in rendered
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("allowed", [True, False])
+async def test_closed_boundary_covers_strategy_and_writer_summaries_not_only_explicit_bans(allowed):
+    current = artifacts()
+    current.business.what_it_does = "SUMMARY_PRODUCT_SENTINEL"
+    current.business.business_model = "SUMMARY_MODEL_SENTINEL"
+    current.business.facts = [Fact(statement="SUMMARY_BUSINESS_SENTINEL")]
+    current.audience.objections[0].answer = "SUMMARY_OBJECTION_ANSWER_SENTINEL"
+    current.offer = OfferSheet(
+        plans=[Plan(name="Starter", price="SUMMARY_PRICE_SENTINEL", includes=["SUMMARY_PLAN_SENTINEL"])],
+        free_entry="SUMMARY_FREE_ENTRY_SENTINEL",
+        guarantees=["SUMMARY_GUARANTEE_SENTINEL"],
+        purchase_motion="SUMMARY_MOTION_SENTINEL",
+        calls_to_action=[CallToAction(label="Start trial", url="https://product.example/signup")],
+    )
+    current.evidence.entries.append(Evidence(
+        id="E7", kind=EvidenceKind.FEATURE,
+        claim="UNRANKED_LEDGER_SENTINEL", verbatim="UNRANKED_LEDGER_SENTINEL",
+    ))
+    row = research_row()
+    status = dossier_status(row)
+    status.dossier.schema_version = 2
+    status.dossier.recommendation = CampaignRecommendation(
+        state=RecommendationState.RECOMMENDED_NARROW,
+        readiness=CampaignReadiness.GO_NARROW,
+        allowed_claims=["licensed product fact 1"] if allowed else [],
+        allowed_evidence_ids=["E1"] if allowed else [],
+        forbidden_evidence_ids=["E4"],
+    )
+    intelligence = build_campaign_intelligence(
+        selected_audience=row.audience_name,
+        match=resolve_audience_research(row.audience_name, [row]),
+        dossier_status=status, ledger=current.evidence,
+    )
+    before = current.model_dump()
+    provider = RoleScriptedProvider(default_answers())
+    provider.set_default("strategist", strategist_answer(evidence=["E1"] if allowed else []))
+    brief = await Strategist(make_session(provider)).build(
+        request=request(), artifacts=current, corpus=SourceCorpus(),
+        contract=parse_contract(request().request), intelligence=intelligence,
+    )
+    await EmailWriter(make_session(provider)).draft(
+        brief=brief.emails[0], campaign=brief, request=request(), artifacts=current, previous=[],
+    )
+
+    for role in ("strategist", "email_writer"):
+        prompt = provider.requests_for(role)[0].system_prompt
+        assert "SUMMARY_" not in prompt
+        assert "UNRANKED_LEDGER_SENTINEL" not in prompt
+        assert "https://product.example/signup" in prompt
+        assert "Starter" in prompt
+        if allowed:
+            assert "licensed product fact 1" in prompt
+    assert current.model_dump() == before
+
+
 def test_compact_context_carries_buyer_reality_and_dossier_but_no_source_body():
     intelligence, _ = context()
     rendered = intelligence.render_for_strategy()
@@ -492,14 +646,31 @@ async def test_current_dossier_and_research_change_the_normalized_brief_without_
     assert brief.emails[0].felt_need == (
         "Repeat warranty questions consume the first hour of the day."
     )
-    assert brief.emails[0].status_quo == (
-        "They answer repeat warranty questions by hand from the shared inbox."
-    )
+    assert brief.emails[0].status_quo == "", "An invented spreadsheet must not become another observed workflow by list order"
+    assert any("single researched problem" in warning for warning in intelligence.trace.validation_warnings)
     assert brief.emails[0].evidence_ids == ["E1"]
     assert brief.emails[0].must_not_say == [
         "It reduces repeat triage; it does not eliminate every warranty question."
     ]
     assert intelligence.trace.partial_caveats_injected == brief.emails[0].must_not_say
+
+
+def test_synthetic_research_problem_cannot_borrow_an_unrelated_capability():
+    intelligence, _ = context()
+    # Two real problems, only E1 is connected to P1. E2 is integration
+    # documentation and does not establish a customer-facing status view.
+    problem = intelligence.problems[1].statement
+    assert intelligence.normalized_felt_need(problem, ["E2"]) == ""
+    assert any("no dossier link" in warning for warning in intelligence.trace.validation_warnings)
+    assert intelligence.normalized_felt_need("", ["E2"]) == "", "Activation needs no invented pain"
+    assert intelligence.normalized_status_quo("They all use spreadsheets") == ""
+
+
+def test_synthetic_research_does_not_fill_a_problem_from_list_order_without_a_bridge():
+    intelligence, _ = context()
+    assert intelligence.normalized_felt_need("An unrelated pain about packaging", ["E2"]) == ""
+    assert intelligence.normalized_status_quo("") == ""
+    assert any("no substitute pain" in warning for warning in intelligence.trace.validation_warnings)
 
 
 @pytest.mark.asyncio
@@ -657,6 +828,80 @@ def test_unknown_dossier_references_and_unavailable_fits_are_ignored_defensively
     assert any("unknown evidence" in item.lower() for item in intelligence.trace.validation_warnings)
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize("verdict", [FitVerdict.ADDRESSED, FitVerdict.SOLVED])
+@pytest.mark.parametrize("inferred", [False, True])
+async def test_v2_problem_bridge_and_scope_limit_survive_into_the_writer(verdict, inferred):
+    row = research_row()
+    status = dossier_status(row)
+    assert status.dossier is not None
+    status.dossier.schema_version = 2
+    status.dossier.recommendation = CampaignRecommendation(
+        state=RecommendationState.RECOMMENDED_NARROW,
+        readiness=CampaignReadiness.GO_NARROW,
+        allowed_claims=["licensed product fact 1"],
+        allowed_evidence_ids=["E1"],
+    )
+    caveat = "Collection operations are supported; higher participation is not established."
+    status.dossier.problem_fits = [ProblemFit(
+        problem_id="P1", verdict=verdict, evidence_ids=["E1"],
+        capability_ids=["collection"], caveat=caveat,
+    )]
+    intelligence = build_campaign_intelligence(
+        selected_audience=row.audience_name,
+        match=resolve_audience_research(row.audience_name, [row]),
+        dossier_status=status, ledger=ledger(),
+    )
+    if inferred:
+        intelligence.problems[0].grounding = str(Grounding.INFERRED)
+        intelligence.problems[0].review_notes = ["Historical sources; current demand unknown."]
+    provider = RoleScriptedProvider(default_answers())
+    provider.set_default("strategist", strategist_answer(evidence=["E1"]))
+    current_artifacts = adapt_researched_audience(artifacts(), research(), intelligence)
+    brief = await Strategist(make_session(provider)).build(
+        request=request(), artifacts=current_artifacts, corpus=SourceCorpus(),
+        contract=parse_contract(request().request), intelligence=intelligence,
+    )
+
+    assert [fit.verdict for fit in intelligence.problem_fits] == [verdict]
+    assert caveat in brief.emails[0].must_not_say
+    assert research().problems[0].statement == brief.emails[0].felt_need
+    await EmailWriter(make_session(provider)).draft(
+        brief=brief.emails[0], campaign=brief, request=request(),
+        artifacts=current_artifacts, previous=[],
+    )
+    assert caveat in (provider.requests_for("email_writer")[0].system_prompt or "")
+    if inferred:
+        prompt = provider.requests_for("email_writer")[0].system_prompt or ""
+        assert "Use it only conditionally" in prompt
+        assert "Historical sources; current demand unknown." in prompt
+    assert not any("Ignored unavailable" in item for item in intelligence.trace.validation_warnings)
+
+
+@pytest.mark.parametrize("evidence_id", ["UNKNOWN", "E4"])
+def test_v2_addressed_bridge_without_usable_evidence_still_drops(evidence_id):
+    row = research_row()
+    status = dossier_status(row)
+    assert status.dossier is not None
+    status.dossier.schema_version = 2
+    status.dossier.recommendation = CampaignRecommendation(
+        state=RecommendationState.RECOMMENDED_NARROW,
+        readiness=CampaignReadiness.GO_NARROW,
+        forbidden_evidence_ids=["E4"],
+    )
+    status.dossier.problem_fits = [ProblemFit(
+        problem_id="P1", verdict=FitVerdict.ADDRESSED,
+        evidence_ids=[evidence_id], capability_ids=["collection"],
+    )]
+    intelligence = build_campaign_intelligence(
+        selected_audience=row.audience_name,
+        match=resolve_audience_research(row.audience_name, [row]),
+        dossier_status=status, ledger=ledger(),
+    )
+    intelligence.validate_against(ledger())
+    assert intelligence.problem_fits == []
+
+
 def database(*, with_dossier: bool = True):
     engine = create_engine(
         "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
@@ -742,6 +987,35 @@ def test_db_gateway_scopes_research_to_brand_and_selected_audience():
     assert bundle.context.trace.audience_resolution_status is AudienceResolution.LOADED
     assert bundle.context.problems[0].statement.startswith("Repeat warranty")
     assert "another brand" not in bundle.context.render_for_strategy()
+
+
+def test_db_gateway_resolves_need_from_this_brands_selected_map_segment():
+    engine, brand_id, other_brand_id, _ = database(with_dossier=False)
+    name = research().audience_name
+    need = "Collect recorded repair results for the public portfolio."
+    with Session(engine) as session:
+        store = MarketStore(session)
+        store.save_map(brand_id, DemandMap(segments=[
+            AudienceSegment(name="Another workflow", need="Unrelated job"),
+            AudienceSegment(name=name, need=need),
+        ]))
+        store.save_map(other_brand_id, DemandMap(segments=[
+            AudienceSegment(name=name, need="Other brand's job"),
+        ]))
+        campaign = Campaign(
+            name="Selected", request="Write one email", brand_id=brand_id,
+            audience_segment=name,
+        )
+        session.add(campaign)
+        session.commit()
+
+        bundle = _DbKnowledgeGateway(session, campaign).campaign_intelligence(artifacts())
+
+    assert bundle.context.selected_need == need
+    assert bundle.artifacts.audience.primary().name == name
+    assert bundle.artifacts.audience.primary().job_to_be_done == research().desired_outcomes[0].text
+    assert "Other brand's job" not in bundle.context.render_for_strategy()
+    assert "Unrelated job" not in bundle.context.render_for_strategy()
 
 
 def test_missing_and_ambiguous_research_use_explicit_fallback_without_leakage():
@@ -930,7 +1204,9 @@ async def test_v2_withheld_evidence_is_removed_before_strategy_writer_and_critic
     planned = brief.emails[0]
     strategy_prompt = provider.requests_for("strategist")[0].system_prompt or ""
     assert planned.evidence_ids == ["E1"]
-    assert planned.forbidden_evidence_ids == ["E4"]
+    # E2/E3/E5/E6 were never selected, but are just as unavailable as the
+    # explicitly excluded E4. Later reader-question retrieval must not revive them.
+    assert planned.forbidden_evidence_ids == ["E2", "E3", "E4", "E5", "E6"]
     assert planned.forbidden_capability_ids == ["voice_telephony"]
     assert any(
         "Do not state that Unreadable Repair Co has an internal problem" in item
@@ -953,4 +1229,4 @@ async def test_v2_withheld_evidence_is_removed_before_strategy_writer_and_critic
     assert "Licensed product fact 4" not in writer_prompt
     assert current_artifacts.evidence.slice_for(
         ["E1", "E4"], excluded_ids=frozenset(planned.forbidden_evidence_ids)
-    ).ids == {"E1", "E2", "E3", "E5", "E6"}
+    ).ids == {"E1"}

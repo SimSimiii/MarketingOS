@@ -12,6 +12,18 @@ corpus below.
 
 # Source rules
 
+- Test the structured workflow and need hypotheses. Prioritize problems whose quotations
+  explicitly concern that workflow. General business stress or adjacent marketing work is
+  context, not evidence of the defining bottleneck unless the source connects them. Report
+  absent or contradictory workflow evidence instead of manufacturing a matching problem.
+- A fetch date is not a publication date. Use the supplied publication metadata; unknown
+  means unknown. Describe dated migrations and complaints in their original period, without
+  implying they remain current. Current applicability needs independent current support.
+- Several problems quoted from one article are one source, not several corroborations.
+  Copies and summaries of that article do not make it independently corroborated.
+- A conclusion combining sources is inferred even when each quotation is verified. State
+  the inference basis; do not turn an interpretation into a direct buyer statement.
+
 - Tier 1 is the buyer speaking directly in first person.
 - Tier 2 is behavioural evidence such as job postings, tool listings, directories, public
   workflows, pricing pages, conference listings, and member listings.
@@ -28,6 +40,10 @@ and when, when those details are present. A complaint establishes a reported exp
 its prevalence or a universal technical limitation. "I could not find an export" does not
 establish that no export exists. Multiple quotes must support the same interpretation, not
 merely mention the same topic. Keep uncertain or historical conclusions qualified.
+Preserve the direction of the observation: “native modules make routine projects easier”
+does not support “native modules complicate routine projects.” A quote can be exact while
+your interpretation is reversed. If sources point in different directions, describe that
+disagreement and qualify the scope; do not manufacture a problem from favourable evidence.
 
 # How to cite
 

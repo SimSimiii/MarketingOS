@@ -170,11 +170,13 @@ def evidence_gate(text: str, index: EvidenceIndex) -> GateReport:
     was previously an instruction in a prompt; here it is a property of the
     output, verified on every draft for free.
     """
-    return _report(
+    report = _report(
         "evidence",
         [unsupported.as_issue() for unsupported in index.unsupported(text)],
         GateSeverity.BLOCKING,
     )
+    return report.extend(_report("evidence-context", index.context_issues(text),
+                                 GateSeverity.ADVISORY))
 
 
 # Product-scope claims whose truth can be checked from the V2 capability
@@ -255,15 +257,16 @@ _SHOUTING_ALLOWED = frozenset(
         "HTTP", "HTTPS", "REST", "JSON", "YAML", "HTML", "GRPC", "CRUD", "WEBHOOK",
         "OAUTH", "SAML", "OIDC", "JWT", "CORS", "UUID", "CDN", "DNS", "TLS",
         "SMTP", "IMAP", "DKIM", "DMARC",
+        "POST", "PATCH", "HEAD", "OPTIONS", "DELETE", "TRACE", "CONNECT",
         # compliance and commerce, which a reader wants to see stated plainly
-        "SOC2", "GDPR", "HIPAA", "CCPA", "ISO", "SLA", "SLAS", "VAT", "SAAS",
+        "SOC2", "GDPR", "HIPAA", "CCPA", "DPIA", "DPIAS", "ISO", "SLA", "SLAS", "VAT", "SAAS",
         # the ones that carry a number the reader is meant to check
         "MRR", "ARR", "ROI", "CPU", "GPU", "RAM",
     }
 )
 
 
-def spam_gate(email: Email) -> GateReport:
+def spam_gate(email: Email, *, company_name: str = "") -> GateReport:
     """Deliverability, not taste. An email nobody receives converts at zero
     however good it is, and none of these checks require judgment."""
     text = render_email(email)
@@ -275,8 +278,14 @@ def spam_gate(email: Email) -> GateReport:
             details.append(
                 f"\"{term}\" is spam-filter vocabulary - say the same thing in your own words"
             )
+    # A documented canonical name can legitimately be uppercase. Exempt its
+    # exact spelling, not its component words or arbitrary uppercase variants.
+    shouting_text = text
+    if name := company_name.strip():
+        shouting_text = re.sub(rf"(?<!\w){re.escape(name)}(?!\w)", "", text)
     shouting = [
-        word for word in _SHOUTING_RE.findall(text) if word.upper() not in _SHOUTING_ALLOWED
+        word for word in _SHOUTING_RE.findall(shouting_text)
+        if word.upper() not in _SHOUTING_ALLOWED
     ]
     if shouting:
         details.append(
@@ -804,7 +813,7 @@ def run_all(
     twice.
     """
     text = render_review(email)
-    substantiation = assess_substantiation(email, assigned or [], ledger or [])
+    substantiation = assess_substantiation(email, assigned or [], ledger or [], company_name=business.company_name if business else "")
     report = GateReport()
     for part in (
         structure_gate(email),
@@ -812,7 +821,7 @@ def run_all(
         stock_phrase_gate(text, extra_banned),
         evidence_gate(text, evidence),
         capability_scope_gate(text, forbidden_capability_ids),
-        spam_gate(email),
+        spam_gate(email, company_name=business.company_name if business else ""),
         overlap_gate(email, previous or []),
         repeated_call_to_action_gate(email),
         repeated_sign_off_gate(email),
@@ -827,13 +836,7 @@ def run_all(
 
 
 def _dedupe(details: list[str]) -> list[str]:
-    seen: set[str] = set()
-    unique: list[str] = []
-    for detail in details:
-        if detail not in seen:
-            seen.add(detail)
-            unique.append(detail)
-    return unique
+    return list(dict.fromkeys(details))
 
 
 def _normalized(text: str) -> str:

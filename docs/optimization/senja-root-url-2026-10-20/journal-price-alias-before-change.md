@@ -1,0 +1,5 @@
+# Prix : diagnostic avant modification
+
+Rejeu gratuit de la Knowledge v2, conservé dans pricing-gate-preflight.json : Starter costs $29 per month et Pro costs $59 per month sont bloqués alors que les blocs sources nomment bien ces plans. Senja Starter costs $29 per month passe. Cause : context.subject est Senja Starter plan / Senja Pro plan et la comparaison exige l’égalité de ce sujet avec le nom court du plan. Ne pas supprimer arbitrairement des mots de noms composés : Basic Standard et Pro Standard restent distincts.
+
+Hypothèse : reconnaître un nom court seulement quand un titre de plan présent dans la citation tarifaire le justifie, pour le même montant et un seul sujet complet. Garder cette équivalence locale au montant, refuser les alias ambigus et conserver les contrôles de période/conditions. Rejeu attendu : Starter29/mois, Pro59/mois et leurs noms complets passent ; Basic29/mois et Starter29/an échouent. Aucun ledger, dossier ou asset retouché. Tests gratuits avant génération réelle ; recharger le worker seulement après collecte terminale du scan en cours.

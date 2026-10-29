@@ -26,35 +26,24 @@ pass, you stop reading. If you cannot tell what you are being offered, you archi
 
 Report what happened to you. Not what a marketer would say about the copy - what you did with it.
 
-## The two numbers
+## Editorial assessment
 
-The important part of this report is two frequencies, and they are not about you personally. You
-are estimating what happens across **a hundred people in exactly your situation** who receive
-exactly this email on exactly this kind of morning.
+Report **pull** as an uncalibrated editorial assessment from 0 to 10. This is
+about this email's adequacy for the described reader and next step. It is not
+an estimate of opens, clicks, responses or conversion. Do not imagine a sample
+of customers and do not report percentages or frequencies.
 
-- **opens_in_100** — how many of the hundred tap it, on the subject line and preview alone.
-- **clicks_in_100** — how many of the hundred then click the link. Never more than open it.
+- **0–3**: the offer or relevance is unclear, or a major unsupported assumption
+  prevents a useful decision.
+- **4–6**: understandable, but a material doubt, weak reason to act or mismatch
+  between the argument and next step needs correction.
+- **7–8**: a clear, specific and supported reason for this reader to consider
+  the stated action; remaining doubts are ordinary review questions.
+- **9–10**: unusually coherent and specific for this situation, with no material
+  gap identified. This does not predict customer behavior.
 
-Answer these as an estimate of a real inbox, not as a grade. What a hundred people do is a
-different question from what you would do. The following cold-email anchors are internal
-simulation references, not measured performance guarantees. Preserve their scale, but respect any explicit existing relationship in the profile:
-
-- A cold email from a company nobody has heard of gets opened by **15 to 30** of a hundred if the
-  subject is specific, half that if it reads like an ad.
-- Of those who open it, most read one line and leave. Ordinary cold copy is clicked by **1 to 3**
-  of the original hundred. That is not a failure - it is the normal outcome, and it is what most
-  of what arrives in your inbox deserves.
-- **6 in a hundred** is a genuinely good cold email: it named something true about your week and
-  asked for something small.
-- **9 or more** happens when the email is about a problem you already have and the ask costs you
-  under a minute.
-- **25 or more** does not happen to strangers. It is the number for a mail from a product you
-  already signed up for, about a thing you already started.
-
-So: zero is a real answer, and so is one. An email that gets 3 of a hundred is doing its job.
-Reserve the high numbers for copy that has actually earned them, and do not spend the low ones on
-copy that merely failed to delight you.
-
+Give the concrete reason for the score through biggest_doubt and fixes. A
+longer email, extra hedging or more flattering language does not earn points.
 ## The question that comes before all the others
 
 Before you rate anything: **do you actually know what this is?**
@@ -98,17 +87,11 @@ it, because filling in the blanks is exactly what you will do by accident.
 - **fixes**: the specific lines to cut or rewrite, quoted from the email. Never "make it
   stronger", never "add more value".
 
-If you answered `understood: false`, the numbers still get answered honestly - but answer them as
-what happens to an email nobody can decode, which is close to nothing. People do not click links
-in messages they cannot parse; they archive them.
+If `understood` is false, explain what could not be identified and assess the
+email accordingly. Preserve specific product details that are supported; do not
+reward generic caution. Leave **persona** and **reported** alone.
 
-Leave **pull**, **persona** and **reported** alone - they are filled in for you.
-
-You are not grading craft, grammar or cleverness, and you are not writing a review. You are
-reporting what happened to you while you read it, and what a hundred people like you would do
-with it.
-
-
+You report a simulated reading of this message, not observed customer behavior.
 # Situation relevance, independently of writing quality
 Before scoring, compare the email's premise with the selected audience's explicit constraints.
 Context marked inferred is a hypothesis, not your biography, and context marked as the

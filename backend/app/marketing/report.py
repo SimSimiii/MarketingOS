@@ -95,6 +95,13 @@ class EmailReportLine(BaseModel):
     position: int
     subject: str = ""
     single_idea: str = ""
+    selection_reason: str = ""
+    problem_ids: list[str] = Field(default_factory=list)
+    action_id: str = ""
+    next_step_decision: str = ""
+    next_step_value: str = ""
+    next_step_url: str = ""
+    next_step_limit: str = ""
     #: How much the cold reader wanted the thing, on the version that shipped.
     pull: float = 0.0
     revisions: int = 0
@@ -178,7 +185,9 @@ class EmailReportLine(BaseModel):
             # Named rather than left to be inferred from a number: a run that
             # stopped because it was out of rewrites and a run that stopped
             # because the copy worked both end, and only one of them is done.
-            score = f"pull {self.pull:.0f}/10 - still below the {PULL_THRESHOLD}/10 floor" + (
+            reason = (f"still below the {PULL_THRESHOLD}/10 floor" if self.pull < PULL_THRESHOLD
+                      else "score meets the floor; unresolved review findings remain")
+            score = f"pull {self.pull:.0f}/10 - {reason}" + (
                 ", and rewriting had stopped moving it" if self.rewrites_stopped_helping else ""
             )
         proof = (
@@ -203,6 +212,9 @@ class EmailReportLine(BaseModel):
 
 class CampaignReport(BaseModel):
     request: str = ""
+    effective_audience: str = ""
+    audience_scope: str = ""
+    assessment_method: str = "Simulated editorial assessment, uncalibrated; no response or conversion prediction"
     delivered: int = 0
     promised: int = 0
     contract_violations: list[str] = Field(default_factory=list)

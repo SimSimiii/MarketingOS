@@ -1,0 +1,87 @@
+{
+  "completed_captured_steps": [
+    {
+      "step": "scan-functional-rivals",
+      "calls": 5,
+      "reported_tokens": 211289,
+      "cache_read_tokens": 0,
+      "seconds": 455.25,
+      "snapshot": "steps\\20261018T071718241915Z-poll.json"
+    },
+    {
+      "step": "map-functional-catalogue",
+      "calls": 2,
+      "reported_tokens": 467947,
+      "cache_read_tokens": 222713,
+      "seconds": 598.85,
+      "snapshot": "steps\\20261018T073503484550Z-poll.json"
+    },
+    {
+      "step": "scan-verify-source-cache",
+      "calls": 1,
+      "reported_tokens": 47460,
+      "cache_read_tokens": 0,
+      "seconds": 260.33,
+      "snapshot": "steps\\20261018T160029700358Z-poll.json"
+    },
+    {
+      "step": "scan-rival-price-scope",
+      "calls": 5,
+      "reported_tokens": 221621,
+      "cache_read_tokens": 0,
+      "seconds": 415.45,
+      "snapshot": "steps\\20261018T160834858544Z-poll.json"
+    },
+    {
+      "step": "research-publication-grounding",
+      "calls": 2,
+      "reported_tokens": 130053,
+      "cache_read_tokens": 44441,
+      "seconds": 387.76,
+      "snapshot": "steps\\20261018T161528292460Z-poll.json"
+    },
+    {
+      "step": "dossier-functional-reliability",
+      "calls": 1,
+      "reported_tokens": 162810,
+      "cache_read_tokens": 0,
+      "seconds": 124.45,
+      "snapshot": "steps\\20261018T161830273579Z-poll.json"
+    },
+    {
+      "step": "rationale_diagnostic",
+      "calls": 1,
+      "reported_tokens": 52234,
+      "snapshot": "functional-rationale-diagnostic.json"
+    },
+    {
+      "step": "email_d87e4e46-cb56-4a02-821d-8f8dc32a793e",
+      "calls": 7,
+      "agent_groups": 4,
+      "reported_tokens": 203487,
+      "cache_read_tokens": 86912,
+      "pipeline_status": "degraded",
+      "needs_review": true,
+      "snapshot": "runs\\d87e4e46-cb56-4a02-821d-8f8dc32a793e\\result.json"
+    },
+    {
+      "step": "email_e14d43af-13ea-4f5c-8063-4a9511033dab",
+      "calls": 26,
+      "agent_groups": 9,
+      "reported_tokens": 583401,
+      "cache_read_tokens": 370560,
+      "pipeline_status": "completed",
+      "needs_review": false,
+      "snapshot": "runs\\e14d43af-13ea-4f5c-8063-4a9511033dab\\result.json"
+    }
+  ],
+  "known_completed_calls": 50,
+  "known_reported_tokens": 2080302,
+  "missing_counters": [
+    {
+      "step": "scan-corrected-rationale-refs",
+      "reason": "Terminal counters not captured (or operation still running)."
+    }
+  ],
+  "scope": "Functional follow-up including diagnostics and both emails. Completed application model calls, not grouped role rows. Cached input included; not uncached tokens, invoice or conversions. One completed scan's process-local terminal counters were lost."
+}

@@ -33,18 +33,25 @@ stops being a text generator.
 import logging
 from datetime import UTC, datetime
 from enum import StrEnum
+from typing import TYPE_CHECKING
+from urllib.parse import urldefrag
 
 from pydantic import BaseModel, Field, field_validator
 
 from app.ai.base import ResearchTool
 from app.ai.model_router import ModelTier
 from app.knowledge.artifacts import BusinessProfile
-from app.knowledge.ledger import Evidence, EvidenceKind, EvidenceStrength
+from app.knowledge.corpus import fold
+from app.knowledge.ledger import Evidence, EvidenceContext, EvidenceKind, EvidenceStrength
 from app.runtime.model_session import ModelSession
+
+if TYPE_CHECKING:
+    from app.market.audience_research import FixedURLFetcher
 
 logger = logging.getLogger("marketingos.market")
 
 ROLE_ID = "proof_hunter"
+MAX_PROOF_URLS = 8
 
 #: What a found proof can be. A narrower list than `EvidenceKind` because
 #: these are the only kinds worth searching the open web for: everything else
@@ -80,6 +87,13 @@ class ProofStatus(StrEnum):
     REJECTED = "rejected"
 
 
+class ProofVerification(StrEnum):
+    NOT_CHECKED = "not_checked"
+    QUOTE_VERIFIED = "quote_verified"
+    PAGE_UNAVAILABLE = "page_unavailable"
+    QUOTE_NOT_FOUND = "quote_not_found"
+
+
 class ProofCandidate(BaseModel):
     """Something the web says about this company, waiting to be confirmed."""
 
@@ -99,9 +113,11 @@ class ProofCandidate(BaseModel):
     #: Where the page lives, for the user's judgment: "g2.com", "a customer's
     #: engineering blog", "Hacker News".
     venue: str = ""
-    #: What the hunter thinks the odds are this is really about this company
-    #: and really says what it says. Advisory to the user, never a gate.
+    #: Legacy transport compatibility only; never used as a probability,
+    #: displayed to the user, or used to assign evidence strength.
     confidence: float = Field(default=0.5, ge=0.0, le=1.0)
+    verification_status: ProofVerification = ProofVerification.NOT_CHECKED
+    context: EvidenceContext | None = None
     #: Why this might not be what it looks like - a same-named company, an old
     #: version of the product, a review of a competitor that mentions us. The
     #: field that makes the approval queue a ten-second decision instead of a
@@ -144,10 +160,22 @@ class ProofCandidate(BaseModel):
             source=self.url,
             strength=(
                 EvidenceStrength.MODERATE
-                if self.confidence >= 0.7
+                if self.verification_status is ProofVerification.QUOTE_VERIFIED
                 else EvidenceStrength.WEAK
             ),
+            context=self._evidence_context(),
         )
+
+    def _evidence_context(self) -> EvidenceContext:
+        context = self.context.model_copy(deep=True) if self.context else EvidenceContext(
+            subject=self.attributed_to,
+            source_kind="third_party",
+            claim_scope="customer_outcome" if self.kind is ProofKind.OUTCOME else "unknown",
+        )
+        context.verification = f"human approved; automatic source check: {self.verification_status}"
+        if self.caveat:
+            context.limitations = "; ".join(filter(None, (context.limitations, self.caveat)))
+        return context
 
     def render(self) -> str:
         who = f" - {self.attributed_to}" if self.attributed_to else ""
@@ -173,12 +201,18 @@ class ProofHunt(BaseModel):
 class ProofHunter:
     """Searches the web for third-party proof about one business."""
 
-    def __init__(self, session: ModelSession) -> None:
+    def __init__(self, session: ModelSession, fetcher: "FixedURLFetcher | None" = None) -> None:
+        from app.market.audience_research import FixedURLFetcher
+
         self._session = session
+        self._fetcher = fetcher or FixedURLFetcher(max_urls=MAX_PROOF_URLS)
 
     async def hunt(
         self, business: BusinessProfile, website: str = "", limit: int = 8
     ) -> ProofHunt:
+        from app.market.audience_research import LocatedSource
+
+        limit = min(max(1, limit), MAX_PROOF_URLS)
         hunt = await self._session.structured(
             role=ROLE_ID,
             tier=ModelTier.BALANCED,
@@ -204,7 +238,31 @@ class ProofHunter:
         dropped = len(hunt.candidates) - len(hunt.usable)
         if dropped:
             logger.info("proof: discarded %d candidate(s) with no quote or source", dropped)
-        hunt.candidates = hunt.usable
+        hunt.candidates = hunt.usable[:limit]
+        # Search snippets and the model's own assertion that it fetched a page
+        # are discovery only. Re-read exact public URLs in bounded Python HTTP
+        # fetches, reusing the audience research SSRF and redirect protections.
+        fetched = await self._fetcher.fetch([
+            LocatedSource(url=candidate.url, venue=candidate.venue)
+            for candidate in hunt.candidates
+        ]) if hunt.candidates else None
+        pages = {
+            urldefrag(source.requested_url)[0].rstrip("/"): source
+            for source in fetched.sources
+        } if fetched else {}
+        for candidate in hunt.candidates:
+            source = pages.get(urldefrag(candidate.url)[0].rstrip("/"))
+            if source is None:
+                candidate.verification_status = ProofVerification.PAGE_UNAVAILABLE
+            elif len(fold(candidate.verbatim)) < 12 or fold(candidate.verbatim) not in fold(
+                source.content
+            ):
+                candidate.verification_status = ProofVerification.QUOTE_NOT_FOUND
+            else:
+                candidate.verification_status = ProofVerification.QUOTE_VERIFIED
+            if candidate.context is not None:
+                # Do not trust a verification label supplied in model JSON.
+                candidate.context.verification = str(candidate.verification_status)
         return hunt
 
 

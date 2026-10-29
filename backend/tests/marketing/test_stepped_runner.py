@@ -14,6 +14,8 @@ fail to, and one of them is silent:
 Scripted provider throughout, so none of this spends quota.
 """
 
+import json
+
 import pytest
 from sqlalchemy.pool import StaticPool
 from sqlmodel import Session, SQLModel, create_engine, select
@@ -187,6 +189,27 @@ async def test_the_finish_step_persists_the_assets_and_closes_the_execution(sess
 
 
 @pytest.mark.asyncio
+async def test_material_concern_survives_steps_as_review_instead_of_empty_delivery(session, provider):
+    gap = "A pre-signup demonstration would help the reader evaluate the feature."
+    provider.set_default("conversion_critic", json.dumps({
+        "verdict": "revise", "failure_mode": "missing_material", "strategy_gap": gap,
+    }))
+    execution, steps = await _run_stepped(session, provider)
+    assets = session.exec(select(GeneratedAsset).where(
+        GeneratedAsset.campaign_execution_id == execution.id,
+    )).all()
+    session.refresh(execution)
+    assert len(assets) == steps[0].total_positions
+    assert all(asset.content and asset.content_html for asset in assets)
+    assert execution.status is ExecutionStatus.COMPLETED
+    assert execution.needs_review
+    assert execution.outcome_status == "degraded"
+    report = execution.result["report"]
+    assert all(any(gap in issue for issue in email["unresolved"]) for email in report["emails"])
+    assert not report["questions"]
+
+
+@pytest.mark.asyncio
 async def test_a_craft_step_before_plan_is_refused(session, provider):
     """Without a brief there is nothing to write. Better a clear error than an
     invented campaign."""
@@ -265,3 +288,22 @@ async def test_finish_after_failed_step_keeps_output_without_further_spend(sessi
     assert len(session.exec(select(GeneratedAsset)).all()) == 1
     session.refresh(execution)
     assert execution.error_message == "Craft step timed out"
+
+
+@pytest.mark.asyncio
+async def test_interrupted_craft_is_serialized_and_finished_without_more_calls(session, provider):
+    from tests.marketing.conftest import FAIL
+    execution = CampaignOrchestrator(session, provider).create_execution(_campaign(session))
+    await stepped_runner.plan(session, execution.id, provider)
+    provider.set_default("conversion_critic", FAIL)
+    step = await stepped_runner.craft(session, execution.id, provider)
+    assert not step.more
+    state = session.exec(select(CampaignRunState)).one()
+    assert len(state.outcomes) == 1
+    assert state.outcomes[0]["interruption"]
+    assert state.abort_reason
+    calls = len(provider.requests)
+    finished = await stepped_runner.finish(session, execution.id, provider)
+    assert finished.status == "degraded"
+    assert len(provider.requests) == calls
+    assert len(session.exec(select(GeneratedAsset)).all()) == 1

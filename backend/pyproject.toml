@@ -38,6 +38,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+render = ["playwright>=1.48,<2"]
 postgres = ["psycopg[binary]>=3.2.0"]
 #: Subscription billing. Needed only where `AI_BILLING=subscription` drives the
 #: `claude` CLI - a development machine with an authenticated $HOME. A host

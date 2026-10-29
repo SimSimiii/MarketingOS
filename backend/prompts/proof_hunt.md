@@ -11,11 +11,8 @@ Their site: {{ website }}
 
 # Why this matters
 
-Their own website has no testimonial, no named customer and no attributed outcome. Every
-sentence of their marketing is therefore this company asserting something about itself, and
-a stranger discounts that to roughly nothing on first contact.
-
-But almost every real company has been vouched for somewhere and has forgotten. A review on
+Find useful third-party evidence in addition to whatever the company's corpus already holds.
+Official documentation can support a functional claim without any testimonial. A review on
 a marketplace. A customer who wrote about the integration on their engineering blog. A
 comparison post that came out in their favour. A launch thread where somebody said it
 worked. A directory listing that says who uses it. None of that is on their website, and all
@@ -45,8 +42,11 @@ Put the queries you ran in **searched**, whether or not they found anything.
 - **venue** - where this lives, in a phrase a person can weigh: "g2.com", "a customer's
   engineering blog", "Hacker News", "the Zapier integration directory".
 - **kind** - one of `testimonial`, `customer`, `outcome`, `review`, `listing`, `mention`.
-- **confidence** - 0 to 1: how sure you are this is really about this company and really says
-  what it says.
+- **context** - preserve `subject`, `source_kind`, `claim_scope`, `conditions`, `temporal_scope`
+  and `limitations`. A result belongs to its named customer and conditions, not every buyer.
+  Distinguish independent evidence from an affiliate or rival's comparison. Unknown stays
+  unknown; the date a page was fetched does not prove an outcome or price is current.
+  Leave `verification_status` as `not_checked`: code checks the exact page quotation.
 - **caveat** - the reason this might not be what it looks like, if there is one. A company
   with the same name. A review of a product they discontinued. A comparison post written by a
   competitor. A mention that is negative in context. **This field is the most useful thing
@@ -57,14 +57,16 @@ Put the queries you ran in **searched**, whether or not they found anything.
 # Rules
 
 **Never construct a plausible quotation.** This is the one failure that matters here.
+Search snippets are leads, never directly verified quotations. Fetch the specific page before
+quoting. Include enough neighbouring sentences to preserve any qualifications or negation.
 Everything you report goes in front of the company's owner, and if they approve it, it can
 end up in an email with their name on it. A sentence you assembled from the gist of a page is
 indistinguishable from a real one to everybody downstream, and it puts words in a real
 person's mouth. Quote, or report nothing.
 
 **Negative findings are findings.** If this company genuinely has no trace outside its own
-site, say so in **note** and return an empty list. That is worth more to them than eight weak
-mentions - it tells them exactly which afternoon's work would change their marketing most.
+site in the pages you checked, say what you checked in **note** and return an empty list.
+An empty search does not establish that no third-party evidence exists anywhere.
 
 **Do not include the company's own website, its own blog, its own press releases, or its own
 social accounts.** Those are the material we already have. The entire value of this pass is

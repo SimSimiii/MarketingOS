@@ -1,0 +1,66 @@
+....................FF.......FFFFFF..................................... [ 51%]
+...............................................................F...      [100%]
+================================== FAILURES ===================================
+_ test_missing_material_is_researched_added_and_replanned_automatically[missing_material] _
+tests\marketing\test_pipeline.py:199: in test_missing_material_is_researched_added_and_replanned_automatically
+    assert provider.calls_by_role["strategist"] == 2
+E   assert 3 == 2
+------------------------------ Captured log call ------------------------------
+WARNING  marketingos.marketing:pipeline.py:421 pipeline: run failed - The recovery strategy ignored every newly verified fact after its one combined correction.
+_ test_missing_material_is_researched_added_and_replanned_automatically[argument] _
+tests\marketing\test_pipeline.py:199: in test_missing_material_is_researched_added_and_replanned_automatically
+    assert provider.calls_by_role["strategist"] == 2
+E   assert 3 == 2
+------------------------------ Captured log call ------------------------------
+WARNING  marketingos.marketing:pipeline.py:421 pipeline: run failed - The recovery strategy ignored every newly verified fact after its one combined correction.
+_ test_argument_gap_citing_verified_fact_replans_without_web_search[False-R1-False] _
+tests\marketing\test_pipeline.py:390: in test_argument_gap_citing_verified_fact_replans_without_web_search
+    assert provider.calls_by_role["strategist"] == 2
+E   assert 3 == 2
+------------------------------ Captured log call ------------------------------
+WARNING  marketingos.marketing:pipeline.py:421 pipeline: run failed - The recovery strategy ignored every newly verified fact after its one combined correction.
+_ test_argument_gap_citing_verified_fact_replans_without_web_search[False-E7-True] _
+tests\marketing\test_pipeline.py:390: in test_argument_gap_citing_verified_fact_replans_without_web_search
+    assert provider.calls_by_role["strategist"] == 2
+E   assert 3 == 2
+------------------------------ Captured log call ------------------------------
+WARNING  marketingos.marketing:pipeline.py:421 pipeline: run failed - The recovery strategy ignored every newly verified fact after its one combined correction.
+_ test_argument_gap_citing_verified_fact_replans_without_web_search[False-export_fact-True] _
+tests\marketing\test_pipeline.py:390: in test_argument_gap_citing_verified_fact_replans_without_web_search
+    assert provider.calls_by_role["strategist"] == 2
+E   assert 3 == 2
+------------------------------ Captured log call ------------------------------
+WARNING  marketingos.marketing:pipeline.py:421 pipeline: run failed - The recovery strategy ignored every newly verified fact after its one combined correction.
+_ test_argument_gap_citing_verified_fact_replans_without_web_search[True-R1-False] _
+tests\marketing\test_pipeline.py:390: in test_argument_gap_citing_verified_fact_replans_without_web_search
+    assert provider.calls_by_role["strategist"] == 2
+E   assert 3 == 2
+------------------------------ Captured log call ------------------------------
+WARNING  marketingos.marketing:pipeline.py:421 pipeline: run failed - The recovery strategy ignored every newly verified fact after its one combined correction.
+_ test_argument_gap_citing_verified_fact_replans_without_web_search[True-E7-True] _
+tests\marketing\test_pipeline.py:390: in test_argument_gap_citing_verified_fact_replans_without_web_search
+    assert provider.calls_by_role["strategist"] == 2
+E   assert 3 == 2
+------------------------------ Captured log call ------------------------------
+WARNING  marketingos.marketing:pipeline.py:421 pipeline: run failed - The recovery strategy ignored every newly verified fact after its one combined correction.
+_ test_argument_gap_citing_verified_fact_replans_without_web_search[True-export_fact-True] _
+tests\marketing\test_pipeline.py:390: in test_argument_gap_citing_verified_fact_replans_without_web_search
+    assert provider.calls_by_role["strategist"] == 2
+E   assert 3 == 2
+------------------------------ Captured log call ------------------------------
+WARNING  marketingos.marketing:pipeline.py:421 pipeline: run failed - The recovery strategy ignored every newly verified fact after its one combined correction.
+_ test_current_qualified_slice_reaches_strategy_and_effective_reader_without_an_extra_call _
+tests\marketing\test_argument_integrity.py:196: in test_current_qualified_slice_reaches_strategy_and_effective_reader_without_an_extra_call
+    assert provider.calls_by_role["strategist"] == 1
+E   assert 2 == 1
+=========================== short test summary info ===========================
+FAILED tests/marketing/test_pipeline.py::test_missing_material_is_researched_added_and_replanned_automatically[missing_material]
+FAILED tests/marketing/test_pipeline.py::test_missing_material_is_researched_added_and_replanned_automatically[argument]
+FAILED tests/marketing/test_pipeline.py::test_argument_gap_citing_verified_fact_replans_without_web_search[False-R1-False]
+FAILED tests/marketing/test_pipeline.py::test_argument_gap_citing_verified_fact_replans_without_web_search[False-E7-True]
+FAILED tests/marketing/test_pipeline.py::test_argument_gap_citing_verified_fact_replans_without_web_search[False-export_fact-True]
+FAILED tests/marketing/test_pipeline.py::test_argument_gap_citing_verified_fact_replans_without_web_search[True-R1-False]
+FAILED tests/marketing/test_pipeline.py::test_argument_gap_citing_verified_fact_replans_without_web_search[True-E7-True]
+FAILED tests/marketing/test_pipeline.py::test_argument_gap_citing_verified_fact_replans_without_web_search[True-export_fact-True]
+FAILED tests/marketing/test_argument_integrity.py::test_current_qualified_slice_reaches_strategy_and_effective_reader_without_an_extra_call
+9 failed, 130 passed in 20.17s

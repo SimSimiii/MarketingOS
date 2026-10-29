@@ -20,7 +20,11 @@ from app.schemas.brand import (
     BrandStyleUpdate,
     KnowledgeArtifactsRead,
 )
-from app.services.knowledge_compilation import CompilationStatus, start_compilation
+from app.services.knowledge_compilation import (
+    CompilationRequest,
+    CompilationStatus,
+    start_compilation,
+)
 from app.services.knowledge_compilation import job_for as compilation_job_for
 
 router = APIRouter(prefix="/brands", tags=["brands"])
@@ -38,6 +42,7 @@ def compilation_status(
 @router.post("/{brand_id}/knowledge/compile", response_model=CompilationStatus, status_code=202)
 async def compile_knowledge(
     brand_id: UUID, session: SessionDep, provider: AIProviderDep, principal: PrincipalDep,
+    data: CompilationRequest | None = None,
 ) -> CompilationStatus:
     brand = BrandRepository(session, principal).get(brand_id)
     if brand is None:
@@ -45,7 +50,9 @@ async def compile_knowledge(
     documents = ArtifactStore(session).source_documents(ArtifactScope(brand_id=brand_id))
     if not any(document.content.strip() for document in documents):
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Add sources before compiling.")
-    return start_compilation(brand_id, session.get_bind(), provider, brand.name)
+    return start_compilation(
+        brand_id, session.get_bind(), provider, brand.name, model=data.model if data else None
+    )
 
 
 @router.post("", response_model=BrandRead, status_code=status.HTTP_201_CREATED)

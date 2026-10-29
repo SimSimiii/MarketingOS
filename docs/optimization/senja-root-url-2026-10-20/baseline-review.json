@@ -1,0 +1,59 @@
+{
+  "stage_reviews": [
+    {
+      "stage": "ingestion_baseline",
+      "score": 7,
+      "facts": [
+        "8 pages, 6071 words",
+        "Homepage, named plans and FAQ, product pages, templates, company and comparison imported from the root URL"
+      ],
+      "limitations": [
+        "Help index only; no onboarding article stored",
+        "Four requests did not yield documents; original extraction and crawl snapshots retained"
+      ]
+    },
+    {
+      "stage": "knowledge_baseline",
+      "score": 7.5,
+      "facts": [
+        "142/142 quotations matched their source documents",
+        "No fictional demo company promoted as customer proof",
+        "Free/Starter/Pro terms and official actions preserved; audience assumptions distinguished"
+      ],
+      "limitations": [
+        "Base monthly prices 29/59 missing from ledger although correct in OfferSheet",
+        "Nine proposed quotations dropped",
+        "10m24s compilation, seven Sonnet calls"
+      ],
+      "calls": 7,
+      "input_tokens": 97993,
+      "output_tokens": 121071
+    }
+  ],
+  "validation": {
+    "backend_tests": 1784,
+    "backend_warnings": 2,
+    "ruff": "passed",
+    "ingestion_targeted": 126,
+    "knowledge_forecast_targeted_after_prompt": 124,
+    "frontend": "unchanged; prior lint/types and 28 tests passed"
+  },
+  "corrections": [
+    {
+      "id": "partial-craft-and-hard-quota",
+      "status": "scripted_validated_loaded",
+      "source_case": "carrd-root-url-2026-10-19"
+    },
+    {
+      "id": "onboarding-guide-priority",
+      "status": "scripted_validated_live_selection_confirmed_guide_access_403",
+      "replay": "crawl-selection-replay.json",
+      "request_budget": 12
+    },
+    {
+      "id": "price-block-quotation",
+      "status": "live_recompile_in_progress",
+      "method": "Prompt only, exact quotation validator unchanged"
+    }
+  ]
+}

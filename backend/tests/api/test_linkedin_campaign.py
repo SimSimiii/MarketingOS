@@ -11,6 +11,7 @@ import json
 from fastapi.testclient import TestClient
 
 from tests.api.conftest import await_terminal_status, create_campaign
+from tests.marketing.conftest import campaign_brief
 
 CHANNEL = {
     "recipient_name": "Alice",
@@ -55,6 +56,9 @@ def test_a_campaign_delivers_one_linkedin_message(client: TestClient, provider):
 
 
 def test_the_message_executes_the_strategist_s_plan(client: TestClient, provider):
+    brief = json.loads(campaign_brief(count=1))
+    brief["emails"][0].update(call_to_action="Reply about your workflow", destination_kind="reply")
+    provider.set_default("strategist", json.dumps(brief))
     provider.set_default("linkedin_writer", json.dumps({"body": DRAFT}))
     campaign = linkedin_campaign(client)
     execution_id = client.post(f"/api/campaigns/{campaign['id']}/start").json()["id"]

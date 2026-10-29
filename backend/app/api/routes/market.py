@@ -232,7 +232,7 @@ async def start_scan(
     brand = _brand(session, brand_id)
     try:
         job = MarketService(session).launch_scan(
-            brand, provider, engine, discover=data.discover
+            brand, provider, engine, discover=data.discover, model=data.model
         )
     except MarketError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
@@ -306,7 +306,7 @@ def read_audience(
             for row in service.store.latest_researches(brand_id)
         ],
         relevance=service.relevance_statuses(brand_id),
-        capability_profile=(CapabilityProfileRead.of(profile[0]) if profile else None),
+        capability_profile=(CapabilityProfileRead.of(*profile) if profile else None),
         note=note,
     )
 
@@ -323,9 +323,10 @@ def read_capability_profile(
     if found is None:
         raise HTTPException(
             status.HTTP_404_NOT_FOUND,
-            "No product capability profile exists yet. Compile Product Knowledge first.",
+            ("No product capability profile exists yet. If Product Knowledge is compiled, "
+             "derive the capability profile or run audience mapping; otherwise compile it first."),
         )
-    return CapabilityProfileRead.of(found[0])
+    return CapabilityProfileRead.of(*found)
 
 
 @router.post(
@@ -337,10 +338,10 @@ def derive_product_capability_profile(
 ) -> CapabilityProfileRead:
     _brand(session, brand_id)
     try:
-        row, _ = MarketService(session).ensure_capability_profile(brand_id)
+        row, checked = MarketService(session).ensure_capability_profile(brand_id)
     except MarketError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
-    return CapabilityProfileRead.of(row)
+    return CapabilityProfileRead.of(row, checked)
 
 
 @router.post(
@@ -437,7 +438,7 @@ async def start_audience_map(
     """
     brand = _brand(session, brand_id)
     try:
-        job = MarketService(session).launch_audience_map(brand, provider, engine, data)
+        job = MarketService(session).launch_audience_map(brand, provider, engine, data, model=data.model)
     except MarketError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
     return JobStatusRead(**vars(job))
@@ -458,7 +459,7 @@ async def start_audience_research(
     brand = _brand(session, brand_id)
     try:
         job = MarketService(session).launch_audience_research(
-            brand, provider, engine, segment=data.segment
+            brand, provider, engine, segment=data.segment, model=data.model
         )
     except MarketError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
@@ -497,7 +498,8 @@ async def start_relevance_dossier(
     brand = _brand(session, brand_id)
     try:
         job = MarketService(session).launch_relevance_dossier(
-            brand, provider, engine, segment=data.segment
+            brand, provider, engine, segment=data.segment, model=data.model,
+            verify_product_gaps=data.verify_product_gaps,
         )
     except MarketError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
@@ -518,7 +520,8 @@ async def rebuild_relevance_dossier(
     brand = _brand(session, brand_id)
     try:
         job = MarketService(session).launch_relevance_dossier(
-            brand, provider, engine, segment=data.segment, force=True
+            brand, provider, engine, segment=data.segment, force=True, model=data.model,
+            verify_product_gaps=data.verify_product_gaps,
         )
     except MarketError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc

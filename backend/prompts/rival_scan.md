@@ -58,3 +58,13 @@ Do not describe what any of them promise. Their own pages are read separately, d
 and that is where their claims will come from - anything you write here about their
 positioning would be a memory competing with a fetched page, and the fetched page wins.
 Your job is the list.
+
+These existing app URLs were unreadable on the previous scan:
+{{ public_page_requests }}
+Within this same search, return `public_pages` mapping each such competitor name to
+up to two exact official marketing/docs URLs found in search. Do not add that name
+again to leads. An empty list is better than a guessed URL.
+
+For every lead, prefer its public marketing site over an app/login URL. Supply up to
+two exact official marketing or documentation URLs found in search in `public_urls`,
+so Python can use them if the primary site is unreadable. Never guess a URL.
