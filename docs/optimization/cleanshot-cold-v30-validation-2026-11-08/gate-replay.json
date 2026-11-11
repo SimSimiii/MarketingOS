@@ -1,0 +1,37 @@
+{
+  "purpose": "Read-only deterministic reproduction on unchanged rejected drafts; no model, app mutation, repaired draft, or campaign launch.",
+  "checks": [
+    {
+      "attempt": 1,
+      "spam": {
+        "issues": [
+          {
+            "gate": "spam",
+            "detail": "SCIM is set in capitals - inbox filters read shouting as promotion, and so do people",
+            "severity": "blocking"
+          }
+        ]
+      },
+      "evidence": {
+        "issues": []
+      }
+    },
+    {
+      "attempt": 2,
+      "spam": {
+        "issues": []
+      },
+      "evidence": {
+        "issues": [
+          {
+            "gate": "evidence",
+            "detail": "\"$10\" - this amount is documented for a different plan or item being priced; preserve the source terms",
+            "severity": "blocking"
+          }
+        ]
+      }
+    }
+  ],
+  "price_aliases": {},
+  "ten_dollar_sources": []
+}

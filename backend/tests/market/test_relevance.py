@@ -105,11 +105,13 @@ def normalize(
     *,
     capability_ids: set[str] | None = None,
     constraint_ids: set[str] | None = None,
+    audience: AudienceResearch | None = None,
+    audience_scope: dict[str, str] | None = None,
 ):
     return normalize_dossier(
         proposal,
         ledger=ledger(),
-        research=research(),
+        research=audience or research(),
         positioning=positioning(),
         knowledge_id=uuid4(),
         knowledge_version=3,
@@ -119,6 +121,7 @@ def normalize(
         market_scan_version=4,
         capability_ids=capability_ids,
         constraint_ids=constraint_ids,
+        audience_scope=audience_scope,
     )
 
 

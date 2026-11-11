@@ -21,3 +21,14 @@ or documentation before creating an account or deploying an endpoint, a quote li
 prerequisites alone is adjacent information, not closure. Return no claims unless the
 fetched text establishes the requested low-commitment evaluation step. Do not turn a
 missing example into a checklist for starting implementation.
+{% if linked_candidates %}
+
+## Official links already found in the captured pages
+
+{{ linked_candidates }}
+
+If the excerpts cannot answer the exact question, you may set `followup_url` to
+one exact URL from this list that is likely to contain the answer. The link itself
+does not establish a product fact. Return no claims until a source answers the
+question. Leave `followup_url` empty if no listed link is relevant.
+{% endif %}

@@ -1,0 +1,581 @@
+{
+  "id": "ed40335d-d85d-42de-a9a1-a405e24b6146",
+  "campaign_id": "4d60d828-d1c9-45fc-8016-cfde0bbf39f3",
+  "status": "failed",
+  "needs_review": false,
+  "outcome_status": "failed",
+  "review_reasons": [],
+  "error_message": "Email 1 failed automatic checks after repair: \"The editor preview doesn't trigger a real send.\": No supplied source describes how Loops' editor preview behaves or confirms it fails to trigger an actual send. This is the draft's central justification for the ask, but no literal source quote entails it.; \"It won't show you how your data variables and payload actually render for a recipient.\": No source states that the editor preview fails to render data variables or payload for a recipient. This elaborates the prior unsupported claim without any textual support.; \"no new integration code required\": No supplied source states that using the CLI avoids writing new integration code. The CLI description only lists its functions (manage contacts, send events, test transactional email); it does not address integration code requirements, so this comparative claim is not entailed.; \"That exercises your draft the same way a live event would.\": No source equates the fidelity of a CLI test send to a real, live-triggered event. This equivalence claim goes beyond what the CLI documentation states about its capability.; \"The docs show the exact command.\": The cited docs page documents the Loops CLI's capability (send events, test transactional email from terminal), but no captured excerpt confirms that an 'exact command' is shown there. Plausible given it is a CLI doc section, but not literally entailed by the captured text.; This unsupported limitation claim is the email's core rationale for acting now; without source support it is a material unsubstantiated assertion about product behavior.; This answers the reader's implicit 'do I need to write code' objection but is not entailed by any supplied source describing the CLI.; Asserts a fidelity equivalence between a CLI test send and a real live-triggered event that the documentation does not state.",
+  "started_at": "2026-11-11T03:56:51.763794Z",
+  "completed_at": "2026-11-11T04:04:41.843223Z",
+  "created_at": "2026-11-11T03:56:51.763794Z",
+  "total_input_tokens": 142314,
+  "total_output_tokens": 42799,
+  "total_cache_read_tokens": 0,
+  "estimated_cost_usd": 1.0945,
+  "recommendation_snapshot": {
+    "campaign_id": "4d60d828-d1c9-45fc-8016-cfde0bbf39f3",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "b3d4b60c-2110-4b0b-8c9e-7eb124efb57d",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Before this template reaches a real user, send yourself one real test transactional email from the terminal — it's the documented way to see exactly what gets delivered."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T03:56:51.852385Z",
+      "completed_at": "2026-11-11T03:58:24.501778Z",
+      "model": "sonnet",
+      "input_tokens": 2,
+      "output_tokens": 8481,
+      "cache_creation_input_tokens": 30689,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.229587,
+      "duration_ms": 92492.47860000469,
+      "attempt": 1
+    },
+    {
+      "id": "049a211f-a4cf-4fad-8433-5fd907bc534f",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · first draft",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "subject": "Test your transactional template for real"
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T03:58:24.777208Z",
+      "completed_at": "2026-11-11T03:58:31.907517Z",
+      "model": "sonnet",
+      "input_tokens": 2,
+      "output_tokens": 282,
+      "cache_creation_input_tokens": 24059,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.116362,
+      "duration_ms": 7033.572799991816,
+      "attempt": 1
+    },
+    {
+      "id": "eeac1dba-5488-4fcc-b58e-7dd8a09b9a78",
+      "agent_id": "claim_reviewer",
+      "agent_name": "Claim Reviewer",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · checking claims against sources"
+      },
+      "output_data": {
+        "semantic_review": {
+          "key": "acef0234e79ab6e8414a719f347e061d2eed030669e39cb10f7c56f08b1492aa",
+          "approved": false,
+          "decision": {
+            "verdict": "revise",
+            "claims": [
+              {
+                "text": "The editor preview doesn't trigger a real send.",
+                "status": "unsupported",
+                "explanation": "No supplied source describes how Loops' editor preview behaves or confirms it fails to trigger an actual send. This is the draft's central justification for the ask, but no literal source quote entails it.",
+                "citations": []
+              },
+              {
+                "text": "It won't show you how your data variables and payload actually render for a recipient.",
+                "status": "unsupported",
+                "explanation": "No source states that the editor preview fails to render data variables or payload for a recipient. This elaborates the prior unsupported claim without any textual support.",
+                "citations": []
+              },
+              {
+                "text": "The Loops CLI sends events and test transactional email straight from your terminal",
+                "status": "supported",
+                "explanation": "Directly matches the documented Loops CLI description.",
+                "citations": [
+                  {
+                    "source_id": "E32",
+                    "quote": "Loops CLI Manage contacts, send events, and test transactional email from your terminal"
+                  }
+                ]
+              },
+              {
+                "text": "no new integration code required",
+                "status": "unsupported",
+                "explanation": "No supplied source states that using the CLI avoids writing new integration code. The CLI description only lists its functions (manage contacts, send events, test transactional email); it does not address integration code requirements, so this comparative claim is not entailed.",
+                "citations": []
+              },
+              {
+                "text": "That exercises your draft the same way a live event would.",
+                "status": "unsupported",
+                "explanation": "No source equates the fidelity of a CLI test send to a real, live-triggered event. This equivalence claim goes beyond what the CLI documentation states about its capability.",
+                "citations": []
+              },
+              {
+                "text": "The docs show the exact command.",
+                "status": "uncertain",
+                "explanation": "The cited docs page documents the Loops CLI's capability (send events, test transactional email from terminal), but no captured excerpt confirms that an 'exact command' is shown there. Plausible given it is a CLI doc section, but not literally entailed by the captured text.",
+                "citations": [
+                  {
+                    "source_id": "E32",
+                    "quote": "Loops CLI Manage contacts, send events, and test transactional email from your terminal"
+                  }
+                ]
+              },
+              {
+                "text": "See the CLI docs →",
+                "status": "supported",
+                "explanation": "CTA destination matches the selected destination (https://loops.so/docs) and corresponds to the documented Loops CLI section referenced for the one requested action.",
+                "citations": [
+                  {
+                    "source_id": "E32",
+                    "quote": "Loops CLI Manage contacts, send events, and test transactional email from your terminal"
+                  }
+                ]
+              }
+            ],
+            "findings": [
+              {
+                "text": "The editor preview doesn't trigger a real send.",
+                "kind": "factual",
+                "explanation": "This unsupported limitation claim is the email's core rationale for acting now; without source support it is a material unsubstantiated assertion about product behavior."
+              },
+              {
+                "text": "no new integration code required",
+                "kind": "factual",
+                "explanation": "This answers the reader's implicit 'do I need to write code' objection but is not entailed by any supplied source describing the CLI."
+              },
+              {
+                "text": "That exercises your draft the same way a live event would.",
+                "kind": "factual",
+                "explanation": "Asserts a fidelity equivalence between a CLI test send and a real live-triggered event that the documentation does not state."
+              }
+            ],
+            "summary": "The one documented mechanism cited—Loops CLI sends events and tests transactional email from the terminal—is correctly sourced (E32), and the single CTA, word count, and single-ask structure all comply with the brief. However, the draft's persuasive core rests on three material claims with no literal source support: that the editor preview doesn't trigger a real send, that the CLI needs no new integration code, and that a CLI test send exercises the template 'the same way a live event would.' These are factual assertions about product behavior, not style choices, and they are not entailed by any supplied source. 'The docs show the exact command' is plausible but unconfirmed by the captured text. Revise to either remove/soften these specific claims or supply supporting source text.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The underlying mechanism—use the documented Loops CLI to send a real test transactional email from the terminal before relying on the draft—is retained and correctly sourced via E32. However, the explanatory scaffolding around it (editor-preview limitation, no-code claim, live-event equivalence) is unsupported, so the benefit is asserted more strongly than the sources establish.",
+              "original_passage": "The editor preview doesn't trigger a real send. It won't show you how your data variables and payload actually render for a recipient.",
+              "revised_passage": ""
+            }
+          },
+          "version": 3,
+          "sources": {
+            "E32": "https://loops.so/docs"
+          }
+        },
+        "passed": false
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T03:58:31.927450Z",
+      "completed_at": "2026-11-11T04:00:17.842384Z",
+      "model": "sonnet",
+      "input_tokens": 2,
+      "output_tokens": 10503,
+      "cache_creation_input_tokens": 23624,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.216885,
+      "duration_ms": 105824.27300000563,
+      "attempt": 1
+    },
+    {
+      "id": "d61a703b-01e6-4d05-a860-2fea75f7d447",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 1 reader(s)",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:00:17.860653Z",
+      "completed_at": "2026-11-11T04:00:42.767898Z",
+      "model": "sonnet",
+      "input_tokens": 2,
+      "output_tokens": 1730,
+      "cache_creation_input_tokens": 5783,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.041701,
+      "duration_ms": 24872.352899983525,
+      "attempt": 1
+    },
+    {
+      "id": "d4c8e7b8-567b-4c51-bd3a-36f814e6d98e",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "Send your draft template to yourself"
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:00:42.829214Z",
+      "completed_at": "2026-11-11T04:02:47.744378Z",
+      "model": "sonnet",
+      "input_tokens": 2,
+      "output_tokens": 11509,
+      "cache_creation_input_tokens": 28263,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.248522,
+      "duration_ms": 124813.37669980712,
+      "attempt": 2
+    },
+    {
+      "id": "b3f1f58c-acb9-4c6c-929e-6618fd449b6c",
+      "agent_id": "claim_reviewer",
+      "agent_name": "Claim Reviewer",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · checking claims against sources"
+      },
+      "output_data": {
+        "semantic_review": {
+          "key": "fd3b5fc64ea42a481dbfdd44ff48e14da47233ad03e8ca510ad0f6cca1edc1ba",
+          "approved": false,
+          "decision": {
+            "verdict": "revise",
+            "claims": [
+              {
+                "text": "Loops sends marketing, product, and transactional email from one platform.",
+                "status": "supported",
+                "explanation": "Matches the vendor's own description of the platform's scope.",
+                "citations": [
+                  {
+                    "source_id": "E30",
+                    "quote": "Loops sends marketing, product, and transactional email from one platform, and every email works from the same contact record."
+                  }
+                ]
+              },
+              {
+                "text": "Its CLI manages contacts, sends events, and tests transactional email straight from your terminal, using that same draft.",
+                "status": "supported",
+                "explanation": "The documented CLI capability (manage contacts, send events, test transactional email from the terminal) matches this statement. 'That same draft' applies the documented function to the reader's own draft template established as the premise, not a separate product claim.",
+                "citations": [
+                  {
+                    "source_id": "E32",
+                    "quote": "Loops CLI Manage contacts, send events, and test transactional email from your terminal"
+                  }
+                ]
+              },
+              {
+                "text": "Send one real test to your own address and you'll see exactly what lands in an inbox — subject, sender, the works — before this template reaches an actual user.",
+                "status": "unsupported",
+                "explanation": "The ability to trigger a real transactional test send from the terminal is documented (E32), but no source establishes that the email will 'land in an inbox' — that is an inbox-placement/deliverability outcome claim, which is explicitly outside what the CLI's documented capability proves. The campaign notes themselves flag deliverability/inbox-placement outcomes as unestablished, and the user's actual request instructs avoiding unsupported outcome claims.",
+                "citations": []
+              },
+              {
+                "text": "The CLI docs walk you through running that test send.",
+                "status": "supported",
+                "explanation": "The CLI's documented page describes testing transactional email from the terminal; the docs page at the cited destination documents this exact function.",
+                "citations": [
+                  {
+                    "source_id": "E32",
+                    "quote": "Loops CLI Manage contacts, send events, and test transactional email from your terminal"
+                  }
+                ]
+              },
+              {
+                "text": "See the CLI docs →",
+                "status": "supported",
+                "explanation": "The CTA destination (loops.so/docs) is the documented page where the CLI's test-transactional-email capability is described, matching the selected destination exactly.",
+                "citations": [
+                  {
+                    "source_id": "E32",
+                    "quote": "Loops CLI Manage contacts, send events, and test transactional email from your terminal"
+                  }
+                ]
+              }
+            ],
+            "findings": [
+              {
+                "text": "you'll see exactly what lands in an inbox — subject, sender, the works",
+                "kind": "instruction",
+                "explanation": "The actual user request says to 'avoid unsupported access, plan, timing and outcome claims,' and the campaign notes explicitly exclude 'any claim about deliverability, inbox placement, or open/click outcomes — not established.' This phrase asserts the test email will land in the inbox, an outcome no supplied source documents. The supported fact is only that the CLI can trigger a real test send from the terminal (E32); whether/how it lands in an inbox is not established."
+              }
+            ],
+            "summary": "Most assertions (platform scope, CLI capability, CLI docs, and CTA destination) are supported by the CLI and platform source quotes. One sentence crosses into an unsupported inbox-placement/deliverability outcome claim that the brief explicitly told the writer to avoid, so the draft needs a revision to that sentence before it can be approved.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The prior passage's concrete, useful operation — the CLI testing transactional email straight from the terminal — reappears almost verbatim in the revised draft, with the added, supported detail that it uses the reader's own draft template. The operational capability and its basic consequence (exercising the real send path instead of only viewing it) carry through; the separate inbox-placement overreach in a later sentence does not remove this preserved operational statement.",
+              "original_passage": "The Loops CLI sends events and test transactional email straight from your terminal",
+              "revised_passage": "Its CLI manages contacts, sends events, and tests transactional email straight from your terminal, using that same draft."
+            }
+          },
+          "version": 3,
+          "factual_repair": true,
+          "sources": {
+            "E30": "https://loops.so/pricing",
+            "E32": "https://loops.so/docs"
+          }
+        },
+        "passed": false
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:02:47.754760Z",
+      "completed_at": "2026-11-11T04:04:09.154101Z",
+      "model": "sonnet",
+      "input_tokens": 2,
+      "output_tokens": 7895,
+      "cache_creation_input_tokens": 24074,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.192923,
+      "duration_ms": 81309.05289994553,
+      "attempt": 2
+    },
+    {
+      "id": "51121479-4a47-4746-bb79-f4f1a620d02d",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 1 reader(s)",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 6
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:04:09.172939Z",
+      "completed_at": "2026-11-11T04:04:41.815701Z",
+      "model": "sonnet",
+      "input_tokens": 2,
+      "output_tokens": 2399,
+      "cache_creation_input_tokens": 5808,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.048486,
+      "duration_ms": 32612.582999980077,
+      "attempt": 2
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "failed",
+    "report": {
+      "request": "Write exactly one English activation email from the Loops team. Reader: A developer with a Loops account and a draft transactional template. Ask them to do one thing: Run a first transactional email test to their own address. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+      "effective_audience": "A developer with a Loops account and a draft transactional template.",
+      "audience_scope": "",
+      "assessment_method": "Simulated reader's interest, uncalibrated; no response or conversion prediction",
+      "delivered": 0,
+      "promised": 1,
+      "contract_violations": [
+        "the user asked for 1 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [
+        "No customer result classified as a usable metric - emails may describe documented capabilities but cannot invent measured outcomes"
+      ],
+      "what_would_help_most": "What measurable result do customers get, and how do you know?",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "Email 1 failed automatic checks after repair: \"The editor preview doesn't trigger a real send.\": No supplied source describes how Loops' editor preview behaves or confirms it fails to trigger an actual send. This is the draft's central justification for the ask, but no literal source quote entails it.; \"It won't show you how your data variables and payload actually render for a recipient.\": No source states that the editor preview fails to render data variables or payload for a recipient. This elaborates the prior unsupported claim without any textual support.; \"no new integration code required\": No supplied source states that using the CLI avoids writing new integration code. The CLI description only lists its functions (manage contacts, send events, test transactional email); it does not address integration code requirements, so this comparative claim is not entailed.; \"That exercises your draft the same way a live event would.\": No source equates the fidelity of a CLI test send to a real, live-triggered event. This equivalence claim goes beyond what the CLI documentation states about its capability.; \"The docs show the exact command.\": The cited docs page documents the Loops CLI's capability (send events, test transactional email from terminal), but no captured excerpt confirms that an 'exact command' is shown there. Plausible given it is a CLI doc section, but not literally entailed by the captured text.; This unsupported limitation claim is the email's core rationale for acting now; without source support it is a material unsubstantiated assertion about product behavior.; This answers the reader's implicit 'do I need to write code' objection but is not entailed by any supplied source describing the CLI.; Asserts a fidelity equivalence between a CLI test send and a real live-triggered event that the documentation does not state.",
+        "Effective audience: A developer with a Loops account and a draft transactional template."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "Read literally: one activation email to an existing Loops user (developer) who already has an account and a draft transactional template, asking for exactly one action — send a real test transactional email to themselves. This is activation of an existing feature, not acquisition, so the CTA is not signup; it is the documented path to trigger a test send (the transactional API endpoint and/or CLI). No plan, pricing, timing, or outcome claims are needed or supported for this ask.",
+      "pipeline_version": 2,
+      "strategy_mode": "planned",
+      "focused_activation": false,
+      "intent": {
+        "objective": "activation",
+        "objective_source": "user",
+        "reader_relationship": "customer",
+        "relationship_source": "user",
+        "announcement": "",
+        "reason_now": "",
+        "desired_action": "Run a first transactional email test to their own address",
+        "required_fact": "",
+        "required_source_url": ""
+      },
+      "reader": "Selected audience (user-stated constraints): A developer with a Loops account and a draft transactional template..\nNo further recipient situation is established. Compiled market context is research to check for applicability, not a replacement biography.",
+      "reader_segment": "SaaS Founder/Marketer",
+      "reader_profile_override": "A developer with a Loops account and a draft transactional template.",
+      "reader_scope": "",
+      "fixed_cta_url": "",
+      "promise": "Sending one real test transactional email to yourself is the documented way to confirm your draft template actually works before it reaches a real user.",
+      "orientation": "Loops is the platform that sends your product's transactional email (like receipts or password resets) from a template you build once, and you can trigger a real test send yourself from the terminal or via its API before it ever reaches a customer.",
+      "arc": "Single email, no sequence arc: one documented first step, one reason it matters, one destination.",
+      "sequence_rationale": "A single activation email can only carry one documented, checkable first step. The CLI's own description — 'test transactional email from your terminal' — and the public transactional API endpoint are the only two documented ways to trigger a real send without writing new app integration, so the brief picks the CLI path as primary (lower setup, no code required) and keeps the direct API call as a complete alternative for a developer who'd rather call it from existing code. Both route to real documentation pages rather than the registration or demo actions, which don't fit a reader who already has an account. What measurable result do customers get, and how do you know?",
+      "emails": [
+        {
+          "problem_ids": [],
+          "offer_id": "offering",
+          "action_id": "",
+          "selection_reason": "The CLI's documented purpose is exactly this reader's job: testing a transactional email from the terminal, with no new integration code, before relying on the draft template for real users.",
+          "next_step_url": "https://loops.so/docs",
+          "destination_kind": "web",
+          "destination_rejected": false,
+          "argument_issue": "",
+          "value_case": {
+            "reader_benefit": "See exactly what the draft template renders for a real recipient, using real data, before it's used for an actual user event.",
+            "mechanism": "The Loops CLI can send a test transactional email from the terminal, exercising the draft template the same way a live event would.",
+            "evidence_ids": [
+              "E32"
+            ],
+            "decision_conditions": []
+          },
+          "claim_conditions": [],
+          "position": 1,
+          "user_request": "Write exactly one English activation email from the Loops team. Reader: A developer with a Loops account and a draft transactional template. Ask them to do one thing: Run a first transactional email test to their own address. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+          "target_audience": "",
+          "job": "Get the reader to send one real transactional email test to their own address using a documented method, before treating the draft template as production-ready.",
+          "single_idea": "Before this template reaches a real user, send yourself one real test transactional email from the terminal — it's the documented way to see exactly what gets delivered.",
+          "felt_need": "The template looks right in the editor, but nobody has actually seen the email it produces land in an inbox.",
+          "status_quo": "Checking the draft template visually in the Loops editor, without having triggered an actual send.",
+          "why_it_fails": "An editor preview doesn't exercise the real send path or confirm how data variables and the payload actually render for a recipient.",
+          "mechanism": "The Loops CLI sends a real transactional email from the terminal, so the template is tested the same way a live event would trigger it.",
+          "alternative_ideas": [],
+          "alternative_arguments": [
+            {
+              "problem_ids": [],
+              "offer_id": "offering",
+              "action_id": "",
+              "selection_reason": "For a developer who would rather call the transactional endpoint directly from existing code than install a separate CLI tool, the documented API path is the same test with a different implementation.",
+              "next_step_url": "https://loops.so/",
+              "destination_kind": "web",
+              "destination_rejected": false,
+              "argument_issue": "",
+              "value_case": {
+                "reader_benefit": "Trigger the same real test send using a single authenticated API call, without adding the CLI to your toolchain.",
+                "mechanism": "A POST to https://app.loops.so/api/v1/transactional with authentication sends a real transactional email using the template.",
+                "evidence_ids": [
+                  "E8"
+                ],
+                "decision_conditions": [
+                  "Requires API authentication already set up on the account"
+                ]
+              },
+              "claim_conditions": [
+                "Requires API authentication already set up on the account"
+              ],
+              "single_idea": "Send one authenticated POST to Loops' transactional API endpoint, addressed to yourself, to test the draft template directly from your own code.",
+              "felt_need": "The template looks right in the editor, but nobody has actually seen the email it produces land in an inbox.",
+              "status_quo": "Checking the draft template visually in the Loops editor, without having triggered an actual send.",
+              "why_it_fails": "An editor preview doesn't exercise the real send path or confirm how data variables and the payload actually render for a recipient.",
+              "mechanism": "The documented transactional API endpoint accepts an authenticated POST and sends a real email from the draft template.",
+              "belief_shift": "Before: assumes the editor preview is enough to know the template works. After: knows one direct API call is the documented way to confirm it before going live.",
+              "evidence_ids": [
+                "E8"
+              ],
+              "must_not_say": [
+                "Free vs. Growth plan limits, sends-per-30-days caps, or branding differences — not relevant to a single test send",
+                "Throughput figures like emails-per-second — irrelevant to one test",
+                "Marketing email, workflows, segments, or CSV import — unrelated to this single transactional test",
+                "Any claim about deliverability, inbox placement, or open/click outcomes — not established",
+                "Any timing claim like 'instant' or 'in minutes' — not documented",
+                "Keep the connection route attached to its cited source. A native or prebuilt integration and a custom HTTP/webhook endpoint are separate setup paths unless the source explicitly equates them. A platform name alone establishes neither manual endpoint configuration nor a no-setup connector. Keep unknown setup requirements unknown; do not mix the steps or benefits of those paths."
+              ],
+              "objection": "They aren't sure how to actually trigger a test send without writing new integration code into their app.",
+              "call_to_action": "See the exact endpoint to call for a transactional test",
+              "next_step_decision": "Whether the draft transactional template is ready to rely on for a real send.",
+              "next_step_value": "The page documents the exact transactional API endpoint and method to call to trigger a real send.",
+              "next_step_evidence_ids": [
+                "E8"
+              ],
+              "next_step_limit": "Confirms the template renders and sends correctly in a test; it doesn't confirm production deliverability, inbox placement, or that your app's own event triggers are wired up.",
+              "subject_strategy": "Name the exact action (test send) and the concrete reason to do it now, framed around a direct API call rather than a CLI install."
+            }
+          ],
+          "belief_shift": "Before: assumes the editor preview is enough to know the template works. After: knows a real terminal-triggered test send is the documented way to confirm it before going live.",
+          "evidence_ids": [
+            "E32",
+            "E8"
+          ],
+          "must_not_say": [
+            "Free vs. Growth plan limits, sends-per-30-days caps, or branding differences — not relevant to a single test send",
+            "Throughput figures like emails-per-second — irrelevant to one test",
+            "Marketing email, workflows, segments, or CSV import — unrelated to this single transactional test",
+            "Any claim about deliverability, inbox placement, or open/click outcomes — not established",
+            "Any timing claim like 'instant' or 'in minutes' — not documented",
+            "Any claim this requires or unlocks a specific paid plan",
+            "Keep the connection route attached to its cited source. A native or prebuilt integration and a custom HTTP/webhook endpoint are separate setup paths unless the source explicitly equates them. A platform name alone establishes neither manual endpoint configuration nor a no-setup connector. Keep unknown setup requirements unknown; do not mix the steps or benefits of those paths."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "They aren't sure how to actually trigger a test send without writing new integration code into their app.",
+          "tone": "direct and practical, like a short technical nudge from one developer to another",
+          "call_to_action": "Open the Loops docs to send a test transactional email from your terminal",
+          "next_step_decision": "Whether the draft transactional template is ready to rely on for a real send.",
+          "next_step_value": "The docs show the documented CLI command for sending a test transactional email from the terminal, exercising the real template.",
+          "next_step_evidence_ids": [
+            "E32"
+          ],
+          "next_step_limit": "Confirms the template renders and sends correctly in a test; it doesn't confirm production deliverability, inbox placement, or that your app's own event triggers are wired up.",
+          "subject_strategy": "Name the exact action (test send) and the concrete reason to do it now (before it reaches a real user), not a generic 'get started' line.",
+          "must_not_reuse": [],
+          "steering": {
+            "directions": [],
+            "include_evidence_ids": [],
+            "exclude_evidence_ids": [],
+            "use": [],
+            "avoid": [],
+            "context_only": [],
+            "excluded_values": []
+          }
+        }
+      ],
+      "voice_notes": "Direct, practical, no hype. Imperative voice ('Send a test...'). Avoid superlatives like 'powerful' or 'seamless' here — this reader just needs the exact next command.",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "one English activation email"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "4d60d828-d1c9-45fc-8016-cfde0bbf39f3",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

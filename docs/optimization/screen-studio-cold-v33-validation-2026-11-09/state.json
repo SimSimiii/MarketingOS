@@ -1,0 +1,64 @@
+{
+  "status": "validation_complete",
+  "runs": [
+    {
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "campaign_id": "d64f2cdd-c194-412f-8454-49cf22e191d6",
+      "status": "failed",
+      "launched_at": "2026-11-09T10:27:54.660Z",
+      "code_revision": "v33b",
+      "launched_from": "Default UI Fast, no override",
+      "outcome_status": "failed",
+      "needs_review": false,
+      "review_reasons": [],
+      "last_checked_at": "2026-11-09T10:32:53.537966+00:00",
+      "result_dir": "docs\\optimization\\screen-studio-cold-v33-validation-2026-11-09\\runs\\5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "estimated_cost_usd": 1.4917,
+      "completed_at": "2026-11-09T10:32:44.165709Z"
+    }
+  ],
+  "steps": {},
+  "quality_history": [
+    {
+      "iteration": 1,
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "score": null,
+      "reason": "No delivered email",
+      "strengths": [
+        "Specific post-recording cursor workflow retained in the rewrite"
+      ],
+      "remaining_defect": "CTA access conditions not sourced before draft and repair"
+    },
+    {
+      "iteration": 2,
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "mode": "archived_draft_replay",
+      "score": 83,
+      "reason": "Reviewed email delivered on replay with the same brief and sources",
+      "strengths": [
+        "Editable cursor after recording stays the main argument",
+        "Documented download CTA reaches the same URL in both exports"
+      ],
+      "remaining_defect": "Some repetition and a broad subject line"
+    }
+  ],
+  "replays": [
+    {
+      "revision": "v34",
+      "baseline_execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "status": "passed",
+      "mode": "archived_draft_replay",
+      "result_dir": "replay-v34",
+      "calls": 3,
+      "elapsed_seconds": 106.797,
+      "negative_control_dir": "replay-v34-free-export-control",
+      "negative_control_rejected": true,
+      "negative_control_calls": 1,
+      "commercial_verdict": "worth_a_targeted_paid_trial_on_this_use_case",
+      "report": "docs/reviews/screen-studio-cta-replay-v34.md"
+    }
+  ],
+  "last_snapshot": "docs\\optimization\\screen-studio-cold-v33-validation-2026-11-09\\steps\\20261109T103336020378Z-capture.json",
+  "commercial_verdict": "not_worth_paying_for_on_this_case",
+  "report": "docs/reviews/screen-studio-validation-2026-11-09.md"
+}

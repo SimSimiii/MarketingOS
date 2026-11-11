@@ -1,0 +1,630 @@
+{
+  "brand_id": "9fa537fd-45d8-407a-a26c-82b6f68c9a58",
+  "map": {
+    "summary": "3 audience(s) mapped; 0 worth exploring first. Commercial priority is a hypothesis, not a response-rate forecast.",
+    "options": {
+      "geography": "",
+      "language": "",
+      "exclusions": "",
+      "objective": "customers",
+      "mode": "refresh"
+    },
+    "validation_note": "Checked 4 pages; 1 fetch failure(s). Quotes are source-verified; interpretations and purchase intent are hypotheses.",
+    "reading": "Assessment summary. Verified quotations do not establish demand or purchase intent; commercial priority remains a hypothesis.\n- IT teams: hypothesis; product compatibility supported; audience evidence absent (0 quoted source(s)); use or purchase unknown; reachability unknown.\n- Customer Success & Support teams documenting client-facing processes: hypothesis; product compatibility supported; audience evidence limited (2 quoted source(s)); use or purchase captured; reachability unknown.\n- HR & L&D teams: hypothesis; product compatibility supported; audience evidence absent (0 quoted source(s)); use or purchase unknown; reachability unknown.",
+    "note": "Budget used: 4 searches as planned. Did not find independently-dated firsthand Reddit/forum posts from IT or HR buyers specifically (only aggregated G2 summaries and vendor case studies/solution pages); treat IT and HR&L&D evidence_strength as limited until a firsthand post is located. Customer Success segment is well-evidenced but entirely via vendor-published case studies — no independent/third-party corroboration found this round.",
+    "searched": [
+      "Scribe scribehow reddit \"how-to guide\" IT documentation SOP review",
+      "Scribe scribehow for client onboarding customer success documentation case study",
+      "scribehow G2 review complaint \"new hire\" training onboarding guides HR",
+      "scribehow G2 review downside limitation desktop app pricing complaint"
+    ],
+    "mapped_at": "2026-11-09T04:58:07.881875Z",
+    "segments": [
+      {
+        "name": "IT teams",
+        "organization": "Mid-size to large companies' internal IT/support operations teams",
+        "workflow": "Documenting IT procedures (software setup, troubleshooting steps, system configs) that currently live in individual staff members' heads or ad hoc tickets",
+        "need": "Capture how IT tasks are actually performed, step by step with screenshots, so procedures can be scaled across the team, kept current when systems change, and reused as training or as structured context for internal AI tools",
+        "buyer_role": "IT manager / Head of IT Operations",
+        "user_role": "IT support / systems administrators",
+        "current_alternative": "Tribal knowledge, Slack/ticket threads, manually-written Word/Confluence docs with hand-taken screenshots",
+        "assessment": {
+          "compatibility": "supported",
+          "evidence_strength": "absent",
+          "findability": "unknown",
+          "usage_or_purchase": "unknown",
+          "reachability": "unknown",
+          "counterevidence_summary": [],
+          "counterevidence": 0,
+          "priority": "hypothesis",
+          "reasons": [
+            "None of the fetched pages mention IT/support teams, IT managers, or IT-specific documentation workflows at all",
+            "The only fetched content (Tettra FAQ, Crexi/Gong/Billions case studies) is about customer-success and general onboarding use, not IT operations"
+          ],
+          "unknowns": [
+            "Whether any IT buyer or sysadmin has actually adopted Scribe for internal IT procedure documentation",
+            "Where IT managers evaluating Scribe can be found (no IT-specific venue surfaced this round)",
+            "No verified venue or example establishes findability yet."
+          ],
+          "evidence": []
+        },
+        "kind": "core",
+        "added_by": "cartographer",
+        "who": "IT managers and sysadmins responsible for internal support documentation",
+        "why_them": "Scribe's core auto-capture mechanic matches the IT documentation pain of procedures only existing in someone's head",
+        "trigger": "unspecified",
+        "pains": [
+          "No documented process to scale, fix, or hand off when staff turn over",
+          "Manual screenshot-and-write documentation is slow and goes stale"
+        ],
+        "objection": "Concern that AI-captured steps need manual review before trusting them as an official SOP, and that non-browser tool capture requires a paid seat",
+        "angle": "",
+        "sophistication": "problem_aware",
+        "fit": 0,
+        "basis": "Derived from supplied segment definition plus general vendor/third-party framing; no direct IT-buyer case study or complaint found this round",
+        "population": "unknown",
+        "signals": [],
+        "where": [
+          "g2.com/products/scribe/reviews",
+          "tettra.com/article/scribe-faq"
+        ],
+        "unobvious": false,
+        "researchable": false,
+        "researchability": "unresearchable",
+        "researchability_reasons": [
+          "No useful observable signal identifies this audience."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [],
+          "required_workflow_signals": [
+            {
+              "code": "undocumented_internal_process",
+              "description": "IT procedures currently exist only as tribal knowledge or scattered tickets"
+            }
+          ],
+          "required_product_capabilities": [
+            "fact_6cfcace388cbf628"
+          ],
+          "optional_signals": [],
+          "hard_disqualifiers": [],
+          "eligible_subsegments": [],
+          "excluded_subsegments": [],
+          "max_team_size": null
+        }
+      },
+      {
+        "name": "Customer Success & Support teams documenting client-facing processes",
+        "organization": "B2B SaaS companies' Customer Success / Support departments (e.g. Gong, Crexi, Billions)",
+        "workflow": "Answering repetitive client questions and onboarding/training customers by writing step-by-step how-to documentation and troubleshooting guides, often created live during calls or training sessions",
+        "need": "Turn live product walkthroughs and support answers into shareable step-by-step guides quickly, instead of manually writing and screenshotting documentation after every client interaction",
+        "buyer_role": "Customer Success / Support team lead or Sales Operations & Enablement leader",
+        "user_role": "Customer Success Managers, Support agents",
+        "current_alternative": "Manually writing documentation and editing screenshots after calls; answering the same client questions repeatedly over chat/email",
+        "assessment": {
+          "compatibility": "supported",
+          "evidence_strength": "limited",
+          "findability": "unknown",
+          "usage_or_purchase": "captured",
+          "reachability": "unknown",
+          "counterevidence_summary": [
+            "All supporting narratives are vendor-authored case studies, not independent or complaint-sourced confirmation of this buying situation — One-sided vendor sourcing weakens independent confirmation of the need and outcomes but does not describe any workflow, buying, or access obstacle itself Minor condition; does not exclude this audience."
+          ],
+          "counterevidence": 1,
+          "priority": "hypothesis",
+          "reasons": [
+            "Two named-company vendor case studies (Crexi, Gong) give first-person quotes from CSMs describing exactly the claimed workflow of answering repetitive client questions and maintaining client/internal documentation",
+            "Autocapture and automatic redaction (verified product facts) directly match the described need to quickly turn live work into shareable guides"
+          ],
+          "unknowns": [
+            "Whether this pattern holds outside the two vendor-selected companies profiled",
+            "No independent venue (forum, G2 filtered review, directory) was found in this round to locate more such buyers beyond the vendor's own case study pages",
+            "1 unsupported or duplicate quotation(s) discarded.",
+            "No verified venue or example establishes findability yet.",
+            "Review the counterevidence before prioritising this audience."
+          ],
+          "evidence": [
+            {
+              "claim": "A Customer Success Manager describes using Scribe to quickly build client walkthroughs instead of manually writing documentation",
+              "quote": "Scribe has not only helped me tremendously, but our clients as well. Scribe allows our team to create walk-throughs for clients automatically and has been a huge time saver.",
+              "url": "https://scribe.com/library/case-study-crexi",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-09T04:57:26.632451Z",
+              "direct_buyer_voice": true
+            },
+            {
+              "claim": "Crexi's CSM team actively uses Scribe as their operating standard for both client-facing answers and internal process documentation",
+              "quote": "Crexi’s Customer Success team uses Scribe as their standard for answering ad hoc client questions and to quickly update internal training documents.",
+              "url": "https://scribe.com/library/case-study-crexi",
+              "kind": "usage",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-09T04:57:26.632451Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "CSMs previously spent significant manual time personalizing an answer per client question before Scribe",
+              "quote": "CSMs have to take the time to create a new document for every client question in order to personalize answers to each client’s account, which takes 5-10 minutes per question.",
+              "url": "https://scribe.com/library/case-study-crexi",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-09T04:57:26.632451Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "A Senior CSM at Gong describes, in her own words, the pain of keeping ad hoc how-to documentation and screenshots organized before Scribe",
+              "quote": "It's pretty hard to keep track of [how-to documentation], and email screenshots are *not* the most visually pleasing.",
+              "url": "https://scribe.com/library/gong-customer-success-guide",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-09T04:57:26.294005Z",
+              "direct_buyer_voice": true
+            },
+            {
+              "claim": "All supporting narratives are vendor-authored case studies, not independent or complaint-sourced confirmation of this buying situation",
+              "quote": "How a Customer Success Leader Answers Client Questions & Updates Internal Process Documentation with Scribe",
+              "url": "https://scribe.com/library/case-study-crexi",
+              "kind": "counterevidence",
+              "impact": "minor",
+              "impact_reason": "One-sided vendor sourcing weakens independent confirmation of the need and outcomes but does not describe any workflow, buying, or access obstacle itself",
+              "fetched_at": "2026-11-09T04:57:26.632451Z",
+              "direct_buyer_voice": false
+            }
+          ]
+        },
+        "kind": "core",
+        "added_by": "cartographer",
+        "who": "Customer Success / Support leads and Sales Enablement leaders at B2B software companies",
+        "why_them": "Vendor case studies name this workflow directly and repeatedly, with quantified before/after outcomes, making it the best-evidenced buying situation found",
+        "trigger": "unspecified",
+        "pains": [
+          "Hours spent manually writing docs and editing screenshots after every client call",
+          "Answering the same client questions repeatedly without a reusable reference"
+        ],
+        "objection": "These are all vendor-published case studies (one-sided source); no independent or complaint-side confirmation found this round",
+        "angle": "",
+        "sophistication": "product_aware",
+        "fit": 0,
+        "basis": "Four named-company vendor case studies (Crexi, Gong, Billions, Crosscard) directly describing this workflow and buyer role; no independent third-party corroboration found",
+        "population": "unknown",
+        "signals": [],
+        "where": [
+          "scribehow.com/library/case-study-crexi",
+          "scribe.com/library/gong-customer-success-guide",
+          "scribe.com/library/billions-case-study",
+          "scribe.com/library/case-study-crosscard"
+        ],
+        "unobvious": false,
+        "researchable": false,
+        "researchability": "unresearchable",
+        "researchability_reasons": [
+          "No useful observable signal identifies this audience."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [],
+          "required_workflow_signals": [
+            {
+              "code": "repeat_client_question_documentation",
+              "description": "Team repeatedly documents answers to client questions or creates client-facing walkthroughs"
+            }
+          ],
+          "required_product_capabilities": [
+            "fact_6cfcace388cbf628",
+            "fact_b1eb61288d5816b5"
+          ],
+          "optional_signals": [],
+          "hard_disqualifiers": [],
+          "eligible_subsegments": [],
+          "excluded_subsegments": [],
+          "max_team_size": null
+        }
+      },
+      {
+        "name": "HR & L&D teams",
+        "organization": "Companies' HR / Learning & Development or People Ops departments",
+        "workflow": "Creating new-hire onboarding materials and training content that documents how top performers actually do their jobs, replacing ask-around learning",
+        "need": "Turn how top performers work into step-by-step training material so new hires and managers learn documented best practice instead of asking colleagues",
+        "buyer_role": "HR / L&D manager or People Ops lead",
+        "user_role": "HR team members, hiring managers, trainers",
+        "current_alternative": "Employees learning by asking coworkers; manually written onboarding checklists",
+        "assessment": {
+          "compatibility": "supported",
+          "evidence_strength": "absent",
+          "findability": "unknown",
+          "usage_or_purchase": "unknown",
+          "reachability": "unknown",
+          "counterevidence_summary": [],
+          "counterevidence": 0,
+          "priority": "hypothesis",
+          "reasons": [
+            "Only evidence found is a generic third-party use-case list mentioning onboarding, with no HR/L&D buyer voice, pain, or purchase behavior described",
+            "No quote establishes that new hires currently learn by asking coworkers or that an HR/L&D buyer evaluated or bought Scribe for this reason"
+          ],
+          "unknowns": [
+            "Whether any real HR/L&D buyer has purchased or deployed Scribe specifically for onboarding documentation",
+            "Where HR/L&D buyers for this use case could be reached; no venue was found in this round beyond a generic feature-list mention",
+            "1 unsupported or duplicate quotation(s) discarded.",
+            "No verified venue or example establishes findability yet."
+          ],
+          "evidence": []
+        },
+        "kind": "core",
+        "added_by": "cartographer",
+        "who": "HR and L&D managers responsible for new-hire training content",
+        "why_them": "Matches the supplied segment's stated problem (tribal onboarding knowledge) and is echoed in aggregated review language about training-time reduction",
+        "trigger": "unspecified",
+        "pains": [
+          "New hires learn by asking around instead of following documented best practice",
+          "Onboarding materials go stale as processes change"
+        ],
+        "objection": "Review evidence is aggregated/summarized by G2 rather than individually dated firsthand posts found directly; vendor's own onboarding pages are marketing, not independent confirmation",
+        "angle": "",
+        "sophistication": "problem_aware",
+        "fit": 0,
+        "basis": "Supplied segment definition retained; supporting evidence this round is an aggregated G2 review summary plus vendor-authored onboarding solution/template pages, not independently sourced firsthand buyer posts",
+        "population": "unknown",
+        "signals": [],
+        "where": [
+          "g2.com/products/scribe/reviews",
+          "scribehow.com/solutions/onboard-new-hires",
+          "scribehow.com/library/onboarding-sops"
+        ],
+        "unobvious": false,
+        "researchable": false,
+        "researchability": "unresearchable",
+        "researchability_reasons": [
+          "No useful observable signal identifies this audience."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [],
+          "required_workflow_signals": [
+            {
+              "code": "tribal_onboarding_knowledge",
+              "description": "New hires currently learn tasks by asking coworkers rather than from documented best practice"
+            }
+          ],
+          "required_product_capabilities": [
+            "fact_6cfcace388cbf628"
+          ],
+          "optional_signals": [],
+          "hard_disqualifiers": [],
+          "eligible_subsegments": [],
+          "excluded_subsegments": [],
+          "max_team_size": null
+        }
+      }
+    ]
+  },
+  "prospects": [],
+  "research": [],
+  "relevance": [],
+  "capability_profile": {
+    "schema_version": 2,
+    "version": 1,
+    "knowledge_id": "e1834f1a-b570-411c-9c81-1217e0b499df",
+    "knowledge_version": 1,
+    "ledger_fingerprint": "c4ce1ca9395ff54adf200fe6b595fb8b5afb47c5a2837af5e61b619228c73a5f",
+    "derivation_version": 3,
+    "capabilities": [
+      {
+        "id": "fact_56460877cd8fdd7c",
+        "label": "Scribe's desktop application is a feature only available on Pro and Enterprise accounts, not Basic",
+        "description": "Source: official_documentation; Subject: Scribe desktop application; Not available on Basic plan; requires Pro or Enterprise",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E5",
+            "claim": "Scribe's desktop application is a feature only available on Pro and Enterprise accounts, not Basic",
+            "quote": "Can I capture processes on my desktop with a Scribe Basic account? No. The Scribe desktop application is a Pro and Enterprise feature.",
+            "source_identifier": "https://scribe.com/pricing"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_f783541de68abef1",
+        "label": "Enterprise plan includes auto-redaction of PII & PHI",
+        "description": "Source: official_documentation; Subject: Scribe Enterprise plan; Included in Enterprise plan",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E10",
+            "claim": "Enterprise plan includes auto-redaction of PII & PHI",
+            "quote": "Auto-redaction of PII & PHI",
+            "source_identifier": "https://scribe.com/pricing"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_0e3e13e540406e23",
+        "label": "Enterprise plan includes SSO for authentication",
+        "description": "Source: official_documentation; Subject: Scribe Enterprise plan; Included in Enterprise plan",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E11",
+            "claim": "Enterprise plan includes SSO for authentication",
+            "quote": "SSO for authentication",
+            "source_identifier": "https://scribe.com/pricing"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_6cfcace388cbf628",
+        "label": "Scribe's Autocapture feature turns work a team has already done into Scribes automatically",
+        "description": "Source: official_documentation; Subject: Scribe Autocapture",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E12",
+            "claim": "Scribe's Autocapture feature turns work a team has already done into Scribes automatically",
+            "quote": "Turn work you've already done into Scribes, automatically",
+            "source_identifier": "https://scribe.com/pricing"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_b1eb61288d5816b5",
+        "label": "Scribe automatically redacts sensitive data so workflows can be captured confidently",
+        "description": "Source: vendor_statement; Subject: Scribe Capture",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E19",
+            "claim": "Scribe automatically redacts sensitive data so workflows can be captured confidently",
+            "quote": "Capture workflows confidently, knowing that sensitive data is automatically redacted.",
+            "source_identifier": "https://scribe.com/"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_56ccd219164878b0",
+        "label": "Scribe automatically redacts 150 categories of PII, PHI, and PCI",
+        "description": "Source: official_documentation; Subject: Scribe",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E22",
+            "claim": "Scribe automatically redacts 150 categories of PII, PHI, and PCI",
+            "quote": "150 categories of PII, PHI, and PCI redacted automatically.",
+            "source_identifier": "https://scribe.com/solutions/hr-ld"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      }
+    ],
+    "constraints": [],
+    "claims": [
+      {
+        "text": "Scribe Basic plan is free",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E1"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Scribe Pro Personal costs $35 per seat per month, or $25 per seat per month on annual billing, starting at 1 seat",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E2"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Scribe Pro Team costs $17 per seat per month, or $13 per seat per month on annual billing, starting at 5 seats",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E3"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Scribe Enterprise pricing is custom, available via scheduling a demo",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E4"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Scribe's desktop application is a feature only available on Pro and Enterprise accounts, not Basic",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E5"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Upgrading to a Pro plan upgrades the entire team unless the user creates a separate team for just the members who need Pro",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E6"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Scribe does not allow mixed-tier teams; all team members must be on the same plan tier",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E7"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Scribe offers an education discount for users with a .edu email address via a request form",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E8"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Scribe offers a nonprofit discount for 501(c)(3) organizations or international equivalents, requiring proof of status",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E9"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Enterprise plan includes auto-redaction of PII & PHI",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E10"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Enterprise plan includes SSO for authentication",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E11"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Scribe's Autocapture feature turns work a team has already done into Scribes automatically",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E12"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Scribe customers achieve 12x faster documentation",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E13"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "98% of customers say they make fewer mistakes",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E14"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Scribe customers save 35 hours per person per month",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E15"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "71% better AI agent performance with Scribe",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E16"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "It takes 5 days to build your AI roadmap with Scribe",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E17"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Scribe meets SOC 2 Type II, HIPAA, CCPA, GDPR, FERPA, and other enterprise compliance standards",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E18"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Scribe automatically redacts sensitive data so workflows can be captured confidently",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E19"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "A New York Life customer said that for anyone documenting a process, a Scribe license is a no-brainer because the value is so immense",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E20"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "7 million people use Scribe",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E21"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Scribe automatically redacts 150 categories of PII, PHI, and PCI",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E22"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Scribe is SOC 2 Type II, HIPAA, FERPA, and GDPR compliant, with fine-grained workspace permissions",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E23"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "An L&D Operations, Senior Specialist named Rachael Harper said it takes minutes to turn complex workflows into clear, step-by-step guides, saving her time and improving team enablement",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E24"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      }
+    ],
+    "id": "c059172f-56cf-43c6-afe5-a15b53005d54",
+    "brand_id": "9fa537fd-45d8-407a-a26c-82b6f68c9a58",
+    "created_at": "2026-11-09T04:56:03.664853"
+  },
+  "note": ""
+}

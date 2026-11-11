@@ -14,12 +14,12 @@ import logging
 import re
 import socket
 from collections.abc import Awaitable, Callable, Sequence
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from enum import IntEnum, StrEnum
 from urllib.parse import urldefrag, urljoin, urlsplit, urlunsplit
 
 import httpx
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, ValidationError, field_validator
 
 from app.ai.base import ResearchTool
 from app.ai.model_router import ModelTier
@@ -416,11 +416,12 @@ class AudienceResearcher:
         segment: AudienceSegment,
         *,
         on_progress: Callable[[str], None] | None = None,
+        compact: bool = False,
     ) -> AudienceResearch:
         progress = on_progress or (lambda _message: None)
         progress("Locating first-party audience voices and behavioural sources")
-        located = await self.locate(segment)
-        progress(f"Fetching up to {min(len(located), MAX_ATTEMPTED_URLS)} exact source URLs")
+        located = await self.locate(segment, **({"compact": True} if compact else {}))
+        progress(f"Fetching up to {min(len(located), 4 if compact else MAX_ATTEMPTED_URLS)} exact source URLs")
         fetched = await self._fetcher.fetch(located)
         _report_fetch_failures(fetched.failures, progress)
         if not fetched.sources and fetched.failures:
@@ -429,7 +430,8 @@ class AudienceResearcher:
             # challenge, and never loop on empty source discovery.
             unavailable = {_source_host(item.url) for item in fetched.failures} - {""}
             progress("No readable sources; searching once for public alternatives on other hosts")
-            alternatives = await self.locate(segment, unavailable_hosts=unavailable)
+            alternatives = await self.locate(segment, unavailable_hosts=unavailable,
+                                             **({"compact": True} if compact else {}))
             recovered = await self._fetcher.fetch(alternatives)
             _report_fetch_failures(recovered.failures, progress)
             fetched = FetchResult(sources=recovered.sources, failures=[*fetched.failures, *recovered.failures])
@@ -442,7 +444,8 @@ class AudienceResearcher:
             f"Synthesising from {len(fetched.sources)} fetched source(s); "
             f"{len(fetched.failures)} fetch(es) failed"
         )
-        draft, references = await self.synthesise(segment, fetched.sources)
+        draft, references = await self.synthesise(segment, fetched.sources,
+                                                  **({"compact": True} if compact else {}))
         verified = verify_research(segment, draft, fetched.sources, references)
         if not any((verified.situation, verified.incumbent_behaviour, verified.sophistication_basis,
                     verified.problems, verified.buyer_phrases, verified.triggers,
@@ -462,16 +465,18 @@ class AudienceResearcher:
 
     async def locate(
         self, segment: AudienceSegment, *, unavailable_hosts: set[str] | None = None,
+        compact: bool = False,
     ) -> list[LocatedSource]:
         answer = await self._session.structured(
             role=ROLE_ID,
             tier=ModelTier.BALANCED,
             template="audience_research_locator",
-            variables={"candidate": _candidate_context(segment), "limit": MAX_ATTEMPTED_URLS},
+            variables={"candidate": _candidate_context(segment), "limit": 4 if compact else MAX_ATTEMPTED_URLS},
             task=(
                 "Search the web now and return exact public URLs where this audience speaks "
                 "or leaves observable behavioural evidence. Locate sources only; do not "
                 "summarise snippets as findings."
+                + (" Use at most three focused queries and prioritise firsthand evidence." if compact else "")
                 + (" Previously attempted hosts returned no readable text: "
                    + ", ".join(sorted(unavailable_hosts))
                    + ". Find other public source hosts. Do not use these hosts or their subdomains, "
@@ -480,6 +485,7 @@ class AudienceResearcher:
             ),
             schema=_LocatedSources,
             tools=[ResearchTool.WEB_SEARCH],
+            **({"max_turns": 9} if compact else {}),
         )
         located = bounded_sources(answer.sources)
         classified = {_canonical_url(item.url): item for item in located}
@@ -494,7 +500,8 @@ class AudienceResearcher:
         ])
 
     async def synthesise(
-        self, segment: AudienceSegment, fetched: Sequence[FetchedSource]
+        self, segment: AudienceSegment, fetched: Sequence[FetchedSource], *,
+        compact: bool = False,
     ) -> tuple[_ResearchDraft, list[SourceReference]]:
         corpus, references = _corpus(fetched)
         draft = await self._session.structured(
@@ -506,6 +513,7 @@ class AudienceResearcher:
                 "Using only the fetched corpus above, describe what is true about this "
                 "audience independently of any product. Cite a source id and verbatim quote "
                 "for every proposed finding."
+                + (" Keep only the strongest one or two problems and decision-relevant observations." if compact else "")
             ),
             schema=_ResearchDraft,
             # Explicit even though an omitted list also means none: this call must stay a
@@ -513,6 +521,40 @@ class AudienceResearcher:
             tools=[],
         )
         return draft, references
+
+
+def research_from_map(segment: AudienceSegment, source_cache: list[dict]) -> AudienceResearch | None:
+    """Reuse fresh, direct buyer quotes already read during map validation."""
+    leads = [
+        item for item in segment.assessment.evidence
+        if item.kind == "need" and item.direct_buyer_voice
+        and re.search(r"\b(?:I|my|we|our|je|mon|ma|nous|notre)\b", item.quote, re.IGNORECASE)
+    ][:3]
+    if not leads:
+        return None
+    sources: dict[str, FetchedSource] = {}
+    now = datetime.now(UTC)
+    wanted = {item.url for item in leads}
+    for payload in source_cache:
+        try:
+            source = FetchedSource.model_validate(payload)
+        except ValidationError:
+            continue
+        stamp = source.fetched_at.replace(tzinfo=UTC) if source.fetched_at.tzinfo is None else source.fetched_at
+        if source.final_url in wanted and timedelta() <= now - stamp <= timedelta(days=7):
+            sources[source.final_url] = source.model_copy(update={"tier": SourceTier.BUYER_VOICE})
+    if not sources:
+        return None
+    research = verify_research(segment, _ResearchDraft(problems=[
+        AudienceProblem(statement=item.claim, evidence=[EvidenceReference(source_id=item.url, quote=item.quote)])
+        for item in leads if item.url in sources
+    ]), list(sources.values()))
+    if not any(problem.grounding is Grounding.GROUNDED for problem in research.problems):
+        return None
+    research.interpretation_warnings.append(
+        "First-campaign research reuses fresh buyer quotations verified from the audience map."
+    )
+    return research
 
 
 def _report_fetch_failures(failures: Sequence[FetchFailure], progress: Callable[[str], None]) -> None:
@@ -757,7 +799,7 @@ def verify_research(
 
 
 def review_research_interpretations(research: AudienceResearch) -> AudienceResearch:
-    """Downgrade clear directional reversals without claiming entailment.
+    """Review source scope and clear reversals without claiming entailment.
 
     Quotation presence was verified elsewhere. This bounded, free check keeps
     the quotation inspectable while preventing an opposite interpretation
@@ -779,6 +821,20 @@ def review_research_interpretations(research: AudienceResearch) -> AudienceResea
             if source.published_date:
                 source.publication_date_basis = "dated_url"
     sources = {source.id: source for source in reviewed.sources}
+
+    def product_material_only(refs: list[EvidenceReference]) -> bool:
+        used = [sources[ref.source_id] for ref in refs if ref.source_id in sources]
+        # Pricing, feature catalogues and product help establish what is
+        # offered. A behavioural tier alone cannot turn their feature list
+        # into an observed buyer workflow. Keep actual buyer quotations and
+        # job/workflow sources available; this is a conservative scope label,
+        # not a semantic verdict about every paraphrase.
+        return bool(used) and all(
+            source.tier is not SourceTier.BUYER_VOICE
+            and re.search(r"/(?:pricing|plans|features|integrations|api|help|docs)(?:/|$)",
+                          urlsplit(source.final_url).path.lower())
+            for source in used
+        )
 
     def temporal(refs: list[EvidenceReference]) -> list[str]:
         used = [sources[ref.source_id] for ref in refs if ref.source_id in sources]
@@ -804,6 +860,13 @@ def review_research_interpretations(research: AudienceResearch) -> AudienceResea
     def observation(item: SourcedObservation | None) -> None:
         if item is None:
             return
+        if product_material_only(item.evidence):
+            note = ("Product material establishes offered functions, not observed buyer adoption "
+                    "or circumstances; treat this audience observation as a hypothesis.")
+            item.grounding = Grounding.INFERRED
+            if note not in item.inference_basis:
+                item.inference_basis = "; ".join(filter(None, [item.inference_basis, note]))
+            warnings.append(f"{note} {item.text}")
         item.inference_basis = item.inference_basis.replace(reversal_prefixes[1], "").strip("; ")
         notes = temporal(item.evidence)
         if notes:

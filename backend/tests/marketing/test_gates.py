@@ -252,6 +252,85 @@ def test_the_first_email_can_never_overlap():
     assert overlap_gate(email("Anything at all.\n\nB.\n\nC."), []).passed
 
 
+@pytest.mark.parametrize("disclosure", [
+    "Je suis partenaire affilié indépendant de systeme.io et je ne représente pas la marque.",
+    "Je suis partenaire affilié indépendant de systeme.io. Je ne représente pas systeme.io.",
+    "I am an independent affiliate of systeme.io and I do not represent the company.",
+    "Je suis partenaire affilié indépendant de systeme.io, sans appartenir à la marque. Je peux bénéficier de cette relation d’affiliation si vous passez par mes recommandations.",
+    "Je suis partenaire affilié indépendant de systeme.io. Je peux être rémunéré si vous passez ultérieurement par un lien affilié.",
+    "I am an independent affiliate of systeme.io. I may earn a commission if you buy through my affiliate link.",
+])
+def test_affiliation_disclosure_can_recur_without_repeating_the_pitch(disclosure):
+    first = email("Découvrez les produits physiques.\n\n" + disclosure, subject="Products")
+    second = email("Construisez votre liste de lecteurs.\n\n" + disclosure,
+                   subject="Readers", position=2)
+    assert overlap_gate(second, [first], company_name="systeme.io").passed
+    assert not overlap_gate(second, [first], company_name="Another brand").passed
+    promise = " Votre prochain lancement devient simple avec tous ces outils réunis."
+    first.body += promise
+    second.body += promise
+    assert not overlap_gate(second, [first], company_name="systeme.io").passed
+
+
+def test_disclosure_does_not_hide_repeated_promises_or_subjects():
+    paragraph = ("Je suis partenaire affilié indépendant de systeme.io. "
+                 "Votre prochain lancement devient simple avec tous ces outils réunis.")
+    first = email("Une gamme de livres.\n\n" + paragraph, subject="Products")
+    second = email("Une liste de lecteurs.\n\n" + paragraph, subject="Readers", position=2)
+    assert not overlap_gate(second, [first], company_name="systeme.io").passed
+    second.body = "Je suis partenaire affilié indépendant de systeme.io.\n\nAutre message."
+    second.subject = first.subject
+    assert "subject repeats" in overlap_gate(second, [first], company_name="systeme.io").render()
+
+
+@pytest.mark.parametrize("phrase,blocks", [
+    ("Découvrez les fonctionnalités détaillées maintenant", False),
+    ("Découvrez toutes les fonctionnalités détaillées maintenant", True),
+])
+def test_overlap_counts_accented_words_without_splitting_them(phrase, blocks):
+    first = email("Première proposition. " + phrase + ".\n\nUne autre idée.", subject="First")
+    second = email("Nouvel argument. " + phrase + ".\n\nDécidez autrement.",
+                   subject="Second", position=2)
+    assert bool(overlap_gate(second, [first]).blocking) is blocks
+
+
+def test_nonrepresentation_clause_does_not_hide_marketing_in_the_same_sentence():
+    common = ("Je suis partenaire affilié indépendant de systeme.io et je ne représente pas "
+              "la marque qui vous permet de gérer toutes vos ventes sans effort.")
+    first = email("Des produits physiques. " + common, subject="First")
+    second = email("Une liste de lecteurs. " + common, subject="Second", position=2)
+    assert overlap_gate(second, [first], company_name="systeme.io").blocking
+
+
+def test_captured_affiliate_sender_clause_does_not_leave_false_overlap():
+    disclosure = "Je vous écris comme partenaire affilié indépendant de systeme.io, et non au nom de la marque."
+    first = email("Une gamme de livres.\n\n" + disclosure, subject="Products")
+    second = email("Une liste de lecteurs.\n\n" + disclosure, subject="Readers", position=2)
+    assert overlap_gate(second, [first], company_name="systeme.io").passed
+    repeated = " Votre prochain lancement devient simple avec tous ces outils réunis."
+    first.body += repeated
+    second.body += repeated
+    assert not overlap_gate(second, [first], company_name="systeme.io").passed
+
+
+@pytest.mark.asyncio
+async def test_sequence_review_uses_the_same_disclosure_rule():
+    from app.marketing.briefs import CampaignBrief
+    from app.marketing.sequence import SequenceReviewer
+    from tests.marketing.conftest import RoleScriptedProvider, make_session
+
+    disclosure = "Je suis partenaire affilié indépendant de systeme.io."
+    first = email("Découvrez les produits physiques.\n\n" + disclosure, subject="Products")
+    second = email("Construisez votre liste de lecteurs.\n\n" + disclosure,
+                   subject="Readers", position=2)
+    provider = RoleScriptedProvider()
+    report = await SequenceReviewer(make_session(provider)).review(
+        [first, second], CampaignBrief(), arc_read=False, company_name="systeme.io",
+    )
+    assert report.passed
+    assert not provider.requests
+
+
 # ----------------------------------------------------------------------- ask
 
 
@@ -271,6 +350,23 @@ def test_a_rephrased_but_real_action_is_accepted():
     assert not call_to_action_gate(
         email("B.\n\nB.\n\nC.", call_to_action="Start the trial"), offer
     ).issues
+
+
+@pytest.mark.parametrize("label,accepted", [
+    ("See the RSS workflow", True),
+    ("See the CRM workflow", False),
+    ("Book an RSS demo", False),
+    ("See RSS pricing", False),
+])
+def test_documentation_action_must_still_match_its_licensed_destination(label, accepted):
+    offer = OfferSheet(calls_to_action=[CallToAction(label="Sign up")])
+    brief = EmailBrief(
+        call_to_action="Review the official documentation: https://docs.example.com/rss-to-email",
+        destination_kind="web", next_step_url="https://docs.example.com/rss-to-email",
+        next_step_value="Documents RSS-to-email automation.",
+    )
+    report = call_to_action_gate(email("A.\n\nB.\n\nC.", call_to_action=label), offer, brief)
+    assert (not report.issues) is accepted
 
 
 def test_a_standalone_body_line_must_not_repeat_the_rendered_cta():

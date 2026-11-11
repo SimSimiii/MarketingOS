@@ -12,6 +12,44 @@ from app.knowledge.ledger import (
 from app.marketing.gates import evidence_gate
 
 
+@pytest.mark.parametrize("draft", [
+    "Tally Pro costs €20 per month.",
+    "Tally Pro costs €20 per month, billed monthly.",
+    "Pro costs €20 per month, billed annually.",
+    "Pro costs €20 and Business costs €65 per month.",
+])
+def test_captured_price_with_explicit_unknown_billing_is_not_licensed_by_raw_page(draft):
+    quote = "### Pro €20 per month"
+    entry = Evidence(
+        id="E1", kind=EvidenceKind.PRICE, claim="Tally Pro costs €20 per month",
+        verbatim=quote, context=EvidenceContext(
+            subject="Tally Pro plan", claim_scope="offer",
+            limitations="Billing period/annual terms not specified in this excerpt beyond 'per month'.",
+        ),
+    )
+    index = EvidenceIndex(EvidenceLedger(entries=[entry]), quote + "\nBusiness €65 per month")
+    report = evidence_gate(draft, index)
+    assert not report.passed
+    assert "unconfirmed billing" in report.issues[0].detail
+    assert evidence_gate("Create your first Tally form.", index).passed
+
+
+def test_independently_documented_payment_terms_resolve_price_uncertainty():
+    entries = [Evidence(
+        id="E1", kind=EvidenceKind.PRICE, claim="Pro costs €20 per month",
+        verbatim="Pro costs €20 per month.",
+        context=EvidenceContext(subject="Pro", claim_scope="offer",
+                                limitations="Billing terms unknown."),
+    ), Evidence(
+        id="E2", kind=EvidenceKind.PRICE, claim="Pro costs €20 per month billed annually",
+        verbatim="Pro costs €20 per month, billed annually.",
+        context=EvidenceContext(subject="Pro", claim_scope="offer"),
+    )]
+    index = EvidenceIndex(EvidenceLedger(entries=entries), "Pro costs €20 per month.")
+    assert evidence_gate("Pro costs €20 per month, billed annually.", index).passed
+    assert not evidence_gate("Pro costs €20 per month, billed monthly.", index).passed
+
+
 @pytest.mark.parametrize("source,draft", [
     ("Pro is $29 per year.", "Pro is $29 per month."),
     ("Pro is $29 per seat per month.", "Pro is $29 per account per month."),

@@ -1,0 +1,123 @@
+[
+  {
+    "id": "cd2be0d1-346f-454a-8ff6-909489fa6f68",
+    "campaign_execution_id": "8cc03c9d-0f8f-4f2b-8546-f121248ac46b",
+    "agent_execution_id": null,
+    "agent_id": null,
+    "step": null,
+    "event_type": "execution_started",
+    "level": "info",
+    "message": "Request: Write exactly one English activation email from the Customerly team. Reader: A Customerly support lead who has a draft answer to one frequently asked question. Ask them to do one thing: Create the first help-center article. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+    "created_at": "2026-11-11T04:20:38.034958Z"
+  },
+  {
+    "id": "248be3f2-9119-4ac2-bfab-c4dd06d453df",
+    "campaign_execution_id": "8cc03c9d-0f8f-4f2b-8546-f121248ac46b",
+    "agent_execution_id": null,
+    "agent_id": null,
+    "step": null,
+    "event_type": "phase",
+    "level": "info",
+    "message": "Read the request as 1 email(s) - the user said so",
+    "created_at": "2026-11-11T04:20:38.063653Z"
+  },
+  {
+    "id": "c431f7d6-5c85-4d31-a9b5-a31b58407e52",
+    "campaign_execution_id": "8cc03c9d-0f8f-4f2b-8546-f121248ac46b",
+    "agent_execution_id": null,
+    "agent_id": null,
+    "step": null,
+    "event_type": "phase",
+    "level": "info",
+    "message": "Reusing what we already know about this business (version 1, 62 facts)",
+    "created_at": "2026-11-11T04:20:38.185488Z"
+  },
+  {
+    "id": "46a203fe-9da4-4cc6-9a6c-5d0992b2d1b4",
+    "campaign_execution_id": "8cc03c9d-0f8f-4f2b-8546-f121248ac46b",
+    "agent_execution_id": null,
+    "agent_id": "knowledge_compiler",
+    "step": null,
+    "event_type": "knowledge_ready",
+    "level": "info",
+    "message": "Knowledge reused: 62 facts the copy may claim, 1 gap(s)",
+    "created_at": "2026-11-11T04:20:38.197551Z"
+  },
+  {
+    "id": "e539156b-3f6a-4f03-b979-3a8cff74eb49",
+    "campaign_execution_id": "8cc03c9d-0f8f-4f2b-8546-f121248ac46b",
+    "agent_execution_id": null,
+    "agent_id": null,
+    "step": null,
+    "event_type": "phase",
+    "level": "info",
+    "message": "9 third-party proof point(s) available to spend",
+    "created_at": "2026-11-11T04:20:38.210943Z"
+  },
+  {
+    "id": "a0b39c33-8dc3-48d8-a794-80386d99ffc7",
+    "campaign_execution_id": "8cc03c9d-0f8f-4f2b-8546-f121248ac46b",
+    "agent_execution_id": null,
+    "agent_id": "strategist",
+    "step": 1,
+    "event_type": "agent_started",
+    "level": "info",
+    "message": "Strategist: Deciding what this campaign says, and in what order",
+    "created_at": "2026-11-11T04:20:38.225852Z"
+  },
+  {
+    "id": "721db1ab-f97f-492f-af8b-b7033a0a889d",
+    "campaign_execution_id": "8cc03c9d-0f8f-4f2b-8546-f121248ac46b",
+    "agent_execution_id": null,
+    "agent_id": "strategist",
+    "step": 1,
+    "event_type": "model_call_started",
+    "level": "debug",
+    "message": "Sent 102,203 characters to gpt-5.6-sol - waiting for the answer",
+    "created_at": "2026-11-11T04:20:38.453907Z"
+  },
+  {
+    "id": "4c9b6841-fabb-4b1c-b55e-404ea6adca53",
+    "campaign_execution_id": "8cc03c9d-0f8f-4f2b-8546-f121248ac46b",
+    "agent_execution_id": "13a78366-7903-42bc-9313-8297d04fce28",
+    "agent_id": "strategist",
+    "step": 1,
+    "event_type": "agent_failed",
+    "level": "error",
+    "message": "Strategist: RoutingProvider call failed after 1 attempt(s): codex exec reported a failed turn: You’ve hit your usage limit. Upgrade to Pro (https://chatgpt.com/explore/pro), visit https://chatgpt.com/settings/usage to purchase more credits or try again at 8:47 AM.",
+    "created_at": "2026-11-11T04:20:41.145605Z"
+  },
+  {
+    "id": "496e539a-1d67-46bd-af1b-94057288dd03",
+    "campaign_execution_id": "8cc03c9d-0f8f-4f2b-8546-f121248ac46b",
+    "agent_execution_id": null,
+    "agent_id": null,
+    "step": 1,
+    "event_type": "campaign_report",
+    "level": "info",
+    "message": "Request: Write exactly one English activation email from the Customerly team. Reader: A Customerly support lead who has a draft answer to one frequently asked question. Ask them to do one thing: Create the first help-center article. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.\nDelivered 0 of 1 email(s). Average simulated reader's interest (uncalibrated) 0.0/10.\nContract problems: the user asked for 1 email(s) and the run produced 0\nWhat held the copy back: Some linked source pages could not be read; the corpus is partial: https://www.customerly.io/ - Use only the readable captured facts; do not infer missing prices, features or proof.\nWhat would help most next time: Can this source be supplied in a readable form or its missing details verified?\nCodex reached its usage limit. Try again at 8:47 AM (time reported by Codex).",
+    "created_at": "2026-11-11T04:20:41.170192Z"
+  },
+  {
+    "id": "e9d63f15-5db5-43c2-9cef-68f759a4ad19",
+    "campaign_execution_id": "8cc03c9d-0f8f-4f2b-8546-f121248ac46b",
+    "agent_execution_id": null,
+    "agent_id": null,
+    "step": 1,
+    "event_type": "phase",
+    "level": "info",
+    "message": "Codex reached its usage limit. Try again at 8:47 AM (time reported by Codex).",
+    "created_at": "2026-11-11T04:20:41.182847Z"
+  },
+  {
+    "id": "a664ccb8-59b1-41af-a7f5-5cf56a322d25",
+    "campaign_execution_id": "8cc03c9d-0f8f-4f2b-8546-f121248ac46b",
+    "agent_execution_id": null,
+    "agent_id": null,
+    "step": null,
+    "event_type": "execution_finished",
+    "level": "info",
+    "message": "Campaign run finished: provider_unavailable",
+    "created_at": "2026-11-11T04:20:41.218254Z"
+  }
+]

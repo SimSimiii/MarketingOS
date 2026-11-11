@@ -1,15 +1,18 @@
 import logging
 import time
+from dataclasses import replace
 from datetime import UTC, datetime
 from typing import Any
 from uuid import UUID
 
-from sqlmodel import Session, select
+from sqlalchemy import or_
+from sqlmodel import Session, col, select
 
 from app.ai.base import AIProvider
 from app.ai.model_router import ModelRouter
 from app.ai.roles import WILDCARD_ROLE
 from app.core.config import PROMPTS_DIR
+from app.ingestion.loaders.site_identity import picture_on
 from app.knowledge.artifacts import KnowledgeArtifacts
 from app.knowledge.corpus import SourceCorpus
 from app.knowledge.recovery import persist_recovered_material
@@ -23,7 +26,7 @@ from app.market.store import (
     merge_proof,
     prospect_qualification,
 )
-from app.marketing.briefs import CampaignBrief
+from app.marketing.briefs import CampaignBrief, EmailBrief
 from app.marketing.cancellation import CancellationToken
 from app.marketing.craft import EmailVersion
 from app.marketing.critic import Critique
@@ -35,7 +38,7 @@ from app.marketing.intelligence import (
     build_campaign_intelligence,
     resolve_audience_research,
 )
-from app.marketing.intent import CampaignIntent
+from app.marketing.intent import CampaignIntent, infer_intent
 from app.marketing.linkedin import ROLE_ID as LINKEDIN_WRITER_ROLE
 from app.marketing.observer import RunObserver
 from app.marketing.pipeline import (
@@ -50,18 +53,22 @@ from app.marketing.render_html import (
     MAX_EMAIL_BYTES,
     BrandStyle,
     EmailTier,
+    Picture,
     render_html,
+    resolve_tier,
     style_for_action,
     text_alternative,
 )
 from app.marketing.report import CampaignReport
 from app.marketing.request import CampaignRequest
 from app.marketing.sequence import SequenceReport
+from app.marketing.steering import CampaignSteering
 from app.models.agent_execution import AgentExecution
 from app.models.campaign import Campaign
 from app.models.campaign_execution import CampaignExecution
 from app.models.enums import AssetType, ExecutionStatus, LogLevel
 from app.models.generated_asset import GeneratedAsset
+from app.models.knowledge_document import KnowledgeDocument
 from app.models.market import ProspectRow
 from app.orchestration.event_emitter import ExecutionEventEmitter
 from app.orchestration.live_broker import broker
@@ -217,6 +224,7 @@ class _DbKnowledgeGateway(KnowledgeGateway):
             match=match,
             dossier_status=dossier_status,
             ledger=artifacts.evidence,
+            campaign_request=self._campaign.request,
         )
         if self._campaign.prospect_id is not None:
             prospect = self._session.get(ProspectRow, self._campaign.prospect_id)
@@ -475,6 +483,7 @@ class _PersistenceObserver(RunObserver):
                         "objection": item.objection,
                         "evidence_ids": item.evidence_ids,
                         "must_not_say": item.must_not_say,
+                        "claim_conditions": item.claim_conditions,
                         # The argument, not only the claim. `single_idea` is
                         # what the email asserts; these four are why anybody
                         # should care, and a timeline that shows the first
@@ -544,7 +553,8 @@ class _PersistenceObserver(RunObserver):
                 f"Email {position}: every automatic check passed",
                 level=LogLevel.DEBUG,
                 agent_id="email_writer",
-                data={"position": position, "attempt": attempt, "passed": True},
+                data={"position": position, "attempt": attempt, "passed": True,
+                      "semantic_review": report.semantic_review},
             )
             return
         self._emitter.emit(
@@ -557,6 +567,7 @@ class _PersistenceObserver(RunObserver):
                 "position": position,
                 "attempt": attempt,
                 "passed": report.passed,
+                "semantic_review": report.semantic_review,
                 "issues": [
                     {"gate": issue.gate, "detail": issue.detail, "severity": issue.severity.value}
                     for issue in report.issues
@@ -847,11 +858,13 @@ class CampaignOrchestrator:
                 else None
             ),
         )
+        brand = BrandRepository(self._session).get(campaign.brand_id) if campaign.brand_id else None
         request = CampaignRequest(
             name=campaign.name,
             request=campaign.request,
             product_description=campaign.product_description,
             product_url=campaign.product_url,
+            brand_website_url=brand.website_url if brand else None,
             target_market=campaign.target_market,
             goals=campaign.goals,
             intent=CampaignIntent.model_validate(campaign.intent) if campaign.intent else None,
@@ -862,6 +875,8 @@ class CampaignOrchestrator:
             # channel the pipeline cannot read would fix the contract to a
             # deliverable nothing knows how to write.
             channel=LinkedInChannel.model_validate(campaign.channel) if campaign.channel else None,
+            steering=CampaignSteering.model_validate(campaign.steering) if campaign.steering else None,
+            email_tier=campaign_tier(campaign),
         )
 
         try:
@@ -931,23 +946,14 @@ class CampaignOrchestrator:
         if result.message is not None:
             self._persist_message(execution, result, fallback)
             return
-        tier, brand = self._presentation(campaign)
         for outcome in result.outcomes:
             email: Email = outcome.email
             agent_execution_id = observer.writer_rows.get(email.position, fallback)
             if agent_execution_id is None:
                 logger.warning("no agent execution row to attach email %d to", email.position)
                 continue
-            style = style_for_action(
-                brand, explicit_url=campaign.cta_url,
-                planned_action=outcome.selected_brief.next_step_url or outcome.selected_brief.call_to_action,
-                offer=result.artifacts.offer if result.artifacts else None,
-                require_planned_destination=True,
-                licensed_urls=(
-                    [entry.source for entry in result.artifacts.evidence.entries
-                     if entry.id in outcome.selected_brief.evidence_ids]
-                    if result.artifacts else []
-                ),
+            content, content_html, tier = self.render_email(
+                campaign, email, outcome.selected_brief, result.artifacts
             )
             self._generated_assets.create(
                 GeneratedAsset(
@@ -955,20 +961,79 @@ class CampaignOrchestrator:
                     agent_execution_id=agent_execution_id,
                     asset_type=AssetType.EMAIL,
                     title=email.subject,
-                    content=text_alternative(email, style),
-                    content_html=_html_or_none(email, tier, style),
+                    content=content,
+                    content_html=content_html,
                     position=email.position,
                     asset_metadata={
                         **email.model_dump(mode="json"),
                         "pull": outcome.best.read.pull,
+                        "semantic_review": outcome.best.gates.semantic_review,
                         "revisions": len(outcome.versions) - 1,
                         "single_idea": outcome.selected_brief.single_idea,
                         "evidence_ids": outcome.selected_brief.evidence_ids,
                         "tier": tier.value,
                         "sequence_review_pending": result.sequence is None and bool(result.abort_reason),
+                        # The slot as it was finally written - after any
+                        # pivot - so an edit made after the run is checked
+                        # against the argument this email actually makes.
+                        "selected_brief": outcome.selected_brief.model_dump(mode="json"),
                     },
                 )
             )
+
+    def render_email(
+        self,
+        campaign: Campaign,
+        email: Email,
+        brief: EmailBrief,
+        artifacts: KnowledgeArtifacts | None,
+    ) -> tuple[str, str | None, EmailTier]:
+        """The pasteable text and the HTML for one email, the way a run
+        renders them. Public because an email edited after the run has to
+        come out looking exactly like the one it replaces."""
+        tier, brand = self._presentation(campaign)
+        style = style_for_action(
+            brand, explicit_url=(
+                brief.next_step_url if brief.next_step_url.lower().startswith(("https://", "http://"))
+                else campaign.cta_url if not brief.next_step_url and not brief.argument_issue else None
+            ),
+            planned_action=brief.next_step_url,
+            offer=artifacts.offer if artifacts else None,
+            require_planned_destination=True,
+            licensed_urls=(
+                [entry.source for entry in artifacts.evidence.entries
+                 if entry.id in brief.evidence_ids]
+                if artifacts else []
+            ),
+        )
+        if tier is EmailTier.BRANDED and (picture := self._picture(campaign, style.cta_url)):
+            style = replace(style, picture=picture)
+        return text_alternative(email, style), _html_or_none(email, tier, style), tier
+
+    def _picture(self, campaign: Campaign, url: str) -> Picture | None:
+        """The photograph of the page this email's button leads to, as the
+        crawler recorded it from that page's own Open Graph image.
+
+        Looked up per email, because each one's button can lead somewhere
+        else, among the brand's sources and the campaign's own, newest first:
+        a re-crawl that found a new photograph wins over the old one. Nothing
+        is fetched here - a page nobody crawled has no picture, and the email
+        renders without one rather than waiting on the network.
+        """
+        if not url:
+            return None
+        scopes = [KnowledgeDocument.campaign_id == campaign.id]
+        if campaign.brand_id is not None:
+            scopes.append(KnowledgeDocument.brand_id == campaign.brand_id)
+        pages = self._session.exec(
+            select(KnowledgeDocument.source_url, KnowledgeDocument.document_metadata)
+            .where(or_(*scopes))
+            .order_by(col(KnowledgeDocument.created_at).desc())
+        ).all()
+        found = picture_on(url, pages)
+        if found is None:
+            return None
+        return Picture(found.image_url, found.image_alt, found.image_width, found.image_height)
 
     def _persist_message(
         self,
@@ -1003,11 +1068,11 @@ class CampaignOrchestrator:
     def _presentation(self, campaign: Campaign) -> tuple[EmailTier, BrandStyle]:
         """How this campaign's emails should look.
 
-        Plain by default, and deliberately: these are mostly cold sales
-        sequences, where a branded template reads as a mailshot, scores worse
-        with filters and converts worse than a message that looks like it came
-        from a person. A campaign asks for the branded tier explicitly, and
-        only a campaign attached to a brand has anything to brand it with.
+        The tier is the campaign's own choice, or `campaign_tier`'s default
+        when it made none - see render_html.resolve_tier for why that default
+        follows who is reading. Only a campaign attached to a brand has
+        anything to brand it with, so a brand that has since gone falls back
+        to the same answer as no brand at all.
 
         The CTA URL is the one field here the campaign may override, because
         it is the one that changes per campaign: a launch points at the launch
@@ -1016,16 +1081,18 @@ class CampaignOrchestrator:
         nothing is still the answer when neither exists, since the renderer
         would otherwise draw a button to a page that does not exist.
         """
-        requested = (campaign.policy or {}).get("email_tier")
-        tier = EmailTier.BRANDED if requested == EmailTier.BRANDED else EmailTier.PLAIN
-        if campaign.brand_id is None:
-            return tier, BrandStyle(cta_url=campaign.cta_url or "")
-        brand = BrandRepository(self._session).get(campaign.brand_id)
+        brand = (
+            BrandRepository(self._session).get(campaign.brand_id)
+            if campaign.brand_id is not None
+            else None
+        )
+        tier = campaign_tier(campaign, has_brand=brand is not None)
         if brand is None:
             return tier, BrandStyle(cta_url=campaign.cta_url or "")
         return tier, BrandStyle(
             name=brand.name,
             logo_url=brand.logo_url or "",
+            website_url=brand.website_url or "",
             primary_color=brand.primary_color or BrandStyle.primary_color,
             footer_lines=tuple(brand.footer_lines or ()),
             cta_url=campaign.cta_url or brand.website_url or "",
@@ -1111,6 +1178,26 @@ def _html_or_none(email: Email, tier: EmailTier, brand: BrandStyle) -> str | Non
         )
         return None
     return rendered
+
+
+def campaign_tier(campaign: Campaign, *, has_brand: bool | None = None) -> EmailTier:
+    """The tier this campaign's emails render in - see render_html.resolve_tier.
+
+    One function for the run, which tells the writer, and for the renderer,
+    which draws it: a writer told "branded" over an email rendered plain would
+    write a headline nobody sees. `has_brand` comes from a caller that has
+    already looked the brand up, so one deleted since counts as none.
+    """
+    intent = (
+        CampaignIntent.model_validate(campaign.intent)
+        if campaign.intent
+        else infer_intent(campaign.request)
+    )
+    return resolve_tier(
+        (campaign.policy or {}).get("email_tier"),
+        has_brand=campaign.brand_id is not None if has_brand is None else has_brand,
+        relationship=intent.reader_relationship,
+    )
 
 
 def _resolve_overrides(policy: ExecutionPolicy, campaign: Campaign) -> dict[str, str]:
@@ -1266,11 +1353,13 @@ def build_stepped_pipeline(
         cancel_token=None,
         deadline=None,
     )
+    brand = BrandRepository(session).get(campaign.brand_id) if campaign.brand_id else None
     request = CampaignRequest(
         name=campaign.name,
         request=campaign.request,
         product_description=campaign.product_description,
         product_url=campaign.product_url,
+        brand_website_url=brand.website_url if brand else None,
         target_market=campaign.target_market,
         goals=campaign.goals,
         intent=CampaignIntent.model_validate(campaign.intent) if campaign.intent else None,
@@ -1278,6 +1367,8 @@ def build_stepped_pipeline(
         sender_role=campaign.sender_role or "",
         cta_url=campaign.cta_url,
         channel=LinkedInChannel.model_validate(campaign.channel) if campaign.channel else None,
+        steering=CampaignSteering.model_validate(campaign.steering) if campaign.steering else None,
+        email_tier=campaign_tier(campaign),
     )
     return pipeline, request, observer
 

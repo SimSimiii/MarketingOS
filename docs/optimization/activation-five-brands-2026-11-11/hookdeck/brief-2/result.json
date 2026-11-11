@@ -1,0 +1,99 @@
+{
+  "id": "5bf2f396-c706-4556-aeac-d80399eae7ea",
+  "campaign_id": "a8eb5b00-90fe-4a50-a90e-76f7df8e0ace",
+  "status": "failed",
+  "needs_review": false,
+  "outcome_status": "failed",
+  "review_reasons": [],
+  "error_message": "The model stopped answering and did not come back after several attempts. Everything finished before that point is below.",
+  "started_at": "2026-11-11T04:09:51.537893Z",
+  "completed_at": "2026-11-11T04:09:57.179561Z",
+  "created_at": "2026-11-11T04:09:51.538892Z",
+  "total_input_tokens": 0,
+  "total_output_tokens": 0,
+  "total_cache_read_tokens": 0,
+  "estimated_cost_usd": 0.0,
+  "recommendation_snapshot": {
+    "campaign_id": "a8eb5b00-90fe-4a50-a90e-76f7df8e0ace",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "f8076b66-d611-4c63-9df1-3e4a00e812ac",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "failed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": null,
+      "error_message": "RoutingProvider call failed after 1 attempt(s): Claude Code rate limit: You've hit your session limit · resets 9:10am (Europe/Paris).",
+      "started_at": "2026-11-11T04:09:51.931655Z",
+      "completed_at": "2026-11-11T04:09:57.124060Z",
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.0,
+      "duration_ms": 0.0,
+      "attempt": 1
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "provider_unavailable",
+    "report": {
+      "request": "Write exactly one English activation email from the Hookdeck team. Reader: A developer who already uses Hookdeck and has a failed event in a test environment. Ask them to do one thing: Review and retry that failed test event. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+      "effective_audience": "",
+      "audience_scope": "",
+      "assessment_method": "Simulated reader's interest, uncalibrated; no response or conversion prediction",
+      "delivered": 0,
+      "promised": 1,
+      "contract_violations": [
+        "the user asked for 1 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [],
+      "what_would_help_most": "",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "The model stopped answering and did not come back after several attempts. Everything finished before that point is below."
+      ],
+      "reads_expected": true
+    },
+    "brief": null,
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "a8eb5b00-90fe-4a50-a90e-76f7df8e0ace",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

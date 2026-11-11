@@ -1,0 +1,1007 @@
+{
+  "id": "30f5ba41-7820-4417-9278-5b546584081d",
+  "campaign_id": "15d308e7-3265-4f08-9fea-39bc9e063dca",
+  "status": "completed",
+  "needs_review": true,
+  "outcome_status": "degraded",
+  "review_reasons": [
+    "Some drafts retain unresolved strategy or review findings."
+  ],
+  "error_message": null,
+  "started_at": "2026-11-11T08:18:04.040055Z",
+  "completed_at": "2026-11-11T08:21:55.225869Z",
+  "created_at": "2026-11-11T08:18:04.041055Z",
+  "total_input_tokens": 178041,
+  "total_output_tokens": 16493,
+  "total_cache_read_tokens": 31744,
+  "estimated_cost_usd": 1.6906,
+  "recommendation_snapshot": {
+    "campaign_id": "15d308e7-3265-4f08-9fea-39bc9e063dca",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "1c313da4-3db3-47f1-af28-c591f37b6534",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Add the provided Customerly script to the website's <head> so the support team can establish the live-chat surface where Aura can answer first and people can take over with context."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:18:04.196593Z",
+      "completed_at": "2026-11-11T08:19:02.373248Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 32233,
+      "output_tokens": 4204,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.383984,
+      "duration_ms": 58001.52610009536,
+      "attempt": 1
+    },
+    {
+      "id": "76e08357-ad34-4f18-9d76-c4a42061905f",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · first draft",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "subject": "Add live chat to your site"
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:19:02.776319Z",
+      "completed_at": "2026-11-11T08:19:15.560823Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 26100,
+      "output_tokens": 709,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.23007,
+      "duration_ms": 12693.151900079101,
+      "attempt": 1
+    },
+    {
+      "id": "d8e68646-47fc-4dbb-8aec-d6fe42901a3b",
+      "agent_id": "claim_reviewer",
+      "agent_name": "Claim Reviewer",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · checking claims against sources"
+      },
+      "output_data": {
+        "semantic_review": {
+          "key": "215f39ad0510764bfe5ece796236facf320629ad16676e6f5e42b0509782dbe2",
+          "approved": true,
+          "decision": {
+            "verdict": "supported",
+            "claims": [
+              {
+                "text": "Preview text: Start by inserting the provided Customerly script into your site’s head section.",
+                "status": "supported",
+                "explanation": "Customerly’s getting-started documentation identifies inserting the provided script into the site’s `<head>` section as the method for installing the website chat widget.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "✔ **Install the live chat widget** – [Add the Customerly chat widget](https://docs.customerly.io/en/live-chat) to your website by inserting the provided script into your site’s `<head>` section and [customize it](https://docs.customerly.io/en/live-chat/how-to-choose-your-live-chat-icon)."
+                  }
+                ]
+              },
+              {
+                "text": "Turn your website into a support channel",
+                "status": "supported",
+                "explanation": "The sources document a live-chat widget for a website through which Aura and human agents handle conversations.",
+                "citations": [
+                  {
+                    "source_id": "E40",
+                    "quote": "A live chat widget for your website and product where Aura answers first and humans take over with context."
+                  }
+                ]
+              },
+              {
+                "text": "Put Customerly live chat on your website so customers have a direct place to start a support conversation.",
+                "status": "supported",
+                "explanation": "A live-chat widget for a website, documented as handling conversations, supports this description without promising a specific customer outcome.",
+                "citations": [
+                  {
+                    "source_id": "E40",
+                    "quote": "A live chat widget for your website and product where Aura answers first and humans take over with context."
+                  }
+                ]
+              },
+              {
+                "text": "The documented first step is specific: insert the provided Customerly script into your website’s `<head>` section.",
+                "status": "supported",
+                "explanation": "The cited Customerly checklist gives this exact website-widget installation operation.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "✔ **Install the live chat widget** – [Add the Customerly chat widget](https://docs.customerly.io/en/live-chat) to your website by inserting the provided script into your site’s `<head>` section and [customize it](https://docs.customerly.io/en/live-chat/how-to-choose-your-live-chat-icon)."
+                  }
+                ]
+              },
+              {
+                "text": "This installs the live-chat widget on your site.",
+                "status": "supported",
+                "explanation": "The documentation explicitly describes adding the Customerly chat widget to a website by inserting the script into its `<head>` section.",
+                "citations": [
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "✔ **Install the live chat widget** – [Add the Customerly chat widget](https://docs.customerly.io/en/live-chat) to your website by inserting the provided script into your site’s `<head>` section and [customize it](https://docs.customerly.io/en/live-chat/how-to-choose-your-live-chat-icon)."
+                  }
+                ]
+              },
+              {
+                "text": "Customerly is an AI helpdesk where the widget supports Aura answering first, with human agents able to take over conversations with context when needed.",
+                "status": "supported",
+                "explanation": "The sources jointly identify Customerly as an AI helpdesk and describe its website widget as supporting Aura-first conversations followed by contextual human takeover. The copy does not claim Aura is immediately configured merely by installing the script.",
+                "citations": [
+                  {
+                    "source_id": "proposition:mechanism:2",
+                    "quote": "Customerly is an AI helpdesk for SaaS and software companies."
+                  },
+                  {
+                    "source_id": "E40",
+                    "quote": "A live chat widget for your website and product where Aura answers first and humans take over with context."
+                  }
+                ]
+              },
+              {
+                "text": "Your team stays part of the conversation.",
+                "status": "supported",
+                "explanation": "This is a qualitative restatement of the documented ability for humans to take over conversations with context.",
+                "citations": [
+                  {
+                    "source_id": "E40",
+                    "quote": "A live chat widget for your website and product where Aura answers first and humans take over with context."
+                  }
+                ]
+              },
+              {
+                "text": "The live-chat documentation walks you through the installation path for adding the widget to your website.",
+                "status": "supported",
+                "explanation": "The captured Customerly checklist links the widget-installation instruction directly to the live-chat documentation destination.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "✔ **Install the live chat widget** – [Add the Customerly chat widget](https://docs.customerly.io/en/live-chat) to your website by inserting the provided script into your site’s `<head>` section and [customize it](https://docs.customerly.io/en/live-chat/how-to-choose-your-live-chat-icon)."
+                  },
+                  {
+                    "source_id": "cta:0",
+                    "quote": "Literal link: [Add the Customerly chat widget](https://docs.customerly.io/en/live-chat)"
+                  }
+                ]
+              },
+              {
+                "text": "Set up live chat →",
+                "status": "supported",
+                "explanation": "The single CTA leads to the exact documented destination for adding the Customerly chat widget; it does not imply free access, a plan entitlement, timing, or a guaranteed outcome.",
+                "citations": [
+                  {
+                    "source_id": "cta:0",
+                    "quote": "Resolved link: https://docs.customerly.io/en/live-chat\nLiteral link: [Add the Customerly chat widget](https://docs.customerly.io/en/live-chat)"
+                  }
+                ]
+              }
+            ],
+            "findings": [],
+            "summary": "Every material factual assertion is supported by the supplied literal sources. The draft asks for one action, uses one CTA with the documented destination, stays under 150 body words, and makes no unsupported access, plan, timing, or outcome claim.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The email preserves the requested value: installing the website widget creates the live-chat surface where Aura can answer first and humans can take over with context, while keeping the team involved.",
+              "original_passage": "Customerly is an AI helpdesk where the widget supports Aura answering first, with human agents able to take over conversations with context when needed. Your team stays part of the conversation.",
+              "revised_passage": ""
+            }
+          },
+          "version": 3,
+          "sources": {
+            "source:0": "[Getting Started with Customerly: Follow our checklist to learn the basics - Customerly - Help Center › **Day 1: Account setup and initial configurations**; document_id=94220a39-e59c-4959-8405-7f8ac48b88fb; source=https://docs.customerly.io/en/articles/43042-getting-started-with-customerly-follow-our-checklist-to-learn-the-basics; aliases=https://docs.customerly.io/en/articles/43042-getting-started-with-customerly-follow-our-checklist-to-learn-the-basics; chunk=1]",
+            "E40": "https://www.customerly.io/ai-helpdesk/",
+            "proposition:mechanism:0": "[Getting Started with Customerly: Follow our checklist to learn the basics - Customerly - Help Center › **Day 1: Account setup and initial configurations**; document_id=94220a39-e59c-4959-8405-7f8ac48b88fb; source=https://docs.customerly.io/en/articles/43042-getting-started-with-customerly-follow-our-checklist-to-learn-the-basics; aliases=https://docs.customerly.io/en/articles/43042-getting-started-with-customerly-follow-our-checklist-to-learn-the-basics; chunk=1]",
+            "proposition:mechanism:2": "[AI Helpdesk Software for Customer Support Teams | Customerly › What is an AI helpdesk?; document_id=48ea9ee4-00b4-4501-a072-006334da7911; source=https://www.customerly.io/ai-helpdesk/; aliases=https://www.customerly.io/ai-helpdesk/; chunk=9]",
+            "cta:0": "Source page: https://docs.customerly.io/en/articles/43042-getting-started-with-customerly-follow-our-checklist-to-learn-the-basics"
+          }
+        },
+        "passed": true
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:19:15.595499Z",
+      "completed_at": "2026-11-11T08:19:55.516917Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 25543,
+      "output_tokens": 2750,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.293193,
+      "duration_ms": 39741.46389984526,
+      "attempt": 1
+    },
+    {
+      "id": "3eaeb9cf-f785-47bb-b3e3-9ade6b526549",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 1 reader(s)",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:19:55.556067Z",
+      "completed_at": "2026-11-11T08:20:13.987917Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 3650,
+      "output_tokens": 1053,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.067139,
+      "duration_ms": 18352.069000015035,
+      "attempt": 1
+    },
+    {
+      "id": "295e3f4a-dfcd-4595-9588-9e6f04f836b6",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "Connect your site to Customerly"
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:20:14.012976Z",
+      "completed_at": "2026-11-11T08:20:41.116811Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 29459,
+      "output_tokens": 2272,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.303832,
+      "duration_ms": 26870.78300002031,
+      "attempt": 2
+    },
+    {
+      "id": "9aa5fe86-01b9-4cef-b238-97af204bc7b3",
+      "agent_id": "claim_reviewer",
+      "agent_name": "Claim Reviewer",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · checking claims against sources"
+      },
+      "output_data": {
+        "semantic_review": {
+          "key": "1ea2e1671531afcf4b024233809d346a56e74ba06fdb4d702006d30217587795",
+          "approved": false,
+          "decision": {
+            "verdict": "revise",
+            "claims": [
+              {
+                "text": "Add the widget, then handle website chats from your shared inbox.",
+                "status": "supported",
+                "explanation": "Customerly documents that live-chat messages land in one shared inbox.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "Live chat, email, WhatsApp, Facebook Messenger and messages from your iOS and Android apps land in one shared inbox."
+                  }
+                ]
+              },
+              {
+                "text": "Bring website conversations into one inbox",
+                "status": "supported",
+                "explanation": "The documented shared inbox includes live-chat conversations from the website widget.",
+                "citations": [
+                  {
+                    "source_id": "E40",
+                    "quote": "A live chat widget for your website and product where Aura answers first and humans take over with context."
+                  },
+                  {
+                    "source_id": "source:1",
+                    "quote": "Live chat, email, WhatsApp, Facebook Messenger and messages from your iOS and Android apps land in one shared inbox."
+                  }
+                ]
+              },
+              {
+                "text": "Connect Customerly to your website by inserting the provided script into the site’s head section.",
+                "status": "supported",
+                "explanation": "The getting-started documentation specifies adding Customerly’s website widget by inserting the provided script into the site’s `<head>` section.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "✔ **Install the live chat widget** – [Add the Customerly chat widget](https://docs.customerly.io/en/live-chat) to your website by inserting the provided script into your site’s `<head>` section and [customize it](https://docs.customerly.io/en/live-chat/how-to-choose-your-live-chat-icon)."
+                  }
+                ]
+              },
+              {
+                "text": "That is the documented first step for installing the live-chat widget.",
+                "status": "unsupported",
+                "explanation": "The supplied documentation identifies inserting the script as the installation method, but it does not literally establish that operation as the first step in an installation sequence.",
+                "citations": []
+              },
+              {
+                "text": "Once installed, Customerly’s live-chat widget gives visitors a place to start a support conversation.",
+                "status": "supported",
+                "explanation": "The source identifies Customerly’s product as a live-chat widget for a website, which entails a website interface for live-chat conversations.",
+                "citations": [
+                  {
+                    "source_id": "E40",
+                    "quote": "A live chat widget for your website and product where Aura answers first and humans take over with context."
+                  }
+                ]
+              },
+              {
+                "text": "Those website chats land in your team’s shared inbox.",
+                "status": "supported",
+                "explanation": "Customerly explicitly states that live-chat messages land in one shared inbox.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "Live chat, email, WhatsApp, Facebook Messenger and messages from your iOS and Android apps land in one shared inbox."
+                  }
+                ]
+              },
+              {
+                "text": "The widget supports Aura answering first.",
+                "status": "supported",
+                "explanation": "The source states this capability directly for Customerly’s website live-chat widget.",
+                "citations": [
+                  {
+                    "source_id": "E40",
+                    "quote": "A live chat widget for your website and product where Aura answers first and humans take over with context."
+                  }
+                ]
+              },
+              {
+                "text": "When she escalates a conversation, it reaches your team with context attached, so an agent can continue from what the customer has already shared.",
+                "status": "supported",
+                "explanation": "The sources jointly document escalation to humans, delivery to the inbox with context attached, and human takeover with that context.",
+                "citations": [
+                  {
+                    "source_id": "E13",
+                    "quote": "Escalations land in your inbox, with the context attached"
+                  },
+                  {
+                    "source_id": "E40",
+                    "quote": "A live chat widget for your website and product where Aura answers first and humans take over with context."
+                  }
+                ]
+              },
+              {
+                "text": "Open the live-chat documentation to follow the installation path, add the widget to your website, and bring those conversations into Customerly.",
+                "status": "supported",
+                "explanation": "The documented widget-installation checklist links to the stated live-chat destination, while the product documentation confirms that live-chat conversations enter Customerly’s shared inbox.",
+                "citations": [
+                  {
+                    "source_id": "cta:0",
+                    "quote": "Source page: https://docs.customerly.io/en/articles/43042-getting-started-with-customerly-follow-our-checklist-to-learn-the-basics\nResolved link: https://docs.customerly.io/en/live-chat\nLiteral link: [Add the Customerly chat widget](https://docs.customerly.io/en/live-chat)"
+                  },
+                  {
+                    "source_id": "source:1",
+                    "quote": "Live chat, email, WhatsApp, Facebook Messenger and messages from your iOS and Android apps land in one shared inbox."
+                  }
+                ]
+              },
+              {
+                "text": "Set up live chat →",
+                "status": "supported",
+                "explanation": "The sole CTA accurately describes the documented destination’s widget-setup purpose, and the captured link resolves to the required live-chat documentation URL.",
+                "citations": [
+                  {
+                    "source_id": "cta:0",
+                    "quote": "Source page: https://docs.customerly.io/en/articles/43042-getting-started-with-customerly-follow-our-checklist-to-learn-the-basics\nResolved link: https://docs.customerly.io/en/live-chat\nLiteral link: [Add the Customerly chat widget](https://docs.customerly.io/en/live-chat)"
+                  }
+                ]
+              }
+            ],
+            "findings": [
+              {
+                "text": "That is the documented first step for installing the live-chat widget.",
+                "kind": "factual",
+                "explanation": "No supplied source explicitly establishes inserting the script as the first step of an installation sequence. The source supports the operation itself, but not its claimed ordinal position."
+              }
+            ],
+            "summary": "The email follows the requested language, length, single-action, single-CTA, and destination constraints. Its installation mechanism, shared-inbox behavior, and Aura-to-human handoff are supported. Revision is required only because the source does not explicitly substantiate the claim that inserting the script is the documented “first step.”",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The requested reader value remains intact: the draft explains that the website widget enables live chat, Aura can answer first, and humans can take over with context.",
+              "original_passage": "The widget supports Aura answering first. When she escalates a conversation, it reaches your team with context attached, so an agent can continue from what the customer has already shared.",
+              "revised_passage": ""
+            }
+          },
+          "version": 3,
+          "sources": {
+            "source:1": "[AI Helpdesk Software for Customer Support Teams | Customerly › One inbox for live chat, email, WhatsApp, Messenger and in-app; document_id=48ea9ee4-00b4-4501-a072-006334da7911; source=https://www.customerly.io/ai-helpdesk/; aliases=https://www.customerly.io/ai-helpdesk/; chunk=2]",
+            "E40": "https://www.customerly.io/ai-helpdesk/",
+            "source:0": "[Getting Started with Customerly: Follow our checklist to learn the basics - Customerly - Help Center › **Day 1: Account setup and initial configurations**; document_id=94220a39-e59c-4959-8405-7f8ac48b88fb; source=https://docs.customerly.io/en/articles/43042-getting-started-with-customerly-follow-our-checklist-to-learn-the-basics; aliases=https://docs.customerly.io/en/articles/43042-getting-started-with-customerly-follow-our-checklist-to-learn-the-basics; chunk=1]",
+            "E13": "https://www.customerly.io/",
+            "cta:0": "Source page: https://docs.customerly.io/en/articles/43042-getting-started-with-customerly-follow-our-checklist-to-learn-the-basics"
+          }
+        },
+        "passed": false
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:20:41.156786Z",
+      "completed_at": "2026-11-11T08:21:33.475396Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 25649,
+      "output_tokens": 4019,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.332111,
+      "duration_ms": 52130.68790012039,
+      "attempt": 2
+    },
+    {
+      "id": "d70e679e-d5cd-4066-923c-5bdd0cdc26cd",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 1 reader(s)",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:21:33.520786Z",
+      "completed_at": "2026-11-11T08:21:55.095606Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 3663,
+      "output_tokens": 1486,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.080233,
+      "duration_ms": 21488.963099895045,
+      "attempt": 2
+    }
+  ],
+  "assets": [
+    {
+      "id": "4deb6dff-7779-47b2-8e30-fe84436af4d7",
+      "asset_type": "email",
+      "title": "Add live chat to your site",
+      "content": "Subject: Add live chat to your site\nPreview text: Start by inserting the provided Customerly script into your site’s head section.\n\nTurn your website into a support channel\n\nHi there,\n\nPut Customerly live chat on your website so customers have a direct place to start a support conversation.\n\nThe documented first step is specific: insert the provided Customerly script into your website’s `<head>` section. This installs the live-chat widget on your site.\n\nCustomerly is an AI helpdesk where the widget supports Aura answering first, with human agents able to take over conversations with context when needed. Your team stays part of the conversation.\n\nThe live-chat documentation walks you through the installation path for adding the widget to your website.\n\nSet up live chat → https://docs.customerly.io/en/live-chat\n\n- Customerly",
+      "content_html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n<meta name=\"x-apple-disable-message-reformatting\" />\n<meta name=\"color-scheme\" content=\"light\" />\n<meta name=\"supported-color-schemes\" content=\"light\" />\n<title>Add live chat to your site</title>\n</head>\n<body style=\"margin:0;padding:0;background-color:#eceef3;-webkit-text-size-adjust:100%;\">\n<div style=\"display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;\">Start by inserting the provided Customerly script into your site’s head section.&#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; </div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#eceef3;\">\n<tr><td align=\"center\" style=\"padding:24px 12px;\">\n<table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;background-color:#ffffff;border-radius:12px;\">\n<tr><td style=\"background-color:#1a56db;height:4px;font-size:0;line-height:0;\">&nbsp;</td></tr>\n<tr><td style=\"padding:26px 36px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:18px;font-weight:800;letter-spacing:0.3px;color:#14161a;\"><a href=\"https://www.customerly.io/\" style=\"color:#14161a;text-decoration:none;\">Customerly</a></td></tr>\n<tr><td style=\"padding:26px 36px 10px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#1a56db;\">LIVE CHAT</p></td></tr>\n<tr><td style=\"padding:0 36px 20px;\"><h1 style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:29px;line-height:1.2;font-weight:800;letter-spacing:-0.5px;color:#14161a;\">Turn your website into a support channel</h1></td></tr>\n<tr><td style=\"padding:10px 36px 16px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Hi there,</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:17px;line-height:1.6;color:#3d434d;\">Put Customerly live chat on your website so customers have a direct place to start a support conversation.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">The documented first step is specific: insert the provided Customerly script into your website’s `&lt;head&gt;` section. This installs the live-chat widget on your site.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Customerly is an AI helpdesk where the widget supports Aura answering first, with human agents able to take over conversations with context when needed. Your team stays part of the conversation.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">The live-chat documentation walks you through the installation path for adding the widget to your website.</p></td></tr>\n<tr><td style=\"padding:6px 36px 22px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td style=\"border-top:1px solid #e6e9ef;font-size:0;line-height:0;\">&nbsp;</td></tr></table></td></tr>\n<tr><td align=\"center\" style=\"padding:4px 36px 8px;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"center\" style=\"background-color:#1a56db;border-radius:8px;\"><a href=\"https://docs.customerly.io/en/live-chat\" style=\"display:inline-block;padding:16px 40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;\">Set up live chat</a></td></tr></table></td></tr>\n<tr><td style=\"padding:22px 36px 20px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6;color:#767d89;\">- Customerly</p></td></tr>\n<tr><td align=\"center\" style=\"padding:22px 36px 28px;background-color:#fafbfc;border-top:1px solid #e6e9ef;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:12px;line-height:1.7;color:#767d89;\">Customerly<br /><a href=\"https://www.customerly.io/\" style=\"color:#767d89;text-decoration:underline;\">customerly.io</a></td></tr>\n</table>\n</td></tr>\n</table>\n</body>\n</html>\n",
+      "position": 1,
+      "asset_metadata": {
+        "position": 1,
+        "role": "activation",
+        "language": "en",
+        "subject": "Add live chat to your site",
+        "preview_text": "Start by inserting the provided Customerly script into your site’s head section.",
+        "eyebrow": "LIVE CHAT",
+        "headline": "Turn your website into a support channel",
+        "greeting": "Hi there,",
+        "body": "Put Customerly live chat on your website so customers have a direct place to start a support conversation.\n\nThe documented first step is specific: insert the provided Customerly script into your website’s `<head>` section. This installs the live-chat widget on your site.\n\nCustomerly is an AI helpdesk where the widget supports Aura answering first, with human agents able to take over conversations with context when needed. Your team stays part of the conversation.\n\nThe live-chat documentation walks you through the installation path for adding the widget to your website.",
+        "call_to_action": "Set up live chat",
+        "sign_off": "- Customerly",
+        "postscript": "",
+        "pull": 7,
+        "semantic_review": {
+          "key": "215f39ad0510764bfe5ece796236facf320629ad16676e6f5e42b0509782dbe2",
+          "approved": true,
+          "decision": {
+            "verdict": "supported",
+            "claims": [
+              {
+                "text": "Preview text: Start by inserting the provided Customerly script into your site’s head section.",
+                "status": "supported",
+                "explanation": "Customerly’s getting-started documentation identifies inserting the provided script into the site’s `<head>` section as the method for installing the website chat widget.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "✔ **Install the live chat widget** – [Add the Customerly chat widget](https://docs.customerly.io/en/live-chat) to your website by inserting the provided script into your site’s `<head>` section and [customize it](https://docs.customerly.io/en/live-chat/how-to-choose-your-live-chat-icon)."
+                  }
+                ]
+              },
+              {
+                "text": "Turn your website into a support channel",
+                "status": "supported",
+                "explanation": "The sources document a live-chat widget for a website through which Aura and human agents handle conversations.",
+                "citations": [
+                  {
+                    "source_id": "E40",
+                    "quote": "A live chat widget for your website and product where Aura answers first and humans take over with context."
+                  }
+                ]
+              },
+              {
+                "text": "Put Customerly live chat on your website so customers have a direct place to start a support conversation.",
+                "status": "supported",
+                "explanation": "A live-chat widget for a website, documented as handling conversations, supports this description without promising a specific customer outcome.",
+                "citations": [
+                  {
+                    "source_id": "E40",
+                    "quote": "A live chat widget for your website and product where Aura answers first and humans take over with context."
+                  }
+                ]
+              },
+              {
+                "text": "The documented first step is specific: insert the provided Customerly script into your website’s `<head>` section.",
+                "status": "supported",
+                "explanation": "The cited Customerly checklist gives this exact website-widget installation operation.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "✔ **Install the live chat widget** – [Add the Customerly chat widget](https://docs.customerly.io/en/live-chat) to your website by inserting the provided script into your site’s `<head>` section and [customize it](https://docs.customerly.io/en/live-chat/how-to-choose-your-live-chat-icon)."
+                  }
+                ]
+              },
+              {
+                "text": "This installs the live-chat widget on your site.",
+                "status": "supported",
+                "explanation": "The documentation explicitly describes adding the Customerly chat widget to a website by inserting the script into its `<head>` section.",
+                "citations": [
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "✔ **Install the live chat widget** – [Add the Customerly chat widget](https://docs.customerly.io/en/live-chat) to your website by inserting the provided script into your site’s `<head>` section and [customize it](https://docs.customerly.io/en/live-chat/how-to-choose-your-live-chat-icon)."
+                  }
+                ]
+              },
+              {
+                "text": "Customerly is an AI helpdesk where the widget supports Aura answering first, with human agents able to take over conversations with context when needed.",
+                "status": "supported",
+                "explanation": "The sources jointly identify Customerly as an AI helpdesk and describe its website widget as supporting Aura-first conversations followed by contextual human takeover. The copy does not claim Aura is immediately configured merely by installing the script.",
+                "citations": [
+                  {
+                    "source_id": "proposition:mechanism:2",
+                    "quote": "Customerly is an AI helpdesk for SaaS and software companies."
+                  },
+                  {
+                    "source_id": "E40",
+                    "quote": "A live chat widget for your website and product where Aura answers first and humans take over with context."
+                  }
+                ]
+              },
+              {
+                "text": "Your team stays part of the conversation.",
+                "status": "supported",
+                "explanation": "This is a qualitative restatement of the documented ability for humans to take over conversations with context.",
+                "citations": [
+                  {
+                    "source_id": "E40",
+                    "quote": "A live chat widget for your website and product where Aura answers first and humans take over with context."
+                  }
+                ]
+              },
+              {
+                "text": "The live-chat documentation walks you through the installation path for adding the widget to your website.",
+                "status": "supported",
+                "explanation": "The captured Customerly checklist links the widget-installation instruction directly to the live-chat documentation destination.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "✔ **Install the live chat widget** – [Add the Customerly chat widget](https://docs.customerly.io/en/live-chat) to your website by inserting the provided script into your site’s `<head>` section and [customize it](https://docs.customerly.io/en/live-chat/how-to-choose-your-live-chat-icon)."
+                  },
+                  {
+                    "source_id": "cta:0",
+                    "quote": "Literal link: [Add the Customerly chat widget](https://docs.customerly.io/en/live-chat)"
+                  }
+                ]
+              },
+              {
+                "text": "Set up live chat →",
+                "status": "supported",
+                "explanation": "The single CTA leads to the exact documented destination for adding the Customerly chat widget; it does not imply free access, a plan entitlement, timing, or a guaranteed outcome.",
+                "citations": [
+                  {
+                    "source_id": "cta:0",
+                    "quote": "Resolved link: https://docs.customerly.io/en/live-chat\nLiteral link: [Add the Customerly chat widget](https://docs.customerly.io/en/live-chat)"
+                  }
+                ]
+              }
+            ],
+            "findings": [],
+            "summary": "Every material factual assertion is supported by the supplied literal sources. The draft asks for one action, uses one CTA with the documented destination, stays under 150 body words, and makes no unsupported access, plan, timing, or outcome claim.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The email preserves the requested value: installing the website widget creates the live-chat surface where Aura can answer first and humans can take over with context, while keeping the team involved.",
+              "original_passage": "Customerly is an AI helpdesk where the widget supports Aura answering first, with human agents able to take over conversations with context when needed. Your team stays part of the conversation.",
+              "revised_passage": ""
+            }
+          },
+          "version": 3,
+          "sources": {
+            "source:0": "[Getting Started with Customerly: Follow our checklist to learn the basics - Customerly - Help Center › **Day 1: Account setup and initial configurations**; document_id=94220a39-e59c-4959-8405-7f8ac48b88fb; source=https://docs.customerly.io/en/articles/43042-getting-started-with-customerly-follow-our-checklist-to-learn-the-basics; aliases=https://docs.customerly.io/en/articles/43042-getting-started-with-customerly-follow-our-checklist-to-learn-the-basics; chunk=1]",
+            "E40": "https://www.customerly.io/ai-helpdesk/",
+            "proposition:mechanism:0": "[Getting Started with Customerly: Follow our checklist to learn the basics - Customerly - Help Center › **Day 1: Account setup and initial configurations**; document_id=94220a39-e59c-4959-8405-7f8ac48b88fb; source=https://docs.customerly.io/en/articles/43042-getting-started-with-customerly-follow-our-checklist-to-learn-the-basics; aliases=https://docs.customerly.io/en/articles/43042-getting-started-with-customerly-follow-our-checklist-to-learn-the-basics; chunk=1]",
+            "proposition:mechanism:2": "[AI Helpdesk Software for Customer Support Teams | Customerly › What is an AI helpdesk?; document_id=48ea9ee4-00b4-4501-a072-006334da7911; source=https://www.customerly.io/ai-helpdesk/; aliases=https://www.customerly.io/ai-helpdesk/; chunk=9]",
+            "cta:0": "Source page: https://docs.customerly.io/en/articles/43042-getting-started-with-customerly-follow-our-checklist-to-learn-the-basics"
+          }
+        },
+        "revisions": 1,
+        "single_idea": "Add the provided Customerly script to the website's <head> so the support team can establish the live-chat surface where Aura can answer first and people can take over with context.",
+        "evidence_ids": [
+          "E40"
+        ],
+        "tier": "branded",
+        "sequence_review_pending": false,
+        "selected_brief": {
+          "problem_ids": [],
+          "offer_id": "offering",
+          "action_id": "",
+          "selection_reason": "Installing the website widget is the reader's requested activation task, and the documented Aura-to-human handoff explains why that task matters to a SaaS support lead.",
+          "next_step_url": "https://docs.customerly.io/en/live-chat",
+          "destination_kind": "web",
+          "destination_rejected": false,
+          "argument_issue": "",
+          "value_case": {
+            "reader_benefit": "The website gains a live-chat support surface where Aura can serve as the first responder and human agents can take over with context when needed.",
+            "mechanism": "After the provided Customerly script is inserted into the website's <head> section, the live-chat widget supplies the website interface; Customerly documents that this widget supports Aura answering first and humans taking over with context.",
+            "evidence_ids": [
+              "E40"
+            ],
+            "decision_conditions": [
+              "The reader must be able to edit the website's <head> section.",
+              "The widget installation does not by itself establish that Aura's knowledge or other AI settings have been configured."
+            ]
+          },
+          "claim_conditions": [
+            "Describe inserting the provided script into the website's <head> as the documented first installation step.",
+            "Present Aura-first handling and contextual human takeover as widget capabilities, not as proof that they are already configured in this workspace."
+          ],
+          "position": 1,
+          "user_request": "Write exactly one English activation email from the Customerly team. Reader: A SaaS support lead who just opened a Customerly workspace and can edit their website. Ask them to do one thing: Set up live chat on their site. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+          "target_audience": "",
+          "job": "Get the reader to install the Customerly live-chat widget on their website.",
+          "single_idea": "Add the provided Customerly script to the website's <head> so the support team can establish the live-chat surface where Aura can answer first and people can take over with context.",
+          "felt_need": "Turn the new Customerly workspace into a support channel customers can reach from the website.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "The documented first step is to insert Customerly's provided script into the website's <head>; this installs the live-chat widget that supports Aura-first conversations and contextual human takeover.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: the new workspace is not yet connected to the website. After: the reader understands the exact first installation step and why the widget is useful to their support workflow.",
+          "evidence_ids": [
+            "E40"
+          ],
+          "must_not_say": [
+            "Do not claim installation takes a particular amount of time or only one line of code; the one-line evidence applies to the mobile SDK, not the website widget.",
+            "Do not claim the reader has access under a particular plan or that any feature is free.",
+            "Do not promise a resolution rate, faster replies, reduced costs, increased conversions or any other customer outcome.",
+            "Do not imply Aura is trained, enabled or ready to answer immediately after the script is installed.",
+            "Do not introduce pricing, migration, mobile SDKs, WhatsApp, Messenger, surveys, help-center setup, API integrations or security claims.",
+            "Do not ask the reader to do anything besides set up live chat.",
+            "Do not use more than one CTA."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "Installing the widget should not remove the support team's ability to step into customer conversations; Customerly documents that humans can take over with context.",
+          "tone": "Direct, welcoming and action-oriented, with one short explanation of the support value.",
+          "call_to_action": "Set up live chat",
+          "next_step_decision": "Follow the documented installation path and add the Customerly widget to the website.",
+          "next_step_value": "The live-chat documentation provides the setup destination for adding the Customerly widget; the getting-started checklist identifies inserting the provided script into the site's <head> as the first step.",
+          "next_step_evidence_ids": [
+            "E40"
+          ],
+          "next_step_limit": "Opening the documentation does not install the widget, configure Aura's knowledge or demonstrate support outcomes.",
+          "subject_strategy": "Make the immediate website activation task unmistakable; signal the concrete live-chat setup step without promising speed or results.",
+          "must_not_reuse": [],
+          "steering": {
+            "directions": [
+              "Produce exactly one English activation email.",
+              "Keep the body under 150 words, excluding subject, preview and signature.",
+              "Ask for one action only: set up live chat on the website.",
+              "Use one CTA with the exact documentation destination."
+            ],
+            "include_evidence_ids": [
+              "E40"
+            ],
+            "exclude_evidence_ids": [
+              "E1",
+              "E3",
+              "E4",
+              "E12",
+              "E19",
+              "E32",
+              "E42",
+              "E49",
+              "E50",
+              "E54",
+              "E55",
+              "E60",
+              "E62"
+            ],
+            "use": [
+              "The documented first step: insert the provided script into the website's <head> section.",
+              "The widget's supported Aura-first and contextual human-takeover capability."
+            ],
+            "avoid": [
+              "Unsupported access, plan, timing and outcome claims.",
+              "Additional setup tasks or secondary CTAs.",
+              "Mobile SDK installation language."
+            ],
+            "context_only": [
+              "The reader has just opened a workspace and can edit the website."
+            ],
+            "excluded_values": [
+              "Pricing",
+              "Migration",
+              "Security",
+              "Broad automation metrics"
+            ]
+          }
+        }
+      },
+      "created_at": "2026-11-11T08:21:55.206952Z"
+    }
+  ],
+  "result": {
+    "run_status": "completed",
+    "report": {
+      "request": "Write exactly one English activation email from the Customerly team. Reader: A SaaS support lead who just opened a Customerly workspace and can edit their website. Ask them to do one thing: Set up live chat on their site. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+      "effective_audience": "A SaaS support lead who just opened a Customerly workspace and can edit their website.",
+      "audience_scope": "",
+      "assessment_method": "Simulated reader's interest, uncalibrated; no response or conversion prediction",
+      "delivered": 1,
+      "promised": 1,
+      "contract_violations": [],
+      "emails": [
+        {
+          "position": 1,
+          "subject": "Add live chat to your site",
+          "single_idea": "Add the provided Customerly script to the website's <head> so the support team can establish the live-chat surface where Aura can answer first and people can take over with context.",
+          "selection_reason": "Installing the website widget is the reader's requested activation task, and the documented Aura-to-human handoff explains why that task matters to a SaaS support lead.",
+          "problem_ids": [],
+          "action_id": "",
+          "next_step_decision": "Follow the documented installation path and add the Customerly widget to the website.",
+          "next_step_value": "The live-chat documentation provides the setup destination for adding the Customerly widget; the getting-started checklist identifies inserting the provided script into the site's <head> as the first step.",
+          "next_step_url": "https://docs.customerly.io/en/live-chat",
+          "next_step_limit": "Opening the documentation does not install the widget, configure Aura's knowledge or demonstrate support outcomes.",
+          "pull": 7.0,
+          "revisions": 1,
+          "clean": true,
+          "landed": true,
+          "rewrites_stopped_helping": true,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E40"
+          ],
+          "evidence_spent": [
+            "E40"
+          ],
+          "attributions": 0,
+          "unresolved": [
+            "Editorial review requested: Add one concrete sentence explaining the post-install operation: where website conversations arrive, how agents are notified, and how takeover from Aura works. Without that, I can picture adding the script but not how this changes my team's daily support workflow."
+          ],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "Customerly offers a website live-chat widget that lets customers start support conversations, with Aura answering first and human agents taking over with context, so my team would handle website support conversations through Customerly.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile establishes that I am a SaaS support lead, have just opened a Customerly workspace, and can edit our website, so adding Customerly live chat is directly relevant and technically plausible. The email additionally assumes that we want website chat and are ready to insert a script; our current channel needs, approval process, website stack, and desired AI involvement remain unknown.",
+              "assumed_experiences": [
+                "Profile-supported: I have opened a Customerly workspace.",
+                "Profile-supported: I can edit the website.",
+                "Profile-supported: I lead support for a SaaS company.",
+                "Email-only: I want the website to become a support channel.",
+                "Email-only: I am ready and authorized to insert Customerly's script into the site's head section.",
+                "Email-only: Aura answering before human agents fits our preferred support workflow."
+              ],
+              "problem_now": "Giving website visitors a direct support channel is relevant to my role, and setting up the workspace makes installation timely, but the profile does not establish that live chat is an urgent current need or that AI-first handling is wanted.",
+              "stopped_at": "",
+              "biggest_doubt": "I can picture installing the widget, but not the operating workflow afterward: the email does not say where incoming chats appear, how my team is notified, or how an agent takes over from Aura.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me where incoming chats appear and how a human agent takes over from Aura after the script is installed.",
+              "fixes": [
+                "Rewrite \"The live-chat documentation walks you through the installation path for adding the widget to your website.\" to specify what the documentation covers beyond inserting the script, such as verifying the widget and configuring the support workflow, if those steps are actually documented.",
+                "Expand \"Your team stays part of the conversation.\" with a concrete, supported explanation of where agents see conversations and how they take over from Aura."
+              ],
+              "opens_in_100": null,
+              "clicks_in_100": null,
+              "persona": "Selected audience (user-stated constraints): A SaaS support lead who just opened a Customerly workspace and can edit their website..\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.\nEstablished relationship to the sender: customer. This establishes no particular installed tools or desired reaction.",
+              "pull": 7
+            }
+          ],
+          "sameness": []
+        }
+      ],
+      "limiting_gaps": [
+        "Some linked source pages could not be read; the corpus is partial: https://www.customerly.io/ - Use only the readable captured facts; do not infer missing prices, features or proof."
+      ],
+      "what_would_help_most": "Resolve this simulated next-step obstacle: I would have clicked if this email had told me where incoming chats appear and how a human agent takes over from Aura after the script is installed. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "Effective audience: A SaaS support lead who just opened a Customerly workspace and can edit their website."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "Treat this as a focused activation email for an existing Customerly workspace, not an acquisition or sales email. The single goal is to help a SaaS support lead install Customerly live chat on their website using the documented first step.",
+      "pipeline_version": 2,
+      "strategy_mode": "planned",
+      "focused_activation": false,
+      "intent": {
+        "objective": "activation",
+        "objective_source": "user",
+        "reader_relationship": "customer",
+        "relationship_source": "user",
+        "announcement": "",
+        "reason_now": "",
+        "desired_action": "Set up live chat on their site",
+        "required_fact": "",
+        "required_source_url": ""
+      },
+      "reader": "Selected audience (user-stated constraints): A SaaS support lead who just opened a Customerly workspace and can edit their website..\nNo further recipient situation is established. Compiled market context is research to check for applicability, not a replacement biography.",
+      "reader_segment": "SaaS support teams scaling with limited headcount",
+      "reader_profile_override": "A SaaS support lead who just opened a Customerly workspace and can edit their website.",
+      "reader_scope": "",
+      "fixed_cta_url": "",
+      "promise": "Installing the Customerly widget creates the website live-chat surface where Aura can answer first and people can take over with conversation context.",
+      "orientation": "Customerly gives a SaaS support team a website live-chat widget where Aura and human agents can handle customer conversations together.",
+      "arc": "One activation step: connect the new workspace to the reader's website, explain the operational value of that connection, and send them directly to the live-chat installation documentation.",
+      "sequence_rationale": "A single activation email should lead with the requested task rather than pricing, migration, broad automation metrics or a sales narrative. The documented script installation is specific and executable, while the widget's AI-first response and contextual human takeover provide the strongest supported reason for a support lead to complete it. No alternative proposition is included because another benefit or CTA would weaken the one-action contract. The single thing that would most change this campaign: Can this source be supplied in a readable form or its missing details verified?",
+      "emails": [
+        {
+          "problem_ids": [],
+          "offer_id": "offering",
+          "action_id": "",
+          "selection_reason": "Installing the website widget is the reader's requested activation task, and the documented Aura-to-human handoff explains why that task matters to a SaaS support lead.",
+          "next_step_url": "https://docs.customerly.io/en/live-chat",
+          "destination_kind": "web",
+          "destination_rejected": false,
+          "argument_issue": "",
+          "value_case": {
+            "reader_benefit": "The website gains a live-chat support surface where Aura can serve as the first responder and human agents can take over with context when needed.",
+            "mechanism": "After the provided Customerly script is inserted into the website's <head> section, the live-chat widget supplies the website interface; Customerly documents that this widget supports Aura answering first and humans taking over with context.",
+            "evidence_ids": [
+              "E40"
+            ],
+            "decision_conditions": [
+              "The reader must be able to edit the website's <head> section.",
+              "The widget installation does not by itself establish that Aura's knowledge or other AI settings have been configured."
+            ]
+          },
+          "claim_conditions": [
+            "Describe inserting the provided script into the website's <head> as the documented first installation step.",
+            "Present Aura-first handling and contextual human takeover as widget capabilities, not as proof that they are already configured in this workspace."
+          ],
+          "position": 1,
+          "user_request": "Write exactly one English activation email from the Customerly team. Reader: A SaaS support lead who just opened a Customerly workspace and can edit their website. Ask them to do one thing: Set up live chat on their site. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+          "target_audience": "",
+          "job": "Get the reader to install the Customerly live-chat widget on their website.",
+          "single_idea": "Add the provided Customerly script to the website's <head> so the support team can establish the live-chat surface where Aura can answer first and people can take over with context.",
+          "felt_need": "Turn the new Customerly workspace into a support channel customers can reach from the website.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "The documented first step is to insert Customerly's provided script into the website's <head>; this installs the live-chat widget that supports Aura-first conversations and contextual human takeover.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: the new workspace is not yet connected to the website. After: the reader understands the exact first installation step and why the widget is useful to their support workflow.",
+          "evidence_ids": [
+            "E40"
+          ],
+          "must_not_say": [
+            "Do not claim installation takes a particular amount of time or only one line of code; the one-line evidence applies to the mobile SDK, not the website widget.",
+            "Do not claim the reader has access under a particular plan or that any feature is free.",
+            "Do not promise a resolution rate, faster replies, reduced costs, increased conversions or any other customer outcome.",
+            "Do not imply Aura is trained, enabled or ready to answer immediately after the script is installed.",
+            "Do not introduce pricing, migration, mobile SDKs, WhatsApp, Messenger, surveys, help-center setup, API integrations or security claims.",
+            "Do not ask the reader to do anything besides set up live chat.",
+            "Do not use more than one CTA."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "Installing the widget should not remove the support team's ability to step into customer conversations; Customerly documents that humans can take over with context.",
+          "tone": "Direct, welcoming and action-oriented, with one short explanation of the support value.",
+          "call_to_action": "Set up live chat",
+          "next_step_decision": "Follow the documented installation path and add the Customerly widget to the website.",
+          "next_step_value": "The live-chat documentation provides the setup destination for adding the Customerly widget; the getting-started checklist identifies inserting the provided script into the site's <head> as the first step.",
+          "next_step_evidence_ids": [
+            "E40"
+          ],
+          "next_step_limit": "Opening the documentation does not install the widget, configure Aura's knowledge or demonstrate support outcomes.",
+          "subject_strategy": "Make the immediate website activation task unmistakable; signal the concrete live-chat setup step without promising speed or results.",
+          "must_not_reuse": [],
+          "steering": {
+            "directions": [
+              "Produce exactly one English activation email.",
+              "Keep the body under 150 words, excluding subject, preview and signature.",
+              "Ask for one action only: set up live chat on the website.",
+              "Use one CTA with the exact documentation destination."
+            ],
+            "include_evidence_ids": [
+              "E40"
+            ],
+            "exclude_evidence_ids": [
+              "E1",
+              "E3",
+              "E4",
+              "E12",
+              "E19",
+              "E32",
+              "E42",
+              "E49",
+              "E50",
+              "E54",
+              "E55",
+              "E60",
+              "E62"
+            ],
+            "use": [
+              "The documented first step: insert the provided script into the website's <head> section.",
+              "The widget's supported Aura-first and contextual human-takeover capability."
+            ],
+            "avoid": [
+              "Unsupported access, plan, timing and outcome claims.",
+              "Additional setup tasks or secondary CTAs.",
+              "Mobile SDK installation language."
+            ],
+            "context_only": [
+              "The reader has just opened a workspace and can edit the website."
+            ],
+            "excluded_values": [
+              "Pricing",
+              "Migration",
+              "Security",
+              "Broad automation metrics"
+            ]
+          }
+        }
+      ],
+      "voice_notes": "Use Customerly's direct, result-oriented voice, but keep this activation email practical rather than turning it into a sales pitch. Refer to Aura by name only when explaining the widget's operational value.",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "one English activation email"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "15d308e7-3265-4f08-9fea-39bc9e063dca",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

@@ -133,6 +133,10 @@ MAX_BULLETS = 5
 #: markup - a heading, a table, a second link - is a sign the email is trying
 #: to be a landing page.
 _BOLD_RE = re.compile(r"\*\*(.+?)\*\*", re.DOTALL)
+#: `render_email` draws the arrow after the link text itself. A writer shown
+#: a rendered draft - every rewrite and every post-run edit is - copies it
+#: into the CTA field, and the email then ships "See the list → →".
+_TRAILING_ARROW_RE = re.compile(r"(?:\s*(?:→|->|»))+\s*$")
 
 #: How a writer marks the block that carries the offer. A space after the
 #: caret is required, so a line that merely begins with a quotation mark in
@@ -209,7 +213,7 @@ class Email(BaseModel):
     postscript: str = ""
 
 
-def parse_email(text: str, position: int) -> Email:
+def parse_email(text: str, position: int, *, enforce_layout: bool = True) -> Email:
     """Turn one labelled-field draft into a validated `Email`.
 
     Raises `EmailCopyError` listing every problem at once, so a repair turn
@@ -241,12 +245,12 @@ def parse_email(text: str, position: int) -> Email:
         headline=fields.get("HEADLINE", ""),
         greeting=fields["GREETING"],
         body=laid_out,
-        call_to_action=fields["CTA"],
+        call_to_action=_TRAILING_ARROW_RE.sub("", fields["CTA"]),
         sign_off=fields["SIGNOFF"],
         postscript=fields.get("PS", ""),
     )
     issues = structural_issues(email)
-    if issues:
+    if issues and enforce_layout:
         raise EmailCopyError("; ".join(issues))
     return email
 

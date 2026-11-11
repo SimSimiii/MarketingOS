@@ -1,14 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, PencilLine } from "lucide-react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmailRevisionPanel } from "@/components/email-revision-panel";
+import { SourceReviewDetails } from "@/components/source-review-details";
 import { cn } from "@/lib/utils";
 import { splitEmail } from "@/lib/email-parts";
+import type { ApiSchemas } from "@/lib/api-schema";
 import type { AssetType, GeneratedAsset } from "@/lib/types";
 
 const ASSET_LABELS: Record<AssetType, string> = {
@@ -22,8 +25,21 @@ const ASSET_LABELS: Record<AssetType, string> = {
 
 type View = "text" | "html";
 
-/** One deliverable, with the copy button that is the whole point of it. */
-export function AssetCard({ asset }: { asset: GeneratedAsset }) {
+/** One deliverable, with the copy button that is the whole point of it.
+ *
+ * With `executionId` set, a finished email can also be adjusted on request -
+ * see EmailRevisionPanel. `onAssetChange` hands an accepted version back to
+ * the page, so "Copy all" and the export pick it up without a reload. */
+export function AssetCard({
+  asset,
+  executionId,
+  onAssetChange,
+}: {
+  asset: GeneratedAsset;
+  executionId?: string;
+  onAssetChange?: (asset: GeneratedAsset) => void;
+}) {
+  const [adjusting, setAdjusting] = useState(false);
   const [copied, setCopied] = useState<View | null>(null);
   const [view, setView] = useState<View>("text");
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -49,6 +65,10 @@ export function AssetCard({ asset }: { asset: GeneratedAsset }) {
 
   const role = typeof asset.asset_metadata?.role === "string" ? asset.asset_metadata.role : null;
   const parts = asset.asset_type === "email" ? splitEmail(asset.content) : null;
+  const adjustable = Boolean(executionId) && asset.asset_type === "email";
+  const review = asset.asset_metadata?.semantic_review as Pick<
+    ApiSchemas["DraftReviewRead"], "approved" | "decision" | "sources"
+  > | undefined;
 
   return (
     <Card className="rise hover:ring-violet-400/25">
@@ -67,6 +87,9 @@ export function AssetCard({ asset }: { asset: GeneratedAsset }) {
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="secondary">{ASSET_LABELS[asset.asset_type] ?? asset.asset_type}</Badge>
             {asset.asset_metadata?.sequence_review_pending === true && <Badge variant="secondary">{asset.asset_metadata?.checkpoint === true ? "Recovered draft · " : ""}Sequence review pending</Badge>}
+            {asset.asset_metadata?.edited === true && (
+              <Badge variant="outline" title="Edited on request after the run; the original is kept">Edited</Badge>
+            )}
             {asset.position > 0 && <span className="sr-only">Position {asset.position}</span>}
             {role && <span className="text-xs text-muted-foreground">{role}</span>}
             {/* A channel with a hard length is worth showing the length of. */}
@@ -80,6 +103,16 @@ export function AssetCard({ asset }: { asset: GeneratedAsset }) {
         </div>
         </div>
         <div className="flex items-center gap-2">
+          {adjustable && (
+            <Button
+              variant={adjusting ? "secondary" : "ghost"}
+              size="sm"
+              aria-expanded={adjusting}
+              onClick={() => setAdjusting((open) => !open)}
+            >
+              <PencilLine aria-hidden="true" /> Adjust
+            </Button>
+          )}
           {html && (
             <div
               className="flex h-8 items-center rounded-[0.6rem] bg-black/25 p-0.5 ring-1 ring-white/[0.07]"
@@ -153,6 +186,15 @@ export function AssetCard({ asset }: { asset: GeneratedAsset }) {
           <pre className="max-w-[42rem] whitespace-pre-wrap break-words rounded-xl bg-black/20 p-5 font-sans text-[0.9375rem] leading-7 text-foreground/95 ring-1 ring-white/[0.07] sm:p-6">
             {asset.content}
           </pre>
+        )}
+        {parts && review?.approved === true && review.decision && (
+          <details className="mt-4 space-y-3 rounded-md border p-3">
+            <summary className="cursor-pointer text-sm font-medium">Source review for this version</summary>
+            <SourceReviewDetails decision={review.decision} sources={review.sources} />
+          </details>
+        )}
+        {adjustable && adjusting && executionId && (
+          <EmailRevisionPanel executionId={executionId} asset={asset} onAssetChange={onAssetChange} />
         )}
       </CardContent>
     </Card>

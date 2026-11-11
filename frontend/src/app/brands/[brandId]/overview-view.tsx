@@ -5,6 +5,8 @@ import { positioningSentence } from "./market/positioning-map";
 import { ArrowRight, BookOpen, Compass, Files, Mail, Megaphone, Users } from "lucide-react";
 
 import { BrandKnowledgeDialog } from "./brand-knowledge-dialog";
+import { DraftReviewCard } from "./draft-review-card";
+import { FirstCampaignCard } from "./first-campaign-card";
 import { BrandSectionHeader } from "../brand-ui";
 import { StatusBadge } from "@/components/status-badge";
 import { StatFigure, StatTile } from "@/components/stat-tile";
@@ -25,18 +27,21 @@ export function BrandOverviewView() {
   const { brandId } = useRouteIds();
   const state = usePageData(async () => {
 
-  const [documents, base, market, campaigns] = await Promise.all([
+  const [documents, base, market, campaigns, brand, job, review] = await Promise.all([
     api.listKnowledgeDocuments({ brandId }),
     api.getKnowledgeBase({ brandId }).catch(nullIfMissing),
     api.getMarket(brandId).catch(nullIfMissing),
     api.listBrandCampaigns(brandId),
+    api.getBrand(brandId),
+    api.getMarketJob(brandId),
+    api.getLatestDraftReview(brandId).catch(() => null),
   ]);
-  return { documents, base, market, campaigns };
+  return { documents, base, market, campaigns, brand, job, review };
   }, [brandId]);
 
   return (
     <PageData state={state}>
-      {({ documents, base, market, campaigns }) => {
+      {({ documents, base, market, campaigns, brand, job, review }) => {
 
   // The API already filtered by brand; the check stays so a stale or
   // unfiltered answer can never show another business's work here.
@@ -46,6 +51,10 @@ export function BrandOverviewView() {
   return (
     <div className="space-y-6">
       <BrandSectionHeader title="Overview" description="Your brand at a glance. Build your knowledge, understand your buyers and turn it into campaigns." />
+      {(brand.website_url || documents.length > 0) && (
+        <FirstCampaignCard key={brandId} brandId={brandId} initialJob={job?.kind === "first_campaign" ? job : null} />
+      )}
+      {base !== null && <DraftReviewCard key={brandId} brandId={brandId} initialJob={review} />}
       <div className="rise-stagger grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {[
           { label: "Sources", value: documents.length, href: `/brands/${brandId}/knowledge`, hint: "Manage your material", icon: Files },
@@ -76,7 +85,9 @@ export function BrandOverviewView() {
                 Nothing compiled yet. Your material is prepared when you first run a campaign
                 for this business and reused until its sources change.{" "}
                 {documents.length === 0
-                  ? "Add this brand's website first."
+                  ? brand.website_url
+                    ? "Use the saved website to prepare a first campaign above."
+                    : "Add this brand's website or a source document first."
                   : `${documents.length} source${documents.length === 1 ? " is" : "s are"} waiting to be read.`}
               </p>
             ) : (

@@ -40,10 +40,7 @@ export function NewBrandDialog({ primary = false, autoOpen = false }: { primary?
       setOpen(false);
       setName("");
       setWebsiteUrl("");
-      // Straight into the new workspace: a brand with nothing in it is not a
-      // row worth returning to a list for - the next thing to do is add its
-      // material, and that lives inside it.
-      router.push(`/brands/${brand.id}/knowledge`);
+      router.push(brand.website_url ? `/brands/${brand.id}` : `/brands/${brand.id}/knowledge`);
       refreshPage();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to create brand");
@@ -78,7 +75,7 @@ export function NewBrandDialog({ primary = false, autoOpen = false }: { primary?
               value={websiteUrl}
               onChange={(e) => setWebsiteUrl(e.target.value)}
             />
-            <p className="text-xs text-muted-foreground">This saves the website address. Add its pages as sources in the next step.</p>
+            <p className="text-xs text-muted-foreground">Use this website to prepare a first campaign from the brand overview.</p>
           </div>
           <DialogFooter>
             <Button type="submit" disabled={submitting || !name.trim()}>

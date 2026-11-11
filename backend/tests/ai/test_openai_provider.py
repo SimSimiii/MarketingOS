@@ -275,3 +275,11 @@ def test_only_web_search_is_offered():
 def test_failed_turn_classifies_hard_quota_without_disabling_transient_retries(detail, retryable):
     from app.ai.openai_provider import _turn_error
     assert _turn_error(detail).retryable is retryable
+
+
+def test_quota_guidance_keeps_retry_time_without_purchase_links():
+    from app.ai.openai_provider import _turn_error
+
+    error = _turn_error("You’ve hit your usage limit. Buy at https://example.com or try again at 2:50 AM.")
+    assert "2:50 AM" in error.user_message
+    assert "https://" not in error.user_message

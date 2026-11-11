@@ -1,0 +1,110 @@
+{
+  "status": "completed",
+  "execution_id": "35945d7a-e03b-4598-abe1-5c0611a1094a",
+  "elapsed_seconds": 223.4,
+  "review": "usable_with_editorial_review",
+  "run_status": "degraded",
+  "quality_history": [
+    {
+      "iteration": 2,
+      "execution_id": "11201e46-149b-4877-bf8d-99c7cc3e32e9",
+      "score": 76,
+      "grid": [
+        24,
+        16,
+        10,
+        12,
+        6,
+        8
+      ],
+      "comparable": true,
+      "strengths": [
+        "3arguments distincts et sources respectées",
+        "Affiliation et portée email2 conservées"
+      ],
+      "remaining_defect": "Trop descriptif; mécanismes opérationnels disponibles sous-utilisés.",
+      "evidence": [
+        "assets.json",
+        "knowledge.json",
+        "corrected-sequence-check.json",
+        "revision.json"
+      ],
+      "next_action": "Commercial review required; no more billed generations for this verification"
+    },
+    {
+      "iteration": 3,
+      "execution_id": "5a160c93-e470-4a9c-a702-dc1f466bde70",
+      "case": "systeme-benefit",
+      "score": null,
+      "grid": null,
+      "comparable": false,
+      "remaining_defect": "Only 1/3 emails: new affiliate phrasing falsely blocked overlap; available operations still underused.",
+      "strengths": [
+        "Source boundaries preserved; explicit scope retained"
+      ],
+      "evidence": [
+        "execution.json",
+        "assets.json",
+        "knowledge.json",
+        "render-checks.json"
+      ],
+      "next_action": "Compare final structured-mechanism run"
+    },
+    {
+      "iteration": 4,
+      "case": "systeme-benefit-v2",
+      "execution_id": "35945d7a-e03b-4598-abe1-5c0611a1094a",
+      "score": 81,
+      "grid": [
+        24,
+        17,
+        14,
+        12,
+        6,
+        8
+      ],
+      "comparable": true,
+      "strengths": [
+        "Three complete emails; concrete product/payment/order workflow sourced in E95.",
+        "Affiliation and email2-only instruction retained; shorter email1 keeps mechanism."
+      ],
+      "remaining_defect": "Editorial run remains degraded (simulated readers 6/10); migration caveats remain heavy; email3 body exactly150 words.",
+      "evidence": [
+        "assets.json",
+        "execution.json",
+        "knowledge.json",
+        "revision.json",
+        "render-checks.json"
+      ],
+      "next_action": "Targeted correction complete; assisted editorial review remains required; no more runs for marginal score gains"
+    }
+  ],
+  "quality_best": {
+    "iteration": 4,
+    "case": "systeme-benefit-v2",
+    "execution_id": "35945d7a-e03b-4598-abe1-5c0611a1094a",
+    "score": 81,
+    "grid": [
+      24,
+      17,
+      14,
+      12,
+      6,
+      8
+    ],
+    "comparable": true,
+    "strengths": [
+      "Three complete emails; concrete product/payment/order workflow sourced in E95.",
+      "Affiliation and email2-only instruction retained; shorter email1 keeps mechanism."
+    ],
+    "remaining_defect": "Editorial run remains degraded (simulated readers 6/10); migration caveats remain heavy; email3 body exactly150 words.",
+    "evidence": [
+      "assets.json",
+      "execution.json",
+      "knowledge.json",
+      "revision.json",
+      "render-checks.json"
+    ],
+    "next_action": "Targeted correction complete; assisted editorial review remains required; no more runs for marginal score gains"
+  }
+}

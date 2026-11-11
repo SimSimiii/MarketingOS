@@ -1,0 +1,249 @@
+{
+  "id": "c9a6fcf2-98ea-4ff1-9bcb-bb05353d798b",
+  "campaign_id": "a40d14f2-3b72-4100-892d-3ed86a9eb695",
+  "status": "failed",
+  "needs_review": false,
+  "outcome_status": "failed",
+  "review_reasons": [],
+  "error_message": "Codex reached its usage limit. Try again at 8:47 AM (time reported by Codex).",
+  "started_at": "2026-11-11T04:19:50.092974Z",
+  "completed_at": "2026-11-11T04:20:36.088599Z",
+  "created_at": "2026-11-11T04:19:50.092974Z",
+  "total_input_tokens": 32237,
+  "total_output_tokens": 2726,
+  "total_cache_read_tokens": 7936,
+  "estimated_cost_usd": 0.2825,
+  "recommendation_snapshot": {
+    "campaign_id": "a40d14f2-3b72-4100-892d-3ed86a9eb695",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "0483a3c7-7088-4aec-9d1f-77516e96d3b4",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Put Customerly live chat on the site so customer conversations can start with Aura and move to a human with context when needed."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:19:50.301664Z",
+      "completed_at": "2026-11-11T04:20:32.564539Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 24301,
+      "output_tokens": 2726,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.282537,
+      "duration_ms": 41965.49539989792,
+      "attempt": 1
+    },
+    {
+      "id": "3ef5d032-be75-4171-98b1-89453d0c27f0",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "failed",
+      "input_data": {
+        "label": "Email 1 · first draft",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": null,
+      "error_message": "RoutingProvider call failed after 1 attempt(s): codex exec reported a failed turn: You’ve hit your usage limit. Upgrade to Pro (https://chatgpt.com/explore/pro), visit https://chatgpt.com/settings/usage to purchase more credits or try again at 8:47 AM.",
+      "started_at": "2026-11-11T04:20:33.257601Z",
+      "completed_at": "2026-11-11T04:20:36.034490Z",
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.0,
+      "duration_ms": 0.0,
+      "attempt": 1
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "provider_unavailable",
+    "report": {
+      "request": "Write exactly one English activation email from the Customerly team. Reader: A SaaS support lead who just opened a Customerly workspace and can edit their website. Ask them to do one thing: Set up live chat on their site. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+      "effective_audience": "A SaaS support lead who just opened a Customerly workspace and can edit their website.",
+      "audience_scope": "",
+      "assessment_method": "Simulated reader's interest, uncalibrated; no response or conversion prediction",
+      "delivered": 0,
+      "promised": 1,
+      "contract_violations": [
+        "the user asked for 1 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [
+        "Some linked source pages could not be read; the corpus is partial: https://www.customerly.io/ - Use only the readable captured facts; do not infer missing prices, features or proof."
+      ],
+      "what_would_help_most": "Can this source be supplied in a readable form or its missing details verified?",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "Codex reached its usage limit. Try again at 8:47 AM (time reported by Codex).",
+        "Effective audience: A SaaS support lead who just opened a Customerly workspace and can edit their website."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "A single activation email for an existing Customerly customer: prompt a SaaS support lead who can edit their website to install the live chat widget, using Customerly’s installation documentation as the only CTA. The email should help complete the first useful setup action, not sell a trial or broader platform evaluation.",
+      "pipeline_version": 2,
+      "strategy_mode": "planned",
+      "focused_activation": false,
+      "intent": {
+        "objective": "activation",
+        "objective_source": "user",
+        "reader_relationship": "customer",
+        "relationship_source": "user",
+        "announcement": "",
+        "reason_now": "",
+        "desired_action": "Set up live chat on their site",
+        "required_fact": "",
+        "required_source_url": ""
+      },
+      "reader": "Selected audience (user-stated constraints): A SaaS support lead who just opened a Customerly workspace and can edit their website..\nNo further recipient situation is established. Compiled market context is research to check for applicability, not a replacement biography.",
+      "reader_segment": "SaaS support teams scaling with limited headcount",
+      "reader_profile_override": "A SaaS support lead who just opened a Customerly workspace and can edit their website.",
+      "reader_scope": "",
+      "fixed_cta_url": "",
+      "promise": "Installing Customerly’s website chat widget creates the live-chat entry point where Aura can answer first and a human can take over with context.",
+      "orientation": "Customerly is an AI helpdesk for SaaS support teams, with a website live chat where Aura answers first and people can take over with context.",
+      "arc": "One focused activation prompt: show the operational value of putting live chat on the site, give the documented first installation step, and send the reader directly to the live-chat setup documentation.",
+      "sequence_rationale": "A one-email activation campaign needs no artificial sequence or invented pain. It should connect the requested setup action to the strongest relevant documented capability: the website widget supports AI-first conversations with contextual human takeover. The installation instruction is concrete—insert the provided script into the site’s <head>—and the documentation is a more useful destination than signup because the reader already has a workspace. The single thing the user could send us that would most change this campaign is a readable, current copy of the live-chat installation page with its complete setup steps verified.",
+      "emails": [
+        {
+          "problem_ids": [],
+          "offer_id": "offering",
+          "action_id": "",
+          "selection_reason": "This is the smallest documented activation step that advances the reader’s stated job: putting Customerly live chat on a website they are authorized to edit. Its value is directly relevant to a support lead because the widget can let Aura answer first while preserving contextual human takeover.",
+          "next_step_url": "https://docs.customerly.io/en/live-chat",
+          "destination_kind": "web",
+          "destination_rejected": false,
+          "argument_issue": "",
+          "value_case": {
+            "reader_benefit": "Once the widget is installed, website conversations can begin in Customerly, with Aura answering first and humans able to take over with context.",
+            "mechanism": "Customerly provides a website live chat widget. The documented first installation step is to insert the provided script into the website’s <head> section; the widget supports Aura-first replies followed by contextual human takeover.",
+            "evidence_ids": [
+              "E40"
+            ],
+            "decision_conditions": [
+              "The reader must be able to edit the website’s <head> section.",
+              "The email must not imply that installing the widget also configures Aura, knowledge sources, routing, or other settings."
+            ]
+          },
+          "claim_conditions": [
+            "Describe the <head> script insertion as Customerly’s documented first installation step, without claiming a setup time or universal compatibility.",
+            "Present Aura-first replies and human takeover with context as widget capabilities, not guaranteed outcomes for every conversation."
+          ],
+          "position": 1,
+          "user_request": "Write exactly one English activation email from the Customerly team. Reader: A SaaS support lead who just opened a Customerly workspace and can edit their website. Ask them to do one thing: Set up live chat on their site. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+          "target_audience": "",
+          "job": "Get the reader to begin setting up Customerly live chat by adding the widget to their website.",
+          "single_idea": "Put Customerly live chat on the site so customer conversations can start with Aura and move to a human with context when needed.",
+          "felt_need": "",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "Direct the reader to insert Customerly’s provided widget script into the website’s <head> section. This activates the website chat surface where Aura can answer first and humans can take over with context.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: the new workspace is not yet connected to the reader’s website. After: the reader sees one concrete installation step that creates a useful support entry point.",
+          "evidence_ids": [
+            "E40"
+          ],
+          "must_not_say": [
+            "Do not claim installation takes a specific amount of time or requires only one line of code.",
+            "Do not claim the reader has access under a particular plan or trial.",
+            "Do not promise a resolution rate, response time, cost saving, revenue result, or reduced workload.",
+            "Do not say installing the widget automatically trains or fully configures Aura.",
+            "Do not introduce mobile SDKs, WhatsApp, Messenger, email, NPS, help center, pricing, migration, security, or unrelated AI features.",
+            "Do not add a second CTA, including signup, demo, reply, or workspace login."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "",
+          "tone": "Warm, direct, and practical; confident without hype.",
+          "call_to_action": "Set up live chat",
+          "next_step_decision": "Complete the first website activation step by installing the Customerly chat widget.",
+          "next_step_value": "The linked documentation shows the live-chat setup path, beginning with adding the provided script to the site’s <head> section.",
+          "next_step_evidence_ids": [
+            "E40"
+          ],
+          "next_step_limit": "The documentation step does not by itself establish that Aura, knowledge sources, routing, appearance, or support outcomes are configured.",
+          "subject_strategy": "Make the immediate activation task unmistakable: connect Customerly live chat to the reader’s site, without teasing results, urgency, or broader features.",
+          "must_not_reuse": [],
+          "steering": {
+            "directions": [
+              "Produce exactly one English activation email.",
+              "Keep the body under 150 words, excluding subject, preview, and signature.",
+              "Ask the reader to do only one thing: set up live chat on their site.",
+              "Use one CTA linking to the exact documentation destination."
+            ],
+            "include_evidence_ids": [
+              "E40"
+            ],
+            "exclude_evidence_ids": [],
+            "use": [
+              "The documented first step: insert the provided script into the website’s <head> section.",
+              "The operational benefit: Aura can answer first and humans can take over with context."
+            ],
+            "avoid": [
+              "Unsupported access, plan, setup-time, compatibility, and outcome claims.",
+              "Additional actions or feature catalogues."
+            ],
+            "context_only": [
+              "The reader has just opened a Customerly workspace and can edit their website."
+            ],
+            "excluded_values": []
+          }
+        }
+      ],
+      "voice_notes": "Use Customerly’s direct, result-oriented voice, but keep this onboarding message practical. Refer to Aura by name and avoid competitive framing or oversized proof claims.",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "one English activation email"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "a40d14f2-3b72-4100-892d-3ed86a9eb695",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

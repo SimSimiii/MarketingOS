@@ -12,6 +12,7 @@ import asyncio
 import json
 import logging
 import os
+import re
 import shutil
 import tempfile
 from collections.abc import AsyncIterator
@@ -54,7 +55,15 @@ def _turn_error(message: str) -> ProviderCallError:
         "usage limit", "usage_limit_reached", "insufficient_quota",
         "quota exceeded", "quota has been exceeded",
     ))
-    return ProviderCallError(message, retryable=not hard_limit)
+    if not hard_limit:
+        return ProviderCallError(message, retryable=True)
+    retry_at = re.search(r"\btry again at (\d{1,2}:\d{2}(?:\s*[AP]M)?)\b", message, re.IGNORECASE)
+    guidance = "Codex reached its usage limit."
+    if retry_at:
+        guidance += f" Try again at {retry_at.group(1)} (time reported by Codex)."
+    else:
+        guidance += " Try again after the quota resets."
+    return ProviderCallError(message, retryable=False, user_message=guidance)
 
 
 class CodexNotInstalledError(RuntimeError):

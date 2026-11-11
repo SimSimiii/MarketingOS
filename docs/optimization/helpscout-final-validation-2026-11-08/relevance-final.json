@@ -1,0 +1,1024 @@
+{
+  "audience_name": "Lean support team lead at a scaling software company",
+  "status": "current",
+  "stale_reasons": [],
+  "missing_prerequisites": [],
+  "dossier_id": "3d827c84-dc20-458c-b37b-9613ca701a30",
+  "generation_version": 2,
+  "created_at": "2026-11-08T07:32:09.065848",
+  "dossier": {
+    "schema_version": 2,
+    "interpretation_version": 28,
+    "audience_research_id": "3bb5b4a6-e638-4db3-9a07-9560825158f9",
+    "audience_name": "Lean support team lead at a scaling software company",
+    "audience_research_version": 1,
+    "knowledge_id": "89078f6b-327f-4020-a860-09e734ca25b7",
+    "knowledge_version": 3,
+    "market_scan_id": "b368b69b-6f6c-46d1-bcd7-4267245dce06",
+    "market_scan_version": 1,
+    "capability_profile_id": "e90e86ba-b612-44f8-a4fc-5531436bb813",
+    "capability_profile_version": 3,
+    "qualification_fingerprint": "607d40b29c97523ebfa0c505f5c3f5490c9140a529b5fbdeb20b6b3198f4c325",
+    "built_at": "2026-11-08T07:32:09.063841Z",
+    "orientation": "Help Scout is a shared-inbox help desk with an AI Answers add-on that replies to common customer questions and hands the rest to the human agents already working in that inbox.",
+    "defining_need_fit": {
+      "status": "partial",
+      "supported_alternative": "",
+      "setup_conditions": [
+        "AI Answers must be deployed with Beacon and pointed at Docs or other knowledge sources (E23).",
+        "Accuracy upkeep runs through Improvements/Suggested Improvements review from inside conversations (E26, E27).",
+        "AI Answers is an add-on billed at $0.75 per AI resolution as defined by Help Scout (R3, R4).",
+        "Teams coming from Zendesk use the built-in Import2 for ticket history and customer profiles, request a separate team-assisted tool for knowledge-base articles, and manually recreate macros and triggers (R5)."
+      ],
+      "evidence_ids": [
+        "E16",
+        "E18",
+        "E23",
+        "E21",
+        "R6",
+        "E26",
+        "R5"
+      ],
+      "capability_ids": [
+        "fact_295bdffb5aeb8d6d",
+        "fact_f5a262218be295b1"
+      ],
+      "unverified_requirements": [
+        "Absorbing repetitive questions without putting the team through a new, disruptive support stack when the team is not already on Help Scout"
+      ],
+      "decision_gaps": [
+        "Does Help Scout's own documentation state whether AI Answers replies to inbound email conversations in the shared inbox, or only in-app through Beacon?",
+        "Does Help Scout document a migration path for teams coming from a plain shared mailbox (e.g. Google Workspace) rather than Zendesk?"
+      ],
+      "supported_core_workflow": "",
+      "unverified_requirement_basis": {
+        "Absorbing repetitive questions without putting the team through a new, disruptive support stack when the team is not already on Help Scout": "without adding staff or forcing the team through a new, disruptive support stack"
+      },
+      "caveat": "The non-disruptive claim is documented only for a customer already working inside Help Scout (E22-adjacent framing in E23/E26), while the only documented inbound migration path (R5, Zendesk) states no timeline and requires manual recreation of macros and triggers, so the whole stated need is supported in components rather than end to end.",
+      "why": "Shared-inbox triage (E16), AI handling of simple repetitive questions with human handoff (E18, E23, E21) and a measured deflection result at one lean software team (R6) are documented, but adoption without a disruptive stack change is established only for existing Help Scout teams."
+    },
+    "ranked_relevance": [
+      {
+        "evidence_id": "E18",
+        "band": "LEAD",
+        "why": "States the mechanism the need asks for: AI Answers handling common questions instantly alongside workflow automations.",
+        "problem_ids": [],
+        "territory": null
+      },
+      {
+        "evidence_id": "E23",
+        "band": "LEAD",
+        "why": "Documents how AI Answers behaves in Beacon, including its knowledge sources and the handoff to a human when needed.",
+        "problem_ids": [],
+        "territory": null
+      },
+      {
+        "evidence_id": "R6",
+        "band": "LEAD",
+        "why": "The only figured result for a lean software support team, with deflection climbing past 10% and peaking at 15.46% in August 2025.",
+        "problem_ids": [],
+        "territory": null
+      },
+      {
+        "evidence_id": "E16",
+        "band": "SUPPORT",
+        "why": "Describes the shared-inbox queue, customer context and behind-the-scenes collaboration that the audience's triage workflow runs on.",
+        "problem_ids": [
+          "P1"
+        ],
+        "territory": null
+      },
+      {
+        "evidence_id": "E26",
+        "band": "SUPPORT",
+        "why": "Explains the documented upkeep mechanism behind AI accuracy: adding missing context from a conversation without rewriting help articles.",
+        "problem_ids": [],
+        "territory": null
+      },
+      {
+        "evidence_id": "R4",
+        "band": "SUPPORT",
+        "why": "Defines what counts as an AI resolution, which bounds what 'AI absorbed the question' means in billing terms.",
+        "problem_ids": [],
+        "territory": null
+      },
+      {
+        "evidence_id": "R3",
+        "band": "SUPPORT",
+        "why": "Per-resolution pricing at $0.75 is the concrete cost of the capacity being added instead of a hire.",
+        "problem_ids": [],
+        "territory": null
+      },
+      {
+        "evidence_id": "R5",
+        "band": "SUPPORT",
+        "why": "Documents the Zendesk import path and its stated exceptions, which is the only licensed material on arriving without rebuilding everything.",
+        "problem_ids": [],
+        "territory": null
+      }
+    ],
+    "problem_fits": [
+      {
+        "problem_id": "P1",
+        "verdict": "ADDRESSED",
+        "evidence_ids": [
+          "E16"
+        ],
+        "capability_ids": [
+          "fact_295bdffb5aeb8d6d"
+        ],
+        "blocked_by": [],
+        "caveat": "Single-source review with unknown publication date, so it confirms the workflow signal rather than a current, corroborated pain.",
+        "why": "The shared-inbox queue with collaboration and resolution tracking described in P1 is the documented capability in E16.",
+        "materiality_basis": ""
+      }
+    ],
+    "segment_objections": [
+      {
+        "objection": "A deflection rate in the 10-15% range will not free enough capacity to stand in for the agent we lost.",
+        "severity": "strong",
+        "answer": "The documented result is one lean software team climbing past 10% and peaking at 15.46% in August 2025 while weekly AI-handled conversations grew from 36 to nearly 300, with the stated intent being that AI takes the simple questions rather than replacing the team.",
+        "grounding": "inferred",
+        "evidence_ids": [
+          "R6",
+          "E21"
+        ],
+        "provenance": []
+      },
+      {
+        "objection": "Getting this AI means moving our support stack, which is the disruption we are trying to avoid.",
+        "severity": "strong",
+        "answer": "AI Answers runs inside the Help Scout inbox the team already works in, and for Zendesk teams the built-in Import2 brings ticket history and customer profiles across, though the knowledge base needs a separate team-assisted tool and macros and triggers must be recreated by hand.",
+        "grounding": "inferred",
+        "evidence_ids": [
+          "E22",
+          "R5"
+        ],
+        "provenance": []
+      }
+    ],
+    "silences": [],
+    "evidence": [
+      {
+        "id": "E16",
+        "kind": "feature",
+        "claim": "Help Scout's shared inbox gives all teammates access to the queue, letting them see customer context, collaborate behind the scenes, and follow conversations to resolution.",
+        "verbatim": "Help Scout’s shared inbox makes that easy. All teammates have access to the queue and can see customer context, collaborate behind the scenes, and follow conversations to resolution.",
+        "source": "https://www.helpscout.com/customers/the-new-wheel/",
+        "document_id": "5a65984d-d533-4e18-b4a5-69d65197142b",
+        "context": {
+          "subject": "Help Scout shared inbox",
+          "source_kind": "vendor_statement",
+          "claim_scope": "capability",
+          "conditions": "",
+          "temporal_scope": "",
+          "limitations": "",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "5a65984d-d533-4e18-b4a5-69d65197142b",
+            "source": "https://www.helpscout.com/customers/the-new-wheel/",
+            "source_type": "website"
+          }
+        ],
+        "strength": "moderate",
+        "category": "product",
+        "value_band": "supporting"
+      },
+      {
+        "id": "E18",
+        "kind": "feature",
+        "claim": "AI Answers handles common customer questions instantly, and workflow automations help the team stay organized and responsive.",
+        "verbatim": "AI Answers handles common questions instantly, while workflow automations help their team stay organized and responsive.",
+        "source": "https://www.helpscout.com/customers/the-new-wheel/",
+        "document_id": "5a65984d-d533-4e18-b4a5-69d65197142b",
+        "context": {
+          "subject": "AI Answers / workflow automations",
+          "source_kind": "vendor_statement",
+          "claim_scope": "capability",
+          "conditions": "",
+          "temporal_scope": "",
+          "limitations": "",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "5a65984d-d533-4e18-b4a5-69d65197142b",
+            "source": "https://www.helpscout.com/customers/the-new-wheel/",
+            "source_type": "website"
+          }
+        ],
+        "strength": "moderate",
+        "category": "product",
+        "value_band": "supporting"
+      },
+      {
+        "id": "E21",
+        "kind": "testimonial",
+        "claim": "eCatholic's Director of Onboarding & Success, Luke Tristani, said AI Answers isn't meant to replace support teams but to let AI handle simple questions so the team can create 'wow moments' for customers.",
+        "verbatim": "We’re not looking to replace support teams with AI, but if we can let AI answer the simple questions, it frees us up to create ‘wow moments’ for customers.",
+        "source": "https://www.helpscout.com/customers/ecatholic/",
+        "document_id": "5fc8e291-1fac-4309-a58e-defe84fd3498",
+        "context": {
+          "subject": "eCatholic / AI Answers",
+          "source_kind": "customer_statement",
+          "claim_scope": "customer_outcome",
+          "conditions": "",
+          "temporal_scope": "early 2025",
+          "limitations": "",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "5fc8e291-1fac-4309-a58e-defe84fd3498",
+            "source": "https://www.helpscout.com/customers/ecatholic/",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "proof",
+        "value_band": "headline"
+      },
+      {
+        "id": "E22",
+        "kind": "feature",
+        "claim": "Luke evaluated other AI vendors — Zoom, Maven, and Intercom — and found those bolt-on tools required major process changes, whereas AI Answers lives inside Help Scout where the team already works.",
+        "verbatim": "After weighing various AI vendors like Zoom, Maven, and Intercom, Luke found those bolt-on tools required major process changes. AI Answers stood out because it lives where the team already works, in Help Scout.",
+        "source": "https://www.helpscout.com/customers/ecatholic/",
+        "document_id": "5fc8e291-1fac-4309-a58e-defe84fd3498",
+        "context": {
+          "subject": "AI Answers vs Zoom, Maven, Intercom",
+          "source_kind": "vendor_comparison",
+          "claim_scope": "comparison",
+          "conditions": "",
+          "temporal_scope": "",
+          "limitations": "Rival claim attributed to customer's evaluation, not independently verified.",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "5fc8e291-1fac-4309-a58e-defe84fd3498",
+            "source": "https://www.helpscout.com/customers/ecatholic/",
+            "source_type": "website"
+          }
+        ],
+        "strength": "moderate",
+        "category": "market",
+        "value_band": "background"
+      },
+      {
+        "id": "E23",
+        "kind": "feature",
+        "claim": "Inside Beacon, AI Answers provides instant, in-app answers with a smooth handoff to a human when needed, drawing on Docs and other knowledge sources, and can be instantly improved with suggestions from recent email conversations.",
+        "verbatim": "Inside Beacon, AI Answers provides instant, in-app answers with a smooth handoff to a human when needed. It draws on Docs and other knowledge sources, can be instantly improved with suggestions from recent email conversations, and captures eCatholic’s friendly, approachable tone to stay on-brand.",
+        "source": "https://www.helpscout.com/customers/ecatholic/",
+        "document_id": "5fc8e291-1fac-4309-a58e-defe84fd3498",
+        "context": {
+          "subject": "AI Answers (Beacon)",
+          "source_kind": "vendor_statement",
+          "claim_scope": "capability",
+          "conditions": "",
+          "temporal_scope": "",
+          "limitations": "",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "5fc8e291-1fac-4309-a58e-defe84fd3498",
+            "source": "https://www.helpscout.com/customers/ecatholic/",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "product",
+        "value_band": "supporting"
+      },
+      {
+        "id": "E26",
+        "kind": "feature",
+        "claim": "With Improvements, teams can quickly add missing context right from a conversation without rewriting help articles, and Help Scout's AI learns directly from that feedback to make the next answer more accurate and on-brand.",
+        "verbatim": "With Improvements, Luke’s team can quickly add missing context right from a conversation. There’s no need to rewrite help articles. Help Scout’s AI learns directly from that feedback, which means the next answer is more accurate and on-brand.",
+        "source": "https://www.helpscout.com/customers/ecatholic/",
+        "document_id": "5fc8e291-1fac-4309-a58e-defe84fd3498",
+        "context": {
+          "subject": "Help Scout AI Answers - Improvements",
+          "source_kind": "vendor_statement",
+          "claim_scope": "capability",
+          "conditions": "",
+          "temporal_scope": "",
+          "limitations": "",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "5fc8e291-1fac-4309-a58e-defe84fd3498",
+            "source": "https://www.helpscout.com/customers/ecatholic/",
+            "source_type": "website"
+          }
+        ],
+        "strength": "moderate",
+        "category": "product",
+        "value_band": "supporting"
+      },
+      {
+        "id": "R3",
+        "kind": "price",
+        "claim": "Help Scout bills AI Answers (Envoy) per resolution, not per conversation or per reply, at $0.75 per resolution",
+        "verbatim": "$0.75 per resolution",
+        "source": "https://www.helpscout.com/pricing/",
+        "document_id": "f6899319-46fb-4afc-b149-da123efa337a",
+        "context": {
+          "subject": "Help Scout AI Answers / Envoy add-on",
+          "source_kind": "official_documentation",
+          "claim_scope": "all plans (Standard, Plus, Pro) per the pricing/feature comparison table",
+          "conditions": "",
+          "temporal_scope": "current pricing page as fetched",
+          "limitations": "",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "f6899319-46fb-4afc-b149-da123efa337a",
+            "source": "https://www.helpscout.com/pricing/",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "commercial",
+        "value_band": "headline"
+      },
+      {
+        "id": "R4",
+        "kind": "feature",
+        "claim": "Help Scout defines a billable AI resolution as a single conversation resolved by AI without human assistance and without further customer escalation",
+        "verbatim": "A resolution is a single conversation that is resolved by AI Answers without human assistance.\n\nA resolution is counted only if the customer receives an AI response and doesn’t use escalation, search the knowledge base, ask more questions, or indicate that they need more help.",
+        "source": "https://www.helpscout.com/pricing/",
+        "document_id": "f6899319-46fb-4afc-b149-da123efa337a",
+        "context": {
+          "subject": "Help Scout AI Answers billing unit definition",
+          "source_kind": "official_documentation",
+          "claim_scope": "AI Answers / Envoy add-on, all plans",
+          "conditions": "customer must not escalate, search KB, ask more questions, or request more help",
+          "temporal_scope": "",
+          "limitations": "only one resolution is billed per conversation even with multiple AI replies",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "f6899319-46fb-4afc-b149-da123efa337a",
+            "source": "https://www.helpscout.com/pricing/",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "product",
+        "value_band": "supporting"
+      },
+      {
+        "id": "R5",
+        "kind": "integration",
+        "claim": "Help Scout documents an import path for moving an existing shared inbox (from Zendesk) via its built-in Import2 feature, covering ticket history and customer profiles, with knowledge-base import handled by a separate team-assisted tool; no specific timeline/duration is stated anywhere in the article.",
+        "verbatim": "Help Scout's built in Import2 feature allows you to import your entire ticket history (and the customer profiles associated with those tickets) from Zendesk into Help Scout.",
+        "source": "https://docs.helpscout.com/article/279-move-from-zendesk-to-help-scout",
+        "document_id": "d5439ce3-0571-4a23-b012-3e56cf683a5b",
+        "context": {
+          "subject": "Help Scout Import2 feature for migrating from Zendesk",
+          "source_kind": "official_documentation",
+          "claim_scope": "Migration path specifically for teams moving from Zendesk to Help Scout",
+          "conditions": "Applies to ticket/customer data; knowledge base articles require contacting Help Scout for a different import tool and instructions, and should not be run through Import2 to avoid duplicate data.",
+          "temporal_scope": "Article last updated September 8, 2026",
+          "limitations": "No timeline, duration, or completion estimate for the import process is stated anywhere in this article; Macros/Triggers are not imported and must be manually recreated.",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "d5439ce3-0571-4a23-b012-3e56cf683a5b",
+            "source": "https://docs.helpscout.com/article/279-move-from-zendesk-to-help-scout",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "technical",
+        "value_band": "supporting"
+      },
+      {
+        "id": "R6",
+        "kind": "metric",
+        "claim": "eCatholic, a software company with a 'lean support team,' reports an AI Answers deflection rate that climbed past 10% and peaked at 15.46% in August 2025, growing from 36 conversations handled in the first week to nearly 300 per week by August.",
+        "verbatim": "Their deflection rate, which Luke once hoped might reach 10%, has consistently climbed past that mark, peaking at 15.46% in August 2025, their highest yet.",
+        "source": "https://www.helpscout.com/customers/ecatholic/",
+        "document_id": "5fc8e291-1fac-4309-a58e-defe84fd3498",
+        "context": {
+          "subject": "eCatholic (software company serving churches, schools, and ministries) using Help Scout AI Answers",
+          "source_kind": "customer_case_study",
+          "claim_scope": "Deflection rate for one named software customer; team size is described only as 'lean support team,' not quantified as 2-10 agents",
+          "conditions": "Measured after adopting AI Answers inside an existing Help Scout/Beacon setup, starting early 2025",
+          "temporal_scope": "Early 2025 through August 2025",
+          "limitations": "The source does not state the exact number of support agents (no 2-10 agent figure given), so this cannot be confirmed as specific to a 2-10 agent team; it is a single customer's result, not a general SaaS benchmark.",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "5fc8e291-1fac-4309-a58e-defe84fd3498",
+            "source": "https://www.helpscout.com/customers/ecatholic/",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "product",
+        "value_band": "headline"
+      }
+    ],
+    "validation_counts": {
+      "dropped_items": 0,
+      "normalized_items": 0
+    },
+    "validation_warnings": [],
+    "verified_product_questions": [
+      "Absorbing repetitive questions without forcing a disruptive support-stack change for a team that is not already working in Help Scout",
+      "Does public documentation state a migration/import path and timeline for moving an existing shared inbox into Help Scout?",
+      "Is there a documented AI Answers deflection or volume-spike figure for a software/SaaS team of 2-10 agents specifically?"
+    ],
+    "recommendation": {
+      "state": "DISCOVERY_ONLY",
+      "readiness": "DISCOVERY_ONLY",
+      "reasons": [
+        "The defining audience need is not fully supported by verified product evidence; a broader subsegment label does not resolve it.",
+        "Absorbing repetitive questions without putting the team through a new, disruptive support stack when the team is not already on Help Scout"
+      ],
+      "eligible_subsegment": "",
+      "qualified_companies": [],
+      "adjacent_companies": [],
+      "excluded_companies": [],
+      "unverified_companies": [],
+      "allowed_claims": [
+        "Help Scout's shared inbox gives all teammates access to the queue, letting them see customer context, collaborate behind the scenes, and follow conversations to resolution.",
+        "AI Answers handles common customer questions instantly, and workflow automations help the team stay organized and responsive.",
+        "Inside Beacon, AI Answers provides instant, in-app answers with a smooth handoff to a human when needed, drawing on Docs and other knowledge sources, and can be instantly improved with suggestions from recent email conversations.",
+        "With Improvements, teams can quickly add missing context right from a conversation without rewriting help articles, and Help Scout's AI learns directly from that feedback to make the next answer more accurate and on-brand.",
+        "With Suggested Improvements, the system surfaces pre-drafted updates that the team can approve, edit, or decline with a click, improving AI Answers' accuracy with minimal effort.",
+        "Help Scout bills AI Answers (Envoy) per resolution, not per conversation or per reply, at $0.75 per resolution",
+        "Help Scout defines a billable AI resolution as a single conversation resolved by AI without human assistance and without further customer escalation",
+        "Help Scout documents an import path for moving an existing shared inbox (from Zendesk) via its built-in Import2 feature, covering ticket history and customer profiles, with knowledge-base import handled by a separate team-assisted tool; no specific timeline/duration is stated anywhere in the article.",
+        "eCatholic, a software company with a 'lean support team,' reports an AI Answers deflection rate that climbed past 10% and peaked at 15.46% in August 2025, growing from 36 conversations handled in the first week to nearly 300 per week by August."
+      ],
+      "allowed_evidence_ids": [
+        "E16",
+        "E18",
+        "E23",
+        "E26",
+        "E27",
+        "R3",
+        "R4",
+        "R5",
+        "R6"
+      ],
+      "forbidden_claims": [],
+      "forbidden_capability_ids": [],
+      "forbidden_evidence_ids": [],
+      "unresolved_objections": [],
+      "recommended_next_action": "Gather direct product and company evidence before treating this as an outreach list.",
+      "override_risk": "Generating now will require audience-level hypotheses and may produce a weak campaign because company-specific fit is unresolved.",
+      "claim_contract": {
+        "contract_version": 1,
+        "verified_product_claims": [
+          {
+            "id": "evidence:E1",
+            "text": "Over 950 million customer conversations have happened in Help Scout.",
+            "evidence_ids": [
+              "E1"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E2",
+            "text": "Help Scout's people-first products power over 12,000 customer-facing teams.",
+            "evidence_ids": [
+              "E2"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E3",
+            "text": "Help Scout was founded in 2011 and its fully remote team works from over 115 cities across the globe.",
+            "evidence_ids": [
+              "E3"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E4",
+            "text": "Help Scout commits 1% of its equity back to the non-profit community via Pledge 1%.",
+            "evidence_ids": [
+              "E4"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E5",
+            "text": "Help Scout gives away at least 2% of its revenue via product discounts for select charitable organizations.",
+            "evidence_ids": [
+              "E5"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E6",
+            "text": "Help Scout matches up to $10,000 of its employees' charitable donations every year.",
+            "evidence_ids": [
+              "E6"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E7",
+            "text": "Customers respond to 56% more messages in their first year with Help Scout.",
+            "evidence_ids": [
+              "E7"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E8",
+            "text": "Satisfaction scores for teams on Help Scout are 25% higher than the industry average.",
+            "evidence_ids": [
+              "E8"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E9",
+            "text": "Help Scout resolves 73% of AI interactions automatically on average.",
+            "evidence_ids": [
+              "E9"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E10",
+            "text": "80% of Help Scout customers stay for 4+ years.",
+            "evidence_ids": [
+              "E10"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E11",
+            "text": "Brain.fm achieved a 95% customer happiness score using Help Scout while handling increased support volume.",
+            "evidence_ids": [
+              "E11"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E12",
+            "text": "Carmel Granahan, Head of Customer at OnePagerCRM, said Help Scout helped them reduce their workload by 50%, making their team twice as productive.",
+            "evidence_ids": [
+              "E12"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E13",
+            "text": "The New Wheel is a bike shop founded in San Francisco by co-founders Brett Thurber and Karen Wiener, focused on the e-bike experience.",
+            "evidence_ids": [
+              "E13"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E14",
+            "text": "The New Wheel became a Help Scout customer in 2016.",
+            "evidence_ids": [
+              "E14"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E15",
+            "text": "The New Wheel has 24 teammates and a single phone number ringing across all locations, with everyone having access to the support queue.",
+            "evidence_ids": [
+              "E15"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E16",
+            "text": "Help Scout's shared inbox gives all teammates access to the queue, letting them see customer context, collaborate behind the scenes, and follow conversations to resolution.",
+            "evidence_ids": [
+              "E16"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E17",
+            "text": "The New Wheel now manages four inboxes across teams and locations, runs two Beacons on their site, and maintains a Docs knowledge base for self-service.",
+            "evidence_ids": [
+              "E17"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E18",
+            "text": "AI Answers handles common customer questions instantly, and workflow automations help the team stay organized and responsive.",
+            "evidence_ids": [
+              "E18"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E19",
+            "text": "The New Wheel uses Help Scout for more than customer interactions, including accounting, purchasing management, and warranty management, via a centralized inbox everyone can collaborate on.",
+            "evidence_ids": [
+              "E19"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E20",
+            "text": "eCatholic builds software that powers websites, online giving, communications, and live streaming for more than 8,000 customers (churches, schools, and ministries).",
+            "evidence_ids": [
+              "E20"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E21",
+            "text": "eCatholic's Director of Onboarding & Success, Luke Tristani, said AI Answers isn't meant to replace support teams but to let AI handle simple questions so the team can create 'wow moments' for customers.",
+            "evidence_ids": [
+              "E21"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E22",
+            "text": "Luke evaluated other AI vendors — Zoom, Maven, and Intercom — and found those bolt-on tools required major process changes, whereas AI Answers lives inside Help Scout where the team already works.",
+            "evidence_ids": [
+              "E22"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E23",
+            "text": "Inside Beacon, AI Answers provides instant, in-app answers with a smooth handoff to a human when needed, drawing on Docs and other knowledge sources, and can be instantly improved with suggestions from recent email conversations.",
+            "evidence_ids": [
+              "E23"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E24",
+            "text": "eCatholic's AI Answers handled 36 conversations in the first week of use, growing to nearly 300 per week by August 2025.",
+            "evidence_ids": [
+              "E24"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E25",
+            "text": "eCatholic's deflection rate, which Luke once hoped might reach 10%, climbed past that, peaking at 15.46% in August 2025.",
+            "evidence_ids": [
+              "E25"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E26",
+            "text": "With Improvements, teams can quickly add missing context right from a conversation without rewriting help articles, and Help Scout's AI learns directly from that feedback to make the next answer more accurate and on-brand.",
+            "evidence_ids": [
+              "E26"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E27",
+            "text": "With Suggested Improvements, the system surfaces pre-drafted updates that the team can approve, edit, or decline with a click, improving AI Answers' accuracy with minimal effort.",
+            "evidence_ids": [
+              "E27"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R1",
+            "text": "Shopify integration provides order status, receipts, and tracking information directly in the Help Scout sidebar",
+            "evidence_ids": [
+              "R1"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R2",
+            "text": "Shopify integration shows full order details and allows refunding, cancelling, editing, or duplicating recent orders in the customer sidebar",
+            "evidence_ids": [
+              "R2"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R3",
+            "text": "Help Scout bills AI Answers (Envoy) per resolution, not per conversation or per reply, at $0.75 per resolution",
+            "evidence_ids": [
+              "R3"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R4",
+            "text": "Help Scout defines a billable AI resolution as a single conversation resolved by AI without human assistance and without further customer escalation",
+            "evidence_ids": [
+              "R4"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R5",
+            "text": "Help Scout documents an import path for moving an existing shared inbox (from Zendesk) via its built-in Import2 feature, covering ticket history and customer profiles, with knowledge-base import handled by a separate team-assisted tool; no specific timeline/duration is stated anywhere in the article.",
+            "evidence_ids": [
+              "R5"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R6",
+            "text": "eCatholic, a software company with a 'lean support team,' reports an AI Answers deflection rate that climbed past 10% and peaked at 15.46% in August 2025, growing from 36 conversations handled in the first week to nearly 300 per week by August.",
+            "evidence_ids": [
+              "R6"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          }
+        ],
+        "campaign_allowed_claims": [
+          {
+            "id": "evidence:E16",
+            "text": "Help Scout's shared inbox gives all teammates access to the queue, letting them see customer context, collaborate behind the scenes, and follow conversations to resolution.",
+            "evidence_ids": [
+              "E16"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E18",
+            "text": "AI Answers handles common customer questions instantly, and workflow automations help the team stay organized and responsive.",
+            "evidence_ids": [
+              "E18"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E23",
+            "text": "Inside Beacon, AI Answers provides instant, in-app answers with a smooth handoff to a human when needed, drawing on Docs and other knowledge sources, and can be instantly improved with suggestions from recent email conversations.",
+            "evidence_ids": [
+              "E23"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E26",
+            "text": "With Improvements, teams can quickly add missing context right from a conversation without rewriting help articles, and Help Scout's AI learns directly from that feedback to make the next answer more accurate and on-brand.",
+            "evidence_ids": [
+              "E26"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E27",
+            "text": "With Suggested Improvements, the system surfaces pre-drafted updates that the team can approve, edit, or decline with a click, improving AI Answers' accuracy with minimal effort.",
+            "evidence_ids": [
+              "E27"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:R3",
+            "text": "Help Scout bills AI Answers (Envoy) per resolution, not per conversation or per reply, at $0.75 per resolution",
+            "evidence_ids": [
+              "R3"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R4",
+            "text": "Help Scout defines a billable AI resolution as a single conversation resolved by AI without human assistance and without further customer escalation",
+            "evidence_ids": [
+              "R4"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R5",
+            "text": "Help Scout documents an import path for moving an existing shared inbox (from Zendesk) via its built-in Import2 feature, covering ticket history and customer profiles, with knowledge-base import handled by a separate team-assisted tool; no specific timeline/duration is stated anywhere in the article.",
+            "evidence_ids": [
+              "R5"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R6",
+            "text": "eCatholic, a software company with a 'lean support team,' reports an AI Answers deflection rate that climbed past 10% and peaked at 15.46% in August 2025, growing from 36 conversations handled in the first week to nearly 300 per week by August.",
+            "evidence_ids": [
+              "R6"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          }
+        ],
+        "forbidden_claims": [],
+        "withheld_claims": [
+          {
+            "id": "evidence:E1",
+            "text": "Over 950 million customer conversations have happened in Help Scout.",
+            "evidence_ids": [
+              "E1"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E2",
+            "text": "Help Scout's people-first products power over 12,000 customer-facing teams.",
+            "evidence_ids": [
+              "E2"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E3",
+            "text": "Help Scout was founded in 2011 and its fully remote team works from over 115 cities across the globe.",
+            "evidence_ids": [
+              "E3"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E4",
+            "text": "Help Scout commits 1% of its equity back to the non-profit community via Pledge 1%.",
+            "evidence_ids": [
+              "E4"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E5",
+            "text": "Help Scout gives away at least 2% of its revenue via product discounts for select charitable organizations.",
+            "evidence_ids": [
+              "E5"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E6",
+            "text": "Help Scout matches up to $10,000 of its employees' charitable donations every year.",
+            "evidence_ids": [
+              "E6"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E7",
+            "text": "Customers respond to 56% more messages in their first year with Help Scout.",
+            "evidence_ids": [
+              "E7"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E8",
+            "text": "Satisfaction scores for teams on Help Scout are 25% higher than the industry average.",
+            "evidence_ids": [
+              "E8"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E9",
+            "text": "Help Scout resolves 73% of AI interactions automatically on average.",
+            "evidence_ids": [
+              "E9"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E10",
+            "text": "80% of Help Scout customers stay for 4+ years.",
+            "evidence_ids": [
+              "E10"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E11",
+            "text": "Brain.fm achieved a 95% customer happiness score using Help Scout while handling increased support volume.",
+            "evidence_ids": [
+              "E11"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E12",
+            "text": "Carmel Granahan, Head of Customer at OnePagerCRM, said Help Scout helped them reduce their workload by 50%, making their team twice as productive.",
+            "evidence_ids": [
+              "E12"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E13",
+            "text": "The New Wheel is a bike shop founded in San Francisco by co-founders Brett Thurber and Karen Wiener, focused on the e-bike experience.",
+            "evidence_ids": [
+              "E13"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E14",
+            "text": "The New Wheel became a Help Scout customer in 2016.",
+            "evidence_ids": [
+              "E14"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E15",
+            "text": "The New Wheel has 24 teammates and a single phone number ringing across all locations, with everyone having access to the support queue.",
+            "evidence_ids": [
+              "E15"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E17",
+            "text": "The New Wheel now manages four inboxes across teams and locations, runs two Beacons on their site, and maintains a Docs knowledge base for self-service.",
+            "evidence_ids": [
+              "E17"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E19",
+            "text": "The New Wheel uses Help Scout for more than customer interactions, including accounting, purchasing management, and warranty management, via a centralized inbox everyone can collaborate on.",
+            "evidence_ids": [
+              "E19"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E20",
+            "text": "eCatholic builds software that powers websites, online giving, communications, and live streaming for more than 8,000 customers (churches, schools, and ministries).",
+            "evidence_ids": [
+              "E20"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E21",
+            "text": "eCatholic's Director of Onboarding & Success, Luke Tristani, said AI Answers isn't meant to replace support teams but to let AI handle simple questions so the team can create 'wow moments' for customers.",
+            "evidence_ids": [
+              "E21"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E22",
+            "text": "Luke evaluated other AI vendors — Zoom, Maven, and Intercom — and found those bolt-on tools required major process changes, whereas AI Answers lives inside Help Scout where the team already works.",
+            "evidence_ids": [
+              "E22"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E24",
+            "text": "eCatholic's AI Answers handled 36 conversations in the first week of use, growing to nearly 300 per week by August 2025.",
+            "evidence_ids": [
+              "E24"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E25",
+            "text": "eCatholic's deflection rate, which Luke once hoped might reach 10%, climbed past that, peaking at 15.46% in August 2025.",
+            "evidence_ids": [
+              "E25"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:R1",
+            "text": "Shopify integration provides order status, receipts, and tracking information directly in the Help Scout sidebar",
+            "evidence_ids": [
+              "R1"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:R2",
+            "text": "Shopify integration shows full order details and allows refunding, cancelling, editing, or duplicating recent orders in the customer sidebar",
+            "evidence_ids": [
+              "R2"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          }
+        ],
+        "warnings": []
+      }
+    }
+  }
+}

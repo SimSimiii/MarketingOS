@@ -1,0 +1,2220 @@
+{
+  "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+  "events": [
+    {
+      "type": "execution_started",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Request: Write exactly one email. Introduce our product to a new buyer with one clear next step.",
+      "at": "2026-11-10T00:23:46.513006+00:00",
+      "campaign_id": "30bb7a9a-960b-493e-9a6f-22cc1e56e9b0",
+      "request": "Write exactly one email. Introduce our product to a new buyer with one clear next step."
+    },
+    {
+      "type": "phase",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Read the request as 1 email(s) - the user said so",
+      "at": "2026-11-10T00:23:46.526747+00:00",
+      "phase": "contract",
+      "count": 1,
+      "explicit": true,
+      "kind": "single_email"
+    },
+    {
+      "type": "phase",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Reusing what we already know about this business (version 1, 22 facts)",
+      "at": "2026-11-10T00:23:46.587285+00:00",
+      "phase": "knowledge",
+      "reused": true,
+      "version": 1
+    },
+    {
+      "type": "knowledge_ready",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "knowledge_compiler",
+      "step": null,
+      "level": "info",
+      "message": "Knowledge reused: 22 facts the copy may claim, 0 gap(s)",
+      "at": "2026-11-10T00:23:46.593350+00:00",
+      "reused": true,
+      "version": 1,
+      "evidence_count": 22,
+      "segments": [
+        "Finance/founder preparing board decks and investor updates",
+        "PLG-led SaaS founder/ops lead tracking free-to-paid conversion"
+      ],
+      "gaps": [],
+      "voice_learned": true,
+      "notes": [
+        "2 of 24 candidate fact(s) were discarded because the quote supporting them could not be found in the source.",
+        "13,697 characters of material were past the reading budget and were not read.",
+        "First-campaign knowledge covers selected pages and decision-relevant evidence. Compile sources to read them in more depth."
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Researched audience and current Relevance Dossier loaded",
+      "at": "2026-11-10T00:23:46.693782+00:00",
+      "phase": "intelligence",
+      "selected_audience": "Finance/founder preparing board decks and investor updates",
+      "audience_resolution_status": "audience_research_loaded",
+      "audience_research_id": "6b6c7651-3595-43c3-8a38-158528aae74d",
+      "audience_research_version": 1,
+      "dossier_status": "current",
+      "dossier_id": "c298d836-da8c-4df8-8ffe-277d9c3d8fea",
+      "dossier_version": 1,
+      "dossier_schema_version": 2,
+      "stale_reasons": [],
+      "legacy_fallback_used": false,
+      "qualified_subsegment": "One email introduces ChartMogul as a subscription analytics platform for recurring-revenue reporting and gives one next step: start the 14-day free Pro trial and connect Stripe, Paddle, or another billing system, after which ChartMogul builds the subscription model automatically so MRR and related recurring-revenue metrics come from one model instead of hand-joined exports. A customer testimonial (OneVision) is used as proof that normalizing billing data in ChartMogul produced defensible, dollar-level revenue clarity.",
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [],
+      "validation_warnings": [
+        "Publication date unknown; retrieval today does not establish current applicability. Finance staff at a described SaaS company maintained numerous separate spreadsheets to manually reconcile billing, accounting, and CRM data into investor-grade metrics.",
+        "Publication date unknown; retrieval today does not establish current applicability. Revenue metrics for board and investor reports were produced through manual spreadsheet joins and CSV exports rather than a governed data layer.",
+        "Publication date unknown; retrieval today does not establish current applicability. A single, trusted version of recurring-revenue numbers that does not require repeated manual reconciliation or explanation to leadership.",
+        "Publication date unknown; retrieval today does not establish current applicability. A described SaaS company was characterized by use of separate billing, accounting, and CRM systems that did not agree with one another.",
+        "Moved product questions without an explicit audience requirement to decision gaps.",
+        "Defining audience need is unassessed or its references required normalization."
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "5 third-party proof point(s) available to spend",
+      "at": "2026-11-10T00:23:46.699642+00:00",
+      "phase": "proof",
+      "proof": 5,
+      "checkable": 17,
+      "asks": []
+    },
+    {
+      "type": "phase",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "1 competitor(s) read - 0 documented difference(s); 20 unmatched captured proposition(s) need verification, not an exclusivity conclusion",
+      "at": "2026-11-10T00:23:46.953771+00:00",
+      "phase": "market",
+      "rivals": 1,
+      "open_ground": [
+        "price",
+        "price",
+        "price",
+        "price",
+        "price",
+        "price",
+        "price",
+        "price",
+        "price",
+        "price",
+        "price",
+        "price",
+        "breadth",
+        "quality",
+        "proof",
+        "proof",
+        "proof",
+        "proof",
+        "proof",
+        "other"
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Written to Finance/founder preparing board decks and investor updates - selected audience hypothesis; response is unmeasured",
+      "at": "2026-11-10T00:23:47.000527+00:00",
+      "phase": "audience",
+      "segment": "Finance/founder preparing board decks and investor updates",
+      "mapped": true
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Strategist: Deciding what this campaign says, and in what order",
+      "at": "2026-11-10T00:23:47.007105+00:00",
+      "agent_name": "Strategist",
+      "label": "Deciding what this campaign says, and in what order"
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "debug",
+      "message": "Sent 101,293 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-10T00:23:47.092820+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 101293
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 13,872 characters in 81.5s (30,830 in / 5,786 out)",
+      "at": "2026-11-10T00:25:08.575354+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 30830,
+      "output_tokens": 5786,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.42022,
+      "duration_ms": 81469.53150001355,
+      "response_chars": 13872
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "debug",
+      "message": "Sent 115,153 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-10T00:25:08.606339+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 115153
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 12,546 characters in 60.0s (33,570 in / 3,887 out)",
+      "at": "2026-11-10T00:26:08.566112+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 33570,
+      "output_tokens": 3887,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.328031,
+      "duration_ms": 59955.66949993372,
+      "response_chars": 12546
+    },
+    {
+      "type": "phase",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Proposition selected for the requested campaign",
+      "at": "2026-11-10T00:26:08.575369+00:00",
+      "phase": "strategy_plan",
+      "pipeline_version": 2,
+      "strategy_mode": "planned",
+      "intent": {
+        "objective": "custom",
+        "objective_source": "inferred",
+        "reader_relationship": "unknown",
+        "relationship_source": "inferred",
+        "announcement": "",
+        "reason_now": "",
+        "desired_action": ""
+      },
+      "plan_history": [
+        {
+          "raw_plan": {
+            "interpretation": "I interpret this as a single acquisition email introducing ChartMogul to solution-aware finance leaders and founders responsible for recurring-revenue reporting. The email should sell one documented workflow and ask the reader to begin the 14-day Pro trial, rather than act as onboarding for an existing user.",
+            "pipeline_version": 2,
+            "strategy_mode": "planned",
+            "intent": {
+              "objective": "custom",
+              "objective_source": "inferred",
+              "reader_relationship": "unknown",
+              "relationship_source": "inferred",
+              "announcement": "",
+              "reason_now": "",
+              "desired_action": "Start the 14-day free Pro trial."
+            },
+            "reader": "A finance leader or founder preparing recurring-revenue figures for board decks or investor updates, especially when those figures currently require joining exports or spreadsheet logic.",
+            "reader_segment": "Finance/founder preparing board decks and investor updates",
+            "reader_profile_override": "",
+            "reader_scope": "Recurring-revenue SaaS finance leaders and founders evaluating a more consistent basis for MRR and related reporting. Treat manual exports and joins as a conditional situation, not a fact about every recipient.",
+            "fixed_cta_url": "",
+            "promise": "ChartMogul can turn connected billing data into a subscription model that gives finance leaders and founders a consistent basis for recurring-revenue analysis.",
+            "orientation": "ChartMogul is a subscription analytics platform that builds a subscription revenue model from connected billing data for MRR, ARR, churn, retention and expansion analysis.",
+            "arc": "In one email, move the reader from knowing the subscription-analytics category to seeing ChartMogul's concrete mechanism, credible customer proof and a low-commitment first step.",
+            "sequence_rationale": "Because the deliverable is one introductory email, the argument must stand alone: establish the reporting use case conditionally, explain how ChartMogul builds the underlying subscription model, substantiate the value with OneVision's bounded result, and close with the documented 14-day Pro offer. The email should not dilute this argument with secondary capabilities or imply that the trial includes features whose plan entitlement is not established.",
+            "emails": [
+              {
+                "problem_ids": [
+                  "S2",
+                  "S4"
+                ],
+                "offer_id": "offering",
+                "action_id": "try_pro_free",
+                "selection_reason": "The selected reader is responsible for recurring-revenue reporting. Building a subscription model directly from connected billing data is the strongest documented mechanism for giving that work a consistent basis, while OneVision supplies closely matched proof that normalization can produce defensible, dollar-level clarity.",
+                "next_step_url": "https://chartmogul.com/",
+                "destination_kind": "web",
+                "argument_issue": "",
+                "value_case": {
+                  "reader_benefit": "If recurring-revenue reporting is assembled from exports, joins or separately maintained calculations, the reader can ground MRR and related analysis in the subscription model ChartMogul builds from connected billing data.",
+                  "mechanism": "The reader connects Stripe, Paddle or another billing system; ChartMogul then builds the subscription model automatically and makes that model available for questions about the business.",
+                  "evidence_ids": [
+                    "E10",
+                    "E12"
+                  ],
+                  "decision_conditions": [
+                    "A supported billing system must be connected before ChartMogul builds the subscription model.",
+                    "OneVision's dollar-level clarity followed normalization of its own billing data in ChartMogul and is not a guaranteed result for every customer."
+                  ]
+                },
+                "claim_conditions": [
+                  "Present exports, joins and spreadsheet adjustments as a conditional reader situation, not a known fact about the recipient.",
+                  "Attach automatic model building to the prerequisite of connecting Stripe, Paddle or another billing system.",
+                  "Attribute the dollar-level clarity result specifically to OneVision and state that it followed normalization of OneVision's data.",
+                  "State that Pro is free for 14 days and that the customer then chooses a plan."
+                ],
+                "position": 1,
+                "target_audience": "Finance/founder preparing board decks and investor updates",
+                "job": "Get the reader to start the 14-day Pro trial after understanding why ChartMogul's billing-data-based subscription model is relevant to recurring-revenue reporting.",
+                "single_idea": "ChartMogul gives recurring-revenue reporting a consistent foundation by automatically building a subscription model after a billing system is connected.",
+                "felt_need": "If recurring-revenue figures are being assembled across exports, spreadsheet joins or separately maintained reporting logic, the reader needs a clearer basis for explaining MRR, churn, retention and growth.",
+                "status_quo": "Some SaaS finance teams calculate recurring-revenue metrics through CSV exports, spreadsheet joins, BI logic and manual adjustments.",
+                "why_it_fails": "When the calculations remain distributed across those artifacts, they do not originate from one subscription model, leaving the reporting basis harder to explain and defend.",
+                "mechanism": "Connect Stripe, Paddle or another billing system. ChartMogul builds the subscription model automatically, after which the user can ask questions of that model and receive useful answers.",
+                "alternative_ideas": [],
+                "alternative_arguments": [
+                  {
+                    "problem_ids": [],
+                    "offer_id": "",
+                    "action_id": "",
+                    "selection_reason": "Board and investor reporting often needs context as well as an internal number. ChartMogul's documented peer comparison by similar ARR or ARPA offers a distinct, supported reason for this reader to investigate the product without assuming a particular reporting problem.",
+                    "next_step_url": "https://chartmogul.com/accurate-revenue-metrics/",
+                    "destination_kind": "web",
+                    "argument_issue": "",
+                    "value_case": {
+                      "reader_benefit": "The reader can place growth and retention metrics in context using comparisons with SaaS companies at a similar ARR or ARPA.",
+                      "mechanism": "ChartMogul models revenue consistently enough to support apples-to-apples benchmarking against more than 2,500 SaaS peers, with comparison groups based on similar ARR or ARPA.",
+                      "evidence_ids": [
+                        "E17"
+                      ],
+                      "decision_conditions": [
+                        "The documented comparison dimensions are similar ARR or ARPA.",
+                        "The evidence does not establish that peer benchmarking is included in the Pro trial."
+                      ]
+                    },
+                    "claim_conditions": [
+                      "Describe the benchmark as a comparison against 2,500+ SaaS peers by similar ARR or ARPA.",
+                      "Do not describe the benchmarking capability as included in the 14-day Pro trial."
+                    ],
+                    "single_idea": "ChartMogul can give board and investor reporting external context by comparing revenue metrics with more than 2,500 SaaS peers at a similar ARR or ARPA.",
+                    "felt_need": "A recurring-revenue number is more useful in a board or investor discussion when the reader can put it in relevant market context.",
+                    "status_quo": "",
+                    "why_it_fails": "",
+                    "mechanism": "ChartMogul supports apples-to-apples revenue benchmarking against more than 2,500 SaaS companies and lets users compare with peers at a similar ARR or ARPA.",
+                    "belief_shift": "Before: subscription analytics mainly explains the company's own performance. After: ChartMogul can also provide a documented peer frame for discussing that performance.",
+                    "evidence_ids": [
+                      "E17"
+                    ],
+                    "must_not_say": [
+                      "Do not claim faster board-deck turnaround or any time saving.",
+                      "Do not claim zero disruption to existing billing, BI or finance tooling.",
+                      "Do not claim reduced headcount or replacement of a BI layer, spreadsheet process or accounting system.",
+                      "Do not claim that ChartMogul reconciles CRM or accounting-ledger figures.",
+                      "Do not claim any valuation, fundraising or diligence outcome.",
+                      "Do not claim that ChartMogul AI, the MCP server or peer benchmarking is included in the Pro trial.",
+                      "Do not claim that support for tiered, multi-component, add-on or usage-based billing is included in the Pro trial.",
+                      "Do not claim that reconciliation across multiple billing systems is included in the Pro trial.",
+                      "Do not claim that multi-currency tracking across billing switches is included in the Pro trial.",
+                      "Do not claim that ChartMogul is unique or that competitors lack comparable capabilities."
+                    ],
+                    "objection": "Will the comparison be meaningful for a company at our scale or pricing level?",
+                    "call_to_action": "See how ChartMogul benchmarks SaaS revenue metrics.",
+                    "next_step_decision": "Decide whether comparison by similar ARR or ARPA would add useful context to the reader's board or investor reporting.",
+                    "next_step_value": "The public page explains that ChartMogul supports apples-to-apples comparisons against more than 2,500 SaaS peers and allows comparisons by similar ARR or ARPA.",
+                    "next_step_evidence_ids": [
+                      "E17"
+                    ],
+                    "next_step_limit": "The page does not establish peer availability for every precise company profile or confirm that benchmarking is included in the Pro trial.",
+                    "subject_strategy": "Lead with the practical question of how the reader's revenue performance compares with similarly sized SaaS companies, using the 2,500+ peer pool as the concrete reason to open."
+                  }
+                ],
+                "belief_shift": "Before: ChartMogul is another analytics dashboard that would still leave the reader to define the underlying subscription numbers. After: once billing data is connected, ChartMogul builds the subscription model that those recurring-revenue questions can use.",
+                "evidence_ids": [
+                  "E10",
+                  "E12",
+                  "E8"
+                ],
+                "must_not_say": [
+                  "Do not claim faster board-deck turnaround or any time saving.",
+                  "Do not claim zero disruption to existing billing, BI or finance tooling.",
+                  "Do not claim reduced headcount or replacement of a BI layer, spreadsheet process or accounting system.",
+                  "Do not claim that ChartMogul reconciles CRM or accounting-ledger figures.",
+                  "Do not claim any valuation, fundraising or diligence outcome.",
+                  "Do not claim that ChartMogul AI, the MCP server or peer benchmarking is included in the Pro trial.",
+                  "Do not claim that support for tiered, multi-component, add-on or usage-based billing is included in the Pro trial.",
+                  "Do not claim that reconciliation across multiple billing systems is included in the Pro trial.",
+                  "Do not claim that multi-currency tracking across billing switches is included in the Pro trial.",
+                  "Do not imply that the documented billing connection and automatic model-building capability is necessarily included in the Pro trial.",
+                  "Do not turn OneVision's testimonial into a guaranteed or universal outcome.",
+                  "Do not claim that the recipient currently has conflicting numbers, an upcoming board meeting or a specific installed billing system.",
+                  "Do not add AI, CRM, PLG automation, peer benchmarking, multi-currency support or complex-plan support to the primary argument.",
+                  "Do not claim that ChartMogul is unique or that competitors cannot provide subscription analytics."
+                ],
+                "forbidden_evidence_ids": [
+                  "E1",
+                  "E2",
+                  "E3",
+                  "E4",
+                  "E5",
+                  "E6",
+                  "E9",
+                  "E18",
+                  "E20",
+                  "E21",
+                  "E22"
+                ],
+                "forbidden_capability_ids": [],
+                "objection": "What does it take to get from billing data to a usable subscription model?",
+                "tone": "Confident, matter-of-fact and concise; explain the revenue-data mechanism plainly without hype.",
+                "call_to_action": "Try ChartMogul Pro free for 14 days.",
+                "next_step_decision": "Decide whether to begin a 14-day evaluation of ChartMogul Pro before choosing a paid plan.",
+                "next_step_value": "The action starts the documented 14-day free Pro offer; after the trial, the customer chooses the plan that is right for the business.",
+                "next_step_evidence_ids": [
+                  "E8"
+                ],
+                "next_step_limit": "The offer evidence does not establish which capabilities are included in the trial, the required setup effort or whether connecting a billing system and building the subscription model can be completed during the trial.",
+                "subject_strategy": "Make the recurring-revenue reporting outcome concrete without inventing a crisis: signal that the email is about putting MRR and related metrics on a subscription model built from billing data, not about generic analytics.",
+                "must_not_reuse": [],
+                "steering": {
+                  "directions": [],
+                  "include_evidence_ids": [],
+                  "exclude_evidence_ids": [],
+                  "use": [],
+                  "avoid": [],
+                  "context_only": [],
+                  "excluded_values": []
+                }
+              }
+            ],
+            "voice_notes": "Use short declarative sentences followed by one plain explanation. Prefer accurate, defensible, recurring revenue and subscription model. Avoid inflated transformation language and clever taglines.",
+            "contract": {
+              "kind": "single_email",
+              "count": 1,
+              "count_is_explicit": true,
+              "evidence": "The user explicitly requested: \"Write exactly one email.\""
+            }
+          },
+          "effective_plan": {
+            "interpretation": "I interpret this as a single acquisition email introducing ChartMogul to solution-aware finance leaders and founders responsible for recurring-revenue reporting. The email should sell one documented workflow and ask the reader to begin the 14-day Pro trial, rather than act as onboarding for an existing user.",
+            "pipeline_version": 2,
+            "strategy_mode": "planned",
+            "intent": {
+              "objective": "custom",
+              "objective_source": "inferred",
+              "reader_relationship": "unknown",
+              "relationship_source": "inferred",
+              "announcement": "",
+              "reason_now": "",
+              "desired_action": ""
+            },
+            "reader": "A finance leader or founder preparing recurring-revenue figures for board decks or investor updates, especially when those figures currently require joining exports or spreadsheet logic.",
+            "reader_segment": "Finance/founder preparing board decks and investor updates",
+            "reader_profile_override": "",
+            "reader_scope": "Recurring-revenue SaaS finance leaders and founders evaluating a more consistent basis for MRR and related reporting. Treat manual exports and joins as a conditional situation, not a fact about every recipient.",
+            "fixed_cta_url": "",
+            "promise": "Try Pro free for 14 days, then choose the plan that's right for your business.",
+            "orientation": "ChartMogul is a subscription analytics platform that connects to a company's billing systems and builds a subscription revenue model from that data to report MRR, ARR, churn, retention and expansion.",
+            "arc": "Get the reader to start the 14-day Pro trial after understanding why ChartMogul's billing-data-based subscription model is relevant to recurring-revenue reporting.",
+            "sequence_rationale": "The product/problem link was not established for email(s) 1. A new proposition is needed to meet the original campaign objective; the unsupported problem and dependent outcome were removed without changing the requested action.",
+            "emails": [
+              {
+                "problem_ids": [
+                  "S2",
+                  "S4"
+                ],
+                "offer_id": "offering",
+                "action_id": "try_pro_free",
+                "selection_reason": "The selected reader is responsible for recurring-revenue reporting. Building a subscription model directly from connected billing data is the strongest documented mechanism for giving that work a consistent basis, while OneVision supplies closely matched proof that normalization can produce defensible, dollar-level clarity.",
+                "next_step_url": "https://chartmogul.com/",
+                "destination_kind": "web",
+                "argument_issue": "The proposed buyer problem is not linked to the assigned evidence. Select another complete argument while preserving campaign intent and action constraints.",
+                "value_case": {
+                  "reader_benefit": "",
+                  "mechanism": "",
+                  "evidence_ids": [],
+                  "decision_conditions": []
+                },
+                "claim_conditions": [
+                  "Present exports, joins and spreadsheet adjustments as a conditional reader situation, not a known fact about the recipient.",
+                  "Attach automatic model building to the prerequisite of connecting Stripe, Paddle or another billing system.",
+                  "Attribute the dollar-level clarity result specifically to OneVision and state that it followed normalization of OneVision's data.",
+                  "State that Pro is free for 14 days and that the customer then chooses a plan.",
+                  "Do not promise: No claim of faster board-deck turnaround or any time saving — not established by the selected evidence.",
+                  "Do not promise: No claim of zero disruption to existing billing, BI or finance tooling.",
+                  "Do not promise: No claim of reduced headcount or of replacing an incumbent BI layer, spreadsheets or accounting system.",
+                  "Do not promise: No claim that ChartMogul reconciles CRM or accounting-ledger figures.",
+                  "Do not promise: No claim of a valuation, fundraising or diligence outcome (E18 withheld).",
+                  "Do not promise: No claim about ChartMogul AI, the MCP server or peer benchmarking being included in the trial plan.",
+                  "Do not promise: No claim that tiered, multi-component, add-on, or usage-based billing plans (E15) are included in the Pro trial — that quote is a generic capability claim not scoped to a named plan.",
+                  "Do not promise: No claim that reconciliation across multiple billing systems (E13) is part of the trial/Pro plan — unscoped to a named plan.",
+                  "Do not promise: No claim that multi-currency tracking across billing switches (E16) is included in the trial — unscoped to a named plan.",
+                  "Do not promise: No claim of zero disruption to existing billing, BI, or finance tooling.",
+                  "Do not promise: No claim of reduced headcount or of replacing an incumbent BI layer, spreadsheets, or accounting system.",
+                  "Do not promise: No claim of a valuation, fundraising, or diligence outcome.",
+                  "Do not promise: No claim about ChartMogul AI, the MCP server, or peer benchmarking being included in the trial plan.",
+                  "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit."
+                ],
+                "position": 1,
+                "target_audience": "Finance/founder preparing board decks and investor updates",
+                "job": "Get the reader to start the 14-day Pro trial after understanding why ChartMogul's billing-data-based subscription model is relevant to recurring-revenue reporting.",
+                "single_idea": "Try Pro free for 14 days, then choose the plan that's right for your business.",
+                "felt_need": "",
+                "status_quo": "",
+                "why_it_fails": "",
+                "mechanism": "Try Pro free for 14 days, then choose the plan that's right for your business.",
+                "alternative_ideas": [],
+                "alternative_arguments": [
+                  {
+                    "problem_ids": [],
+                    "offer_id": "offering",
+                    "action_id": "",
+                    "selection_reason": "Board and investor reporting often needs context as well as an internal number. ChartMogul's documented peer comparison by similar ARR or ARPA offers a distinct, supported reason for this reader to investigate the product without assuming a particular reporting problem.",
+                    "next_step_url": "https://chartmogul.com/accurate-revenue-metrics/",
+                    "destination_kind": "web",
+                    "argument_issue": "The proposed buyer problem is not linked to the assigned evidence. Select another complete argument while preserving campaign intent and action constraints.",
+                    "value_case": {
+                      "reader_benefit": "",
+                      "mechanism": "",
+                      "evidence_ids": [],
+                      "decision_conditions": []
+                    },
+                    "claim_conditions": [
+                      "Describe the benchmark as a comparison against 2,500+ SaaS peers by similar ARR or ARPA.",
+                      "Do not describe the benchmarking capability as included in the 14-day Pro trial.",
+                      "Do not promise: No claim of faster board-deck turnaround or any time saving — not established by the selected evidence.",
+                      "Do not promise: No claim of zero disruption to existing billing, BI or finance tooling.",
+                      "Do not promise: No claim of reduced headcount or of replacing an incumbent BI layer, spreadsheets or accounting system.",
+                      "Do not promise: No claim that ChartMogul reconciles CRM or accounting-ledger figures.",
+                      "Do not promise: No claim of a valuation, fundraising or diligence outcome (E18 withheld).",
+                      "Do not promise: No claim about ChartMogul AI, the MCP server or peer benchmarking being included in the trial plan.",
+                      "Do not promise: No claim that tiered, multi-component, add-on, or usage-based billing plans (E15) are included in the Pro trial — that quote is a generic capability claim not scoped to a named plan.",
+                      "Do not promise: No claim that reconciliation across multiple billing systems (E13) is part of the trial/Pro plan — unscoped to a named plan.",
+                      "Do not promise: No claim that multi-currency tracking across billing switches (E16) is included in the trial — unscoped to a named plan.",
+                      "Do not promise: No claim of zero disruption to existing billing, BI, or finance tooling.",
+                      "Do not promise: No claim of reduced headcount or of replacing an incumbent BI layer, spreadsheets, or accounting system.",
+                      "Do not promise: No claim of a valuation, fundraising, or diligence outcome.",
+                      "Do not promise: No claim about ChartMogul AI, the MCP server, or peer benchmarking being included in the trial plan.",
+                      "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit."
+                    ],
+                    "single_idea": "Companies can benchmark their revenue metrics apples-to-apples against 2,500+ peer SaaS companies, comparing by similar ARR or ARPA",
+                    "felt_need": "",
+                    "status_quo": "",
+                    "why_it_fails": "",
+                    "mechanism": "Companies can benchmark their revenue metrics apples-to-apples against 2,500+ peer SaaS companies, comparing by similar ARR or ARPA",
+                    "belief_shift": "",
+                    "evidence_ids": [
+                      "E17"
+                    ],
+                    "must_not_say": [
+                      "Do not claim faster board-deck turnaround or any time saving.",
+                      "Do not claim zero disruption to existing billing, BI or finance tooling.",
+                      "Do not claim reduced headcount or replacement of a BI layer, spreadsheet process or accounting system.",
+                      "Do not claim that ChartMogul reconciles CRM or accounting-ledger figures.",
+                      "Do not claim any valuation, fundraising or diligence outcome.",
+                      "Do not claim that ChartMogul AI, the MCP server or peer benchmarking is included in the Pro trial.",
+                      "Do not claim that support for tiered, multi-component, add-on or usage-based billing is included in the Pro trial.",
+                      "Do not claim that reconciliation across multiple billing systems is included in the Pro trial.",
+                      "Do not claim that multi-currency tracking across billing switches is included in the Pro trial.",
+                      "Do not claim that ChartMogul is unique or that competitors lack comparable capabilities.",
+                      "The assigned evidence does not establish that this function resolves the proposed buyer problem. Inspecting its source or starting an account does not demonstrate that outcome, a completed integration, or a result for this recipient."
+                    ],
+                    "objection": "",
+                    "call_to_action": "See how ChartMogul benchmarks SaaS revenue metrics.",
+                    "next_step_decision": "",
+                    "next_step_value": "",
+                    "next_step_evidence_ids": [],
+                    "next_step_limit": "The assigned evidence does not establish that this function resolves the proposed buyer problem. Inspecting its source or starting an account does not demonstrate that outcome, a completed integration, or a result for this recipient.",
+                    "subject_strategy": "Respect the campaign objective and name only a supported proposition; do not imply novelty without user-provided or dated support."
+                  }
+                ],
+                "belief_shift": "",
+                "evidence_ids": [
+                  "E8",
+                  "E10",
+                  "E12"
+                ],
+                "must_not_say": [
+                  "Do not claim faster board-deck turnaround or any time saving.",
+                  "Do not claim zero disruption to existing billing, BI or finance tooling.",
+                  "Do not claim reduced headcount or replacement of a BI layer, spreadsheet process or accounting system.",
+                  "Do not claim that ChartMogul reconciles CRM or accounting-ledger figures.",
+                  "Do not claim any valuation, fundraising or diligence outcome.",
+                  "Do not claim that ChartMogul AI, the MCP server or peer benchmarking is included in the Pro trial.",
+                  "Do not claim that support for tiered, multi-component, add-on or usage-based billing is included in the Pro trial.",
+                  "Do not claim that reconciliation across multiple billing systems is included in the Pro trial.",
+                  "Do not claim that multi-currency tracking across billing switches is included in the Pro trial.",
+                  "Do not imply that the documented billing connection and automatic model-building capability is necessarily included in the Pro trial.",
+                  "Do not turn OneVision's testimonial into a guaranteed or universal outcome.",
+                  "Do not claim that the recipient currently has conflicting numbers, an upcoming board meeting or a specific installed billing system.",
+                  "Do not add AI, CRM, PLG automation, peer benchmarking, multi-currency support or complex-plan support to the primary argument.",
+                  "Do not claim that ChartMogul is unique or that competitors cannot provide subscription analytics.",
+                  "Keep the connection route attached to its cited source. A native or prebuilt integration and a custom HTTP/webhook endpoint are separate setup paths unless the source explicitly equates them. A platform name alone establishes neither manual endpoint configuration nor a no-setup connector. Keep unknown setup requirements unknown; do not mix the steps or benefits of those paths.",
+                  "No verified link connects this argument to the proposed buyer problem. Explain only the documented function; do not invent a pain, a switching story or a promised outcome.",
+                  "The assigned evidence does not establish that this function resolves the proposed buyer problem. Inspecting its source or starting an account does not demonstrate that outcome, a completed integration, or a result for this recipient."
+                ],
+                "forbidden_evidence_ids": [
+                  "E1",
+                  "E11",
+                  "E18",
+                  "E2",
+                  "E20",
+                  "E21",
+                  "E22",
+                  "E3",
+                  "E4",
+                  "E5",
+                  "E6",
+                  "E9"
+                ],
+                "forbidden_capability_ids": [],
+                "objection": "",
+                "tone": "Confident, matter-of-fact and concise; explain the revenue-data mechanism plainly without hype.",
+                "call_to_action": "Try ChartMogul Pro free for 14 days.",
+                "next_step_decision": "",
+                "next_step_value": "",
+                "next_step_evidence_ids": [],
+                "next_step_limit": "The assigned evidence does not establish that this function resolves the proposed buyer problem. Inspecting its source or starting an account does not demonstrate that outcome, a completed integration, or a result for this recipient.",
+                "subject_strategy": "Respect the campaign objective and name only a supported proposition; do not imply novelty without user-provided or dated support.",
+                "must_not_reuse": [],
+                "steering": {
+                  "directions": [],
+                  "include_evidence_ids": [],
+                  "exclude_evidence_ids": [],
+                  "use": [],
+                  "avoid": [],
+                  "context_only": [],
+                  "excluded_values": []
+                }
+              }
+            ],
+            "voice_notes": "Use short declarative sentences followed by one plain explanation. Prefer accurate, defensible, recurring revenue and subscription model. Avoid inflated transformation language and clever taglines.",
+            "contract": {
+              "kind": "single_email",
+              "count": 1,
+              "count_is_explicit": true,
+              "evidence": "The user explicitly requested: \"Write exactly one email.\""
+            }
+          },
+          "changed_fields": [
+            "intent",
+            "promise",
+            "orientation",
+            "arc",
+            "sequence_rationale",
+            "emails"
+          ]
+        },
+        {
+          "raw_plan": {
+            "interpretation": "I interpret this as a single acquisition email introducing ChartMogul to solution-aware finance leaders and founders responsible for recurring-revenue reporting. The email should sell the documented billing-data-to-subscription-model workflow and ask the reader to begin the 14-day Pro trial, rather than onboard an existing user.",
+            "pipeline_version": 2,
+            "strategy_mode": "planned",
+            "intent": {
+              "objective": "custom",
+              "objective_source": "inferred",
+              "reader_relationship": "unknown",
+              "relationship_source": "inferred",
+              "announcement": "",
+              "reason_now": "",
+              "desired_action": ""
+            },
+            "reader": "A finance leader or founder preparing recurring-revenue figures for board decks or investor updates and evaluating a more consistent basis for MRR and related reporting.",
+            "reader_segment": "Finance/founder preparing board decks and investor updates",
+            "reader_profile_override": "",
+            "reader_scope": "Recurring-revenue SaaS finance leaders and founders evaluating subscription analytics for board or investor reporting. Do not assume a particular deadline, installed billing system or current reporting process.",
+            "fixed_cta_url": "https://chartmogul.com/",
+            "promise": "Connect billing data and have ChartMogul automatically build the subscription model used to examine MRR and related recurring-revenue metrics.",
+            "orientation": "ChartMogul is a subscription analytics platform that connects to billing systems and builds a subscription revenue model from that data for MRR, ARR, churn, retention and expansion reporting.",
+            "arc": "Introduce one concrete reporting workflow, substantiate it with closely matched customer proof, and reduce the cost of evaluating ChartMogul with the documented 14-day Pro trial.",
+            "sequence_rationale": "The repaired email uses a direct, function-led proposition rather than asserting an unverified recipient problem. E10 establishes the billing-system connection and automatic subscription-model mechanism, E12 supplies conditional customer proof after data normalization, and E8 supports the fixed trial action. The email remains within the qualified finance/founder reporting scope without promising that the workflow is included in the trial.",
+            "emails": [
+              {
+                "problem_ids": [],
+                "offer_id": "offering",
+                "action_id": "try_pro_free",
+                "selection_reason": "The selected reader is responsible for recurring-revenue reporting. ChartMogul's documented ability to build a subscription model automatically after a billing system is connected is the strongest supported operational reason to consider it, while OneVision supplies closely matched proof of the clarity that followed its own data normalization.",
+                "next_step_url": "https://chartmogul.com/",
+                "destination_kind": "web",
+                "argument_issue": "",
+                "value_case": {
+                  "reader_benefit": "For a finance leader or founder responsible for recurring-revenue reporting, the resulting subscription model provides one modeled basis from which to examine MRR and related subscription metrics.",
+                  "mechanism": "The reader connects Stripe, Paddle or another billing system, after which ChartMogul builds the subscription model automatically. OneVision separately reports that, after normalizing its data in ChartMogul, it gained recurring-revenue clarity down to the dollar.",
+                  "evidence_ids": [
+                    "E10",
+                    "E12"
+                  ],
+                  "decision_conditions": [
+                    "Automatic model building follows connection of Stripe, Paddle or another billing system.",
+                    "The dollar-level clarity statement is OneVision's result after normalizing its data; it is not a guaranteed result for other companies.",
+                    "The available evidence does not establish that the billing connection or automatic model-building capability is included in the Pro trial."
+                  ]
+                },
+                "claim_conditions": [
+                  "Attach automatic model building to the prerequisite of connecting Stripe, Paddle or another billing system.",
+                  "Attribute the dollar-level clarity result specifically to OneVision and state that it followed normalization of OneVision's data.",
+                  "State that Pro is free for 14 days and that the customer then chooses a plan.",
+                  "Do not promise faster board-deck turnaround or any time saving.",
+                  "Do not promise zero disruption to existing billing, BI or finance tooling.",
+                  "Do not promise reduced headcount or replacement of an incumbent BI layer, spreadsheets or an accounting system.",
+                  "Do not claim that ChartMogul reconciles CRM or accounting-ledger figures.",
+                  "Do not promise a valuation, fundraising or diligence outcome.",
+                  "Do not claim that ChartMogul AI, the MCP server or peer benchmarking is included in the trial plan.",
+                  "Do not claim that tiered, multi-component, add-on or usage-based billing support is included in the Pro trial.",
+                  "Do not claim that reconciliation across multiple billing systems is included in the Pro trial.",
+                  "Do not claim that multi-currency tracking across billing switches is included in the trial.",
+                  "This is a documented-use draft, not proof of broader audience fit or recipient circumstances."
+                ],
+                "position": 1,
+                "target_audience": "Finance/founder preparing board decks and investor updates",
+                "job": "Get the reader to start the 14-day Pro trial by showing how ChartMogul turns connected billing data into a subscription model for recurring-revenue reporting.",
+                "single_idea": "Once a billing system is connected, ChartMogul automatically builds the subscription model used to examine MRR and related recurring-revenue metrics.",
+                "felt_need": "",
+                "status_quo": "",
+                "why_it_fails": "",
+                "mechanism": "Connect Stripe, Paddle or another billing system, and ChartMogul builds the subscription model automatically. OneVision's founder says that after the company normalized its data in ChartMogul, it gained recurring-revenue clarity down to the dollar.",
+                "alternative_ideas": [],
+                "alternative_arguments": [
+                  {
+                    "problem_ids": [],
+                    "offer_id": "",
+                    "action_id": "",
+                    "selection_reason": "Board and investor reporting can require external context as well as internal metrics. ChartMogul's documented comparison against more than 2,500 SaaS peers by similar ARR or ARPA provides a distinct reason for this reader to inspect the product.",
+                    "next_step_url": "https://chartmogul.com/accurate-revenue-metrics/",
+                    "destination_kind": "web",
+                    "argument_issue": "",
+                    "value_case": {
+                      "reader_benefit": "A finance leader or founder can place revenue performance in the context of SaaS companies with a similar ARR or ARPA.",
+                      "mechanism": "ChartMogul compares consistently modeled revenue metrics against more than 2,500 SaaS peers and allows comparison by similar ARR or ARPA.",
+                      "evidence_ids": [
+                        "E17"
+                      ],
+                      "decision_conditions": [
+                        "The evidence establishes the benchmarking capability but does not establish that it is included in the 14-day Pro trial."
+                      ]
+                    },
+                    "claim_conditions": [
+                      "Describe the benchmark as a comparison against more than 2,500 SaaS peers by similar ARR or ARPA.",
+                      "Do not describe the benchmarking capability as included in the 14-day Pro trial.",
+                      "Do not claim that benchmarking improves fundraising, valuation or board outcomes.",
+                      "Do not claim that ChartMogul is unique or that competitors lack comparable capabilities."
+                    ],
+                    "single_idea": "ChartMogul lets companies compare revenue metrics with more than 2,500 SaaS peers, including peers with similar ARR or ARPA.",
+                    "felt_need": "",
+                    "status_quo": "",
+                    "why_it_fails": "",
+                    "mechanism": "ChartMogul uses consistently modeled revenue metrics to support apples-to-apples comparisons with more than 2,500 SaaS peers by similar ARR or ARPA.",
+                    "belief_shift": "Before: peer context may appear separate from subscription reporting. After: the reader sees that ChartMogul documents both the revenue metrics and a peer-comparison view for framing performance.",
+                    "evidence_ids": [
+                      "E17"
+                    ],
+                    "must_not_say": [
+                      "Do not claim that peer benchmarking is included in the Pro trial.",
+                      "Do not promise faster reporting, improved board reception, fundraising success, valuation gains or any other customer outcome.",
+                      "Do not claim that ChartMogul is unique or that competitors lack comparable benchmarking.",
+                      "Do not add AI, CRM, PLG automation, multi-currency support or complex-plan support to this argument."
+                    ],
+                    "objection": "The reader may need to know whether the comparison group is relevant to their company's scale or monetization model.",
+                    "call_to_action": "See how ChartMogul benchmarks SaaS revenue metrics.",
+                    "next_step_decision": "Decide whether comparison by similar ARR or ARPA would provide useful context for the company's recurring-revenue reporting.",
+                    "next_step_value": "The page explains that ChartMogul supports comparisons against more than 2,500 SaaS peers, including peers with similar ARR or ARPA.",
+                    "next_step_evidence_ids": [
+                      "E17"
+                    ],
+                    "next_step_limit": "The page does not establish trial entitlement, setup effort or a reporting outcome for this recipient.",
+                    "subject_strategy": "Lead with the concrete peer set and the ARR-or-ARPA comparison, without implying exclusivity or a guaranteed board or investor outcome."
+                  }
+                ],
+                "belief_shift": "Before: ChartMogul may be understood only as another place to view SaaS metrics. After: the reader sees the documented mechanism—connect billing data and have ChartMogul build the subscription model automatically—and has relevant customer proof that normalization produced dollar-level recurring-revenue clarity for OneVision.",
+                "evidence_ids": [
+                  "E8",
+                  "E10",
+                  "E12"
+                ],
+                "must_not_say": [
+                  "Do not claim faster board-deck turnaround or any time saving.",
+                  "Do not claim zero disruption to existing billing, BI or finance tooling.",
+                  "Do not claim reduced headcount or replacement of a BI layer, spreadsheet process or accounting system.",
+                  "Do not claim that ChartMogul reconciles CRM or accounting-ledger figures.",
+                  "Do not claim any valuation, fundraising or diligence outcome.",
+                  "Do not claim that ChartMogul AI, the MCP server or peer benchmarking is included in the Pro trial.",
+                  "Do not claim that support for tiered, multi-component, add-on or usage-based billing is included in the Pro trial.",
+                  "Do not claim that reconciliation across multiple billing systems is included in the Pro trial.",
+                  "Do not claim that multi-currency tracking across billing switches is included in the Pro trial.",
+                  "Do not imply that the documented billing connection and automatic model-building capability is necessarily included in the Pro trial.",
+                  "Do not turn OneVision's testimonial into a guaranteed or universal outcome.",
+                  "Do not claim that the recipient currently has conflicting numbers, uses manual exports or spreadsheet joins, has an upcoming board meeting or uses a specific billing system.",
+                  "Do not add AI, CRM, PLG automation, peer benchmarking, multi-currency support or complex-plan support to the primary argument.",
+                  "Do not claim that ChartMogul is unique or that competitors cannot provide subscription analytics.",
+                  "Keep the connection route attached to its cited source. Do not infer manual endpoint configuration, a no-setup connector or equivalence between native, prebuilt, automation and custom webhook routes.",
+                  "Do not claim that starting the trial demonstrates a completed integration or a result for this recipient."
+                ],
+                "forbidden_evidence_ids": [
+                  "E1",
+                  "E11",
+                  "E18",
+                  "E2",
+                  "E20",
+                  "E21",
+                  "E22",
+                  "E3",
+                  "E4",
+                  "E5",
+                  "E6",
+                  "E9"
+                ],
+                "forbidden_capability_ids": [],
+                "objection": "The reader may hesitate to begin a trial without knowing what must happen before ChartMogul can build the subscription model.",
+                "tone": "Confident, matter-of-fact and concise; explain the revenue-data mechanism plainly without hype.",
+                "call_to_action": "Try ChartMogul Pro free for 14 days.",
+                "next_step_decision": "Decide during the 14-day Pro trial whether to choose a ChartMogul plan for the business.",
+                "next_step_value": "The action starts the documented 14-day Pro trial; after the trial, the customer chooses the plan that is right for the business.",
+                "next_step_evidence_ids": [
+                  "E8"
+                ],
+                "next_step_limit": "The trial offer alone does not establish that billing-system connection, automatic model building or any other named capability is included in the trial, nor does it establish setup effort or a reporting result.",
+                "subject_strategy": "Name the billing-data-to-subscription-model operation and its relevance to recurring-revenue reporting; let the free 14-day trial reduce evaluation friction rather than become the main proposition.",
+                "must_not_reuse": [],
+                "steering": {
+                  "directions": [],
+                  "include_evidence_ids": [],
+                  "exclude_evidence_ids": [],
+                  "use": [],
+                  "avoid": [],
+                  "context_only": [],
+                  "excluded_values": []
+                }
+              }
+            ],
+            "voice_notes": "Use short declarative sentences followed by one plain explanation. Prefer accurate, defensible, recurring revenue and subscription model. Avoid inflated transformation language and clever taglines.",
+            "contract": {
+              "kind": "single_email",
+              "count": 1,
+              "count_is_explicit": true,
+              "evidence": "The user explicitly requested: \"Write exactly one email.\""
+            }
+          },
+          "effective_plan": {
+            "interpretation": "I interpret this as a single acquisition email introducing ChartMogul to solution-aware finance leaders and founders responsible for recurring-revenue reporting. The email should sell the documented billing-data-to-subscription-model workflow and ask the reader to begin the 14-day Pro trial, rather than onboard an existing user.",
+            "pipeline_version": 2,
+            "strategy_mode": "planned",
+            "intent": {
+              "objective": "custom",
+              "objective_source": "inferred",
+              "reader_relationship": "unknown",
+              "relationship_source": "inferred",
+              "announcement": "",
+              "reason_now": "",
+              "desired_action": ""
+            },
+            "reader": "Selected audience: Finance/founder preparing board decks and investor updates.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): Recurring-revenue SaaS companies where finance or RevOps must reconcile operational subscription metrics for executives, investors, or diligence.",
+            "reader_segment": "Finance/founder preparing board decks and investor updates",
+            "reader_profile_override": "",
+            "reader_scope": "",
+            "fixed_cta_url": "",
+            "promise": "Connect billing data and have ChartMogul automatically build the subscription model used to examine MRR and related recurring-revenue metrics.",
+            "orientation": "ChartMogul is a subscription analytics platform that connects to a company's billing systems and builds a subscription revenue model from that data to report MRR, ARR, churn, retention and expansion.",
+            "arc": "Introduce one concrete reporting workflow, substantiate it with closely matched customer proof, and reduce the cost of evaluating ChartMogul with the documented 14-day Pro trial.",
+            "sequence_rationale": "The repaired email uses a direct, function-led proposition rather than asserting an unverified recipient problem. E10 establishes the billing-system connection and automatic subscription-model mechanism, E12 supplies conditional customer proof after data normalization, and E8 supports the fixed trial action. The email remains within the qualified finance/founder reporting scope without promising that the workflow is included in the trial.",
+            "emails": [
+              {
+                "problem_ids": [],
+                "offer_id": "offering",
+                "action_id": "try_pro_free",
+                "selection_reason": "The selected reader is responsible for recurring-revenue reporting. ChartMogul's documented ability to build a subscription model automatically after a billing system is connected is the strongest supported operational reason to consider it, while OneVision supplies closely matched proof of the clarity that followed its own data normalization.",
+                "next_step_url": "https://chartmogul.com/",
+                "destination_kind": "web",
+                "argument_issue": "",
+                "value_case": {
+                  "reader_benefit": "For a finance leader or founder responsible for recurring-revenue reporting, the resulting subscription model provides one modeled basis from which to examine MRR and related subscription metrics.",
+                  "mechanism": "The reader connects Stripe, Paddle or another billing system, after which ChartMogul builds the subscription model automatically. OneVision separately reports that, after normalizing its data in ChartMogul, it gained recurring-revenue clarity down to the dollar.",
+                  "evidence_ids": [
+                    "E10",
+                    "E12"
+                  ],
+                  "decision_conditions": [
+                    "Automatic model building follows connection of Stripe, Paddle or another billing system.",
+                    "The dollar-level clarity statement is OneVision's result after normalizing its data; it is not a guaranteed result for other companies.",
+                    "The available evidence does not establish that the billing connection or automatic model-building capability is included in the Pro trial."
+                  ]
+                },
+                "claim_conditions": [
+                  "Attach automatic model building to the prerequisite of connecting Stripe, Paddle or another billing system.",
+                  "Attribute the dollar-level clarity result specifically to OneVision and state that it followed normalization of OneVision's data.",
+                  "State that Pro is free for 14 days and that the customer then chooses a plan.",
+                  "Do not promise faster board-deck turnaround or any time saving.",
+                  "Do not promise zero disruption to existing billing, BI or finance tooling.",
+                  "Do not promise reduced headcount or replacement of an incumbent BI layer, spreadsheets or an accounting system.",
+                  "Do not claim that ChartMogul reconciles CRM or accounting-ledger figures.",
+                  "Do not promise a valuation, fundraising or diligence outcome.",
+                  "Do not claim that ChartMogul AI, the MCP server or peer benchmarking is included in the trial plan.",
+                  "Do not claim that tiered, multi-component, add-on or usage-based billing support is included in the Pro trial.",
+                  "Do not claim that reconciliation across multiple billing systems is included in the Pro trial.",
+                  "Do not claim that multi-currency tracking across billing switches is included in the trial.",
+                  "This is a documented-use draft, not proof of broader audience fit or recipient circumstances.",
+                  "Do not promise: No claim of faster board-deck turnaround or any time saving — not established by the selected evidence.",
+                  "Do not promise: No claim of zero disruption to existing billing, BI or finance tooling.",
+                  "Do not promise: No claim of reduced headcount or of replacing an incumbent BI layer, spreadsheets or accounting system.",
+                  "Do not promise: No claim that ChartMogul reconciles CRM or accounting-ledger figures.",
+                  "Do not promise: No claim of a valuation, fundraising or diligence outcome (E18 withheld).",
+                  "Do not promise: No claim about ChartMogul AI, the MCP server or peer benchmarking being included in the trial plan.",
+                  "Do not promise: No claim that tiered, multi-component, add-on, or usage-based billing plans (E15) are included in the Pro trial — that quote is a generic capability claim not scoped to a named plan.",
+                  "Do not promise: No claim that reconciliation across multiple billing systems (E13) is part of the trial/Pro plan — unscoped to a named plan.",
+                  "Do not promise: No claim that multi-currency tracking across billing switches (E16) is included in the trial — unscoped to a named plan.",
+                  "Do not promise: No claim of zero disruption to existing billing, BI, or finance tooling.",
+                  "Do not promise: No claim of reduced headcount or of replacing an incumbent BI layer, spreadsheets, or accounting system.",
+                  "Do not promise: No claim of a valuation, fundraising, or diligence outcome.",
+                  "Do not promise: No claim about ChartMogul AI, the MCP server, or peer benchmarking being included in the trial plan.",
+                  "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit."
+                ],
+                "position": 1,
+                "target_audience": "Finance/founder preparing board decks and investor updates",
+                "job": "Get the reader to start the 14-day Pro trial by showing how ChartMogul turns connected billing data into a subscription model for recurring-revenue reporting.",
+                "single_idea": "Once a billing system is connected, ChartMogul automatically builds the subscription model used to examine MRR and related recurring-revenue metrics.",
+                "felt_need": "",
+                "status_quo": "",
+                "why_it_fails": "",
+                "mechanism": "Connect Stripe, Paddle or another billing system, and ChartMogul builds the subscription model automatically. OneVision's founder says that after the company normalized its data in ChartMogul, it gained recurring-revenue clarity down to the dollar.",
+                "alternative_ideas": [],
+                "alternative_arguments": [
+                  {
+                    "problem_ids": [],
+                    "offer_id": "offering",
+                    "action_id": "",
+                    "selection_reason": "Board and investor reporting can require external context as well as internal metrics. ChartMogul's documented comparison against more than 2,500 SaaS peers by similar ARR or ARPA provides a distinct reason for this reader to inspect the product.",
+                    "next_step_url": "https://chartmogul.com/accurate-revenue-metrics/",
+                    "destination_kind": "web",
+                    "argument_issue": "",
+                    "value_case": {
+                      "reader_benefit": "A finance leader or founder can place revenue performance in the context of SaaS companies with a similar ARR or ARPA.",
+                      "mechanism": "ChartMogul compares consistently modeled revenue metrics against more than 2,500 SaaS peers and allows comparison by similar ARR or ARPA.",
+                      "evidence_ids": [
+                        "E17"
+                      ],
+                      "decision_conditions": [
+                        "The evidence establishes the benchmarking capability but does not establish that it is included in the 14-day Pro trial."
+                      ]
+                    },
+                    "claim_conditions": [
+                      "Describe the benchmark as a comparison against more than 2,500 SaaS peers by similar ARR or ARPA.",
+                      "Do not describe the benchmarking capability as included in the 14-day Pro trial.",
+                      "Do not claim that benchmarking improves fundraising, valuation or board outcomes.",
+                      "Do not claim that ChartMogul is unique or that competitors lack comparable capabilities.",
+                      "Do not promise: No claim of faster board-deck turnaround or any time saving — not established by the selected evidence.",
+                      "Do not promise: No claim of zero disruption to existing billing, BI or finance tooling.",
+                      "Do not promise: No claim of reduced headcount or of replacing an incumbent BI layer, spreadsheets or accounting system.",
+                      "Do not promise: No claim that ChartMogul reconciles CRM or accounting-ledger figures.",
+                      "Do not promise: No claim of a valuation, fundraising or diligence outcome (E18 withheld).",
+                      "Do not promise: No claim about ChartMogul AI, the MCP server or peer benchmarking being included in the trial plan.",
+                      "Do not promise: No claim that tiered, multi-component, add-on, or usage-based billing plans (E15) are included in the Pro trial — that quote is a generic capability claim not scoped to a named plan.",
+                      "Do not promise: No claim that reconciliation across multiple billing systems (E13) is part of the trial/Pro plan — unscoped to a named plan.",
+                      "Do not promise: No claim that multi-currency tracking across billing switches (E16) is included in the trial — unscoped to a named plan.",
+                      "Do not promise: No claim of zero disruption to existing billing, BI, or finance tooling.",
+                      "Do not promise: No claim of reduced headcount or of replacing an incumbent BI layer, spreadsheets, or accounting system.",
+                      "Do not promise: No claim of a valuation, fundraising, or diligence outcome.",
+                      "Do not promise: No claim about ChartMogul AI, the MCP server, or peer benchmarking being included in the trial plan.",
+                      "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit."
+                    ],
+                    "single_idea": "ChartMogul lets companies compare revenue metrics with more than 2,500 SaaS peers, including peers with similar ARR or ARPA.",
+                    "felt_need": "",
+                    "status_quo": "",
+                    "why_it_fails": "",
+                    "mechanism": "ChartMogul uses consistently modeled revenue metrics to support apples-to-apples comparisons with more than 2,500 SaaS peers by similar ARR or ARPA.",
+                    "belief_shift": "Before: peer context may appear separate from subscription reporting. After: the reader sees that ChartMogul documents both the revenue metrics and a peer-comparison view for framing performance.",
+                    "evidence_ids": [
+                      "E17"
+                    ],
+                    "must_not_say": [
+                      "Do not claim that peer benchmarking is included in the Pro trial.",
+                      "Do not promise faster reporting, improved board reception, fundraising success, valuation gains or any other customer outcome.",
+                      "Do not claim that ChartMogul is unique or that competitors lack comparable benchmarking.",
+                      "Do not add AI, CRM, PLG automation, multi-currency support or complex-plan support to this argument."
+                    ],
+                    "objection": "The reader may need to know whether the comparison group is relevant to their company's scale or monetization model.",
+                    "call_to_action": "See how ChartMogul benchmarks SaaS revenue metrics.",
+                    "next_step_decision": "Decide whether comparison by similar ARR or ARPA would provide useful context for the company's recurring-revenue reporting.",
+                    "next_step_value": "The page explains that ChartMogul supports comparisons against more than 2,500 SaaS peers, including peers with similar ARR or ARPA.",
+                    "next_step_evidence_ids": [
+                      "E17"
+                    ],
+                    "next_step_limit": "The page does not establish trial entitlement, setup effort or a reporting outcome for this recipient.",
+                    "subject_strategy": "Lead with the concrete peer set and the ARR-or-ARPA comparison, without implying exclusivity or a guaranteed board or investor outcome."
+                  }
+                ],
+                "belief_shift": "Before: ChartMogul may be understood only as another place to view SaaS metrics. After: the reader sees the documented mechanism—connect billing data and have ChartMogul build the subscription model automatically—and has relevant customer proof that normalization produced dollar-level recurring-revenue clarity for OneVision.",
+                "evidence_ids": [
+                  "E8",
+                  "E10",
+                  "E12"
+                ],
+                "must_not_say": [
+                  "Do not claim faster board-deck turnaround or any time saving.",
+                  "Do not claim zero disruption to existing billing, BI or finance tooling.",
+                  "Do not claim reduced headcount or replacement of a BI layer, spreadsheet process or accounting system.",
+                  "Do not claim that ChartMogul reconciles CRM or accounting-ledger figures.",
+                  "Do not claim any valuation, fundraising or diligence outcome.",
+                  "Do not claim that ChartMogul AI, the MCP server or peer benchmarking is included in the Pro trial.",
+                  "Do not claim that support for tiered, multi-component, add-on or usage-based billing is included in the Pro trial.",
+                  "Do not claim that reconciliation across multiple billing systems is included in the Pro trial.",
+                  "Do not claim that multi-currency tracking across billing switches is included in the Pro trial.",
+                  "Do not imply that the documented billing connection and automatic model-building capability is necessarily included in the Pro trial.",
+                  "Do not turn OneVision's testimonial into a guaranteed or universal outcome.",
+                  "Do not claim that the recipient currently has conflicting numbers, uses manual exports or spreadsheet joins, has an upcoming board meeting or uses a specific billing system.",
+                  "Do not add AI, CRM, PLG automation, peer benchmarking, multi-currency support or complex-plan support to the primary argument.",
+                  "Do not claim that ChartMogul is unique or that competitors cannot provide subscription analytics.",
+                  "Keep the connection route attached to its cited source. Do not infer manual endpoint configuration, a no-setup connector or equivalence between native, prebuilt, automation and custom webhook routes.",
+                  "Do not claim that starting the trial demonstrates a completed integration or a result for this recipient.",
+                  "Keep the connection route attached to its cited source. A native or prebuilt integration and a custom HTTP/webhook endpoint are separate setup paths unless the source explicitly equates them. A platform name alone establishes neither manual endpoint configuration nor a no-setup connector. Keep unknown setup requirements unknown; do not mix the steps or benefits of those paths."
+                ],
+                "forbidden_evidence_ids": [
+                  "E1",
+                  "E11",
+                  "E18",
+                  "E2",
+                  "E20",
+                  "E21",
+                  "E22",
+                  "E3",
+                  "E4",
+                  "E5",
+                  "E6",
+                  "E9"
+                ],
+                "forbidden_capability_ids": [],
+                "objection": "The reader may hesitate to begin a trial without knowing what must happen before ChartMogul can build the subscription model.",
+                "tone": "Confident, matter-of-fact and concise; explain the revenue-data mechanism plainly without hype.",
+                "call_to_action": "Try ChartMogul Pro free for 14 days.",
+                "next_step_decision": "Decide during the 14-day Pro trial whether to choose a ChartMogul plan for the business.",
+                "next_step_value": "The action starts the documented 14-day Pro trial; after the trial, the customer chooses the plan that is right for the business.",
+                "next_step_evidence_ids": [
+                  "E8"
+                ],
+                "next_step_limit": "The trial offer alone does not establish that billing-system connection, automatic model building or any other named capability is included in the trial, nor does it establish setup effort or a reporting result.",
+                "subject_strategy": "Name the billing-data-to-subscription-model operation and its relevance to recurring-revenue reporting; let the free 14-day trial reduce evaluation friction rather than become the main proposition.",
+                "must_not_reuse": [],
+                "steering": {
+                  "directions": [],
+                  "include_evidence_ids": [],
+                  "exclude_evidence_ids": [],
+                  "use": [],
+                  "avoid": [],
+                  "context_only": [],
+                  "excluded_values": []
+                }
+              }
+            ],
+            "voice_notes": "Use short declarative sentences followed by one plain explanation. Prefer accurate, defensible, recurring revenue and subscription model. Avoid inflated transformation language and clever taglines.",
+            "contract": {
+              "kind": "single_email",
+              "count": 1,
+              "count_is_explicit": true,
+              "evidence": "one email"
+            }
+          },
+          "changed_fields": [
+            "fixed_cta_url",
+            "orientation",
+            "emails"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "brief_ready",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Campaign brief: Connect billing data and have ChartMogul automatically build the subscription model used to examine MRR and related recurring-revenue metrics.",
+      "at": "2026-11-10T00:26:08.581598+00:00",
+      "reader": "Selected audience: Finance/founder preparing board decks and investor updates.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): Recurring-revenue SaaS companies where finance or RevOps must reconcile operational subscription metrics for executives, investors, or diligence.",
+      "reader_segment": "Finance/founder preparing board decks and investor updates",
+      "promise": "Connect billing data and have ChartMogul automatically build the subscription model used to examine MRR and related recurring-revenue metrics.",
+      "arc": "Introduce one concrete reporting workflow, substantiate it with closely matched customer proof, and reduce the cost of evaluating ChartMogul with the documented 14-day Pro trial.",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Get the reader to start the 14-day Pro trial by showing how ChartMogul turns connected billing data into a subscription model for recurring-revenue reporting.",
+          "single_idea": "Once a billing system is connected, ChartMogul automatically builds the subscription model used to examine MRR and related recurring-revenue metrics.",
+          "selection_reason": "The selected reader is responsible for recurring-revenue reporting. ChartMogul's documented ability to build a subscription model automatically after a billing system is connected is the strongest supported operational reason to consider it, while OneVision supplies closely matched proof of the clarity that followed its own data normalization.",
+          "problem_ids": [],
+          "action_id": "try_pro_free",
+          "next_step_url": "https://chartmogul.com/",
+          "argument_issue": "",
+          "objection": "The reader may hesitate to begin a trial without knowing what must happen before ChartMogul can build the subscription model.",
+          "evidence_ids": [
+            "E8",
+            "E10",
+            "E12"
+          ],
+          "must_not_say": [
+            "Do not claim faster board-deck turnaround or any time saving.",
+            "Do not claim zero disruption to existing billing, BI or finance tooling.",
+            "Do not claim reduced headcount or replacement of a BI layer, spreadsheet process or accounting system.",
+            "Do not claim that ChartMogul reconciles CRM or accounting-ledger figures.",
+            "Do not claim any valuation, fundraising or diligence outcome.",
+            "Do not claim that ChartMogul AI, the MCP server or peer benchmarking is included in the Pro trial.",
+            "Do not claim that support for tiered, multi-component, add-on or usage-based billing is included in the Pro trial.",
+            "Do not claim that reconciliation across multiple billing systems is included in the Pro trial.",
+            "Do not claim that multi-currency tracking across billing switches is included in the Pro trial.",
+            "Do not imply that the documented billing connection and automatic model-building capability is necessarily included in the Pro trial.",
+            "Do not turn OneVision's testimonial into a guaranteed or universal outcome.",
+            "Do not claim that the recipient currently has conflicting numbers, uses manual exports or spreadsheet joins, has an upcoming board meeting or uses a specific billing system.",
+            "Do not add AI, CRM, PLG automation, peer benchmarking, multi-currency support or complex-plan support to the primary argument.",
+            "Do not claim that ChartMogul is unique or that competitors cannot provide subscription analytics.",
+            "Keep the connection route attached to its cited source. Do not infer manual endpoint configuration, a no-setup connector or equivalence between native, prebuilt, automation and custom webhook routes.",
+            "Do not claim that starting the trial demonstrates a completed integration or a result for this recipient.",
+            "Keep the connection route attached to its cited source. A native or prebuilt integration and a custom HTTP/webhook endpoint are separate setup paths unless the source explicitly equates them. A platform name alone establishes neither manual endpoint configuration nor a no-setup connector. Keep unknown setup requirements unknown; do not mix the steps or benefits of those paths."
+          ],
+          "claim_conditions": [
+            "Attach automatic model building to the prerequisite of connecting Stripe, Paddle or another billing system.",
+            "Attribute the dollar-level clarity result specifically to OneVision and state that it followed normalization of OneVision's data.",
+            "State that Pro is free for 14 days and that the customer then chooses a plan.",
+            "Do not promise faster board-deck turnaround or any time saving.",
+            "Do not promise zero disruption to existing billing, BI or finance tooling.",
+            "Do not promise reduced headcount or replacement of an incumbent BI layer, spreadsheets or an accounting system.",
+            "Do not claim that ChartMogul reconciles CRM or accounting-ledger figures.",
+            "Do not promise a valuation, fundraising or diligence outcome.",
+            "Do not claim that ChartMogul AI, the MCP server or peer benchmarking is included in the trial plan.",
+            "Do not claim that tiered, multi-component, add-on or usage-based billing support is included in the Pro trial.",
+            "Do not claim that reconciliation across multiple billing systems is included in the Pro trial.",
+            "Do not claim that multi-currency tracking across billing switches is included in the trial.",
+            "This is a documented-use draft, not proof of broader audience fit or recipient circumstances.",
+            "Do not promise: No claim of faster board-deck turnaround or any time saving — not established by the selected evidence.",
+            "Do not promise: No claim of zero disruption to existing billing, BI or finance tooling.",
+            "Do not promise: No claim of reduced headcount or of replacing an incumbent BI layer, spreadsheets or accounting system.",
+            "Do not promise: No claim that ChartMogul reconciles CRM or accounting-ledger figures.",
+            "Do not promise: No claim of a valuation, fundraising or diligence outcome (E18 withheld).",
+            "Do not promise: No claim about ChartMogul AI, the MCP server or peer benchmarking being included in the trial plan.",
+            "Do not promise: No claim that tiered, multi-component, add-on, or usage-based billing plans (E15) are included in the Pro trial — that quote is a generic capability claim not scoped to a named plan.",
+            "Do not promise: No claim that reconciliation across multiple billing systems (E13) is part of the trial/Pro plan — unscoped to a named plan.",
+            "Do not promise: No claim that multi-currency tracking across billing switches (E16) is included in the trial — unscoped to a named plan.",
+            "Do not promise: No claim of zero disruption to existing billing, BI, or finance tooling.",
+            "Do not promise: No claim of reduced headcount or of replacing an incumbent BI layer, spreadsheets, or accounting system.",
+            "Do not promise: No claim of a valuation, fundraising, or diligence outcome.",
+            "Do not promise: No claim about ChartMogul AI, the MCP server, or peer benchmarking being included in the trial plan.",
+            "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit."
+          ],
+          "felt_need": "",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "Connect Stripe, Paddle or another billing system, and ChartMogul builds the subscription model automatically. OneVision's founder says that after the company normalized its data in ChartMogul, it gained recurring-revenue clarity down to the dollar.",
+          "call_to_action": "Try ChartMogul Pro free for 14 days.",
+          "next_step_decision": "Decide during the 14-day Pro trial whether to choose a ChartMogul plan for the business.",
+          "next_step_value": "The action starts the documented 14-day Pro trial; after the trial, the customer chooses the plan that is right for the business.",
+          "next_step_evidence_ids": [
+            "E8"
+          ],
+          "next_step_limit": "The trial offer alone does not establish that billing-system connection, automatic model building or any other named capability is included in the trial, nor does it establish setup effort or a reporting result.",
+          "alternative_arguments": [
+            {
+              "problem_ids": [],
+              "offer_id": "offering",
+              "action_id": "",
+              "selection_reason": "Board and investor reporting can require external context as well as internal metrics. ChartMogul's documented comparison against more than 2,500 SaaS peers by similar ARR or ARPA provides a distinct reason for this reader to inspect the product.",
+              "next_step_url": "https://chartmogul.com/accurate-revenue-metrics/",
+              "destination_kind": "web",
+              "argument_issue": "",
+              "value_case": {
+                "reader_benefit": "A finance leader or founder can place revenue performance in the context of SaaS companies with a similar ARR or ARPA.",
+                "mechanism": "ChartMogul compares consistently modeled revenue metrics against more than 2,500 SaaS peers and allows comparison by similar ARR or ARPA.",
+                "evidence_ids": [
+                  "E17"
+                ],
+                "decision_conditions": [
+                  "The evidence establishes the benchmarking capability but does not establish that it is included in the 14-day Pro trial."
+                ]
+              },
+              "claim_conditions": [
+                "Describe the benchmark as a comparison against more than 2,500 SaaS peers by similar ARR or ARPA.",
+                "Do not describe the benchmarking capability as included in the 14-day Pro trial.",
+                "Do not claim that benchmarking improves fundraising, valuation or board outcomes.",
+                "Do not claim that ChartMogul is unique or that competitors lack comparable capabilities.",
+                "Do not promise: No claim of faster board-deck turnaround or any time saving — not established by the selected evidence.",
+                "Do not promise: No claim of zero disruption to existing billing, BI or finance tooling.",
+                "Do not promise: No claim of reduced headcount or of replacing an incumbent BI layer, spreadsheets or accounting system.",
+                "Do not promise: No claim that ChartMogul reconciles CRM or accounting-ledger figures.",
+                "Do not promise: No claim of a valuation, fundraising or diligence outcome (E18 withheld).",
+                "Do not promise: No claim about ChartMogul AI, the MCP server or peer benchmarking being included in the trial plan.",
+                "Do not promise: No claim that tiered, multi-component, add-on, or usage-based billing plans (E15) are included in the Pro trial — that quote is a generic capability claim not scoped to a named plan.",
+                "Do not promise: No claim that reconciliation across multiple billing systems (E13) is part of the trial/Pro plan — unscoped to a named plan.",
+                "Do not promise: No claim that multi-currency tracking across billing switches (E16) is included in the trial — unscoped to a named plan.",
+                "Do not promise: No claim of zero disruption to existing billing, BI, or finance tooling.",
+                "Do not promise: No claim of reduced headcount or of replacing an incumbent BI layer, spreadsheets, or accounting system.",
+                "Do not promise: No claim of a valuation, fundraising, or diligence outcome.",
+                "Do not promise: No claim about ChartMogul AI, the MCP server, or peer benchmarking being included in the trial plan.",
+                "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit."
+              ],
+              "single_idea": "ChartMogul lets companies compare revenue metrics with more than 2,500 SaaS peers, including peers with similar ARR or ARPA.",
+              "felt_need": "",
+              "status_quo": "",
+              "why_it_fails": "",
+              "mechanism": "ChartMogul uses consistently modeled revenue metrics to support apples-to-apples comparisons with more than 2,500 SaaS peers by similar ARR or ARPA.",
+              "belief_shift": "Before: peer context may appear separate from subscription reporting. After: the reader sees that ChartMogul documents both the revenue metrics and a peer-comparison view for framing performance.",
+              "evidence_ids": [
+                "E17"
+              ],
+              "must_not_say": [
+                "Do not claim that peer benchmarking is included in the Pro trial.",
+                "Do not promise faster reporting, improved board reception, fundraising success, valuation gains or any other customer outcome.",
+                "Do not claim that ChartMogul is unique or that competitors lack comparable benchmarking.",
+                "Do not add AI, CRM, PLG automation, multi-currency support or complex-plan support to this argument."
+              ],
+              "objection": "The reader may need to know whether the comparison group is relevant to their company's scale or monetization model.",
+              "call_to_action": "See how ChartMogul benchmarks SaaS revenue metrics.",
+              "next_step_decision": "Decide whether comparison by similar ARR or ARPA would provide useful context for the company's recurring-revenue reporting.",
+              "next_step_value": "The page explains that ChartMogul supports comparisons against more than 2,500 SaaS peers, including peers with similar ARR or ARPA.",
+              "next_step_evidence_ids": [
+                "E17"
+              ],
+              "next_step_limit": "The page does not establish trial entitlement, setup effort or a reporting outcome for this recipient.",
+              "subject_strategy": "Lead with the concrete peer set and the ARR-or-ARPA comparison, without implying exclusivity or a guaranteed board or investor outcome."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Campaign intelligence applied to the normalized brief",
+      "at": "2026-11-10T00:26:08.586041+00:00",
+      "phase": "intelligence",
+      "selected_audience": "Finance/founder preparing board decks and investor updates",
+      "audience_resolution_status": "audience_research_loaded",
+      "audience_research_id": "6b6c7651-3595-43c3-8a38-158528aae74d",
+      "audience_research_version": 1,
+      "dossier_status": "current",
+      "dossier_id": "c298d836-da8c-4df8-8ffe-277d9c3d8fea",
+      "dossier_version": 1,
+      "dossier_schema_version": 2,
+      "stale_reasons": [],
+      "legacy_fallback_used": false,
+      "qualified_subsegment": "One email introduces ChartMogul as a subscription analytics platform for recurring-revenue reporting and gives one next step: start the 14-day free Pro trial and connect Stripe, Paddle, or another billing system, after which ChartMogul builds the subscription model automatically so MRR and related recurring-revenue metrics come from one model instead of hand-joined exports. A customer testimonial (OneVision) is used as proof that normalizing billing data in ChartMogul produced defensible, dollar-level revenue clarity.",
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [
+        "Do not promise: No claim of faster board-deck turnaround or any time saving — not established by the selected evidence.",
+        "Do not promise: No claim of zero disruption to existing billing, BI or finance tooling.",
+        "Do not promise: No claim of reduced headcount or of replacing an incumbent BI layer, spreadsheets or accounting system.",
+        "Do not promise: No claim that ChartMogul reconciles CRM or accounting-ledger figures.",
+        "Do not promise: No claim of a valuation, fundraising or diligence outcome (E18 withheld).",
+        "Do not promise: No claim about ChartMogul AI, the MCP server or peer benchmarking being included in the trial plan.",
+        "Do not promise: No claim that tiered, multi-component, add-on, or usage-based billing plans (E15) are included in the Pro trial — that quote is a generic capability claim not scoped to a named plan.",
+        "Do not promise: No claim that reconciliation across multiple billing systems (E13) is part of the trial/Pro plan — unscoped to a named plan.",
+        "Do not promise: No claim that multi-currency tracking across billing switches (E16) is included in the trial — unscoped to a named plan.",
+        "Do not promise: No claim of zero disruption to existing billing, BI, or finance tooling.",
+        "Do not promise: No claim of reduced headcount or of replacing an incumbent BI layer, spreadsheets, or accounting system.",
+        "Do not promise: No claim of a valuation, fundraising, or diligence outcome.",
+        "Do not promise: No claim about ChartMogul AI, the MCP server, or peer benchmarking being included in the trial plan.",
+        "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit."
+      ],
+      "validation_warnings": [
+        "Publication date unknown; retrieval today does not establish current applicability. Finance staff at a described SaaS company maintained numerous separate spreadsheets to manually reconcile billing, accounting, and CRM data into investor-grade metrics.",
+        "Publication date unknown; retrieval today does not establish current applicability. Revenue metrics for board and investor reports were produced through manual spreadsheet joins and CSV exports rather than a governed data layer.",
+        "Publication date unknown; retrieval today does not establish current applicability. A single, trusted version of recurring-revenue numbers that does not require repeated manual reconciliation or explanation to leadership.",
+        "Publication date unknown; retrieval today does not establish current applicability. A described SaaS company was characterized by use of separate billing, accounting, and CRM systems that did not agree with one another.",
+        "Moved product questions without an explicit audience requirement to decision gaps.",
+        "Defining audience need is unassessed or its references required normalization.",
+        "Ignored unavailable dossier ranking E9.",
+        "Ignored unavailable dossier ranking E18.",
+        "Ignored unavailable dossier ranking E20.",
+        "Ignored unavailable dossier ranking E3.",
+        "Ignored unavailable dossier ranking E5.",
+        "Ignored unavailable dossier ranking E6.",
+        "Ignored unavailable dossier ranking E1.",
+        "Ignored unavailable dossier ranking E2.",
+        "Ignored unavailable dossier ranking E21.",
+        "Ignored unavailable dossier ranking E22.",
+        "Ignored unavailable dossier ranking E4.",
+        "The proposition referenced an unknown or unsupported problem id.",
+        "The proposed current alternative was not established by audience research; it remains unknown.",
+        "The proposed buyer problem was not established by the selected audience research; no substitute pain was inserted."
+      ]
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Strategist: 1 email(s) to Selected audience: Finance/founder preparing board decks and investor updates.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): Recurring-revenue SaaS companies where finance or RevOps must reconcile operational subscription metrics for executives, investors, or diligence.",
+      "at": "2026-11-10T00:26:08.601053+00:00",
+      "agent_name": "Strategist",
+      "agent_execution_id": "a415dc92-63c0-4399-b81f-85649179bfc4",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 64400,
+      "output_tokens": 9673,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.748251,
+      "duration_ms": 141425.20099994726,
+      "attempt": 1,
+      "summary": "1 email(s) to Selected audience: Finance/founder preparing board decks and investor updates.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): Recurring-revenue SaaS companies where finance or RevOps must reconcile operational subscription metrics for executives, investors, or diligence.",
+      "assets_produced": []
+    },
+    {
+      "type": "phase",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": null,
+      "step": 1,
+      "level": "info",
+      "message": "Drafts will be read cold by: Finance/founder preparing board decks and investor updates",
+      "at": "2026-11-10T00:26:08.606615+00:00",
+      "phase": "strategy",
+      "segment": "Finance/founder preparing board decks and investor updates",
+      "matched": true,
+      "audience_source": "compiled"
+    },
+    {
+      "type": "phase",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": null,
+      "step": 1,
+      "level": "info",
+      "message": "Email 1 of 1: Once a billing system is connected, ChartMogul automatically builds the subscription model used to examine MRR and related recurring-revenue metrics.",
+      "at": "2026-11-10T00:26:08.714553+00:00",
+      "phase": "craft",
+      "position": 1
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "info",
+      "message": "Email Writer: Email 1 · first draft",
+      "at": "2026-11-10T00:26:08.722131+00:00",
+      "agent_name": "Email Writer",
+      "label": "Email 1 · first draft",
+      "position": 1,
+      "attempt": 1
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "debug",
+      "message": "Sent 74,711 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-10T00:26:08.753165+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 74711
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 1,051 characters in 9.5s (25,901 in / 439 out)",
+      "at": "2026-11-10T00:26:18.233362+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 25901,
+      "output_tokens": 439,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.220378,
+      "duration_ms": 9476.03809996508,
+      "response_chars": 1051
+    },
+    {
+      "type": "draft",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "info",
+      "message": "Email 1, draft 1: \"Turn billing data into revenue metrics\"",
+      "at": "2026-11-10T00:26:18.240479+00:00",
+      "position": 1,
+      "attempt": 1,
+      "subject": "Turn billing data into revenue metrics",
+      "preview_text": "Build a subscription model for MRR, ARR, churn, retention and expansion.",
+      "greeting": "Hi there,",
+      "body": "Connect Stripe, Paddle or another billing system. ChartMogul then automatically builds a subscription model you can use to examine MRR and related recurring-revenue metrics.\n\nChartMogul is a subscription analytics platform for reporting MRR, ARR, churn, retention and expansion from billing and subscription data. That gives board decks and investor updates a modeled basis for discussing recurring revenue and its movements.\n\nAfter OneVision normalized its data in ChartMogul, founder and CEO Joseph Kolchinsky said the company gained **“recurring revenue clarity down to the dollar.”**\n\nTry ChartMogul Pro **free for 14 days**, then choose the plan that is right for your business.",
+      "call_to_action": "Try Pro free for 14 days",
+      "sign_off": "- ChartMogul",
+      "postscript": "",
+      "word_count": 100
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "info",
+      "message": "Email Writer: Drafted \"Turn billing data into revenue metrics\"",
+      "at": "2026-11-10T00:26:18.252169+00:00",
+      "agent_name": "Email Writer",
+      "agent_execution_id": "75ddff37-21f3-457e-bac2-8f734912fcad",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 25901,
+      "output_tokens": 439,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.220378,
+      "duration_ms": 9476.03809996508,
+      "attempt": 1,
+      "summary": "Drafted \"Turn billing data into revenue metrics\"",
+      "assets_produced": []
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "claim_reviewer",
+      "step": 3,
+      "level": "info",
+      "message": "Claim Reviewer: Email 1 · checking claims against sources",
+      "at": "2026-11-10T00:26:18.262655+00:00",
+      "agent_name": "Claim Reviewer",
+      "label": "Email 1 · checking claims against sources"
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "claim_reviewer",
+      "step": 3,
+      "level": "debug",
+      "message": "Sent 47,254 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-10T00:26:18.282785+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 47254
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "claim_reviewer",
+      "step": 3,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 7,351 characters in 39.2s (20,757 in / 2,523 out)",
+      "at": "2026-11-10T00:26:57.468062+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 20757,
+      "output_tokens": 2523,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.241746,
+      "duration_ms": 39180.352900060825,
+      "response_chars": 7351
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "claim_reviewer",
+      "step": 3,
+      "level": "info",
+      "message": "Claim Reviewer: Source review passed",
+      "at": "2026-11-10T00:26:57.493756+00:00",
+      "agent_name": "Claim Reviewer",
+      "agent_execution_id": "0b32e72f-3a67-459e-a33a-a1a190c020be",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 20757,
+      "output_tokens": 2523,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.241746,
+      "duration_ms": 39180.352900060825,
+      "attempt": 1,
+      "summary": "Source review passed",
+      "assets_produced": []
+    },
+    {
+      "type": "gates",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "email_writer",
+      "step": 3,
+      "level": "debug",
+      "message": "Email 1: every automatic check passed",
+      "at": "2026-11-10T00:26:57.498268+00:00",
+      "position": 1,
+      "attempt": 1,
+      "passed": true,
+      "semantic_review": {
+        "key": "1d2bd7845259ffc2848fb3e6c9ccf5b6f78972d1a393b6be9157460b3a78bc34",
+        "approved": true,
+        "decision": {
+          "verdict": "supported",
+          "claims": [
+            {
+              "text": "Subject: Turn billing data into revenue metrics",
+              "status": "supported",
+              "explanation": "ChartMogul is documented as transforming billing and subscription data into revenue metrics.",
+              "citations": [
+                {
+                  "source_id": "source:0",
+                  "quote": "ChartMogul transforms billing and subscription data into accurate, explainable revenue metrics your whole company can trust – a single source of truth for MRR, ARR, churn, retention, expansion, contraction, and customer movements."
+                }
+              ]
+            },
+            {
+              "text": "Preview text: Build a subscription model for MRR, ARR, churn, retention and expansion.",
+              "status": "supported",
+              "explanation": "The sources document automatic subscription-model building after connecting billing data and identify MRR, ARR, churn, retention and expansion as resulting revenue metrics.",
+              "citations": [
+                {
+                  "source_id": "E10",
+                  "quote": "1. Connect Stripe, Paddle, or your billing system 2. ChartMogul builds your subscription model automatically 3. Ask your first questions and get useful answers"
+                },
+                {
+                  "source_id": "source:0",
+                  "quote": "ChartMogul transforms billing and subscription data into accurate, explainable revenue metrics your whole company can trust – a single source of truth for MRR, ARR, churn, retention, expansion, contraction, and customer movements."
+                }
+              ]
+            },
+            {
+              "text": "Build recurring-revenue reporting on one model",
+              "status": "supported",
+              "explanation": "The documented subscription model supplies the modeled basis for the listed recurring-revenue metrics; “one model” does not assert unsupported exclusivity or uniqueness.",
+              "citations": [
+                {
+                  "source_id": "E10",
+                  "quote": "1. Connect Stripe, Paddle, or your billing system 2. ChartMogul builds your subscription model automatically 3. Ask your first questions and get useful answers"
+                },
+                {
+                  "source_id": "source:0",
+                  "quote": "ChartMogul transforms billing and subscription data into accurate, explainable revenue metrics your whole company can trust – a single source of truth for MRR, ARR, churn, retention, expansion, contraction, and customer movements."
+                }
+              ]
+            },
+            {
+              "text": "Connect Stripe, Paddle or another billing system. ChartMogul then automatically builds a subscription model you can use to examine MRR and related recurring-revenue metrics.",
+              "status": "supported",
+              "explanation": "This retains the documented billing-system prerequisite and sequence. The cited model-building workflow and revenue-metric description support examining MRR and related metrics through that model.",
+              "citations": [
+                {
+                  "source_id": "E10",
+                  "quote": "1. Connect Stripe, Paddle, or your billing system 2. ChartMogul builds your subscription model automatically 3. Ask your first questions and get useful answers"
+                },
+                {
+                  "source_id": "source:0",
+                  "quote": "ChartMogul transforms billing and subscription data into accurate, explainable revenue metrics your whole company can trust – a single source of truth for MRR, ARR, churn, retention, expansion, contraction, and customer movements."
+                }
+              ]
+            },
+            {
+              "text": "ChartMogul is a subscription analytics platform for reporting MRR, ARR, churn, retention and expansion from billing and subscription data.",
+              "status": "supported",
+              "explanation": "The source expressly says ChartMogul transforms billing and subscription data into the named metrics. Describing that documented function as a subscription analytics platform is entailed in context.",
+              "citations": [
+                {
+                  "source_id": "source:0",
+                  "quote": "ChartMogul transforms billing and subscription data into accurate, explainable revenue metrics your whole company can trust – a single source of truth for MRR, ARR, churn, retention, expansion, contraction, and customer movements."
+                }
+              ]
+            },
+            {
+              "text": "That gives board decks and investor updates a modeled basis for discussing recurring revenue and its movements.",
+              "status": "supported",
+              "explanation": "The claim is limited to using the documented subscription model and revenue metrics as a basis for discussion; it does not promise a board, fundraising or valuation outcome.",
+              "citations": [
+                {
+                  "source_id": "E10",
+                  "quote": "1. Connect Stripe, Paddle, or your billing system 2. ChartMogul builds your subscription model automatically 3. Ask your first questions and get useful answers"
+                },
+                {
+                  "source_id": "source:0",
+                  "quote": "ChartMogul transforms billing and subscription data into accurate, explainable revenue metrics your whole company can trust – a single source of truth for MRR, ARR, churn, retention, expansion, contraction, and customer movements."
+                },
+                {
+                  "source_id": "E17",
+                  "quote": "Consistent enough to benchmark against 2,500+ peers The same consistency that makes your metrics trustworthy makes them comparable. Because thousands of SaaS companies model revenue the same way in ChartMogul, you can finally benchmark apples to apples. See what great actually looks like today across growth and retention, compare yourself to peers with similar ARR or ARPA, and frame your performance for your board and investors."
+                }
+              ]
+            },
+            {
+              "text": "After OneVision normalized its data in ChartMogul, founder and CEO Joseph Kolchinsky said the company gained “recurring revenue clarity down to the dollar.”",
+              "status": "supported",
+              "explanation": "The customer outcome is attributed specifically to OneVision and Joseph Kolchinsky and is conditioned on OneVision first normalizing its data, rather than presented as a guaranteed buyer result.",
+              "citations": [
+                {
+                  "source_id": "E12",
+                  "quote": "Before ChartMogul, we could run an income statement in QuickBooks, but we couldn't truly defend our subscription metrics. Once we normalized our data, ChartMogul gave us **recurring revenue clarity down to the dollar**. It completely changed how confidently we talk about churn, retention, and growth."
+                },
+                {
+                  "source_id": "source:0",
+                  "quote": "> Joseph Kolchinsky,\n> Founder and CEO, OneVision"
+                }
+              ]
+            },
+            {
+              "text": "Try ChartMogul Pro free for 14 days, then choose the plan that is right for your business.",
+              "status": "supported",
+              "explanation": "This accurately states the documented Pro trial duration and the subsequent plan-selection step. It does not say the previously described model-building capability is included in the trial.",
+              "citations": [
+                {
+                  "source_id": "E8",
+                  "quote": "Try Pro free for 14 days, then choose the plan that’s right for your business."
+                }
+              ]
+            },
+            {
+              "text": "Try Pro free for 14 days →",
+              "status": "supported",
+              "explanation": "The CTA accurately describes the documented immediate action: starting a free 14-day Pro trial. The surrounding copy separately states what happens afterward and does not promise an undocumented trial entitlement.",
+              "citations": [
+                {
+                  "source_id": "E8",
+                  "quote": "Try Pro free for 14 days, then choose the plan that’s right for your business."
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "summary": "Every material assertion in the subject, preview, body and CTA is supported by the supplied sources. The draft preserves the billing-system prerequisite, properly attributes and qualifies OneVision’s outcome, accurately describes the 14-day Pro trial, and does not imply that automatic model building is included in that trial.",
+          "benefit_retention": {
+            "status": "preserved",
+            "explanation": "The draft retains the central reader benefit: connected billing data is automatically turned into a subscription model that provides a modeled basis for examining recurring-revenue metrics.",
+            "original_passage": "Connect Stripe, Paddle or another billing system. ChartMogul then automatically builds a subscription model you can use to examine MRR and related recurring-revenue metrics.",
+            "revised_passage": ""
+          }
+        },
+        "version": 3
+      }
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "blind_reader",
+      "step": 4,
+      "level": "info",
+      "message": "Blind Reader: Email 1 · read cold by 1 reader(s)",
+      "at": "2026-11-10T00:26:57.504787+00:00",
+      "agent_name": "Blind Reader",
+      "label": "Email 1 · read cold by 1 reader(s)",
+      "position": 1,
+      "attempt": 1
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "blind_reader",
+      "step": 4,
+      "level": "debug",
+      "message": "Sent 12,459 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-10T00:26:57.514538+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 12459
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "blind_reader",
+      "step": 4,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 2,964 characters in 21.7s (11,644 in / 1,511 out)",
+      "at": "2026-11-10T00:27:19.246350+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11644,
+      "output_tokens": 1511,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.081343,
+      "duration_ms": 21726.07670002617,
+      "response_chars": 2964
+    },
+    {
+      "type": "review",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "blind_reader",
+      "step": 4,
+      "level": "info",
+      "message": "Email 1 read cold: 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "at": "2026-11-10T00:27:19.253638+00:00",
+      "approved": false,
+      "conversion_score": 6,
+      "understood": true,
+      "summary": "ChartMogul is subscription analytics software that turns billing data into MRR, ARR, churn, retention and expansion reporting for board decks and investor updates.",
+      "issues": [
+        "Rewrite “ChartMogul then automatically builds a subscription model you can use to examine MRR and related recurring-revenue metrics” to explain what finance can review, define or reconcile in that model before using its figures.",
+        "Replace “recurring revenue clarity down to the dollar” with a concrete account of what OneVision reconciled or produced; the quotation alone does not substantiate board-ready accuracy.",
+        "Rewrite “That gives board decks and investor updates a modeled basis for discussing recurring revenue and its movements” to state whether the output can be reviewed and adjusted for reporting, without claiming an unsupported capability."
+      ],
+      "position": 1,
+      "attempt": 1,
+      "biggest_doubt": "I cannot tell how the automatically generated model is checked, adjusted or reconciled before I rely on its numbers in consequential board and investor materials. The OneVision quotation asserts precision but does not show the process or evidence behind it.",
+      "stopped_at": "After OneVision normalized its data in ChartMogul, founder and CEO Joseph Kolchinsky said the company gained “recurring revenue clarity down to the dollar.”",
+      "readers": [
+        {
+          "persona": "Selected audience (explicit constraints): Finance/founder preparing board decks and investor updates.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): Recurring-revenue SaaS companies where finance or RevOps must reconcile operational subscription metrics for executives, investors, or diligence.\n\n",
+          "reported": true,
+          "opened": true,
+          "pull": 6,
+          "would_act": false,
+          "what_it_sells": "ChartMogul is subscription analytics software that turns billing data into MRR, ARR, churn, retention and expansion reporting for board decks and investor updates.",
+          "understood": true,
+          "biggest_doubt": "I cannot tell how the automatically generated model is checked, adjusted or reconciled before I rely on its numbers in consequential board and investor materials. The OneVision quotation asserts precision but does not show the process or evidence behind it.",
+          "stopped_at": "After OneVision normalized its data in ChartMogul, founder and CEO Joseph Kolchinsky said the company gained “recurring revenue clarity down to the dollar.”",
+          "fixes": [
+            "Rewrite “ChartMogul then automatically builds a subscription model you can use to examine MRR and related recurring-revenue metrics” to explain what finance can review, define or reconcile in that model before using its figures.",
+            "Replace “recurring revenue clarity down to the dollar” with a concrete account of what OneVision reconciled or produced; the quotation alone does not substantiate board-ready accuracy.",
+            "Rewrite “That gives board decks and investor updates a modeled basis for discussing recurring revenue and its movements” to state whether the output can be reviewed and adjusted for reporting, without claiming an unsupported capability."
+          ]
+        }
+      ]
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "blind_reader",
+      "step": 4,
+      "level": "info",
+      "message": "Blind Reader: Pull 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "at": "2026-11-10T00:27:19.265548+00:00",
+      "agent_name": "Blind Reader",
+      "agent_execution_id": "7b1cf929-73ba-4b2b-9723-baade2b9025a",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11644,
+      "output_tokens": 1511,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.081343,
+      "duration_ms": 21726.07670002617,
+      "attempt": 1,
+      "summary": "Pull 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "assets_produced": []
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "email_writer",
+      "step": 5,
+      "level": "info",
+      "message": "Email Writer: Email 1 · rewrite 1",
+      "at": "2026-11-10T00:27:19.270527+00:00",
+      "agent_name": "Email Writer",
+      "label": "Email 1 · rewrite 1",
+      "position": 1,
+      "attempt": 2
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "email_writer",
+      "step": 5,
+      "level": "debug",
+      "message": "Sent 84,566 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-10T00:27:19.306161+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 84566
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "email_writer",
+      "step": 5,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 1,038 characters in 24.3s (28,056 in / 2,143 out)",
+      "at": "2026-11-10T00:27:43.647940+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 28056,
+      "output_tokens": 2143,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.288738,
+      "duration_ms": 24334.439700003713,
+      "response_chars": 1038
+    },
+    {
+      "type": "draft",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "email_writer",
+      "step": 5,
+      "level": "info",
+      "message": "Email 1, draft 2: \"One model for recurring revenue\"",
+      "at": "2026-11-10T00:27:43.652409+00:00",
+      "position": 1,
+      "attempt": 2,
+      "subject": "One model for recurring revenue",
+      "preview_text": "Connect billing data and examine MRR, ARR, churn, retention and expansion.",
+      "greeting": "Hi there,",
+      "body": "Board and investor conversations about recurring revenue need more than a metric on a slide. They need a clear subscription model underneath it.\n\nChartMogul is a subscription analytics platform for examining MRR, ARR, churn, retention and expansion. Once you connect Stripe, Paddle or another billing system, ChartMogul automatically builds the subscription model from that data.\n\nThis creates one modeled basis for exploring how recurring revenue is moving. More than **3,000 leading software companies** trust ChartMogul, including Buffer, Pitch, Todoist and Teamwork.com.\n\nTry ChartMogul Pro **free for 14 days**. After the trial, choose the plan that is right for your business.",
+      "call_to_action": "Start the 14-day Pro trial",
+      "sign_off": "- ChartMogul",
+      "postscript": "",
+      "word_count": 100
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "email_writer",
+      "step": 5,
+      "level": "info",
+      "message": "Email Writer: Rewrote as \"One model for recurring revenue\"",
+      "at": "2026-11-10T00:27:43.665968+00:00",
+      "agent_name": "Email Writer",
+      "agent_execution_id": "d495c2c6-5a2f-41f8-ab84-7ae396b4387d",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 28056,
+      "output_tokens": 2143,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.288738,
+      "duration_ms": 24334.439700003713,
+      "attempt": 2,
+      "summary": "Rewrote as \"One model for recurring revenue\"",
+      "assets_produced": []
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "claim_reviewer",
+      "step": 6,
+      "level": "info",
+      "message": "Claim Reviewer: Email 1 · checking claims against sources",
+      "at": "2026-11-10T00:27:43.676711+00:00",
+      "agent_name": "Claim Reviewer",
+      "label": "Email 1 · checking claims against sources"
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "claim_reviewer",
+      "step": 6,
+      "level": "debug",
+      "message": "Sent 46,798 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-10T00:27:43.693860+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 46798
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "claim_reviewer",
+      "step": 6,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 7,992 characters in 65.1s (20,661 in / 5,270 out)",
+      "at": "2026-11-10T00:28:48.835867+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 20661,
+      "output_tokens": 5270,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.266249,
+      "duration_ms": 65140.09919995442,
+      "response_chars": 7992
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "claim_reviewer",
+      "step": 6,
+      "level": "info",
+      "message": "Claim Reviewer: Source review needs a correction",
+      "at": "2026-11-10T00:28:48.853863+00:00",
+      "agent_name": "Claim Reviewer",
+      "agent_execution_id": "f6b6fb49-530c-4fbd-b4ff-4252c9195a07",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 20661,
+      "output_tokens": 5270,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.266249,
+      "duration_ms": 65140.09919995442,
+      "attempt": 2,
+      "summary": "Source review needs a correction",
+      "assets_produced": []
+    },
+    {
+      "type": "gates",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "email_writer",
+      "step": 6,
+      "level": "warning",
+      "message": "Email 1: 4 automatic check(s) failed - \"Board and investor conversations about recurring revenue need more than a metric on a slide. They need a clear subscription model underneath it.\": The sources position ChartMogul as a foundation for board decks and investor updates, but none entails the categorical assertion that these conversations require more than a metric or require a clear subscription model.; \"Once you connect Stripe, Paddle or another billing system, ChartMogul automatically builds the subscription model from that data.\n\nThis creates one modeled basis for exploring how recurring revenue is moving. More than 3,000 leading software companies trust ChartMogul, including Buffer, Pitch, Todoist and Teamwork.com.\n\nTry ChartMogul Pro free for 14 days.\": In this sequence, the trial invitation reasonably implies that the preceding billing-connection and automatic model-building workflow can be evaluated in the Pro trial. E10 supports the general workflow and E8 supports the trial, but no source establishes that this capability is included in the Pro trial.",
+      "at": "2026-11-10T00:28:48.857606+00:00",
+      "position": 1,
+      "attempt": 2,
+      "passed": false,
+      "semantic_review": {
+        "key": "3886c41849c8a3389bcd7a73911c61acf2a2a601576a86bd6d778e9050e1d97d",
+        "approved": false,
+        "decision": {
+          "verdict": "revise",
+          "claims": [
+            {
+              "text": "Subject: One model for recurring revenue",
+              "status": "supported",
+              "explanation": "ChartMogul is documented as automatically building a subscription model from connected billing data.",
+              "citations": [
+                {
+                  "source_id": "E10",
+                  "quote": "1. Connect Stripe, Paddle, or your billing system 2. ChartMogul builds your subscription model automatically 3. Ask your first questions and get useful answers"
+                }
+              ]
+            },
+            {
+              "text": "Preview text: Connect billing data and examine MRR, ARR, churn, retention and expansion.",
+              "status": "supported",
+              "explanation": "The sources support connecting a billing system, building a model, and working with the listed recurring-revenue metrics.",
+              "citations": [
+                {
+                  "source_id": "E10",
+                  "quote": "1. Connect Stripe, Paddle, or your billing system 2. ChartMogul builds your subscription model automatically 3. Ask your first questions and get useful answers"
+                },
+                {
+                  "source_id": "source:0",
+                  "quote": "ChartMogul turns messy billing data into accurate, consistent revenue metrics – MRR, ARR, churn, retention, expansion – that hold up under investor and audit scrutiny."
+                }
+              ]
+            },
+            {
+              "text": "SUBSCRIPTION ANALYTICS",
+              "status": "supported",
+              "explanation": "The documented functions—modeling billing data and producing recurring-revenue metrics—support this category description.",
+              "citations": [
+                {
+                  "source_id": "source:0",
+                  "quote": "ChartMogul turns messy billing data into accurate, consistent revenue metrics – MRR, ARR, churn, retention, expansion – that hold up under investor and audit scrutiny."
+                }
+              ]
+            },
+            {
+              "text": "Examine recurring revenue from one model",
+              "status": "supported",
+              "explanation": "The source documents an automatically built subscription model and the ability to ask questions using it.",
+              "citations": [
+                {
+                  "source_id": "E10",
+                  "quote": "1. Connect Stripe, Paddle, or your billing system 2. ChartMogul builds your subscription model automatically 3. Ask your first questions and get useful answers"
+                }
+              ]
+            },
+            {
+              "text": "Board and investor conversations about recurring revenue need more than a metric on a slide. They need a clear subscription model underneath it.",
+              "status": "unsupported",
+              "explanation": "The sources position ChartMogul as a foundation for board decks and investor updates, but none entails the categorical assertion that these conversations require more than a metric or require a clear subscription model.",
+              "citations": []
+            },
+            {
+              "text": "ChartMogul is a subscription analytics platform for examining MRR, ARR, churn, retention and expansion.",
+              "status": "supported",
+              "explanation": "The documented transformation of billing data into these recurring-revenue metrics supports the platform description and stated analytical use.",
+              "citations": [
+                {
+                  "source_id": "source:0",
+                  "quote": "ChartMogul turns messy billing data into accurate, consistent revenue metrics – MRR, ARR, churn, retention, expansion – that hold up under investor and audit scrutiny."
+                }
+              ]
+            },
+            {
+              "text": "Once you connect Stripe, Paddle or another billing system, ChartMogul automatically builds the subscription model from that data.",
+              "status": "supported",
+              "explanation": "This accurately preserves the documented connection prerequisite and automatic model-building sequence.",
+              "citations": [
+                {
+                  "source_id": "E10",
+                  "quote": "1. Connect Stripe, Paddle, or your billing system 2. ChartMogul builds your subscription model automatically 3. Ask your first questions and get useful answers"
+                }
+              ]
+            },
+            {
+              "text": "This creates one modeled basis for exploring how recurring revenue is moving.",
+              "status": "supported",
+              "explanation": "This is a reasonable description of using the automatically built subscription model to ask questions about recurring-revenue metrics.",
+              "citations": [
+                {
+                  "source_id": "E10",
+                  "quote": "1. Connect Stripe, Paddle, or your billing system 2. ChartMogul builds your subscription model automatically 3. Ask your first questions and get useful answers"
+                },
+                {
+                  "source_id": "source:0",
+                  "quote": "ChartMogul turns messy billing data into accurate, consistent revenue metrics – MRR, ARR, churn, retention, expansion – that hold up under investor and audit scrutiny."
+                }
+              ]
+            },
+            {
+              "text": "More than 3,000 leading software companies trust ChartMogul, including Buffer, Pitch, Todoist and Teamwork.com.",
+              "status": "supported",
+              "explanation": "The source states over 3,000 and names all four listed companies.",
+              "citations": [
+                {
+                  "source_id": "E7",
+                  "quote": "Trusted by over 3,000 leading software companies Softr Buffer Pitch Signeasy Todoist Teamwork.com"
+                }
+              ]
+            },
+            {
+              "text": "Try ChartMogul Pro free for 14 days.",
+              "status": "supported",
+              "explanation": "The offer expressly documents a free 14-day Pro trial.",
+              "citations": [
+                {
+                  "source_id": "E8",
+                  "quote": "Try Pro free for 14 days, then choose the plan that’s right for your business."
+                }
+              ]
+            },
+            {
+              "text": "After the trial, choose the plan that is right for your business.",
+              "status": "supported",
+              "explanation": "This accurately states the documented post-trial step without presenting the trial as a guarantee or paid evaluation.",
+              "citations": [
+                {
+                  "source_id": "E8",
+                  "quote": "Try Pro free for 14 days, then choose the plan that’s right for your business."
+                }
+              ]
+            },
+            {
+              "text": "Once you connect Stripe, Paddle or another billing system, ChartMogul automatically builds the subscription model from that data.\n\nThis creates one modeled basis for exploring how recurring revenue is moving. More than 3,000 leading software companies trust ChartMogul, including Buffer, Pitch, Todoist and Teamwork.com.\n\nTry ChartMogul Pro free for 14 days.",
+              "status": "uncertain",
+              "explanation": "In this sequence, the trial invitation reasonably implies that the preceding billing-connection and automatic model-building workflow can be evaluated in the Pro trial. E10 supports the general workflow and E8 supports the trial, but no source establishes that this capability is included in the Pro trial.",
+              "citations": [
+                {
+                  "source_id": "E10",
+                  "quote": "1. Connect Stripe, Paddle, or your billing system 2. ChartMogul builds your subscription model automatically 3. Ask your first questions and get useful answers"
+                },
+                {
+                  "source_id": "E8",
+                  "quote": "Try Pro free for 14 days, then choose the plan that’s right for your business."
+                }
+              ]
+            },
+            {
+              "text": "Start the 14-day Pro trial →",
+              "status": "supported",
+              "explanation": "The CTA accurately describes the documented immediate action and duration.",
+              "citations": [
+                {
+                  "source_id": "E8",
+                  "quote": "Try Pro free for 14 days, then choose the plan that’s right for your business."
+                }
+              ]
+            }
+          ],
+          "findings": [
+            {
+              "text": "Board and investor conversations about recurring revenue need more than a metric on a slide. They need a clear subscription model underneath it.",
+              "kind": "factual",
+              "explanation": "No supplied source entails this categorical requirement for board and investor conversations."
+            },
+            {
+              "text": "Once you connect Stripe, Paddle or another billing system, ChartMogul automatically builds the subscription model from that data.\n\nThis creates one modeled basis for exploring how recurring revenue is moving. More than 3,000 leading software companies trust ChartMogul, including Buffer, Pitch, Todoist and Teamwork.com.\n\nTry ChartMogul Pro free for 14 days.",
+              "kind": "instruction",
+              "explanation": "The adjacency implies that the documented billing-connection and automatic model-building workflow is available through the Pro trial, contrary to the explicit direction not to imply that plan entitlement without evidence."
+            }
+          ],
+          "summary": "Most product, customer, and trial assertions are supported. Revision is required because the board/investor requirement is not established and the transition from the workflow description to the Pro-trial invitation implies an undocumented trial entitlement.",
+          "benefit_retention": {
+            "status": "preserved",
+            "explanation": "The draft retains the requested mechanism and reader value: connecting billing data leads ChartMogul to build a subscription model that serves as a basis for examining recurring-revenue metrics.",
+            "original_passage": "Once you connect Stripe, Paddle or another billing system, ChartMogul automatically builds the subscription model from that data.\n\nThis creates one modeled basis for exploring how recurring revenue is moving.",
+            "revised_passage": ""
+          }
+        },
+        "version": 3
+      },
+      "issues": [
+        {
+          "gate": "claim-review",
+          "detail": "\"Board and investor conversations about recurring revenue need more than a metric on a slide. They need a clear subscription model underneath it.\": The sources position ChartMogul as a foundation for board decks and investor updates, but none entails the categorical assertion that these conversations require more than a metric or require a clear subscription model.",
+          "severity": "blocking"
+        },
+        {
+          "gate": "claim-review",
+          "detail": "\"Once you connect Stripe, Paddle or another billing system, ChartMogul automatically builds the subscription model from that data.\n\nThis creates one modeled basis for exploring how recurring revenue is moving. More than 3,000 leading software companies trust ChartMogul, including Buffer, Pitch, Todoist and Teamwork.com.\n\nTry ChartMogul Pro free for 14 days.\": In this sequence, the trial invitation reasonably implies that the preceding billing-connection and automatic model-building workflow can be evaluated in the Pro trial. E10 supports the general workflow and E8 supports the trial, but no source establishes that this capability is included in the Pro trial.",
+          "severity": "blocking"
+        },
+        {
+          "gate": "claim-review",
+          "detail": "No supplied source entails this categorical requirement for board and investor conversations.",
+          "severity": "blocking"
+        },
+        {
+          "gate": "claim-review",
+          "detail": "The adjacency implies that the documented billing-connection and automatic model-building workflow is available through the Pro trial, contrary to the explicit direction not to imply that plan entitlement without evidence.",
+          "severity": "blocking"
+        }
+      ]
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "blind_reader",
+      "step": 7,
+      "level": "info",
+      "message": "Blind Reader: Email 1 · read cold by 1 reader(s)",
+      "at": "2026-11-10T00:28:48.862620+00:00",
+      "agent_name": "Blind Reader",
+      "label": "Email 1 · read cold by 1 reader(s)",
+      "position": 1,
+      "attempt": 2
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "blind_reader",
+      "step": 7,
+      "level": "debug",
+      "message": "Sent 12,449 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-10T00:28:48.871710+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 12449
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "blind_reader",
+      "step": 7,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 2,872 characters in 28.3s (11,645 in / 2,098 out)",
+      "at": "2026-11-10T00:29:17.132541+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11645,
+      "output_tokens": 2098,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.098961,
+      "duration_ms": 28255.775699974038,
+      "response_chars": 2872
+    },
+    {
+      "type": "review",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "blind_reader",
+      "step": 7,
+      "level": "info",
+      "message": "Email 1 read cold: 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "at": "2026-11-10T00:29:17.145895+00:00",
+      "approved": false,
+      "conversion_score": 6,
+      "understood": true,
+      "summary": "A subscription analytics platform that connects to billing data and automatically models MRR, ARR, churn, retention and expansion, potentially giving me one basis for recurring-revenue reporting instead of assembling those metrics separately.",
+      "issues": [
+        "Rewrite \"This creates one modeled basis for exploring how recurring revenue is moving\" to explain the concrete finance workflow after modeling: what I can inspect, reconcile and take into a board or investor update.",
+        "Replace \"More than 3,000 leading software companies trust ChartMogul, including Buffer, Pitch, Todoist and Teamwork.com\" with a specific example of how a finance team validated or used the modeled figures for board reporting, if such evidence is available.",
+        "Expand \"Start the 14-day Pro trial →\" to state what connecting billing data entails and whether I can evaluate the model before relying on its figures."
+      ],
+      "position": 1,
+      "attempt": 2,
+      "biggest_doubt": "I cannot tell whether the automatically built model is sufficiently inspectable and adjustable for finance work—especially when billing data contains exceptions—or whether it is mainly a dashboard whose numbers I would still have to reconcile before using them with a board.",
+      "stopped_at": "",
+      "readers": [
+        {
+          "persona": "Selected audience (explicit constraints): Finance/founder preparing board decks and investor updates.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): Recurring-revenue SaaS companies where finance or RevOps must reconcile operational subscription metrics for executives, investors, or diligence.\n\n",
+          "reported": true,
+          "opened": true,
+          "pull": 6,
+          "would_act": false,
+          "what_it_sells": "A subscription analytics platform that connects to billing data and automatically models MRR, ARR, churn, retention and expansion, potentially giving me one basis for recurring-revenue reporting instead of assembling those metrics separately.",
+          "understood": true,
+          "biggest_doubt": "I cannot tell whether the automatically built model is sufficiently inspectable and adjustable for finance work—especially when billing data contains exceptions—or whether it is mainly a dashboard whose numbers I would still have to reconcile before using them with a board.",
+          "stopped_at": "",
+          "fixes": [
+            "Rewrite \"This creates one modeled basis for exploring how recurring revenue is moving\" to explain the concrete finance workflow after modeling: what I can inspect, reconcile and take into a board or investor update.",
+            "Replace \"More than 3,000 leading software companies trust ChartMogul, including Buffer, Pitch, Todoist and Teamwork.com\" with a specific example of how a finance team validated or used the modeled figures for board reporting, if such evidence is available.",
+            "Expand \"Start the 14-day Pro trial →\" to state what connecting billing data entails and whether I can evaluate the model before relying on its figures."
+          ]
+        }
+      ]
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "blind_reader",
+      "step": 7,
+      "level": "info",
+      "message": "Blind Reader: Pull 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "at": "2026-11-10T00:29:17.163642+00:00",
+      "agent_name": "Blind Reader",
+      "agent_execution_id": "f4af9160-d003-4e2f-a095-f7259d1b466f",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11645,
+      "output_tokens": 2098,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.098961,
+      "duration_ms": 28255.775699974038,
+      "attempt": 2,
+      "summary": "Pull 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "assets_produced": []
+    },
+    {
+      "type": "phase",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": null,
+      "step": 7,
+      "level": "info",
+      "message": "Email 1: rewrite 1 was not preferred to the version before it - stopping rather than spending 0 more rewrite(s) on it",
+      "at": "2026-11-10T00:29:17.171679+00:00",
+      "phase": "craft",
+      "position": 1,
+      "attempt": 2,
+      "rewrites_left": 0
+    },
+    {
+      "type": "email_ready",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": "email_writer",
+      "step": 7,
+      "level": "info",
+      "message": "Email 1 ready: \"Turn billing data into revenue metrics\" (pull 6/10)",
+      "at": "2026-11-10T00:29:17.185540+00:00",
+      "position": 1,
+      "subject": "Turn billing data into revenue metrics",
+      "pull": 6,
+      "attempts": 1,
+      "clean": true
+    },
+    {
+      "type": "campaign_report",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": null,
+      "step": 7,
+      "level": "info",
+      "message": "Request: Write exactly one email. Introduce our product to a new buyer with one clear next step.\nDelivered 1 of 1 email(s). Average simulated reader's interest (uncalibrated) 6.0/10.\n- Email 1 \"Turn billing data into revenue metrics\": Once a billing system is connected, ChartMogul automatically builds the subscription model used to examine MRR and related recurring-revenue metrics. - pull 6/10 - still below the 7/10 floor, and rewriting had stopped moving it after 1 rewrite(s)\nEmail(s) 1 did not satisfy the simulated assessment criteria. The loop stopped rewriting them; it did not decide these were ready to send.\nUnresolved before sending: Email 1: Editorial review requested: Add the missing operational step between automatic modeling and board use: explain whether and how a finance user can inspect metric definitions, resolve exceptions and reconcile movements before reporting them. I can picture connecting billing data and viewing charts, but not establishing that the resulting figures are dependable enough for a board deck.\nWhat would help most next time: Resolve this simulated next-step obstacle: I would have clicked if this email had told me how finance teams verify and reconcile the modeled MRR movements before putting them into a board deck. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.\nEffective audience: Finance/founder preparing board decks and investor updates\nAudience context: audience_research_loaded\nPublication date unknown; retrieval today does not establish current applicability. Finance staff at a described SaaS company maintained numerous separate spreadsheets to manually reconcile billing, accounting, and CRM data into investor-grade metrics.\nPublication date unknown; retrieval today does not establish current applicability. Revenue metrics for board and investor reports were produced through manual spreadsheet joins and CSV exports rather than a governed data layer.\nPublication date unknown; retrieval today does not establish current applicability. A single, trusted version of recurring-revenue numbers that does not require repeated manual reconciliation or explanation to leadership.\nPublication date unknown; retrieval today does not establish current applicability. A described SaaS company was characterized by use of separate billing, accounting, and CRM systems that did not agree with one another.\nMoved product questions without an explicit audience requirement to decision gaps.\nDefining audience need is unassessed or its references required normalization.\nIgnored unavailable dossier ranking E9.\nIgnored unavailable dossier ranking E18.\nIgnored unavailable dossier ranking E20.\nIgnored unavailable dossier ranking E3.\nIgnored unavailable dossier ranking E5.\nIgnored unavailable dossier ranking E6.\nIgnored unavailable dossier ranking E1.\nIgnored unavailable dossier ranking E2.\nIgnored unavailable dossier ranking E21.\nIgnored unavailable dossier ranking E22.\nIgnored unavailable dossier ranking E4.\nThe proposition referenced an unknown or unsupported problem id.\nThe proposed current alternative was not established by audience research; it remains unknown.\nThe proposed buyer problem was not established by the selected audience research; no substitute pain was inserted.\n1 email(s) came in under the floor on a run configured without more than one opening per email, a panel of cold readers rather than one, the conversion critic, alternative subject lines, more than one rewrite. These settings describe review depth, not the cause of the weak result. Check the audience fit and verified support for the reported obstacle first; additional readers or rewrites cannot supply missing evidence.",
+      "at": "2026-11-10T00:29:17.190052+00:00",
+      "delivered": 1,
+      "promised": 1,
+      "average_pull": 6.0,
+      "contract_violations": [],
+      "limiting_gaps": [],
+      "below_floor": [
+        1
+      ],
+      "what_would_help_most": "Resolve this simulated next-step obstacle: I would have clicked if this email had told me how finance teams verify and reconcile the modeled MRR movements before putting them into a board deck. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence."
+    },
+    {
+      "type": "phase",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": null,
+      "step": 7,
+      "level": "info",
+      "message": "1 email(s) produced - average simulated reader's interest 6.0/10 (uncalibrated) - 1 still under the 7/10 floor when the loop stopped rewriting",
+      "at": "2026-11-10T00:29:17.195562+00:00",
+      "phase": "finished",
+      "status": "degraded",
+      "below_floor": [
+        1
+      ]
+    },
+    {
+      "type": "execution_finished",
+      "execution_id": "1b109447-df76-4a54-80d3-4a1da780925f",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Campaign run finished: degraded",
+      "at": "2026-11-10T00:29:17.229622+00:00",
+      "status": "completed",
+      "run_status": "degraded",
+      "estimated_cost_usd": 1.9457,
+      "delivered": 1
+    }
+  ],
+  "last_event_id": 54,
+  "is_running": false
+}

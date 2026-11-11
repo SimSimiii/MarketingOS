@@ -264,3 +264,15 @@ def test_one_sentence_too_long_is_still_the_writers_problem():
     assert any("one paragraph" in issue for issue in structural_issues(
         email_with(body=one_sentence)
     ))
+
+
+@pytest.mark.parametrize("cta", ["See the Teams permission list →", "See the Teams permission list ->",
+                                 "See the Teams permission list → →"])
+def test_a_copied_render_arrow_is_dropped_from_the_cta(cta):
+    # Seen live in a post-run edit: the writer is shown the rendered email,
+    # copies its arrow into the CTA field, and the render adds a second one.
+    from tests.marketing.conftest import email_draft
+
+    email = parse_email(email_draft(cta=cta), 1)
+    assert email.call_to_action == "See the Teams permission list"
+    assert "→ →" not in render_email(email, cta_url="https://docs.example.com/teams")

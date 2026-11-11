@@ -1,12 +1,17 @@
 from datetime import datetime
 from uuid import UUID
 
+import httpx
 from fastapi import APIRouter, HTTPException, status
 from sqlalchemy import func
 from sqlmodel import Session, col, select
 
 from app.api.deps import AIProviderDep, PrincipalDep, SessionDep
+from app.core.public_http import fetch_page, public_client
+from app.ingestion.exceptions import LoaderError
+from app.ingestion.loaders.site_identity import read_identity
 from app.knowledge.store import ArtifactScope, ArtifactStore
+from app.models.background_job import BackgroundJob
 from app.models.brand import Brand
 from app.models.campaign import Campaign
 from app.models.knowledge_artifacts import KnowledgeArtifactSet
@@ -15,11 +20,15 @@ from app.models.market import MarketScan, ProofCandidateRow, RadarEventRow, Riva
 from app.repositories.brand_repository import BrandRepository
 from app.schemas.brand import (
     BrandCreateRequest,
+    BrandIdentityRead,
     BrandOverviewRead,
     BrandRead,
     BrandStyleUpdate,
+    DraftReviewJobRead,
+    DraftReviewRequest,
     KnowledgeArtifactsRead,
 )
+from app.services import draft_review
 from app.services.knowledge_compilation import (
     CompilationRequest,
     CompilationStatus,
@@ -28,6 +37,41 @@ from app.services.knowledge_compilation import (
 from app.services.knowledge_compilation import job_for as compilation_job_for
 
 router = APIRouter(prefix="/brands", tags=["brands"])
+
+
+@router.post("/{brand_id}/draft-review", response_model=DraftReviewJobRead, status_code=202)
+async def review_draft(
+    brand_id: UUID, data: DraftReviewRequest, session: SessionDep,
+    provider: AIProviderDep, principal: PrincipalDep,
+) -> DraftReviewJobRead:
+    brand = BrandRepository(session, principal).get(brand_id)
+    if brand is None:
+        raise HTTPException(404, "Brand not found")
+    return draft_review.launch(session, brand, provider, data)
+
+
+@router.get("/{brand_id}/draft-review/{job_id}", response_model=DraftReviewJobRead)
+def read_draft_review(
+    brand_id: UUID, job_id: UUID, session: SessionDep, principal: PrincipalDep,
+) -> DraftReviewJobRead:
+    if BrandRepository(session, principal).get(brand_id) is None:
+        raise HTTPException(404, "Brand not found")
+    job = session.get(BackgroundJob, job_id)
+    if job is None or job.brand_id != brand_id or job.category != draft_review.CATEGORY:
+        raise HTTPException(404, "Draft review not found")
+    return draft_review.snapshot(job)
+
+
+@router.get("/{brand_id}/draft-review", response_model=DraftReviewJobRead | None)
+def latest_draft_review(
+    brand_id: UUID, session: SessionDep, principal: PrincipalDep,
+) -> DraftReviewJobRead | None:
+    if BrandRepository(session, principal).get(brand_id) is None:
+        raise HTTPException(404, "Brand not found")
+    job = session.exec(select(BackgroundJob).where(
+        BackgroundJob.brand_id == brand_id, BackgroundJob.category == draft_review.CATEGORY,
+    ).order_by(col(BackgroundJob.created_at).desc())).first()
+    return draft_review.snapshot(job) if job is not None else None
 
 
 @router.get("/{brand_id}/knowledge/compile", response_model=CompilationStatus)
@@ -179,6 +223,45 @@ def update_style(
     return BrandRead.model_validate(repository.update(brand))
 
 
+@router.post("/{brand_id}/style/detect", response_model=BrandIdentityRead)
+async def detect_style(
+    brand_id: UUID, session: SessionDep, principal: PrincipalDep
+) -> BrandIdentityRead:
+    """Read the logo and colour the brand's own home page declares.
+
+    A suggestion, not a save: the appearance page fills its form with it and
+    the owner decides, because a site can declare a logo that is wrong for
+    an email in ways only a person looking at it will catch. Crawling the
+    site fills an empty brand automatically; this is how a brand crawled
+    before that existed, or one whose owner wants to look first, gets it.
+    """
+    brand = BrandRepository(session, principal).get(brand_id)
+    if brand is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Brand not found")
+    if not brand.website_url:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Add the brand's website first.")
+    try:
+        html, url = await read_home_page(brand.website_url)
+    except (httpx.HTTPError, LoaderError) as exc:
+        raise HTTPException(
+            status.HTTP_502_BAD_GATEWAY, f"Could not read {brand.website_url}: {exc}"
+        ) from exc
+    identity = read_identity(html, url)
+    return BrandIdentityRead(
+        logo_url=identity.logo_url or None,
+        primary_color=identity.theme_color or None,
+        notes=list(identity.notes),
+    )
+
+
+async def read_home_page(url: str) -> tuple[str, str]:
+    """The page's HTML and the address it finally answered from."""
+    async with public_client() as client:
+        response = await fetch_page(client, url)
+        response.raise_for_status()
+    return response.text, str(response.url)
+
+
 @router.get("/{brand_id}/knowledge", response_model=KnowledgeArtifactsRead)
 def get_knowledge(
     brand_id: UUID, session: SessionDep, principal: PrincipalDep
@@ -222,7 +305,6 @@ def delete_brand(brand_id: UUID, session: SessionDep, principal: PrincipalDep) -
         raise HTTPException(409, "Wait for this brand's jobs to finish before deleting it.")
     from sqlalchemy import delete
 
-    from app.models.background_job import BackgroundJob
     session.execute(delete(BackgroundJob).where(BackgroundJob.brand_id == brand_id, ~BackgroundJob.active))
     for table in SQLModel.metadata.tables.values():
         for foreign_key in table.foreign_keys:

@@ -1,0 +1,74 @@
+{
+  "status": "validation_complete",
+  "runs": [
+    {
+      "execution_id": "7bd8e520-691c-4763-a39b-e36eb6d1801c",
+      "campaign_id": "9df98006-a5c7-47f7-9ed2-d172a94b624b",
+      "status": "completed",
+      "launched_at": "2026-11-09T05:00:45.742Z",
+      "code_revision": "v32",
+      "launched_from": "UI Run campaign, default Fast and no override",
+      "outcome_status": "degraded",
+      "needs_review": true,
+      "review_reasons": [
+        "Some drafts retain unresolved strategy or review findings.",
+        "Some drafts still need editorial review."
+      ],
+      "last_checked_at": "2026-11-09T05:06:33.222736+00:00",
+      "result_dir": "docs\\optimization\\scribe-cold-v32-validation-2026-11-09\\runs\\7bd8e520-691c-4763-a39b-e36eb6d1801c",
+      "estimated_cost_usd": 1.6429,
+      "completed_at": "2026-11-09T05:06:31.785897Z"
+    },
+    {
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "campaign_id": "65150239-cc6d-4a96-8dba-57ba86473a76",
+      "status": "completed",
+      "launched_at": "2026-11-09T05:12:01.554Z",
+      "code_revision": "v32c",
+      "launched_from": "UI Run campaign, default Fast and same brand/audience/sources",
+      "outcome_status": "degraded",
+      "needs_review": true,
+      "review_reasons": [
+        "Some drafts retain unresolved strategy or review findings.",
+        "Some drafts still need editorial review."
+      ],
+      "last_checked_at": "2026-11-09T05:16:26.280023+00:00",
+      "result_dir": "docs\\optimization\\scribe-cold-v32-validation-2026-11-09\\runs\\1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "estimated_cost_usd": 1.3957,
+      "completed_at": "2026-11-09T05:16:19.810913Z"
+    }
+  ],
+  "steps": {},
+  "quality_history": [
+    {
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "score": 77,
+      "breakdown": {
+        "facts": 25,
+        "audience_offer": 16,
+        "specificity": 11,
+        "subject_body_cta": 11,
+        "render": 9,
+        "no_abuse_repetition": 5,
+        "total": 77
+      },
+      "needs_review": true,
+      "notes": "Supported claims, working exports, but supported hand-off value was lost in the rewrite."
+    }
+  ],
+  "last_snapshot": "docs\\optimization\\scribe-cold-v32-validation-2026-11-09\\steps\\20261109T051719463090Z-capture.json",
+  "commercial_verdict": "not_worth_paying_for_on_this_case",
+  "report": "docs/reviews/scribe-validation-2026-11-09.md",
+  "repair_replays": [
+    {
+      "revision": "v33b",
+      "result": "passed",
+      "positive": "replay-v33b-positive/replay.json",
+      "negative": "replay-v33b-negative/replay.json",
+      "email": "replay-v33/email.txt",
+      "simulated_pull": 6,
+      "commercial_verdict_reassessed": false,
+      "report": "docs/reviews/scribe-repair-replay-v33.md"
+    }
+  ]
+}

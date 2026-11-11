@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+from collections.abc import Callable
 from datetime import UTC, datetime
 from typing import Literal
 from uuid import UUID
@@ -91,6 +92,12 @@ def start_compilation(
     current = jobs.get(brand_id)
     if current is not None and current.state == "running":
         return current
+    from app.runtime.work_limits import WorkLimitError
+    from app.services.market_service import job_for as market_job_for
+
+    market_job = market_job_for(brand_id)
+    if market_job and market_job.kind == "first_campaign" and market_job.state == "running":
+        raise WorkLimitError("First campaign preparation is already reading this brand.", 409)
     job = CompilationJob(state="running", brand_id=brand_id, brand_name=brand_name)
     job.say("Reading knowledge sources…")
     jobs[brand_id] = job
@@ -103,6 +110,10 @@ def start_compilation(
 async def _compile(
     brand_id: UUID, engine: Engine, provider: AIProvider, job: CompilationJob,
     model: str | None = None,
+    *,
+    compact: bool = False,
+    on_progress: Callable[[str], None] | None = None,
+    on_call: Callable[[RoleCall], None] | None = None,
 ) -> None:
     scope = ArtifactScope(brand_id=brand_id)
     try:
@@ -115,6 +126,11 @@ async def _compile(
             corpus = build_corpus(documents)
         if corpus.is_empty:
             raise ValueError("Add a source containing text before compiling.")
+        def record(call: RoleCall) -> None:
+            job.record(call)
+            if on_call is not None:
+                on_call(call)
+
         session = ModelSession(
             provider=provider,
             prompt_engine=get_prompt_engine(PROMPTS_DIR),
@@ -123,13 +139,19 @@ async def _compile(
                 {"knowledge_compiler": model} if model else None
             )),
             execution_id=f"knowledge:{brand_id}",
-            on_call=job.record,
+            on_call=record,
+            effort="medium" if compact else None,
         )
 
         def progress(_stage: str, message: str) -> None:
             job.say(message)
+            if on_progress is not None:
+                on_progress(message)
 
-        artifacts = await KnowledgeCompiler(session).compile(corpus, on_progress=progress)
+        compiler = KnowledgeCompiler(session, compact=True) if compact else KnowledgeCompiler(session)
+        artifacts = await compiler.compile(corpus, on_progress=progress)
+        if compact:
+            artifacts.notes.append("First-campaign knowledge covers selected pages and decision-relevant evidence. Compile sources to read them in more depth.")
         with Session(engine) as db:
             store = ArtifactStore(db)
             if db.get(Brand, brand_id) is None:

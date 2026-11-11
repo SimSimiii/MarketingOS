@@ -1,0 +1,271 @@
+{
+  "index": 0,
+  "segment": {
+    "name": "A Dutch or EU public-sector web team told its site may not load Google before consent, and that a public body cannot use a cookie wall",
+    "organization": "Municipality, government agency, public university, library or other public body with a comms/web team and a formal DPO",
+    "workflow": "Running the public website's statistics for content and service decisions while passing DPO review, FG/AVG audits and public accountability questions about third-party trackers",
+    "need": "Visitor statistics that process no personal data, store nothing on the device and are hosted in the EU, so they can run without consent and survive a regulator or journalist scan",
+    "buyer_role": "Head of communications or information manager, with the DPO/FG and procurement as gatekeepers; budget approved against a framework rather than a card",
+    "user_role": "Web editor / online comms adviser who reads the stats weekly; sometimes an external web supplier implements",
+    "current_alternative": "Google Analytics loaded before consent (status quo, now publicly flagged), Matomo (self-hosted or EU cloud), Piwik PRO, Siteimprove, Govanalytics, or statistics switched off entirely",
+    "assessment": {
+      "compatibility": "supported",
+      "evidence_strength": "supported",
+      "findability": "verified",
+      "usage_or_purchase": "unknown",
+      "reachability": "venue_identified",
+      "counterevidence_summary": [
+        "A Dutch-government-specific vendor positions itself directly against Simple Analytics and adds exactly the public-sector artefacts procurement asks for. — An incumbent built for this buyer, naming this product as the thing it improves on, sets the comparison frame; the gap it claims (BIO compliance, hosting guarantee, intranet tracking) is not addressed anywhere in the supplied product truth. Review before prioritising.",
+        "The competitor makes DPO and procurement documentation its headline promise, implying that documentation — not measurement capability — is the gate in this sale. — If signed DPAs, DPIAs and BIO paperwork are the decision criteria, the supplied product truth contains none of them, which is a buying obstacle at the review stage rather than a messaging problem. Review before prioritising.",
+        "The same legal commentary that creates the trigger predicts the migration will stall on cost and justification in small organisations like municipalities. — It argues the trigger does not convert into a purchase because the time and budget cannot be justified locally — a direct obstacle to the buying step, from the same source that establishes the need. Review before prioritising.",
+        "A commenter argues the whole category can simply be dropped from a government site, making removal rather than replacement the cheap resolution. — Switching analytics off is free and immediately compliant; if that view prevails inside a municipality there is no purchase at all, which is a substantial competing resolution rather than an objection to handle. Review before prioritising.",
+        "Regulatory pressure has barely materialised in practice, which weakens the urgency the trigger appears to create. — With one unpublished reprimand on record and hundreds of thousands of sites unchanged, the deadline pressure a compliance-led pitch relies on is largely reputational; that changes the expected timeline and conversion of the whole segment. Review before prioritising."
+      ],
+      "counterevidence": 3,
+      "priority": "review_first",
+      "reasons": [
+        "The trigger is dated, named and quantified: a scan of all 342 Dutch municipal websites found 207 of 339 loading Big Tech before consent, 70 loading Google Analytics pre-consent, and only 31 using a professional consent platform.",
+        "Independent legal commentary states plainly that this is not permitted because personal data goes to the US without a clear GDPR basis, which is what forces a tool decision rather than a banner decision.",
+        "A practitioner voice in the comment thread defends the underlying need — analytics to see whether information provided to residents is actually read and how to improve it — so switching off is not costless for the web team.",
+        "A third source establishes the legal route this product fits: cookieless analytics meeting the audience-measurement exemption criteria need no consent under the Telecommunicatiewet, and the regulator treats cookie walls as invalid consent.",
+        "Product truth establishes the capabilities the DPO sign-off turns on: no cookies or browser storage, no IP collection or storage, no fingerprinting, country-level location only, EU/NL hosting, open-source client scripts, and non-EU transfer only on opt-in features.",
+        "The population is enumerable and public (342 municipal websites, with the pre-consent Google loaders identified by scan), so targeting does not depend on inference."
+      ],
+      "unknowns": [
+        "No DPA, DPIA template, BIO documentation, SOC 2 certification or uptime SLA appears in the supplied product truth, and the competitor makes procurement documentation its explicit selling point — whether this is a hard gate for Dutch public bodies is not established in the corpus.",
+        "The claim that a statutory ban on cookie walls applies specifically to public-sector sites is not supported by the fetched pages; the source states only that the regulator treats cookie walls as invalid consent.",
+        "No observed public-sector purchase or use of this product; the only mention is a competitor's comparison page.",
+        "Unknown whether municipalities buy individually or through framework contracts, and whether an incumbent CMS or web supplier controls the analytics choice.",
+        "The named public-sector logos in the product truth were not verified by any fetched page.",
+        "Review the counterevidence before prioritising this audience."
+      ],
+      "evidence": [
+        {
+          "claim": "A dated, per-organisation scan turns a latent privacy risk into a named finding for most Dutch municipalities, including 70 loading Google Analytics before consent.",
+          "quote": "70 gemeentes laden Google Analytics voor toestemming",
+          "url": "https://www.nixondigital.io/blog/nl/gemeentewebsites-delen-data-met-google-zonder-toestemming-onderzoek-2026/",
+          "kind": "need",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-11-05T06:08:46.263155Z"
+        },
+        {
+          "claim": "The scan covers the whole enumerable population and quantifies how widespread the pre-consent loading is.",
+          "quote": "207 van 339 succesvol gescande gemeentes (61,1%) laden Big Tech voor consent",
+          "url": "https://www.nixondigital.io/blog/nl/gemeentewebsites-delen-data-met-google-zonder-toestemming-onderzoek-2026/",
+          "kind": "need",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-11-05T06:08:46.263155Z"
+        },
+        {
+          "claim": "Almost none of these bodies have a professional consent platform in place, so 'add a banner' is not the existing posture they can fall back on.",
+          "quote": "Slechts 31 gemeentes (9%) gebruiken een professioneel cookiebannerplatform",
+          "url": "https://www.nixondigital.io/blog/nl/gemeentewebsites-delen-data-met-google-zonder-toestemming-onderzoek-2026/",
+          "kind": "need",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-11-05T06:08:46.263155Z"
+        },
+        {
+          "claim": "Independent legal commentary states the current setup is unlawful because personal data goes to the US without a clear GDPR basis.",
+          "quote": "Nee, dit mag niet – er gaan dan persoonsgegevens naar de VS zonder duidelijke AVG-grondslag.",
+          "url": "https://blog.iusmentis.com/2026/03/19/ruim-60-procent-gemeentewebsites-deelt-illegaal-data-met-google/",
+          "kind": "need",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-11-05T06:08:45.788550Z"
+        },
+        {
+          "claim": "A practitioner in the public comment thread states why the web team still needs statistics after removing Google, and the thread itself is a public venue where this audience argues the question.",
+          "quote": "En analytics om te kunnen analyseren of de informatie die je aan je bewoners verstrekt ook bekeken wordt en hoe je dit kunt verbeteren.",
+          "url": "https://blog.iusmentis.com/2026/03/19/ruim-60-procent-gemeentewebsites-deelt-illegaal-data-met-google/",
+          "kind": "access",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-11-05T06:08:45.788550Z"
+        },
+        {
+          "claim": "The legal route this product fits is stated explicitly: cookieless analytics meeting the exemption criteria require no consent under Dutch law.",
+          "quote": "Cookieless analytics that meet the audience-measurement exemption criteria require no consent under the Telecommunicatiewet.",
+          "url": "https://clickport.io/blog/privacy-analytics-netherlands",
+          "kind": "need",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-11-05T06:08:47.417648Z"
+        },
+        {
+          "claim": "A Dutch-government-specific vendor positions itself directly against Simple Analytics and adds exactly the public-sector artefacts procurement asks for.",
+          "quote": "Govanalytics adds government-specific BIO compliance, NL hosting guarantee and intranet tracking via SharePoint Tracker.",
+          "url": "https://www.govanalytics.nl/en/",
+          "kind": "counterevidence",
+          "impact": "material",
+          "impact_reason": "An incumbent built for this buyer, naming this product as the thing it improves on, sets the comparison frame; the gap it claims (BIO compliance, hosting guarantee, intranet tracking) is not addressed anywhere in the supplied product truth.",
+          "fetched_at": "2026-11-05T06:08:47.645400Z"
+        },
+        {
+          "claim": "The competitor makes DPO and procurement documentation its headline promise, implying that documentation — not measurement capability — is the gate in this sale.",
+          "quote": "All documents your data protection officer and procurement team need are ready and updated every quarter.",
+          "url": "https://www.govanalytics.nl/en/",
+          "kind": "counterevidence",
+          "impact": "material",
+          "impact_reason": "If signed DPAs, DPIAs and BIO paperwork are the decision criteria, the supplied product truth contains none of them, which is a buying obstacle at the review stage rather than a messaging problem.",
+          "fetched_at": "2026-11-05T06:08:47.645400Z"
+        },
+        {
+          "claim": "The same legal commentary that creates the trigger predicts the migration will stall on cost and justification in small organisations like municipalities.",
+          "quote": "De alternatieven vereisen werk en dus tijd en geld, met een lastig verhaal waarom. En dan houdt het snel op.",
+          "url": "https://blog.iusmentis.com/2026/03/19/ruim-60-procent-gemeentewebsites-deelt-illegaal-data-met-google/",
+          "kind": "counterevidence",
+          "impact": "material",
+          "impact_reason": "It argues the trigger does not convert into a purchase because the time and budget cannot be justified locally — a direct obstacle to the buying step, from the same source that establishes the need.",
+          "fetched_at": "2026-11-05T06:08:45.788550Z"
+        },
+        {
+          "claim": "A commenter argues the whole category can simply be dropped from a government site, making removal rather than replacement the cheap resolution.",
+          "quote": "Maar goed. We hebben het hier over analytics, lettertypes en filmpjes. Een overheidssite kan prima zonder alle drie.",
+          "url": "https://blog.iusmentis.com/2026/03/19/ruim-60-procent-gemeentewebsites-deelt-illegaal-data-met-google/",
+          "kind": "counterevidence",
+          "impact": "material",
+          "impact_reason": "Switching analytics off is free and immediately compliant; if that view prevails inside a municipality there is no purchase at all, which is a substantial competing resolution rather than an objection to handle.",
+          "fetched_at": "2026-11-05T06:08:45.788550Z"
+        },
+        {
+          "claim": "Regulatory pressure has barely materialised in practice, which weakens the urgency the trigger appears to create.",
+          "quote": "The AP's only Google Analytics enforcement was a formal reprimand against Takeaway.com for Universal Analytics data transfers to the US. It was never made public, and the AP says those findings do not carry over one-to-one to GA4. 715,000 Dutch websites still use Google Analytics.",
+          "url": "https://clickport.io/blog/privacy-analytics-netherlands",
+          "kind": "counterevidence",
+          "impact": "material",
+          "impact_reason": "With one unpublished reprimand on record and hundreds of thousands of sites unchanged, the deadline pressure a compliance-led pitch relies on is largely reputational; that changes the expected timeline and conversion of the whole segment.",
+          "fetched_at": "2026-11-05T06:08:47.417648Z"
+        }
+      ]
+    },
+    "kind": "triggered",
+    "added_by": "cartographer",
+    "who": "Web and comms teams at Dutch municipalities and comparable EU public bodies named in compliance scans for loading Google before consent",
+    "why_them": "Hypothesis: a published scan of all 342 Dutch municipal websites turned this from a latent risk into a named, dated, press-covered finding per organisation, and the same legal commentary says a public body cannot use a cookie wall — which removes 'just add a banner' as the cheap fix and forces a cookieless tool choice",
+    "trigger": "Being named in a compliance scan or press item, a council question (raadsvraag), a DPO/FG audit, or a redesign tender where the privacy annex requires no pre-consent third-party loading",
+    "pains": [
+      "A published scan found 61% of municipalities load Big Tech services before consent — in 99.5% of those cases Google — and 70 municipalities load Google Analytics pre-consent; being on that list is a documented, attributable finding",
+      "220 of 342 municipalities have no cookie banner at all, so the current analytics setup has no lawful basis to fall back on",
+      "Legal commentary reports over 60% of municipal sites share data with Google illegally, and the cookie-wall route is closed to public bodies by statute",
+      "Switching off analytics entirely leaves the web team unable to show whether service pages are findable or used"
+    ],
+    "objection": "Procurement and our DPO will want an EU vendor with a DPA, a DPIA already done and ideally a government-specific product — you are a small Amsterdam company with SOC 2 'in progress', and there are Dutch tools built for government.",
+    "angle": "Lead with what the DPO has to sign: no cookies, no localStorage, no IP storage, no fingerprinting, country-level location only, EU hosting in the Netherlands, open-source client scripts — and flag the AI chat as an opt-in with a data-transfer consequence rather than bundling it into the EU-hosting claim.",
+    "sophistication": "problem_aware",
+    "fit": 0.0,
+    "basis": "New candidate from this round. Demand evidence: the Nixon Digital 2026 scan of all 342 Dutch municipal websites (61% load Big Tech pre-consent, 70 load Google Analytics pre-consent, 220 have no cookie banner, only 31 use a professional CMP), reported independently by ib-p.nl, security.nl, ICTMagazine and Ius Mentis ('over 60% of municipal websites share data with Google illegally'); clickport.io states Article 11.7a(5) Telecommunicatiewet bans cookie walls outright for public-sector websites and that cookieless audience measurement meeting the exemption needs no consent, making it defensible to a DPO or an AP review. Counterevidence, material: Govanalytics is purpose-built for Dutch government (€129/month) and the NL commentary recommends Matomo, Piwik PRO, Siteimprove and SIM Analytics by name — an incumbent-vendor field with existing public-sector references; Simple Analytics has no SOC 2 certification, and no DPA, DPIA template or uptime SLA appears in the supplied material, which is usually mandatory in public procurement. Note: the named public-sector logos in the brief (GOV.UK, Scottish Government, Bank of England) were not verified in this round.",
+    "population": "unknown",
+    "signals": [
+      "public_sector_domain_suffix_or_government_body",
+      "third_party_tracker_loaded_before_consent_in_public_scan",
+      "dpo_or_fg_contact_published_on_site",
+      "cookie_statement_names_google_analytics",
+      "named_in_privacy_compliance_scan_or_press_coverage",
+      "website_redesign_tender_with_privacy_annex",
+      "no_cookie_banner_but_analytics_script_present"
+    ],
+    "where": [
+      "nixondigital.io municipal privacy scan and its webinar",
+      "ib-p.nl and security.nl coverage of the municipal scan",
+      "blog.iusmentis.com legal commentary on municipal sites and Google",
+      "TenderNed / public procurement notices for website and web-statistics suppliers",
+      "govanalytics.nl articles (competitor positioning for Dutch government)",
+      "VNG / Gebruiker Centraal and Dutch digital-government community channels"
+    ],
+    "unobvious": true,
+    "researchable": true,
+    "researchability": "high",
+    "researchability_reasons": [
+      "7 useful observable signals and 6 specific research venues.",
+      "The audience is anchored in a concrete workflow or situation.",
+      "A clear trigger narrows the evidence to look for.",
+      "No population basis is stated."
+    ],
+    "definition": {
+      "schema_version": 2,
+      "required_structural_signals": [
+        {
+          "code": "public_sector_or_publicly_funded_organisation",
+          "description": ""
+        },
+        {
+          "code": "eu_based_with_dpo_or_data_protection_officer_named",
+          "description": ""
+        },
+        {
+          "code": "public_facing_informational_website_as_primary_channel",
+          "description": ""
+        }
+      ],
+      "required_workflow_signals": [
+        {
+          "code": "web_statistics_used_for_content_or_service_decisions",
+          "description": ""
+        },
+        {
+          "code": "privacy_review_required_before_adding_a_script",
+          "description": ""
+        },
+        {
+          "code": "consent_banner_absent_or_legally_unavailable_as_a_fix",
+          "description": ""
+        }
+      ],
+      "required_product_capabilities": [
+        "fact_96722818ae844bbc",
+        "fact_be04458752321709",
+        "fact_930cd3813ab22a03",
+        "fact_9883c646d9090697",
+        "fact_7f03e1eac5a3827b",
+        "fact_1d90df47f6dc92be",
+        "fact_d9a0e8465fd8b0ae",
+        "fact_ba03c85205e405a7",
+        "fact_ad430e9251bd3368"
+      ],
+      "optional_signals": [
+        {
+          "code": "external_web_agency_maintains_the_site",
+          "description": ""
+        },
+        {
+          "code": "multiple_subdomains_or_service_portals",
+          "description": ""
+        },
+        {
+          "code": "accessibility_or_digital_standards_statement_published",
+          "description": ""
+        }
+      ],
+      "hard_disqualifiers": [
+        {
+          "code": "procurement_requires_soc2_certification_or_signed_dpa_not_evidenced",
+          "description": "SOC 2 in progress; no DPA in the supplied material",
+          "outcome": "EXCLUDED"
+        },
+        {
+          "code": "mandated_to_use_a_government_specific_analytics_framework",
+          "description": "",
+          "outcome": "EXCLUDED"
+        },
+        {
+          "code": "requires_self_hosting_inside_own_datacentre",
+          "description": "",
+          "outcome": "EXCLUDED"
+        }
+      ],
+      "eligible_subsegments": [
+        "municipalities",
+        "public_universities_and_libraries",
+        "national_agencies_and_inspectorates",
+        "public_broadcasters_and_cultural_institutions"
+      ],
+      "excluded_subsegments": [
+        "bodies_under_a_central_mandated_analytics_contract"
+      ],
+      "max_team_size": null
+    }
+  }
+}

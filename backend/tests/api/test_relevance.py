@@ -4,6 +4,7 @@ import json
 import time
 from uuid import UUID
 
+import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
@@ -110,6 +111,54 @@ def answer() -> str:
     )
 
 
+def test_closed_dossier_model_override_does_not_pin_an_unused_web_research_role(client, engine, provider, monkeypatch):
+    monkeypatch.setattr(market_routes, "engine", engine)
+    market_service._jobs.clear()
+    brand = make_brand(client)
+    prepare_inputs(engine, brand["id"])
+    provider.set_default("relevance_analyst", answer())
+    response = client.post(f"/api/market/{brand['id']}/audience/relevance", json={
+        "segment": "Repair shops", "model": "gpt-5.6-sol",
+    })
+    assert response.status_code == 202, response.text
+    assert await_market_job(client, brand["id"])["state"] == "done"
+    request = provider.requests_for("relevance_analyst")[0]
+    assert request.model == "gpt-5.6-sol" and request.tools == []
+    assert provider.calls_by_role["material_researcher"] == 0
+
+
+@pytest.mark.parametrize("old_receipt", [False, True])
+def test_recovery_attempt_receipt_survives_only_unchanged_inputs(client, engine, provider, monkeypatch, old_receipt):
+    monkeypatch.setattr(market_routes, "engine", engine)
+    market_service._jobs.clear()
+    brand = make_brand(client)
+    brand_id = UUID(brand["id"])
+    prepare_inputs(engine, brand["id"])
+    provider.set_default("relevance_analyst", answer())
+    endpoint = f"/api/market/{brand_id}/audience/relevance"
+    assert client.post(endpoint, json={"segment": "Repair shops"}).status_code == 202
+    assert await_market_job(client, str(brand_id))["state"] == "done"
+    with Session(engine) as db:
+        store = MarketStore(db)
+        dossier = store.latest_dossier(brand_id, "Repair shops")[1]
+        store.save_dossier(brand_id, dossier.model_copy(update={
+            "verified_product_questions": ["Official configuration already checked."],
+            "interpretation_version": 25 if old_receipt else dossier.interpretation_version,
+        }))
+    assert client.post(endpoint + "/rebuild", json={"segment": "Repair shops"}).status_code == 202
+    assert await_market_job(client, str(brand_id))["state"] == "done"
+    with Session(engine) as db:
+        store = MarketStore(db)
+        assert bool(store.latest_dossier(brand_id, "Repair shops")[1].verified_product_questions) is not old_receipt
+        research = store.latest_research(brand_id, "Repair shops")[1]
+        store.save_research(brand_id, research, None)
+    assert client.post(endpoint + "/rebuild", json={"segment": "Repair shops"}).status_code == 202
+    assert await_market_job(client, str(brand_id))["state"] == "done"
+    with Session(engine) as db:
+        assert not MarketStore(db).latest_dossier(brand_id, "Repair shops")[1].verified_product_questions
+    assert provider.calls_by_role["material_researcher"] == 0
+
+
 def test_status_and_generation_report_all_missing_prerequisites(client: TestClient):
     brand = make_brand(client)
 
@@ -158,6 +207,63 @@ def test_discovery_only_campaign_preflight_makes_zero_writer_calls(client, provi
     assert advice.json()["readiness"] == "DISCOVERY_ONLY"
     assert advice.json()["override_required"] is True
     assert provider.calls_by_role["email_writer"] == 0
+
+
+def test_preflight_explains_current_workflow_gaps_without_requalifying(
+    client, engine, provider, monkeypatch
+):
+    monkeypatch.setattr(market_routes, "engine", engine)
+    market_service._jobs.clear()
+    brand = make_brand(client)
+    prepare_inputs(engine, brand["id"])
+    research = AudienceResearch(
+        audience_name="Repair shops",
+        candidate_kind="adjacent",
+        definition=AudienceDefinition(
+            required_product_capabilities=["fact_deadbeefdeadbeef"]
+        ),
+        problems=[AudienceProblem(id="P1", statement="Answer warranty questions.")],
+    )
+    with Session(engine) as session:
+        MarketStore(session).save_research(UUID(brand["id"]), research, None)
+    gap = "Answering warranty questions from live order records is not established."
+    proposal = json.loads(answer())
+    proposal["defining_need_fit"] = {
+        "status": "partial", "evidence_ids": ["E1"],
+        "unverified_requirements": [gap],
+        "why": "Release-note drafting does not establish access to warranty records.",
+    }
+    provider.set_default("relevance_analyst", json.dumps(proposal))
+    generated = client.post(
+        f"/api/market/{brand['id']}/audience/relevance",
+        json={"segment": "Repair shops"},
+    )
+    assert generated.status_code == 202, generated.text
+    assert await_market_job(client, brand["id"])["state"] == "done"
+    campaign = client.post("/api/campaigns", json={
+        "name": "Missing workflow support", "request": "Write one acquisition email.",
+        "brand_id": brand["id"], "audience_segment": "Repair shops",
+    }).json()
+    url = f"/api/campaigns/{campaign['id']}/generation-advice"
+    advice = client.get(url).json()
+    assert advice["readiness"] == "DISCOVERY_ONLY"
+    assert advice["override_required"] is True
+    assert advice["reasons"] == [gap]
+    assert "Add product sources" in advice["user_message"]
+    assert any("fact_deadbeefdeadbeef" in reason
+               for reason in advice["recommendation"]["reasons"])
+    assert provider.calls_by_role["email_writer"] == 0
+    assert provider.calls_by_role["relevance_analyst"] == 1
+
+    # Old workflow findings must not conceal a newer freshness problem.
+    with Session(engine) as session:
+        MarketStore(session).save_research(UUID(brand["id"]), research, None)
+    stale = client.get(url).json()
+    assert stale["dossier_status"] == "stale"
+    assert stale["override_required"] is True
+    assert "changed" in stale["user_message"]
+    assert any("stale" in reason for reason in stale["reasons"])
+    assert provider.calls_by_role["relevance_analyst"] == 1
 
 
 def test_capability_profile_is_versioned_editable_and_evidence_bounded(

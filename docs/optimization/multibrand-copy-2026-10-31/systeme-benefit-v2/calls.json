@@ -1,0 +1,380 @@
+[
+  {
+    "id": "28cf7f68-9b8a-48f5-b745-84ec747864e1",
+    "started_at": "2026-10-31T20:52:26.427603",
+    "duration_ms": 52018.11919998727,
+    "agent_id": "strategist",
+    "completed_at": "2026-10-31T20:53:18.711053",
+    "attempt": 1,
+    "agent_name": "Strategist",
+    "model": "gpt-5.6-sol",
+    "sequence_order": 1,
+    "input_tokens": 37033,
+    "status": "completed",
+    "output_tokens": 7771,
+    "input_data": {
+      "label": "Deciding what this campaign says, and in what order"
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "emails": [
+        "#1 Un auteur peut proposer un livre physique directement depuis un tunnel ou un site systeme.io et faire traiter le paiement par Stripe, sans boutique Shopify ou WooCommerce séparée.",
+        "#2 Un tunnel systeme.io peut transformer une inscription en contact tagué et inscrit dans une séquence automatisée, sans outil d’automatisation externe pour cette opération.",
+        "#3 Lors d’une migration, les contacts peuvent être importés, mais les fiches produits doivent être recréées manuellement ; ce compromis doit être évalué à l’échelle réelle du catalogue."
+      ]
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "35945d7a-e03b-4598-abe1-5c0611a1094a",
+    "error_message": null,
+    "cost_usd": 0.535743
+  },
+  {
+    "id": "6b17b82b-a2aa-4e9d-868b-52c1fbb9787f",
+    "started_at": "2026-10-31T20:53:19.039197",
+    "duration_ms": 15300.276199996006,
+    "agent_id": "email_writer",
+    "completed_at": "2026-10-31T20:53:34.389237",
+    "attempt": 1,
+    "agent_name": "Email Writer",
+    "model": "gpt-5.6-sol",
+    "sequence_order": 2,
+    "input_tokens": 16439,
+    "status": "completed",
+    "output_tokens": 2489,
+    "input_data": {
+      "label": "Email 1 · first draft",
+      "position": 1,
+      "attempt": 1
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "subject": "Vendre directement un livre physique"
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "35945d7a-e03b-4598-abe1-5c0611a1094a",
+    "error_message": null,
+    "cost_usd": 0.212531
+  },
+  {
+    "id": "7052194d-62f0-4657-8ceb-9a767d3f8436",
+    "started_at": "2026-10-31T20:53:34.502145",
+    "duration_ms": 13145.52220000769,
+    "agent_id": "blind_reader",
+    "completed_at": "2026-10-31T20:53:47.674711",
+    "attempt": 1,
+    "agent_name": "Blind Reader",
+    "model": "gpt-5.6-sol",
+    "sequence_order": 3,
+    "input_tokens": 3986,
+    "status": "completed",
+    "output_tokens": 1508,
+    "input_data": {
+      "label": "Email 1 · read cold by 1 reader(s)",
+      "position": 1,
+      "attempt": 1
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "pull": 6
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "35945d7a-e03b-4598-abe1-5c0611a1094a",
+    "error_message": null,
+    "cost_usd": 0.083477
+  },
+  {
+    "id": "b1be7079-cedf-4d5c-ab84-70fbd6a153a0",
+    "started_at": "2026-10-31T20:53:47.685652",
+    "duration_ms": 13325.96369998646,
+    "agent_id": "email_writer",
+    "completed_at": "2026-10-31T20:54:01.050856",
+    "attempt": 2,
+    "agent_name": "Email Writer",
+    "model": "gpt-5.6-sol",
+    "sequence_order": 4,
+    "input_tokens": 17682,
+    "status": "completed",
+    "output_tokens": 1760,
+    "input_data": {
+      "label": "Email 1 · rewrite 1",
+      "position": 1,
+      "attempt": 2
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "subject": "Du paiement aux frais de livraison"
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "35945d7a-e03b-4598-abe1-5c0611a1094a",
+    "error_message": null,
+    "cost_usd": 0.200605
+  },
+  {
+    "id": "5c8154fa-5a23-4f52-ab8d-c35a7720e533",
+    "started_at": "2026-10-31T20:54:01.162955",
+    "duration_ms": 12691.906500025652,
+    "agent_id": "blind_reader",
+    "completed_at": "2026-10-31T20:54:13.887805",
+    "attempt": 2,
+    "agent_name": "Blind Reader",
+    "model": "gpt-5.6-sol",
+    "sequence_order": 5,
+    "input_tokens": 4000,
+    "status": "completed",
+    "output_tokens": 1396,
+    "input_data": {
+      "label": "Email 1 · read cold by 1 reader(s)",
+      "position": 1,
+      "attempt": 2
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "pull": 6
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "35945d7a-e03b-4598-abe1-5c0611a1094a",
+    "error_message": null,
+    "cost_usd": 0.080229
+  },
+  {
+    "id": "7681a691-0335-4174-919e-752c6e024220",
+    "started_at": "2026-10-31T20:54:13.920610",
+    "duration_ms": 10266.263800003799,
+    "agent_id": "email_writer",
+    "completed_at": "2026-10-31T20:54:24.242350",
+    "attempt": 3,
+    "agent_name": "Email Writer",
+    "model": "gpt-5.6-sol",
+    "sequence_order": 6,
+    "input_tokens": 17213,
+    "status": "completed",
+    "output_tokens": 1296,
+    "input_data": {
+      "label": "Email 2 · first draft",
+      "position": 2,
+      "attempt": 1
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "subject": "Du tunnel à la séquence email"
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "35945d7a-e03b-4598-abe1-5c0611a1094a",
+    "error_message": null,
+    "cost_usd": 0.182933
+  },
+  {
+    "id": "b0480491-7542-4ce1-adb2-5d7734a0aee6",
+    "started_at": "2026-10-31T20:54:24.369848",
+    "duration_ms": 11491.96650000522,
+    "agent_id": "blind_reader",
+    "completed_at": "2026-10-31T20:54:35.886880",
+    "attempt": 3,
+    "agent_name": "Blind Reader",
+    "model": "gpt-5.6-sol",
+    "sequence_order": 7,
+    "input_tokens": 3964,
+    "status": "completed",
+    "output_tokens": 1133,
+    "input_data": {
+      "label": "Email 2 · read cold by 1 reader(s)",
+      "position": 2,
+      "attempt": 1
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "pull": 6
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "35945d7a-e03b-4598-abe1-5c0611a1094a",
+    "error_message": null,
+    "cost_usd": 0.072051
+  },
+  {
+    "id": "94fd9ec4-b405-430b-9376-62c63f07190e",
+    "started_at": "2026-10-31T20:54:35.897370",
+    "duration_ms": 15135.523700009799,
+    "agent_id": "email_writer",
+    "completed_at": "2026-10-31T20:54:51.077090",
+    "attempt": 4,
+    "agent_name": "Email Writer",
+    "model": "gpt-5.6-sol",
+    "sequence_order": 8,
+    "input_tokens": 18487,
+    "status": "completed",
+    "output_tokens": 2183,
+    "input_data": {
+      "label": "Email 2 · rewrite 1",
+      "position": 2,
+      "attempt": 2
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "subject": "Après l’inscription d’un lecteur"
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "35945d7a-e03b-4598-abe1-5c0611a1094a",
+    "error_message": null,
+    "cost_usd": 0.219735
+  },
+  {
+    "id": "3a66d72d-ea2f-4323-8afc-ed3894879143",
+    "started_at": "2026-10-31T20:54:51.174679",
+    "duration_ms": 14289.351700019324,
+    "agent_id": "blind_reader",
+    "completed_at": "2026-10-31T20:55:05.490649",
+    "attempt": 4,
+    "agent_name": "Blind Reader",
+    "model": "gpt-5.6-sol",
+    "sequence_order": 9,
+    "input_tokens": 3974,
+    "status": "completed",
+    "output_tokens": 1551,
+    "input_data": {
+      "label": "Email 2 · read cold by 1 reader(s)",
+      "position": 2,
+      "attempt": 2
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "pull": 6
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "35945d7a-e03b-4598-abe1-5c0611a1094a",
+    "error_message": null,
+    "cost_usd": 0.084671
+  },
+  {
+    "id": "ff529235-0353-4383-986c-0131a0280382",
+    "started_at": "2026-10-31T20:55:05.523389",
+    "duration_ms": 10913.400999997975,
+    "agent_id": "email_writer",
+    "completed_at": "2026-10-31T20:55:16.479763",
+    "attempt": 5,
+    "agent_name": "Email Writer",
+    "model": "gpt-5.6-sol",
+    "sequence_order": 10,
+    "input_tokens": 17878,
+    "status": "completed",
+    "output_tokens": 1509,
+    "input_data": {
+      "label": "Email 3 · first draft",
+      "position": 3,
+      "attempt": 1
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "subject": "Contacts importés, produits recréés"
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "35945d7a-e03b-4598-abe1-5c0611a1094a",
+    "error_message": null,
+    "cost_usd": 0.194643
+  },
+  {
+    "id": "d0277b4f-b35e-4f21-ae2f-f70d6f0544de",
+    "started_at": "2026-10-31T20:55:16.598437",
+    "duration_ms": 13850.897500000428,
+    "agent_id": "blind_reader",
+    "completed_at": "2026-10-31T20:55:30.477179",
+    "attempt": 5,
+    "agent_name": "Blind Reader",
+    "model": "gpt-5.6-sol",
+    "sequence_order": 11,
+    "input_tokens": 3998,
+    "status": "completed",
+    "output_tokens": 1699,
+    "input_data": {
+      "label": "Email 3 · read cold by 1 reader(s)",
+      "position": 3,
+      "attempt": 1
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "pull": 6
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "35945d7a-e03b-4598-abe1-5c0611a1094a",
+    "error_message": null,
+    "cost_usd": 0.089303
+  },
+  {
+    "id": "4722257c-8fbb-4d3b-ae5c-c79b65951878",
+    "started_at": "2026-10-31T20:55:30.486846",
+    "duration_ms": 14635.02739998512,
+    "agent_id": "email_writer",
+    "completed_at": "2026-10-31T20:55:45.167947",
+    "attempt": 6,
+    "agent_name": "Email Writer",
+    "model": "gpt-5.6-sol",
+    "sequence_order": 12,
+    "input_tokens": 19117,
+    "status": "completed",
+    "output_tokens": 2104,
+    "input_data": {
+      "label": "Email 3 · rewrite 1",
+      "position": 3,
+      "attempt": 2
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "subject": "Ce qui ne migre pas automatiquement"
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "35945d7a-e03b-4598-abe1-5c0611a1094a",
+    "error_message": null,
+    "cost_usd": 0.222405
+  },
+  {
+    "id": "7b592ec5-e266-4114-ab81-9d5f0f4464a3",
+    "started_at": "2026-10-31T20:55:45.277613",
+    "duration_ms": 14472.709199995734,
+    "agent_id": "blind_reader",
+    "completed_at": "2026-10-31T20:55:59.775091",
+    "attempt": 6,
+    "agent_name": "Blind Reader",
+    "model": "gpt-5.6-sol",
+    "sequence_order": 13,
+    "input_tokens": 4003,
+    "status": "completed",
+    "output_tokens": 1705,
+    "input_data": {
+      "label": "Email 3 · read cold by 1 reader(s)",
+      "position": 3,
+      "attempt": 2
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "pull": 4
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "35945d7a-e03b-4598-abe1-5c0611a1094a",
+    "error_message": null,
+    "cost_usd": 0.089523
+  },
+  {
+    "id": "ebd2b63e-e2e9-40ed-8eb3-ecd068e64863",
+    "started_at": "2026-10-31T20:55:59.804192",
+    "duration_ms": 6966.590700001689,
+    "agent_id": "sequence_reviewer",
+    "completed_at": "2026-10-31T20:56:06.798528",
+    "attempt": 1,
+    "agent_name": "Sequence Reviewer",
+    "model": "gpt-5.6-sol",
+    "sequence_order": 14,
+    "input_tokens": 3327,
+    "status": "completed",
+    "output_tokens": 247,
+    "input_data": {
+      "label": "Reading all 3 emails as one sequence"
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "passed": true
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "35945d7a-e03b-4598-abe1-5c0611a1094a",
+    "error_message": null,
+    "cost_usd": 0.040375
+  }
+]

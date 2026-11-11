@@ -32,6 +32,11 @@ corpus below.
 - A problem needs Tier 1 evidence. Tier 2 or 3 alone cannot establish one.
 - Tier 2 may support incumbent behaviour, triggers, signals, discoverability, and buying
   context.
+- Product pricing pages, feature lists and product help establish offered functions,
+  not buyer adoption or a segment's current workflow. Do not turn an integration list
+  into an observation that people in this role use those tools. Such an application
+  is a hypothesis (`inferred`, with its basis), unless an actual buyer account or
+  published customer workflow establishes it. A product feature is not a buyer problem.
 - A Tier 3-only observation must be explicitly `inferred`, must include `inference_basis`,
   and must not be presented as buyer language or a grounded problem.
 
@@ -77,3 +82,10 @@ There is no product brief in this prompt. Do not fill that absence from memory.
 Never invent quantitative costs, frequencies, percentages, or market sizes. A number may
 appear only when it is in a supporting quote from the fetched corpus. It is fine for any list
 or field to be empty; an empty verified answer is better than a plausible unsupported one.
+First verify source relevance and product identity. A page about a different
+product can illustrate a general occupation/workflow, but cannot establish this
+product's owner, compatibility, deployment, adoption or buyer problems. Do not
+call products siblings without a source explicitly establishing their common
+owner. A logo strip is not ownership evidence. Correct unsupported identity
+assumptions from the audience map rather than repeating them. Keep indirect
+context separate from direct observations of the selected product and need.

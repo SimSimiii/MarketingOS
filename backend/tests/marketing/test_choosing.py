@@ -87,7 +87,7 @@ async def test_two_candidates_that_came_back_the_same_are_not_read_twice(
     provider.push(
         "email_writer",
         email_draft(subject="The same line", body=_BODY_ONE),
-        email_draft(subject="The same line", body=_BODY_TWO),
+        email_draft(subject="The same line", body=_BODY_ONE),
         email_draft(subject="A different line", body=_BODY_THREE),
     )
 
@@ -109,6 +109,7 @@ async def test_a_candidate_a_gate_already_vetoed_is_not_read_cold(
     anyway bought a whole panel per blocked draft - three calls each on a
     preset that writes four candidates - for a number nothing consumes.
     """
+    provider.review("", "Unsupported urgency: act now without an established deadline.", "")
     provider.set_default("strategist", campaign_brief(1))
     provider.push(
         "email_writer",
@@ -140,6 +141,7 @@ async def test_candidates_that_all_broke_a_check_are_still_read(
     read is the only instrument left that can say which of them to carry into
     the rewrites. Skipping it there would pick the winner by draft order.
     """
+    provider.review(*["Unsupported urgency: act now without an established deadline."] * 3)
     provider.set_default("strategist", campaign_brief(1))
     provider.push(
         "email_writer",
@@ -253,9 +255,9 @@ async def test_a_rewrite_that_drops_the_proof_does_not_take_the_title(
 
     outcome = result.outcomes[0]
     assert len(outcome.versions) == 2, "the rewrite was still written and read"
-    assert outcome.versions[1].duel is None, "and was not even put to a vote"
-    assert outcome.best.attempt == 1
-    assert result.emails[0].subject == "The draft that argues from the material"
+    assert outcome.versions[1].duel is not None, "the models judge evidence use in context"
+    assert outcome.best.attempt == 2
+    assert result.emails[0].subject == "The rewrite that argues from nothing"
 
 
 @pytest.mark.asyncio
@@ -472,6 +474,7 @@ async def test_a_better_scanning_subject_that_breaks_a_check_is_not_shipped(
     """The free checks outrank the improvement. A subject can repeat an earlier
     email's word for word, and a swap that breaks a gate is a swap that made
     the deliverable worse."""
+    provider.review("", "The new subject asserts an unsupported deadline.")
     import json
 
     provider.set_default("strategist", campaign_brief(1))
@@ -511,6 +514,7 @@ async def test_a_broken_line_does_not_take_the_clean_one_down_with_it(
     readers rank contains only lines that could ship, and the best of those is
     the one delivered.
     """
+    provider.review("", "The new subject asserts an unsupported deadline.")
     import json
 
     provider.set_default("strategist", campaign_brief(1))
@@ -539,7 +543,10 @@ async def test_a_broken_line_does_not_take_the_clean_one_down_with_it(
     pipeline, _ = build(provider, refine_only(max_revisions=0, subject_variants=2))
     result = await pipeline.run(one_email(request_fixture))
 
-    assert result.emails[0].subject == "Release notes, option 2"
+    # Only the selected new header spends a source review. Its rejection
+    # preserves the already reviewed incumbent, never the unsupported winner.
+    assert result.emails[0].subject == result.outcomes[0].versions[0].email.subject
+    assert result.emails[0].subject != "Act now before this offer ends"
     assert not result.outcomes[0].best.gates.blocking
 
 

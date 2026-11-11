@@ -1,0 +1,94 @@
+[
+  {
+    "case": "papier",
+    "status": "completed",
+    "delivered": 1,
+    "promised": 1,
+    "seconds": 68.7,
+    "calls": 3,
+    "transport_retries": 0,
+    "input_tokens": 68952,
+    "output_tokens": 8108,
+    "estimated_cost_usd": 0.7949,
+    "words": [
+      109
+    ]
+  },
+  {
+    "case": "papier-revision",
+    "calls": 1,
+    "status": "proposed",
+    "seconds": 20.9,
+    "input_tokens": 21039,
+    "output_tokens": 948,
+    "words": 99,
+    "checks": {
+      "issues": []
+    }
+  },
+  {
+    "case": "cabaia",
+    "status": "degraded",
+    "delivered": 1,
+    "promised": 1,
+    "seconds": 94.4,
+    "calls": 5,
+    "transport_retries": 0,
+    "input_tokens": 113339,
+    "output_tokens": 9214,
+    "estimated_cost_usd": 1.0117,
+    "words": [
+      136
+    ]
+  },
+  {
+    "case": "systeme",
+    "status": "degraded",
+    "delivered": 1,
+    "promised": 3,
+    "seconds": 174.6,
+    "calls": 9,
+    "transport_retries": 0,
+    "input_tokens": 193212,
+    "output_tokens": 19574,
+    "estimated_cost_usd": 1.7329,
+    "words": [
+      131
+    ]
+  },
+  {
+    "case": "systeme-retest",
+    "status": "degraded",
+    "delivered": 3,
+    "promised": 3,
+    "seconds": 236.3,
+    "calls": 16,
+    "transport_retries": 0,
+    "input_tokens": 316291,
+    "output_tokens": 26259,
+    "estimated_cost_usd": 2.461,
+    "words": [
+      140,
+      125,
+      127
+    ]
+  },
+  {
+    "case": "systeme-retest-revision",
+    "calls": 1,
+    "status": "proposed",
+    "seconds": 14.9,
+    "input_tokens": 23529,
+    "output_tokens": 1192,
+    "words": 91,
+    "checks": {
+      "issues": [
+        {
+          "gate": "call-to-action",
+          "detail": "the email asks the reader to 'Voir le parcours d’inscription', which is not one of the actions this product supports (Commencez gratuitement, Commencer, Contactez notre support, Tarifs, Migration gratuite, Configuration DNS gratuite, Bibliothèque de templates, Tutoriels vidéo)",
+          "severity": "advisory"
+        }
+      ]
+    }
+  }
+]

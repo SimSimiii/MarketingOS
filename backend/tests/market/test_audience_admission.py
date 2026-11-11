@@ -55,6 +55,16 @@ def test_empty_signals_fail_admission():
     assert any("observable signal" in reason for reason in admission.reasons)
 
 
+def test_topic_research_does_not_turn_missing_prospect_signals_into_contact_admission():
+    audience = concrete(signals=[], organization="Small SaaS teams", workflow="Shipping an AI feature",
+                        need="Evaluate production responses before release")
+    demand = DemandMap(segments=[audience])
+    assert demand.admission_for(audience, allow_topic_research=True).researchable
+    assert not demand.admission_for(audience).researchable
+    assert not concrete(signals=[], where=["online"], organization=audience.organization,
+                        workflow=audience.workflow, need=audience.need).admission(allow_topic_research=True).researchable
+
+
 @pytest.mark.parametrize("venue", ["online", "LinkedIn", "social media", "web"])
 def test_a_generic_channel_without_a_qualifier_is_not_a_venue(venue: str):
     admission = concrete(where=[venue]).admission()
@@ -173,4 +183,7 @@ def test_admission_has_no_product_evidence_or_campaign_inputs():
     )
 
     assert baseline.admission() == changed_buying_case.admission()
-    assert set(inspect.signature(AudienceSegment.admission).parameters) == {"self", "existing"}
+    parameters = inspect.signature(AudienceSegment.admission).parameters
+    assert set(parameters) == {"self", "existing", "allow_topic_research"}
+    assert parameters["allow_topic_research"].default is False
+    assert parameters["allow_topic_research"].kind is inspect.Parameter.KEYWORD_ONLY

@@ -1,0 +1,204 @@
+{
+  "status": "complete",
+  "live_resume": null,
+  "database": "C:\\Users\\oussa\\AppData\\Local\\Temp\\marketingos-acceptance-2026-11-01.sqlite",
+  "branch": "master",
+  "source_revision": "c53a9f27d401",
+  "cases": [
+    {
+      "case": "papier-acquisition",
+      "status": "usable_with_minor_edits",
+      "execution_id": "10befd94-ebe9-4682-a724-d492879ebd2a",
+      "score": 88
+    },
+    {
+      "case": "papier-consideration",
+      "status": "usable_with_minor_edits",
+      "execution_id": "bf614ad8-8467-4094-b553-a28b5d296ab8",
+      "score": 87
+    },
+    {
+      "case": "systeme-acquisition",
+      "status": "usable_with_minor_edits",
+      "execution_id": "a1e13681-a98e-4f04-8fd1-9a9b46d080fd",
+      "score": 83
+    },
+    {
+      "case": "systeme-sequence",
+      "status": "usable_after_optional_local_revisions",
+      "execution_id": "b3460fe8-898d-41a3-a5b1-1798cb5683e0",
+      "delivered": 3,
+      "promised": 3,
+      "score": 85,
+      "score_components": [
+        25,
+        18,
+        13,
+        12,
+        9,
+        8
+      ],
+      "counts_as_usable": true,
+      "selected_revision_ids": {
+        "1": "23b83f7a-070b-457a-877f-35c158d9f607",
+        "3": "a4614a60-aa0d-4ae5-9f96-90d97e6a1356"
+      },
+      "strengths": [
+        "Three distinct supported decisions: physical selling, reader signup automation, plan capacity",
+        "Affiliate sender identity retained; manual preparation/dispatch explicit; incomplete price removed",
+        "Chosen text and HTML inspected, exact clipboard/export and full current-sequence deterministic checks pass"
+      ],
+      "remaining_defect": "Conservative copy; no substantial factual or argument defect in the chosen version. CTA label advisory is overly literal.",
+      "evidence": [
+        "systeme-sequence/final-selected/result.json",
+        "systeme-sequence/final-ui-check.json",
+        "systeme-sequence/final-deterministic-checks.json",
+        "all-selected-deterministic-checks.json"
+      ],
+      "reviewed_at": "2026-11-05T03:30:28.892173+00:00",
+      "score_method": "Coordinator editorial judgment on fixed grid, not simulated clicks or observed buyer outcomes"
+    },
+    {
+      "case": "loops-acquisition",
+      "status": "usable_after_minor_revision",
+      "readiness": "GO_NARROW, current, Supabase only; no override",
+      "score": 89,
+      "score_components": [
+        25,
+        18,
+        16,
+        13,
+        9,
+        8
+      ],
+      "execution_id": "8a3f9561-820a-42a8-9406-295255c120d4",
+      "selected_revision_id": "100eb4e7-75b4-4c52-8f99-3717772ea213",
+      "delivered": 1,
+      "promised": 1,
+      "strengths": [
+        "Auth sending and onboarding contact sync explained as separate useful paths",
+        "Source-backed implementation conditions retained; documented inspection before account or deployment"
+      ],
+      "remaining_defect": "Subject is functional rather than striking; advisory CTA label matcher flags an official URL despite correct destination.",
+      "minor_changes": "Clarify independent routes with existing implementation facts, remove distracting rate-limit paragraph, keep same argument and guide CTA.",
+      "stage_scores_out_of_10": {
+        "ingestion": 9,
+        "compilation": 9,
+        "capabilities": 8,
+        "competitors": 7,
+        "positioning": 7,
+        "audience_map": 7,
+        "research": 7,
+        "dossier": 8,
+        "generation": 8,
+        "consultation": 8
+      }
+    },
+    {
+      "case": "loops-consideration",
+      "status": "usable_after_minor_revision",
+      "readiness": "GO_NARROW, current, Supabase only; no override",
+      "score": 88,
+      "score_components": [
+        25,
+        18,
+        15,
+        13,
+        9,
+        8
+      ],
+      "execution_id": "a7fdcb01-c4bd-4d6c-aeb4-aed76381bb11",
+      "selected_revision_id": "788f73a7-d3f0-43f0-b24c-31e87df060b9",
+      "delivered": 1,
+      "promised": 1,
+      "strengths": [
+        "Concrete hook/Edge Function/template/domain architecture for evaluation",
+        "Same official guide and conditions retained in a concise proposal"
+      ],
+      "remaining_defect": "Conservative editorial voice; no stronger-results claim is established. Advisory compares CTA wording literally.",
+      "minor_changes": "Correct Loops guide publisher, make subject value-led, shorten repetition; same argument, evidence, offer and action.",
+      "stage_scores_out_of_10": {
+        "ingestion": 9,
+        "compilation": 9,
+        "capabilities": 8,
+        "competitors": 7,
+        "positioning": 7,
+        "audience_map": 7,
+        "research": 7,
+        "dossier": 8,
+        "generation": 8,
+        "consultation": 8
+      }
+    }
+  ],
+  "new_model_calls": null,
+  "updated_at": "2026-11-05T03:30:28.892173+00:00",
+  "ordinary_cases_usable_with_minor_edits": 5,
+  "ordinary_cases_required": 5,
+  "ordinary_cases_partial": [],
+  "ordinary_cases_not_generated": [],
+  "negative_cases": {
+    "empty_brand": "pass_zero_model_calls_missing_sources_requested",
+    "cabaia": "pass_after_deterministic_advice_fix_no_override_used"
+  },
+  "call_count_definition": "Completed model calls; known minimum395 as of prior closure, exact total unknown due original map counter loss.",
+  "blocker": null,
+  "pending": [],
+  "report": "docs/reviews/acceptance-2026-11-01.md",
+  "resume": "docs/optimization/acceptance-2026-11-01/resume.md",
+  "product_code_changes_this_continuation": [
+    "Human-facing current defining-need gaps in campaign generation advice",
+    "Direct source-workspace link for override warnings",
+    "API regression test preserves diagnostic, override and stale-input warnings"
+  ],
+  "baseline_script_status": "Four actual same-model direct controls completed.",
+  "tests_status": "Functional bar met before unit checks.59 targeted tests pass; full suite not rerun at user request. Ruff, ESLint, TypeScript and whitespace checks pass.",
+  "servers": {
+    "backend": "stopped after zero active executions/revisions",
+    "frontend": "stopped after actual UI export and render checks"
+  },
+  "validation": "validation.json",
+  "code_head": "6b6e87f7d1e727cdc73be91b64e08489ae1f7f96",
+  "access_probes": [
+    "docs\\optimization\\acceptance-2026-11-01\\claude-access-20261101T033210Z.json"
+  ],
+  "claude_auth_verified": {
+    "at": "2026-11-01T03:55:18.175083+00:00",
+    "loggedIn": true,
+    "authMethod": "claude.ai",
+    "subscriptionType": "pro",
+    "ai_billing": "subscription",
+    "api_key_visible_to_cli": false
+  },
+  "current_operations": [],
+  "ordinary_cases_failed_delivery": [],
+  "ordinary_cases_needing_more_evidence": [],
+  "new_model_calls_known_minimum": 804,
+  "new_model_calls_total": null,
+  "remaining_product_obstacles": [],
+  "completed_revision_jobs": 11,
+  "completed_comparable_direct_controls": 4,
+  "third_direct_control": "Completed on Loops acquisition; same GPT model and supplied campaign context.",
+  "verdict_reason": "Six fixed ordinary scenarios on three brands are usable with normal review and optional local edits. The formerly failed full sequence now has a useful supported third argument, chosen versions, fresh checks, history and exact export.",
+  "stop_condition": "Achieved useful paid-quality workflow on the fixed sample; no further billed polishing.",
+  "current_corrections": [
+    "Publisher-linked manifests,depth3,guide priority and HTML/Markdown dedup within existing crawl budget",
+    "Brand-only overview pricing preservation and same-brand selected-audience focus",
+    "Capacity evidence retrieval; explicit OR supported-branch normalization, full-need schema for conjunctions, interpretation18",
+    "Verified scope and setup carried into strategy and every rewrite",
+    "Supported premise, proportionate next step and accurate guide publisher prompt rules",
+    "Narrow affiliate disclosure exclusion from sequence repetition checks"
+  ],
+  "ordinary_cases_requires_substantive_change": [],
+  "metrics": "metrics-final.json",
+  "final_code_hashes": "reviewed-code-final-sha256.json",
+  "verdict": "sellable",
+  "verdict_type": "Estimated paid utility, not observed purchases",
+  "quota_exhausted": false,
+  "latest_corrections": [
+    "Keep operational claim conditions separate from forbidden statements",
+    "Preserve explicitly required shared evidence instead of erasing the value case",
+    "Give partial strategy repair the actual retained and rejected slots",
+    "Recheck proposed selections against all current sibling versions without model calls; serialize selections in the single process"
+  ]
+}

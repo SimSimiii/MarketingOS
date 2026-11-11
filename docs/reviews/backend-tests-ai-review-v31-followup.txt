@@ -1,0 +1,20 @@
+.....................................................F.................. [ 37%]
+........................................................................ [ 74%]
+..................................................                       [100%]
+================================== FAILURES ===================================
+_________ test_repetition_inside_the_sequence_is_caught_while_writing _________
+tests\marketing\test_pipeline.py:1129: in test_repetition_inside_the_sequence_is_caught_while_writing
+    assert second.best.attempt == 2, "the sequence model requested a rewrite"
+E   AssertionError: the sequence model requested a rewrite
+E   assert 1 == 2
+E    +  where 1 = EmailVersion(attempt=1, email=Email(position=2, role='hook', language='', subject='Release notes, written before you s...], edits=[], summary='Ready to send.'), critic_skipped=False, duel=None, idea='idea number 2 that nothing else argues').attempt
+E    +    where EmailVersion(attempt=1, email=Email(position=2, role='hook', language='', subject='Release notes, written before you s...], edits=[], summary='Ready to send.'), critic_skipped=False, duel=None, idea='idea number 2 that nothing else argues') = EmailOutcome(brief=EmailBrief(problem_ids=[], offer_id='offering', action_id='action_e4bd31965a01', selection_reason='...ed_early=False, champion_attempt=1, pivoted_to='', unresolved_strategy='', unresolved_failure_mode='', interruption='').best
+============================== warnings summary ===============================
+.venv\Lib\site-packages\starlette\testclient.py:53
+  C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/marketing/test_pipeline.py::test_repetition_inside_the_sequence_is_caught_while_writing
+1 failed, 193 passed, 1 warning in 55.60s

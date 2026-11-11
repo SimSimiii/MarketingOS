@@ -1,0 +1,495 @@
+{
+  "archived_run": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+  "models": {
+    "strategist": "gpt-5.6-sol",
+    "email_writer": "gpt-5.6-sol",
+    "claim_reviewer": "gpt-5.6-sol",
+    "blind_reader": "gpt-5.6-sol"
+  },
+  "destination": "https://screen.studio/download",
+  "passed": true,
+  "selected_attempt": 2,
+  "retention": {
+    "status": "preserved",
+    "explanation": "The prior concrete benefit was improving how viewers follow the product without re-recording. The revised passage preserves post-recording cursor adjustment and its viewer-guidance consequence, while keeping the Screen Studio and macOS conditions.",
+    "original_passage": "You can improve how viewers follow your product without recording the walkthrough again.",
+    "revised_passage": "When a product walkthrough is recorded in Screen Studio on macOS, the cursor can still be adjusted afterward—so each move can guide viewers through the feature you are showing."
+  },
+  "email": {
+    "position": 1,
+    "role": "acquisition",
+    "language": "en",
+    "subject": "Keep every cursor move clear",
+    "preview_text": "Adjust cursor movement, size and style after recording your product walkthrough.",
+    "eyebrow": "Product demos",
+    "headline": "Keep the cursor editable after recording",
+    "greeting": "Hi there,",
+    "body": "When a product walkthrough is recorded in Screen Studio on macOS, the cursor can still be adjusted afterward—so each move can guide viewers through the feature you are showing.\n\nScreen Studio is screen recording software for Mac. It captures precise mouse-movement data separately from the screen, synchronizes it with the video, and adds the cursor to the final result.\n\nThat means you can smooth cursor movement or change its size and style after recording, instead of starting the walkthrough again.\n\nWhen it is ready, export the finished video at up to 4K and 60 fps on every plan.\n\nScreen Studio supports macOS only, with macOS 13.1 or later recommended.",
+    "call_to_action": "Download Screen Studio for Mac",
+    "sign_off": "- Screen Studio",
+    "postscript": ""
+  },
+  "versions": [
+    {
+      "attempt": 1,
+      "email": {
+        "position": 1,
+        "role": "",
+        "language": "",
+        "subject": "Adjust cursor effects after recording",
+        "preview_text": "Record a walkthrough on Mac, refine the cursor afterward, then export up to 4K at 60 fps.",
+        "eyebrow": "",
+        "headline": "Refine the cursor after you record",
+        "greeting": "Hi there,",
+        "body": "If you’re creating a launch or feature demo on a Mac, record the walkthrough in Screen Studio, then refine how the cursor appears after you finish recording.\n\nScreen Studio is screen recording software built only for macOS. It records precise mouse-movement data separately from the screen, synchronizes it with the video, and adds the cursor back into the final result.\n\nBecause the cursor is not baked into the capture, you can smooth its movement or change its size and shape afterward. You can improve how viewers follow your product without recording the walkthrough again.\n\nWhen the video is ready, export it at up to 4K and 60 fps. That export option is included in every Screen Studio plan.\n\nThe Mac download gives you the application needed to record one walkthrough and try the cursor workflow for yourself.",
+        "call_to_action": "Download Screen Studio for Mac",
+        "sign_off": "- Screen Studio",
+        "postscript": ""
+      },
+      "gates": {
+        "issues": [
+          {
+            "gate": "claim-review",
+            "detail": "\"The Mac download gives you the application needed to record one walkthrough and try the cursor workflow for yourself.\": The product capabilities are documented, but the exact download route is not established as granting usable access to record and try the workflow. In conjunction with “Download Screen Studio for Mac →,” this can imply a free trial or free workflow, while the supplied evidence establishes only paid plans and explicitly establishes no free trial or free tier.",
+            "severity": "blocking"
+          },
+          {
+            "gate": "claim-review",
+            "detail": "The implied offer is an unspecified Mac-download access route. The surrounding capability copy and CTA imply that this route lets the recipient record a walkthrough, use post-recording cursor controls, and export it, but no source establishes that downloading alone grants that access or that a free trial/free workflow exists. Paid-plan feature availability does not verify download-route entitlement.",
+            "severity": "blocking"
+          }
+        ],
+        "semantic_review": {
+          "key": "8c18a9f9728c8db8b09d6950814a3a3a1546ef0de49985689b3382f6efc02a8b",
+          "approved": false,
+          "decision": {
+            "verdict": "uncertain",
+            "claims": [
+              {
+                "text": "Subject: Adjust cursor effects after recording",
+                "status": "supported",
+                "explanation": "Screen Studio applies cursor effects after recording.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "Thanks to this, it can apply many effects after the video is recorded, such as making mouse movement smooth, changing cursor size and shape, etc."
+                  }
+                ]
+              },
+              {
+                "text": "Preview text: Record a walkthrough on Mac, refine the cursor afterward, then export up to 4K at 60 fps.",
+                "status": "supported",
+                "explanation": "The sources support macOS-only recording, post-recording cursor refinement, and export up to 4K at 60 fps. The draft later makes clear that the walkthrough must be recorded in Screen Studio.",
+                "citations": [
+                  {
+                    "source_id": "E8",
+                    "quote": "Is the Windows version ready? No, and there are no near-future plans to add Windows support. Currently, Screen Studio only supports macOS."
+                  },
+                  {
+                    "source_id": "source:0",
+                    "quote": "Thanks to this, it can apply many effects after the video is recorded, such as making mouse movement smooth, changing cursor size and shape, etc."
+                  },
+                  {
+                    "source_id": "E6",
+                    "quote": "Export up to 4K at 60 fps"
+                  }
+                ]
+              },
+              {
+                "text": "Refine the cursor after you record",
+                "status": "supported",
+                "explanation": "The documented workflow permits cursor effects after recording.",
+                "citations": [
+                  {
+                    "source_id": "source:2",
+                    "quote": "Change the cursor’s size and style after you record, so every move is easier to follow."
+                  }
+                ]
+              },
+              {
+                "text": "If you’re creating a launch or feature demo on a Mac, record the walkthrough in Screen Studio, then refine how the cursor appears after you finish recording.",
+                "status": "supported",
+                "explanation": "This is conditional rather than a claim about the recipient. Screen Studio is macOS-only, and its recorded cursor data permits post-recording refinement.",
+                "citations": [
+                  {
+                    "source_id": "E8",
+                    "quote": "Is the Windows version ready? No, and there are no near-future plans to add Windows support. Currently, Screen Studio only supports macOS."
+                  },
+                  {
+                    "source_id": "E3",
+                    "quote": "It records your screen, ignoring the mouse cursor, and then adds the cursor back in the final video. This is possible because Screen Studio records precise mouse movement data and synchronizes it with the recorded video."
+                  },
+                  {
+                    "source_id": "source:2",
+                    "quote": "Change the cursor’s size and style after you record, so every move is easier to follow."
+                  }
+                ]
+              },
+              {
+                "text": "Screen Studio is screen recording software built only for macOS.",
+                "status": "supported",
+                "explanation": "The official source says Screen Studio currently supports only macOS.",
+                "citations": [
+                  {
+                    "source_id": "E8",
+                    "quote": "Is the Windows version ready? No, and there are no near-future plans to add Windows support. Currently, Screen Studio only supports macOS."
+                  }
+                ]
+              },
+              {
+                "text": "It records precise mouse-movement data separately from the screen, synchronizes it with the video, and adds the cursor back into the final result.",
+                "status": "supported",
+                "explanation": "The source states that the screen capture ignores the cursor while precise cursor movement data is recorded and synchronized, after which the cursor is added to the final video.",
+                "citations": [
+                  {
+                    "source_id": "E3",
+                    "quote": "It records your screen, ignoring the mouse cursor, and then adds the cursor back in the final video. This is possible because Screen Studio records precise mouse movement data and synchronizes it with the recorded video."
+                  }
+                ]
+              },
+              {
+                "text": "Because the cursor is not baked into the capture, you can smooth its movement or change its size and shape afterward.",
+                "status": "supported",
+                "explanation": "The source documents the separate cursor mechanism and specifically names smoothing and size/shape changes after recording.",
+                "citations": [
+                  {
+                    "source_id": "E3",
+                    "quote": "It records your screen, ignoring the mouse cursor, and then adds the cursor back in the final video. This is possible because Screen Studio records precise mouse movement data and synchronizes it with the recorded video."
+                  },
+                  {
+                    "source_id": "source:0",
+                    "quote": "Thanks to this, it can apply many effects after the video is recorded, such as making mouse movement smooth, changing cursor size and shape, etc."
+                  }
+                ]
+              },
+              {
+                "text": "You can improve how viewers follow your product without recording the walkthrough again.",
+                "status": "supported",
+                "explanation": "Post-recording cursor styling is documented as making movement easier to follow, so the stated qualitative benefit and lack of rerecording are supported.",
+                "citations": [
+                  {
+                    "source_id": "source:2",
+                    "quote": "Change the cursor’s size and style after you record, so every move is easier to follow."
+                  },
+                  {
+                    "source_id": "source:0",
+                    "quote": "Thanks to this, it can apply many effects after the video is recorded, such as making mouse movement smooth, changing cursor size and shape, etc."
+                  }
+                ]
+              },
+              {
+                "text": "When the video is ready, export it at up to 4K and 60 fps.",
+                "status": "supported",
+                "explanation": "The export ceiling and frame rate are stated directly.",
+                "citations": [
+                  {
+                    "source_id": "E6",
+                    "quote": "Export up to 4K at 60 fps"
+                  }
+                ]
+              },
+              {
+                "text": "That export option is included in every Screen Studio plan.",
+                "status": "supported",
+                "explanation": "The export option is a Screen Studio feature, and both supplied Screen Studio plans state that all features are included.",
+                "citations": [
+                  {
+                    "source_id": "E6",
+                    "quote": "Export up to 4K at 60 fps"
+                  },
+                  {
+                    "source_id": "E4",
+                    "quote": "### Yearly Save 69% $9/mo. All Screen Studio features included."
+                  },
+                  {
+                    "source_id": "E5",
+                    "quote": "### Monthly $29/mo. All Screen Studio features included."
+                  }
+                ]
+              },
+              {
+                "text": "The Mac download gives you the application needed to record one walkthrough and try the cursor workflow for yourself.",
+                "status": "uncertain",
+                "explanation": "The product capabilities are documented, but the exact download route is not established as granting usable access to record and try the workflow. In conjunction with “Download Screen Studio for Mac →,” this can imply a free trial or free workflow, while the supplied evidence establishes only paid plans and explicitly establishes no free trial or free tier.",
+                "citations": [
+                  {
+                    "source_id": "E3",
+                    "quote": "It records your screen, ignoring the mouse cursor, and then adds the cursor back in the final video. This is possible because Screen Studio records precise mouse movement data and synchronizes it with the recorded video."
+                  },
+                  {
+                    "source_id": "E4",
+                    "quote": "### Yearly Save 69% $9/mo. All Screen Studio features included."
+                  },
+                  {
+                    "source_id": "E5",
+                    "quote": "### Monthly $29/mo. All Screen Studio features included."
+                  }
+                ]
+              }
+            ],
+            "findings": [
+              {
+                "text": "The Mac download gives you the application needed to record one walkthrough and try the cursor workflow for yourself.",
+                "kind": "factual",
+                "explanation": "The implied offer is an unspecified Mac-download access route. The surrounding capability copy and CTA imply that this route lets the recipient record a walkthrough, use post-recording cursor controls, and export it, but no source establishes that downloading alone grants that access or that a free trial/free workflow exists. Paid-plan feature availability does not verify download-route entitlement."
+              }
+            ],
+            "summary": "The cursor mechanism, macOS boundary, viewer-following benefit, and 4K/60 fps export claim are supported. The review remains uncertain because the download-and-try passage implies usable access through the download route without evidence of a free trial, free tier, or other entitlement.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The draft preserves the proposed benefit: a walkthrough recorded in Screen Studio on macOS can have its cursor refined afterward and be exported at up to 4K and 60 fps. The unresolved issue is access through the download route, not loss of the core benefit.",
+              "original_passage": "If the reader is creating a launch or feature demo on a Mac, they can refine how the cursor appears after the walkthrough has been recorded and export the finished video at up to 4K and 60 fps.",
+              "revised_passage": "If you’re creating a launch or feature demo on a Mac, record the walkthrough in Screen Studio, then refine how the cursor appears after you finish recording. When the video is ready, export it at up to 4K and 60 fps."
+            }
+          },
+          "version": 3
+        }
+      },
+      "read": {
+        "reads": [
+          {
+            "opened": true,
+            "stopped_at": "",
+            "what_it_sells": "Screen Studio is a macOS screen recorder that lets me edit the recorded cursor’s movement, size, and shape afterward, potentially saving me from re-recording a launch or feature demo.",
+            "understood": true,
+            "situation_matches": null,
+            "relevance_feedback": "",
+            "assumed_experiences": [],
+            "problem_now": "",
+            "biggest_doubt": "The CTA asks me to install unfamiliar software, but I cannot tell whether the one-walkthrough test is free, whether its export is watermarked, or what I would pay afterward. The cursor feature sounds useful, but not useful enough to download blindly.",
+            "would_act": false,
+            "to_click_it_would_have_to": "",
+            "pull": 6,
+            "fixes": [
+              "Rewrite \"The Mac download gives you the application needed to record one walkthrough and try the cursor workflow for yourself.\" to state the actual test terms: whether payment details are required, whether the exported walkthrough is watermarked, and what happens after the test.",
+              "Rewrite \"Download Screen Studio for Mac →\" as a lower-commitment CTA such as \"See pricing and trial details →\" unless the download terms can be stated directly beside the link.",
+              "Cut \"Screen Studio is screen recording software built only for macOS.\" if the Mac-only requirement is placed clearly beside the CTA; the subject preview and opening sentence already establish the platform."
+            ],
+            "material_revision": "",
+            "persona": "Selected audience (explicit constraints): Indie SaaS founder/maker creating launch & demo videos.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (grounded; applicability must be checked): Indie and solo SaaS founders preparing a Product Hunt launch build their own launch/demo video and page assets as part of the process, often alongside writing descriptions and filling out their product page before going live.\nSource: https://www.indiehackers.com/post/i-launched-2-apps-on-product-hunt-and-both-were-featured-heres-what-i-learned-0b24c76a3a; quote: I recently launched two apps on Product Hunt — Erla (a language learning app) and Voicr (a voice-to-polished-text app).\nSource: https://www.indiehackers.com/post/i-launched-2-apps-on-product-hunt-and-both-were-featured-heres-what-i-learned-0b24c76a3a; quote: Create your product page 3–4 days before launch and schedule it.\nProblem context: Indie/bootstrapped founders preparing a product launch video report being budget-constrained to the point that hiring professional video production (an agency) was ruled out, pushing them toward cheaper routes. [Source limits: Historical sources (2022-06-16); present applicability is not corroborated.; Single-source problem; independent corroboration is not established.] (inferred); source: https://www.indiehackers.com/post/how-we-won-product-hunt-video-of-the-year-and-2-3k-upvotes-as-a-total-newcomer-a8b6c36f2e\nProblem context: A Product Hunt launcher reports wanting the demo video/asset creation step to be fast (achievable in about an hour with AI tools) rather than a slow or skill-intensive task, as part of preparing launch materials. [Source limits: Single-source problem; independent corroboration is not established.]; source: https://www.indiehackers.com/post/i-launched-2-apps-on-product-hunt-and-both-were-featured-heres-what-i-learned-0b24c76a3a",
+            "reported": true,
+            "opens_in_100": null,
+            "clicks_in_100": null
+          }
+        ]
+      }
+    },
+    {
+      "attempt": 2,
+      "email": {
+        "position": 1,
+        "role": "acquisition",
+        "language": "en",
+        "subject": "Keep every cursor move clear",
+        "preview_text": "Adjust cursor movement, size and style after recording your product walkthrough.",
+        "eyebrow": "Product demos",
+        "headline": "Keep the cursor editable after recording",
+        "greeting": "Hi there,",
+        "body": "When a product walkthrough is recorded in Screen Studio on macOS, the cursor can still be adjusted afterward—so each move can guide viewers through the feature you are showing.\n\nScreen Studio is screen recording software for Mac. It captures precise mouse-movement data separately from the screen, synchronizes it with the video, and adds the cursor to the final result.\n\nThat means you can smooth cursor movement or change its size and style after recording, instead of starting the walkthrough again.\n\nWhen it is ready, export the finished video at up to 4K and 60 fps on every plan.\n\nScreen Studio supports macOS only, with macOS 13.1 or later recommended.",
+        "call_to_action": "Download Screen Studio for Mac",
+        "sign_off": "- Screen Studio",
+        "postscript": ""
+      },
+      "gates": {
+        "issues": [],
+        "semantic_review": {
+          "key": "d9604afdafa7f4a74cb6704407aba13f1e23d4cbd157579c08f39d1c5fcacbcb",
+          "approved": true,
+          "decision": {
+            "verdict": "supported",
+            "claims": [
+              {
+                "text": "Subject: Keep every cursor move clear",
+                "status": "supported",
+                "explanation": "Screen Studio documents cursor editing intended to make every move easier to follow.",
+                "citations": [
+                  {
+                    "source_id": "prior:source:2",
+                    "quote": "Change the cursor’s size and style after you record, so every move is easier to follow."
+                  }
+                ]
+              },
+              {
+                "text": "Preview text: Adjust cursor movement, size and style after recording your product walkthrough.",
+                "status": "supported",
+                "explanation": "The sources document smoothing cursor movement and changing cursor size and style after recording.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "Thanks to this, it can apply many effects after the video is recorded, such as making mouse movement smooth, changing cursor size and shape, etc."
+                  },
+                  {
+                    "source_id": "prior:source:2",
+                    "quote": "Change the cursor’s size and style after you record, so every move is easier to follow."
+                  }
+                ]
+              },
+              {
+                "text": "Keep the cursor editable after recording",
+                "status": "supported",
+                "explanation": "Screen Studio documents applying cursor effects after recording.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "Thanks to this, it can apply many effects after the video is recorded, such as making mouse movement smooth, changing cursor size and shape, etc."
+                  }
+                ]
+              },
+              {
+                "text": "When a product walkthrough is recorded in Screen Studio on macOS, the cursor can still be adjusted afterward—so each move can guide viewers through the feature you are showing.",
+                "status": "supported",
+                "explanation": "The claim preserves the prerequisite that the walkthrough is recorded in Screen Studio, while the sources support post-recording cursor adjustment, macOS compatibility, and making cursor moves easier to follow.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "It records your screen, ignoring the mouse cursor, and then adds the cursor back in the final video. This is possible because Screen Studio records precise mouse movement data and synchronizes it with the recorded video.\n\nThanks to this, it can apply many effects after the video is recorded, such as making mouse movement smooth, changing cursor size and shape, etc."
+                  },
+                  {
+                    "source_id": "prior:source:2",
+                    "quote": "Change the cursor’s size and style after you record, so every move is easier to follow."
+                  },
+                  {
+                    "source_id": "E8",
+                    "quote": "Is the Windows version ready? No, and there are no near-future plans to add Windows support. Currently, Screen Studio only supports macOS."
+                  }
+                ]
+              },
+              {
+                "text": "Screen Studio is screen recording software for Mac.",
+                "status": "supported",
+                "explanation": "The sources describe Screen Studio recording the screen and supporting only macOS.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "Screen Studio records your screen differently than most apps."
+                  },
+                  {
+                    "source_id": "E8",
+                    "quote": "Is the Windows version ready? No, and there are no near-future plans to add Windows support. Currently, Screen Studio only supports macOS."
+                  }
+                ]
+              },
+              {
+                "text": "It captures precise mouse-movement data separately from the screen, synchronizes it with the video, and adds the cursor to the final result.",
+                "status": "supported",
+                "explanation": "This accurately states the documented cursor-recording mechanism.",
+                "citations": [
+                  {
+                    "source_id": "E3",
+                    "quote": "It records your screen, ignoring the mouse cursor, and then adds the cursor back in the final video. This is possible because Screen Studio records precise mouse movement data and synchronizes it with the recorded video."
+                  }
+                ]
+              },
+              {
+                "text": "That means you can smooth cursor movement or change its size and style after recording, instead of starting the walkthrough again.",
+                "status": "supported",
+                "explanation": "The sources expressly support post-recording smoothing and changes to cursor size and style; making those changes afterward avoids re-recording merely to apply them.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "Thanks to this, it can apply many effects after the video is recorded, such as making mouse movement smooth, changing cursor size and shape, etc."
+                  },
+                  {
+                    "source_id": "prior:source:2",
+                    "quote": "Change the cursor’s size and style after you record, so every move is easier to follow."
+                  }
+                ]
+              },
+              {
+                "text": "When it is ready, export the finished video at up to 4K and 60 fps on every plan.",
+                "status": "supported",
+                "explanation": "Export up to 4K at 60 fps is documented, and both supplied Screen Studio plan quotations state that all features are included.",
+                "citations": [
+                  {
+                    "source_id": "E6",
+                    "quote": "Export up to 4K at 60 fps"
+                  },
+                  {
+                    "source_id": "E4",
+                    "quote": "### Yearly Save 69% $9/mo. All Screen Studio features included."
+                  },
+                  {
+                    "source_id": "E5",
+                    "quote": "### Monthly $29/mo. All Screen Studio features included."
+                  }
+                ]
+              },
+              {
+                "text": "Screen Studio supports macOS only, with macOS 13.1 or later recommended.",
+                "status": "supported",
+                "explanation": "Both the macOS-only boundary and the recommended operating-system version are stated literally.",
+                "citations": [
+                  {
+                    "source_id": "E8",
+                    "quote": "Is the Windows version ready? No, and there are no near-future plans to add Windows support. Currently, Screen Studio only supports macOS."
+                  },
+                  {
+                    "source_id": "E1",
+                    "quote": "macOS 13.1 or later recommended"
+                  }
+                ]
+              },
+              {
+                "text": "Download Screen Studio for Mac →",
+                "status": "supported",
+                "explanation": "The documented destination provides a literal Download for Mac link. The draft does not imply a free trial, free tier, or other entitlement.",
+                "citations": [
+                  {
+                    "source_id": "cta:1",
+                    "quote": "Source page: https://screen.studio/\nResolved link: https://screen.studio/download\nLiteral link: [Download for Mac](/download)"
+                  }
+                ]
+              }
+            ],
+            "findings": [],
+            "summary": "Every material factual assertion is supported by the supplied literal sources. The draft states the Screen Studio recording prerequisite, macOS-only boundary, recommended macOS version, post-recording cursor mechanism, export capability, and plan scope without implying free access or an unsupported outcome.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The prior concrete benefit was improving how viewers follow the product without re-recording. The revised passage preserves post-recording cursor adjustment and its viewer-guidance consequence, while keeping the Screen Studio and macOS conditions.",
+              "original_passage": "You can improve how viewers follow your product without recording the walkthrough again.",
+              "revised_passage": "When a product walkthrough is recorded in Screen Studio on macOS, the cursor can still be adjusted afterward—so each move can guide viewers through the feature you are showing."
+            }
+          },
+          "version": 3,
+          "factual_repair": true
+        }
+      },
+      "read": {
+        "reads": [
+          {
+            "opened": true,
+            "stopped_at": "",
+            "what_it_sells": "Screen Studio is a Mac screen recorder that would let me polish cursor movement, size, and style after recording a product walkthrough instead of re-recording it.",
+            "understood": true,
+            "situation_matches": true,
+            "relevance_feedback": "The profile explicitly establishes that I create launch and demo videos, so avoiding a retake is relevant. The email additionally assumes cursor presentation is a meaningful problem in my walkthroughs and that I use a compatible Mac; neither is established, though the pitch is framed conditionally rather than as my history.",
+            "assumed_experiences": [
+              "Profile-supported: I create product launch and demo videos as an indie SaaS founder/maker.",
+              "Email-only: I record or would record product walkthroughs in Screen Studio.",
+              "Email-only: cursor movement, size, or style causes enough trouble that post-recording edits would save me a retake.",
+              "Email-only: I use a Mac running a compatible version of macOS."
+            ],
+            "problem_now": "Producing demo assets is relevant, and avoiding slow retakes is a plausible benefit. Whether cursor editing is a problem for my current video—and whether I have a compatible Mac—is unknown.",
+            "biggest_doubt": "I understand the feature, but I cannot judge whether downloading another recorder is worthwhile without knowing the price or seeing the cursor correction demonstrated in an actual before-and-after walkthrough.",
+            "would_act": false,
+            "to_click_it_would_have_to": "I would have clicked if this email had shown a short before-and-after example and told me the starting price.",
+            "pull": 6,
+            "fixes": [
+              "Rewrite “It captures precise mouse-movement data separately from the screen, synchronizes it with the video, and adds the cursor to the final result.” as “It records cursor movement separately, so you can correct distracting movement after the walkthrough is finished.”",
+              "Replace “Download Screen Studio for Mac →” with a lower-commitment link such as “See cursor editing in a walkthrough →”, if such a demonstration exists.",
+              "Add the starting price immediately before the CTA so I can decide whether this is realistic for an indie launch budget."
+            ],
+            "material_revision": "",
+            "persona": "Selected audience (explicit constraints): Indie SaaS founder/maker creating launch & demo videos.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (grounded; applicability must be checked): Indie and solo SaaS founders preparing a Product Hunt launch build their own launch/demo video and page assets as part of the process, often alongside writing descriptions and filling out their product page before going live.\nSource: https://www.indiehackers.com/post/i-launched-2-apps-on-product-hunt-and-both-were-featured-heres-what-i-learned-0b24c76a3a; quote: I recently launched two apps on Product Hunt — Erla (a language learning app) and Voicr (a voice-to-polished-text app).\nSource: https://www.indiehackers.com/post/i-launched-2-apps-on-product-hunt-and-both-were-featured-heres-what-i-learned-0b24c76a3a; quote: Create your product page 3–4 days before launch and schedule it.\nProblem context: Indie/bootstrapped founders preparing a product launch video report being budget-constrained to the point that hiring professional video production (an agency) was ruled out, pushing them toward cheaper routes. [Source limits: Historical sources (2022-06-16); present applicability is not corroborated.; Single-source problem; independent corroboration is not established.] (inferred); source: https://www.indiehackers.com/post/how-we-won-product-hunt-video-of-the-year-and-2-3k-upvotes-as-a-total-newcomer-a8b6c36f2e\nProblem context: A Product Hunt launcher reports wanting the demo video/asset creation step to be fast (achievable in about an hour with AI tools) rather than a slow or skill-intensive task, as part of preparing launch materials. [Source limits: Single-source problem; independent corroboration is not established.]; source: https://www.indiehackers.com/post/i-launched-2-apps-on-product-hunt-and-both-were-featured-heres-what-i-learned-0b24c76a3a",
+            "reported": true,
+            "opens_in_100": null,
+            "clicks_in_100": null
+          }
+        ]
+      }
+    }
+  ],
+  "calls": 3,
+  "elapsed_seconds": 106.797,
+  "estimated_usd": 0.5835116
+}

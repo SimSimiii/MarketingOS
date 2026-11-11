@@ -18,18 +18,22 @@ same product starts from everything the first one learned.
 
 import hashlib
 import re
+from collections import Counter
 from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Literal
 
 from pydantic import BaseModel, Field, model_validator
 
+from app.ingestion.loaders.site_identity import same_page
 from app.knowledge.corpus import fold
 from app.knowledge.ledger import (
     MAX_EVIDENCE_IN_PROMPT,
+    Evidence,
     EvidenceKind,
     EvidenceLedger,
     EvidenceStrength,
+    value_of,
 )
 from app.knowledge.product_scope import is_product_subject
 
@@ -107,6 +111,19 @@ def _significant_words(text: str) -> set[str]:
         for word in _WORD_RE.findall(text.lower())
         if len(word) > 3 and word not in _STOPWORDS
     }
+
+
+#: "4.83/5", "5/5", "4,5 / 5". Out of five only: that is how shops publish a
+#: rating, and "9/10" in a page of prose is as often a date as a score.
+_RATING_RE = re.compile(r"(?<![\d/])(\d(?:[.,]\d+)?)\s*/\s*5\b(?!/)")
+#: The lowest review worth quoting at a buyer.
+_MIN_REVIEW_STARS = 4
+
+
+def _stars(entry: Evidence) -> float | None:
+    """The score out of five this entry states, if it states one."""
+    match = _RATING_RE.search(entry.verbatim)
+    return float(match.group(1).replace(",", ".")) if match else None
 
 
 # ------------------------------------------------------------------- business
@@ -754,6 +771,72 @@ class KnowledgeArtifacts(BaseModel):
                     and is_product_subject(context.subject, self.business.company_name)):
                 entries.append(entry)
         return EvidenceLedger(entries=entries[:3])
+
+    def selling_facts(
+        self, destination: str, *, excluded_ids: set[str] | frozenset[str] = frozenset(),
+    ) -> EvidenceLedger:
+        """The reasons to buy that the page this email leads to already states.
+
+        The strategist assigns at most three facts and the rest of the slice is
+        the most valuable of the whole ledger, so the page being sold never got
+        a look in. Cabaia's Duffle email of 31 October was written from one
+        fact, a pocket size, while its price, 4.83/5 on 82 reviews, "best
+        seller" and free returns sat on the page it linked to - and the writer
+        was told to use nothing outside a list they were not on.
+
+        Chosen in code because the answer is a lookup: what the page says about
+        its own product, by kind, a few of each. A shop's page also lists other
+        products with their prices, so anything about a product has to be about
+        the one the page mostly talks about. Delivery, returns and certificates
+        are about the company, and reviews about the product by construction.
+        """
+        page = [
+            entry for entry in self.evidence.entries
+            if entry.id not in excluded_ids and entry.context is not None
+            and same_page(entry.source or "", destination)
+            and entry.context.source_kind not in {"third_party", "vendor_comparison"}
+        ]
+        subjects = Counter(
+            entry.context.subject for entry in page
+            if entry.kind is not EvidenceKind.TESTIMONIAL and entry.context.subject
+        )
+        product = _significant_words(subjects.most_common(1)[0][0]) if subjects else set()
+
+        def about_the_product(entry: Evidence) -> bool:
+            shared = product & _significant_words(entry.context.subject)
+            return len(shared) >= min(2, len(product))
+
+        def best(kind: EvidenceKind, count: int, *, company_wide: bool = False) -> list[Evidence]:
+            found = [
+                entry for entry in page
+                if entry.kind is kind and (company_wide or about_the_product(entry))
+            ]
+            return sorted(found, key=lambda entry: -value_of(entry).score)[:count]
+
+        def stars(entry: Evidence) -> float:
+            rating = _stars(entry)
+            return 5.0 if rating is None else rating
+
+        metrics = sorted(best(EvidenceKind.METRIC, len(page)), key=lambda entry: _stars(entry) is None)
+        # A rating under four stars is a review the page publishes, not one
+        # that sells. Among the good ones the longest says the most.
+        reviews = sorted(
+            (entry for entry in page if entry.kind is EvidenceKind.TESTIMONIAL
+             and stars(entry) >= _MIN_REVIEW_STARS),
+            key=lambda entry: (-stars(entry), -len(entry.verbatim.split())),
+        )
+        # Many features, because their score rewards a number: "100% polyester"
+        # outranks "40 litres" and the wide opening, which sell the bag better.
+        return EvidenceLedger(entries=[
+            *best(EvidenceKind.PRICE, 2),
+            *best(EvidenceKind.AWARD, 2),
+            *metrics[:4],
+            *reviews[:4],
+            *best(EvidenceKind.GUARANTEE, 4, company_wide=True),
+            *best(EvidenceKind.CERTIFICATION, 2, company_wide=True),
+            *best(EvidenceKind.CUSTOMER, 2, company_wide=True),
+            *best(EvidenceKind.FEATURE, 16),
+        ])
 
     def evidence_for_writing(
         self,

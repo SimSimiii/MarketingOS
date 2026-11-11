@@ -1,0 +1,905 @@
+{
+  "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+  "events": [
+    {
+      "type": "execution_started",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Request: Write exactly one email. Introduce our product to a new buyer with one clear next step.",
+      "at": "2026-11-08T23:38:53.102996+00:00",
+      "campaign_id": "4112863e-9ae6-4bfc-80be-70e8a2934e3f",
+      "request": "Write exactly one email. Introduce our product to a new buyer with one clear next step."
+    },
+    {
+      "type": "phase",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Read the request as 1 email(s) - the user said so",
+      "at": "2026-11-08T23:38:53.115683+00:00",
+      "phase": "contract",
+      "count": 1,
+      "explicit": true,
+      "kind": "single_email"
+    },
+    {
+      "type": "phase",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Reusing what we already know about this business (version 1, 25 facts)",
+      "at": "2026-11-08T23:38:53.188709+00:00",
+      "phase": "knowledge",
+      "reused": true,
+      "version": 1
+    },
+    {
+      "type": "knowledge_ready",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": "knowledge_compiler",
+      "step": null,
+      "level": "info",
+      "message": "Knowledge reused: 25 facts the copy may claim, 1 gap(s)",
+      "at": "2026-11-08T23:38:53.193742+00:00",
+      "reused": true,
+      "version": 1,
+      "evidence_count": 25,
+      "segments": [
+        "Product manager planning a new feature or internal tool",
+        "Developer or team using AI coding assistants (e.g. Claude, Cursor)"
+      ],
+      "gaps": [
+        "No measurable results found"
+      ],
+      "voice_learned": true,
+      "notes": [
+        "27,767 characters of material were past the reading budget and were not read.",
+        "First-campaign knowledge covers selected pages and decision-relevant evidence. Compile sources to read them in more depth."
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Researched audience and current Relevance Dossier loaded",
+      "at": "2026-11-08T23:38:53.283566+00:00",
+      "phase": "intelligence",
+      "selected_audience": "Product manager planning a new feature or internal tool",
+      "audience_resolution_status": "audience_research_loaded",
+      "audience_research_id": "ada303a5-66c4-4c7d-b962-d30e73d2d85d",
+      "audience_research_version": 1,
+      "dossier_status": "current",
+      "dossier_id": "4178ba0a-6c3f-41e4-9efe-1aba3a32487d",
+      "dossier_version": 1,
+      "dossier_schema_version": 2,
+      "stale_reasons": [],
+      "legacy_fallback_used": false,
+      "qualified_subsegment": "Start a 14-day trial with no credit card, prompt Balsamiq AI (or drop in a screenshot) to produce a wireframe of one proposed flow, make it interactive without code inside a single project, and invite stakeholders as reviewers who can view or comment at no extra cost.",
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [],
+      "validation_warnings": [
+        "Publication date unknown; retrieval today does not establish current applicability. Wireframing tools of this kind are positioned at product managers, founders and developers who create low-fidelity wireframes to align a team and make product decisions before further work (e.g. engineering) begins.",
+        "Historical sources (2021-04-21); present applicability is not corroborated. A product-management commentator describes choosing Balsamiq over other wireframing tools for its simplicity, and separately reports a prior tool (Mockflow) as unintuitive and limited in its free trial.",
+        "Historical sources (2021-04-21); present applicability is not corroborated. The same commentator also considered flowcharting tools (e.g. Draw.io) and plain paper/pencil sketches as alternatives to dedicated wireframing software for low-fidelity work.",
+        "Historical sources (2021-04-21); present applicability is not corroborated. The stated intent of wireframing, per a product-management commentator, is to represent the elements and user journeys of a screen so a team can review and align before further design/engineering work proceeds.",
+        "Source coverage is partial: 2 readable page(s), 2 unavailable URL(s). Findings cover only the pages read.",
+        "Complete support was not tied to the exact selected core task.",
+        "Defining audience need is unassessed or its references required normalization."
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "5 third-party proof point(s) available to spend",
+      "at": "2026-11-08T23:38:53.291571+00:00",
+      "phase": "proof",
+      "proof": 5,
+      "checkable": 20,
+      "asks": [
+        "What measurable result do customers get, and how do you know?"
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "1 competitor(s) read - 0 documented difference(s); 24 unmatched captured proposition(s) need verification, not an exclusivity conclusion",
+      "at": "2026-11-08T23:38:53.470554+00:00",
+      "phase": "market",
+      "rivals": 1,
+      "open_ground": [
+        "speed",
+        "price",
+        "price",
+        "price",
+        "price",
+        "price",
+        "price",
+        "price",
+        "price",
+        "price",
+        "breadth",
+        "breadth",
+        "breadth",
+        "security",
+        "security",
+        "security",
+        "security",
+        "security",
+        "proof",
+        "support",
+        "other",
+        "other",
+        "other",
+        "other"
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Written to Product manager planning a new feature or internal tool - selected audience hypothesis; response is unmeasured",
+      "at": "2026-11-08T23:38:53.524479+00:00",
+      "phase": "audience",
+      "segment": "Product manager planning a new feature or internal tool",
+      "mapped": true
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Strategist: Deciding what this campaign says, and in what order",
+      "at": "2026-11-08T23:38:53.531837+00:00",
+      "agent_name": "Strategist",
+      "label": "Deciding what this campaign says, and in what order"
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "debug",
+      "message": "Sent 96,344 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-08T23:38:53.601991+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 96344
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 11,544 characters in 67.8s (30,274 in / 4,825 out)",
+      "at": "2026-11-08T23:40:01.367904+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 30274,
+      "output_tokens": 4825,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.329803,
+      "duration_ms": 67761.05940004345,
+      "response_chars": 11544
+    },
+    {
+      "type": "phase",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Proposition selected for the requested campaign",
+      "at": "2026-11-08T23:40:01.387412+00:00",
+      "phase": "strategy_plan",
+      "pipeline_version": 2,
+      "strategy_mode": "planned",
+      "intent": {
+        "objective": "custom",
+        "objective_source": "inferred",
+        "reader_relationship": "unknown",
+        "relationship_source": "inferred",
+        "announcement": "",
+        "reason_now": "",
+        "desired_action": ""
+      },
+      "plan_history": [
+        {
+          "raw_plan": {
+            "interpretation": "Treat this as a single acquisition-style introduction for a product manager planning a new feature or internal tool. The email will introduce Balsamiq through one documented workflow and ask the reader to try that workflow, without assuming they currently use a particular design tool.",
+            "pipeline_version": 2,
+            "strategy_mode": "planned",
+            "intent": {
+              "objective": "custom",
+              "objective_source": "inferred",
+              "reader_relationship": "unknown",
+              "relationship_source": "inferred",
+              "announcement": "",
+              "reason_now": "",
+              "desired_action": "Start the 14-day free trial and turn one proposed flow into an interactive prototype."
+            },
+            "reader": "A product manager considering how to represent a proposed feature or internal-tool flow before engineering work begins.",
+            "reader_segment": "Product manager planning a new feature or internal tool",
+            "reader_profile_override": "",
+            "reader_scope": "The documented-use scope is a product manager trying one proposed flow: beginning with a prompt or screenshot, producing a wireframe, and making it interactive without code. Do not generalize this fit to every product manager or assume a current tool, failed process, deadline, or stakeholder problem.",
+            "fixed_cta_url": "https://balsamiq.cloud/#signup",
+            "promise": "Balsamiq gives a product manager a concrete way to turn a rough feature idea into an interactive prototype before committing engineering work.",
+            "orientation": "Balsamiq is a wireframing and prototyping tool a product manager can use to draft a proposed flow and share it with reviewers before engineering work starts.",
+            "arc": "In this single-email campaign, move the reader from knowing only that they need to represent a proposed flow to seeing one specific, low-commitment way to create and interact with it.",
+            "sequence_rationale": "With only one email, the strongest supported argument combines the core product operation with the lowest-friction verified action: start from a prompt or screenshot, make the resulting wireframe interactive without code, and test that workflow during a 14-day trial that requires no credit card. The email should not spend its limited attention on plan comparisons, enterprise controls, integrations, procurement, or unsupported outcome claims. No researched pain or failing incumbent is strong enough to justify a problem-led opening, so the campaign should lead directly with the documented use. The single thing the user could send us that would most change this campaign: What measurable result do customers get, and how do you know?",
+            "emails": [
+              {
+                "problem_ids": [],
+                "offer_id": "offering",
+                "action_id": "action_04b3bf365080",
+                "selection_reason": "This is the clearest supported introduction for a product manager planning a flow: it demonstrates the product's central operation and lets the reader try it without an upfront payment or card commitment.",
+                "next_step_url": "https://balsamiq.cloud/#signup",
+                "destination_kind": "web",
+                "argument_issue": "",
+                "value_case": {
+                  "reader_benefit": "For a proposed feature or internal-tool flow, the reader can move from a rough idea to something they can click through before engineering work starts.",
+                  "mechanism": "Balsamiq AI accepts a prompt or screenshot as the starting point, and Balsamiq can turn the rough wireframe into an interactive prototype without code.",
+                  "evidence_ids": [
+                    "E3",
+                    "E1"
+                  ],
+                  "decision_conditions": [
+                    "The invitation is a 14-day free trial with no credit card required.",
+                    "The evidence establishes product capabilities, not stakeholder alignment, validation, or a measurable business result."
+                  ]
+                },
+                "claim_conditions": [
+                  "Apply the workflow conditionally to one proposed feature or internal-tool flow; do not imply that the recipient currently has such a project underway.",
+                  "Describe the output as an interactive prototype, not production software or a validated design.",
+                  "Keep the no-code claim limited to moving from rough wireframe to interactive prototype."
+                ],
+                "position": 1,
+                "target_audience": "Product manager planning a new feature or internal tool",
+                "job": "Get the reader to start a free trial and test whether Balsamiq can turn one rough flow idea into an interactive prototype.",
+                "single_idea": "Give Balsamiq a rough prompt or screenshot, then turn the resulting wireframe into an interactive prototype without writing code.",
+                "felt_need": "",
+                "status_quo": "",
+                "why_it_fails": "",
+                "mechanism": "Invite the reader to use one real proposed flow as the input: prompt Balsamiq AI or drop in a screenshot, inspect the generated wireframe, and make it interactive without code during the trial.",
+                "alternative_ideas": [],
+                "alternative_arguments": [
+                  {
+                    "problem_ids": [],
+                    "offer_id": "",
+                    "action_id": "",
+                    "selection_reason": "This is a viable alternative when the reader's immediate decision is about organizing variations and collecting stakeholder comments rather than generating a first interactive draft.",
+                    "next_step_url": "https://balsamiq.com/pricing/",
+                    "destination_kind": "web",
+                    "argument_issue": "",
+                    "value_case": {
+                      "reader_benefit": "A product manager can keep multiple variations of one proposed flow inside a single project and invite stakeholders to view or comment without adding reviewer charges.",
+                      "mechanism": "A Balsamiq project represents one initiative and contains unlimited free boards; Starter also permits unlimited reviewers, who can view or comment but cannot edit.",
+                      "evidence_ids": [
+                        "E24",
+                        "E17",
+                        "E14"
+                      ],
+                      "decision_conditions": [
+                        "Starter is limited to 10 projects.",
+                        "Reviewers can view or comment but cannot edit.",
+                        "Starter costs $16 per editor per month, billed annually at $192 per year."
+                      ]
+                    },
+                    "claim_conditions": [
+                      "Keep unlimited scope attached to boards within a project and to reviewers, not projects, editors, or AI usage.",
+                      "State that reviewer access is view-and-comment only."
+                    ],
+                    "single_idea": "One initiative can contain unlimited board variations and unlimited no-extra-cost reviewers, while the paid unit remains the project and editor plan.",
+                    "felt_need": "",
+                    "status_quo": "",
+                    "why_it_fails": "",
+                    "mechanism": "Use one project for the proposed flow, place each variation on its own board, and invite stakeholders as reviewers who can view or comment but not edit.",
+                    "belief_shift": "Before: assumes every variation or stakeholder may add another paid unit. After: understands that boards within a project are free and reviewers can be added at no extra cost, subject to plan limits.",
+                    "evidence_ids": [
+                      "E24",
+                      "E17",
+                      "E14"
+                    ],
+                    "must_not_say": [
+                      "Do not call projects, editors, or AI usage unlimited.",
+                      "Do not imply reviewers can edit.",
+                      "Do not promise stakeholder alignment, approval, or recorded sign-off.",
+                      "Do not present the plan structure as cheaper than a competitor."
+                    ],
+                    "objection": "Will each flow variation or stakeholder require another paid seat or board purchase?",
+                    "call_to_action": "See how Balsamiq structures projects, boards, reviewers, and Starter pricing.",
+                    "next_step_decision": "Decide whether the Starter project structure suits the number of initiatives and reviewers the reader expects to involve.",
+                    "next_step_value": "The pricing page shows the Starter price and limits, explains that projects contain unlimited free boards, and states that unlimited reviewers may view or comment at no extra cost.",
+                    "next_step_evidence_ids": [
+                      "E24",
+                      "E17",
+                      "E14"
+                    ],
+                    "next_step_limit": "Reading the pricing page does not establish that Balsamiq will produce stakeholder alignment or fit the reader's wider design workflow.",
+                    "subject_strategy": "Make the distinction between a paid project and its unlimited boards immediately useful to someone comparing ways to explore one proposed flow."
+                  }
+                ],
+                "belief_shift": "Before: sees an interactive prototype as something that may require a polished design or code. After: sees that Balsamiq can begin with a rough prompt or screenshot and make that wireframe interactive without code.",
+                "evidence_ids": [
+                  "E3",
+                  "E1",
+                  "E22"
+                ],
+                "must_not_say": [
+                  "Do not promise any growth, signup, conversion, or other measurable result.",
+                  "Do not promise zero disruption to the team's existing design workflow or tools.",
+                  "Do not promise reduced headcount, reduced design hours, or quantified time or cost savings.",
+                  "Do not claim superiority over or replacement of Figma, Whimsical, Draw.io, or any incumbent tool.",
+                  "Do not promise stakeholder alignment, validation, approval, or recorded sign-off.",
+                  "Do not claim unlimited AI capacity or unlimited projects.",
+                  "Do not generalize the documented workflow's fit to every product manager.",
+                  "Do not describe the prototype as production-ready software.",
+                  "Do not introduce MCP integrations, enterprise security, data residency, procurement quotes, reseller payment terms, nonprofit discounts, plan comparisons, or AI credit top-ups.",
+                  "Do not use the PostHog or SparkToro results; they are outside the campaign-safe evidence boundary."
+                ],
+                "forbidden_evidence_ids": [
+                  "E6"
+                ],
+                "forbidden_capability_ids": [],
+                "objection": "I do not want to commit budget or provide card details just to find out whether this workflow fits.",
+                "tone": "Confident, plain-spoken, and product-led; lightly challenging without hype.",
+                "call_to_action": "Try Balsamiq free for 14 days.",
+                "next_step_decision": "Decide whether Balsamiq is a useful way to turn one proposed flow into an interactive prototype before engineering work starts.",
+                "next_step_value": "The no-card trial lets the reader prompt Balsamiq AI or supply a screenshot, inspect the resulting wireframe, and try making it interactive without code.",
+                "next_step_evidence_ids": [
+                  "E3",
+                  "E1",
+                  "E22"
+                ],
+                "next_step_limit": "The trial does not by itself establish fit with the reader's wider toolchain, stakeholder agreement, production readiness, or any measurable business result.",
+                "subject_strategy": "Earn the open with the concrete transformation from a rough feature idea to an interactive prototype; avoid generic claims about speed, alignment, or better decisions.",
+                "must_not_reuse": [],
+                "steering": {
+                  "directions": [],
+                  "include_evidence_ids": [],
+                  "exclude_evidence_ids": [],
+                  "use": [],
+                  "avoid": [],
+                  "context_only": [],
+                  "excluded_values": []
+                }
+              }
+            ],
+            "voice_notes": "",
+            "contract": {
+              "kind": "single_email",
+              "count": 1,
+              "count_is_explicit": true,
+              "evidence": "The user explicitly requested: \"Write exactly one email.\""
+            }
+          },
+          "effective_plan": {
+            "interpretation": "Treat this as a single acquisition-style introduction for a product manager planning a new feature or internal tool. The email will introduce Balsamiq through one documented workflow and ask the reader to try that workflow, without assuming they currently use a particular design tool.",
+            "pipeline_version": 2,
+            "strategy_mode": "planned",
+            "intent": {
+              "objective": "custom",
+              "objective_source": "inferred",
+              "reader_relationship": "unknown",
+              "relationship_source": "inferred",
+              "announcement": "",
+              "reason_now": "",
+              "desired_action": ""
+            },
+            "reader": "Selected audience: Product manager planning a new feature or internal tool.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): Wireframing tools of this kind are positioned at product managers, founders and developers who create low-fidelity wireframes to align a team and make product decisions before further work (e.g. engineering) begins.\nQualified campaign scope within that audience: Start a 14-day trial with no credit card, prompt Balsamiq AI (or drop in a screenshot) to produce a wireframe of one proposed flow, make it interactive without code inside a single project, and invite stakeholders as reviewers who can view or comment at no extra cost..",
+            "reader_segment": "Product manager planning a new feature or internal tool",
+            "reader_profile_override": "",
+            "reader_scope": "Start a 14-day trial with no credit card, prompt Balsamiq AI (or drop in a screenshot) to produce a wireframe of one proposed flow, make it interactive without code inside a single project, and invite stakeholders as reviewers who can view or comment at no extra cost.",
+            "fixed_cta_url": "",
+            "promise": "Balsamiq gives a product manager a concrete way to turn a rough feature idea into an interactive prototype before committing engineering work.",
+            "orientation": "Balsamiq is a wireframing and prototyping tool a product manager can use to draft a proposed flow and share it with reviewers before engineering work starts.",
+            "arc": "In this single-email campaign, move the reader from knowing only that they need to represent a proposed flow to seeing one specific, low-commitment way to create and interact with it.",
+            "sequence_rationale": "With only one email, the strongest supported argument combines the core product operation with the lowest-friction verified action: start from a prompt or screenshot, make the resulting wireframe interactive without code, and test that workflow during a 14-day trial that requires no credit card. The email should not spend its limited attention on plan comparisons, enterprise controls, integrations, procurement, or unsupported outcome claims. No researched pain or failing incumbent is strong enough to justify a problem-led opening, so the campaign should lead directly with the documented use. The single thing the user could send us that would most change this campaign: What measurable result do customers get, and how do you know?",
+            "emails": [
+              {
+                "problem_ids": [],
+                "offer_id": "offering",
+                "action_id": "action_04b3bf365080",
+                "selection_reason": "This is the clearest supported introduction for a product manager planning a flow: it demonstrates the product's central operation and lets the reader try it without an upfront payment or card commitment.",
+                "next_step_url": "https://balsamiq.cloud/#signup",
+                "destination_kind": "web",
+                "argument_issue": "",
+                "value_case": {
+                  "reader_benefit": "For a proposed feature or internal-tool flow, the reader can move from a rough idea to something they can click through before engineering work starts.",
+                  "mechanism": "Balsamiq AI accepts a prompt or screenshot as the starting point, and Balsamiq can turn the rough wireframe into an interactive prototype without code.",
+                  "evidence_ids": [
+                    "E3",
+                    "E1"
+                  ],
+                  "decision_conditions": [
+                    "The invitation is a 14-day free trial with no credit card required.",
+                    "The evidence establishes product capabilities, not stakeholder alignment, validation, or a measurable business result."
+                  ]
+                },
+                "claim_conditions": [
+                  "Apply the workflow conditionally to one proposed feature or internal-tool flow; do not imply that the recipient currently has such a project underway.",
+                  "Describe the output as an interactive prototype, not production software or a validated design.",
+                  "Keep the no-code claim limited to moving from rough wireframe to interactive prototype.",
+                  "Trial is 14 days, no credit card required; continued use requires a per-editor annual plan from $16/month (Starter)",
+                  "A project is the unit of work and is capped per plan; boards inside it are unlimited and free",
+                  "AI use draws on monthly AI credits per editor (500 on Starter, about 31 wireframes or 10 prototypes)",
+                  "Invited reviewers can view or comment only, not edit",
+                  "Do not promise: Any growth, signup or conversion result (the SparkToro 20% figure is one customer's reported outcome with no stated period or method, not a promise)",
+                  "Do not promise: Zero disruption to the team's existing design workflow or tools",
+                  "Do not promise: Reduced headcount, reduced design hours or quantified time or cost savings",
+                  "Do not promise: Superiority over or replacement of Figma, Whimsical, Draw.io or any incumbent tool",
+                  "Do not promise: A guarantee of stakeholder alignment or recorded sign-off",
+                  "Do not promise: Unlimited AI capacity or unlimited projects",
+                  "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit."
+                ],
+                "position": 1,
+                "target_audience": "Product manager planning a new feature or internal tool",
+                "job": "Get the reader to start a free trial and test whether Balsamiq can turn one rough flow idea into an interactive prototype.",
+                "single_idea": "Give Balsamiq a rough prompt or screenshot, then turn the resulting wireframe into an interactive prototype without writing code.",
+                "felt_need": "",
+                "status_quo": "",
+                "why_it_fails": "",
+                "mechanism": "Invite the reader to use one real proposed flow as the input: prompt Balsamiq AI or drop in a screenshot, inspect the generated wireframe, and make it interactive without code during the trial.",
+                "alternative_ideas": [],
+                "alternative_arguments": [
+                  {
+                    "problem_ids": [],
+                    "offer_id": "offering",
+                    "action_id": "",
+                    "selection_reason": "This is a viable alternative when the reader's immediate decision is about organizing variations and collecting stakeholder comments rather than generating a first interactive draft.",
+                    "next_step_url": "https://balsamiq.com/pricing/",
+                    "destination_kind": "web",
+                    "argument_issue": "",
+                    "value_case": {
+                      "reader_benefit": "A product manager can keep multiple variations of one proposed flow inside a single project and invite stakeholders to view or comment without adding reviewer charges.",
+                      "mechanism": "A Balsamiq project represents one initiative and contains unlimited free boards; Starter also permits unlimited reviewers, who can view or comment but cannot edit.",
+                      "evidence_ids": [
+                        "E24",
+                        "E17",
+                        "E14"
+                      ],
+                      "decision_conditions": [
+                        "Starter is limited to 10 projects.",
+                        "Reviewers can view or comment but cannot edit.",
+                        "Starter costs $16 per editor per month, billed annually at $192 per year."
+                      ]
+                    },
+                    "claim_conditions": [
+                      "Keep unlimited scope attached to boards within a project and to reviewers, not projects, editors, or AI usage.",
+                      "State that reviewer access is view-and-comment only.",
+                      "Trial is 14 days, no credit card required; continued use requires a per-editor annual plan from $16/month (Starter)",
+                      "A project is the unit of work and is capped per plan; boards inside it are unlimited and free",
+                      "AI use draws on monthly AI credits per editor (500 on Starter, about 31 wireframes or 10 prototypes)",
+                      "Invited reviewers can view or comment only, not edit",
+                      "Do not promise: Any growth, signup or conversion result (the SparkToro 20% figure is one customer's reported outcome with no stated period or method, not a promise)",
+                      "Do not promise: Zero disruption to the team's existing design workflow or tools",
+                      "Do not promise: Reduced headcount, reduced design hours or quantified time or cost savings",
+                      "Do not promise: Superiority over or replacement of Figma, Whimsical, Draw.io or any incumbent tool",
+                      "Do not promise: A guarantee of stakeholder alignment or recorded sign-off",
+                      "Do not promise: Unlimited AI capacity or unlimited projects",
+                      "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit."
+                    ],
+                    "single_idea": "One initiative can contain unlimited board variations and unlimited no-extra-cost reviewers, while the paid unit remains the project and editor plan.",
+                    "felt_need": "",
+                    "status_quo": "",
+                    "why_it_fails": "",
+                    "mechanism": "Use one project for the proposed flow, place each variation on its own board, and invite stakeholders as reviewers who can view or comment but not edit.",
+                    "belief_shift": "Before: assumes every variation or stakeholder may add another paid unit. After: understands that boards within a project are free and reviewers can be added at no extra cost, subject to plan limits.",
+                    "evidence_ids": [
+                      "E24",
+                      "E17",
+                      "E14"
+                    ],
+                    "must_not_say": [
+                      "Do not call projects, editors, or AI usage unlimited.",
+                      "Do not imply reviewers can edit.",
+                      "Do not promise stakeholder alignment, approval, or recorded sign-off.",
+                      "Do not present the plan structure as cheaper than a competitor."
+                    ],
+                    "objection": "Will each flow variation or stakeholder require another paid seat or board purchase?",
+                    "call_to_action": "See how Balsamiq structures projects, boards, reviewers, and Starter pricing.",
+                    "next_step_decision": "Decide whether the Starter project structure suits the number of initiatives and reviewers the reader expects to involve.",
+                    "next_step_value": "The pricing page shows the Starter price and limits, explains that projects contain unlimited free boards, and states that unlimited reviewers may view or comment at no extra cost.",
+                    "next_step_evidence_ids": [
+                      "E24",
+                      "E17",
+                      "E14"
+                    ],
+                    "next_step_limit": "Reading the pricing page does not establish that Balsamiq will produce stakeholder alignment or fit the reader's wider design workflow.",
+                    "subject_strategy": "Make the distinction between a paid project and its unlimited boards immediately useful to someone comparing ways to explore one proposed flow."
+                  }
+                ],
+                "belief_shift": "Before: sees an interactive prototype as something that may require a polished design or code. After: sees that Balsamiq can begin with a rough prompt or screenshot and make that wireframe interactive without code.",
+                "evidence_ids": [
+                  "E3",
+                  "E1",
+                  "E22"
+                ],
+                "must_not_say": [
+                  "Do not promise any growth, signup, conversion, or other measurable result.",
+                  "Do not promise zero disruption to the team's existing design workflow or tools.",
+                  "Do not promise reduced headcount, reduced design hours, or quantified time or cost savings.",
+                  "Do not claim superiority over or replacement of Figma, Whimsical, Draw.io, or any incumbent tool.",
+                  "Do not promise stakeholder alignment, validation, approval, or recorded sign-off.",
+                  "Do not claim unlimited AI capacity or unlimited projects.",
+                  "Do not generalize the documented workflow's fit to every product manager.",
+                  "Do not describe the prototype as production-ready software.",
+                  "Do not introduce MCP integrations, enterprise security, data residency, procurement quotes, reseller payment terms, nonprofit discounts, plan comparisons, or AI credit top-ups.",
+                  "Do not use the PostHog or SparkToro results; they are outside the campaign-safe evidence boundary."
+                ],
+                "forbidden_evidence_ids": [
+                  "E10",
+                  "E11",
+                  "E2",
+                  "E6",
+                  "E7",
+                  "E8",
+                  "E9"
+                ],
+                "forbidden_capability_ids": [],
+                "objection": "I do not want to commit budget or provide card details just to find out whether this workflow fits.",
+                "tone": "Confident, plain-spoken, and product-led; lightly challenging without hype.",
+                "call_to_action": "Try Balsamiq free for 14 days.",
+                "next_step_decision": "Decide whether Balsamiq is a useful way to turn one proposed flow into an interactive prototype before engineering work starts.",
+                "next_step_value": "The no-card trial lets the reader prompt Balsamiq AI or supply a screenshot, inspect the resulting wireframe, and try making it interactive without code.",
+                "next_step_evidence_ids": [
+                  "E3",
+                  "E1",
+                  "E22"
+                ],
+                "next_step_limit": "The trial does not by itself establish fit with the reader's wider toolchain, stakeholder agreement, production readiness, or any measurable business result.",
+                "subject_strategy": "Earn the open with the concrete transformation from a rough feature idea to an interactive prototype; avoid generic claims about speed, alignment, or better decisions.",
+                "must_not_reuse": [],
+                "steering": {
+                  "directions": [],
+                  "include_evidence_ids": [],
+                  "exclude_evidence_ids": [],
+                  "use": [],
+                  "avoid": [],
+                  "context_only": [],
+                  "excluded_values": []
+                }
+              }
+            ],
+            "voice_notes": "",
+            "contract": {
+              "kind": "single_email",
+              "count": 1,
+              "count_is_explicit": true,
+              "evidence": "one email"
+            }
+          },
+          "changed_fields": [
+            "intent",
+            "fixed_cta_url",
+            "emails"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "brief_ready",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Campaign brief: Balsamiq gives a product manager a concrete way to turn a rough feature idea into an interactive prototype before committing engineering work.",
+      "at": "2026-11-08T23:40:01.393932+00:00",
+      "reader": "Selected audience: Product manager planning a new feature or internal tool.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): Wireframing tools of this kind are positioned at product managers, founders and developers who create low-fidelity wireframes to align a team and make product decisions before further work (e.g. engineering) begins.\nQualified campaign scope within that audience: Start a 14-day trial with no credit card, prompt Balsamiq AI (or drop in a screenshot) to produce a wireframe of one proposed flow, make it interactive without code inside a single project, and invite stakeholders as reviewers who can view or comment at no extra cost..",
+      "reader_segment": "Product manager planning a new feature or internal tool",
+      "promise": "Balsamiq gives a product manager a concrete way to turn a rough feature idea into an interactive prototype before committing engineering work.",
+      "arc": "In this single-email campaign, move the reader from knowing only that they need to represent a proposed flow to seeing one specific, low-commitment way to create and interact with it.",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Get the reader to start a free trial and test whether Balsamiq can turn one rough flow idea into an interactive prototype.",
+          "single_idea": "Give Balsamiq a rough prompt or screenshot, then turn the resulting wireframe into an interactive prototype without writing code.",
+          "selection_reason": "This is the clearest supported introduction for a product manager planning a flow: it demonstrates the product's central operation and lets the reader try it without an upfront payment or card commitment.",
+          "problem_ids": [],
+          "action_id": "action_04b3bf365080",
+          "next_step_url": "https://balsamiq.cloud/#signup",
+          "argument_issue": "",
+          "objection": "I do not want to commit budget or provide card details just to find out whether this workflow fits.",
+          "evidence_ids": [
+            "E3",
+            "E1",
+            "E22"
+          ],
+          "must_not_say": [
+            "Do not promise any growth, signup, conversion, or other measurable result.",
+            "Do not promise zero disruption to the team's existing design workflow or tools.",
+            "Do not promise reduced headcount, reduced design hours, or quantified time or cost savings.",
+            "Do not claim superiority over or replacement of Figma, Whimsical, Draw.io, or any incumbent tool.",
+            "Do not promise stakeholder alignment, validation, approval, or recorded sign-off.",
+            "Do not claim unlimited AI capacity or unlimited projects.",
+            "Do not generalize the documented workflow's fit to every product manager.",
+            "Do not describe the prototype as production-ready software.",
+            "Do not introduce MCP integrations, enterprise security, data residency, procurement quotes, reseller payment terms, nonprofit discounts, plan comparisons, or AI credit top-ups.",
+            "Do not use the PostHog or SparkToro results; they are outside the campaign-safe evidence boundary."
+          ],
+          "claim_conditions": [
+            "Apply the workflow conditionally to one proposed feature or internal-tool flow; do not imply that the recipient currently has such a project underway.",
+            "Describe the output as an interactive prototype, not production software or a validated design.",
+            "Keep the no-code claim limited to moving from rough wireframe to interactive prototype.",
+            "Trial is 14 days, no credit card required; continued use requires a per-editor annual plan from $16/month (Starter)",
+            "A project is the unit of work and is capped per plan; boards inside it are unlimited and free",
+            "AI use draws on monthly AI credits per editor (500 on Starter, about 31 wireframes or 10 prototypes)",
+            "Invited reviewers can view or comment only, not edit",
+            "Do not promise: Any growth, signup or conversion result (the SparkToro 20% figure is one customer's reported outcome with no stated period or method, not a promise)",
+            "Do not promise: Zero disruption to the team's existing design workflow or tools",
+            "Do not promise: Reduced headcount, reduced design hours or quantified time or cost savings",
+            "Do not promise: Superiority over or replacement of Figma, Whimsical, Draw.io or any incumbent tool",
+            "Do not promise: A guarantee of stakeholder alignment or recorded sign-off",
+            "Do not promise: Unlimited AI capacity or unlimited projects",
+            "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit."
+          ],
+          "felt_need": "",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "Invite the reader to use one real proposed flow as the input: prompt Balsamiq AI or drop in a screenshot, inspect the generated wireframe, and make it interactive without code during the trial.",
+          "call_to_action": "Try Balsamiq free for 14 days.",
+          "next_step_decision": "Decide whether Balsamiq is a useful way to turn one proposed flow into an interactive prototype before engineering work starts.",
+          "next_step_value": "The no-card trial lets the reader prompt Balsamiq AI or supply a screenshot, inspect the resulting wireframe, and try making it interactive without code.",
+          "next_step_evidence_ids": [
+            "E3",
+            "E1",
+            "E22"
+          ],
+          "next_step_limit": "The trial does not by itself establish fit with the reader's wider toolchain, stakeholder agreement, production readiness, or any measurable business result.",
+          "alternative_arguments": [
+            {
+              "problem_ids": [],
+              "offer_id": "offering",
+              "action_id": "",
+              "selection_reason": "This is a viable alternative when the reader's immediate decision is about organizing variations and collecting stakeholder comments rather than generating a first interactive draft.",
+              "next_step_url": "https://balsamiq.com/pricing/",
+              "destination_kind": "web",
+              "argument_issue": "",
+              "value_case": {
+                "reader_benefit": "A product manager can keep multiple variations of one proposed flow inside a single project and invite stakeholders to view or comment without adding reviewer charges.",
+                "mechanism": "A Balsamiq project represents one initiative and contains unlimited free boards; Starter also permits unlimited reviewers, who can view or comment but cannot edit.",
+                "evidence_ids": [
+                  "E24",
+                  "E17",
+                  "E14"
+                ],
+                "decision_conditions": [
+                  "Starter is limited to 10 projects.",
+                  "Reviewers can view or comment but cannot edit.",
+                  "Starter costs $16 per editor per month, billed annually at $192 per year."
+                ]
+              },
+              "claim_conditions": [
+                "Keep unlimited scope attached to boards within a project and to reviewers, not projects, editors, or AI usage.",
+                "State that reviewer access is view-and-comment only.",
+                "Trial is 14 days, no credit card required; continued use requires a per-editor annual plan from $16/month (Starter)",
+                "A project is the unit of work and is capped per plan; boards inside it are unlimited and free",
+                "AI use draws on monthly AI credits per editor (500 on Starter, about 31 wireframes or 10 prototypes)",
+                "Invited reviewers can view or comment only, not edit",
+                "Do not promise: Any growth, signup or conversion result (the SparkToro 20% figure is one customer's reported outcome with no stated period or method, not a promise)",
+                "Do not promise: Zero disruption to the team's existing design workflow or tools",
+                "Do not promise: Reduced headcount, reduced design hours or quantified time or cost savings",
+                "Do not promise: Superiority over or replacement of Figma, Whimsical, Draw.io or any incumbent tool",
+                "Do not promise: A guarantee of stakeholder alignment or recorded sign-off",
+                "Do not promise: Unlimited AI capacity or unlimited projects",
+                "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit."
+              ],
+              "single_idea": "One initiative can contain unlimited board variations and unlimited no-extra-cost reviewers, while the paid unit remains the project and editor plan.",
+              "felt_need": "",
+              "status_quo": "",
+              "why_it_fails": "",
+              "mechanism": "Use one project for the proposed flow, place each variation on its own board, and invite stakeholders as reviewers who can view or comment but not edit.",
+              "belief_shift": "Before: assumes every variation or stakeholder may add another paid unit. After: understands that boards within a project are free and reviewers can be added at no extra cost, subject to plan limits.",
+              "evidence_ids": [
+                "E24",
+                "E17",
+                "E14"
+              ],
+              "must_not_say": [
+                "Do not call projects, editors, or AI usage unlimited.",
+                "Do not imply reviewers can edit.",
+                "Do not promise stakeholder alignment, approval, or recorded sign-off.",
+                "Do not present the plan structure as cheaper than a competitor."
+              ],
+              "objection": "Will each flow variation or stakeholder require another paid seat or board purchase?",
+              "call_to_action": "See how Balsamiq structures projects, boards, reviewers, and Starter pricing.",
+              "next_step_decision": "Decide whether the Starter project structure suits the number of initiatives and reviewers the reader expects to involve.",
+              "next_step_value": "The pricing page shows the Starter price and limits, explains that projects contain unlimited free boards, and states that unlimited reviewers may view or comment at no extra cost.",
+              "next_step_evidence_ids": [
+                "E24",
+                "E17",
+                "E14"
+              ],
+              "next_step_limit": "Reading the pricing page does not establish that Balsamiq will produce stakeholder alignment or fit the reader's wider design workflow.",
+              "subject_strategy": "Make the distinction between a paid project and its unlimited boards immediately useful to someone comparing ways to explore one proposed flow."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Campaign intelligence applied to the normalized brief",
+      "at": "2026-11-08T23:40:01.400019+00:00",
+      "phase": "intelligence",
+      "selected_audience": "Product manager planning a new feature or internal tool",
+      "audience_resolution_status": "audience_research_loaded",
+      "audience_research_id": "ada303a5-66c4-4c7d-b962-d30e73d2d85d",
+      "audience_research_version": 1,
+      "dossier_status": "current",
+      "dossier_id": "4178ba0a-6c3f-41e4-9efe-1aba3a32487d",
+      "dossier_version": 1,
+      "dossier_schema_version": 2,
+      "stale_reasons": [],
+      "legacy_fallback_used": false,
+      "qualified_subsegment": "Start a 14-day trial with no credit card, prompt Balsamiq AI (or drop in a screenshot) to produce a wireframe of one proposed flow, make it interactive without code inside a single project, and invite stakeholders as reviewers who can view or comment at no extra cost.",
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [
+        "Trial is 14 days, no credit card required; continued use requires a per-editor annual plan from $16/month (Starter)",
+        "A project is the unit of work and is capped per plan; boards inside it are unlimited and free",
+        "AI use draws on monthly AI credits per editor (500 on Starter, about 31 wireframes or 10 prototypes)",
+        "Invited reviewers can view or comment only, not edit",
+        "Do not promise: Any growth, signup or conversion result (the SparkToro 20% figure is one customer's reported outcome with no stated period or method, not a promise)",
+        "Do not promise: Zero disruption to the team's existing design workflow or tools",
+        "Do not promise: Reduced headcount, reduced design hours or quantified time or cost savings",
+        "Do not promise: Superiority over or replacement of Figma, Whimsical, Draw.io or any incumbent tool",
+        "Do not promise: A guarantee of stakeholder alignment or recorded sign-off",
+        "Do not promise: Unlimited AI capacity or unlimited projects",
+        "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit."
+      ],
+      "validation_warnings": [
+        "Publication date unknown; retrieval today does not establish current applicability. Wireframing tools of this kind are positioned at product managers, founders and developers who create low-fidelity wireframes to align a team and make product decisions before further work (e.g. engineering) begins.",
+        "Historical sources (2021-04-21); present applicability is not corroborated. A product-management commentator describes choosing Balsamiq over other wireframing tools for its simplicity, and separately reports a prior tool (Mockflow) as unintuitive and limited in its free trial.",
+        "Historical sources (2021-04-21); present applicability is not corroborated. The same commentator also considered flowcharting tools (e.g. Draw.io) and plain paper/pencil sketches as alternatives to dedicated wireframing software for low-fidelity work.",
+        "Historical sources (2021-04-21); present applicability is not corroborated. The stated intent of wireframing, per a product-management commentator, is to represent the elements and user journeys of a screen so a team can review and align before further design/engineering work proceeds.",
+        "Source coverage is partial: 2 readable page(s), 2 unavailable URL(s). Findings cover only the pages read.",
+        "Complete support was not tied to the exact selected core task.",
+        "Defining audience need is unassessed or its references required normalization.",
+        "Ignored unavailable dossier ranking E6."
+      ]
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Strategist: 1 email(s) to Selected audience: Product manager planning a new feature or internal tool.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): Wireframing tools of this kind are positioned at product managers, founders and developers who create low-fidelity wireframes to align a team and make product decisions before further work (e.g. engineering) begins.\nQualified campaign scope within that audience: Start a 14-day trial with no credit card, prompt Balsamiq AI (or drop in a screenshot) to produce a wireframe of one proposed flow, make it interactive without code inside a single project, and invite stakeholders as reviewers who can view or comment at no extra cost..",
+      "at": "2026-11-08T23:40:01.414550+00:00",
+      "agent_name": "Strategist",
+      "agent_execution_id": "7db126ea-c5bf-4b8d-a658-17755ecab5fa",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 30274,
+      "output_tokens": 4825,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.329803,
+      "duration_ms": 67761.05940004345,
+      "attempt": 1,
+      "summary": "1 email(s) to Selected audience: Product manager planning a new feature or internal tool.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): Wireframing tools of this kind are positioned at product managers, founders and developers who create low-fidelity wireframes to align a team and make product decisions before further work (e.g. engineering) begins.\nQualified campaign scope within that audience: Start a 14-day trial with no credit card, prompt Balsamiq AI (or drop in a screenshot) to produce a wireframe of one proposed flow, make it interactive without code inside a single project, and invite stakeholders as reviewers who can view or comment at no extra cost..",
+      "assets_produced": []
+    },
+    {
+      "type": "phase",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": null,
+      "step": 1,
+      "level": "info",
+      "message": "Drafts will be read cold by: Product manager planning a new feature or internal tool",
+      "at": "2026-11-08T23:40:01.419550+00:00",
+      "phase": "strategy",
+      "segment": "Product manager planning a new feature or internal tool",
+      "matched": true,
+      "audience_source": "compiled"
+    },
+    {
+      "type": "phase",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": null,
+      "step": 1,
+      "level": "info",
+      "message": "Email 1 of 1: Give Balsamiq a rough prompt or screenshot, then turn the resulting wireframe into an interactive prototype without writing code.",
+      "at": "2026-11-08T23:40:01.524120+00:00",
+      "phase": "craft",
+      "position": 1
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "info",
+      "message": "Email Writer: Email 1 · first draft",
+      "at": "2026-11-08T23:40:01.533127+00:00",
+      "agent_name": "Email Writer",
+      "label": "Email 1 · first draft",
+      "position": 1,
+      "attempt": 1
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "debug",
+      "message": "Sent 63,755 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-08T23:40:01.557917+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 63755
+    },
+    {
+      "type": "agent_failed",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "error",
+      "message": "Email Writer: RoutingProvider call failed after 1 attempt(s): codex exec reported a failed turn: You’ve hit your usage limit. Upgrade to Pro (https://chatgpt.com/explore/pro), visit https://chatgpt.com/settings/usage to purchase more credits or try again at 2:50 AM.",
+      "at": "2026-11-08T23:40:03.691514+00:00",
+      "agent_name": "Email Writer",
+      "agent_execution_id": "d023890c-0ecd-4634-825a-0a025c9721d8",
+      "error": "RoutingProvider call failed after 1 attempt(s): codex exec reported a failed turn: You’ve hit your usage limit. Upgrade to Pro (https://chatgpt.com/explore/pro), visit https://chatgpt.com/settings/usage to purchase more credits or try again at 2:50 AM.",
+      "attempt": 1
+    },
+    {
+      "type": "campaign_report",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": null,
+      "step": 2,
+      "level": "info",
+      "message": "Request: Write exactly one email. Introduce our product to a new buyer with one clear next step.\nDelivered 0 of 1 email(s). Average simulated reader's interest (uncalibrated) 0.0/10.\nContract problems: the user asked for 1 email(s) and the run produced 0\nWhat held the copy back: No measurable results found - emails may describe documented capabilities but cannot invent measured outcomes\nWhat would help most next time: What measurable result do customers get, and how do you know?\nThe model stopped answering and did not come back after several attempts. Everything finished before that point is below.\nEffective audience: Product manager planning a new feature or internal tool. Qualified scope: Start a 14-day trial with no credit card, prompt Balsamiq AI (or drop in a screenshot) to produce a wireframe of one proposed flow, make it interactive without code inside a single project, and invite stakeholders as reviewers who can view or comment at no extra cost.\nAudience context: audience_research_loaded\nPublication date unknown; retrieval today does not establish current applicability. Wireframing tools of this kind are positioned at product managers, founders and developers who create low-fidelity wireframes to align a team and make product decisions before further work (e.g. engineering) begins.\nHistorical sources (2021-04-21); present applicability is not corroborated. A product-management commentator describes choosing Balsamiq over other wireframing tools for its simplicity, and separately reports a prior tool (Mockflow) as unintuitive and limited in its free trial.\nHistorical sources (2021-04-21); present applicability is not corroborated. The same commentator also considered flowcharting tools (e.g. Draw.io) and plain paper/pencil sketches as alternatives to dedicated wireframing software for low-fidelity work.\nHistorical sources (2021-04-21); present applicability is not corroborated. The stated intent of wireframing, per a product-management commentator, is to represent the elements and user journeys of a screen so a team can review and align before further design/engineering work proceeds.\nSource coverage is partial: 2 readable page(s), 2 unavailable URL(s). Findings cover only the pages read.\nComplete support was not tied to the exact selected core task.\nDefining audience need is unassessed or its references required normalization.\nIgnored unavailable dossier ranking E6.",
+      "at": "2026-11-08T23:40:03.695535+00:00",
+      "delivered": 0,
+      "promised": 1,
+      "average_pull": 0.0,
+      "contract_violations": [
+        "the user asked for 1 email(s) and the run produced 0"
+      ],
+      "limiting_gaps": [
+        "No measurable results found - emails may describe documented capabilities but cannot invent measured outcomes"
+      ],
+      "below_floor": [],
+      "what_would_help_most": "What measurable result do customers get, and how do you know?"
+    },
+    {
+      "type": "phase",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": null,
+      "step": 2,
+      "level": "info",
+      "message": "The model stopped answering and did not come back after several attempts. Everything finished before that point is below.",
+      "at": "2026-11-08T23:40:03.701121+00:00",
+      "phase": "stopped",
+      "status": "provider_unavailable"
+    },
+    {
+      "type": "execution_finished",
+      "execution_id": "38bb84d7-4adb-422b-a9ce-2c5cbe4f4da6",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Campaign run finished: provider_unavailable",
+      "at": "2026-11-08T23:40:03.715435+00:00",
+      "status": "failed",
+      "run_status": "provider_unavailable",
+      "estimated_cost_usd": 0.3298,
+      "delivered": 0
+    }
+  ],
+  "last_event_id": 23,
+  "is_running": false
+}

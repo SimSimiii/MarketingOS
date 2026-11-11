@@ -1,0 +1,1048 @@
+{
+  "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+  "events": [
+    {
+      "type": "execution_started",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Request: Rédige un seul email d’acquisition en français pour l’audience sélectionnée. Choisis la stratégie et un prochain pas documenté à partir des connaissances compilées de la marque.",
+      "at": "2026-11-04T00:17:45.228671+00:00",
+      "campaign_id": "12fa6da2-5064-4708-bbaf-d26ec32b62a9",
+      "request": "Rédige un seul email d’acquisition en français pour l’audience sélectionnée. Choisis la stratégie et un prochain pas documenté à partir des connaissances compilées de la marque."
+    },
+    {
+      "type": "phase",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Read the request as 1 email(s) - the user said so",
+      "at": "2026-11-04T00:17:45.268798+00:00",
+      "phase": "contract",
+      "count": 1,
+      "explicit": true,
+      "kind": "single_email"
+    },
+    {
+      "type": "phase",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Reusing what we already know about this business (version 3, 883 facts)",
+      "at": "2026-11-04T00:17:46.178112+00:00",
+      "phase": "knowledge",
+      "reused": true,
+      "version": 3
+    },
+    {
+      "type": "knowledge_ready",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": "knowledge_compiler",
+      "step": null,
+      "level": "info",
+      "message": "Knowledge reused: 883 facts the copy may claim, 1 gap(s)",
+      "at": "2026-11-04T00:17:46.188039+00:00",
+      "reused": true,
+      "version": 3,
+      "evidence_count": 883,
+      "segments": [
+        "The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it",
+        "Une professionnelle qui transporte son ordinateur et ses affaires entre travail, quotidien et courts week-ends",
+        "Une personne qui prépare régulièrement des escapades de week-end et veut éviter une valise rigide",
+        "Une personne qui emporte son déjeuner au travail et veut un sac isotherme plus présentable qu'une glacière classique"
+      ],
+      "gaps": [
+        "Some linked source pages could not be read; the corpus is partial: https://www.cabaia.fr/"
+      ],
+      "voice_learned": true,
+      "notes": [
+        "7 of 890 candidate fact(s) were discarded because the quote supporting them could not be found in the source."
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Researched audience loaded; stale Relevance Dossier is advisory (interpretation_changed)",
+      "at": "2026-11-04T00:17:47.688003+00:00",
+      "phase": "intelligence",
+      "selected_audience": "The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it",
+      "audience_resolution_status": "audience_research_loaded",
+      "audience_research_id": "e4daea9f-43f2-47e0-b849-f82b99868be0",
+      "audience_research_version": 2,
+      "dossier_status": "stale",
+      "dossier_id": "2f26cc74-b27d-4a62-ae52-fd653eb7673f",
+      "dossier_version": 3,
+      "dossier_schema_version": 2,
+      "stale_reasons": [
+        "interpretation_changed"
+      ],
+      "legacy_fallback_used": true,
+      "qualified_subsegment": "",
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [],
+      "validation_warnings": [
+        "Historical sources (2021-09-02); present applicability is not corroborated. Previously carried three separate bags to cover one workday: a handbag, a dedicated computer bag and a tote bag for notebooks.",
+        "Publication date unknown; retrieval today does not establish current applicability. Used a tote/cabas style bag for work (teaching) materials, replacing it only once it wore out.",
+        "Publication date unknown; retrieval today does not establish current applicability. Considered wheeled bags as a way to limit weight carried, but rejected that option as not suited to personal preference.",
+        "Publication date unknown; retrieval today does not establish current applicability. Previously used an unstructured sporty backpack for work (school) use, finding it adequate for leisure/travel but not structured enough for daily work carrying.",
+        "Publication date unknown; retrieval today does not establish current applicability. A previous tote/cabas-style work bag wore out ('rendu l'âme'), prompting a switch to a backpack.",
+        "Publication date unknown; retrieval today does not establish current applicability. Physical discomfort from carrying a heavy bag on one shoulder daily (flagged to an osteopath) prompted looking for an alternative carrying format.",
+        "Publication date unknown; retrieval today does not establish current applicability. Wants a bag resistant enough to use roughly without extra precautions.",
+        "Publication date unknown; retrieval today does not establish current applicability. Wants one bag that covers multiple needs rather than several single-purpose items.",
+        "Publication date unknown; retrieval today does not establish current applicability. Wants quick, unfussy access to contents within a reasonable capacity.",
+        "Publication date unknown; retrieval today does not establish current applicability. Wants the bag to also look good, not purely functional.",
+        "Publication date unknown; retrieval today does not establish current applicability. Wants the same bag usable for daily routine and for weekend outings or trips.",
+        "Historical sources (2021-09-02); present applicability is not corroborated. Wants to carry a fully loaded bag without feeling its weight.",
+        "Historical sources (2021-09-02); present applicability is not corroborated. Carries a laptop, a water bottle and notebooks/papers together in one bag for daily workplace commuting.",
+        "Publication date unknown; retrieval today does not establish current applicability. Needs enough bag capacity for a packed lunch alongside other daily items when sizing up.",
+        "Historical sources (2021-09-02); present applicability is not corroborated. Previously used two or more separate bags for one workday before consolidating into a single bag.",
+        "Historical sources (2021-09-02); present applicability is not corroborated. Discussed on a parenting/family lifestyle blog reviewing an everyday backpack for daily personal and work use.",
+        "Publication date unknown; retrieval today does not establish current applicability. Discussed on a teacher-oriented blog under classroom-organisation content, framed explicitly as a work bag ('cartable de maitresse').",
+        "Historical sources (2023-10-30); present applicability is not corroborated. Covered on a workplace-equipment review outlet addressing the search for an ideal work bag.",
+        "P2: Publication date unknown; retrieval today does not establish current applicability.",
+        "P2: Single-source problem; independent corroboration is not established."
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "327 third-party proof point(s) available to spend",
+      "at": "2026-11-04T00:17:47.711069+00:00",
+      "phase": "proof",
+      "proof": 327,
+      "checkable": 556,
+      "asks": [
+        "Can this source be supplied in a readable form or its missing details verified?"
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "4 competitor(s) read - 0 documented difference(s); 30 unmatched captured proposition(s) need verification, not an exclusivity conclusion",
+      "at": "2026-11-04T00:17:52.418519+00:00",
+      "phase": "market",
+      "rivals": 4,
+      "open_ground": [
+        "price",
+        "price",
+        "price",
+        "price",
+        "price",
+        "breadth",
+        "breadth",
+        "breadth",
+        "security",
+        "security",
+        "security",
+        "security",
+        "security",
+        "proof",
+        "proof",
+        "proof",
+        "proof",
+        "proof",
+        "proof",
+        "support",
+        "support",
+        "support",
+        "support",
+        "support",
+        "support",
+        "other",
+        "other",
+        "other",
+        "other",
+        "other"
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Written to The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it - selected audience hypothesis; response is unmeasured",
+      "at": "2026-11-04T00:17:53.072073+00:00",
+      "phase": "audience",
+      "segment": "The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it",
+      "mapped": true
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Strategist: Deciding what this campaign says, and in what order",
+      "at": "2026-11-04T00:17:53.087963+00:00",
+      "agent_name": "Strategist",
+      "label": "Deciding what this campaign says, and in what order"
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "debug",
+      "message": "Sent 141,625 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-04T00:17:54.078796+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 141625
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 8,805 characters in 84.8s (41,930 in / 7,098 out)",
+      "at": "2026-11-04T00:19:18.910070+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 41930,
+      "output_tokens": 7098,
+      "cache_read_input_tokens": 4352,
+      "cost_usd": 0.517046,
+      "duration_ms": 84817.13420001324,
+      "response_chars": 8805
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "debug",
+      "message": "Sent 150,898 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-04T00:19:18.958402+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 150898
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 11,109 characters in 60.9s (43,907 in / 3,945 out)",
+      "at": "2026-11-04T00:20:19.842154+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 43907,
+      "output_tokens": 3945,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.412467,
+      "duration_ms": 60873.8910999964,
+      "response_chars": 11109
+    },
+    {
+      "type": "phase",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Proposition selected for the requested campaign",
+      "at": "2026-11-04T00:20:19.868804+00:00",
+      "phase": "strategy_plan",
+      "pipeline_version": 2,
+      "strategy_mode": "planned",
+      "intent": {
+        "objective": "acquisition",
+        "objective_source": "user",
+        "reader_relationship": "unknown",
+        "relationship_source": "inferred",
+        "announcement": "",
+        "reason_now": "",
+        "desired_action": ""
+      },
+      "plan_history": [
+        {
+          "raw_plan": {
+            "interpretation": "Je traite la demande comme une campagne d’acquisition composée d’un seul email, adressée à l’audience sélectionnée sans supposer qu’elle est froide, abonnée ou déjà cliente. La stratégie présente directement le Carry All Wanderer comme un format pertinent pour organiser l’ordinateur et la gourde lors des trajets quotidiens, sans prétendre que le déjeuner y tient aussi. Conformément au cadre « homepage-only », le clic mène uniquement à la page d’accueil CABAIA.",
+            "pipeline_version": 2,
+            "strategy_mode": "planned",
+            "intent": {
+              "objective": "acquisition",
+              "objective_source": "user",
+              "reader_relationship": "unknown",
+              "relationship_source": "inferred",
+              "announcement": "",
+              "reason_now": "",
+              "desired_action": "Obtenir une première visite qualifiée sur le site CABAIA afin que le lecteur décide si l’offre mérite d’être explorée pour ses trajets quotidiens."
+            },
+            "reader": "Une personne qui se déplace quotidiennement avec un ordinateur, un déjeuner et une gourde, et cherche à éviter de multiplier les sacs sans renoncer à un format utilisable au travail comme le week-end.",
+            "reader_segment": "The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it",
+            "reader_profile_override": "",
+            "reader_scope": "Audience la plus consciente de la catégorie et de son besoin. Ne pas lui expliquer longuement le problème ni supposer qu’elle possède déjà un produit CABAIA, qu’elle a connu une panne ou qu’elle transporte des objets de dimensions particulières.",
+            "fixed_cta_url": "https://www.cabaia.fr/",
+            "promise": "Le Carry All Wanderer réunit dans un format de 16 L plusieurs espaces utiles au quotidien, dont un compartiment pour ordinateur et un emplacement pour gourde, avec un usage annoncé pour le travail comme pour une escapade le week-end.",
+            "orientation": "Un sac de 16 L pensé pour organiser notamment l’ordinateur et la gourde entre les trajets de travail et les sorties du week-end.",
+            "arc": "Un email autonome et concret : partir des objets transportés, montrer comment le Carry All les organise, puis inviter à découvrir CABAIA sans transformer une compatibilité non vérifiée en promesse.",
+            "sequence_rationale": "Un seul email impose de concentrer l’argument sur la conséquence opérationnelle la mieux documentée pour cette audience : organiser l’ordinateur et la gourde dans un Carry All de 16 L utilisable dans un contexte de travail. L’audience étant most_aware, l’email peut commencer par le produit et son mécanisme plutôt que développer le problème. Le déjeuner reste volontairement hors de la promesse : aucune preuve ne montre qu’il tient dans le Carry All en même temps que l’ordinateur et la gourde. L’objection sur la finesse, la protection de l’ordinateur ou la durabilité n’est pas assignée, car les éléments disponibles ne la résolvent que partiellement. La destination imposée étant la page d’accueil, le prochain pas sert à ouvrir une première exploration de la marque, pas à valider les dimensions ou la configuration d’un produit précis. Ce qui changerait le plus cette campagne : pouvez-vous fournir la page source actuellement illisible dans une forme exploitable, ou en faire vérifier les détails manquants ?",
+            "emails": [
+              {
+                "problem_ids": [],
+                "offer_id": "offering",
+                "action_id": "",
+                "selection_reason": "Le volume de 16 L et l’organisation mentionnant l’ordinateur et la gourde correspondent directement à deux objets centraux du trajet quotidien de l’audience, tandis que l’usage travail/week-end soutient sa recherche de polyvalence sans inventer la compatibilité avec son déjeuner.",
+                "next_step_url": "https://www.cabaia.fr/",
+                "destination_kind": "web",
+                "argument_issue": "",
+                "value_case": {
+                  "reader_benefit": "Si les dimensions de ses affaires conviennent, le lecteur peut organiser son ordinateur et sa gourde dans un même sac et envisager le même format pour une journée de travail ou un week-end.",
+                  "mechanism": "Le Carry All Wanderer offre un volume annoncé de 16 L. Un avis d’utilisation professionnelle mentionne ses multiples poches, un compartiment pour ordinateur et un emplacement pour gourde; CABAIA le présente aussi pour le travail ou une escapade le week-end.",
+                  "evidence_ids": [
+                    "E731",
+                    "E749"
+                  ],
+                  "decision_conditions": [
+                    "Le bénéfice porte uniquement sur les éléments documentés : ordinateur, gourde et autres affaires non détaillées.",
+                    "Les dimensions compatibles de l’ordinateur et de la gourde ne sont pas établies.",
+                    "La présence simultanée d’un déjeuner dans le Carry All n’est pas documentée."
+                  ]
+                },
+                "claim_conditions": [
+                  "Présenter les 16 L comme un volume annoncé par CABAIA, sans en déduire une capacité universelle.",
+                  "Présenter l’organisation ordinateur-gourde comme rapportée dans un avis individuel d’usage professionnel.",
+                  "Formuler l’usage week-end comme une possibilité, pas comme une garantie de convenance pour tout voyage."
+                ],
+                "position": 1,
+                "target_audience": "The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it",
+                "job": "Faire considérer CABAIA pour un prochain sac quotidien en montrant une organisation concrète du Carry All Wanderer, puis obtenir une visite qualifiée sur le site de la marque.",
+                "single_idea": "Le Carry All Wanderer associe un volume de 16 L à plusieurs espaces, dont un compartiment pour ordinateur et un emplacement pour gourde, afin d’organiser ces essentiels dans un même format utilisable au travail et envisagé pour le week-end.",
+                "felt_need": "",
+                "status_quo": "",
+                "why_it_fails": "",
+                "mechanism": "Ancrer l’argument dans le format de 16 L, les multiples poches, le compartiment pour ordinateur et l’emplacement pour gourde. Relier ensuite cette organisation à la polyvalence travail/week-end annoncée, sans ajouter le lunch bag à la liste des objets censés tenir dedans.",
+                "alternative_ideas": [],
+                "alternative_arguments": [],
+                "belief_shift": "Avant : un sac polyvalent reste une promesse générale difficile à distinguer. Après : le lecteur voit précisément quels éléments documentés du Carry All peuvent être pertinents pour ses trajets — 16 L, ordinateur, gourde et usage travail/week-end — tout en sachant que la compatibilité avec son chargement complet n’est pas établie.",
+                "evidence_ids": [
+                  "E731",
+                  "E749"
+                ],
+                "must_not_say": [
+                  "Ne pas affirmer que l’ordinateur, la gourde et le déjeuner tiennent simultanément dans le Carry All Wanderer.",
+                  "Ne pas donner de dimensions compatibles pour l’ordinateur, la gourde ou le lunch bag.",
+                  "Ne pas promettre que le compartiment protège suffisamment un ordinateur contre les chocs.",
+                  "Ne pas promettre confort, légèreté ou absence de fatigue lorsque le sac est chargé.",
+                  "Ne pas affirmer que le tissu, le fond ou les fermetures résisteront à un usage intensif.",
+                  "Ne pas présenter l’usage professionnel et l’usage week-end d’une cliente comme un résultat représentatif de tous les acheteurs.",
+                  "Ne pas affirmer que le lecteur transporte actuellement trois sacs ou a déjà connu une mauvaise expérience.",
+                  "Ne pas revendiquer une supériorité ou une exclusivité face aux autres marques.",
+                  "Ne pas introduire le Lunch bag, le Duffle, les valises, CABAIA Studio, les engagements B Corp ou les certifications : ils dilueraient l’unique argument.",
+                  "Ne pas annoncer un prix, un stock, une promotion ou une disponibilité en boutique non établis pour le Carry All Wanderer."
+                ],
+                "forbidden_evidence_ids": [],
+                "forbidden_capability_ids": [],
+                "objection": "",
+                "tone": "Enjoué, complice et concret, avec des phrases courtes et une touche d’humour quotidien discrète.",
+                "call_to_action": "Découvrir CABAIA",
+                "next_step_decision": "Décider si l’univers CABAIA mérite une exploration plus poussée pour choisir un sac adapté à ses trajets quotidiens.",
+                "next_step_value": "La page d’accueil ouvre l’accès au site marchand et à l’offre CABAIA; l’email donne au lecteur les éléments documentés à rechercher ensuite autour du Carry All Wanderer.",
+                "next_step_evidence_ids": [
+                  "E731",
+                  "E749"
+                ],
+                "next_step_limit": "La page d’accueil amorce la découverte de la gamme, mais ne remplace pas la consultation d’une fiche produit précise avant de choisir un modèle.",
+                "subject_strategy": "Faire reconnaître immédiatement la scène « ordinateur + gourde » et introduire le format de 16 L comme détail concret. Éviter les superlatifs, la promesse des « trois sacs en un » et toute affirmation sur le déjeuner.",
+                "must_not_reuse": [],
+                "steering": {
+                  "directions": [],
+                  "include_evidence_ids": [],
+                  "exclude_evidence_ids": [],
+                  "use": [],
+                  "avoid": [],
+                  "context_only": [],
+                  "excluded_values": []
+                }
+              }
+            ],
+            "voice_notes": "Employer « vous » et « nous », des formulations courtes et concrètes, et le vocabulaire de la mobilité quotidienne. Garder l’humour léger; ne pas caricaturer le lecteur comme désorganisé.",
+            "contract": {
+              "kind": "single_email",
+              "count": 1,
+              "count_is_explicit": true,
+              "evidence": "La demande précise explicitement « Rédige un seul email d’acquisition en français » et « Exactement 1 email(s) »."
+            }
+          },
+          "effective_plan": {
+            "interpretation": "Je traite la demande comme une campagne d’acquisition composée d’un seul email, adressée à l’audience sélectionnée sans supposer qu’elle est froide, abonnée ou déjà cliente. La stratégie présente directement le Carry All Wanderer comme un format pertinent pour organiser l’ordinateur et la gourde lors des trajets quotidiens, sans prétendre que le déjeuner y tient aussi. Conformément au cadre « homepage-only », le clic mène uniquement à la page d’accueil CABAIA.",
+            "pipeline_version": 2,
+            "strategy_mode": "planned",
+            "intent": {
+              "objective": "acquisition",
+              "objective_source": "user",
+              "reader_relationship": "unknown",
+              "relationship_source": "inferred",
+              "announcement": "",
+              "reason_now": "",
+              "desired_action": ""
+            },
+            "reader": "Une personne qui se déplace quotidiennement avec un ordinateur, un déjeuner et une gourde, et cherche à éviter de multiplier les sacs sans renoncer à un format utilisable au travail comme le week-end.",
+            "reader_segment": "The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it",
+            "reader_profile_override": "",
+            "reader_scope": "Audience la plus consciente de la catégorie et de son besoin. Ne pas lui expliquer longuement le problème ni supposer qu’elle possède déjà un produit CABAIA, qu’elle a connu une panne ou qu’elle transporte des objets de dimensions particulières.",
+            "fixed_cta_url": "",
+            "promise": "Le Carry All Wanderer réunit dans un format de 16 L plusieurs espaces utiles au quotidien, dont un compartiment pour ordinateur et un emplacement pour gourde, avec un usage annoncé pour le travail comme pour une escapade le week-end.",
+            "orientation": "Un sac de 16 L pensé pour organiser notamment l’ordinateur et la gourde entre les trajets de travail et les sorties du week-end.",
+            "arc": "Un email autonome et concret : partir des objets transportés, montrer comment le Carry All les organise, puis inviter à découvrir CABAIA sans transformer une compatibilité non vérifiée en promesse.",
+            "sequence_rationale": "Un seul email impose de concentrer l’argument sur la conséquence opérationnelle la mieux documentée pour cette audience : organiser l’ordinateur et la gourde dans un Carry All de 16 L utilisable dans un contexte de travail. L’audience étant most_aware, l’email peut commencer par le produit et son mécanisme plutôt que développer le problème. Le déjeuner reste volontairement hors de la promesse : aucune preuve ne montre qu’il tient dans le Carry All en même temps que l’ordinateur et la gourde. L’objection sur la finesse, la protection de l’ordinateur ou la durabilité n’est pas assignée, car les éléments disponibles ne la résolvent que partiellement. La destination imposée étant la page d’accueil, le prochain pas sert à ouvrir une première exploration de la marque, pas à valider les dimensions ou la configuration d’un produit précis. Ce qui changerait le plus cette campagne : pouvez-vous fournir la page source actuellement illisible dans une forme exploitable, ou en faire vérifier les détails manquants ?",
+            "emails": [
+              {
+                "problem_ids": [],
+                "offer_id": "offering",
+                "action_id": "",
+                "selection_reason": "Le volume de 16 L et l’organisation mentionnant l’ordinateur et la gourde correspondent directement à deux objets centraux du trajet quotidien de l’audience, tandis que l’usage travail/week-end soutient sa recherche de polyvalence sans inventer la compatibilité avec son déjeuner.",
+                "next_step_url": "",
+                "destination_kind": "web",
+                "argument_issue": "The web CTA has no verified destination. Choose one exact assigned evidence source or an offer action with a URL; a brand homepage fallback does not establish the promised page.",
+                "value_case": {
+                  "reader_benefit": "Si les dimensions de ses affaires conviennent, le lecteur peut organiser son ordinateur et sa gourde dans un même sac et envisager le même format pour une journée de travail ou un week-end.",
+                  "mechanism": "Le Carry All Wanderer offre un volume annoncé de 16 L. Un avis d’utilisation professionnelle mentionne ses multiples poches, un compartiment pour ordinateur et un emplacement pour gourde; CABAIA le présente aussi pour le travail ou une escapade le week-end.",
+                  "evidence_ids": [
+                    "E731",
+                    "E749"
+                  ],
+                  "decision_conditions": [
+                    "Le bénéfice porte uniquement sur les éléments documentés : ordinateur, gourde et autres affaires non détaillées.",
+                    "Les dimensions compatibles de l’ordinateur et de la gourde ne sont pas établies.",
+                    "La présence simultanée d’un déjeuner dans le Carry All n’est pas documentée."
+                  ]
+                },
+                "claim_conditions": [
+                  "Présenter les 16 L comme un volume annoncé par CABAIA, sans en déduire une capacité universelle.",
+                  "Présenter l’organisation ordinateur-gourde comme rapportée dans un avis individuel d’usage professionnel.",
+                  "Formuler l’usage week-end comme une possibilité, pas comme une garantie de convenance pour tout voyage."
+                ],
+                "position": 1,
+                "target_audience": "The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it",
+                "job": "Faire considérer CABAIA pour un prochain sac quotidien en montrant une organisation concrète du Carry All Wanderer, puis obtenir une visite qualifiée sur le site de la marque.",
+                "single_idea": "Le Carry All Wanderer associe un volume de 16 L à plusieurs espaces, dont un compartiment pour ordinateur et un emplacement pour gourde, afin d’organiser ces essentiels dans un même format utilisable au travail et envisagé pour le week-end.",
+                "felt_need": "",
+                "status_quo": "",
+                "why_it_fails": "",
+                "mechanism": "Ancrer l’argument dans le format de 16 L, les multiples poches, le compartiment pour ordinateur et l’emplacement pour gourde. Relier ensuite cette organisation à la polyvalence travail/week-end annoncée, sans ajouter le lunch bag à la liste des objets censés tenir dedans.",
+                "alternative_ideas": [],
+                "alternative_arguments": [],
+                "belief_shift": "Avant : un sac polyvalent reste une promesse générale difficile à distinguer. Après : le lecteur voit précisément quels éléments documentés du Carry All peuvent être pertinents pour ses trajets — 16 L, ordinateur, gourde et usage travail/week-end — tout en sachant que la compatibilité avec son chargement complet n’est pas établie.",
+                "evidence_ids": [
+                  "E731",
+                  "E749"
+                ],
+                "must_not_say": [
+                  "Ne pas affirmer que l’ordinateur, la gourde et le déjeuner tiennent simultanément dans le Carry All Wanderer.",
+                  "Ne pas donner de dimensions compatibles pour l’ordinateur, la gourde ou le lunch bag.",
+                  "Ne pas promettre que le compartiment protège suffisamment un ordinateur contre les chocs.",
+                  "Ne pas promettre confort, légèreté ou absence de fatigue lorsque le sac est chargé.",
+                  "Ne pas affirmer que le tissu, le fond ou les fermetures résisteront à un usage intensif.",
+                  "Ne pas présenter l’usage professionnel et l’usage week-end d’une cliente comme un résultat représentatif de tous les acheteurs.",
+                  "Ne pas affirmer que le lecteur transporte actuellement trois sacs ou a déjà connu une mauvaise expérience.",
+                  "Ne pas revendiquer une supériorité ou une exclusivité face aux autres marques.",
+                  "Ne pas introduire le Lunch bag, le Duffle, les valises, CABAIA Studio, les engagements B Corp ou les certifications : ils dilueraient l’unique argument.",
+                  "Ne pas annoncer un prix, un stock, une promotion ou une disponibilité en boutique non établis pour le Carry All Wanderer."
+                ],
+                "forbidden_evidence_ids": [],
+                "forbidden_capability_ids": [],
+                "objection": "",
+                "tone": "Enjoué, complice et concret, avec des phrases courtes et une touche d’humour quotidien discrète.",
+                "call_to_action": "Découvrir CABAIA",
+                "next_step_decision": "Décider si l’univers CABAIA mérite une exploration plus poussée pour choisir un sac adapté à ses trajets quotidiens.",
+                "next_step_value": "La page d’accueil ouvre l’accès au site marchand et à l’offre CABAIA; l’email donne au lecteur les éléments documentés à rechercher ensuite autour du Carry All Wanderer.",
+                "next_step_evidence_ids": [
+                  "E731",
+                  "E749"
+                ],
+                "next_step_limit": "La page d’accueil amorce la découverte de la gamme, mais ne remplace pas la consultation d’une fiche produit précise avant de choisir un modèle.",
+                "subject_strategy": "Faire reconnaître immédiatement la scène « ordinateur + gourde » et introduire le format de 16 L comme détail concret. Éviter les superlatifs, la promesse des « trois sacs en un » et toute affirmation sur le déjeuner.",
+                "must_not_reuse": [],
+                "steering": {
+                  "directions": [],
+                  "include_evidence_ids": [],
+                  "exclude_evidence_ids": [],
+                  "use": [],
+                  "avoid": [],
+                  "context_only": [],
+                  "excluded_values": []
+                }
+              }
+            ],
+            "voice_notes": "Employer « vous » et « nous », des formulations courtes et concrètes, et le vocabulaire de la mobilité quotidienne. Garder l’humour léger; ne pas caricaturer le lecteur comme désorganisé.",
+            "contract": {
+              "kind": "single_email",
+              "count": 1,
+              "count_is_explicit": true,
+              "evidence": "La demande précise explicitement « Rédige un seul email d’acquisition en français » et « Exactement 1 email(s) »."
+            }
+          },
+          "changed_fields": [
+            "intent",
+            "fixed_cta_url",
+            "emails"
+          ]
+        },
+        {
+          "raw_plan": {
+            "interpretation": "Je traite la demande comme une campagne d’acquisition composée d’un seul email, adressée à l’audience sélectionnée sans supposer qu’elle est froide, abonnée ou déjà cliente. La stratégie présente directement le Carry All Wanderer comme un format pertinent pour organiser l’ordinateur et la gourde lors des trajets quotidiens, sans prétendre que le déjeuner y tient aussi. La page d’accueil ne constituant pas une destination vérifiable pour cette proposition, le clic mène à la fiche source documentée du Carry All Wanderer.",
+            "pipeline_version": 2,
+            "strategy_mode": "planned",
+            "intent": {
+              "objective": "acquisition",
+              "objective_source": "user",
+              "reader_relationship": "unknown",
+              "relationship_source": "inferred",
+              "announcement": "",
+              "reason_now": "",
+              "desired_action": "Faire découvrir la fiche documentée du Carry All Wanderer."
+            },
+            "reader": "Une personne qui se déplace quotidiennement avec un ordinateur, un déjeuner et une gourde, et cherche à éviter de multiplier les sacs sans renoncer à un format utilisable au travail comme le week-end.",
+            "reader_segment": "The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it",
+            "reader_profile_override": "",
+            "reader_scope": "Audience la plus consciente de la catégorie et de son besoin. Ne pas lui expliquer longuement le problème ni supposer qu’elle possède déjà un produit CABAIA, qu’elle a connu une panne ou qu’elle transporte des objets de dimensions particulières.",
+            "fixed_cta_url": "https://www.cabaia.fr/products/carry-all-wanderer-aurland",
+            "promise": "Le Carry All Wanderer réunit dans un format de 16 L plusieurs espaces utiles au quotidien, dont un compartiment pour ordinateur et un emplacement pour gourde.",
+            "orientation": "Un sac de 16 L doté de plusieurs espaces pour organiser notamment un ordinateur et une gourde pendant les trajets quotidiens.",
+            "arc": "Un email autonome et concret : partir des objets transportés, montrer comment le Carry All les organise, puis inviter à consulter sa fiche sans transformer une compatibilité non vérifiée en promesse.",
+            "sequence_rationale": "Un seul email impose de concentrer l’argument sur la conséquence opérationnelle la mieux documentée pour cette audience : organiser l’ordinateur et la gourde dans un Carry All de 16 L utilisé dans un contexte professionnel. L’audience étant most_aware, l’email peut commencer par le produit et son mécanisme plutôt que développer le problème. Le déjeuner reste volontairement hors de la promesse : aucune preuve ne montre qu’il tient dans le Carry All en même temps que l’ordinateur et la gourde. L’objection sur la finesse, la protection de l’ordinateur ou la durabilité n’est pas assignée, car les éléments disponibles ne la résolvent que partiellement. La fiche source du Carry All remplace la page d’accueil comme destination : elle est directement reliée aux preuves assignées et permet d’examiner le produit évoqué. Une proposition alternative exploitable est conservée autour de la polyvalence travail/sac 24 h, mais son témoignage comporte une réserve sur l’épaisseur du tissu et le fond. Ce qui changerait le plus cette campagne : pouvez-vous fournir la page source actuellement illisible dans une forme exploitable, ou en faire vérifier les détails manquants ?",
+            "emails": [
+              {
+                "problem_ids": [],
+                "offer_id": "offering",
+                "action_id": "",
+                "selection_reason": "Le volume de 16 L et l’organisation mentionnant l’ordinateur et la gourde correspondent directement à deux objets centraux du trajet quotidien de l’audience, sans inventer la compatibilité avec son déjeuner.",
+                "next_step_url": "https://www.cabaia.fr/products/carry-all-wanderer-aurland",
+                "destination_kind": "web",
+                "argument_issue": "",
+                "value_case": {
+                  "reader_benefit": "Si les dimensions de ses affaires conviennent, le lecteur peut organiser son ordinateur et sa gourde dans un même sac pour ses déplacements quotidiens.",
+                  "mechanism": "Le Carry All Wanderer offre un volume annoncé de 16 L. Un avis individuel d’utilisation professionnelle mentionne ses multiples poches, un compartiment pour ordinateur et un emplacement pour gourde.",
+                  "evidence_ids": [
+                    "E731",
+                    "E749"
+                  ],
+                  "decision_conditions": [
+                    "Les dimensions compatibles de l’ordinateur et de la gourde ne sont pas établies.",
+                    "La présence simultanée d’un déjeuner dans le Carry All n’est pas documentée."
+                  ]
+                },
+                "claim_conditions": [
+                  "Présenter les 16 L comme un volume annoncé par CABAIA, sans en déduire une capacité universelle.",
+                  "Présenter l’organisation ordinateur-gourde comme rapportée dans un avis individuel d’usage professionnel."
+                ],
+                "position": 1,
+                "target_audience": "The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it",
+                "job": "Faire considérer le Carry All Wanderer comme prochain sac quotidien en montrant son organisation documentée, puis obtenir une consultation qualifiée de sa fiche.",
+                "single_idea": "Le Carry All Wanderer associe un volume annoncé de 16 L à plusieurs espaces, dont un compartiment pour ordinateur et un emplacement pour gourde, pour organiser ces essentiels dans un même format.",
+                "felt_need": "",
+                "status_quo": "",
+                "why_it_fails": "",
+                "mechanism": "Ancrer l’argument dans le format de 16 L, les multiples poches, le compartiment pour ordinateur et l’emplacement pour gourde. Ne pas ajouter le déjeuner à la liste des objets censés tenir dedans.",
+                "alternative_ideas": [],
+                "alternative_arguments": [
+                  {
+                    "problem_ids": [],
+                    "offer_id": "offering",
+                    "action_id": "",
+                    "selection_reason": "Cette proposition offre une autre raison documentée de considérer le Carry All : une cliente l’a jugé adapté pour alterner entre travail et sac 24 h, ce qui rejoint le souhait de réutiliser un même format dans plusieurs contextes.",
+                    "next_step_url": "https://www.cabaia.fr/products/carry-all-wanderer-aurland",
+                    "destination_kind": "web",
+                    "argument_issue": "",
+                    "value_case": {
+                      "reader_benefit": "Le lecteur peut envisager un même modèle pour ses affaires de travail et un usage de type sac 24 h, sous réserve que le format et la construction lui conviennent.",
+                      "mechanism": "Une cliente a déclaré que la taille du Carry All convenait pour osciller entre travail et sac 24 h.",
+                      "evidence_ids": [
+                        "E759"
+                      ],
+                      "decision_conditions": [
+                        "Il s’agit d’un avis individuel anonyme.",
+                        "La même cliente aurait préféré un tissu plus épais et un fond renforcé."
+                      ]
+                    },
+                    "claim_conditions": [
+                      "Attribuer explicitement l’appréciation travail/sac 24 h à une cliente, sans la généraliser.",
+                      "Ne pas transformer la taille jugée idéale par cette cliente en garantie de capacité pour tout chargement."
+                    ],
+                    "single_idea": "La taille du Carry All a permis à une cliente de l’utiliser entre travail et sac 24 h, avec une réserve explicite sur l’épaisseur du tissu et le renforcement du fond.",
+                    "felt_need": "",
+                    "status_quo": "",
+                    "why_it_fails": "",
+                    "mechanism": "S’appuyer sur l’usage travail/sac 24 h rapporté dans l’avis et conserver sa réserve sur la construction, sans promettre une polyvalence universelle.",
+                    "belief_shift": "Avant : un sac destiné au travail risque de rester cantonné à cet usage. Après : le lecteur voit un exemple documenté d’usage entre travail et sac 24 h, tout en gardant les réserves de la cliente en tête.",
+                    "evidence_ids": [
+                      "E759"
+                    ],
+                    "must_not_say": [
+                      "Ne pas garantir que le Carry All convient à tous les week-ends ou chargements de 24 heures.",
+                      "Ne pas affirmer que son tissu est épais, que son fond est renforcé ou qu’il résiste à un usage intensif.",
+                      "Ne pas présenter l’expérience d’une cliente anonyme comme représentative de tous les acheteurs.",
+                      "Ne pas affirmer que le déjeuner, l’ordinateur et la gourde y tiennent simultanément."
+                    ],
+                    "objection": "",
+                    "call_to_action": "Découvrir le Carry All Wanderer",
+                    "next_step_decision": "Décider si ce modèle mérite d’être envisagé pour alterner entre déplacements professionnels et usage de type sac 24 h.",
+                    "next_step_value": "La fiche présente le Carry All Wanderer auquel se rapporte l’avis sur l’usage travail/sac 24 h.",
+                    "next_step_evidence_ids": [
+                      "E759"
+                    ],
+                    "next_step_limit": "Cette consultation ne garantit pas que le volume ou la construction conviendront au chargement personnel du lecteur.",
+                    "subject_strategy": "Faire émerger la possibilité d’un même sac entre travail et 24 h, en restant fidèle au caractère individuel du témoignage et sans promettre un sac universel."
+                  }
+                ],
+                "belief_shift": "Avant : un volume annoncé ne dit pas comment les essentiels du trajet peuvent être répartis. Après : le lecteur identifie une organisation documentée autour de plusieurs poches, d’un compartiment pour ordinateur et d’un emplacement pour gourde.",
+                "evidence_ids": [
+                  "E731",
+                  "E749"
+                ],
+                "must_not_say": [
+                  "Ne pas affirmer que l’ordinateur, la gourde et le déjeuner tiennent simultanément dans le Carry All Wanderer.",
+                  "Ne pas donner de dimensions compatibles pour l’ordinateur, la gourde ou le lunch bag.",
+                  "Ne pas promettre que le compartiment protège suffisamment un ordinateur contre les chocs.",
+                  "Ne pas promettre confort, légèreté ou absence de fatigue lorsque le sac est chargé.",
+                  "Ne pas affirmer que le tissu, le fond ou les fermetures résisteront à un usage intensif.",
+                  "Ne pas présenter l’usage professionnel ou l’usage week-end d’une cliente comme un résultat représentatif de tous les acheteurs.",
+                  "Ne pas affirmer que le lecteur transporte actuellement trois sacs ou a déjà connu une mauvaise expérience.",
+                  "Ne pas revendiquer une supériorité ou une exclusivité face aux autres marques.",
+                  "Ne pas introduire le Lunch bag, le Duffle, les valises, CABAIA Studio, les engagements B Corp ou les certifications : ils dilueraient l’unique argument.",
+                  "Ne pas annoncer un prix, un stock, une promotion ou une disponibilité en boutique non établis pour le Carry All Wanderer."
+                ],
+                "forbidden_evidence_ids": [],
+                "forbidden_capability_ids": [],
+                "objection": "",
+                "tone": "Enjoué, complice et concret, avec des phrases courtes et une touche d’humour quotidien discrète.",
+                "call_to_action": "Découvrir le Carry All Wanderer",
+                "next_step_decision": "Décider si le Carry All Wanderer mérite d’être envisagé pour organiser l’ordinateur et la gourde pendant les trajets quotidiens.",
+                "next_step_value": "La fiche consultée porte sur le Carry All Wanderer et permet de poursuivre l’examen du modèle décrit dans l’email.",
+                "next_step_evidence_ids": [
+                  "E731",
+                  "E749"
+                ],
+                "next_step_limit": "La consultation de la fiche ne garantit pas la compatibilité du modèle avec les dimensions ou le chargement complet du lecteur.",
+                "subject_strategy": "Faire reconnaître immédiatement la scène « ordinateur + gourde » et introduire le format de 16 L comme détail concret. Éviter les superlatifs, la promesse des « trois sacs en un » et toute affirmation sur le déjeuner.",
+                "must_not_reuse": [],
+                "steering": {
+                  "directions": [],
+                  "include_evidence_ids": [],
+                  "exclude_evidence_ids": [],
+                  "use": [],
+                  "avoid": [],
+                  "context_only": [],
+                  "excluded_values": []
+                }
+              }
+            ],
+            "voice_notes": "Employer « vous » et « nous », des formulations courtes et concrètes, et le vocabulaire de la mobilité quotidienne. Garder l’humour léger; ne pas caricaturer le lecteur comme désorganisé.",
+            "contract": {
+              "kind": "single_email",
+              "count": 1,
+              "count_is_explicit": true,
+              "evidence": "La demande précise explicitement « Rédige un seul email d’acquisition en français » et « Exactement 1 email(s) »."
+            }
+          },
+          "effective_plan": {
+            "interpretation": "Je traite la demande comme une campagne d’acquisition composée d’un seul email, adressée à l’audience sélectionnée sans supposer qu’elle est froide, abonnée ou déjà cliente. La stratégie présente directement le Carry All Wanderer comme un format pertinent pour organiser l’ordinateur et la gourde lors des trajets quotidiens, sans prétendre que le déjeuner y tient aussi. La page d’accueil ne constituant pas une destination vérifiable pour cette proposition, le clic mène à la fiche source documentée du Carry All Wanderer.",
+            "pipeline_version": 2,
+            "strategy_mode": "planned",
+            "intent": {
+              "objective": "acquisition",
+              "objective_source": "user",
+              "reader_relationship": "unknown",
+              "relationship_source": "inferred",
+              "announcement": "",
+              "reason_now": "",
+              "desired_action": ""
+            },
+            "reader": "Selected audience: The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (grounded; check applicability): Daily commuters and workplace-goers (office workers, teachers) who carry a laptop, a water bottle, papers/notebooks and personal items to a workplace and want to reuse the same bag for other outings, after previously juggling multiple separate bags to cover one day's needs.",
+            "reader_segment": "The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it",
+            "reader_profile_override": "",
+            "reader_scope": "",
+            "fixed_cta_url": "",
+            "promise": "Le Carry All Wanderer réunit dans un format de 16 L plusieurs espaces utiles au quotidien, dont un compartiment pour ordinateur et un emplacement pour gourde.",
+            "orientation": "Un sac de 16 L doté de plusieurs espaces pour organiser notamment un ordinateur et une gourde pendant les trajets quotidiens.",
+            "arc": "Un email autonome et concret : partir des objets transportés, montrer comment le Carry All les organise, puis inviter à consulter sa fiche sans transformer une compatibilité non vérifiée en promesse.",
+            "sequence_rationale": "Un seul email impose de concentrer l’argument sur la conséquence opérationnelle la mieux documentée pour cette audience : organiser l’ordinateur et la gourde dans un Carry All de 16 L utilisé dans un contexte professionnel. L’audience étant most_aware, l’email peut commencer par le produit et son mécanisme plutôt que développer le problème. Le déjeuner reste volontairement hors de la promesse : aucune preuve ne montre qu’il tient dans le Carry All en même temps que l’ordinateur et la gourde. L’objection sur la finesse, la protection de l’ordinateur ou la durabilité n’est pas assignée, car les éléments disponibles ne la résolvent que partiellement. La fiche source du Carry All remplace la page d’accueil comme destination : elle est directement reliée aux preuves assignées et permet d’examiner le produit évoqué. Une proposition alternative exploitable est conservée autour de la polyvalence travail/sac 24 h, mais son témoignage comporte une réserve sur l’épaisseur du tissu et le fond. Ce qui changerait le plus cette campagne : pouvez-vous fournir la page source actuellement illisible dans une forme exploitable, ou en faire vérifier les détails manquants ?",
+            "emails": [
+              {
+                "problem_ids": [],
+                "offer_id": "offering",
+                "action_id": "",
+                "selection_reason": "Le volume de 16 L et l’organisation mentionnant l’ordinateur et la gourde correspondent directement à deux objets centraux du trajet quotidien de l’audience, sans inventer la compatibilité avec son déjeuner.",
+                "next_step_url": "https://www.cabaia.fr/products/carry-all-wanderer-aurland",
+                "destination_kind": "web",
+                "argument_issue": "",
+                "value_case": {
+                  "reader_benefit": "Si les dimensions de ses affaires conviennent, le lecteur peut organiser son ordinateur et sa gourde dans un même sac pour ses déplacements quotidiens.",
+                  "mechanism": "Le Carry All Wanderer offre un volume annoncé de 16 L. Un avis individuel d’utilisation professionnelle mentionne ses multiples poches, un compartiment pour ordinateur et un emplacement pour gourde.",
+                  "evidence_ids": [
+                    "E731",
+                    "E749"
+                  ],
+                  "decision_conditions": [
+                    "Les dimensions compatibles de l’ordinateur et de la gourde ne sont pas établies.",
+                    "La présence simultanée d’un déjeuner dans le Carry All n’est pas documentée."
+                  ]
+                },
+                "claim_conditions": [
+                  "Présenter les 16 L comme un volume annoncé par CABAIA, sans en déduire une capacité universelle.",
+                  "Présenter l’organisation ordinateur-gourde comme rapportée dans un avis individuel d’usage professionnel."
+                ],
+                "position": 1,
+                "target_audience": "The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it",
+                "job": "Faire considérer le Carry All Wanderer comme prochain sac quotidien en montrant son organisation documentée, puis obtenir une consultation qualifiée de sa fiche.",
+                "single_idea": "Le Carry All Wanderer associe un volume annoncé de 16 L à plusieurs espaces, dont un compartiment pour ordinateur et un emplacement pour gourde, pour organiser ces essentiels dans un même format.",
+                "felt_need": "",
+                "status_quo": "",
+                "why_it_fails": "",
+                "mechanism": "Ancrer l’argument dans le format de 16 L, les multiples poches, le compartiment pour ordinateur et l’emplacement pour gourde. Ne pas ajouter le déjeuner à la liste des objets censés tenir dedans.",
+                "alternative_ideas": [],
+                "alternative_arguments": [
+                  {
+                    "problem_ids": [],
+                    "offer_id": "offering",
+                    "action_id": "",
+                    "selection_reason": "Cette proposition offre une autre raison documentée de considérer le Carry All : une cliente l’a jugé adapté pour alterner entre travail et sac 24 h, ce qui rejoint le souhait de réutiliser un même format dans plusieurs contextes.",
+                    "next_step_url": "https://www.cabaia.fr/products/carry-all-wanderer-aurland",
+                    "destination_kind": "web",
+                    "argument_issue": "",
+                    "value_case": {
+                      "reader_benefit": "Le lecteur peut envisager un même modèle pour ses affaires de travail et un usage de type sac 24 h, sous réserve que le format et la construction lui conviennent.",
+                      "mechanism": "Une cliente a déclaré que la taille du Carry All convenait pour osciller entre travail et sac 24 h.",
+                      "evidence_ids": [
+                        "E759"
+                      ],
+                      "decision_conditions": [
+                        "Il s’agit d’un avis individuel anonyme.",
+                        "La même cliente aurait préféré un tissu plus épais et un fond renforcé."
+                      ]
+                    },
+                    "claim_conditions": [
+                      "Attribuer explicitement l’appréciation travail/sac 24 h à une cliente, sans la généraliser.",
+                      "Ne pas transformer la taille jugée idéale par cette cliente en garantie de capacité pour tout chargement."
+                    ],
+                    "single_idea": "La taille du Carry All a permis à une cliente de l’utiliser entre travail et sac 24 h, avec une réserve explicite sur l’épaisseur du tissu et le renforcement du fond.",
+                    "felt_need": "",
+                    "status_quo": "",
+                    "why_it_fails": "",
+                    "mechanism": "S’appuyer sur l’usage travail/sac 24 h rapporté dans l’avis et conserver sa réserve sur la construction, sans promettre une polyvalence universelle.",
+                    "belief_shift": "Avant : un sac destiné au travail risque de rester cantonné à cet usage. Après : le lecteur voit un exemple documenté d’usage entre travail et sac 24 h, tout en gardant les réserves de la cliente en tête.",
+                    "evidence_ids": [
+                      "E759"
+                    ],
+                    "must_not_say": [
+                      "Ne pas garantir que le Carry All convient à tous les week-ends ou chargements de 24 heures.",
+                      "Ne pas affirmer que son tissu est épais, que son fond est renforcé ou qu’il résiste à un usage intensif.",
+                      "Ne pas présenter l’expérience d’une cliente anonyme comme représentative de tous les acheteurs.",
+                      "Ne pas affirmer que le déjeuner, l’ordinateur et la gourde y tiennent simultanément."
+                    ],
+                    "objection": "",
+                    "call_to_action": "Découvrir le Carry All Wanderer",
+                    "next_step_decision": "Décider si ce modèle mérite d’être envisagé pour alterner entre déplacements professionnels et usage de type sac 24 h.",
+                    "next_step_value": "La fiche présente le Carry All Wanderer auquel se rapporte l’avis sur l’usage travail/sac 24 h.",
+                    "next_step_evidence_ids": [
+                      "E759"
+                    ],
+                    "next_step_limit": "Cette consultation ne garantit pas que le volume ou la construction conviendront au chargement personnel du lecteur.",
+                    "subject_strategy": "Faire émerger la possibilité d’un même sac entre travail et 24 h, en restant fidèle au caractère individuel du témoignage et sans promettre un sac universel."
+                  }
+                ],
+                "belief_shift": "Avant : un volume annoncé ne dit pas comment les essentiels du trajet peuvent être répartis. Après : le lecteur identifie une organisation documentée autour de plusieurs poches, d’un compartiment pour ordinateur et d’un emplacement pour gourde.",
+                "evidence_ids": [
+                  "E731",
+                  "E749"
+                ],
+                "must_not_say": [
+                  "Ne pas affirmer que l’ordinateur, la gourde et le déjeuner tiennent simultanément dans le Carry All Wanderer.",
+                  "Ne pas donner de dimensions compatibles pour l’ordinateur, la gourde ou le lunch bag.",
+                  "Ne pas promettre que le compartiment protège suffisamment un ordinateur contre les chocs.",
+                  "Ne pas promettre confort, légèreté ou absence de fatigue lorsque le sac est chargé.",
+                  "Ne pas affirmer que le tissu, le fond ou les fermetures résisteront à un usage intensif.",
+                  "Ne pas présenter l’usage professionnel ou l’usage week-end d’une cliente comme un résultat représentatif de tous les acheteurs.",
+                  "Ne pas affirmer que le lecteur transporte actuellement trois sacs ou a déjà connu une mauvaise expérience.",
+                  "Ne pas revendiquer une supériorité ou une exclusivité face aux autres marques.",
+                  "Ne pas introduire le Lunch bag, le Duffle, les valises, CABAIA Studio, les engagements B Corp ou les certifications : ils dilueraient l’unique argument.",
+                  "Ne pas annoncer un prix, un stock, une promotion ou une disponibilité en boutique non établis pour le Carry All Wanderer."
+                ],
+                "forbidden_evidence_ids": [],
+                "forbidden_capability_ids": [],
+                "objection": "",
+                "tone": "Enjoué, complice et concret, avec des phrases courtes et une touche d’humour quotidien discrète.",
+                "call_to_action": "Découvrir le Carry All Wanderer",
+                "next_step_decision": "Décider si le Carry All Wanderer mérite d’être envisagé pour organiser l’ordinateur et la gourde pendant les trajets quotidiens.",
+                "next_step_value": "La fiche consultée porte sur le Carry All Wanderer et permet de poursuivre l’examen du modèle décrit dans l’email.",
+                "next_step_evidence_ids": [
+                  "E731",
+                  "E749"
+                ],
+                "next_step_limit": "La consultation de la fiche ne garantit pas la compatibilité du modèle avec les dimensions ou le chargement complet du lecteur.",
+                "subject_strategy": "Faire reconnaître immédiatement la scène « ordinateur + gourde » et introduire le format de 16 L comme détail concret. Éviter les superlatifs, la promesse des « trois sacs en un » et toute affirmation sur le déjeuner.",
+                "must_not_reuse": [],
+                "steering": {
+                  "directions": [],
+                  "include_evidence_ids": [],
+                  "exclude_evidence_ids": [],
+                  "use": [],
+                  "avoid": [],
+                  "context_only": [],
+                  "excluded_values": []
+                }
+              }
+            ],
+            "voice_notes": "Employer « vous » et « nous », des formulations courtes et concrètes, et le vocabulaire de la mobilité quotidienne. Garder l’humour léger; ne pas caricaturer le lecteur comme désorganisé.",
+            "contract": {
+              "kind": "single_email",
+              "count": 1,
+              "count_is_explicit": true,
+              "evidence": "un seul email"
+            }
+          },
+          "changed_fields": [
+            "intent",
+            "fixed_cta_url"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "brief_ready",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Campaign brief: Le Carry All Wanderer réunit dans un format de 16 L plusieurs espaces utiles au quotidien, dont un compartiment pour ordinateur et un emplacement pour gourde.",
+      "at": "2026-11-04T00:20:19.878036+00:00",
+      "reader": "Selected audience: The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (grounded; check applicability): Daily commuters and workplace-goers (office workers, teachers) who carry a laptop, a water bottle, papers/notebooks and personal items to a workplace and want to reuse the same bag for other outings, after previously juggling multiple separate bags to cover one day's needs.",
+      "reader_segment": "The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it",
+      "promise": "Le Carry All Wanderer réunit dans un format de 16 L plusieurs espaces utiles au quotidien, dont un compartiment pour ordinateur et un emplacement pour gourde.",
+      "arc": "Un email autonome et concret : partir des objets transportés, montrer comment le Carry All les organise, puis inviter à consulter sa fiche sans transformer une compatibilité non vérifiée en promesse.",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Faire considérer le Carry All Wanderer comme prochain sac quotidien en montrant son organisation documentée, puis obtenir une consultation qualifiée de sa fiche.",
+          "single_idea": "Le Carry All Wanderer associe un volume annoncé de 16 L à plusieurs espaces, dont un compartiment pour ordinateur et un emplacement pour gourde, pour organiser ces essentiels dans un même format.",
+          "selection_reason": "Le volume de 16 L et l’organisation mentionnant l’ordinateur et la gourde correspondent directement à deux objets centraux du trajet quotidien de l’audience, sans inventer la compatibilité avec son déjeuner.",
+          "problem_ids": [],
+          "action_id": "",
+          "next_step_url": "https://www.cabaia.fr/products/carry-all-wanderer-aurland",
+          "argument_issue": "",
+          "objection": "",
+          "evidence_ids": [
+            "E731",
+            "E749"
+          ],
+          "must_not_say": [
+            "Ne pas affirmer que l’ordinateur, la gourde et le déjeuner tiennent simultanément dans le Carry All Wanderer.",
+            "Ne pas donner de dimensions compatibles pour l’ordinateur, la gourde ou le lunch bag.",
+            "Ne pas promettre que le compartiment protège suffisamment un ordinateur contre les chocs.",
+            "Ne pas promettre confort, légèreté ou absence de fatigue lorsque le sac est chargé.",
+            "Ne pas affirmer que le tissu, le fond ou les fermetures résisteront à un usage intensif.",
+            "Ne pas présenter l’usage professionnel ou l’usage week-end d’une cliente comme un résultat représentatif de tous les acheteurs.",
+            "Ne pas affirmer que le lecteur transporte actuellement trois sacs ou a déjà connu une mauvaise expérience.",
+            "Ne pas revendiquer une supériorité ou une exclusivité face aux autres marques.",
+            "Ne pas introduire le Lunch bag, le Duffle, les valises, CABAIA Studio, les engagements B Corp ou les certifications : ils dilueraient l’unique argument.",
+            "Ne pas annoncer un prix, un stock, une promotion ou une disponibilité en boutique non établis pour le Carry All Wanderer."
+          ],
+          "claim_conditions": [
+            "Présenter les 16 L comme un volume annoncé par CABAIA, sans en déduire une capacité universelle.",
+            "Présenter l’organisation ordinateur-gourde comme rapportée dans un avis individuel d’usage professionnel."
+          ],
+          "felt_need": "",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "Ancrer l’argument dans le format de 16 L, les multiples poches, le compartiment pour ordinateur et l’emplacement pour gourde. Ne pas ajouter le déjeuner à la liste des objets censés tenir dedans.",
+          "call_to_action": "Découvrir le Carry All Wanderer",
+          "next_step_decision": "Décider si le Carry All Wanderer mérite d’être envisagé pour organiser l’ordinateur et la gourde pendant les trajets quotidiens.",
+          "next_step_value": "La fiche consultée porte sur le Carry All Wanderer et permet de poursuivre l’examen du modèle décrit dans l’email.",
+          "next_step_evidence_ids": [
+            "E731",
+            "E749"
+          ],
+          "next_step_limit": "La consultation de la fiche ne garantit pas la compatibilité du modèle avec les dimensions ou le chargement complet du lecteur.",
+          "alternative_arguments": [
+            {
+              "problem_ids": [],
+              "offer_id": "offering",
+              "action_id": "",
+              "selection_reason": "Cette proposition offre une autre raison documentée de considérer le Carry All : une cliente l’a jugé adapté pour alterner entre travail et sac 24 h, ce qui rejoint le souhait de réutiliser un même format dans plusieurs contextes.",
+              "next_step_url": "https://www.cabaia.fr/products/carry-all-wanderer-aurland",
+              "destination_kind": "web",
+              "argument_issue": "",
+              "value_case": {
+                "reader_benefit": "Le lecteur peut envisager un même modèle pour ses affaires de travail et un usage de type sac 24 h, sous réserve que le format et la construction lui conviennent.",
+                "mechanism": "Une cliente a déclaré que la taille du Carry All convenait pour osciller entre travail et sac 24 h.",
+                "evidence_ids": [
+                  "E759"
+                ],
+                "decision_conditions": [
+                  "Il s’agit d’un avis individuel anonyme.",
+                  "La même cliente aurait préféré un tissu plus épais et un fond renforcé."
+                ]
+              },
+              "claim_conditions": [
+                "Attribuer explicitement l’appréciation travail/sac 24 h à une cliente, sans la généraliser.",
+                "Ne pas transformer la taille jugée idéale par cette cliente en garantie de capacité pour tout chargement."
+              ],
+              "single_idea": "La taille du Carry All a permis à une cliente de l’utiliser entre travail et sac 24 h, avec une réserve explicite sur l’épaisseur du tissu et le renforcement du fond.",
+              "felt_need": "",
+              "status_quo": "",
+              "why_it_fails": "",
+              "mechanism": "S’appuyer sur l’usage travail/sac 24 h rapporté dans l’avis et conserver sa réserve sur la construction, sans promettre une polyvalence universelle.",
+              "belief_shift": "Avant : un sac destiné au travail risque de rester cantonné à cet usage. Après : le lecteur voit un exemple documenté d’usage entre travail et sac 24 h, tout en gardant les réserves de la cliente en tête.",
+              "evidence_ids": [
+                "E759"
+              ],
+              "must_not_say": [
+                "Ne pas garantir que le Carry All convient à tous les week-ends ou chargements de 24 heures.",
+                "Ne pas affirmer que son tissu est épais, que son fond est renforcé ou qu’il résiste à un usage intensif.",
+                "Ne pas présenter l’expérience d’une cliente anonyme comme représentative de tous les acheteurs.",
+                "Ne pas affirmer que le déjeuner, l’ordinateur et la gourde y tiennent simultanément."
+              ],
+              "objection": "",
+              "call_to_action": "Découvrir le Carry All Wanderer",
+              "next_step_decision": "Décider si ce modèle mérite d’être envisagé pour alterner entre déplacements professionnels et usage de type sac 24 h.",
+              "next_step_value": "La fiche présente le Carry All Wanderer auquel se rapporte l’avis sur l’usage travail/sac 24 h.",
+              "next_step_evidence_ids": [
+                "E759"
+              ],
+              "next_step_limit": "Cette consultation ne garantit pas que le volume ou la construction conviendront au chargement personnel du lecteur.",
+              "subject_strategy": "Faire émerger la possibilité d’un même sac entre travail et 24 h, en restant fidèle au caractère individuel du témoignage et sans promettre un sac universel."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Campaign intelligence applied to the normalized brief",
+      "at": "2026-11-04T00:20:19.888172+00:00",
+      "phase": "intelligence",
+      "selected_audience": "The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it",
+      "audience_resolution_status": "audience_research_loaded",
+      "audience_research_id": "e4daea9f-43f2-47e0-b849-f82b99868be0",
+      "audience_research_version": 2,
+      "dossier_status": "stale",
+      "dossier_id": "2f26cc74-b27d-4a62-ae52-fd653eb7673f",
+      "dossier_version": 3,
+      "dossier_schema_version": 2,
+      "stale_reasons": [
+        "interpretation_changed"
+      ],
+      "legacy_fallback_used": true,
+      "qualified_subsegment": "",
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [],
+      "validation_warnings": [
+        "Historical sources (2021-09-02); present applicability is not corroborated. Previously carried three separate bags to cover one workday: a handbag, a dedicated computer bag and a tote bag for notebooks.",
+        "Publication date unknown; retrieval today does not establish current applicability. Used a tote/cabas style bag for work (teaching) materials, replacing it only once it wore out.",
+        "Publication date unknown; retrieval today does not establish current applicability. Considered wheeled bags as a way to limit weight carried, but rejected that option as not suited to personal preference.",
+        "Publication date unknown; retrieval today does not establish current applicability. Previously used an unstructured sporty backpack for work (school) use, finding it adequate for leisure/travel but not structured enough for daily work carrying.",
+        "Publication date unknown; retrieval today does not establish current applicability. A previous tote/cabas-style work bag wore out ('rendu l'âme'), prompting a switch to a backpack.",
+        "Publication date unknown; retrieval today does not establish current applicability. Physical discomfort from carrying a heavy bag on one shoulder daily (flagged to an osteopath) prompted looking for an alternative carrying format.",
+        "Publication date unknown; retrieval today does not establish current applicability. Wants a bag resistant enough to use roughly without extra precautions.",
+        "Publication date unknown; retrieval today does not establish current applicability. Wants one bag that covers multiple needs rather than several single-purpose items.",
+        "Publication date unknown; retrieval today does not establish current applicability. Wants quick, unfussy access to contents within a reasonable capacity.",
+        "Publication date unknown; retrieval today does not establish current applicability. Wants the bag to also look good, not purely functional.",
+        "Publication date unknown; retrieval today does not establish current applicability. Wants the same bag usable for daily routine and for weekend outings or trips.",
+        "Historical sources (2021-09-02); present applicability is not corroborated. Wants to carry a fully loaded bag without feeling its weight.",
+        "Historical sources (2021-09-02); present applicability is not corroborated. Carries a laptop, a water bottle and notebooks/papers together in one bag for daily workplace commuting.",
+        "Publication date unknown; retrieval today does not establish current applicability. Needs enough bag capacity for a packed lunch alongside other daily items when sizing up.",
+        "Historical sources (2021-09-02); present applicability is not corroborated. Previously used two or more separate bags for one workday before consolidating into a single bag.",
+        "Historical sources (2021-09-02); present applicability is not corroborated. Discussed on a parenting/family lifestyle blog reviewing an everyday backpack for daily personal and work use.",
+        "Publication date unknown; retrieval today does not establish current applicability. Discussed on a teacher-oriented blog under classroom-organisation content, framed explicitly as a work bag ('cartable de maitresse').",
+        "Historical sources (2023-10-30); present applicability is not corroborated. Covered on a workplace-equipment review outlet addressing the search for an ideal work bag.",
+        "P2: Publication date unknown; retrieval today does not establish current applicability.",
+        "P2: Single-source problem; independent corroboration is not established."
+      ]
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Strategist: 1 email(s) to Selected audience: The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (grounded; check applicability): Daily commuters and workplace-goers (office workers, teachers) who carry a laptop, a water bottle, papers/notebooks and personal items to a workplace and want to reuse the same bag for other outings, after previously juggling multiple separate bags to cover one day's needs.",
+      "at": "2026-11-04T00:20:19.909927+00:00",
+      "agent_name": "Strategist",
+      "agent_execution_id": "ce3b0288-da84-41ea-8ad1-86570858bb52",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 85837,
+      "output_tokens": 11043,
+      "cache_read_input_tokens": 12288,
+      "cost_usd": 0.929512,
+      "duration_ms": 145691.02530000964,
+      "attempt": 1,
+      "summary": "1 email(s) to Selected audience: The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (grounded; check applicability): Daily commuters and workplace-goers (office workers, teachers) who carry a laptop, a water bottle, papers/notebooks and personal items to a workplace and want to reuse the same bag for other outings, after previously juggling multiple separate bags to cover one day's needs.",
+      "assets_produced": []
+    },
+    {
+      "type": "phase",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": null,
+      "step": 1,
+      "level": "info",
+      "message": "Drafts will be read cold by: The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it",
+      "at": "2026-11-04T00:20:19.920549+00:00",
+      "phase": "strategy",
+      "segment": "The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it",
+      "matched": true,
+      "audience_source": "compiled"
+    },
+    {
+      "type": "campaign_report",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": null,
+      "step": 1,
+      "level": "info",
+      "message": "Request: Rédige un seul email d’acquisition en français pour l’audience sélectionnée. Choisis la stratégie et un prochain pas documenté à partir des connaissances compilées de la marque.\nDelivered 0 of 1 email(s). Average AI simulation assessment (uncalibrated) 0.0/10.\nContract problems: the user asked for 1 email(s) and the run produced 0\nWhat held the copy back: Some linked source pages could not be read; the corpus is partial: https://www.cabaia.fr/ - Use only the readable captured facts; do not infer missing prices, features or proof.\nWhat would help most next time: Can this source be supplied in a readable form or its missing details verified?\nCancelled by user request.\nEffective audience: The daily commuter who leaves the house with a laptop, a lunch box and a water bottle and refuses to carry three bags for it\nAudience context: audience_research_loaded; legacy fallback used\nHistorical sources (2021-09-02); present applicability is not corroborated. Previously carried three separate bags to cover one workday: a handbag, a dedicated computer bag and a tote bag for notebooks.\nPublication date unknown; retrieval today does not establish current applicability. Used a tote/cabas style bag for work (teaching) materials, replacing it only once it wore out.\nPublication date unknown; retrieval today does not establish current applicability. Considered wheeled bags as a way to limit weight carried, but rejected that option as not suited to personal preference.\nPublication date unknown; retrieval today does not establish current applicability. Previously used an unstructured sporty backpack for work (school) use, finding it adequate for leisure/travel but not structured enough for daily work carrying.\nPublication date unknown; retrieval today does not establish current applicability. A previous tote/cabas-style work bag wore out ('rendu l'âme'), prompting a switch to a backpack.\nPublication date unknown; retrieval today does not establish current applicability. Physical discomfort from carrying a heavy bag on one shoulder daily (flagged to an osteopath) prompted looking for an alternative carrying format.\nPublication date unknown; retrieval today does not establish current applicability. Wants a bag resistant enough to use roughly without extra precautions.\nPublication date unknown; retrieval today does not establish current applicability. Wants one bag that covers multiple needs rather than several single-purpose items.\nPublication date unknown; retrieval today does not establish current applicability. Wants quick, unfussy access to contents within a reasonable capacity.\nPublication date unknown; retrieval today does not establish current applicability. Wants the bag to also look good, not purely functional.\nPublication date unknown; retrieval today does not establish current applicability. Wants the same bag usable for daily routine and for weekend outings or trips.\nHistorical sources (2021-09-02); present applicability is not corroborated. Wants to carry a fully loaded bag without feeling its weight.\nHistorical sources (2021-09-02); present applicability is not corroborated. Carries a laptop, a water bottle and notebooks/papers together in one bag for daily workplace commuting.\nPublication date unknown; retrieval today does not establish current applicability. Needs enough bag capacity for a packed lunch alongside other daily items when sizing up.\nHistorical sources (2021-09-02); present applicability is not corroborated. Previously used two or more separate bags for one workday before consolidating into a single bag.\nHistorical sources (2021-09-02); present applicability is not corroborated. Discussed on a parenting/family lifestyle blog reviewing an everyday backpack for daily personal and work use.\nPublication date unknown; retrieval today does not establish current applicability. Discussed on a teacher-oriented blog under classroom-organisation content, framed explicitly as a work bag ('cartable de maitresse').\nHistorical sources (2023-10-30); present applicability is not corroborated. Covered on a workplace-equipment review outlet addressing the search for an ideal work bag.\nP2: Publication date unknown; retrieval today does not establish current applicability.\nP2: Single-source problem; independent corroboration is not established.",
+      "at": "2026-11-04T00:20:19.928230+00:00",
+      "delivered": 0,
+      "promised": 1,
+      "average_pull": 0.0,
+      "contract_violations": [
+        "the user asked for 1 email(s) and the run produced 0"
+      ],
+      "limiting_gaps": [
+        "Some linked source pages could not be read; the corpus is partial: https://www.cabaia.fr/ - Use only the readable captured facts; do not infer missing prices, features or proof."
+      ],
+      "below_floor": [],
+      "what_would_help_most": "Can this source be supplied in a readable form or its missing details verified?"
+    },
+    {
+      "type": "phase",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": null,
+      "step": 1,
+      "level": "info",
+      "message": "Cancelled by user request.",
+      "at": "2026-11-04T00:20:19.935112+00:00",
+      "phase": "stopped",
+      "status": "cancelled"
+    },
+    {
+      "type": "execution_finished",
+      "execution_id": "95da4393-aa1d-4124-aab3-f58b3287ff06",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Campaign run finished: cancelled",
+      "at": "2026-11-04T00:20:19.988000+00:00",
+      "status": "cancelled",
+      "run_status": "cancelled",
+      "estimated_cost_usd": 0.9295,
+      "delivered": 0
+    }
+  ],
+  "last_event_id": 21,
+  "is_running": false
+}

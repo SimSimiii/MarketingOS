@@ -18,6 +18,7 @@ whether a sentence is too long.
 """
 
 import re
+import unicodedata
 from enum import StrEnum
 
 from pydantic import BaseModel, Field
@@ -54,6 +55,8 @@ class GateIssue(BaseModel):
 
 class GateReport(BaseModel):
     issues: list[GateIssue] = Field(default_factory=list)
+    # A receipt for the exact text and source context, never an inherited verdict.
+    semantic_review: dict | None = None
 
     @property
     def blocking(self) -> list[GateIssue]:
@@ -76,7 +79,25 @@ class GateReport(BaseModel):
         return "\n".join(f"- {issue.render()}" for issue in self.blocking)
 
     def extend(self, other: "GateReport") -> "GateReport":
-        return GateReport(issues=[*self.issues, *other.issues])
+        return GateReport(issues=[*self.issues, *other.issues],
+                          semantic_review=other.semantic_review or self.semantic_review)
+
+
+
+def mechanical_gate(email: Email, merge_fields: tuple[str, ...] | list[str] = ()) -> GateReport:
+    """Only envelope completeness and explicit merge-field configuration block.
+
+    Word counts, capitals, lexical similarity and claim/plan matching need a
+    reader. They are intentionally absent from this delivery decision.
+    """
+    issues = [GateIssue(gate="format", detail=f"The {name} field is empty.")
+              for name in ("subject", "preview_text", "greeting", "body", "call_to_action", "sign_off")
+              if not getattr(email, name).strip()]
+    allowed = {name.lower() for name in merge_fields}
+    for match in _MERGE_TAG_RE.finditer(render_review(email)):
+        if (match.group(1) or match.group(2) or "").lower() not in allowed:
+            issues.append(GateIssue(gate="merge-field", detail=f"Unconfigured merge field: {match.group(0)}"))
+    return GateReport(issues=issues)
 
 
 def _report(gate: str, details: list[str], severity: GateSeverity) -> GateReport:
@@ -254,7 +275,7 @@ _EXCLAMATION_LIMIT = 2
 _SHOUTING_ALLOWED = frozenset(
     {
         # what a product built on someone else's API has to say out loud
-        "HTTP", "HTTPS", "REST", "JSON", "YAML", "HTML", "GRPC", "CRUD", "WEBHOOK",
+        "RGPD", "CNIL", "SIRET", "SIREN", "TVA", "HTTP", "HTTPS", "REST", "JSON", "YAML", "HTML", "GRPC", "CRUD", "WEBHOOK",
         "OAUTH", "SAML", "OIDC", "JWT", "CORS", "UUID", "CDN", "DNS", "TLS",
         "SMTP", "IMAP", "DKIM", "DMARC",
         "POST", "PATCH", "HEAD", "OPTIONS", "DELETE", "TRACE", "CONNECT",
@@ -308,7 +329,7 @@ def spam_gate(email: Email, *, company_name: str = "") -> GateReport:
 
 # ------------------------------------------------------------------ overlap
 
-_WORD_RE = re.compile(r"[a-z0-9']+")
+_WORD_RE = re.compile(r"[^\W_]+(?:'[^\W_]+)*")
 #: Long enough that a match is a reused phrase rather than a common idiom.
 _NGRAM = 6
 #: How many words of the opening count as the "opening move". Two emails that
@@ -318,14 +339,54 @@ _OPENING_WORDS = 7
 
 
 def _words(text: str) -> list[str]:
-    return _WORD_RE.findall(text.lower())
+    return _WORD_RE.findall(unicodedata.normalize("NFKC", text).lower().replace("’", "'"))
 
 
 def _ngrams(words: list[str], size: int) -> set[tuple[str, ...]]:
     return {tuple(words[index : index + size]) for index in range(len(words) - size + 1)}
 
 
-def overlap_gate(email: Email, previous: list[Email]) -> GateReport:
+def _overlap_body(email: Email, company_name: str) -> str:
+    """Disclosure is allowed to recur; the persuasion around it still counts.
+
+    Remove only closed declaration clauses, not an entire paragraph containing
+    'affiliate'. This changes variety checking, never factual licensing.
+    """
+    text = strip_markup(email.body)
+    if not company_name.strip():
+        return text
+    brand = re.escape(company_name.strip())
+    identity = re.compile(
+        r"(?<!\w)(?:(?:je suis|nous sommes|i am|we are|"
+        r"je vous [ée]cris (?:comme|en tant que))\s+)?"
+        r"(?:(?:un|une|an?)\s+)?(?:partenaire\s+)?"
+        r"(?:affili[ée]s?(?:\s+ind[ée]pendant[es]*)?\s+(?:de|d[’'])\s*"
+        r"|(?:independent\s+)?affiliate(?:\s+partner)?\s+(?:of|for)\s+)"
+        + brand + r"(?!\w)"
+        r"(?:,?\s+(?:et non au nom de la marque|sans appartenir [àa] la marque))?", re.IGNORECASE,
+    )
+    if not identity.search(text):
+        return text
+    text = identity.sub("", text)
+    representation = re.compile(
+        r"(?<!\w)(?:(?:et|mais|and|but)\s+)?"
+        r"(?:je\s+ne\s+repr[ée]sente\s+pas\s+|i\s+(?:do\s+not|don't)\s+represent\s+)"
+        r"(?:" + brand + r"|la marque|l[’']entreprise|l[’'][ée]quipe|the brand|the company)(?!\w)",
+        re.IGNORECASE,
+    )
+    text = representation.sub("", text)
+    compensation = re.compile(
+        r"(?<!\w)(?:je peux [êe]tre r[ée]mun[ée]r[ée] si vous passez "
+        r"(?:ult[ée]rieurement )?par un lien affili[ée]"
+        r"|je peux b[ée]n[ée]ficier de cette relation d[’']affiliation "
+        r"si vous passez par mes recommandations"
+        r"|i may (?:earn|receive) a commission if you (?:buy|purchase) "
+        r"through (?:an|my) affiliate link)(?!\w)", re.IGNORECASE,
+    )
+    return compensation.sub("", text)
+
+
+def overlap_gate(email: Email, previous: list[Email], *, company_name: str = "") -> GateReport:
     """Cross-email repetition, verified rather than requested.
 
     Every writing prompt in the old system told the writer not to reuse an
@@ -336,12 +397,12 @@ def overlap_gate(email: Email, previous: list[Email]) -> GateReport:
         return GateReport()
 
     details: list[str] = []
-    body_words = _words(email.body)
+    body_words = _words(_overlap_body(email, company_name))
     current = _ngrams(body_words, _NGRAM)
     opening = tuple(body_words[:_OPENING_WORDS])
 
     for earlier in previous:
-        earlier_words = _words(earlier.body)
+        earlier_words = _words(_overlap_body(earlier, company_name))
         shared = current & _ngrams(earlier_words, _NGRAM)
         if shared:
             phrase = " ".join(min(shared))
@@ -364,7 +425,7 @@ def overlap_gate(email: Email, previous: list[Email]) -> GateReport:
 # ---------------------------------------------------------------------- ask
 
 
-def call_to_action_gate(email: Email, offer: OfferSheet) -> GateReport:
+def call_to_action_gate(email: Email, offer: OfferSheet, brief: EmailBrief | None = None) -> GateReport:
     """Is the email asking for something the reader can actually do?
 
     Advisory, not blocking: the writer legitimately rephrases an action to fit
@@ -380,6 +441,27 @@ def call_to_action_gate(email: Email, offer: OfferSheet) -> GateReport:
     known = [_normalized(cta.label) for cta in offer.calls_to_action]
     if any(asked in label or label in asked for label in known):
         return GateReport()
+    if brief and brief.next_step_url and brief.destination_kind == "web":
+        planned = _normalized(brief.call_to_action.split("http", 1)[0])
+        if planned and (asked in planned or planned in asked):
+            return GateReport()
+        inspect = r"^(?:inspect|review|read|see|view|look at)\s+(?:the\s+)?"
+        if re.match(inspect, asked) and re.match(inspect, planned):
+            object_words = set(re.findall(r"[\w-]{4,}", re.sub(inspect, "", asked)))
+            planned_words = set(re.findall(r"[\w-]{4,}", re.sub(inspect, "", planned)))
+            if object_words and object_words <= planned_words:
+                return GateReport()
+            if re.search(r"\b(?:documentation|docs|guide)\b", planned):
+                # A source-backed documentation step may name its topic rather
+                # than repeat "official documentation" verbatim (e.g. RSS).
+                topic = set(re.findall(r"\w{3,}", re.sub(inspect, "", asked))) - {
+                    "the", "official", "documentation", "docs", "guide", "workflow",
+                }
+                destination = set(re.findall(
+                    r"\w{3,}", _normalized(brief.next_step_url + " " + brief.next_step_value),
+                ))
+                if topic and topic <= destination:
+                    return GateReport()
     supported = ", ".join(cta.label for cta in offer.calls_to_action)
     return _report(
         "call-to-action",
@@ -687,7 +769,7 @@ _CATEGORY_NOISE = frozenset(
 
 
 def _identifying_words(name: str) -> list[str]:
-    words = [word for word in re.findall(r"[a-z0-9]{2,}", name.lower())]
+    words = [word for word in re.findall(r"[^\W_]{2,}", unicodedata.normalize("NFC", name).casefold())]
     distinctive = [word for word in words if word not in _NAME_NOISE]
     # A company genuinely called "The Software Group" has no distinctive word,
     # and refusing to check is better than checking against "group".
@@ -746,6 +828,7 @@ def clarity_gate(email: Email, business: BusinessProfile) -> GateReport:
             )
         )
     )
+    visible = unicodedata.normalize("NFC", visible).casefold()
     named = any(re.search(rf"\b{re.escape(word)}\b", visible) for word in wanted)
     if not named:
         return _report(
@@ -798,6 +881,7 @@ def run_all(
     ledger: list[Evidence] | None = None,
     positioning: PositioningMap | None = None,
     forbidden_capability_ids: tuple[str, ...] | list[str] = (),
+    brief: EmailBrief | None = None,
 ) -> tuple[GateReport, Substantiation]:
     """Every deterministic check, in one report - plus what the copy is
     actually standing on.
@@ -822,10 +906,10 @@ def run_all(
         evidence_gate(text, evidence),
         capability_scope_gate(text, forbidden_capability_ids),
         spam_gate(email, company_name=business.company_name if business else ""),
-        overlap_gate(email, previous or []),
+        overlap_gate(email, previous or [], company_name=business.company_name if business else ""),
         repeated_call_to_action_gate(email),
         repeated_sign_off_gate(email),
-        call_to_action_gate(email, offer),
+        call_to_action_gate(email, offer, brief),
         clarity_gate(email, business or BusinessProfile()),
         substantiation_gate(substantiation),
         sameness_gate(email, positioning),

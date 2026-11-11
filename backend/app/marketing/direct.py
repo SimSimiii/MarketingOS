@@ -7,11 +7,18 @@ Ambiguous jobs retain the planned path and its configured review depth.
 from app.knowledge.artifacts import KnowledgeArtifacts
 from app.marketing.briefs import CampaignBrief, EmailBrief
 from app.marketing.contract import DeliverableContract, DeliverableKind
+from app.marketing.grounding import absolute_destination
 from app.marketing.intelligence import CampaignIntelligence
 from app.marketing.policy import ExecutionPolicy
 from app.marketing.request import CampaignRequest
 
 _DIRECT_OBJECTIVES = {"announcement", "activation", "recovery", "nurture"}
+
+
+def focused_activation(request: CampaignRequest) -> bool:
+    intent = request.intent
+    return bool(intent and intent.objective == "activation" and intent.objective_source == "user"
+                and (request.cta_url or intent.desired_action))
 
 
 def direct_brief(
@@ -33,7 +40,11 @@ def direct_brief(
         return None
     actions = artifacts.offer.calls_to_action
     if request.cta_url:
-        actions = [action for action in actions if action.url == request.cta_url]
+        actions = [action for action in actions if action.url and request.cta_url in {
+            action.url, absolute_destination(
+                action.url, (action.provenance.source if action.provenance else "") or request.source_identity_url,
+            ),
+        }]
     elif intent.desired_action:
         matches = [action for action in actions if intent.desired_action.strip().casefold()
                    in {action.label.strip().casefold(), action.reference_id.casefold()}]
@@ -46,7 +57,10 @@ def direct_brief(
     if len(unique) != 1:
         return None
     action = next(iter(unique.values()))
-    if not action.url:
+    destination = absolute_destination(
+        action.url or "", (action.provenance.source if action.provenance else "") or request.source_identity_url,
+    )
+    if not destination:
         return None
     forbidden = list(intelligence.forbidden_evidence_ids) if intelligence else []
     if intelligence and intelligence.v2_claim_boundary:
@@ -62,7 +76,7 @@ def direct_brief(
         offer_id="offering",
         action_id=action.reference_id,
         call_to_action=action.label,
-        next_step_url=action.url or "",
+        next_step_url=destination,
         next_step_evidence_ids=list(action.evidence_ids),
         selection_reason="The user specified one email; its action is unambiguous in the offer.",
         must_not_say=list(intelligence.forbidden_claims) if intelligence else [],
@@ -70,9 +84,10 @@ def direct_brief(
         forbidden_capability_ids=list(intelligence.forbidden_capability_ids) if intelligence else [],
     )
     return CampaignBrief(
-        strategy_mode="direct", intent=intent, contract=contract,
+        strategy_mode="direct", focused_activation=focused_activation(request), intent=intent, contract=contract,
         interpretation=request.request, reader=audience, reader_profile_override=audience,
-        reader_scope=intelligence.eligible_subsegment if intelligence else "",
+        reader_scope=(intelligence.eligible_subsegment
+                      if intelligence and not intelligence.first_email_scope_applied else ""),
         fixed_cta_url=request.cta_url or "", orientation=artifacts.business.what_it_does,
         emails=[email],
     )

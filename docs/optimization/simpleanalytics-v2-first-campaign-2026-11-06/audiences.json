@@ -1,0 +1,1011 @@
+{
+  "brand_id": "7e5f6600-0520-4524-a061-de2ee487f6a1",
+  "map": {
+    "summary": "3 audience(s) mapped; 0 worth exploring first. Commercial priority is a hypothesis, not a response-rate forecast.",
+    "options": {
+      "geography": "",
+      "language": "",
+      "exclusions": "",
+      "objective": "customers",
+      "mode": "refresh"
+    },
+    "validation_note": "Checked 3 pages; 2 fetch failure(s). Quotes are source-verified; interpretations and purchase intent are hypotheses.",
+    "reading": "Assessment summary. Verified quotations do not establish demand or purchase intent; commercial priority remains a hypothesis.\n- GA4 user suspecting undercounted traffic: hypothesis; product compatibility supported; audience evidence supported (3 quoted source(s)); use or purchase unknown; reachability unknown.\n- Agency or freelance developer choosing the analytics stack for client sites: hypothesis; product compatibility supported; audience evidence absent (0 quoted source(s)); use or purchase unknown; reachability unknown.\n- Small business or maker replacing Google Analytics: hypothesis; product compatibility supported; audience evidence absent (0 quoted source(s)); use or purchase unknown; reachability unknown.",
+    "note": "Coverage gap: no first-person customer testimonial or case study was found naming Simple Analytics specifically as the chosen tool for any segment — all three candidates rest on independent third-party description of the buyer profile plus the vendor's own targeting, not a verified purchase quote. Named organisation examples (specific companies using Simple Analytics) were not found within the four-query budget. Competitor context (Plausible, Fathom, OpenPanel) was not previously documented and should inform future competitive-angle framing.",
+    "searched": [
+      "GA4 undercounting traffic consent banner cookie consent reject analytics gap",
+      "\"simpleanalytics\" OR \"simple analytics\" switched from Google Analytics indie maker cookie-free",
+      "privacy-friendly analytics \"no DPA needed\" GDPR agency client procurement requires DPA before signing analytics tool",
+      "web agency developers recommend Simple Analytics or Plausible to clients instead of Google Analytics cookie consent"
+    ],
+    "mapped_at": "2026-11-05T23:49:47.906376Z",
+    "segments": [
+      {
+        "name": "GA4 user suspecting undercounted traffic",
+        "organization": "Any business or site owner running GA4 behind a cookie/consent banner (SaaS marketing sites, e-commerce, content publishers)",
+        "workflow": "Operates a cookie-consent banner (CMP) in front of GA4; checks GA4 session/pageview totals against ad spend, server logs or business volume and finds a gap after tightening consent settings.",
+        "need": "An independent, consent-independent pageview count to measure and validate the size of the GA4 consent gap, run side-by-side with GA4.",
+        "buyer_role": "Marketing lead, growth/analytics owner, or site owner who reads GA4 reports",
+        "user_role": "Same person who reads GA4 dashboards",
+        "current_alternative": "Google Analytics 4 with a consent banner/CMP (e.g. Cookiebot, OneTrust), accepting the undercount as unavoidable",
+        "assessment": {
+          "compatibility": "supported",
+          "evidence_strength": "supported",
+          "findability": "unknown",
+          "usage_or_purchase": "unknown",
+          "reachability": "unknown",
+          "counterevidence_summary": [
+            "An expert SEO source frames GA4's native Consent Mode, not a second analytics platform, as the recommended long-term fix for this exact problem. — Recommends staying within the GA4 ecosystem via Consent Mode rather than adopting an independent measurement tool, directly undermining the premise that this audience's remedy of choice is a second, consent-independent product. Review before prioritising.",
+            "The documented diagnostic workflow for the GA4 gap used SEO tools, not a parallel analytics platform. — Shows the agency's actual remedy relied on existing SEO tools rather than adopting a second analytics platform, suggesting the documented workflow does not naturally lead to this product category even though it does not rule it out. Minor condition; does not exclude this audience.",
+            "The forum discussion of this exact pain ended without any solution, including no mention of an independent analytics tool. — Indicates the discussion remained open and unresolved, with no participant suggesting a second, consent-independent analytics tool as the fix. Minor condition; does not exclude this audience."
+          ],
+          "counterevidence": 3,
+          "priority": "hypothesis",
+          "reasons": [
+            "The Shopify Community thread and the Mad Fish Digital case study both document the hypothesized pain directly: GA4 undercounts or misattributes traffic once a cookie consent banner is active, creating a measurable gap against known business/sales volume.",
+            "Product truth capabilities (no cookies/trackers/consent required; narrow, non-personal EU-processed data scope; no DPA required) are compatible with running a consent-independent pageview count alongside GA4.",
+            "None of the three fetched sources mention Simple Analytics or any 'run a second analytics tool alongside GA4' workflow; the documented remedies are GA4 Consent Mode, Enhanced Conversions, server-side tagging, or cross-checking with SEO tools, not a second analytics platform.",
+            "The Shopify Community forum is a concrete, named public venue where a real site owner ('cdem') posted this exact GA4-consent-gap complaint, giving a verifiable instance of the audience and a venue to reach similar posters.",
+            "Re-ranked on matching researched sources (2 fetched)."
+          ],
+          "unknowns": [
+            "Whether this audience, when actually fixing the problem, would choose a parallel independent tool over GA4-native fixes (Consent Mode, Enhanced Conversions) that the corpus shows being recommended first.",
+            "No first-person account in the corpus of anyone evaluating or adopting Simple Analytics specifically for this purpose.",
+            "Population size and the typical buyer role (marketing lead vs. store owner vs. agency) for this exact pain beyond the handful of documented cases.",
+            "1 unsupported or duplicate quotation(s) discarded.",
+            "No verified venue or example establishes findability yet.",
+            "Review the counterevidence before prioritising this audience."
+          ],
+          "evidence": [
+            {
+              "claim": "GA4 loses attribution when consent is declined, producing a measurement gap that looks like a traffic collapse plus a direct-traffic spike.",
+              "quote": "The result is a measurement gap that looks like an organic traffic collapse paired with a mysterious direct traffic surge.",
+              "url": "https://www.madfishdigital.com/blog/why-your-ga4-traffic-dropped-after-adding-a-cookie-consent-banner/",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:47:56.676788Z"
+            },
+            {
+              "claim": "A Shopify store owner observes a real discrepancy between known sales and GA4-reported numbers caused by a consent banner, matching the hypothesized trigger.",
+              "quote": "As a result, we’re seeing a significant discrepancy between our Shopify sales data and what’s reported in Google Analytics.",
+              "url": "https://community.shopify.com/t/google-analytics-ga4-how-to-manage-sales-data-blocked-by-cookie-consent/362048",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:47:56.474088Z"
+            },
+            {
+              "claim": "The commonly recommended fix for the consent-driven GA4 gap is GA4's own Consent Mode, not a second analytics tool.",
+              "quote": "This is the best long term solution.",
+              "url": "https://www.taggurus.co.uk/blog/cookie-consent-amp-ga4-how-to-fix-broken-tracking-and-regain-your-data",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:47:56.802534Z"
+            },
+            {
+              "claim": "For Google Ads specifically, the forum's recommended workaround is Enhanced Conversions, sending hashed customer data to Google rather than adopting an independent measurement tool.",
+              "quote": "enable enhanced conversions, which means you send customer data to Google, and based on AI, will Google fill in the gap",
+              "url": "https://community.shopify.com/t/google-analytics-ga4-how-to-manage-sales-data-blocked-by-cookie-consent/362048",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:47:56.474088Z"
+            },
+            {
+              "claim": "An expert SEO source frames GA4's native Consent Mode, not a second analytics platform, as the recommended long-term fix for this exact problem.",
+              "quote": "This is the best long term solution.",
+              "url": "https://www.taggurus.co.uk/blog/cookie-consent-amp-ga4-how-to-fix-broken-tracking-and-regain-your-data",
+              "kind": "counterevidence",
+              "impact": "material",
+              "impact_reason": "Recommends staying within the GA4 ecosystem via Consent Mode rather than adopting an independent measurement tool, directly undermining the premise that this audience's remedy of choice is a second, consent-independent product.",
+              "fetched_at": "2026-11-05T23:47:56.802534Z"
+            },
+            {
+              "claim": "The documented diagnostic workflow for the GA4 gap used SEO tools, not a parallel analytics platform.",
+              "quote": "We pulled Ahrefs and Google Search Console data to look at organic visibility, keyword rankings, and estimated traffic trends independent of GA4.",
+              "url": "https://www.madfishdigital.com/blog/why-your-ga4-traffic-dropped-after-adding-a-cookie-consent-banner/",
+              "kind": "counterevidence",
+              "impact": "minor",
+              "impact_reason": "Shows the agency's actual remedy relied on existing SEO tools rather than adopting a second analytics platform, suggesting the documented workflow does not naturally lead to this product category even though it does not rule it out.",
+              "fetched_at": "2026-11-05T23:47:56.676788Z"
+            },
+            {
+              "claim": "The forum discussion of this exact pain ended without any solution, including no mention of an independent analytics tool.",
+              "quote": "No definitive GA4-side fix identified; Enhanced Conversions can improve Google Ads attribution but does not solve GA4 reporting gaps.",
+              "url": "https://community.shopify.com/t/google-analytics-ga4-how-to-manage-sales-data-blocked-by-cookie-consent/362048",
+              "kind": "counterevidence",
+              "impact": "minor",
+              "impact_reason": "Indicates the discussion remained open and unresolved, with no participant suggesting a second, consent-independent analytics tool as the fix.",
+              "fetched_at": "2026-11-05T23:47:56.474088Z"
+            }
+          ]
+        },
+        "kind": "core",
+        "added_by": "cartographer",
+        "who": "Marketing/growth owners and site operators running GA4 with a consent banner who suspect undercounted traffic",
+        "why_them": "They have an observable, named trigger (a sudden or ongoing GA4 drop after a consent banner change) and a stated want (an independent count), which Simple Analytics' free 30-day GA4 comparison directly targets.",
+        "trigger": "GA4 totals look unexpectedly low versus known business volume, especially right after adding or tightening a consent banner.",
+        "pains": [
+          "GA4 may undercount traffic when visitors reject consent or are blocked (inferred)",
+          "Uncertainty about how big the consent gap actually is without a second, independent measurement"
+        ],
+        "objection": "GA4's advanced consent mode might already model most of the missing visitors, so some buyers won't see the need for a second tool.",
+        "angle": "",
+        "sophistication": "solution_aware",
+        "fit": 0,
+        "basis": "Multiple independent SEO/agency blog posts (gitconnected, Mad Fish Digital, taggurus.co.uk) describe specific, large GA4 session drops attributed to consent banners; Simple Analytics' Enterprise free 30-day GA4 comparison and compliance FAQ page are built around this exact comparison workflow.",
+        "population": "unknown",
+        "signals": [
+          "uses_ga4_with_consent_banner",
+          "reports_or_discusses_traffic_drop_after_consent_change",
+          "compares_analytics_tools_against_ga4"
+        ],
+        "where": [
+          "https://levelup.gitconnected.com/a-cookie-banner-is-an-analytics-outage-not-a-legal-checkbox-55dcb7d330a3",
+          "https://www.madfishdigital.com/blog/why-your-ga4-traffic-dropped-after-adding-a-cookie-consent-banner/",
+          "https://community.shopify.com/t/google-analytics-ga4-how-to-manage-sales-data-blocked-by-cookie-consent/362048"
+        ],
+        "unobvious": false,
+        "researchable": true,
+        "researchability": "high",
+        "researchability_reasons": [
+          "3 useful observable signals and 3 specific research venues.",
+          "The audience is anchored in a concrete workflow or situation.",
+          "A clear trigger narrows the evidence to look for.",
+          "No population basis is stated."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [
+            {
+              "code": "operates_website_with_ga4",
+              "description": "Runs a website currently instrumented with GA4"
+            }
+          ],
+          "required_workflow_signals": [
+            {
+              "code": "has_cookie_consent_banner",
+              "description": "Site shows a CMP/consent banner in front of GA4 tracking"
+            },
+            {
+              "code": "suspects_undercounted_traffic",
+              "description": "Has stated or implied that reported GA4 numbers look lower than expected"
+            }
+          ],
+          "required_product_capabilities": [
+            "fact_dbba330b97737d29",
+            "fact_a11044c433265541",
+            "fact_06ced1486822133e"
+          ],
+          "optional_signals": [
+            {
+              "code": "has_discussed_consent_mode_or_cmp_vendor",
+              "description": "Mentions a specific CMP (Cookiebot, OneTrust, etc.) or GA4 consent mode setting"
+            }
+          ],
+          "hard_disqualifiers": [
+            {
+              "code": "no_website_traffic_measurement_need",
+              "description": "Does not operate a website needing traffic measurement",
+              "outcome": "EXCLUDED"
+            }
+          ],
+          "eligible_subsegments": [],
+          "excluded_subsegments": [],
+          "max_team_size": null
+        }
+      },
+      {
+        "name": "Agency or freelance developer choosing the analytics stack for client sites",
+        "organization": "Small web design/dev agencies and freelance developers building and maintaining client websites",
+        "workflow": "Selects and installs the default analytics tool when building a client site, aiming to avoid adding a consent banner or GA4 complexity for the client, then repeats that choice across multiple client builds.",
+        "need": "A standard, easy-to-recommend, cookie-free analytics default that avoids DPA/consent-banner friction across many client sites.",
+        "buyer_role": "Agency owner or lead developer who picks the default stack and may expense it to clients",
+        "user_role": "Client or agency staff who views the resulting dashboard",
+        "current_alternative": "Google Analytics 4, or a competing cookie-free tool (Plausible, Fathom) already adopted as the agency's house default",
+        "assessment": {
+          "compatibility": "supported",
+          "evidence_strength": "absent",
+          "findability": "unknown",
+          "usage_or_purchase": "unknown",
+          "reachability": "unknown",
+          "counterevidence_summary": [],
+          "counterevidence": 0,
+          "priority": "hypothesis",
+          "reasons": [
+            "Product truth capabilities (no DPA required because no personal data is processed; no cookies/trackers/consent; EU-based data storage) are compatible with an agency's stated need to avoid consent-banner/DPA friction across client sites, so compatibility is supported in principle.",
+            "None of the three fetched pages (Mad Fish Digital, Shopify Community, taggurus.co.uk) discuss agencies or freelance developers selecting a default analytics stack for client websites; all three concern individual site/store owners or an agency's end-client reporting problem, not the agency's own tool-selection decision.",
+            "No pain, workaround, buyer role, or venue specific to agency procurement of a cookie-free analytics default appears anywhere in the fetched corpus."
+          ],
+          "unknowns": [
+            "Whether agencies in this corpus's domain (SEO/e-commerce consulting) actually face the DPA/consent-banner procurement friction this candidate hypothesizes, since no fetched page raises a DPA requirement.",
+            "Whether any agency in the fetched sources already defaults to a competing cookie-free tool (Plausible, Fathom), which would make this an adjacent rather than open audience; not addressed in these pages.",
+            "No venue or access channel for reaching agency decision-makers was found in the fetched corpus.",
+            "No verified venue or example establishes findability yet."
+          ],
+          "evidence": []
+        },
+        "kind": "channel",
+        "added_by": "cartographer",
+        "who": "Agency owners and freelance developers who choose and install the analytics default on client websites",
+        "why_them": "They buy once per client relationship and repeat the decision across many sites, and the DPA/consent-banner objection this product answers is specifically a procurement concern for someone buying on behalf of others.",
+        "trigger": "A new client build or a client request to avoid consent banners/personal-data handling.",
+        "pains": [
+          "Our procurement process requires a signed DPA before we can buy any analytics tool. (inferred, applies via client procurement)"
+        ],
+        "objection": "Comparison content for this channel names Plausible and Fathom ahead of Simple Analytics as the easiest default to recommend, so this may not be Simple Analytics' strongest channel without differentiation.",
+        "angle": "",
+        "sophistication": "product_aware",
+        "fit": 0,
+        "basis": "Agency-facing comparison and listing sites (oviond.com, seline.com, posthog.com) describe this as a repeatable, once-per-client decision among cookie-free tools; Simple Analytics' compliance FAQ page is built for the DPA objection this buyer raises on clients' behalf, but no direct agency testimonial naming Simple Analytics was found.",
+        "population": "unknown",
+        "signals": [
+          "manages_multiple_client_websites",
+          "selects_default_analytics_stack_for_clients",
+          "cites_dpa_or_consent_banner_as_client_requirement"
+        ],
+        "where": [
+          "https://www.oviond.com/alternative-google-analytics/",
+          "https://seline.com/blog/google-analytics-alternatives",
+          "https://docs.simpleanalytics.com/compliance-faq"
+        ],
+        "unobvious": true,
+        "researchable": true,
+        "researchability": "high",
+        "researchability_reasons": [
+          "3 useful observable signals and 3 specific research venues.",
+          "The audience is anchored in a concrete workflow or situation.",
+          "A clear trigger narrows the evidence to look for.",
+          "No population basis is stated."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [
+            {
+              "code": "manages_multiple_client_websites",
+              "description": "Builds or maintains websites for multiple separate client organizations"
+            }
+          ],
+          "required_workflow_signals": [
+            {
+              "code": "selects_default_analytics_stack_for_clients",
+              "description": "Chooses the default analytics tool applied across client builds"
+            }
+          ],
+          "required_product_capabilities": [
+            "fact_06ced1486822133e",
+            "fact_dbba330b97737d29",
+            "fact_9286b556fbb9e0d6"
+          ],
+          "optional_signals": [
+            {
+              "code": "cites_dpa_requirement",
+              "description": "Mentions a client or internal requirement for a signed DPA before tool adoption"
+            }
+          ],
+          "hard_disqualifiers": [
+            {
+              "code": "locked_into_competing_default_stack",
+              "description": "Agency has a long-standing default (e.g. Plausible, Fathom) with no stated dissatisfaction",
+              "outcome": "ADJACENT"
+            }
+          ],
+          "eligible_subsegments": [],
+          "excluded_subsegments": [],
+          "max_team_size": null
+        }
+      },
+      {
+        "name": "Small business or maker replacing Google Analytics",
+        "organization": "Bootstrapped startups, indie hackers, solo makers and small marketing/content sites",
+        "workflow": "Launches or runs a small website/product and wants a one-page traffic view without configuring GA4's event model, consent banner or handling personal data.",
+        "need": "A simple, no-setup traffic dashboard (pageviews, referrers, UTM campaigns) that avoids cookies, consent banners and personal-data handling entirely.",
+        "buyer_role": "Founder or solo developer who owns the website and the budget",
+        "user_role": "Same founder/developer",
+        "current_alternative": "Google Analytics 4 (seen as too complex for the need), or no analytics at all, or a competing cookie-free tool (Plausible, Fathom)",
+        "assessment": {
+          "compatibility": "supported",
+          "evidence_strength": "absent",
+          "findability": "unknown",
+          "usage_or_purchase": "unknown",
+          "reachability": "unknown",
+          "counterevidence_summary": [],
+          "counterevidence": 0,
+          "priority": "hypothesis",
+          "reasons": [
+            "Product truth capabilities (no cookies/trackers/consent required; data deleted after account deletion; non-personal data never sold or shared) are compatible with a simple, no-setup, privacy-avoiding dashboard, so compatibility is supported in principle.",
+            "None of the three fetched pages (Mad Fish Digital, Shopify Community, taggurus.co.uk) address solo founders, indie makers, or small-business site owners choosing a simple cookie-free analytics tool to replace GA4; all three concern existing GA4 users experiencing consent-driven data gaps on sites that already have meaningful traffic or sales volume.",
+            "No pain, workaround, buyer role, or venue specific to this candidate's hypothesized audience appears anywhere in the fetched corpus."
+          ],
+          "unknowns": [
+            "Whether this hobby/maker/solo-founder audience actually exists at a findable scale, since no page in this corpus discusses GA4 complexity avoidance or simple one-page dashboards.",
+            "Whether the 'current alternative' (no analytics, or Plausible/Fathom) is actually in use by this audience; no evidence either way in the fetched pages.",
+            "No venue or access channel for reaching this audience was found in the fetched corpus.",
+            "No verified venue or example establishes findability yet."
+          ],
+          "evidence": []
+        },
+        "kind": "core",
+        "added_by": "cartographer",
+        "who": "Solo founders, indie makers and small-business site owners who want traffic numbers without GA4's setup burden or personal-data handling",
+        "why_them": "Independent review and listing sites (not just the vendor) repeatedly name this exact profile as the natural fit for a one-page, cookie-free dashboard.",
+        "trigger": "Frustration with GA4's complexity or a deliberate decision to avoid collecting personal data from day one.",
+        "pains": [
+          "not established"
+        ],
+        "objection": "Plausible, Fathom and other cookie-free tools are marketed to the same buyer with similar simplicity claims, so the choice may come down to price or brand familiarity rather than a Simple Analytics-specific need.",
+        "angle": "",
+        "sophistication": "problem_aware",
+        "fit": 0,
+        "basis": "Independent review/listing sites (makerstack.co, keithgreer.dev, prettyinsights.com) describe this buyer profile and GA4-complexity trigger, but no first-person customer account of choosing Simple Analytics specifically was found.",
+        "population": "unknown",
+        "signals": [
+          "operates_small_or_hobby_website",
+          "has_not_yet_deployed_cookie_consent_banner",
+          "expresses_ga4_complexity_complaint"
+        ],
+        "where": [
+          "https://makerstack.co/reviews/simple-analytics-review/",
+          "https://keithgreer.dev/simple-analytics/",
+          "https://prettyinsights.com/simple-analytics-review/"
+        ],
+        "unobvious": false,
+        "researchable": true,
+        "researchability": "medium",
+        "researchability_reasons": [
+          "3 useful observable signals and 3 specific research venues.",
+          "The audience is anchored in a concrete workflow or situation.",
+          "No clear trigger narrows the research.",
+          "No population basis is stated."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [
+            {
+              "code": "operates_small_or_hobby_website",
+              "description": "Runs a small, bootstrapped or hobby website/product site"
+            }
+          ],
+          "required_workflow_signals": [
+            {
+              "code": "wants_simple_traffic_view",
+              "description": "Wants a one-page pageview/referrer/UTM view without configuration overhead"
+            },
+            {
+              "code": "avoids_personal_data_or_cookies",
+              "description": "States a preference to avoid cookies, consent banners or personal-data collection"
+            }
+          ],
+          "required_product_capabilities": [
+            "fact_dbba330b97737d29",
+            "fact_f163a4ccd58b21ae",
+            "fact_311b514843049acb"
+          ],
+          "optional_signals": [
+            {
+              "code": "mentions_ga4_complexity_complaint",
+              "description": "Explicitly complains about GA4 setup or event-model complexity"
+            }
+          ],
+          "hard_disqualifiers": [
+            {
+              "code": "requires_user_level_behavioral_tracking",
+              "description": "Needs individual user-level event tracking GA4 provides and Simple Analytics does not",
+              "outcome": "EXCLUDED"
+            }
+          ],
+          "eligible_subsegments": [],
+          "excluded_subsegments": [],
+          "max_team_size": null
+        }
+      }
+    ]
+  },
+  "prospects": [],
+  "research": [
+    {
+      "audience_name": "GA4 user suspecting undercounted traffic",
+      "audience_fingerprint": "fbbb46d8e9ab3d0346c0954bdb08db53ef4f494065dea7e64e4f8444392b6cab",
+      "candidate_kind": "core",
+      "definition": {
+        "schema_version": 2,
+        "required_structural_signals": [
+          {
+            "code": "operates_website_with_ga4",
+            "description": "Runs a website currently instrumented with GA4"
+          }
+        ],
+        "required_workflow_signals": [
+          {
+            "code": "has_cookie_consent_banner",
+            "description": "Site shows a CMP/consent banner in front of GA4 tracking"
+          },
+          {
+            "code": "suspects_undercounted_traffic",
+            "description": "Has stated or implied that reported GA4 numbers look lower than expected"
+          }
+        ],
+        "required_product_capabilities": [
+          "fact_dbba330b97737d29",
+          "fact_a11044c433265541",
+          "fact_06ced1486822133e"
+        ],
+        "optional_signals": [
+          {
+            "code": "has_discussed_consent_mode_or_cmp_vendor",
+            "description": "Mentions a specific CMP (Cookiebot, OneTrust, etc.) or GA4 consent mode setting"
+          }
+        ],
+        "hard_disqualifiers": [
+          {
+            "code": "no_website_traffic_measurement_need",
+            "description": "Does not operate a website needing traffic measurement",
+            "outcome": "EXCLUDED"
+          }
+        ],
+        "eligible_subsegments": [],
+        "excluded_subsegments": [],
+        "max_team_size": null
+      },
+      "situation": null,
+      "incumbent_behaviour": [
+        {
+          "text": "When GA4 trend lines break after a consent rollout, pulls independent third-party data (e.g. Ahrefs, Google Search Console) to check whether real performance changed or only measurement did.",
+          "grounding": "inferred",
+          "evidence": [
+            {
+              "source_id": "S1",
+              "quote": "We pulled Ahrefs and Google Search Console data to look at organic visibility, keyword rankings, and estimated traffic trends independent of GA4."
+            }
+          ],
+          "inference_basis": "Reported by the client's agency (Tier 3) describing diagnostic steps taken on the client's behalf, not the buyer's own first-person account of their workflow."
+        }
+      ],
+      "sophistication": null,
+      "sophistication_basis": null,
+      "problems": [],
+      "buyer_phrases": [],
+      "triggers": [],
+      "desired_outcomes": [],
+      "signals": [],
+      "where": [
+        {
+          "text": "The problem is also written about from the outside by marketing agencies narrating a client's traffic-drop episode.",
+          "grounding": "inferred",
+          "evidence": [
+            {
+              "source_id": "S1",
+              "quote": "That’s exactly what happened with one of our clients not long ago."
+            }
+          ],
+          "inference_basis": "Tier 3 observation about where the topic is discussed by a third party; it does not establish the buyer's own presence at this venue."
+        }
+      ],
+      "sources": [
+        {
+          "id": "S1",
+          "requested_url": "https://www.madfishdigital.com/blog/why-your-ga4-traffic-dropped-after-adding-a-cookie-consent-banner/",
+          "final_url": "https://www.madfishdigital.com/blog/why-your-ga4-traffic-dropped-after-adding-a-cookie-consent-banner/",
+          "title": "Why Your GA4 Traffic Dropped After Adding a Cookie Consent Banner - Mad Fish Digital",
+          "tier": 3,
+          "venue": "",
+          "fetched_at": "2026-11-05T23:49:48.457127Z",
+          "published_date": "2026-09-29",
+          "publication_date_basis": "page_publication_metadata",
+          "content_hash": "0ae59369d6fb1f6a6f1fcb6b8e6a69decfe587b1f9d67b6aba3211ad831406ee"
+        },
+        {
+          "id": "S2",
+          "requested_url": "https://community.shopify.com/t/google-analytics-ga4-how-to-manage-sales-data-blocked-by-cookie-consent/362048",
+          "final_url": "https://community.shopify.com/t/google-analytics-ga4-how-to-manage-sales-data-blocked-by-cookie-consent/362048",
+          "title": "Google Analytics / GA4",
+          "tier": 3,
+          "venue": "",
+          "fetched_at": "2026-11-05T23:49:48.380032Z",
+          "published_date": "2024-09-27",
+          "publication_date_basis": "page_publication_metadata",
+          "content_hash": "b389e8e8aedaddfd76824309c8aebd5b9430ef40f1219d769aaae10f406ff2ee"
+        }
+      ],
+      "dropped_claims": 22,
+      "interpretation_warnings": [],
+      "researched_at": "2026-11-05T23:52:06.874124Z",
+      "id": "af402f7f-952b-4785-9252-93363ba3c02d",
+      "brand_id": "7e5f6600-0520-4524-a061-de2ee487f6a1",
+      "audience_key": "ga4 user suspecting undercounted traffic",
+      "version": 1,
+      "source_map_id": "3a73c3e0-8213-44a6-8587-9b248259421d",
+      "source_map_version": 1,
+      "created_at": "2026-11-05T23:52:06.878542"
+    }
+  ],
+  "relevance": [
+    {
+      "audience_name": "GA4 user suspecting undercounted traffic",
+      "status": "missing",
+      "stale_reasons": [],
+      "missing_prerequisites": [],
+      "dossier_id": null,
+      "generation_version": null,
+      "created_at": null,
+      "dossier": null
+    }
+  ],
+  "capability_profile": {
+    "schema_version": 2,
+    "version": 1,
+    "knowledge_id": "9f44dc02-1fd5-4ceb-8124-5336eecf2c02",
+    "knowledge_version": 1,
+    "ledger_fingerprint": "f169ff13247ad2d7674de626ede11f144e5f8abbb56b7a2ea56068368131b4d6",
+    "derivation_version": 3,
+    "capabilities": [
+      {
+        "id": "fact_dbba330b97737d29",
+        "label": "Simple Analytics requires no cookies, no trackers, and no consent from visitors.",
+        "description": "Source: official_documentation; Subject: Simple Analytics",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E1",
+            "claim": "Simple Analytics requires no cookies, no trackers, and no consent from visitors.",
+            "quote": "No cookies. No trackers. **No consent required from your visitors**. Just straightforward analytics.",
+            "source_identifier": "https://docs.simpleanalytics.com"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_9286b556fbb9e0d6",
+        "label": "Website data is stored in the EU, with primary infrastructure in the Netherlands.",
+        "description": "Source: official_documentation; Subject: Simple Analytics",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E7",
+            "claim": "Website data is stored in the EU, with primary infrastructure in the Netherlands.",
+            "quote": "Your website data is stored in the EU, with our primary infrastructure in the Netherlands.",
+            "source_identifier": "https://www.simpleanalytics.com/pricing"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_6f14399813a0f2de",
+        "label": "Data only goes to a provider outside the EU when the customer opts in to a feature that needs it, such as the AI assistant.",
+        "description": "Source: official_documentation; Subject: Simple Analytics AI assistant; Applies only when the customer opts in to the AI assistant feature",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E8",
+            "claim": "Data only goes to a provider outside the EU when the customer opts in to a feature that needs it, such as the AI assistant.",
+            "quote": "It only goes to a provider outside the EU when you opt in to a feature that needs it, like the AI assistant.",
+            "source_identifier": "https://www.simpleanalytics.com/pricing"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_311b514843049acb",
+        "label": "Simple Analytics only collects non-personal data, which belongs to the customer, and never sells it or shares it with anyone for their own use.",
+        "description": "Source: official_documentation; Subject: Simple Analytics",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E9",
+            "claim": "Simple Analytics only collects non-personal data, which belongs to the customer, and never sells it or shares it with anyone for their own use.",
+            "quote": "The data we collect belongs to you. We only collect non-personal data, and we never sell it or share it with anyone for their own use.",
+            "source_identifier": "https://www.simpleanalytics.com/pricing"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_ebcbcc4817a8176d",
+        "label": "By default, Simple Analytics does not collect or store any data for visitors who have Do Not Track enabled.",
+        "description": "Source: official_documentation; Subject: Simple Analytics; Default behavior; can be disabled by the site owner",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E10",
+            "claim": "By default, Simple Analytics does not collect or store any data for visitors who have Do Not Track enabled.",
+            "quote": "> By default we **do NOT collect or store** any data **if a visitor has Do Not Track** enabled",
+            "source_identifier": "https://docs.simpleanalytics.com/what-we-collect"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_006f6ba7d6c5ebf1",
+        "label": "Simple Analytics collects and stores how long a page is viewed, counting seconds only while the page is visible and not when it is hidden.",
+        "description": "Source: official_documentation; Subject: Simple Analytics",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E11",
+            "claim": "Simple Analytics collects and stores how long a page is viewed, counting seconds only while the page is visible and not when it is hidden.",
+            "quote": "> We **do collect and store** how long a page is being viewed When a visitor is on a page we collect the amount of seconds a page is viewed. If the page is hidden, we don’t count those seconds.",
+            "source_identifier": "https://docs.simpleanalytics.com/what-we-collect"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_1bc4edc43af9d596",
+        "label": "Simple Analytics collects and stores how far a visitor scrolls on a page, recorded in 5% increments.",
+        "description": "Source: official_documentation; Subject: Simple Analytics",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E12",
+            "claim": "Simple Analytics collects and stores how far a visitor scrolls on a page, recorded in 5% increments.",
+            "quote": "> We **do collect and store** how far a visitor scrolls on the page When a visitor scrolls on a page we record how far they scrolled. We do store this in a percentage with increments of 5%.",
+            "source_identifier": "https://docs.simpleanalytics.com/what-we-collect"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_d6027353305b4e46",
+        "label": "All analytics data is processed in the Netherlands (EU-hosted).",
+        "description": "Source: official_documentation; Subject: Simple Analytics",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E18",
+            "claim": "All analytics data is processed in the Netherlands (EU-hosted).",
+            "quote": "EU-hosted All analytics data is processed in the Netherlands",
+            "source_identifier": "https://www.simpleanalytics.com/security"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_dbd3cdeb3e45cbd8",
+        "label": "No IP addresses are stored; they are discarded immediately.",
+        "description": "Source: official_documentation; Subject: Simple Analytics",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E19",
+            "claim": "No IP addresses are stored; they are discarded immediately.",
+            "quote": "No IP addresses stored (discarded immediately)",
+            "source_identifier": "https://www.simpleanalytics.com/security"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_fd1b91115fceaa8e",
+        "label": "Data is encrypted, and only Simple Analytics controls the decryption keys.",
+        "description": "Source: official_documentation; Subject: Simple Analytics",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E20",
+            "claim": "Data is encrypted, and only Simple Analytics controls the decryption keys.",
+            "quote": "Data is encrypted, and only Simple Analytics controls the decryption keys",
+            "source_identifier": "https://www.simpleanalytics.com/security"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_f163a4ccd58b21ae",
+        "label": "Data is deleted after account deletion, fully removed after 90 days.",
+        "description": "Source: official_documentation; Subject: Simple Analytics; applies after account deletion",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E21",
+            "claim": "Data is deleted after account deletion, fully removed after 90 days.",
+            "quote": "Data deleted after account deletion (fully removed after 90 days)",
+            "source_identifier": "https://www.simpleanalytics.com/security"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_9a1a185279f1f96b",
+        "label": "Simple Analytics is hosted on infrastructure from Worldstream and Leaseweb.",
+        "description": "Source: official_documentation; Subject: Simple Analytics",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E22",
+            "claim": "Simple Analytics is hosted on infrastructure from Worldstream and Leaseweb.",
+            "quote": "Hosted on infrastructure from Worldstream and Leaseweb",
+            "source_identifier": "https://www.simpleanalytics.com/security"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_06ced1486822133e",
+        "label": "Simple Analytics does not process personal data, so a Data Processing Agreement is not required when using it.",
+        "description": "Source: official_documentation; Subject: Simple Analytics; applies under GDPR's definition of when a DPA is required",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E23",
+            "claim": "Simple Analytics does not process personal data, so a Data Processing Agreement is not required when using it.",
+            "quote": "Simple Analytics does not process personal data. Because of this, a DPA is not required when using Simple Analytics. This is due to the absence of personal data processing.",
+            "source_identifier": "https://www.simpleanalytics.com/data-processing-agreement"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_a11044c433265541",
+        "label": "Simple Analytics processes only Page URL, Referrer, UTM parameters, Time zone, and Device and browser type as its data scope.",
+        "description": "Source: official_documentation; Subject: Simple Analytics; processed within the EU by subprocessors; these metrics are not linked to individuals and cannot be used to identify users",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E24",
+            "claim": "Simple Analytics processes only Page URL, Referrer, UTM parameters, Time zone, and Device and browser type as its data scope.",
+            "quote": "- Page URL - Referrer - UTM parameters - Time zone - Device and browser type",
+            "source_identifier": "https://www.simpleanalytics.com/data-processing-agreement"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      }
+    ],
+    "constraints": [],
+    "claims": [
+      {
+        "text": "Simple Analytics requires no cookies, no trackers, and no consent from visitors.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E1"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "The Self-serve plan costs €20/month, estimated for about 100k monthly pageviews.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E2"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "The Self-serve plan includes 1 user; each additional user costs +€20/month.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E3"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "The Free plan supports 1 user and 5 websites, with 1 month of analytics history, and requires displaying the free plan badge.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E4"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Simple Analytics offers a free 30-day proof of concept to test it on your own website, including help optimizing the setup for proxies and custom domains.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E5"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Simple Analytics is GDPR compliant from installation, satisfying the GDPR, the ePrivacy Directive, the UK GDPR, and the PECR because it only processes non-personal data.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E6"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Website data is stored in the EU, with primary infrastructure in the Netherlands.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E7"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Data only goes to a provider outside the EU when the customer opts in to a feature that needs it, such as the AI assistant.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E8"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Simple Analytics only collects non-personal data, which belongs to the customer, and never sells it or shares it with anyone for their own use.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E9"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "By default, Simple Analytics does not collect or store any data for visitors who have Do Not Track enabled.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E10"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Simple Analytics collects and stores how long a page is viewed, counting seconds only while the page is visible and not when it is hidden.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E11"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Simple Analytics collects and stores how far a visitor scrolls on a page, recorded in 5% increments.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E12"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "31k+ users rely on Simple Analytics.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E13"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Simple Analytics is trusted by teams at Bloomberg, Michelin, Hyundai, GOV.UK, Polkadot, Bank of England, Sketch, Excalidraw and Nomads.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E14"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Hebban ran Simple Analytics alongside GA4 and Simple Analytics counted about 431,000 more pageviews, 27% more than GA4; the gap can come from consent rejection, blocking or differences in implementation.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E15"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Run Simple Analytics alongside GA4 for 30 days, free, with setup help to compare the numbers.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E16"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Simple Analytics is working toward SOC 2 Type II certification (in progress, not yet achieved).",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E17"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "All analytics data is processed in the Netherlands (EU-hosted).",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E18"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "No IP addresses are stored; they are discarded immediately.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E19"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Data is encrypted, and only Simple Analytics controls the decryption keys.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E20"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Data is deleted after account deletion, fully removed after 90 days.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E21"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Simple Analytics is hosted on infrastructure from Worldstream and Leaseweb.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E22"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Simple Analytics does not process personal data, so a Data Processing Agreement is not required when using it.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E23"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Simple Analytics processes only Page URL, Referrer, UTM parameters, Time zone, and Device and browser type as its data scope.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E24"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      }
+    ],
+    "id": "fa65ea61-b64d-4964-bd56-b99cc80382f6",
+    "brand_id": "7e5f6600-0520-4524-a061-de2ee487f6a1",
+    "created_at": "2026-11-05T23:46:07.091614"
+  },
+  "note": ""
+}

@@ -110,6 +110,7 @@ def test_a_connection_note_is_held_to_its_own_limit(client: TestClient, provider
 
 
 def test_a_draft_that_never_passes_its_gates_ships_nothing(client: TestClient, provider):
+    provider.review("The quantified claim has no source.")
     provider.set_default("linkedin_writer", json.dumps({"body": "We cut your release notes by 94%."}))
     campaign = linkedin_campaign(client)
     execution_id = client.post(f"/api/campaigns/{campaign['id']}/start").json()["id"]
@@ -131,5 +132,5 @@ def test_the_forecast_knows_this_run_buys_no_panel(client: TestClient):
     assert message["emails"] == 1
     assert message["high"] < email["high"]
     #: Knowledge, a Strategist call and the writer's own correction turn.
-    assert message["high"] - message["compile_high"] == 4
-    assert message["low"] - message["compile_low"] == 2
+    assert message["high"] - message["compile_high"] == 8
+    assert message["low"] - message["compile_low"] == 3

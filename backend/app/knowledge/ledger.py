@@ -119,6 +119,53 @@ class Evidence(BaseModel):
         return self.verbatim
 
 
+def unconfirmed_billing(entry: Evidence) -> bool:
+    """Honor an explicit source limitation, without inventing missing terms.
+
+    A quoted monthly equivalent does not establish a monthly payment. Legacy
+    entries without such a limitation keep their existing interpretation.
+    """
+    if entry.kind is not EvidenceKind.PRICE or entry.context is None:
+        return False
+    return _uncertain_billing(entry.context)
+
+
+def preserve_billing_uncertainty(entry: Evidence, source: str) -> Evidence:
+    """A captured pair of billing controls does not identify the active one.
+
+    Do not let an extractor attach 'monthly payment' to a monthly equivalent
+    merely because the page contains that button. Explicit payment terms in
+    the quotation, or separately quoted monthly/yearly amounts, remain usable.
+    """
+    if entry.kind is not EvidenceKind.PRICE:
+        return entry
+    material = fold(source)
+    # Adjacent button labels can be captured as "Pay monthlyPay yearly".
+    if not (re.search(r"pay\s+monthly", material)
+            and re.search(r"pay\s+yearly", material)):
+        return entry
+    quote = fold(entry.verbatim)
+    amounts = [claim for claim in extract_claims(quote) if claim.kind is ClaimKind.MONEY]
+    if len(amounts) != 1 or re.search(
+        r"\b(?:billed|paid|payable)\s+(?:monthly|annually|yearly)\b|"
+        r"\b(?:monthly|annual|yearly)\s+(?:billing|payment|commitment)\b", quote,
+    ):
+        return entry
+    limitation = ("Billing terms not established: both Pay monthly and Pay yearly controls "
+                  "were captured, but this quotation does not identify the payment basis.")
+    context = entry.context.model_copy(deep=True) if entry.context else EvidenceContext()
+    if limitation not in context.limitations:
+        context.limitations = " ".join(filter(None, [context.limitations, limitation]))
+    return entry.model_copy(update={"context": context})
+
+
+def _uncertain_billing(context: EvidenceContext) -> bool:
+    terms = fold(f"{context.conditions} {context.limitations}")
+    subject = r"(?:billing(?: period| terms)?|annual terms|payment frequency|facturation|paiement)"
+    unknown = r"(?:not specified|not established|not confirmed|unknown|unclear|unconfirmed|unspecified|non precise\w*|inconnu\w*|a confirmer)"
+    return bool(re.search(rf"{subject}[^.;\n]{{0,90}}{unknown}|{unknown}[^.;\n]{{0,60}}{subject}", terms))
+
+
 def category_of(entry: Evidence) -> FactCategory:
     """The shelf for one fact, stored if the compiler set one, derived if not."""
     if entry.category is not None:
@@ -242,6 +289,20 @@ class EvidenceLedger(BaseModel):
 
     def render(self) -> str:
         return render_entries(self.entries)
+
+    def render_compact(self) -> str:
+        """One line per fact: what it says and the words that license it.
+
+        `render` spends about 800 characters a fact on scope and provenance,
+        which is right for the few an email is built on and wrong for a page's
+        worth of selling points: twenty of them grew the writer's prompt by a
+        quarter. The words themselves stay, because a quotation has to come
+        back exactly.
+        """
+        return "\n".join(
+            f'- [{entry.id}] {entry.kind}: {entry.claim} (source says: "{_collapse(entry.verbatim, 200)}")'
+            for entry in self.entries
+        )
 
     def slice_for(
         self,
@@ -368,9 +429,11 @@ class Claim(BaseModel):
     normalized: str
 
 
+# Keep grouped thousands and decimal commas intact before normalizing.
+_MEASURE_NUMBER = r"\d{1,3}(?:[ \u00a0\u202f]\d{3})+(?:[.,]\d+)?|\d[\d,]*(?:\.\d+)?"
 _MONEY_RE = re.compile(
-    r"[$€£]\s?\d[\d,]*(?:\.\d+)?\s?[kmb]?\b"
-    r"|\b\d[\d,]*(?:\.\d+)?\s?(?:usd|eur|gbp|dollars?|euros?|pounds?)\b",
+    rf"[$€£]\s?(?:{_MEASURE_NUMBER})\s?[kmb]?\b"
+    rf"|\b(?:{_MEASURE_NUMBER})\s?(?:[$€£]|(?:usd|eur|gbp|dollars?|euros?|pounds?)\b)",
     re.IGNORECASE,
 )
 #: No trailing \b after "%": a word boundary cannot exist between "%" and the
@@ -382,7 +445,7 @@ _PERCENT_RE = re.compile(
 _MULTIPLIER_RE = re.compile(r"\b\d[\d,]*(?:\.\d+)?\s?[x×]\b", re.IGNORECASE)
 _DURATION_RE = re.compile(
     r"\b\d[\d,]*(?:\.\d+)?[\s\u2010\u2011-]?"
-    r"(seconds?|secs?|minutes?|mins?|hours?|hrs?|days?|weeks?|months?|years?)\b",
+    r"(seconds?|secs?|minutes?|mins?|hours?|hrs?|days?|weeks?|months?|years?|secondes?|heures?|jours?|semaines?|mois|ans?|années?)\b",
     re.IGNORECASE,
 )
 #: Two digits or more only. A single bare digit is almost always rhetoric
@@ -393,14 +456,24 @@ _DURATION_RE = re.compile(
 #: The grouped-thousands alternative comes first and must: "1,500" read by the
 #: plain pattern starts matching after the comma and yields "500", which is a
 #: different number and would fail the gate on a figure the source states.
-_QUANTITY_RE = re.compile(r"\b\d{1,3}(?:,\d{3})+(?:\.\d+)?\+?|\b\d{2,}(?:\.\d+)?\+?\b")
+#:
+#: A decimal is one figure too, and is exempt from the two-digit rule because
+#: nobody writes "4.8" as rhetoric. Read by the plain pattern, "1,34 kg" gave
+#: "34" - a number nobody wrote, blocking a true weight - and "4,9/5" gave
+#: nothing at all, so an invented rating went unread. The lookarounds leave
+#: "1.2.3" alone: that is a version, not a quantity.
+_QUANTITY_RE = re.compile(
+    r"\b\d{1,3}(?:,\d{3})+(?:\.\d+)?\+?"
+    r"|(?<!\d[.,])\b\d+[.,]\d{1,2}(?![.,]?\d)"
+    r"|\b\d{2,}(?:\.\d+)?\+?\b"
+)
 _URL_RE = re.compile(r"https?://[^\s<>()\[\]\"']+", re.IGNORECASE)
 #: Double quotes only - a bare apostrophe is not a quote delimiter, it is what
 #: every contraction and possessive in ordinary prose uses. Including it here
 #: meant any two contractions in the same sentence ("it's ... you'd") bounded
 #: a 25-400 char span that got flagged as a fabricated testimonial - the gate
 #: was blocking drafts for sentences that never claimed to quote anyone.
-_QUOTE_RE = re.compile(r"[“”\"]{1}([^“”\"\n]{25,400})[“”\"]{1}")
+_QUOTE_RE = re.compile(r"[«“”\"]{1}([^«»“”\"\n]{25,400})[»“”\"]{1}")
 
 #: The shortest quoted span worth treating as an attributed quotation rather
 #: than a turn of phrase in quote marks.
@@ -412,6 +485,10 @@ _UNIT_CANON = {
     "hr": "hours", "hrs": "hours", "hour": "hours",
     "day": "days", "week": "weeks", "month": "months", "year": "years",
     "percent": "%",
+    "seconde": "seconds", "secondes": "seconds",
+    "heure": "hours", "heures": "hours", "jour": "days", "jours": "days",
+    "semaine": "weeks", "semaines": "weeks", "mois": "months",
+    "an": "years", "ans": "years", "année": "years", "années": "years",
     "dollar": "usd", "dollars": "usd", "euro": "eur", "euros": "eur",
     "pound": "gbp", "pounds": "gbp",
 }
@@ -431,15 +508,25 @@ def _normalize_measure(raw: str) -> str:
     """'1,500 mins' and '1500 minutes' must be the same string, or the gate
     fires on the writer's formatting rather than on its honesty."""
     flat = _collapse(raw).lower().replace("×", "x").rstrip("+")
+    flat = re.sub(r"(?<=\d) (?=\d{3}(?:\D|$))", "", flat)
     match = _TOKEN_SPLIT_RE.match(flat)
     if match is None:
         return flat
     symbol, number, unit = match.groups()
-    number = number.replace(",", "").rstrip(".")
+    # A comma followed by one or two digits is decimal, never thousands.
+    if re.fullmatch(r"\d+,\d{1,2}", number):
+        number = number.replace(",", ".")
+    else:
+        number = number.replace(",", "")
+    number = number.rstrip(".")
     if "." in number:
         number = number.rstrip("0").rstrip(".")
     unit = unit.strip().lstrip("-‐‑").strip()
     unit = _UNIT_CANON.get(unit, unit)
+    # Currency placement and spelling are typography, not different offers.
+    currency = {"eur": "€", "usd": "$", "gbp": "£", "€": "€", "$": "$", "£": "£"}
+    if not symbol and unit in currency:
+        symbol, unit = currency[unit], ""
     return f"{symbol}{number}{(' ' + unit) if unit else ''}".strip()
 
 
@@ -631,6 +718,8 @@ class EvidenceIndex:
             text, known_subjects=subjects, subject_aliases=self._price_aliases.get(claim.normalized),
         )
                     if item.value == claim.normalized]
+        if not requests and any(item.billing_uncertain for item in sources):
+            return "this price has unconfirmed billing terms; omit it or verify the payment conditions"
         for requested in requests:
             eligible = list(sources)
             for field, description in (("period", "billing period"), ("unit", "per-unit basis"),
@@ -646,6 +735,13 @@ class EvidenceIndex:
             # Only explicit restrictions present on every compatible source
             # constrain a price. No semantic guess about arbitrary terms blocks.
             if eligible:
+                if any(item.billing_uncertain for item in eligible):
+                    confirmed = [item for item in eligible if item.billing_confirmed]
+                    if not confirmed:
+                        return "this price has unconfirmed billing terms; omit it or verify the payment conditions"
+                    # The raw page must not erase the conditions of a separate
+                    # source that actually resolves the uncertainty.
+                    eligible = confirmed
                 required = set.intersection(*(set(item.conditions) for item in eligible))
                 missing = required - set(requested.conditions)
                 if missing:
@@ -721,6 +817,8 @@ class PriceSupport(BaseModel):
     subject: str = ""
     role: str = ""
     conditions: list[str] = Field(default_factory=list)
+    billing_uncertain: bool = False
+    billing_confirmed: bool = False
 
 
 _NOVELTY_CLAIM = re.compile(
@@ -834,16 +932,16 @@ _PRICE_UNIT = re.compile(
 _PRICE_SUBJECT = re.compile(
     r"\b([\w-]+)(?:\s+(?:plan|tier|subscription|abonnement|offre))?\s+"
     r"(?:is|costs?|co[uû]te(?:nt)?|est)\s+(?:from\s+|a partir de\s+)?"
-    r"(?:[$€£]|\d+\s*(?:usd|eur|gbp))", re.IGNORECASE,
+    rf"(?:[$€£]|(?:{_MEASURE_NUMBER})\s*(?:[$€£]|usd|eur|gbp|euros?|dollars?|pounds?))", re.IGNORECASE,
 )
 _PRICE_GENERIC_SUBJECTS = frozenset({
     "it", "this", "that", "price", "pricing", "plan", "subscription", "product", "app",
     "cela", "ceci", "prix", "abonnement", "produit",
 })
 _PRICE_CONDITIONS = {
-    "annual payment": r"\b(?:billed|paid|payable|facture|paye)\s+(?:annually|yearly|annuellement)|\bannual (?:billing|payment|commitment|contract)\b",
+    "annual payment": r"\b(?:billed|paid|payable|facture|paye)\s+(?:annually|yearly|annuellement)|\bannual (?:billing|payment|commitment|contract)\b|\b(?:facturation|paiement|engagement|contrat)\s+annuel(?:le)?\b",
     "tax excluded": r"\b(?:excluding|excludes|before|hors)\s+(?:vat|tax|taxes|tva)\b",
-    "introductory price": r"\b(?:introductory|introductoire|first (?:month|year)|premier(?:e)? (?:mois|annee))\b",
+    "introductory price": r"\b(?:introductory|introductoire|first (?:month|year)|premier(?:e)? (?:mois|annee)|premiere annee)\b",
     "new customers only": r"\b(?:new customers only|nouveaux clients uniquement)\b",
 }
 
@@ -907,8 +1005,15 @@ def _price_supports(
         ) else "price" if period or unit or subject or (
             context is not None and context.claim_scope == "offer"
         ) else ""
+        uncertain = bool(context and _uncertain_billing(context))
+        confirmed = bool(context and not uncertain and (
+            "annual payment" in conditions
+            or re.search(r"\b(?:billed|paid|payable)\s+monthly\b|\bmonthly (?:billing|payment)\b|"
+                         r"\b(?:facturation|paiement)\s+mensuel(?:le)?\b", fold(terms))
+        ))
         supports.append(PriceSupport(value=amounts[0].normalized, period=period, unit=unit,
-                                     subject=subject, role=role, conditions=conditions))
+                                     subject=subject, role=role, conditions=conditions,
+                                     billing_uncertain=uncertain, billing_confirmed=confirmed))
     return supports
 
 

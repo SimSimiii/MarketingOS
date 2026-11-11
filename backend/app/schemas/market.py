@@ -312,6 +312,8 @@ class JobStatusRead(BaseModel):
     output_tokens: int = 0
     cache_read_tokens: int = 0
     cost_usd: float = 0.0
+    campaign_id: UUID | None = None
+    audience: str = ""
 
     @field_serializer("input_tokens", "output_tokens", "cache_read_tokens")
     def hide_tokens(self, value: int) -> int:
@@ -320,6 +322,15 @@ class JobStatusRead(BaseModel):
     @field_serializer("cost_usd")
     def hide_internal_cost(self, value: float) -> float:
         return 0.0 if get_settings().credit_billing_enabled else value
+
+
+class FirstCampaignRequest(BaseModel):
+    objective: str = Field(min_length=10, max_length=2000)
+
+    @field_validator("objective", mode="before")
+    @classmethod
+    def strip_objective(cls, value: str) -> str:
+        return value.strip() if isinstance(value, str) else value
 
 
 class ScanRequest(BaseModel):

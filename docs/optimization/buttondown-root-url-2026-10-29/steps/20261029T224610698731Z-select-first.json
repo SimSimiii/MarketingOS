@@ -1,0 +1,171 @@
+{
+  "index": 0,
+  "segment": {
+    "name": "A newsletter owner bringing an editor or operations teammate into a formerly solo publishing workflow",
+    "organization": "A newsletter or small publication transitioning from one owner-operator to a multi-person editorial or operations workflow.",
+    "workflow": "Draft, review, edit, manage subscribers, and send issues while separating editorial access from billing, API keys, administration, and final sending authority.",
+    "need": "Role-specific collaboration inside the newsletter system without sharing the owner's credentials or granting every teammate full control.",
+    "buyer_role": "Newsletter owner, publisher, or content lead",
+    "user_role": "Editor, proofreader, contributor, or newsletter operations teammate",
+    "current_alternative": "Google Docs handoffs, emailed drafts, shared credentials, or GitHub pull-request review",
+    "assessment": {
+      "compatibility": "supported",
+      "evidence_strength": "absent",
+      "findability": "verified",
+      "usage_or_purchase": "unknown",
+      "reachability": "venue_identified",
+      "counterevidence_summary": [],
+      "counterevidence": 0,
+      "priority": "hypothesis",
+      "reasons": [
+        "The supplied product truth verifies multi-person management, granular email and sending permissions, immediate revocation, draft review, and an audit trail.",
+        "The Turing Way documents an actual multi-person drafting and review workflow using GitHub and HackMD, supporting the underlying need and current workaround.",
+        "The source does not establish that The Turing Way bought or used Buttondown Teams, so usage or purchase remains unknown.",
+        "Public GitHub newsletter handbooks and repositories are concrete discovery venues for teams with observable review workflows."
+      ],
+      "unknowns": [
+        "Whether prospective teams will pay for the Professional plan or the separately stated Teams add-on is unresolved.",
+        "The corpus does not show a completed purchase of Buttondown Teams by a formerly solo publisher.",
+        "The exact suggestion or tracked-change experience inside Buttondown is not established by the fetched Teams documentation.",
+        "3 unsupported or duplicate quotation(s) discarded."
+      ],
+      "evidence": [
+        {
+          "claim": "The workflow gathers newsletter contributions from multiple community members through a GitHub issue.",
+          "quote": "Create a new GitHub issue where throughout the month you and other community members can suggest news items as a comment.",
+          "url": "https://abikesa.github.io/eric/community-handbook/newsletters/newsletters-process.html",
+          "kind": "example",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-10-29T22:44:52.600440Z"
+        },
+        {
+          "claim": "GitHub branches, draft pull requests, and WIP labels form an observable external review workaround.",
+          "quote": "If working online, please keep the draft mode on for your PR or add “[WIP]” (work in progress) in the title.",
+          "url": "https://abikesa.github.io/eric/community-handbook/newsletters/newsletters-process.html",
+          "kind": "alternative",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-10-29T22:44:52.600440Z"
+        },
+        {
+          "claim": "The public GitHub repository and issue workflow provide a concrete venue for identifying collaborative newsletter teams.",
+          "quote": "Create a new GitHub issue where throughout the month you and other community members can suggest news items as a comment.",
+          "url": "https://abikesa.github.io/eric/community-handbook/newsletters/newsletters-process.html",
+          "kind": "access",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-10-29T22:44:52.600440Z"
+        },
+        {
+          "claim": "Buttondown permits immediate access revocation, matching temporary-contributor and contractor workflows.",
+          "quote": "Select \"Revoke,\" and your teammate’s permissions will update immediately.",
+          "url": "https://docs.buttondown.com/teams",
+          "kind": "example",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-10-29T22:44:53.131862Z"
+        }
+      ]
+    },
+    "kind": "core",
+    "added_by": "cartographer",
+    "who": "Previously solo publishers visibly adding a co-author, editor, proofreader, marketing lead, or operations contractor.",
+    "why_them": "Public newsletter workflows show multi-person review, fact-checking, image review, and approval before publication. Comparable newsletter tools explicitly separate editor and administrator access, supporting the underlying demand for constrained roles.",
+    "trigger": "The first collaborator is hired or invited, or a growing publication needs distinct drafting, subscriber-management, and sending responsibilities.",
+    "pains": [
+      "Drafts are copied between Google Docs, email, GitHub, and the sending platform.",
+      "Shared credentials expose billing, subscriber data, domains, and API keys.",
+      "A reviewer may need to suggest changes without being able to send.",
+      "The owner needs to revoke access promptly when a contractor or volunteer leaves."
+    ],
+    "objection": "The pricing page lists Teams at +$79 per month while separate documentation places it on the Professional plan. That unresolved packaging conflict is material, and a small team may continue using free Google Docs or GitHub review instead.",
+    "angle": "Bring editorial help into the sending workflow while keeping billing, subscriber data, API keys, and the send button under explicit control.",
+    "sophistication": "solution_aware",
+    "fit": 0.0,
+    "basis": "The Turing Way documents a real collaborative process: contributors collect items, draft in GitHub or HackMD, request review, check language and accuracy, approve a pull request, and then publish. This demonstrates the work and the existing handoff alternative, though it does not prove a Buttondown Teams purchase. Buttondown documentation establishes the relevant permissions but leaves plan versus add-on pricing inconsistent.",
+    "population": "unknown",
+    "signals": [
+      "Newsletter documentation names multiple reviewers or approvers.",
+      "Public contributor list shows an editor, proofreader, marketing lead, or operations role.",
+      "Drafts are exchanged through Google Docs, HackMD, email, or pull requests before sending.",
+      "The organization is recruiting or has recently added a content collaborator.",
+      "A security policy discourages shared accounts or requires prompt access revocation."
+    ],
+    "where": [
+      "GitHub community and publication repositories",
+      "Newsletter operator communities",
+      "r/Newsletters",
+      "Independent publisher communities",
+      "Public editorial handbooks and contributor guides"
+    ],
+    "unobvious": false,
+    "researchable": true,
+    "researchability": "high",
+    "researchability_reasons": [
+      "5 useful observable signals and 5 specific research venues.",
+      "The audience is anchored in a concrete workflow or situation.",
+      "A clear trigger narrows the evidence to look for.",
+      "No population basis is stated."
+    ],
+    "definition": {
+      "schema_version": 2,
+      "required_structural_signals": [
+        {
+          "code": "multi_person_newsletter_team",
+          "description": "At least two people participate in drafting, review, subscriber operations, styling, administration, or sending."
+        }
+      ],
+      "required_workflow_signals": [
+        {
+          "code": "pre_send_review_or_role_separation",
+          "description": "The workflow includes editorial review, approval, or a requirement to separate drafting from sending or administration."
+        }
+      ],
+      "required_product_capabilities": [
+        "fact_897eeabdda3d446a",
+        "fact_41eb057ced6dc0e4",
+        "fact_adb91b7c7423cbad",
+        "fact_d540b7d00cd5f4e9",
+        "fact_1e0923f05b5cce82"
+      ],
+      "optional_signals": [
+        {
+          "code": "uses_shared_document_handoff",
+          "description": "Drafts are currently reviewed in a separate shared document or repository."
+        },
+        {
+          "code": "sensitive_settings_separation",
+          "description": "The owner wants collaborators excluded from billing, API keys, domains, or subscriber data."
+        },
+        {
+          "code": "contractor_or_volunteer_access",
+          "description": "Some collaborators require temporary or narrowly scoped access."
+        }
+      ],
+      "hard_disqualifiers": [
+        {
+          "code": "will_not_pay_for_team_access",
+          "description": "The buyer requires in-product collaboration but will not consider the published Teams price or a qualifying plan.",
+          "outcome": "EXCLUDED"
+        },
+        {
+          "code": "team_packaging_unconfirmed",
+          "description": "The buyer cannot proceed until Buttondown reconciles whether Teams is included in Professional or billed as a separate add-on.",
+          "outcome": "UNVERIFIED"
+        }
+      ],
+      "eligible_subsegments": [
+        "Writer plus editor",
+        "Volunteer publication committee",
+        "Small content team",
+        "Newsletter owner plus operations contractor"
+      ],
+      "excluded_subsegments": [
+        "Solo publishers with no review or delegation workflow",
+        "Large enterprises requiring a documented support SLA or identity-management features not established here"
+      ],
+      "max_team_size": null
+    }
+  }
+}

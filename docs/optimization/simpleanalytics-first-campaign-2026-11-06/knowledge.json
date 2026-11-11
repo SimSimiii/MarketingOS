@@ -1,0 +1,1618 @@
+{
+  "version": 1,
+  "compiled_at": "2026-11-05T23:37:53.644294Z",
+  "evidence_count": 34,
+  "segments": [
+    "A marketing/analytics lead second-guessing a GA4 traffic drop since the consent banner went up",
+    "A solo or small-site owner who finds GA4 overbuilt for what they actually check",
+    "An EU-based founder who doesn't want a cookie consent banner on their own site"
+  ],
+  "gaps": [],
+  "voice_learned": true,
+  "artifacts": {
+    "business": {
+      "company_name": "Simple Analytics",
+      "what_it_does": "A privacy-friendly website analytics tool that measures pageviews and visits without cookies or personal data, run either as a standalone replacement for Google Analytics or alongside GA4 to capture the traffic GA4 misses when visitors reject consent.",
+      "category": "Privacy-friendly web analytics software",
+      "business_model": "Subscription (self-serve monthly/annual plans priced by pageview volume and per extra user, plus a free tier) alongside custom-priced, sales-led Enterprise contracts.",
+      "facts": [
+        {
+          "statement": "31k+ users rely on Simple Analytics.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/customers",
+            "quote": "31k+ users rely on Simple Analytics.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "The homepage states 31,300+ users.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/",
+            "quote": "Users\n31,300+",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "In a comparison run by customer Hebban, Simple Analytics counted about 431,000 more pageviews than GA4 (2,031,468 vs ≈1.6M), 27% more.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/customers",
+            "quote": "Simple Analytics counted about 431,000 more pageviews, 27% more than GA4. The gap can come from consent rejection, blocking or differences in implementation.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "case_study"
+          }
+        },
+        {
+          "statement": "Simple Analytics does not collect cookies, persistent identifiers, or cross-site tracking data.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/security",
+            "quote": "No cookies or persistent identifiers\n- No cross-site tracking",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "All analytics data is hosted and processed in the Netherlands (EU), on infrastructure from Worldstream and Leaseweb.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/security",
+            "quote": "Data stored in the Netherlands (EU)\n- Hosted on infrastructure from Worldstream and Leaseweb",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "SOC 2 Type II certification is in progress, not yet completed.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/security",
+            "quote": "We are working toward SOC 2 Type II certification",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "IP addresses are never stored, collected, or hashed; even server logs replace IPs with zeros.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/data-collection",
+            "quote": "IP addresses are dropped from every single request. We don't save, collect, or hash them. Even in server logs, IPs are replaced with zeros before being stored.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "Country is derived from the visitor's browser timezone, not their IP address.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/data-collection",
+            "quote": "Country is derived from the visitor's browser time zone (IANA time zone database), not their IP address, so VPNs don't affect it.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "Account data is deleted after account deletion, fully removed after 90 days.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/security",
+            "quote": "Data deleted after account deletion (fully removed after 90 days)",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "The Free plan includes 1 user, 5 websites, and 1 month of history, and requires displaying a badge.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/pricing",
+            "quote": "Free for hobby sites\n\n1 user  5 websites\n\n1 month history  The Free plan keeps the latest month of analytics data in your dashboard.  Badge required",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "The free plan offers unlimited pageviews, subject to a fair use policy.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/pricing",
+            "quote": "Our free plan offers unlimited pageviews. This allows you to track as much traffic as your website gets without any restrictions. However, we have a fair use policy to make sure our servers run smoothly for all users.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "The self-serve dashboard plan starts at €20/month for an estimated 100k pageviews, with pricing scaling up to 2.5M pageviews on the slider.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/pricing",
+            "quote": "A simple dashboard to understand your website traffic\n\n€20/month\n\nEstimate your monthly pageviews\n\n100k\n\n100k100k pageviews 2.5M",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "The paid self-serve plan includes 1 user, with extra users at +€20/mo per extra user.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/pricing",
+            "quote": "Includes 1 user  +€20/mo per extra user",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "Paying annually gives 2 months free compared to monthly billing.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/pricing",
+            "quote": "Annually\n\n2 months free",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "Accepted payment methods are Credit Card, Debit Card, Bitcoin (+10% and yearly only), Apple Pay, and Google Pay; bills from €500 can be paid by bank transfer with an additional 10% fee.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/pricing",
+            "quote": "We accept Credit Card, Debit Card, Bitcoin +10% & yearly, Apple Pay, and Google Pay as payment methods for all our paid plans. You can pay in Euros, US Dollars or British Pounds. Bills from €500 can be paid via bank transfers and cost an additional 10% in banking and service fees.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "Enterprise pricing is custom and discussed on a call.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/pricing",
+            "quote": "Custom pricing · Discuss your requirements on the call",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "There is both a 14-day self-serve trial and a separate, assisted 30-day free proof of concept run alongside GA4.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/pricing",
+            "quote": "The 14-day self-serve trial lets you explore Simple Analytics on your own. The free 30-day proof of concept is an assisted evaluation alongside GA4. Book a demo to discuss your measurement questions and agree on what to compare.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "During the 30-day proof of concept, Simple Analytics is run alongside GA4 (GA4 and the consent banner stay in place) and results are compared together afterward.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/pricing",
+            "quote": "First, we discuss your GA4 setup and define the measurement question you want answered. Next, you run Simple Analytics alongside GA4 for 30 days, keeping GA4 and your consent banner in place.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "UTM tracking covers utm_source, utm_medium, utm_campaign, and utm_content; utm_term is deprecated because it may contain user data.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/data-collection",
+            "quote": "We track utm_source, utm_medium, utm_campaign, and utm_content. The utm_term parameter is deprecated as it may contain user data.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "Scroll depth is recorded in 5% increments.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/data-collection",
+            "quote": "We record how far a visitor scrolls on each page, stored as a percentage in 5% increments.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "Simple Analytics has a Capterra rating of 4.8.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/",
+            "quote": "Capterra\n4.8",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "The company is EU-owned, based in Amsterdam.",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/",
+            "quote": "EU owned\n\nAmsterdam",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "Enterprise customers and larger teams primarily use Simple Analytics as a cookieless supplement to GA4, not a wholesale replacement for it, since GA4 is explicitly described as still running reporting, audiences and conversions.",
+          "grounding": "inferred",
+          "provenance": null
+        }
+      ],
+      "vocabulary": [
+        "pageviews",
+        "unique visits",
+        "consent banner",
+        "cookieless",
+        "proof of concept",
+        "observed traffic",
+        "Consent Mode",
+        "data points",
+        "fair use policy",
+        "scroll depth",
+        "customer support code",
+        "subprocessors",
+        "badge required",
+        "time on page",
+        "data processing agreement"
+      ]
+    },
+    "offer": {
+      "plans": [
+        {
+          "name": "Free",
+          "price": "Free forever",
+          "includes": [
+            "Free for hobby sites",
+            "1 user",
+            "5 websites",
+            "1 month history",
+            "Badge required",
+            "Unlimited pageviews, subject to a fair use policy"
+          ],
+          "id": "free",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/pricing",
+            "quote": "Free for hobby sites\n\n1 user  5 websites\n\n1 month history ... Badge required",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "name": "Self-serve (paid dashboard plan)",
+          "price": "€20/month (estimated at 100k pageviews; scales up to 2.5M pageviews on the pricing slider)",
+          "includes": [
+            "See your website traffic in seconds",
+            "One-page dashboard, no configuration",
+            "No cookies, no consent banners, no personal data",
+            "EU-hosted and compliant by design",
+            "Includes 1 user, +€20/mo per extra user",
+            "2 months free when paid annually"
+          ],
+          "id": "self_serve",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/pricing",
+            "quote": "A simple dashboard to understand your website traffic\n\n€20/month\n\nEstimate your monthly pageviews\n\n100k\n\n100k100k pageviews 2.5M",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "name": "Enterprise",
+          "price": "custom",
+          "includes": [
+            "Observed traffic measurement without relying on Consent Mode modeling",
+            "Campaign comparisons against GA4-reported traffic",
+            "API & BI access for existing reporting tools",
+            "Diagnosing whether traffic is falling or GA4 is measuring less",
+            "Free 30-day proof of concept, including support for proxies and custom domains"
+          ],
+          "id": "enterprise",
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/pricing",
+            "quote": "Custom pricing · Discuss your requirements on the call",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        }
+      ],
+      "free_entry": "Free plan (free forever, no credit card required, cancel anytime) for hobby sites — 1 user, 5 websites, 1 month history, badge required. Separately, a 14-day self-serve trial, and a free 30-day assisted proof of concept run alongside GA4 for Enterprise evaluation.",
+      "guarantees": [],
+      "calls_to_action": [
+        {
+          "label": "Start for free",
+          "intent": "self-serve signup",
+          "url": "/signup",
+          "id": "start_free",
+          "evidence_ids": [],
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/pricing",
+            "quote": "Start for free",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "label": "Book a demo",
+          "intent": "book-a-demo for Enterprise / GA4 comparison",
+          "url": "/demo",
+          "id": "book_demo",
+          "evidence_ids": [],
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/",
+            "quote": "Book a demo",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "label": "View live dashboard",
+          "intent": "see a live example dashboard",
+          "url": "https://dashboard.simpleanalytics.com/simpleanalytics.com?from=landing",
+          "id": "view_live_dashboard",
+          "evidence_ids": [],
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/",
+            "quote": "View live dashboard",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "label": "Open contact form",
+          "intent": "contact support/sales for security or compliance questions",
+          "url": "https://dashboard.simpleanalytics.com/contact",
+          "id": "open_contact_form",
+          "evidence_ids": [],
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/security",
+            "quote": "Open contact form",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "label": "Read the Hebban comparison",
+          "intent": "read a customer case study comparing GA4 vs Simple Analytics",
+          "url": "/blog/you-are-missing-20-of-your-website-data-with-ga4",
+          "id": "read_hebban_story",
+          "evidence_ids": [],
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/customers",
+            "quote": "Read the Hebban comparison →",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "label": "Read the VertoDigital story",
+          "intent": "read a customer case study",
+          "url": "/customers/verto-digital",
+          "id": "read_verto_story",
+          "evidence_ids": [],
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/customers",
+            "quote": "Read the VertoDigital story →",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "label": "Learn more about our data collection",
+          "intent": "read the data collection policy",
+          "url": "/data-collection",
+          "id": "learn_data_collection",
+          "evidence_ids": [],
+          "provenance": {
+            "source": "https://www.simpleanalytics.com/security",
+            "quote": "Learn more about our data collection",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        }
+      ],
+      "purchase_motion": "Self-serve signup (Start for free) for the Free and paid self-serve dashboard plans; book-a-demo / sales-led for Enterprise, which runs through a discussed, free 30-day proof of concept alongside GA4 before custom pricing is agreed."
+    },
+    "evidence": {
+      "entries": [
+        {
+          "id": "E1",
+          "kind": "metric",
+          "claim": "31k+ users rely on Simple Analytics.",
+          "verbatim": "31k+ users rely on Simple Analytics.",
+          "source": "https://www.simpleanalytics.com/customers",
+          "document_id": "43517055-9f28-4bff-9f26-a5b9e210b86a",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "market",
+          "context": {
+            "subject": "Simple Analytics",
+            "source_kind": "vendor_statement",
+            "claim_scope": "unknown",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "43517055-9f28-4bff-9f26-a5b9e210b86a",
+              "source": "https://www.simpleanalytics.com/customers",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E2",
+          "kind": "customer",
+          "claim": "Simple Analytics is trusted by teams at Bloomberg, Michelin, Hyundai, GOV.UK, Polkadot, Bank of England, Sketch, Excalidraw and Nomads.",
+          "verbatim": "Trusted by teams at Bloomberg Michelin Hyundai GOV.UK Polkadot Bank of England Sketch Excalidraw Nomads",
+          "source": "https://www.simpleanalytics.com/customers",
+          "document_id": "43517055-9f28-4bff-9f26-a5b9e210b86a",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "proof",
+          "context": {
+            "subject": "Simple Analytics customers",
+            "source_kind": "vendor_statement",
+            "claim_scope": "unknown",
+            "conditions": "Listed under 'Enterprise and agencies'",
+            "temporal_scope": "",
+            "limitations": "Logo list only, no attributed outcome per customer",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "43517055-9f28-4bff-9f26-a5b9e210b86a",
+              "source": "https://www.simpleanalytics.com/customers",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E3",
+          "kind": "metric",
+          "claim": "Hebban found Simple Analytics counted about 431,000 more pageviews than GA4, 27% more, when run side by side, though the gap can come from consent rejection, blocking or implementation differences.",
+          "verbatim": "Simple Analytics counted about 431,000 more pageviews, 27% more than GA4. The gap can come from consent rejection, blocking or differences in implementation.",
+          "source": "https://www.simpleanalytics.com/customers",
+          "document_id": "43517055-9f28-4bff-9f26-a5b9e210b86a",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof",
+          "context": {
+            "subject": "Hebban",
+            "source_kind": "customer_statement",
+            "claim_scope": "customer_outcome",
+            "conditions": "Hebban ran Simple Analytics next to GA4 and compared reported pageview totals on its own site",
+            "temporal_scope": "",
+            "limitations": "The gap can come from consent rejection, blocking or differences in implementation",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "43517055-9f28-4bff-9f26-a5b9e210b86a",
+              "source": "https://www.simpleanalytics.com/customers",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E4",
+          "kind": "metric",
+          "claim": "For Hebban, GA4 reported about 1.6M page_view events versus 2,031,468 Simple Analytics pageviews, a difference of about 431,000.",
+          "verbatim": "GA4 page\\_view events : ≈1.6M Simple Analytics pageviews : 2,031,468 Difference : ≈431,000",
+          "source": "https://www.simpleanalytics.com/customers",
+          "document_id": "43517055-9f28-4bff-9f26-a5b9e210b86a",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof",
+          "context": {
+            "subject": "Hebban",
+            "source_kind": "customer_statement",
+            "claim_scope": "customer_outcome",
+            "conditions": "Comparison of GA4 page_view events against Simple Analytics pageviews for Hebban's site",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "43517055-9f28-4bff-9f26-a5b9e210b86a",
+              "source": "https://www.simpleanalytics.com/customers",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E5",
+          "kind": "customer",
+          "claim": "VertoDigital is building a check comparing demo requests, form submissions and downloads between Simple Analytics and GA4 on its own website to inform its client work, with results pending once the comparison has run.",
+          "verbatim": "VertoDigital is building a check that compares demo requests, form submissions and downloads in Simple Analytics and GA4 on its own website, to inform its client work. Results follow once the comparison has run.",
+          "source": "https://www.simpleanalytics.com/customers",
+          "document_id": "43517055-9f28-4bff-9f26-a5b9e210b86a",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "proof",
+          "context": {
+            "subject": "VertoDigital",
+            "source_kind": "customer_statement",
+            "claim_scope": "customer_outcome",
+            "conditions": "Comparing demo requests, form submissions and downloads on its own website to inform client work",
+            "temporal_scope": "In progress",
+            "limitations": "No measured result reported yet; comparison has not run",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "43517055-9f28-4bff-9f26-a5b9e210b86a",
+              "source": "https://www.simpleanalytics.com/customers",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E6",
+          "kind": "price",
+          "claim": "Buyers can run Simple Analytics alongside GA4 for 30 days free, with Simple Analytics helping set it up and compare the numbers.",
+          "verbatim": "Run Simple Analytics alongside GA4 for 30 days, free. We help you set it up and compare the numbers.",
+          "source": "https://www.simpleanalytics.com/customers",
+          "document_id": "43517055-9f28-4bff-9f26-a5b9e210b86a",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial",
+          "context": {
+            "subject": "Simple Analytics",
+            "source_kind": "vendor_statement",
+            "claim_scope": "offer",
+            "conditions": "Run alongside GA4; Simple Analytics assists with setup and comparison",
+            "temporal_scope": "30 days",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "43517055-9f28-4bff-9f26-a5b9e210b86a",
+              "source": "https://www.simpleanalytics.com/customers",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E7",
+          "kind": "price",
+          "claim": "Smaller websites can start Simple Analytics for free.",
+          "verbatim": "For smaller websites, [start for free](/signup).",
+          "source": "https://www.simpleanalytics.com/customers",
+          "document_id": "43517055-9f28-4bff-9f26-a5b9e210b86a",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "commercial",
+          "context": {
+            "subject": "Simple Analytics",
+            "source_kind": "vendor_statement",
+            "claim_scope": "offer",
+            "conditions": "Applies to smaller websites",
+            "temporal_scope": "",
+            "limitations": "'Smaller' is not quantified",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "43517055-9f28-4bff-9f26-a5b9e210b86a",
+              "source": "https://www.simpleanalytics.com/customers",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E8",
+          "kind": "guarantee",
+          "claim": "Simple Analytics uses no cookies, no trackers, and requires no consent from visitors.",
+          "verbatim": "No cookies. No trackers. **No consent required from your visitors**.",
+          "source": "https://docs.simpleanalytics.com",
+          "document_id": "d41716e6-3d23-4a84-9be9-280ee910c377",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust",
+          "context": {
+            "subject": "Simple Analytics",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "d41716e6-3d23-4a84-9be9-280ee910c377",
+              "source": "https://docs.simpleanalytics.com",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E9",
+          "kind": "feature",
+          "claim": "Simple Analytics is built and hosted in the EU.",
+          "verbatim": "Built and hosted in the EU 🇪🇺, we believe in an internet that is friendly to website visitors.",
+          "source": "https://docs.simpleanalytics.com",
+          "document_id": "d41716e6-3d23-4a84-9be9-280ee910c377",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust",
+          "context": {
+            "subject": "Simple Analytics",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "d41716e6-3d23-4a84-9be9-280ee910c377",
+              "source": "https://docs.simpleanalytics.com",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E10",
+          "kind": "integration",
+          "claim": "Simple Analytics supports importing Google Analytics data.",
+          "verbatim": "[Import your Google Analytics data](https://docs.simpleanalytics.com/import-google-analytics-data)",
+          "source": "https://docs.simpleanalytics.com",
+          "document_id": "d41716e6-3d23-4a84-9be9-280ee910c377",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "technical",
+          "context": {
+            "subject": "Simple Analytics",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "d41716e6-3d23-4a84-9be9-280ee910c377",
+              "source": "https://docs.simpleanalytics.com",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E11",
+          "kind": "testimonial",
+          "claim": "Darien Overland said that 99% of users just want to see how many pageviews they get.",
+          "verbatim": "“99% of us just want to see how many pageviews we get.”",
+          "source": "https://www.simpleanalytics.com/customers",
+          "document_id": "43517055-9f28-4bff-9f26-a5b9e210b86a",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "proof",
+          "context": {
+            "subject": "Darien Overland",
+            "source_kind": "customer_statement",
+            "claim_scope": "unknown",
+            "conditions": "Niche website customer",
+            "temporal_scope": "",
+            "limitations": "Vague opinion, not a measured outcome",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "43517055-9f28-4bff-9f26-a5b9e210b86a",
+              "source": "https://www.simpleanalytics.com/customers",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E12",
+          "kind": "customer",
+          "claim": "Awesome Stuff to Buy switched from Google Analytics and uses the Simple Analytics API for the numbers that matter to it.",
+          "verbatim": "Switched from Google Analytics and uses the API for the numbers that matter.",
+          "source": "https://www.simpleanalytics.com/customers",
+          "document_id": "43517055-9f28-4bff-9f26-a5b9e210b86a",
+          "strength": "weak",
+          "user_attested": false,
+          "category": "proof",
+          "context": {
+            "subject": "Awesome Stuff to Buy",
+            "source_kind": "customer_statement",
+            "claim_scope": "customer_outcome",
+            "conditions": "Affiliate website",
+            "temporal_scope": "",
+            "limitations": "No specific metric given for API usage",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "43517055-9f28-4bff-9f26-a5b9e210b86a",
+              "source": "https://www.simpleanalytics.com/customers",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E13",
+          "kind": "price",
+          "claim": "The self-serve plan ('A simple dashboard to understand your website traffic') costs €20/month.",
+          "verbatim": "A simple dashboard to understand your website traffic €20/month",
+          "source": "https://www.simpleanalytics.com/pricing",
+          "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial",
+          "context": {
+            "subject": "Simple Analytics self-serve plan",
+            "source_kind": "official_documentation",
+            "claim_scope": "offer",
+            "conditions": "Monthly billing; annual billing offers 2 months free",
+            "temporal_scope": "",
+            "limitations": "Price shown is base tier; usage-based pricing scales with estimated monthly pageviews",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+              "source": "https://www.simpleanalytics.com/pricing",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E14",
+          "kind": "price",
+          "claim": "The self-serve plan includes 1 user, with each additional user costing +€20/month.",
+          "verbatim": "Includes 1 user +€20/mo per extra user",
+          "source": "https://www.simpleanalytics.com/pricing",
+          "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial",
+          "context": {
+            "subject": "Simple Analytics self-serve plan",
+            "source_kind": "official_documentation",
+            "claim_scope": "offer",
+            "conditions": "Per-seat pricing on top of base plan price",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+              "source": "https://www.simpleanalytics.com/pricing",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E15",
+          "kind": "price",
+          "claim": "The Free plan is limited to 1 user and 5 websites.",
+          "verbatim": "Free for hobby sites 1 user 5 websites",
+          "source": "https://www.simpleanalytics.com/pricing",
+          "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial",
+          "context": {
+            "subject": "Simple Analytics Free plan",
+            "source_kind": "official_documentation",
+            "claim_scope": "offer",
+            "conditions": "Positioned for hobby sites",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+              "source": "https://www.simpleanalytics.com/pricing",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E16",
+          "kind": "feature",
+          "claim": "The Free plan keeps only the latest 1 month of analytics data in the dashboard, and requires a badge.",
+          "verbatim": "1 month history The Free plan keeps the latest month of analytics data in your dashboard. [Badge required](/badges)",
+          "source": "https://www.simpleanalytics.com/pricing",
+          "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial",
+          "context": {
+            "subject": "Simple Analytics Free plan",
+            "source_kind": "official_documentation",
+            "claim_scope": "offer",
+            "conditions": "Requires displaying a badge on the site",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+              "source": "https://www.simpleanalytics.com/pricing",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E17",
+          "kind": "feature",
+          "claim": "Simple Analytics does not use cookies, consent banners, or collect personal data.",
+          "verbatim": "No cookies, no consent banners, no personal data",
+          "source": "https://www.simpleanalytics.com/pricing",
+          "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product",
+          "context": {
+            "subject": "Simple Analytics",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+              "source": "https://www.simpleanalytics.com/pricing",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E18",
+          "kind": "feature",
+          "claim": "Simple Analytics is EU-hosted and compliant by design.",
+          "verbatim": "EU-hosted and compliant by design",
+          "source": "https://www.simpleanalytics.com/pricing",
+          "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust",
+          "context": {
+            "subject": "Simple Analytics",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+              "source": "https://www.simpleanalytics.com/pricing",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E19",
+          "kind": "certification",
+          "claim": "Simple Analytics is GDPR compliant from installation and satisfies the GDPR, the ePrivacy Directive, the UK GDPR, and the PECR because it only processes non-personal data.",
+          "verbatim": "Is Simple Analytics GDPR-compliant? Simple Analytics is GDPR compliant from installation. Because it only processes non-personal data, it can satisfy the requirements of the strictest privacy regulation, including the GDPR, the ePrivacy Directive, the UK GDPR, and the PECR. For more information [check our documentation](https://docs.simpleanalytics.com/compliance).",
+          "source": "https://www.simpleanalytics.com/pricing",
+          "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust",
+          "context": {
+            "subject": "Simple Analytics",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+              "source": "https://www.simpleanalytics.com/pricing",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E20",
+          "kind": "customer",
+          "claim": "Simple Analytics is used by named customers including Bloomberg, Michelin, Hyundai, GOV.UK, Polkadot, Bank of England, Sketch, Excalidraw, and Nomads.",
+          "verbatim": "Bloomberg Michelin Hyundai GOV.UK Polkadot Bank of England Sketch Excalidraw Nomads",
+          "source": "https://www.simpleanalytics.com/pricing",
+          "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "proof",
+          "context": {
+            "subject": "Simple Analytics Enterprise",
+            "source_kind": "vendor_statement",
+            "claim_scope": "customer_outcome",
+            "conditions": "Listed on Enterprise plan page as customer logos",
+            "temporal_scope": "",
+            "limitations": "No specifics on how each named organization uses the product or outcomes achieved",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "fd779a3f-fe5e-4e96-9fba-f8da81aa403c",
+              "source": "https://www.simpleanalytics.com/",
+              "source_type": "website"
+            },
+            {
+              "document_id": "43517055-9f28-4bff-9f26-a5b9e210b86a",
+              "source": "https://www.simpleanalytics.com/customers",
+              "source_type": "website"
+            },
+            {
+              "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+              "source": "https://www.simpleanalytics.com/pricing",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E21",
+          "kind": "guarantee",
+          "claim": "Enterprise prospects can test Simple Analytics on their own website free for 30 days.",
+          "verbatim": "Test it on your own website. Free for 30 days.",
+          "source": "https://www.simpleanalytics.com/pricing",
+          "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial",
+          "context": {
+            "subject": "Simple Analytics Enterprise proof of concept",
+            "source_kind": "official_documentation",
+            "claim_scope": "offer",
+            "conditions": "Assisted evaluation run alongside GA4, booked via demo",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+              "source": "https://www.simpleanalytics.com/pricing",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E22",
+          "kind": "guarantee",
+          "claim": "Every signup starts a 14-day free trial with no credit card required, regardless of plan chosen.",
+          "verbatim": "How does the 14-day self-serve trial work? When you sign-up, your 14-day free trial (no credit card required) starts. No matter which plan you choose. During these 14 days, you can use advanced features without any restrictions. After the trial period, we'll ask you to choose a plan to continue using Simple Analytics. If you choose our paid plan, we need you to add your payment details. You can switch to any plan, provided your usage remains within its limits.",
+          "source": "https://www.simpleanalytics.com/pricing",
+          "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial",
+          "context": {
+            "subject": "Simple Analytics self-serve signup",
+            "source_kind": "official_documentation",
+            "claim_scope": "offer",
+            "conditions": "Applies to self-serve signup across all plans",
+            "temporal_scope": "",
+            "limitations": "After trial a plan selection is required to continue",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+              "source": "https://www.simpleanalytics.com/pricing",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E23",
+          "kind": "guarantee",
+          "claim": "Subscriptions can be cancelled at any moment, with access to the account and data retained until the end of the paid period.",
+          "verbatim": "Can I cancel anytime? Yes. You can cancel your subscription at any moment. You will still have access to your account and data until the end of the period you paid for.",
+          "source": "https://www.simpleanalytics.com/pricing",
+          "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial",
+          "context": {
+            "subject": "Simple Analytics paid plans",
+            "source_kind": "official_documentation",
+            "claim_scope": "offer",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+              "source": "https://www.simpleanalytics.com/pricing",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E24",
+          "kind": "feature",
+          "claim": "Website data is stored in the EU with primary infrastructure in the Netherlands, and only goes to a non-EU provider when the customer opts into a feature requiring it, such as the AI assistant.",
+          "verbatim": "Your website data is stored in the EU, with our primary infrastructure in the Netherlands. It only goes to a provider outside the EU when you opt in to a feature that needs it, like the AI assistant.",
+          "source": "https://www.simpleanalytics.com/pricing",
+          "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust",
+          "context": {
+            "subject": "Simple Analytics data storage",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "Non-EU transfer only occurs if customer opts into AI assistant feature",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+              "source": "https://www.simpleanalytics.com/pricing",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E25",
+          "kind": "feature",
+          "claim": "Simple Analytics never sets any cookies or uses similar technologies like local storage, session cookies, or fingerprinting, which means the site doesn't need a cookie consent banner.",
+          "verbatim": "We never set any cookies or use similar technologies like local storage, session cookies, or fingerprinting. This means you don't need a cookie consent banner.",
+          "source": "https://www.simpleanalytics.com/data-collection",
+          "document_id": "04413ee1-f52a-4a0c-94ec-c56402d4b28a",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product",
+          "context": {
+            "subject": "Simple Analytics",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "04413ee1-f52a-4a0c-94ec-c56402d4b28a",
+              "source": "https://www.simpleanalytics.com/data-collection",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E26",
+          "kind": "feature",
+          "claim": "IP addresses are dropped from every request and are never saved, collected, or hashed; even in server logs, IPs are replaced with zeros before being stored.",
+          "verbatim": "IP addresses are dropped from every single request. We don't save, collect, or hash them. Even in server logs, IPs are replaced with zeros before being stored.",
+          "source": "https://www.simpleanalytics.com/data-collection",
+          "document_id": "04413ee1-f52a-4a0c-94ec-c56402d4b28a",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust",
+          "context": {
+            "subject": "Simple Analytics",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "04413ee1-f52a-4a0c-94ec-c56402d4b28a",
+              "source": "https://www.simpleanalytics.com/data-collection",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E27",
+          "kind": "feature",
+          "claim": "Country is derived from the visitor's browser time zone (IANA time zone database) rather than their IP address, so VPNs don't affect it.",
+          "verbatim": "Country is derived from the visitor's browser time zone (IANA time zone database), not their IP address, so VPNs don't affect it.",
+          "source": "https://www.simpleanalytics.com/data-collection",
+          "document_id": "04413ee1-f52a-4a0c-94ec-c56402d4b28a",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product",
+          "context": {
+            "subject": "Simple Analytics",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "A few time zones are missing from the mapping or are shared across borders, so some visitors may be tagged under the wrong country; detection is limited to country-level and can't determine city or region.",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "04413ee1-f52a-4a0c-94ec-c56402d4b28a",
+              "source": "https://www.simpleanalytics.com/data-collection",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E28",
+          "kind": "feature",
+          "claim": "User agents are anonymized by truncating version numbers (e.g. Chrome/78.0.3904.108 becomes Chrome/78.0.0.0) and stripping identifiers like Facebook tracking data.",
+          "verbatim": "User agents are anonymized by truncating version numbers (e.g. Chrome/78.0.3904.108 becomes Chrome/78.0.0.0) and stripping identifiers like Facebook tracking data.",
+          "source": "https://www.simpleanalytics.com/data-collection",
+          "document_id": "04413ee1-f52a-4a0c-94ec-c56402d4b28a",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical",
+          "context": {
+            "subject": "Simple Analytics",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "Used only for aggregate OS, browser, and device type stats, never for fingerprinting.",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "04413ee1-f52a-4a0c-94ec-c56402d4b28a",
+              "source": "https://www.simpleanalytics.com/data-collection",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E29",
+          "kind": "feature",
+          "claim": "Simple Analytics records how far a visitor scrolls on each page, stored as a percentage in 5% increments.",
+          "verbatim": "We record how far a visitor scrolls on each page, stored as a percentage in 5% increments.",
+          "source": "https://www.simpleanalytics.com/data-collection",
+          "document_id": "04413ee1-f52a-4a0c-94ec-c56402d4b28a",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product",
+          "context": {
+            "subject": "Simple Analytics",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "04413ee1-f52a-4a0c-94ec-c56402d4b28a",
+              "source": "https://www.simpleanalytics.com/data-collection",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E30",
+          "kind": "feature",
+          "claim": "Simple Analytics measures how many seconds a page is viewed, and if the page is hidden (e.g. the user switches tabs) those seconds are not counted.",
+          "verbatim": "We measure how many seconds a page is viewed. If the page is hidden (e.g. the user switches tabs), those seconds are not counted.",
+          "source": "https://www.simpleanalytics.com/data-collection",
+          "document_id": "04413ee1-f52a-4a0c-94ec-c56402d4b28a",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product",
+          "context": {
+            "subject": "Simple Analytics",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "04413ee1-f52a-4a0c-94ec-c56402d4b28a",
+              "source": "https://www.simpleanalytics.com/data-collection",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E31",
+          "kind": "feature",
+          "claim": "Simple Analytics collects the URL of each page visited but only stores the protocol, hostname, and pathname, with query parameters and fragments stripped.",
+          "verbatim": "We collect the URL of each page visited, but only store the protocol, hostname, and pathname. Query parameters and fragments are stripped.",
+          "source": "https://www.simpleanalytics.com/data-collection",
+          "document_id": "04413ee1-f52a-4a0c-94ec-c56402d4b28a",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product",
+          "context": {
+            "subject": "Simple Analytics",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "04413ee1-f52a-4a0c-94ec-c56402d4b28a",
+              "source": "https://www.simpleanalytics.com/data-collection",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E32",
+          "kind": "feature",
+          "claim": "All analytics data is processed in the Netherlands.",
+          "verbatim": "All analytics data is processed in the Netherlands",
+          "source": "https://www.simpleanalytics.com/security",
+          "document_id": "11d2773f-e76c-43d5-881e-d552e3e0ecb4",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust",
+          "context": {
+            "subject": "Simple Analytics",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "11d2773f-e76c-43d5-881e-d552e3e0ecb4",
+              "source": "https://www.simpleanalytics.com/security",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E33",
+          "kind": "certification",
+          "claim": "Simple Analytics is working toward SOC 2 Type II certification (not yet certified).",
+          "verbatim": "We are working toward SOC 2 Type II certification",
+          "source": "https://www.simpleanalytics.com/security",
+          "document_id": "11d2773f-e76c-43d5-881e-d552e3e0ecb4",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "trust",
+          "context": {
+            "subject": "Simple Analytics",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "In progress, not yet achieved.",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "11d2773f-e76c-43d5-881e-d552e3e0ecb4",
+              "source": "https://www.simpleanalytics.com/security",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E34",
+          "kind": "integration",
+          "claim": "Simple Analytics is hosted on infrastructure from Worldstream and Leaseweb.",
+          "verbatim": "Hosted on infrastructure from Worldstream and Leaseweb",
+          "source": "https://www.simpleanalytics.com/security",
+          "document_id": "11d2773f-e76c-43d5-881e-d552e3e0ecb4",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical",
+          "context": {
+            "subject": "Simple Analytics",
+            "source_kind": "vendor_statement",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "11d2773f-e76c-43d5-881e-d552e3e0ecb4",
+              "source": "https://www.simpleanalytics.com/security",
+              "source_type": "website"
+            }
+          ]
+        }
+      ]
+    },
+    "voice": {
+      "learned": true,
+      "tone": "Plain and factual, allergic to hype. Claims lean on specific numbers (431,000 more pageviews, 27%, 30 days) rather than adjectives, and privacy/simplicity are treated as the default, not a selling point to oversell.",
+      "rhythm": "Short declarative sentences, often just two per paragraph: state the fact, then state the consequence or next step. Headers carry the setup; the sentence underneath does the explaining in one or two breaths.",
+      "person": "Writes as \"we\" for the company's own actions (what we collect, what we help with) and refers to the product by its own name, \"Simple Analytics,\" in third person when narrating what it does or what a customer did with it. No individual signer appears in the material.",
+      "greetings": [],
+      "sign_offs": [],
+      "exemplars": [
+        "Run Simple Analytics alongside GA4 for 30 days, free. We help you set it up and compare the numbers.",
+        "Hebban ran Simple Analytics next to GA4 and compared the reported pageview totals. Simple Analytics counted about 431,000 more pageviews, 27% more than GA4. The gap can come from consent rejection, blocking or differences in implementation.",
+        "We don't collect, store, or process personal data. That fundamentally reduces risk.",
+        "We retain data only as long as necessary to provide our service. Customers have full control and can export or delete their data at any time.",
+        "VertoDigital is building a check that compares demo requests, form submissions and downloads in Simple Analytics and GA4 on its own website, to inform its client work. Results follow once the comparison has run."
+      ],
+      "prefer_words": [
+        "simple",
+        "privacy",
+        "GA4",
+        "consent",
+        "compare",
+        "data"
+      ],
+      "avoid_words": []
+    },
+    "audience": {
+      "segments": [
+        {
+          "name": "A marketing/analytics lead second-guessing a GA4 traffic drop since the consent banner went up",
+          "situation": "Owns the traffic report that gets forwarded to leadership, still runs GA4 and the consent banner day to day, and has started to doubt whether a recent dip in reported numbers is a real drop in visitors or just visitors rejecting the consent banner. Has no independent count to check the gap against, so the doubt sits unresolved every time the report goes out.",
+          "situation_grounding": "inferred",
+          "situation_provenance": [],
+          "job_to_be_done": "Be able to tell leadership, with confidence, whether the business is actually losing visitors or just losing visibility into them, instead of guessing when asked why traffic looks down.",
+          "trigger": "GA4's reported traffic dropped or stopped matching other signals after a consent banner or Consent Mode change, and someone upstream asked why.",
+          "sophistication": "solution_aware",
+          "pains": [
+            {
+              "statement": "For one customer, Hebban, running Simple Analytics next to GA4 showed about 431,000 more pageviews than GA4 reported — 27% more — a gap the company attributes to consent rejection, blocking, or implementation differences rather than fewer real visitors.",
+              "grounding": "vendor_claim",
+              "provenance": {
+                "source": "https://www.simpleanalytics.com/customers",
+                "quote": "Simple Analytics counted about 431,000 more pageviews, 27% more than GA4. The gap can come from consent rejection, blocking or differences in implementation.",
+                "document_id": null,
+                "evidence_id": "E3",
+                "source_kind": "vendor_copy"
+              }
+            },
+            {
+              "statement": "The Enterprise plan is pitched around exactly this uncertainty: distinguishing whether traffic is genuinely falling or GA4 is simply measuring less of it.",
+              "grounding": "inferred",
+              "provenance": {
+                "source": "Simple Analytics plans data (Enterprise plan feature list)",
+                "quote": "Diagnosing whether traffic is falling or GA4 is measuring less",
+                "document_id": null,
+                "evidence_id": "",
+                "source_kind": "vendor_copy"
+              }
+            },
+            {
+              "statement": "VertoDigital is currently building its own comparison of demo requests, form submissions and downloads between Simple Analytics and GA4 on its own site to settle this question for its client work; no result exists yet.",
+              "grounding": "grounded",
+              "provenance": {
+                "source": "https://www.simpleanalytics.com/customers",
+                "quote": "VertoDigital is building a check that compares demo requests, form submissions and downloads in Simple Analytics and GA4 on its own website, to inform its client work. Results follow once the comparison has run.",
+                "document_id": null,
+                "evidence_id": "E5",
+                "source_kind": "case_study"
+              }
+            }
+          ]
+        },
+        {
+          "name": "A solo or small-site owner who finds GA4 overbuilt for what they actually check",
+          "situation": "Runs a small, niche, or affiliate website and either currently wades through Google Analytics' reports and configuration to find one number, or has already walked away from GA4 because it asked for more setup and interpretation than the site needed.",
+          "situation_grounding": "inferred",
+          "situation_provenance": [],
+          "job_to_be_done": "See how the site is doing at a glance without having to become a data analyst to do it.",
+          "trigger": "Opened Google Analytics looking for a simple answer — how many people visited — and got a dashboard of reports and dimensions instead.",
+          "sophistication": "solution_aware",
+          "pains": [
+            {
+              "statement": "One Simple Analytics customer, Darien Overland, described the underlying want plainly: “99% of us just want to see how many pageviews we get,” reflecting a niche-website user's frustration with analytics complexity — this is that one customer's stated view, not a measured pattern across a segment.",
+              "grounding": "grounded",
+              "provenance": {
+                "source": "https://www.simpleanalytics.com/customers",
+                "quote": "“99% of us just want to see how many pageviews we get.”",
+                "document_id": null,
+                "evidence_id": "E11",
+                "source_kind": "customer_voice"
+              }
+            },
+            {
+              "statement": "Awesome Stuff to Buy, an affiliate site, switched away from Google Analytics and now relies on the Simple Analytics API for the specific numbers it cares about — this is that customer's own outcome, with no stated reason for the switch beyond the fact of it.",
+              "grounding": "vendor_claim",
+              "provenance": {
+                "source": "https://www.simpleanalytics.com/customers",
+                "quote": "Switched from Google Analytics and uses the API for the numbers that matter.",
+                "document_id": null,
+                "evidence_id": "E12",
+                "source_kind": "vendor_copy"
+              }
+            },
+            {
+              "statement": "Likely suspects that most of GA4's dashboards, reports and configuration are overhead they never use, but hasn't yet found a simpler alternative that still feels credible enough to trust for business decisions.",
+              "grounding": "inferred",
+              "provenance": null
+            }
+          ]
+        },
+        {
+          "name": "An EU-based founder who doesn't want a cookie consent banner on their own site",
+          "situation": "Is building or running a site aimed at EU visitors and is weighing whether to stand up the usual GA4-plus-consent-banner stack, or avoid it from the start; has not necessarily hit a compliance problem yet, just wants to not create one.",
+          "situation_grounding": "inferred",
+          "situation_provenance": [],
+          "job_to_be_done": "Run a website without the cookie-banner friction and GDPR gray areas that come with standard analytics, and not have to think about it again.",
+          "trigger": "Launching or relaunching a site for the EU market, or reconsidering an existing GA4 setup after a compliance concern surfaces internally or from a client.",
+          "sophistication": "problem_aware",
+          "pains": [
+            {
+              "statement": "The company claims Simple Analytics is GDPR compliant from installation and, because it only processes non-personal data, can satisfy the GDPR, the ePrivacy Directive, the UK GDPR, and the PECR — this is the company's own compliance claim, not a third-party audit result.",
+              "grounding": "vendor_claim",
+              "provenance": {
+                "source": "https://www.simpleanalytics.com/pricing",
+                "quote": "Simple Analytics is GDPR compliant from installation. Because it only processes non-personal data, it can satisfy the requirements of the strictest privacy regulation, including the GDPR, the ePrivacy Directive, the UK GDPR, and the PECR.",
+                "document_id": null,
+                "evidence_id": "E19",
+                "source_kind": "vendor_copy"
+              }
+            },
+            {
+              "statement": "The company claims it never sets cookies or similar technologies, which it says means a site using it doesn't need a cookie consent banner at all.",
+              "grounding": "vendor_claim",
+              "provenance": {
+                "source": "https://www.simpleanalytics.com/data-collection",
+                "quote": "We never set any cookies or use similar technologies like local storage, session cookies, or fingerprinting. This means you don't need a cookie consent banner.",
+                "document_id": null,
+                "evidence_id": "E25",
+                "source_kind": "vendor_copy"
+              }
+            },
+            {
+              "statement": "Likely worries that a future GDPR complaint, consent-banner-driven visitor drop-off, or legal review could force an expensive fix later, even though nothing has forced the issue yet.",
+              "grounding": "inferred",
+              "provenance": null
+            }
+          ]
+        }
+      ],
+      "objections": [
+        {
+          "objection": "We already run GA4 and a consent banner that works well enough — why add and maintain a second analytics script?",
+          "severity": "strong",
+          "answer": "It's positioned as additive, not a replacement: buyers keep GA4 and the consent banner and add an independent, consent-free count to compare against it, with a free 30-day period where Simple Analytics helps with setup and the comparison.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E6",
+            "E21"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "Pricing scales with pageviews and per extra user, so at our volume this could get expensive and we won't know the real number until well into signup.",
+          "severity": "strong",
+          "answer": "The inputs are disclosed up front — a slider from the €20/month, ~100k-pageview base up to 2.5M pageviews, plus a flat +€20/month per extra user — but no price ceiling or spend guarantee appears anywhere in the pricing material.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E13",
+            "E14"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "Our security or procurement review will flag that SOC 2 Type II isn't finished yet.",
+          "severity": "strong",
+          "answer": "The company states plainly that SOC 2 Type II is still in progress, not completed, and leans on EU hosting, Netherlands-only processing, and GDPR-by-design (because no personal data is processed) as the current story — real, but not a substitute for a finished SOC 2 report.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E33",
+            "E19",
+            "E24"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "I could just keep using free GA4 instead of paying for another dashboard.",
+          "severity": "mild",
+          "answer": "There's a free-forever tier (1 user, 5 sites, 1-month history, badge required), and every signup — free or paid — gets a full 14-day trial with no credit card required, so trying it costs nothing even before a paid plan is on the table.",
+          "grounding": "inferred",
+          "evidence_ids": [
+            "E7",
+            "E15",
+            "E22"
+          ],
+          "provenance": []
+        },
+        {
+          "objection": "We need city or region-level geo data and consistent country accuracy; this only infers country from browser timezone.",
+          "severity": "strong",
+          "answer": "Nothing in the material resolves this favorably: the documentation itself admits detection is country-level only, that a few timezones are missing or shared across borders so some visitors get tagged under the wrong country, and that there is no city or region data.",
+          "grounding": "inferred",
+          "evidence_ids": [],
+          "provenance": []
+        },
+        {
+          "objection": "Our reporting, audiences and conversion tracking already live in GA4 — switching is a bigger lift than the pitch suggests.",
+          "severity": "blocking",
+          "answer": "Enterprise positioning doesn't ask for a switch: it's described as adding campaign comparisons against GA4-reported traffic and API/BI access so existing reporting tools keep working, consistent with the (inferred) pattern that enterprise customers mainly use it to supplement GA4 rather than replace it — but no ledger evidence directly confirms this for a named enterprise customer.",
+          "grounding": "inferred",
+          "evidence_ids": [],
+          "provenance": []
+        }
+      ]
+    },
+    "gaps": {
+      "gaps": []
+    },
+    "version": 1,
+    "compiled_at": "2026-11-05T23:37:53.644294Z",
+    "source_document_ids": [
+      "43517055-9f28-4bff-9f26-a5b9e210b86a",
+      "d41716e6-3d23-4a84-9be9-280ee910c377",
+      "62a4ae44-f370-4ce3-b0ad-e7f68393e65b",
+      "04413ee1-f52a-4a0c-94ec-c56402d4b28a",
+      "11d2773f-e76c-43d5-881e-d552e3e0ecb4",
+      "fea3a080-fc62-46ab-963e-79114079ee3f",
+      "2cfa3d1b-2570-4d40-b958-a14391451c17",
+      "fd779a3f-fe5e-4e96-9fba-f8da81aa403c"
+    ],
+    "source_context_fingerprint": "d081730df49a0fd20e399991c4b075fd68a5b077a86991cd6e63de7ccdf2af9b",
+    "notes": [
+      "2 of 36 candidate fact(s) were discarded because the quote supporting them could not be found in the source.",
+      "18,933 characters of material were past the reading budget and were not read.",
+      "6 unverified offer guarantee summary item(s) omitted; consult the source-scoped Evidence Ledger for offer conditions.",
+      "First-campaign knowledge covers selected pages and decision-relevant evidence. Compile sources to read them in more depth."
+    ]
+  }
+}

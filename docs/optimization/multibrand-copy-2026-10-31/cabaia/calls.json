@@ -1,0 +1,137 @@
+[
+  {
+    "sequence_order": 1,
+    "input_tokens": 38847,
+    "status": "completed",
+    "output_tokens": 4890,
+    "input_data": {
+      "label": "Deciding what this campaign says, and in what order"
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "emails": [
+        "#1 Le Duffle Adventurer documente une organisation intérieure améliorée et une poche rembourrée pour ordinateur jusqu’à 14 pouces : c’est le premier critère à vérifier avant de l’envisager comme sac de travail."
+      ]
+    },
+    "cache_read_input_tokens": 0,
+    "campaign_execution_id": "f64543bb-0733-4a75-8be2-1d9970e9f6a8",
+    "error_message": null,
+    "cost_usd": 0.457476,
+    "id": "42e30113-25a1-4637-bfb7-a787d58e1c51",
+    "started_at": "2026-10-30T23:48:10.056606",
+    "duration_ms": 40067.93990000733,
+    "agent_id": "strategist",
+    "completed_at": "2026-10-30T23:48:50.407125",
+    "attempt": 1,
+    "agent_name": "Strategist",
+    "model": "gpt-5.6-sol"
+  },
+  {
+    "sequence_order": 2,
+    "input_tokens": 16048,
+    "status": "completed",
+    "output_tokens": 650,
+    "input_data": {
+      "label": "Email 1 · first draft",
+      "position": 1,
+      "attempt": 1
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "subject": "Votre ordinateur passe-t-il ce test ?"
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "f64543bb-0733-4a75-8be2-1d9970e9f6a8",
+    "error_message": null,
+    "cost_usd": 0.154233,
+    "id": "321fd6ba-e8fc-4d26-9c74-c1107d1fc416",
+    "started_at": "2026-10-30T23:48:51.662833",
+    "duration_ms": 8583.747500000754,
+    "agent_id": "email_writer",
+    "completed_at": "2026-10-30T23:49:00.313717",
+    "attempt": 1,
+    "agent_name": "Email Writer",
+    "model": "gpt-5.6-sol"
+  },
+  {
+    "sequence_order": 3,
+    "input_tokens": 4244,
+    "status": "completed",
+    "output_tokens": 1230,
+    "input_data": {
+      "label": "Email 1 · read cold by 1 reader(s)",
+      "position": 1,
+      "attempt": 1
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "pull": 6
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "f64543bb-0733-4a75-8be2-1d9970e9f6a8",
+    "error_message": null,
+    "cost_usd": 0.077201,
+    "id": "cab444ad-f1a4-4a1f-8015-a85437254dd4",
+    "started_at": "2026-10-30T23:49:00.630986",
+    "duration_ms": 13447.99499999499,
+    "agent_id": "blind_reader",
+    "completed_at": "2026-10-30T23:49:14.112476",
+    "attempt": 1,
+    "agent_name": "Blind Reader",
+    "model": "gpt-5.6-sol"
+  },
+  {
+    "sequence_order": 4,
+    "input_tokens": 26132,
+    "status": "completed",
+    "output_tokens": 798,
+    "input_data": {
+      "label": "Email 1 · rewrite 1",
+      "position": 1,
+      "attempt": 2
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "subject": "Un premier tri pour votre sac"
+    },
+    "cache_read_input_tokens": 0,
+    "campaign_execution_id": "f64543bb-0733-4a75-8be2-1d9970e9f6a8",
+    "error_message": null,
+    "cost_usd": 0.232996,
+    "id": "ffe4f801-cb7d-4b59-86b5-34c5c9dde5c5",
+    "started_at": "2026-10-30T23:49:14.124429",
+    "duration_ms": 8794.928100003744,
+    "agent_id": "email_writer",
+    "completed_at": "2026-10-30T23:49:22.971390",
+    "attempt": 2,
+    "agent_name": "Email Writer",
+    "model": "gpt-5.6-sol"
+  },
+  {
+    "sequence_order": 5,
+    "input_tokens": 4260,
+    "status": "completed",
+    "output_tokens": 1646,
+    "input_data": {
+      "label": "Email 1 · read cold by 1 reader(s)",
+      "position": 1,
+      "attempt": 2
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "pull": 6
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "f64543bb-0733-4a75-8be2-1d9970e9f6a8",
+    "error_message": null,
+    "cost_usd": 0.089809,
+    "id": "a154ca32-b509-4cd4-b87a-b79ed535b154",
+    "started_at": "2026-10-30T23:49:23.317857",
+    "duration_ms": 15199.769700004254,
+    "agent_id": "blind_reader",
+    "completed_at": "2026-10-30T23:49:38.549918",
+    "attempt": 2,
+    "agent_name": "Blind Reader",
+    "model": "gpt-5.6-sol"
+  }
+]

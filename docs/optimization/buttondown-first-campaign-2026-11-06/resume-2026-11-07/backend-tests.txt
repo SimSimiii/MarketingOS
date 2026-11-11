@@ -1,0 +1,785 @@
+........................................................................ [  3%]
+........................................................................ [  6%]
+....................FFFF.....F.......................................... [  9%]
+.................................................F...FFFFF.............. [ 13%]
+........................................................................ [ 16%]
+........................................................................ [ 19%]
+........................................................................ [ 22%]
+........................................................................ [ 26%]
+........................................................................ [ 29%]
+........................................................................ [ 32%]
+............................................................F........... [ 35%]
+.........................................................FF.F........... [ 39%]
+........................................................................ [ 42%]
+........................................................................ [ 45%]
+........................................................................ [ 48%]
+........................................................................ [ 52%]
+........................................................................ [ 55%]
+........................................................................ [ 58%]
+........................................................................ [ 61%]
+........................................................................ [ 65%]
+........................................................................ [ 68%]
+........................................................................ [ 71%]
+........................................................................ [ 74%]
+........................................................................ [ 78%]
+........................................................................ [ 81%]
+........................................................................ [ 84%]
+........................................................................ [ 87%]
+........................................................................ [ 91%]
+........................................................................ [ 94%]
+........................................................................ [ 97%]
+.....................................................                    [100%]
+================================== FAILURES ===================================
+___ test_credit_reserve_is_released_only_for_proven_unsent_calls[provider] ____
+
+engine = Engine(sqlite:///C:\Users\oussa\AppData\Local\Temp\pytest-of-oussa\pytest-824\test_credit_reserve_is_release2\test.db)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000016B31CF6C90>
+failure = 'provider'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("failure", ["admission", "event", "provider", "unknown_model", "unknown_version", "invalid_cost"])
+    async def test_credit_reserve_is_released_only_for_proven_unsent_calls(engine, monkeypatch, failure):
+        import app.services.credit_meter as meter_module
+    
+        monkeypatch.setattr(meter_module, "app_engine", engine)
+        monkeypatch.setattr(get_settings(), "credit_billing_enabled", True)
+        user = User(email="reserve-test@example.com", password_hash="unused")
+        user_id = user.id
+        with Session(engine) as db:
+            db.add(user)
+            db.commit()
+            refund(db, user_id, 1000, "audit:initial")
+    
+        class Provider(RoleScriptedProvider):
+            async def generate(self, request):
+                self.requests.append(request)
+                if failure == "provider":
+                    # Same exception type as local admission, but the request did
+                    # reach the provider: this must keep its uncertain reserve.
+                    raise WorkLimitError("Remote operation stopped after send.")
+                returned_model = {
+                    "unknown_model": "unpriced-future-model",
+                    "unknown_version": "claude-sonnet-future-unreviewed-version",
+                }.get(failure, request.model)
+                return AIResponse(
+                    content="Done", model=returned_model,
+                    usage=AIUsage(reported_cost_usd=float("nan") if failure == "invalid_cost" else 0.01),
+                )
+    
+        provider = Provider({})
+        events = EventBus()
+        if failure == "event":
+            def failed_log(event):
+                raise RuntimeError("Execution logging failed before the request")
+            events.subscribe(ModelCallStarted, failed_log)
+        model = ModelSession(provider, get_prompt_engine(PROMPTS_DIR), events,
+                             ModelRouter({"*": "gpt-5.6-sol"}), f"vision:{user_id}")
+    
+        def refuse():
+            raise WorkLimitError("Server budget reached before send.")
+    
+        permit = SimpleNamespace(attempt=refuse, tokens=0) if failure == "admission" else None
+        token = current_work.set(permit)
+        try:
+            with pytest.raises(ProviderError):
+                await model.text(role="email_writer", tier=ModelTier.DEEP,
+                                 system_prompt="Write clearly", task="One sentence")
+        finally:
+            current_work.reset(token)
+        with Session(engine) as db:
+>           assert (balance(db, user_id) == 1000) is (failure in {"admission", "event"})
+E           AssertionError: assert (1000 == 1000) is ('provider' in {'admission', 'event'})
+E            +  where 1000 = balance(<sqlmodel.orm.session.Session object at 0x0000016B31D1BD10>, UUID('48a5e2e4-a922-4855-a9e6-16dabfd2b45d'))
+
+tests\api\test_audit_regressions.py:135: AssertionError
+_ test_credit_reserve_is_released_only_for_proven_unsent_calls[unknown_model] _
+
+engine = Engine(sqlite:///C:\Users\oussa\AppData\Local\Temp\pytest-of-oussa\pytest-824\test_credit_reserve_is_release3\test.db)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000016B31D2EA80>
+failure = 'unknown_model'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("failure", ["admission", "event", "provider", "unknown_model", "unknown_version", "invalid_cost"])
+    async def test_credit_reserve_is_released_only_for_proven_unsent_calls(engine, monkeypatch, failure):
+        import app.services.credit_meter as meter_module
+    
+        monkeypatch.setattr(meter_module, "app_engine", engine)
+        monkeypatch.setattr(get_settings(), "credit_billing_enabled", True)
+        user = User(email="reserve-test@example.com", password_hash="unused")
+        user_id = user.id
+        with Session(engine) as db:
+            db.add(user)
+            db.commit()
+            refund(db, user_id, 1000, "audit:initial")
+    
+        class Provider(RoleScriptedProvider):
+            async def generate(self, request):
+                self.requests.append(request)
+                if failure == "provider":
+                    # Same exception type as local admission, but the request did
+                    # reach the provider: this must keep its uncertain reserve.
+                    raise WorkLimitError("Remote operation stopped after send.")
+                returned_model = {
+                    "unknown_model": "unpriced-future-model",
+                    "unknown_version": "claude-sonnet-future-unreviewed-version",
+                }.get(failure, request.model)
+                return AIResponse(
+                    content="Done", model=returned_model,
+                    usage=AIUsage(reported_cost_usd=float("nan") if failure == "invalid_cost" else 0.01),
+                )
+    
+        provider = Provider({})
+        events = EventBus()
+        if failure == "event":
+            def failed_log(event):
+                raise RuntimeError("Execution logging failed before the request")
+            events.subscribe(ModelCallStarted, failed_log)
+        model = ModelSession(provider, get_prompt_engine(PROMPTS_DIR), events,
+                             ModelRouter({"*": "gpt-5.6-sol"}), f"vision:{user_id}")
+    
+        def refuse():
+            raise WorkLimitError("Server budget reached before send.")
+    
+        permit = SimpleNamespace(attempt=refuse, tokens=0) if failure == "admission" else None
+        token = current_work.set(permit)
+        try:
+            with pytest.raises(ProviderError):
+                await model.text(role="email_writer", tier=ModelTier.DEEP,
+                                 system_prompt="Write clearly", task="One sentence")
+        finally:
+            current_work.reset(token)
+        with Session(engine) as db:
+>           assert (balance(db, user_id) == 1000) is (failure in {"admission", "event"})
+E           AssertionError: assert (1000 == 1000) is ('unknown_model' in {'admission', 'event'})
+E            +  where 1000 = balance(<sqlmodel.orm.session.Session object at 0x0000016B32E6CAD0>, UUID('81972592-2a78-43f6-ab82-3e4ca49ee56a'))
+
+tests\api\test_audit_regressions.py:135: AssertionError
+_ test_credit_reserve_is_released_only_for_proven_unsent_calls[unknown_version] _
+
+engine = Engine(sqlite:///C:\Users\oussa\AppData\Local\Temp\pytest-of-oussa\pytest-824\test_credit_reserve_is_release4\test.db)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000016B31D2DA90>
+failure = 'unknown_version'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("failure", ["admission", "event", "provider", "unknown_model", "unknown_version", "invalid_cost"])
+    async def test_credit_reserve_is_released_only_for_proven_unsent_calls(engine, monkeypatch, failure):
+        import app.services.credit_meter as meter_module
+    
+        monkeypatch.setattr(meter_module, "app_engine", engine)
+        monkeypatch.setattr(get_settings(), "credit_billing_enabled", True)
+        user = User(email="reserve-test@example.com", password_hash="unused")
+        user_id = user.id
+        with Session(engine) as db:
+            db.add(user)
+            db.commit()
+            refund(db, user_id, 1000, "audit:initial")
+    
+        class Provider(RoleScriptedProvider):
+            async def generate(self, request):
+                self.requests.append(request)
+                if failure == "provider":
+                    # Same exception type as local admission, but the request did
+                    # reach the provider: this must keep its uncertain reserve.
+                    raise WorkLimitError("Remote operation stopped after send.")
+                returned_model = {
+                    "unknown_model": "unpriced-future-model",
+                    "unknown_version": "claude-sonnet-future-unreviewed-version",
+                }.get(failure, request.model)
+                return AIResponse(
+                    content="Done", model=returned_model,
+                    usage=AIUsage(reported_cost_usd=float("nan") if failure == "invalid_cost" else 0.01),
+                )
+    
+        provider = Provider({})
+        events = EventBus()
+        if failure == "event":
+            def failed_log(event):
+                raise RuntimeError("Execution logging failed before the request")
+            events.subscribe(ModelCallStarted, failed_log)
+        model = ModelSession(provider, get_prompt_engine(PROMPTS_DIR), events,
+                             ModelRouter({"*": "gpt-5.6-sol"}), f"vision:{user_id}")
+    
+        def refuse():
+            raise WorkLimitError("Server budget reached before send.")
+    
+        permit = SimpleNamespace(attempt=refuse, tokens=0) if failure == "admission" else None
+        token = current_work.set(permit)
+        try:
+            with pytest.raises(ProviderError):
+                await model.text(role="email_writer", tier=ModelTier.DEEP,
+                                 system_prompt="Write clearly", task="One sentence")
+        finally:
+            current_work.reset(token)
+        with Session(engine) as db:
+>           assert (balance(db, user_id) == 1000) is (failure in {"admission", "event"})
+E           AssertionError: assert (1000 == 1000) is ('unknown_version' in {'admission', 'event'})
+E            +  where 1000 = balance(<sqlmodel.orm.session.Session object at 0x0000016B31D2D310>, UUID('46de1649-a1e6-4fe6-b089-8c0671d83c99'))
+
+tests\api\test_audit_regressions.py:135: AssertionError
+_ test_credit_reserve_is_released_only_for_proven_unsent_calls[invalid_cost] __
+
+engine = Engine(sqlite:///C:\Users\oussa\AppData\Local\Temp\pytest-of-oussa\pytest-824\test_credit_reserve_is_release5\test.db)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000016B31D19250>
+failure = 'invalid_cost'
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("failure", ["admission", "event", "provider", "unknown_model", "unknown_version", "invalid_cost"])
+    async def test_credit_reserve_is_released_only_for_proven_unsent_calls(engine, monkeypatch, failure):
+        import app.services.credit_meter as meter_module
+    
+        monkeypatch.setattr(meter_module, "app_engine", engine)
+        monkeypatch.setattr(get_settings(), "credit_billing_enabled", True)
+        user = User(email="reserve-test@example.com", password_hash="unused")
+        user_id = user.id
+        with Session(engine) as db:
+            db.add(user)
+            db.commit()
+            refund(db, user_id, 1000, "audit:initial")
+    
+        class Provider(RoleScriptedProvider):
+            async def generate(self, request):
+                self.requests.append(request)
+                if failure == "provider":
+                    # Same exception type as local admission, but the request did
+                    # reach the provider: this must keep its uncertain reserve.
+                    raise WorkLimitError("Remote operation stopped after send.")
+                returned_model = {
+                    "unknown_model": "unpriced-future-model",
+                    "unknown_version": "claude-sonnet-future-unreviewed-version",
+                }.get(failure, request.model)
+                return AIResponse(
+                    content="Done", model=returned_model,
+                    usage=AIUsage(reported_cost_usd=float("nan") if failure == "invalid_cost" else 0.01),
+                )
+    
+        provider = Provider({})
+        events = EventBus()
+        if failure == "event":
+            def failed_log(event):
+                raise RuntimeError("Execution logging failed before the request")
+            events.subscribe(ModelCallStarted, failed_log)
+        model = ModelSession(provider, get_prompt_engine(PROMPTS_DIR), events,
+                             ModelRouter({"*": "gpt-5.6-sol"}), f"vision:{user_id}")
+    
+        def refuse():
+            raise WorkLimitError("Server budget reached before send.")
+    
+        permit = SimpleNamespace(attempt=refuse, tokens=0) if failure == "admission" else None
+        token = current_work.set(permit)
+        try:
+            with pytest.raises(ProviderError):
+                await model.text(role="email_writer", tier=ModelTier.DEEP,
+                                 system_prompt="Write clearly", task="One sentence")
+        finally:
+            current_work.reset(token)
+        with Session(engine) as db:
+>           assert (balance(db, user_id) == 1000) is (failure in {"admission", "event"})
+E           AssertionError: assert (1000 == 1000) is ('invalid_cost' in {'admission', 'event'})
+E            +  where 1000 = balance(<sqlmodel.orm.session.Session object at 0x0000016B31CF5E20>, UUID('8bb58147-4bcd-4fda-9338-745408f7f568'))
+
+tests\api\test_audit_regressions.py:135: AssertionError
+_____________________ test_reserve_release_is_idempotent ______________________
+
+engine = Engine(sqlite:///C:\Users\oussa\AppData\Local\Temp\pytest-of-oussa\pytest-824\test_reserve_release_is_idempo0\test.db)
+
+    def test_reserve_release_is_idempotent(engine):
+        from app.ai.base import AIRequest
+        from app.services.credit_meter import CreditMeter
+    
+        user = User(email="release@example.com", password_hash="unused")
+        user_id = user.id
+        with Session(engine) as db:
+            db.add(user)
+            db.commit()
+            refund(db, user_id, 1000, "release:initial")
+        meter = CreditMeter(f"vision:{user_id}", engine)
+>       hold = meter.reserve(AIRequest(model="gpt-5.6-sol"))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\api\test_audit_regressions.py:184: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\credit_meter.py:92: in reserve
+    assert_prepaid_prices_current()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def assert_prepaid_prices_current() -> None:
+        if datetime.now(UTC).date() - PREPAID_PRICES_REVIEWED_ON > timedelta(days=30):
+>           raise RuntimeError("Prepaid model prices need operator review before billing can continue.")
+E           RuntimeError: Prepaid model prices need operator review before billing can continue.
+
+app\core\config.py:23: RuntimeError
+____________ test_refund_freezes_account_and_prevents_repeat_usage ____________
+
+engine = Engine(sqlite:///C:\Users\oussa\AppData\Local\Temp\pytest-of-oussa\pytest-824\test_refund_freezes_account_an0\test.db)
+
+    def test_refund_freezes_account_and_prevents_repeat_usage(engine):
+        user = User(email="reversed@example.com", password_hash="unused")
+        checkout = CreditCheckout(
+            stripe_session_id="cs_test_reversed", user_id=user.id,
+            credits=1000, amount_cents=1000,
+        )
+        with Session(engine) as session:
+            session.add(user)
+            session.flush()
+            session.add(checkout)
+            session.commit()
+            assert credit_paid_checkout(session, _paid(checkout))
+            assert freeze_reversed_payment(session, "pi_cs_test_reversed")
+            assert not freeze_reversed_payment(session, "pi_cs_test_reversed")
+            assert session.get(User, user.id).status == UserStatus.SUSPENDED
+            assert balance(session, user.id) == 1000
+            assert [row.kind for row in history(session, user.id)] == ["payment_reversed", "purchase"]
+        with pytest.raises(ValueError, match="cannot use credits"):
+>           CreditMeter(f"vision:{user.id}", engine).reserve(AIRequest(model="gpt-5.6-sol"))
+
+tests\api\test_credits.py:115: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\credit_meter.py:92: in reserve
+    assert_prepaid_prices_current()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def assert_prepaid_prices_current() -> None:
+        if datetime.now(UTC).date() - PREPAID_PRICES_REVIEWED_ON > timedelta(days=30):
+>           raise RuntimeError("Prepaid model prices need operator review before billing can continue.")
+E           RuntimeError: Prepaid model prices need operator review before billing can continue.
+
+app\core\config.py:23: RuntimeError
+_________ test_checkout_price_is_server_owned_and_test_mode_recorded __________
+
+client = <starlette.testclient.TestClient object at 0x0000016B3B9D6420>
+engine = Engine(sqlite:///C:\Users\oussa\AppData\Local\Temp\pytest-of-oussa\pytest-824\test_checkout_price_is_server_0\test.db)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000016B409B5C40>
+
+    def test_checkout_price_is_server_owned_and_test_mode_recorded(client, engine, monkeypatch):
+        settings = get_settings()
+        monkeypatch.setattr(settings, "credit_billing_enabled", True)
+        monkeypatch.setattr(settings, "stripe_secret_key", "sk_test_fake")
+        monkeypatch.setattr(settings, "stripe_webhook_secret", "whsec_fake")
+        user = User(email="checkout@example.com", password_hash="unused")
+        with Session(engine) as db:
+            db.add(user)
+            db.commit()
+            token = issue_tokens(db, user).access_token
+        headers = {"Authorization": f"Bearer {token}"}
+        seen = []
+    
+        def fake_create(**kwargs):
+            seen.append(kwargs)
+            return SimpleNamespace(id="cs_test_checkout", url="https://checkout.stripe.com/test", livemode=False)
+    
+        monkeypatch.setattr("app.api.routes.credits.stripe.checkout.Session.create", fake_create)
+>       assert client.post("/api/credits/checkout", json={"package": "other"}, headers=headers).status_code == 422
+E       AssertionError: assert 503 == 422
+E        +  where 503 = <Response [503 Service Unavailable]>.status_code
+E        +    where <Response [503 Service Unavailable]> = post('/api/credits/checkout', json={'package': 'other'}, headers={'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjRkYTUzYi01Y2E1LTQ5MjctOTFiMS0zN2RkNGY5NjJ...CI6MTc5NDA0ODM3NSwianRpIjoiNDk5YzFlYmU4MDEzNDJkMGIxNTQ4M2MyMWQ2MzFiOWYifQ.9H2D36MggiO4LEtZx39Xx7TXTl6SB7AqVECLWdPSIgY'})
+E        +      where post = <starlette.testclient.TestClient object at 0x0000016B3B9D6420>.post
+
+tests\api\test_credits.py:216: AssertionError
+______ test_model_call_reserves_before_spend_and_releases_unused_credits ______
+
+engine = Engine(sqlite:///C:\Users\oussa\AppData\Local\Temp\pytest-of-oussa\pytest-824\test_model_call_reserves_befor0\test.db)
+
+    def test_model_call_reserves_before_spend_and_releases_unused_credits(engine):
+        user = User(email="meter@example.com", password_hash="unused")
+        user_id = user.id
+        with Session(engine) as session:
+            session.add(user)
+            session.flush()
+            checkout = CreditCheckout(
+                stripe_session_id="cs_test_meter", user_id=user_id,
+                credits=1000, amount_cents=1000,
+            )
+            session.add(checkout)
+            session.commit()
+            credit_paid_checkout(session, _paid(checkout))
+        meter = CreditMeter(f"vision:{user_id}", engine)
+        request = AIRequest(
+            model="gpt-5.6-sol", max_tokens=100,
+            system_prompt="Read this page.",
+            messages=[AIMessage(role="user", content="One short answer.")],
+        )
+>       hold = meter.reserve(request)
+               ^^^^^^^^^^^^^^^^^^^^^^
+
+tests\api\test_credits.py:247: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\credit_meter.py:92: in reserve
+    assert_prepaid_prices_current()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def assert_prepaid_prices_current() -> None:
+        if datetime.now(UTC).date() - PREPAID_PRICES_REVIEWED_ON > timedelta(days=30):
+>           raise RuntimeError("Prepaid model prices need operator review before billing can continue.")
+E           RuntimeError: Prepaid model prices need operator review before billing can continue.
+
+app\core\config.py:23: RuntimeError
+___________ test_model_call_with_no_balance_never_reaches_provider ____________
+
+engine = Engine(sqlite:///C:\Users\oussa\AppData\Local\Temp\pytest-of-oussa\pytest-824\test_model_call_with_no_balanc0\test.db)
+
+    def test_model_call_with_no_balance_never_reaches_provider(engine):
+        user = User(email="empty@example.com", password_hash="unused")
+        user_id = user.id
+        with Session(engine) as session:
+            session.add(user)
+            session.commit()
+        meter = CreditMeter(f"vision:{user_id}", engine)
+        with pytest.raises(InsufficientCreditsError):
+>           meter.reserve(AIRequest(model="gpt-5.6-sol"))
+
+tests\api\test_credits.py:265: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\credit_meter.py:92: in reserve
+    assert_prepaid_prices_current()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def assert_prepaid_prices_current() -> None:
+        if datetime.now(UTC).date() - PREPAID_PRICES_REVIEWED_ON > timedelta(days=30):
+>           raise RuntimeError("Prepaid model prices need operator review before billing can continue.")
+E           RuntimeError: Prepaid model prices need operator review before billing can continue.
+
+app\core\config.py:23: RuntimeError
+____________ test_model_session_checks_credit_before_provider_call ____________
+
+engine = Engine(sqlite:///C:\Users\oussa\AppData\Local\Temp\pytest-of-oussa\pytest-824\test_model_session_checks_cred0\test.db)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000016B40A54680>
+
+    @pytest.mark.asyncio
+    async def test_model_session_checks_credit_before_provider_call(engine, monkeypatch):
+        import app.services.credit_meter as meter_module
+    
+        monkeypatch.setattr(meter_module, "app_engine", engine)
+        monkeypatch.setattr(get_settings(), "credit_billing_enabled", True)
+        user = User(email="runtime@example.com", password_hash="unused")
+        user_id = user.id
+        with Session(engine) as db:
+            db.add(user)
+            db.commit()
+        provider = RoleScriptedProvider({"email_writer": "A short draft."})
+        model = ModelSession(
+            provider, get_prompt_engine(PROMPTS_DIR), EventBus(),
+            ModelRouter({"*": "gpt-5.6-sol"}), f"vision:{user_id}",
+        )
+>       with pytest.raises(Exception, match="Insufficient credits"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'Insufficient credits'
+E         Actual message: 'Prepaid model prices need operator review before billing can continue.'
+
+tests\api\test_credits.py:284: AssertionError
+________ test_model_session_settles_successful_call_to_twice_its_cost _________
+
+self = <app.runtime.model_session.ModelSession object at 0x0000016B40B21760>
+role = 'email_writer', tier = <ModelTier.DEEP: 'deep'>, model = 'gpt-5.6-sol'
+system = 'Write clearly.', task = 'One sentence.', template = '', tools = []
+image = None, max_turns = None
+
+    async def _generate(
+        self,
+        role: str,
+        tier: ModelTier,
+        model: str,
+        system: str,
+        task: str,
+        template: str = "",
+        tools: list[ResearchTool] | None = None,
+        image=None,
+        max_turns: int | None = None,
+    ) -> str:
+        wanted = list(dict.fromkeys(tools or []))
+        if wanted:
+            # Checked here, once, rather than trusted to the provider. See
+            # `CapabilityUnavailableError`: the cost of finding out late is
+            # not a failed call, it is a successful-looking one.
+            # Asked about *this* model, not about the provider in general:
+            # once roles can be pinned to different vendors, "can we search the
+            # web" has a different answer per call.
+            offered = self._provider.available_tools(model)
+            if missing := [tool for tool in wanted if tool not in offered]:
+                raise CapabilityUnavailableError(
+                    f"Role '{role}' asked for {', '.join(missing)}, which '{model}' "
+                    "cannot offer. This role reads the open web and has nothing to "
+                    "report without it - put it on a Claude model.",
+                    role=role,
+                    provider=type(self._provider).__name__,
+                    missing=[str(tool) for tool in missing],
+                )
+        request = AIRequest(
+            system_prompt=system,
+            messages=[AIMessage(role="user", content=task)],
+            model=model,
+            role=role,
+            template=template,
+            tools=wanted,
+            image=image,
+            max_turns=max_turns,
+        )
+        hold = None
+        if self._credit_meter is not None:
+            try:
+>               hold = self._credit_meter.reserve(request)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+app\runtime\model_session.py:433: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\credit_meter.py:92: in reserve
+    assert_prepaid_prices_current()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def assert_prepaid_prices_current() -> None:
+        if datetime.now(UTC).date() - PREPAID_PRICES_REVIEWED_ON > timedelta(days=30):
+>           raise RuntimeError("Prepaid model prices need operator review before billing can continue.")
+E           RuntimeError: Prepaid model prices need operator review before billing can continue.
+
+app\core\config.py:23: RuntimeError
+
+The above exception was the direct cause of the following exception:
+
+engine = Engine(sqlite:///C:\Users\oussa\AppData\Local\Temp\pytest-of-oussa\pytest-824\test_model_session_settles_suc0\test.db)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000016B40A1ED80>
+
+    @pytest.mark.asyncio
+    async def test_model_session_settles_successful_call_to_twice_its_cost(engine, monkeypatch):
+        import app.services.credit_meter as meter_module
+    
+        monkeypatch.setattr(meter_module, "app_engine", engine)
+        monkeypatch.setattr(get_settings(), "credit_billing_enabled", True)
+        user = User(email="paid-runtime@example.com", password_hash="unused")
+        user_id = user.id
+        with Session(engine) as db:
+            db.add(user)
+            db.flush()
+            checkout = CreditCheckout(
+                stripe_session_id="cs_test_paid_runtime", user_id=user_id,
+                credits=1000, amount_cents=1000,
+            )
+            db.add(checkout)
+            db.commit()
+            credit_paid_checkout(db, _paid(checkout))
+        provider = RoleScriptedProvider({"email_writer": "A short draft."})
+        model = ModelSession(
+            provider, get_prompt_engine(PROMPTS_DIR), EventBus(),
+            ModelRouter({"*": "gpt-5.6-sol"}), f"vision:{user_id}",
+        )
+>       result = await model.text(role="email_writer", tier=ModelTier.DEEP,
+                                  system_prompt="Write clearly.", task="One sentence.")
+
+tests\api\test_credits.py:313: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\runtime\model_session.py:241: in text
+    return await self._generate(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.runtime.model_session.ModelSession object at 0x0000016B40B21760>
+role = 'email_writer', tier = <ModelTier.DEEP: 'deep'>, model = 'gpt-5.6-sol'
+system = 'Write clearly.', task = 'One sentence.', template = '', tools = []
+image = None, max_turns = None
+
+    async def _generate(
+        self,
+        role: str,
+        tier: ModelTier,
+        model: str,
+        system: str,
+        task: str,
+        template: str = "",
+        tools: list[ResearchTool] | None = None,
+        image=None,
+        max_turns: int | None = None,
+    ) -> str:
+        wanted = list(dict.fromkeys(tools or []))
+        if wanted:
+            # Checked here, once, rather than trusted to the provider. See
+            # `CapabilityUnavailableError`: the cost of finding out late is
+            # not a failed call, it is a successful-looking one.
+            # Asked about *this* model, not about the provider in general:
+            # once roles can be pinned to different vendors, "can we search the
+            # web" has a different answer per call.
+            offered = self._provider.available_tools(model)
+            if missing := [tool for tool in wanted if tool not in offered]:
+                raise CapabilityUnavailableError(
+                    f"Role '{role}' asked for {', '.join(missing)}, which '{model}' "
+                    "cannot offer. This role reads the open web and has nothing to "
+                    "report without it - put it on a Claude model.",
+                    role=role,
+                    provider=type(self._provider).__name__,
+                    missing=[str(tool) for tool in missing],
+                )
+        request = AIRequest(
+            system_prompt=system,
+            messages=[AIMessage(role="user", content=task)],
+            model=model,
+            role=role,
+            template=template,
+            tools=wanted,
+            image=image,
+            max_turns=max_turns,
+        )
+        hold = None
+        if self._credit_meter is not None:
+            try:
+                hold = self._credit_meter.reserve(request)
+            except (ValueError, RuntimeError) as exc:
+>               raise ProviderError(str(exc), role=role, provider="credits") from exc
+E               app.runtime.exceptions.ProviderError: Prepaid model prices need operator review before billing can continue.
+
+app\runtime\model_session.py:435: ProviderError
+__________ test_admission_has_no_product_evidence_or_campaign_inputs __________
+
+    def test_admission_has_no_product_evidence_or_campaign_inputs():
+        baseline = concrete(fit=0.01, basis="unlikely to buy")
+        changed_buying_case = baseline.model_copy(
+            update={
+                "fit": 0.99,
+                "basis": "very likely to buy",
+                "why_them": "the product is a perfect fit",
+                "angle": "a campaign-specific sales angle",
+            }
+        )
+    
+        assert baseline.admission() == changed_buying_case.admission()
+>       assert set(inspect.signature(AudienceSegment.admission).parameters) == {"self", "existing"}
+E       AssertionError: assert {'allow_topic...ting', 'self'} == {'existing', 'self'}
+E         
+E         Extra items in the left set:
+E         'allow_topic_research'
+E         Use -v to get more diff
+
+tests\market\test_audience_admission.py:176: AssertionError
+_____________ test_successful_background_refresh_appends_versions _____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000016B4F67BA10>
+
+    @pytest.mark.asyncio
+    async def test_successful_background_refresh_appends_versions(monkeypatch) -> None:
+        engine, brand_id = database()
+    
+        class SuccessfulResearcher:
+            def __init__(self, _session) -> None:
+                pass
+    
+            async def research(self, chosen, *, on_progress=None) -> AudienceResearch:
+                if on_progress:
+                    on_progress("verified")
+                return AudienceResearch(
+                    audience_name=chosen.name,
+                    candidate_kind=str(chosen.kind),
+                )
+    
+        monkeypatch.setattr(market_service, "AudienceResearcher", SuccessfulResearcher)
+        for _ in range(2):
+            await market_service._run_audience_research(
+                brand_id,
+                ScriptedProvider(),
+                engine,
+                JobStatus(kind="audience_research", brand_id=brand_id),
+                segment=segment().name,
+            )
+    
+        with Session(engine) as session:
+            store = MarketStore(session)
+            latest = store.latest_research_row(brand_id, segment().name)
+>           assert latest is not None and latest.version == 2
+E           assert (None is not None)
+
+tests\market\test_audience_research.py:386: AssertionError
+------------------------------ Captured log call ------------------------------
+ERROR    marketingos.market:market_service.py:1294 market: audience research crashed
+Traceback (most recent call last):
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\services\market_service.py", line 1269, in _run_audience_research
+    research = await AudienceResearcher(
+                     ^^^^^^^^^^^^^^^^^^^
+TypeError: test_successful_background_refresh_appends_versions.<locals>.SuccessfulResearcher.__init__() got an unexpected keyword argument 'fetcher'
+ERROR    marketingos.market:market_service.py:1294 market: audience research crashed
+Traceback (most recent call last):
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\services\market_service.py", line 1269, in _run_audience_research
+    research = await AudienceResearcher(
+                     ^^^^^^^^^^^^^^^^^^^
+TypeError: test_successful_background_refresh_appends_versions.<locals>.SuccessfulResearcher.__init__() got an unexpected keyword argument 'fetcher'
+__________________ test_total_fetch_failure_persists_nothing __________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000016B4F6419A0>
+
+    @pytest.mark.asyncio
+    async def test_total_fetch_failure_persists_nothing(monkeypatch) -> None:
+        engine, brand_id = database()
+    
+        class FailingResearcher:
+            def __init__(self, _session) -> None:
+                pass
+    
+            async def research(self, _chosen, *, on_progress=None):
+                raise AudienceResearchError("None of the located sources could be fetched")
+    
+        monkeypatch.setattr(market_service, "AudienceResearcher", FailingResearcher)
+        status = JobStatus(kind="audience_research", brand_id=brand_id)
+    
+        await market_service._run_audience_research(
+            brand_id,
+            ScriptedProvider(),
+            engine,
+            status,
+            segment=segment().name,
+        )
+    
+        with Session(engine) as session:
+            assert MarketStore(session).latest_research_row(brand_id, segment().name) is None
+        assert status.state == "failed"
+>       assert "None of the located sources" in status.error
+E       AssertionError: assert 'None of the located sources' in 'Audience research crashed unexpectedly. Check server logs.'
+E        +  where 'Audience research crashed unexpectedly. Check server logs.' = JobStatus(kind='audience_research', brand_id=UUID('47f649f7-b584-4a82-af95-b8d7a49ebd94'), brand_name='', state='faile...', found=0, calls=0, input_tokens=0, output_tokens=0, cache_read_tokens=0, cost_usd=0.0, campaign_id=None, audience='').error
+
+tests\market\test_audience_research.py:418: AssertionError
+------------------------------ Captured log call ------------------------------
+ERROR    marketingos.market:market_service.py:1294 market: audience research crashed
+Traceback (most recent call last):
+  File "C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\app\services\market_service.py", line 1269, in _run_audience_research
+    research = await AudienceResearcher(
+                     ^^^^^^^^^^^^^^^^^^^
+TypeError: test_total_fetch_failure_persists_nothing.<locals>.FailingResearcher.__init__() got an unexpected keyword argument 'fetcher'
+_____ test_every_launcher_goes_through_the_one_place_that_holds_the_task ______
+
+    def test_every_launcher_goes_through_the_one_place_that_holds_the_task():
+        """The launchers are written by copying each other, so the guard has
+        to be the only door rather than a line in each of them."""
+        source = inspect.getsource(market_service)
+    
+        assert source.count("create_job_task(") == 1, (
+            "create_task belongs in _spawn and nowhere else - a task nothing holds "
+            "can be collected mid-run"
+        )
+        assert "create_job_task(" in inspect.getsource(market_service._spawn)
+>       assert source.count("_spawn(") == 7, "one definition and six launchers"
+E       AssertionError: one definition and six launchers
+E       assert 8 == 7
+E        +  where 8 = <built-in method count of str object at 0x0000016B4E78E020>('_spawn(')
+E        +    where <built-in method count of str object at 0x0000016B4E78E020> = '"""Running and reading a brand\'s market intelligence.\n\nSix background jobs, one shape: scan the competitors, hunt ...,\n        execution_id=f"market:{brand_id}",\n        on_call=status.record if status is not None else None,\n    )\n'.count
+
+tests\market\test_background_jobs.py:50: AssertionError
+============================== warnings summary ===============================
+.venv\Lib\site-packages\starlette\testclient.py:53
+  C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+tests/api/test_audience.py::test_an_unknown_decision_is_refused_rather_than_stored
+  C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py:1100: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    result = context.run(func, *args)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/api/test_audit_regressions.py::test_credit_reserve_is_released_only_for_proven_unsent_calls[provider]
+FAILED tests/api/test_audit_regressions.py::test_credit_reserve_is_released_only_for_proven_unsent_calls[unknown_model]
+FAILED tests/api/test_audit_regressions.py::test_credit_reserve_is_released_only_for_proven_unsent_calls[unknown_version]
+FAILED tests/api/test_audit_regressions.py::test_credit_reserve_is_released_only_for_proven_unsent_calls[invalid_cost]
+FAILED tests/api/test_audit_regressions.py::test_reserve_release_is_idempotent
+FAILED tests/api/test_credits.py::test_refund_freezes_account_and_prevents_repeat_usage
+FAILED tests/api/test_credits.py::test_checkout_price_is_server_owned_and_test_mode_recorded
+FAILED tests/api/test_credits.py::test_model_call_reserves_before_spend_and_releases_unused_credits
+FAILED tests/api/test_credits.py::test_model_call_with_no_balance_never_reaches_provider
+FAILED tests/api/test_credits.py::test_model_session_checks_credit_before_provider_call
+FAILED tests/api/test_credits.py::test_model_session_settles_successful_call_to_twice_its_cost
+FAILED tests/market/test_audience_admission.py::test_admission_has_no_product_evidence_or_campaign_inputs
+FAILED tests/market/test_audience_research.py::test_successful_background_refresh_appends_versions
+FAILED tests/market/test_audience_research.py::test_total_fetch_failure_persists_nothing
+FAILED tests/market/test_background_jobs.py::test_every_launcher_goes_through_the_one_place_that_holds_the_task
+15 failed, 2198 passed, 2 warnings in 188.57s (0:03:08)

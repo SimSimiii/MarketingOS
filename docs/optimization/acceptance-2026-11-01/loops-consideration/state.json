@@ -1,0 +1,169 @@
+{
+  "runs": [
+    {
+      "execution_id": "2a41a6d3-e524-4a54-a26f-d18f807fc069",
+      "campaign_id": "82eae0ec-8049-4ba8-bcc0-b7a588534c6d",
+      "status": "completed",
+      "launched_at": "2026-11-02T06:15:15.700111+00:00",
+      "code_revision": "working-tree",
+      "outcome_status": "degraded",
+      "needs_review": true,
+      "review_reasons": [
+        "Some drafts retain unresolved strategy or review findings."
+      ],
+      "last_checked_at": "2026-11-02T06:18:37.609823+00:00",
+      "result_dir": "docs\\optimization\\acceptance-2026-11-01\\loops-consideration\\runs\\2a41a6d3-e524-4a54-a26f-d18f807fc069",
+      "estimated_cost_usd": 2.8644,
+      "completed_at": "2026-11-02T06:18:34.265337Z"
+    },
+    {
+      "execution_id": "a7fdcb01-c4bd-4d6c-aeb4-aed76381bb11",
+      "campaign_id": "82eae0ec-8049-4ba8-bcc0-b7a588534c6d",
+      "status": "completed",
+      "launched_at": "2026-11-03T23:52:52.685151+00:00",
+      "code_revision": "working-tree",
+      "outcome_status": "degraded",
+      "needs_review": true,
+      "review_reasons": [
+        "Some drafts retain unresolved strategy or review findings."
+      ],
+      "last_checked_at": "2026-11-03T23:57:34.422756+00:00",
+      "result_dir": "docs\\optimization\\acceptance-2026-11-01\\loops-consideration\\runs\\a7fdcb01-c4bd-4d6c-aeb4-aed76381bb11",
+      "estimated_cost_usd": 3.28,
+      "completed_at": "2026-11-03T23:57:27.367678Z"
+    }
+  ],
+  "steps": {
+    "campaign": {
+      "started_at": "20261102T000512209838Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-consideration\\steps\\20261102T000512209838Z-campaign.json"
+    },
+    "policy-gpt-window-recovery": {
+      "started_at": "20261102T061458679591Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-consideration\\steps\\20261102T061458679591Z-policy.json"
+    }
+  },
+  "last_snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-consideration\\steps\\20261102T061458679591Z-policy.json",
+  "acceptance_review": {
+    "iteration": "claim-context-separation",
+    "execution_id": "a7fdcb01-c4bd-4d6c-aeb4-aed76381bb11",
+    "score": 88,
+    "score_components": [
+      25,
+      18,
+      15,
+      13,
+      9,
+      8
+    ],
+    "comparable": true,
+    "track": "single consideration email with ordinary optional revision",
+    "strengths": [
+      "Source-backed SMTP versus Hook coverage gives a specific route-selection decision",
+      "Domain, Hook template and Edge Function conditions remain; original/history and chosen export verified"
+    ],
+    "remaining_defect": "SMTP template setup is left to the guide; the prose does not promise configuration-free SMTP. An unrelated rate-limit paragraph in the generated version needed a minor optional edit.",
+    "evidence": [
+      "runs/a7fdcb01-c4bd-4d6c-aeb4-aed76381bb11/result.json",
+      "claim-context-revision-accepted.json",
+      "claim-context-revision-ui-check.json",
+      "claim-context-selected/render-check.json"
+    ],
+    "next_action": "Transfer check passed after one1-call minor revision; continue remaining three-email case.",
+    "reviewed_at": "2026-11-04T00:00:49.308308+00:00",
+    "status": "usable_after_minor_revision",
+    "selected_revision_id": "788f73a7-d3f0-43f0-b24c-31e87df060b9",
+    "delivered": 1,
+    "promised": 1,
+    "counts_as_usable": true
+  },
+  "quality_history": [
+    {
+      "iteration": "scope18-gpt-original",
+      "execution_id": "2a41a6d3-e524-4a54-a26f-d18f807fc069",
+      "score": 84,
+      "score_components": [
+        24,
+        18,
+        14,
+        12,
+        9,
+        7
+      ],
+      "comparable": true,
+      "track": "knowledge2/scope18 GPT",
+      "strengths": [
+        "Documented integration architecture",
+        "Proportionate guide CTA"
+      ],
+      "remaining_defect": "Guide publisher mislabeled as Supabase; warning-led subject.",
+      "next_action": "One bounded minor revision",
+      "evidence": [
+        "runs/2a41a6d3-e524-4a54-a26f-d18f807fc069/result.json"
+      ],
+      "reviewed_at": "2026-11-02T06:48:20.584715+00:00",
+      "delta_vs_previous_comparable": null
+    },
+    {
+      "iteration": "scope18-gpt-selected",
+      "execution_id": "2a41a6d3-e524-4a54-a26f-d18f807fc069",
+      "revision_id": "39e36149-914d-4727-8b7e-8adc37b81997",
+      "score": 88,
+      "score_components": [
+        25,
+        18,
+        15,
+        13,
+        9,
+        8
+      ],
+      "comparable": true,
+      "track": "knowledge2/scope18 GPT",
+      "strengths": [
+        "Concrete hook/Edge Function/template/domain architecture for evaluation",
+        "Same official guide and conditions retained in a concise proposal"
+      ],
+      "remaining_defect": "Conservative editorial voice; no stronger-results claim is established. Advisory compares CTA wording literally.",
+      "next_action": "Accepted for fixed audit; no further model runs",
+      "evidence": [
+        "runs/2a41a6d3-e524-4a54-a26f-d18f807fc069/result.json"
+      ],
+      "reviewed_at": "2026-11-02T06:48:20.584715+00:00",
+      "delta_vs_previous_comparable": 4
+    },
+    {
+      "iteration": "claim-context-separation",
+      "execution_id": "a7fdcb01-c4bd-4d6c-aeb4-aed76381bb11",
+      "score": 88,
+      "score_components": [
+        25,
+        18,
+        15,
+        13,
+        9,
+        8
+      ],
+      "comparable": true,
+      "track": "single consideration email with ordinary optional revision",
+      "strengths": [
+        "Source-backed SMTP versus Hook coverage gives a specific route-selection decision",
+        "Domain, Hook template and Edge Function conditions remain; original/history and chosen export verified"
+      ],
+      "remaining_defect": "SMTP template setup is left to the guide; the prose does not promise configuration-free SMTP. An unrelated rate-limit paragraph in the generated version needed a minor optional edit.",
+      "evidence": [
+        "runs/a7fdcb01-c4bd-4d6c-aeb4-aed76381bb11/result.json",
+        "claim-context-revision-accepted.json",
+        "claim-context-revision-ui-check.json",
+        "claim-context-selected/render-check.json"
+      ],
+      "next_action": "Transfer check passed after one1-call minor revision; continue remaining three-email case.",
+      "reviewed_at": "2026-11-04T00:00:49.308308+00:00"
+    }
+  ],
+  "quality_best": {
+    "iteration": "scope18-gpt-selected",
+    "score": 88,
+    "execution_id": "2a41a6d3-e524-4a54-a26f-d18f807fc069",
+    "track": "knowledge2/scope18 GPT"
+  }
+}

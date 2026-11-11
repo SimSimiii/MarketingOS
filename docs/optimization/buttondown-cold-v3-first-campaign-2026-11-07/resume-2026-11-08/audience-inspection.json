@@ -1,0 +1,582 @@
+{
+  "brand_id": "cde40f3a-cb41-46af-9688-344989968a56",
+  "map": {
+    "summary": "3 audience(s) mapped; 0 worth exploring first. Commercial priority is a hypothesis, not a response-rate forecast.",
+    "options": {
+      "geography": "",
+      "language": "",
+      "exclusions": "",
+      "objective": "customers",
+      "mode": "refresh"
+    },
+    "validation_note": "Checked 5 pages; 0 fetch failure(s). Quotes are source-verified; interpretations and purchase intent are hypotheses.",
+    "reading": "Assessment summary. Verified quotations do not establish demand or purchase intent; commercial priority remains a hypothesis.\n- Newsletter writer leaving Substack for ownership and independence: hypothesis; product compatibility supported; audience evidence absent (1 quoted source(s)); use or purchase captured; reachability unknown.\n- Developer-minded newsletter operator: hypothesis; product compatibility supported; audience evidence absent (0 quoted source(s)); use or purchase unknown; reachability unknown.\n- Solo newsletter writer growing past manual workflows: hypothesis; product compatibility supported; audience evidence absent (0 quoted source(s)); use or purchase unknown; reachability unknown.",
+    "note": "Budget used: 3 searches across 2 turns, within the 4-query limit. Did not find population counts, pricing-sensitivity complaints, or a direct Buttondown-Teams buyer testimonial; those remain open gaps. No geography/language restriction was given, so results were not geo-filtered.",
+    "searched": [
+      "\"Buttondown\" newsletter writer switched from Substack reddit",
+      "Buttondown API automation newsletter developer \"buttondown.com/api\" OR \"docs.buttondown\" workflow",
+      "newsletter editor collaborator \"Google Docs\" draft review workflow writer complaint"
+    ],
+    "mapped_at": "2026-11-08T00:54:09.763495Z",
+    "segments": [
+      {
+        "name": "Newsletter writer leaving Substack for ownership and independence",
+        "organization": "Independent writer or small publication (solo or 2-person team)",
+        "workflow": "Currently publishes on Substack or another hosted platform and is moving the list, archive, and sending infrastructure to a self-hosted-feeling tool they control",
+        "need": "Own their subscriber list and archive outright, outside a platform's content-moderation and lock-in policies, while keeping the ability to send and host a newsletter",
+        "buyer_role": "Writer/owner",
+        "user_role": "Writer/owner",
+        "current_alternative": "Substack (or Ghost/Mailchimp) with its built-in audience, discovery and moderation policies",
+        "assessment": {
+          "compatibility": "supported",
+          "evidence_strength": "absent",
+          "findability": "unknown",
+          "usage_or_purchase": "captured",
+          "reachability": "unknown",
+          "counterevidence_summary": [],
+          "counterevidence": 0,
+          "priority": "hypothesis",
+          "reasons": [
+            "Five independent firsthand blog posts document writers actually completing a move off Substack to Buttondown, each citing platform moderation/policy as the trigger",
+            "Buttondown's verified GDPR/no-data-collection stance (fact_57a9a1e633f0f9ab) matches the privacy-and-ownership motive these writers state for leaving a platform-heavy host"
+          ],
+          "unknowns": [
+            "None of the fetched posts mention pricing, add-on usage, or satisfaction after switching, so stickiness/retention is unverified",
+            "Margot Atwell's own post is truncated before confirming she personally landed on Buttondown (the surrounding sentence cuts off), so her first-person destination is not fully confirmed in the fetched excerpt",
+            "5 unsupported or duplicate quotation(s) discarded.",
+            "No verified venue or example establishes findability yet."
+          ],
+          "evidence": [
+            {
+              "claim": "Writer explicitly moved an existing Substack newsletter to Buttondown, citing Substack's tolerance of hateful content as the reason",
+              "quote": "So instead of writing further here, I've moved my newsletter to an alternative provider Buttondown. After you receive this last Substack email, I'll send you a new one via Buttondown, containing my new newsletter.",
+              "url": "https://mcgaritydotme.substack.com/p/why-im-switching-newsletter-providers",
+              "kind": "usage",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-08T00:53:29.149891Z",
+              "direct_buyer_voice": true
+            }
+          ]
+        },
+        "kind": "triggered",
+        "added_by": "cartographer",
+        "who": "Writers who have publicly announced or blogged about migrating their newsletter off Substack, citing platform policy or walled-garden concerns",
+        "why_them": "Multiple writers document moving specifically to Buttondown and explain the decision in public posts, showing an active, documented switching motion rather than inferred intent",
+        "trigger": "A platform-level event (moderation controversy, pricing change, or a personal decision to 'own the list') prompts an active search for an alternative",
+        "pains": [
+          "Feeling locked into a platform that keeps the audience relationship and makes export hard",
+          "Disagreement with how the platform's business model monetizes or moderates other writers on the same platform",
+          "Wanting privacy-first subscriber data handling rather than analytics-heavy platforms"
+        ],
+        "objection": "Buttondown has a smaller built-in discovery/network effect than Substack, so switching costs reach beyond tooling (fit/basis hypothesis, not sourced)",
+        "angle": "",
+        "sophistication": "solution_aware",
+        "fit": 0,
+        "basis": "Sourced from multiple independent firsthand migration posts (McGarityDotMe, Buttondown's own writer-hosted 'Why I Left Substack' post, Ric Mac, Eve Harms, blmurch, boardgamewire, lastweeksnewyorker) describing an actual, completed switch to Buttondown; motives given are platform policy, ownership, and design rather than team/collaboration pain. No evidence found yet on price sensitivity or add-on usage after switching.",
+        "population": "unknown",
+        "signals": [
+          "cta-signup",
+          "cta-get-started"
+        ],
+        "where": [
+          "buttondown.com/blog",
+          "substack.com (migration posts hosted there)",
+          "personal blogs of migrating writers"
+        ],
+        "unobvious": true,
+        "researchable": true,
+        "researchability": "medium",
+        "researchability_reasons": [
+          "2 useful observable signals and 3 specific research venues.",
+          "The audience is anchored in a concrete workflow or situation.",
+          "No clear trigger narrows the research.",
+          "No population basis is stated."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [],
+          "required_workflow_signals": [
+            {
+              "code": "migrating_from_hosted_platform",
+              "description": "Publicly documents or announces moving an existing newsletter off Substack/another host"
+            }
+          ],
+          "required_product_capabilities": [
+            "fact_57a9a1e633f0f9ab"
+          ],
+          "optional_signals": [
+            {
+              "code": "custom_domain_sending",
+              "description": "Wants to send/host under their own domain"
+            }
+          ],
+          "hard_disqualifiers": [],
+          "eligible_subsegments": [],
+          "excluded_subsegments": [],
+          "max_team_size": null
+        }
+      },
+      {
+        "name": "Developer-minded newsletter operator",
+        "organization": "Solo developer, small dev-focused community, or technical team running a newsletter as part of a product/community",
+        "workflow": "Manages subscribers, sends, and triggers newsletters programmatically from code, Slack, GitHub issues, spreadsheets, or terminal, rather than through a web UI",
+        "need": "Automate newsletter operations end-to-end via an API so newsletter sending integrates with existing tools (CRM, Slack, GitHub, Sheets)",
+        "buyer_role": "Developer/maintainer",
+        "user_role": "Developer/maintainer",
+        "current_alternative": "Manual UI-driven sending in Buttondown/Substack, or a custom-built send pipeline (SMTP + scripts)",
+        "assessment": {
+          "compatibility": "supported",
+          "evidence_strength": "absent",
+          "findability": "unknown",
+          "usage_or_purchase": "unknown",
+          "reachability": "unknown",
+          "counterevidence_summary": [],
+          "counterevidence": 0,
+          "priority": "hypothesis",
+          "reasons": [
+            "None of the fetched pages (five Substack-to-Buttondown migration posts) discuss API-driven sending, developer tooling, or integrations with Slack/GitHub/Sheets",
+            "The candidate's cited sources (GitHub repo, Agical blog, Buttondown's own API pages) are not present in the fetched corpus, so no quotable evidence exists here"
+          ],
+          "unknowns": [
+            "Whether any developer-built automation on Buttondown's API actually exists is unverified in this fetched set",
+            "Whether the unquantified rate-limit language would be a real objection for this audience is untested without fetched developer accounts",
+            "No verified venue or example establishes findability yet."
+          ],
+          "evidence": []
+        },
+        "kind": "core",
+        "added_by": "cartographer",
+        "who": "Developers and technical community maintainers who have published code or blog posts building on Buttondown's API",
+        "why_them": "Concrete public examples exist of developers building automations on Buttondown's API for real newsletters (Python Community News via GitHub Issues, a Slack-to-newsletter pipeline, a Google-Sheets-driven send, terminal-based sending), showing actual integration behavior, not just interest",
+        "trigger": "Needs integrations or custom tooling a plain web UI doesn't cover, e.g. syncing a CRM or auto-curating content from another tool",
+        "pains": [
+          "Manually copy-pasting curated content (e.g. Slack threads, GitHub issues) into a newsletter editor",
+          "Wanting to trigger sends from external events rather than logging into a dashboard"
+        ],
+        "objection": "Rate limits are described only as 'generous enough for most use cases,' an unquantified claim that a high-volume automation builder may need to verify before committing (fact_42870bbbfa7b155e)",
+        "angle": "",
+        "sophistication": "product_aware",
+        "fit": 0,
+        "basis": "Sourced from Buttondown's own API-feature page plus independent third-party build writeups: a GitHub repo (Python-Community-News/Newsletter), an Agical blog post on Buttondown+Google Sheets automation, Buttondown's own blog posts on terminal-sending and Slack-powered newsletters. Evidence of working integrations is real but mostly vendor-adjacent (Buttondown's own blog) or small-community projects; no large-company case study found.",
+        "population": "unknown",
+        "signals": [
+          "cta-api-docs",
+          "cta-signup"
+        ],
+        "where": [
+          "github.com/Python-Community-News/Newsletter",
+          "blog.agical.se",
+          "buttondown.com/blog",
+          "mcpmarket.com/server/buttondown"
+        ],
+        "unobvious": false,
+        "researchable": true,
+        "researchability": "medium",
+        "researchability_reasons": [
+          "2 useful observable signals and 4 specific research venues.",
+          "The audience is anchored in a concrete workflow or situation.",
+          "No clear trigger narrows the research.",
+          "No population basis is stated."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [],
+          "required_workflow_signals": [
+            {
+              "code": "api_driven_sending",
+              "description": "Sends or manages subscribers primarily via API/code rather than the web dashboard"
+            }
+          ],
+          "required_product_capabilities": [
+            "fact_42870bbbfa7b155e"
+          ],
+          "optional_signals": [
+            {
+              "code": "external_tool_integration",
+              "description": "Pulls content from Slack, GitHub, or spreadsheets into the newsletter"
+            }
+          ],
+          "hard_disqualifiers": [],
+          "eligible_subsegments": [],
+          "excluded_subsegments": [],
+          "max_team_size": null
+        }
+      },
+      {
+        "name": "Solo newsletter writer growing past manual workflows",
+        "organization": "Solo writer beginning to add an editor or occasional collaborator",
+        "workflow": "Drafts in a document tool and emails or shares drafts back and forth with an editor/collaborator before sending",
+        "need": "Get editorial help on drafts without handing over billing or API-key access",
+        "buyer_role": "Writer/owner",
+        "user_role": "Writer/owner plus one invited editor",
+        "current_alternative": "Emailing or sharing Google Docs drafts with an editor outside the sending platform",
+        "assessment": {
+          "compatibility": "supported",
+          "evidence_strength": "absent",
+          "findability": "unknown",
+          "usage_or_purchase": "unknown",
+          "reachability": "unknown",
+          "counterevidence_summary": [],
+          "counterevidence": 0,
+          "priority": "hypothesis",
+          "reasons": [
+            "None of the fetched pages mention editorial collaboration, draft hand-offs, or Buttondown's Teams access-control feature",
+            "All five fetched sources are solo-writer Substack-to-Buttondown migration accounts with no mention of a second collaborator or editor role"
+          ],
+          "unknowns": [
+            "Whether any Buttondown user has described using Teams specifically to solve a Docs-handoff editing problem remains unverified",
+            "Whether this need is distinct enough from competitor solutions (e.g., Kit's Creator Pro, mentioned only in the candidate's own basis, not in fetched pages) to motivate a purchase is untested",
+            "No verified venue or example establishes findability yet."
+          ],
+          "evidence": []
+        },
+        "kind": "core",
+        "added_by": "cartographer",
+        "who": "Growing solo newsletter writers who need a second set of eyes on drafts",
+        "why_them": "General collaborative-writing workflow literature confirms this hand-off pattern (draft in Docs, review elsewhere, reconcile before publishing) as a known source of version-control friction, matching the situation Buttondown's Teams add-on targets",
+        "trigger": "Newsletter growing beyond what one person can manage alone",
+        "pains": [
+          "Version control issues when editors keep editing after handoff",
+          "Reformatting/reconciliation friction moving a reviewed draft from Docs into the sending tool"
+        ],
+        "objection": "No firsthand account found of a writer naming Buttondown specifically (vs. a generic competitor like Kit Creator Pro) as the fix for this exact Docs-handoff pain; the link between the general pain and this product is inferred, not sourced",
+        "angle": "",
+        "sophistication": "solution_aware",
+        "fit": 0,
+        "basis": "Search surfaced generic collaborative-editing pain (version control, suggesting-mode review cycles) and a competitor, Kit's 'Creator Pro' collaborative newsletter editing feature, but no direct buyer-voice evidence naming Buttondown's Teams add-on as the solution. Treat as a hypothesis pending firsthand confirmation.",
+        "population": "unknown",
+        "signals": [
+          "cta-signup",
+          "cta-build"
+        ],
+        "where": [
+          "kit.com/resources/blog/collaborative-newsletter-editing (competitor reference)",
+          "bernoff.com/blog/the-unwritten-rules-of-collaborative-courtesy"
+        ],
+        "unobvious": false,
+        "researchable": true,
+        "researchability": "medium",
+        "researchability_reasons": [
+          "2 useful observable signals and 2 specific research venues.",
+          "The audience is anchored in a concrete workflow or situation.",
+          "No clear trigger narrows the research.",
+          "No population basis is stated."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [],
+          "required_workflow_signals": [
+            {
+              "code": "editor_handoff_outside_platform",
+              "description": "Shares drafts with an editor/collaborator outside the sending tool before publishing"
+            }
+          ],
+          "required_product_capabilities": [
+            "fact_7366557233d79775",
+            "fact_5ae5810a5361881e"
+          ],
+          "optional_signals": [],
+          "hard_disqualifiers": [],
+          "eligible_subsegments": [],
+          "excluded_subsegments": [],
+          "max_team_size": 5
+        }
+      }
+    ]
+  },
+  "prospects": [],
+  "research": [],
+  "relevance": [],
+  "capability_profile": {
+    "schema_version": 2,
+    "version": 1,
+    "knowledge_id": "8ff6ac27-8707-404f-a8b9-6d729d899551",
+    "knowledge_version": 1,
+    "ledger_fingerprint": "b90ba1796e5ad88f0000a58db9cc8d30e95c73ee573cd5549859be7973610d00",
+    "derivation_version": 3,
+    "capabilities": [
+      {
+        "id": "fact_42870bbbfa7b155e",
+        "label": "Buttondown's API is rate-limited to prevent abuse, with limits described as generous enough for most use cases",
+        "description": "Source: official_documentation; Subject: Buttondown API; \"generous enough\" is vague/unquantified",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E2",
+            "claim": "Buttondown's API is rate-limited to prevent abuse, with limits described as generous enough for most use cases",
+            "quote": "Yes. The API is rate-limited to prevent abuse, but the limits are generous enough for most use cases.",
+            "source_identifier": "https://buttondown.com/features/api"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_57a9a1e633f0f9ab",
+        "label": "Buttondown is GDPR-compliant and does not collect any data about users or their subscribers by default",
+        "description": "Source: official_documentation; Subject: Buttondown analytics & privacy",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E5",
+            "claim": "Buttondown is GDPR-compliant and does not collect any data about users or their subscribers by default",
+            "quote": "Buttondown is GDPR-compliant and then some. We don't collect any data about you or your subscribers by default.",
+            "source_identifier": "https://buttondown.com/features"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_b51ab82bc499e49c",
+        "label": "Buttondown supports over 40 integrations for embedding videos, GIFs, songs, posts, or other content",
+        "description": "Source: official_documentation; Subject: Buttondown integrations",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E8",
+            "claim": "Buttondown supports over 40 integrations for embedding videos, GIFs, songs, posts, or other content",
+            "quote": "We support [over 40 integrations](/features/integrations).",
+            "source_identifier": "https://buttondown.com/features"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_33485b07490674e0",
+        "label": "Buttondown lets users send a newsletter post directly from their personal or business email by emailing it in, and save it as a draft by sending to a different address",
+        "description": "Source: official_documentation; Subject: Buttondown send-from-email feature; must send from the email address used to join Buttondown",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E9",
+            "claim": "Buttondown lets users send a newsletter post directly from their personal or business email by emailing it in, and save it as a draft by sending to a different address",
+            "quote": "Send an email to `[email protected]` from the email address that you joined Buttondown with, and we'll send it out to your subscribers. Want to save it as a draft? Send it to`[email protected]` instead.",
+            "source_identifier": "https://buttondown.com/features"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_7366557233d79775",
+        "label": "Buttondown for Teams lets collaborators review emails before they go out, seeing drafts, suggesting changes, and helping ship with confidence",
+        "description": "Source: vendor_statement; Subject: Buttondown Teams",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E11",
+            "claim": "Buttondown for Teams lets collaborators review emails before they go out, seeing drafts, suggesting changes, and helping ship with confidence",
+            "quote": "Invite collaborators to review your emails before they go out. They can see your drafts, suggest changes, and help you ship with confidence.",
+            "source_identifier": "https://buttondown.com/features/teams"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_5ae5810a5361881e",
+        "label": "Teams access control lets you give an editor access to drafts but not billing, and let a marketing lead manage subscribers without touching API keys",
+        "description": "Source: vendor_statement; Subject: Buttondown Teams",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E12",
+            "claim": "Teams access control lets you give an editor access to drafts but not billing, and let a marketing lead manage subscribers without touching API keys",
+            "quote": "Give your editor access to drafts but not billing. Let your marketing lead manage subscribers without touching your API keys.",
+            "source_identifier": "https://buttondown.com/features/teams"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      }
+    ],
+    "constraints": [],
+    "claims": [
+      {
+        "text": "The API is available on all plans, including the free plan",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E1"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown's API is rate-limited to prevent abuse, with limits described as generous enough for most use cases",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E2"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown will migrate a user's mailing list to Buttondown for free, regardless of list size, via a concierge migration service",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E3"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown does not charge extra for paid subscribers on its paid subscriptions feature, letting creators keep all revenue they make",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E4"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown is GDPR-compliant and does not collect any data about users or their subscribers by default",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E5"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown's surveys have response rates 200% higher than the industry average",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E6"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown takes no cut of newsletter sponsorships; creators keep 100% of every sponsorship minus Stripe's processing fee",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E7"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown supports over 40 integrations for embedding videos, GIFs, songs, posts, or other content",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E8"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown lets users send a newsletter post directly from their personal or business email by emailing it in, and save it as a draft by sending to a different address",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E9"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown charges users based on total subscriber count across all their newsletters, not by the number of newsletters created, so users can create unlimited distinct newsletters",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E10"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown for Teams lets collaborators review emails before they go out, seeing drafts, suggesting changes, and helping ship with confidence",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E11"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Teams access control lets you give an editor access to drafts but not billing, and let a marketing lead manage subscribers without touching API keys",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E12"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Team members do not count toward subscriber limits and don't affect billing at all",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E13"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "There is no limit on how many collaborators can be invited to a Buttondown team",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E14"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown is free for the first 100 subscribers",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E15"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "The Teams add-on costs an additional $79/month",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E16"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "The Email attachments add-on costs an additional $9/month",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E17"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Registered 501(c)(3) non-profits (or the equivalent in their country) get a 50% discount on their plan",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E18"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown charges for active subscribers only, not all contacts",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E19"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown's listed prices assume sending at most one email a day to the entire subscriber base; sending more requires contacting them about usage-based pricing",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E20"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      }
+    ],
+    "id": "c9125486-d7fd-4a82-82f9-5ad74fd3f61d",
+    "brand_id": "cde40f3a-cb41-46af-9688-344989968a56",
+    "created_at": "2026-11-08T00:52:19.773772"
+  },
+  "note": ""
+}

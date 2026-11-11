@@ -227,6 +227,7 @@ class MapEvidence(BaseModel):
     impact: Literal["unknown", "minor", "material"] = "unknown"
     impact_reason: str = ""
     fetched_at: datetime | None = None
+    direct_buyer_voice: bool = False
 
 
 class MapAssessment(BaseModel):
@@ -487,7 +488,8 @@ class AudienceSegment(BaseModel):
         return self.kind is not SegmentKind.CORE
 
     def admission(
-        self, existing: Iterable["AudienceSegment"] = ()
+        self, existing: Iterable["AudienceSegment"] = (), *,
+        allow_topic_research: bool = False,
     ) -> AudienceAdmission:
         """Whether another research pass can learn something concrete about this buyer.
 
@@ -504,7 +506,10 @@ class AudienceSegment(BaseModel):
             situation = 2
             useful_signals = [signal for signal in self.signals if len(signal.strip()) >= 8]
         failures: list[str] = []
-        if not useful_signals:
+        topic_research = allow_topic_research and all(
+            value.strip() for value in (self.organization, self.workflow, self.need)
+        ) and bool(specific_venues)
+        if not useful_signals and not topic_research:
             failures.append("No useful observable signal identifies this audience.")
         if not specific_venues:
             failures.append(
@@ -534,6 +539,8 @@ class AudienceSegment(BaseModel):
                 f"{'s' if len(specific_venues) != 1 else ''}."
             )
         ]
+        if topic_research and not useful_signals:
+            reasons.append("The stated workflow can be researched in the named public venues; prospect identification is unverified.")
         if len(useful_signals) >= 2:
             score += 1
         else:
@@ -682,7 +689,7 @@ class DemandMap(BaseModel):
             research[self.admission_for(segment).researchability],
         ))
 
-    def admission_for(self, segment: AudienceSegment) -> AudienceAdmission:
+    def admission_for(self, segment: AudienceSegment, *, allow_topic_research: bool = False) -> AudienceAdmission:
         """Admission in map order, so only later duplicates are rejected."""
         index = next(
             (position for position, item in enumerate(self.segments) if item is segment),
@@ -693,7 +700,7 @@ class DemandMap(BaseModel):
                 (position for position, item in enumerate(self.segments) if item == segment),
                 len(self.segments),
             )
-        return segment.admission(self.segments[:index])
+        return segment.admission(self.segments[:index], allow_topic_research=allow_topic_research)
 
     @property
     def researchability_ranked(self) -> list["AudienceSegment"]:
@@ -911,6 +918,7 @@ class AudienceCartographer:
         options: MapOptions | None = None,
         previous: DemandMap | None = None,
         progress: Callable[[str], None] = lambda _: None,
+        compact: bool = False,
     ) -> DemandMap:
         """Discover, fetch and validate in at most two logical model calls.
 
@@ -931,7 +939,7 @@ class AudienceCartographer:
         progress("Discovering candidates and exact source URLs (stage 1 of 2)")
         answer = await self._session.structured(
             role=CARTOGRAPHER_ROLE_ID,
-            tier=ModelTier.DEEP,
+            tier=ModelTier.BALANCED if compact else ModelTier.DEEP,
             template="audience_map",
             variables={
                 "company": artifacts.business.company_name or "this company",
@@ -950,6 +958,7 @@ class AudienceCartographer:
                     else "Nobody has read this market's competitors yet."
                 ),
                 "limit": limit,
+                "compact": compact,
                 "capabilities": json.dumps(capability_profile.discovery_context(), ensure_ascii=False)
                 if capability_profile else "Unknown; do not assume support.",
                 "scope": options.model_dump_json(),
@@ -967,13 +976,15 @@ class AudienceCartographer:
             ),
             schema=_MapAnswer,
             tools=[ResearchTool.WEB_SEARCH],
+            **({"max_turns": 10} if compact else {}),
         )
         # Local import keeps the existing audience researcher free to use the
         # segment model while discovery reuses its bounded, safe URL fetcher.
         from app.market.audience_discovery import validate_map
 
         return await validate_map(
-            self._session, answer, capability_profile, options, previous, limit, progress
+            self._session, answer, capability_profile, options, previous, limit, progress,
+            compact=compact,
         )
 
 

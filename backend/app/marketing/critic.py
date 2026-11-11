@@ -206,6 +206,10 @@ class ConversionCritic:
             campaign.fixed_cta_url or brief.next_step_url,
             excluded_ids=frozenset(brief.forbidden_evidence_ids),
         )
+        selling = artifacts.selling_facts(
+            campaign.fixed_cta_url or brief.next_step_url,
+            excluded_ids=frozenset(brief.forbidden_evidence_ids),
+        )
         critique = await self._session.structured(
             role=ROLE_ID,
             tier=ModelTier.DEEP,
@@ -230,7 +234,12 @@ class ConversionCritic:
                     brief.objection,
                     offering=campaign.orientation,
                     excluded_ids=frozenset(brief.forbidden_evidence_ids),
-                ).render(),
+                ).render() + (
+                    # What the writer was handed to sell with, or the price in
+                    # the draft reads as an invention.
+                    f"\n\nAlso licensed, from the page the button leads to:\n{selling.render_compact()}"
+                    if selling.entries else ""
+                ),
                 "voice": artifacts.voice.render(),
                 "reader_report": read.render(),
                 "gate_report": gates.render(),

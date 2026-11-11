@@ -1,0 +1,1499 @@
+{
+  "audience_name": "A blogger with an existing site and an RSS feed, finally switching their email send-out off Mailchimp after putting it off for a while",
+  "status": "current",
+  "stale_reasons": [],
+  "missing_prerequisites": [],
+  "dossier_id": "67f61b89-4a03-44c0-b213-449f95faaeab",
+  "generation_version": 4,
+  "created_at": "2026-11-06T03:24:06.742038",
+  "dossier": {
+    "schema_version": 2,
+    "interpretation_version": 20,
+    "audience_research_id": "65752b06-0578-4896-927f-d847484676ea",
+    "audience_name": "A blogger with an existing site and an RSS feed, finally switching their email send-out off Mailchimp after putting it off for a while",
+    "audience_research_version": 1,
+    "knowledge_id": "a9015563-4e42-4f78-8b8c-e2af6737e8af",
+    "knowledge_version": 3,
+    "market_scan_id": "5628dda2-f1a0-480e-9517-f32840b0552d",
+    "market_scan_version": 1,
+    "capability_profile_id": "a84e0c69-5e28-4015-8fc1-f39ff6a2f472",
+    "capability_profile_version": 3,
+    "qualification_fingerprint": "607d40b29c97523ebfa0c505f5c3f5490c9140a529b5fbdeb20b6b3198f4c325",
+    "built_at": "2026-11-06T03:24:06.738919Z",
+    "orientation": "Buttondown is a browser-based newsletter platform where RSS-to-email is a paid add-on ($9/month, requiring the Basic plan) that can automatically turn a blog's RSS feed into an email send, using a template the owner builds once rather than writing a separate issue for each post.",
+    "defining_need_fit": {
+      "status": "partial",
+      "supported_alternative": "",
+      "setup_conditions": [
+        "A one-time RSS-to-email template must be built before automation runs; there is no stated no-code default (R9).",
+        "If the chosen cadence is weekly or monthly digest rather than per-post, the template must additionally contain a loop over feed items (R4, R10); this loop cannot be paired with the 'every new item' cadence (R11)."
+      ],
+      "evidence_ids": [
+        "E5",
+        "R2",
+        "R3",
+        "R9",
+        "R4",
+        "R10",
+        "R11"
+      ],
+      "capability_ids": [],
+      "unverified_requirements": [
+        "Whether any no-code/default template exists so manual Jinja authoring is never required is not established by the selected evidence; R9's own limitation notes it 'does not mention or rule out any separate no-code default template option.'"
+      ],
+      "decision_gaps": [
+        "Does Buttondown offer any no-code default RSS-to-email template, or is the template/loop construction in R9/R4 always required regardless of plan?",
+        "What is the Basic plan's own base monthly price (required for RSS-to-email per R6), needed to compute total replacement cost against this audience's cited Mailchimp bill?",
+        "How often do typical blog RSS feeds (e.g., default WordPress/Ghost exports) trigger the documented base-64 image exclusion (R12) or enclosure-skipping behavior (R13), which would determine how often a manual post-send fix is needed?"
+      ],
+      "caveat": "The 'automatic, no parallel authoring step' promise holds per-post and per-digest-cycle only after the one-time template is built; building that template is a documented setup step, not an ongoing second authoring workflow, but it is also not optional or no-code per the selected evidence.",
+      "why": "E5/R2/R3 document the core automatic pull-and-send mechanism across both cadence options, and R9/R4/R10/R11 document the one-time template construction and its documented exceptions that this mechanism rests on, together supporting the full defining workflow rather than only a fragment of it."
+    },
+    "ranked_relevance": [
+      {
+        "evidence_id": "E5",
+        "band": "LEAD",
+        "why": "Directly states the core mechanism the defining need asks for: Buttondown pulls RSS content and sends it to subscribers automatically.",
+        "problem_ids": [
+          "P1"
+        ],
+        "territory": null
+      },
+      {
+        "evidence_id": "R2",
+        "band": "LEAD",
+        "why": "Documents the per-post cadence option that most literally matches 'no second authoring step'—a new email fires as each post publishes.",
+        "problem_ids": [
+          "P1"
+        ],
+        "territory": null
+      },
+      {
+        "evidence_id": "R9",
+        "band": "SUPPORT",
+        "why": "Required exception to the LEAD mechanism: a template must be built once before automation works, which is the precise caveat this need needs on record.",
+        "problem_ids": [
+          "P1"
+        ],
+        "territory": null
+      },
+      {
+        "evidence_id": "R3",
+        "band": "SUPPORT",
+        "why": "Documents the alternate weekly-cadence trigger option supporting the same automatic-delivery mechanism.",
+        "problem_ids": [],
+        "territory": null
+      },
+      {
+        "evidence_id": "R4",
+        "band": "SUPPORT",
+        "why": "Documents how the digest branch of the template mechanism behaves (loop over items), a documented exception to the simple per-post template.",
+        "problem_ids": [],
+        "territory": null
+      },
+      {
+        "evidence_id": "R10",
+        "band": "SUPPORT",
+        "why": "Restates and confirms the digest-loop template requirement as the documented method, not an incidental detail.",
+        "problem_ids": [],
+        "territory": null
+      },
+      {
+        "evidence_id": "R11",
+        "band": "SUPPORT",
+        "why": "Documents a hard cadence/template pairing exception (digest cannot pair with 'every') that a buyer configuring automation needs to know.",
+        "problem_ids": [],
+        "territory": null
+      },
+      {
+        "evidence_id": "R12",
+        "band": "SUPPORT",
+        "why": "Documents a concrete rendering-fidelity exception (base-64 images skipped) to the automatic pull-and-send mechanism.",
+        "problem_ids": [],
+        "territory": null
+      },
+      {
+        "evidence_id": "R13",
+        "band": "SUPPORT",
+        "why": "Documents a second concrete exception (non-image enclosures skipped) to what the feed-pulling mechanism actually carries into the email.",
+        "problem_ids": [],
+        "territory": null
+      },
+      {
+        "evidence_id": "E18",
+        "band": "SUPPORT",
+        "why": "Directly answers the specific tracking complaint in P1 ('they track everything even when I tell them not to') with a stated no-default-data-collection/GDPR policy.",
+        "problem_ids": [
+          "P1"
+        ],
+        "territory": null
+      },
+      {
+        "evidence_id": "E9",
+        "band": "SUPPORT",
+        "why": "A documented customer migration account that the RSS-to-email switch was cheaper and less cluttered, touching both the cost problem and the no-CRM-bloat desire.",
+        "problem_ids": [
+          "P1",
+          "P2"
+        ],
+        "territory": null
+      },
+      {
+        "evidence_id": "E4",
+        "band": "SUPPORT",
+        "why": "A documented customer account of fast (~30 min relative) RSS-to-email setup, relevant to the 'no second workflow' adoption concern.",
+        "problem_ids": [
+          "P1"
+        ],
+        "territory": null
+      },
+      {
+        "evidence_id": "R6",
+        "band": "SUPPORT",
+        "why": "States the plan-tier gate (Basic plan) that determines what this costs, directly relevant to the price-driven search in P2.",
+        "problem_ids": [
+          "P2"
+        ],
+        "territory": null
+      },
+      {
+        "evidence_id": "R7",
+        "band": "SUPPORT",
+        "why": "Carries the one concrete figure in the ledger for this feature ($9/month add-on), the strongest pricing fact against the cited $326/month Mailchimp pain point.",
+        "problem_ids": [
+          "P2"
+        ],
+        "territory": null
+      },
+      {
+        "evidence_id": "R8",
+        "band": "SUPPORT",
+        "why": "Clarifies RSS-to-email sits outside the free base tier, a condition a cost-sensitive buyer needs preserved.",
+        "problem_ids": [
+          "P2"
+        ],
+        "territory": null
+      },
+      {
+        "evidence_id": "E19",
+        "band": "SUPPORT",
+        "why": "A free, size-agnostic migration offer reduces the switching friction implied by this audience's deferred-decision migration workflow.",
+        "problem_ids": [
+          "P2"
+        ],
+        "territory": null
+      },
+      {
+        "evidence_id": "E12",
+        "band": "WITHHOLD",
+        "why": "A licensed proof point, but an enterprise (LEGO) namedrop is a poor fit for a solo blogger audience explicitly seeking a non-bloated, personal-scale tool.",
+        "problem_ids": [],
+        "territory": null
+      },
+      {
+        "evidence_id": "E23",
+        "band": "WITHHOLD",
+        "why": "A true capability, but leading with '40+ integrations' cuts against this audience's stated desire for a tool limited to RSS-to-email without extra bundled features.",
+        "problem_ids": [],
+        "territory": null
+      },
+      {
+        "evidence_id": "E2",
+        "band": "CONTEXT",
+        "why": "General trust/responsiveness background, not specific to the RSS-to-email mechanism or either researched problem.",
+        "problem_ids": [],
+        "territory": null
+      },
+      {
+        "evidence_id": "E17",
+        "band": "CONTEXT",
+        "why": "A monetization/paid-subscriber policy unrelated to the audience's stated RSS-to-email and pricing concerns in this first decision.",
+        "problem_ids": [],
+        "territory": null
+      }
+    ],
+    "problem_fits": [
+      {
+        "problem_id": "P1",
+        "verdict": "PARTIAL",
+        "evidence_ids": [
+          "E5",
+          "R2",
+          "R3",
+          "E18"
+        ],
+        "capability_ids": [],
+        "blocked_by": [],
+        "caveat": "The automatic pull-and-send mechanism (E5/R2/R3) and the no-default-data-collection policy (E18) address the stated want and the tracking complaint, but a template must still be built once (R9) and rendering has documented exceptions (base-64 images skipped per R12; non-image enclosures skipped per R13), so the fit is not unconditional.",
+        "why": "Documented product mechanism matches the stated 'automatic RSS-to-email, no CRM bloat' want and the tracking complaint is directly answered, but concrete setup and rendering caveats remain in the selected evidence.",
+        "materiality_basis": ""
+      },
+      {
+        "problem_id": "P2",
+        "verdict": "PARTIAL",
+        "evidence_ids": [
+          "R7",
+          "R6",
+          "R8",
+          "E9",
+          "E19"
+        ],
+        "capability_ids": [],
+        "blocked_by": [],
+        "caveat": "The ledger establishes only the $9/month RSS-to-email add-on price and its Basic-plan gate; the Basic plan's own base price is not in the selected evidence, so total replacement cost against the cited $326/month Mailchimp bill is not established by the selected evidence.",
+        "why": "A concrete add-on price and a free, size-agnostic migration offer directly speak to the audience's cost complaint, but the figure needed to prove overall savings is incomplete in this ledger.",
+        "materiality_basis": "The audience's own cited figure ($326/month) makes price magnitude a material, not incidental, decision factor."
+      }
+    ],
+    "segment_objections": [
+      {
+        "objection": "Switching to Buttondown just trades one workflow (writing posts) for another (building and maintaining an RSS-to-email template), so it isn't really a single-authoring-step solution.",
+        "severity": "moderate",
+        "answer": "The template is a documented one-time construction step (R9), not a per-post or per-issue authoring task; for the per-post cadence (R2) no loop is needed at all, and for digest cadence the loop (R4/R10) is written once and reused automatically, with the two cadence/template pairings kept mutually exclusive by design (R11).",
+        "grounding": "inferred",
+        "evidence_ids": [
+          "R9",
+          "R2",
+          "R4",
+          "R10",
+          "R11"
+        ],
+        "provenance": []
+      },
+      {
+        "objection": "This audience left Mailchimp partly because it tracked subscribers even after opting out; moving to another ESP could repeat that problem.",
+        "severity": "moderate",
+        "answer": "Buttondown states it is GDPR-compliant and does not collect data about the owner or subscribers by default, which directly answers the tracking behavior that prompted the complaint.",
+        "grounding": "inferred",
+        "evidence_ids": [
+          "E18"
+        ],
+        "provenance": []
+      }
+    ],
+    "silences": [],
+    "evidence": [
+      {
+        "id": "E2",
+        "kind": "metric",
+        "claim": "When a customer reported a security vulnerability to Buttondown on a Friday afternoon, Buttondown acknowledged and fixed it in under two hours, on a Friday night.",
+        "verbatim": "A week ago I discovered a security vulnerability and reported it on Friday afternoon. They acknowledged and fixed it in under two hours. On a Friday night!",
+        "source": "https://buttondown.com/testimonials",
+        "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+        "context": {
+          "subject": "Buttondown's response to a reported security vulnerability",
+          "source_kind": "customer_statement",
+          "claim_scope": "customer_outcome",
+          "conditions": "single reported vulnerability, disclosed by Predrag Gruevski, Principal Engineer at Kensho",
+          "temporal_scope": "",
+          "limitations": "one incident's response time, not a stated SLA for all vulnerabilities",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+            "source": "https://buttondown.com/testimonials",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "trust",
+        "value_band": "supporting"
+      },
+      {
+        "id": "E4",
+        "kind": "integration",
+        "claim": "Buttondown's RSS-to-Email feature took about 30 minutes to set up for one customer, versus the time it took to figure out the equivalent feature in Mailchimp.",
+        "verbatim": "I just tested the RSS to Email feature for one of my blogs and it was incredibly easy to set up. It took me about 30 mins to figure out the same feature in Mailchimp.",
+        "source": "https://buttondown.com/testimonials",
+        "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+        "context": {
+          "subject": "Buttondown RSS to Email feature compared with Mailchimp",
+          "source_kind": "customer_statement",
+          "claim_scope": "comparison",
+          "conditions": "one customer's personal setup-time test of both tools",
+          "temporal_scope": "",
+          "limitations": "single user's timed impression, not a controlled benchmark",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+            "source": "https://buttondown.com/testimonials",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "technical",
+        "value_band": "supporting"
+      },
+      {
+        "id": "E5",
+        "kind": "feature",
+        "claim": "Buttondown can take an RSS feed, automatically pull in its content, and send it to subscribers.",
+        "verbatim": "The killer feature for me: Buttondown will take an RSS feed then automatically slurp up the content (in their words) and then send it to our subscribers.",
+        "source": "https://buttondown.com/testimonials",
+        "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+        "context": {
+          "subject": "Buttondown RSS-to-email feature",
+          "source_kind": "customer_statement",
+          "claim_scope": "capability",
+          "conditions": "",
+          "temporal_scope": "",
+          "limitations": "",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+            "source": "https://buttondown.com/testimonials",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "product",
+        "value_band": "supporting"
+      },
+      {
+        "id": "E9",
+        "kind": "feature",
+        "claim": "A customer who switched their RSS-to-email provider from Mailchimp to Buttondown found Buttondown cheaper, more flexible, and less cluttered.",
+        "verbatim": "This long weekend I fulfilled a long-standing promise to myself to switch my RSS-to-email provider from Mailchimp to Buttondown, and it's been such a great experience. It's cheaper, more flexible, less cluttered, and it's run by Justin Duke who is just delightful and answered a bunch of my questions over the weekend (even though I asked him to please not!).",
+        "source": "https://buttondown.com/testimonials",
+        "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+        "context": {
+          "subject": "Buttondown versus Mailchimp for RSS-to-email",
+          "source_kind": "customer_statement",
+          "claim_scope": "comparison",
+          "conditions": "one customer's personal migration experience, Rian van der Merwe, Director of Product at PagerDuty",
+          "temporal_scope": "",
+          "limitations": "subjective comparison with no specific prices or figures cited",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+            "source": "https://buttondown.com/testimonials",
+            "source_type": "website"
+          }
+        ],
+        "strength": "moderate",
+        "category": "market",
+        "value_band": "background"
+      },
+      {
+        "id": "E12",
+        "kind": "customer",
+        "claim": "James Whatley, Senior Strategy Director at The LEGO Group, is a named Buttondown customer.",
+        "verbatim": "James Whatley — Senior Strategy Director, The LEGO Group",
+        "source": "https://buttondown.com/testimonials",
+        "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+        "context": {
+          "subject": "James Whatley / The LEGO Group",
+          "source_kind": "customer_statement",
+          "claim_scope": "unknown",
+          "conditions": "",
+          "temporal_scope": "",
+          "limitations": "",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+            "source": "https://buttondown.com/testimonials",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "proof",
+        "value_band": "supporting"
+      },
+      {
+        "id": "E17",
+        "kind": "guarantee",
+        "claim": "Buttondown does not charge newsletter owners extra for paid subscribers, so they keep all of the revenue they make.",
+        "verbatim": "The best part? We won't charge you extra for paid subscribers, so you'll keep all of the revenue that you make.",
+        "source": "https://buttondown.com/features",
+        "document_id": "3745b435-2972-41aa-a26a-c66bb5edca7c",
+        "context": {
+          "subject": "Buttondown Paid Subscriptions feature",
+          "source_kind": "vendor_statement",
+          "claim_scope": "offer",
+          "conditions": "",
+          "temporal_scope": "",
+          "limitations": "",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "3745b435-2972-41aa-a26a-c66bb5edca7c",
+            "source": "https://buttondown.com/features",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "commercial",
+        "value_band": "supporting"
+      },
+      {
+        "id": "E18",
+        "kind": "certification",
+        "claim": "Buttondown is GDPR-compliant and does not collect any data about newsletter owners or their subscribers by default.",
+        "verbatim": "Buttondown is GDPR-compliant and then some. We don't collect any data about you or your subscribers by default.",
+        "source": "https://buttondown.com/features",
+        "document_id": "3745b435-2972-41aa-a26a-c66bb5edca7c",
+        "context": {
+          "subject": "Buttondown data collection and GDPR compliance",
+          "source_kind": "vendor_statement",
+          "claim_scope": "capability",
+          "conditions": "by default",
+          "temporal_scope": "",
+          "limitations": "",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "3745b435-2972-41aa-a26a-c66bb5edca7c",
+            "source": "https://buttondown.com/features",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "trust",
+        "value_band": "supporting"
+      },
+      {
+        "id": "E19",
+        "kind": "guarantee",
+        "claim": "Buttondown will migrate a newsletter owner's existing list to Buttondown for free, no matter how large the list is.",
+        "verbatim": "We'll migrate your list to Buttondown for free, no matter how large it is.",
+        "source": "https://buttondown.com/features",
+        "document_id": "3745b435-2972-41aa-a26a-c66bb5edca7c",
+        "context": {
+          "subject": "Buttondown concierge migration",
+          "source_kind": "vendor_statement",
+          "claim_scope": "offer",
+          "conditions": "no matter list size",
+          "temporal_scope": "",
+          "limitations": "",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "3745b435-2972-41aa-a26a-c66bb5edca7c",
+            "source": "https://buttondown.com/features",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "operations",
+        "value_band": "supporting"
+      },
+      {
+        "id": "E23",
+        "kind": "integration",
+        "claim": "Buttondown supports over 40 integrations for embedding videos, GIFs, songs, posts, and other content.",
+        "verbatim": "Need to embed videos, GIFs, songs, ~~tweets~~ posts, or anything else? We support [over 40 integrations](/features/integrations).",
+        "source": "https://buttondown.com/features",
+        "document_id": "3745b435-2972-41aa-a26a-c66bb5edca7c",
+        "context": {
+          "subject": "Buttondown integrations",
+          "source_kind": "vendor_statement",
+          "claim_scope": "capability",
+          "conditions": "",
+          "temporal_scope": "",
+          "limitations": "",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "3745b435-2972-41aa-a26a-c66bb5edca7c",
+            "source": "https://buttondown.com/features",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "technical",
+        "value_band": "supporting"
+      },
+      {
+        "id": "R2",
+        "kind": "feature",
+        "claim": "Buttondown's RSS-to-email automation can be configured to trigger per new post as it is published.",
+        "verbatim": "You can have trigger a new email every time a new item is published in your RSS feed.",
+        "source": "https://docs.buttondown.com/rss-to-email",
+        "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+        "context": {
+          "subject": "Buttondown RSS-to-email cadence option",
+          "source_kind": "official_documentation",
+          "claim_scope": "one of three selectable cadence options for RSS automation",
+          "conditions": "Buttondown checks the RSS feed every thirty minutes, so triggering is not instantaneous",
+          "temporal_scope": "",
+          "limitations": "This cadence cannot be combined with a digest-style template (see separate restriction)",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+            "source": "https://docs.buttondown.com/rss-to-email",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "product",
+        "value_band": "supporting"
+      },
+      {
+        "id": "R3",
+        "kind": "feature",
+        "claim": "Buttondown's RSS-to-email automation can instead be configured to trigger weekly on a chosen day and time, matching a weekly-digest pull preference.",
+        "verbatim": "You can trigger a new email every week, on a day and time of your choosing.",
+        "source": "https://docs.buttondown.com/rss-to-email",
+        "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+        "context": {
+          "subject": "Buttondown RSS-to-email cadence option",
+          "source_kind": "official_documentation",
+          "claim_scope": "one of three selectable cadence options for RSS automation",
+          "conditions": "For weekly cadence, the automation only triggers if there is a new item in the RSS feed since the last check",
+          "temporal_scope": "",
+          "limitations": "",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+            "source": "https://docs.buttondown.com/rss-to-email",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "product",
+        "value_band": "supporting"
+      },
+      {
+        "id": "R4",
+        "kind": "feature",
+        "claim": "Buttondown's RSS-to-email templates can be built as a digest that loops over multiple feed items collected during the chosen cadence.",
+        "verbatim": "If you want to send a digest of multiple blog posts, you'd start by iterating over the list of items in the feed.",
+        "source": "https://docs.buttondown.com/rss-to-email",
+        "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+        "context": {
+          "subject": "Buttondown RSS-to-email digest template",
+          "source_kind": "official_documentation",
+          "claim_scope": "template-building behavior for digest-style RSS emails",
+          "conditions": "Requires a weekly or monthly cadence setting; relies on a {% for item in items %} loop structure",
+          "temporal_scope": "",
+          "limitations": "",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+            "source": "https://docs.buttondown.com/rss-to-email",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "product",
+        "value_band": "supporting"
+      },
+      {
+        "id": "R6",
+        "kind": "price",
+        "claim": "Buttondown's RSS-to-email automation is explicitly gated to a paid tier (the Basic plan), not the free tier.",
+        "verbatim": "Available on the[Basic plan.](https://buttondown.com/pricing?plan=basic)",
+        "source": "https://docs.buttondown.com/rss-to-email",
+        "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+        "context": {
+          "subject": "Buttondown RSS-to-email feature availability",
+          "source_kind": "official_documentation",
+          "claim_scope": "plan_tier_requirement",
+          "conditions": "Stated at the top of the RSS-to-email documentation page",
+          "temporal_scope": "",
+          "limitations": "Does not itself describe the dollar price of the Basic plan; only names the plan tier required.",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+            "source": "https://docs.buttondown.com/rss-to-email",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "commercial",
+        "value_band": "supporting"
+      },
+      {
+        "id": "R7",
+        "kind": "price",
+        "claim": "On Buttondown's pricing page, RSS-to-email is listed as a paid add-on costing an extra $9/month, separate from the base free offering.",
+        "verbatim": "[RSS-to-email](/features/rss) support\n\n+$9/month",
+        "source": "https://buttondown.com/pricing",
+        "document_id": "9f9481b2-080a-44a3-a1aa-3a272f2b2d70",
+        "context": {
+          "subject": "Buttondown pricing page add-on list",
+          "source_kind": "official_documentation",
+          "claim_scope": "plan_tier_pricing",
+          "conditions": "Listed under the 'Add-ons' section of the pricing page, which sits below the free base plan description",
+          "temporal_scope": "",
+          "limitations": "Price is per month; page does not state whether this is billed per newsletter or per subscriber count tier.",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "9f9481b2-080a-44a3-a1aa-3a272f2b2d70",
+            "source": "https://buttondown.com/pricing",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "commercial",
+        "value_band": "headline"
+      },
+      {
+        "id": "R8",
+        "kind": "price",
+        "claim": "The free Buttondown base plan (first 100 subscribers) is described as including only a specific set of features, with RSS-to-email listed separately as an add-on rather than as part of that free base.",
+        "verbatim": "Absolutely nothing for your first 100 subscribers.",
+        "source": "https://buttondown.com/pricing",
+        "document_id": "9f9481b2-080a-44a3-a1aa-3a272f2b2d70",
+        "context": {
+          "subject": "Buttondown free base plan",
+          "source_kind": "official_documentation",
+          "claim_scope": "plan_tier_pricing",
+          "conditions": "Applies to accounts with up to 100 subscribers",
+          "temporal_scope": "",
+          "limitations": "The page does not explicitly state in one sentence that RSS-to-email is excluded from this free tier; the exclusion is inferred only from RSS-to-email appearing under the separate 'Add-ons' pricing list rather than the base-plan feature list quoted alongside this line.",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "9f9481b2-080a-44a3-a1aa-3a272f2b2d70",
+            "source": "https://buttondown.com/pricing",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "commercial",
+        "value_band": "supporting"
+      },
+      {
+        "id": "R9",
+        "kind": "feature",
+        "claim": "Buttondown requires the user to manually construct the email template that pulls in RSS feed content; there is no stated no-code default template.",
+        "verbatim": "To populate your email with content you'll need to build a template that works with your RSS feed.",
+        "source": "https://docs.buttondown.com/rss-to-email",
+        "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+        "context": {
+          "subject": "Buttondown RSS-to-email template building",
+          "source_kind": "official_documentation",
+          "claim_scope": "product_requirement",
+          "conditions": "Applies to all RSS-to-email automations regardless of cadence",
+          "temporal_scope": "",
+          "limitations": "Text only states the need to build a template; it does not mention or rule out any separate no-code default template option.",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+            "source": "https://docs.buttondown.com/rss-to-email",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "product",
+        "value_band": "supporting"
+      },
+      {
+        "id": "R10",
+        "kind": "feature",
+        "claim": "For a digest (weekly/monthly) RSS email, the user must author a loop over feed items in the template, rather than relying on an automatic default digest format.",
+        "verbatim": "If you want to send a digest of multiple blog posts, you'd start by iterating over the list of items in the feed. Here's how this would look:",
+        "source": "https://docs.buttondown.com/rss-to-email",
+        "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+        "context": {
+          "subject": "Buttondown digest email template construction",
+          "source_kind": "official_documentation",
+          "claim_scope": "product_requirement",
+          "conditions": "Applies specifically to the weekly or monthly digest cadence, as opposed to the single-item 'every' cadence",
+          "temporal_scope": "",
+          "limitations": "Confirms a manual loop-based template is the documented method for digests; does not state whether any alternative no-code digest template exists.",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+            "source": "https://docs.buttondown.com/rss-to-email",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "product",
+        "value_band": "supporting"
+      },
+      {
+        "id": "R11",
+        "kind": "feature",
+        "claim": "A digest email cannot be created at all when the cadence is set to trigger on every new item, which forces the loop-template approach specifically onto the weekly/monthly branch.",
+        "verbatim": "You cannot create a digest email when the schedule is set to \"every time a new item appears\". This would result in the email not being sent.",
+        "source": "https://docs.buttondown.com/rss-to-email",
+        "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+        "context": {
+          "subject": "Buttondown RSS-to-email cadence and digest templates",
+          "source_kind": "official_documentation",
+          "claim_scope": "product_requirement",
+          "conditions": "Applies when the automation cadence is set to 'every'",
+          "temporal_scope": "",
+          "limitations": "Describes a constraint on cadence/template pairing, not the presence or absence of a no-code digest template.",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+            "source": "https://docs.buttondown.com/rss-to-email",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "product",
+        "value_band": "supporting"
+      },
+      {
+        "id": "R12",
+        "kind": "feature",
+        "claim": "Image rendering fidelity from RSS content has a stated limitation: base-64 encoded images in the feed are not supported and will not display in most email clients.",
+        "verbatim": "Buttondown doesn't support base-64 encoded images in RSS feeds; those images won't be displayed in most email clients.",
+        "source": "https://docs.buttondown.com/rss-to-email",
+        "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+        "context": {
+          "subject": "Buttondown RSS-to-email image rendering",
+          "source_kind": "official_documentation",
+          "claim_scope": "feature_limitation",
+          "conditions": "Applies when the source RSS feed encodes images as base-64",
+          "temporal_scope": "",
+          "limitations": "Only covers the base-64 image case; does not describe general formatting, embeds, or other image-encoding fidelity.",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+            "source": "https://docs.buttondown.com/rss-to-email",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "product",
+        "value_band": "supporting"
+      },
+      {
+        "id": "R13",
+        "kind": "feature",
+        "claim": "Buttondown's enclosure handling is selective: only image enclosures are surfaced into the email template field, and non-image enclosures such as podcast audio files are skipped rather than carried into the email.",
+        "verbatim": "Because this renders as an image in your email, non-image enclosures—such as the audio file on a podcast episode—are skipped.",
+        "source": "https://docs.buttondown.com/rss-to-email",
+        "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+        "context": {
+          "subject": "Buttondown RSS feed parsing of enclosures",
+          "source_kind": "official_documentation",
+          "claim_scope": "feature_limitation",
+          "conditions": "Applies to feed items that include an enclosure element",
+          "temporal_scope": "",
+          "limitations": "Addresses only enclosure media selection; does not address general formatting/embed fidelity of the pulled item.content or item.description fields in the rendered email.",
+          "verification": "source_metadata_changed_review_required"
+        },
+        "source_references": [
+          {
+            "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+            "source": "https://docs.buttondown.com/rss-to-email",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "product",
+        "value_band": "supporting"
+      }
+    ],
+    "validation_counts": {
+      "dropped_items": 0,
+      "normalized_items": 0
+    },
+    "validation_warnings": [
+      "Defining audience need is unassessed or its references required normalization."
+    ],
+    "recommendation": {
+      "state": "DISCOVERY_ONLY",
+      "readiness": "DISCOVERY_ONLY",
+      "reasons": [
+        "The defining audience need is not fully supported by verified product evidence; a broader subsegment label does not resolve it.",
+        "Whether any no-code/default template exists so manual Jinja authoring is never required is not established by the selected evidence; R9's own limitation notes it 'does not mention or rule out any separate no-code default template option.'"
+      ],
+      "eligible_subsegment": "",
+      "qualified_companies": [],
+      "adjacent_companies": [],
+      "excluded_companies": [],
+      "unverified_companies": [],
+      "allowed_claims": [
+        "Buttondown's RSS-to-Email feature took about 30 minutes to set up for one customer, versus the time it took to figure out the equivalent feature in Mailchimp.",
+        "Buttondown can take an RSS feed, automatically pull in its content, and send it to subscribers.",
+        "A customer who switched their RSS-to-email provider from Mailchimp to Buttondown found Buttondown cheaper, more flexible, and less cluttered.",
+        "Buttondown's API is available on all plans, including the free plan.",
+        "Buttondown's API is rate-limited to prevent abuse, though the limits are generous enough for most use cases.",
+        "Buttondown deliberately does not provide official SDKs, investing instead in its OpenAPI spec so any caller can generate a typed client.",
+        "Buttondown does not ship an official MCP server and instead recommends pointing an LLM at its OpenAPI spec to build one tailored to the user's workflow.",
+        "Buttondown is GDPR-compliant and does not collect any data about newsletter owners or their subscribers by default.",
+        "Buttondown will migrate a newsletter owner's existing list to Buttondown for free, no matter how large the list is.",
+        "Buttondown's CLI lets users script their newsletter from CI/CD pipelines, bulk-manage subscribers, and pull analytics — anything doable in the web app is doable from the command line.",
+        "Buttondown's RSS-to-email automation can be configured to trigger per new post as it is published.",
+        "Buttondown's RSS-to-email automation can instead be configured to trigger weekly on a chosen day and time, matching a weekly-digest pull preference.",
+        "Buttondown's RSS-to-email templates can be built as a digest that loops over multiple feed items collected during the chosen cadence.",
+        "Buttondown's RSS-to-email automation is explicitly gated to a paid tier (the Basic plan), not the free tier.",
+        "On Buttondown's pricing page, RSS-to-email is listed as a paid add-on costing an extra $9/month, separate from the base free offering.",
+        "The free Buttondown base plan (first 100 subscribers) is described as including only a specific set of features, with RSS-to-email listed separately as an add-on rather than as part of that free base.",
+        "Buttondown requires the user to manually construct the email template that pulls in RSS feed content; there is no stated no-code default template.",
+        "For a digest (weekly/monthly) RSS email, the user must author a loop over feed items in the template, rather than relying on an automatic default digest format.",
+        "A digest email cannot be created at all when the cadence is set to trigger on every new item, which forces the loop-template approach specifically onto the weekly/monthly branch.",
+        "Image rendering fidelity from RSS content has a stated limitation: base-64 encoded images in the feed are not supported and will not display in most email clients.",
+        "Buttondown's enclosure handling is selective: only image enclosures are surfaced into the email template field, and non-image enclosures such as podcast audio files are skipped rather than carried into the email."
+      ],
+      "allowed_evidence_ids": [
+        "E4",
+        "E5",
+        "E9",
+        "E13",
+        "E14",
+        "E15",
+        "E16",
+        "E18",
+        "E19",
+        "E24",
+        "R2",
+        "R3",
+        "R4",
+        "R6",
+        "R7",
+        "R8",
+        "R9",
+        "R10",
+        "R11",
+        "R12",
+        "R13"
+      ],
+      "forbidden_claims": [],
+      "forbidden_capability_ids": [],
+      "forbidden_evidence_ids": [
+        "E12",
+        "E23"
+      ],
+      "unresolved_objections": [],
+      "recommended_next_action": "Gather direct product and company evidence before treating this as an outreach list.",
+      "override_risk": "Generating now will require audience-level hypotheses and may produce a weak campaign because company-specific fit is unresolved.",
+      "claim_contract": {
+        "contract_version": 1,
+        "verified_product_claims": [
+          {
+            "id": "evidence:E1",
+            "text": "Cassidy Williams's newsletter on Buttondown grew from a fairly small list to over 15,000 subscribers without performance problems.",
+            "evidence_ids": [
+              "E1"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E2",
+            "text": "When a customer reported a security vulnerability to Buttondown on a Friday afternoon, Buttondown acknowledged and fixed it in under two hours, on a Friday night.",
+            "evidence_ids": [
+              "E2"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E3",
+            "text": "Buttondown lets users turn tracking pixels off so subscribers are not tracked.",
+            "evidence_ids": [
+              "E3"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E4",
+            "text": "Buttondown's RSS-to-Email feature took about 30 minutes to set up for one customer, versus the time it took to figure out the equivalent feature in Mailchimp.",
+            "evidence_ids": [
+              "E4"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E5",
+            "text": "Buttondown can take an RSS feed, automatically pull in its content, and send it to subscribers.",
+            "evidence_ids": [
+              "E5"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E6",
+            "text": "Buttondown offers a supporter single-tier and pay-what-you-want payment option, and built custom additional payment support for one customer within a couple of days of the request.",
+            "evidence_ids": [
+              "E6"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E7",
+            "text": "Buttondown has a free version of its product that one customer described as generous.",
+            "evidence_ids": [
+              "E7"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E8",
+            "text": "Buttondown offers a plan named \"Basic\" that a customer upgraded to.",
+            "evidence_ids": [
+              "E8"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E9",
+            "text": "A customer who switched their RSS-to-email provider from Mailchimp to Buttondown found Buttondown cheaper, more flexible, and less cluttered.",
+            "evidence_ids": [
+              "E9"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E10",
+            "text": "Buttondown supports API access and Markdown for building newsletter-writing workflows.",
+            "evidence_ids": [
+              "E10"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E11",
+            "text": "Buttondown provides privacy-focused sending and sign-up forms, a Markdown-only editor, and a default template styled to look like a blog post.",
+            "evidence_ids": [
+              "E11"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E12",
+            "text": "James Whatley, Senior Strategy Director at The LEGO Group, is a named Buttondown customer.",
+            "evidence_ids": [
+              "E12"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E13",
+            "text": "Buttondown's API is available on all plans, including the free plan.",
+            "evidence_ids": [
+              "E13"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E14",
+            "text": "Buttondown's API is rate-limited to prevent abuse, though the limits are generous enough for most use cases.",
+            "evidence_ids": [
+              "E14"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E15",
+            "text": "Buttondown deliberately does not provide official SDKs, investing instead in its OpenAPI spec so any caller can generate a typed client.",
+            "evidence_ids": [
+              "E15"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E16",
+            "text": "Buttondown does not ship an official MCP server and instead recommends pointing an LLM at its OpenAPI spec to build one tailored to the user's workflow.",
+            "evidence_ids": [
+              "E16"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E17",
+            "text": "Buttondown does not charge newsletter owners extra for paid subscribers, so they keep all of the revenue they make.",
+            "evidence_ids": [
+              "E17"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E18",
+            "text": "Buttondown is GDPR-compliant and does not collect any data about newsletter owners or their subscribers by default.",
+            "evidence_ids": [
+              "E18"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E19",
+            "text": "Buttondown will migrate a newsletter owner's existing list to Buttondown for free, no matter how large the list is.",
+            "evidence_ids": [
+              "E19"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E20",
+            "text": "Buttondown's surveys have response rates 200% higher than the industry average.",
+            "evidence_ids": [
+              "E20"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E21",
+            "text": "Buttondown takes no cut of newsletter sponsorships; creators keep 100% of every sponsorship, minus Stripe's processing fee.",
+            "evidence_ids": [
+              "E21"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E22",
+            "text": "Buttondown lets users create as many distinct newsletters as they'd like, charging only based on total subscriber count.",
+            "evidence_ids": [
+              "E22"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E23",
+            "text": "Buttondown supports over 40 integrations for embedding videos, GIFs, songs, posts, and other content.",
+            "evidence_ids": [
+              "E23"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E24",
+            "text": "Buttondown's CLI lets users script their newsletter from CI/CD pipelines, bulk-manage subscribers, and pull analytics — anything doable in the web app is doable from the command line.",
+            "evidence_ids": [
+              "E24"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R1",
+            "text": "Buttondown allows sending emails from a custom domain the user controls, and this is available to all accounts regardless of plan.",
+            "evidence_ids": [
+              "R1"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R2",
+            "text": "Buttondown's RSS-to-email automation can be configured to trigger per new post as it is published.",
+            "evidence_ids": [
+              "R2"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R3",
+            "text": "Buttondown's RSS-to-email automation can instead be configured to trigger weekly on a chosen day and time, matching a weekly-digest pull preference.",
+            "evidence_ids": [
+              "R3"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R4",
+            "text": "Buttondown's RSS-to-email templates can be built as a digest that loops over multiple feed items collected during the chosen cadence.",
+            "evidence_ids": [
+              "R4"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R5",
+            "text": "A digest email cannot be used with the per-post ('every new item') cadence, confirming that the digest format only works with the weekly/monthly cadence options.",
+            "evidence_ids": [
+              "R5"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R6",
+            "text": "Buttondown's RSS-to-email automation is explicitly gated to a paid tier (the Basic plan), not the free tier.",
+            "evidence_ids": [
+              "R6"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R7",
+            "text": "On Buttondown's pricing page, RSS-to-email is listed as a paid add-on costing an extra $9/month, separate from the base free offering.",
+            "evidence_ids": [
+              "R7"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R8",
+            "text": "The free Buttondown base plan (first 100 subscribers) is described as including only a specific set of features, with RSS-to-email listed separately as an add-on rather than as part of that free base.",
+            "evidence_ids": [
+              "R8"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R9",
+            "text": "Buttondown requires the user to manually construct the email template that pulls in RSS feed content; there is no stated no-code default template.",
+            "evidence_ids": [
+              "R9"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R10",
+            "text": "For a digest (weekly/monthly) RSS email, the user must author a loop over feed items in the template, rather than relying on an automatic default digest format.",
+            "evidence_ids": [
+              "R10"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R11",
+            "text": "A digest email cannot be created at all when the cadence is set to trigger on every new item, which forces the loop-template approach specifically onto the weekly/monthly branch.",
+            "evidence_ids": [
+              "R11"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R12",
+            "text": "Image rendering fidelity from RSS content has a stated limitation: base-64 encoded images in the feed are not supported and will not display in most email clients.",
+            "evidence_ids": [
+              "R12"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R13",
+            "text": "Buttondown's enclosure handling is selective: only image enclosures are surfaced into the email template field, and non-image enclosures such as podcast audio files are skipped rather than carried into the email.",
+            "evidence_ids": [
+              "R13"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          }
+        ],
+        "campaign_allowed_claims": [
+          {
+            "id": "evidence:E4",
+            "text": "Buttondown's RSS-to-Email feature took about 30 minutes to set up for one customer, versus the time it took to figure out the equivalent feature in Mailchimp.",
+            "evidence_ids": [
+              "E4"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E5",
+            "text": "Buttondown can take an RSS feed, automatically pull in its content, and send it to subscribers.",
+            "evidence_ids": [
+              "E5"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E9",
+            "text": "A customer who switched their RSS-to-email provider from Mailchimp to Buttondown found Buttondown cheaper, more flexible, and less cluttered.",
+            "evidence_ids": [
+              "E9"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E13",
+            "text": "Buttondown's API is available on all plans, including the free plan.",
+            "evidence_ids": [
+              "E13"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E14",
+            "text": "Buttondown's API is rate-limited to prevent abuse, though the limits are generous enough for most use cases.",
+            "evidence_ids": [
+              "E14"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E15",
+            "text": "Buttondown deliberately does not provide official SDKs, investing instead in its OpenAPI spec so any caller can generate a typed client.",
+            "evidence_ids": [
+              "E15"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E16",
+            "text": "Buttondown does not ship an official MCP server and instead recommends pointing an LLM at its OpenAPI spec to build one tailored to the user's workflow.",
+            "evidence_ids": [
+              "E16"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E18",
+            "text": "Buttondown is GDPR-compliant and does not collect any data about newsletter owners or their subscribers by default.",
+            "evidence_ids": [
+              "E18"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E19",
+            "text": "Buttondown will migrate a newsletter owner's existing list to Buttondown for free, no matter how large the list is.",
+            "evidence_ids": [
+              "E19"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E24",
+            "text": "Buttondown's CLI lets users script their newsletter from CI/CD pipelines, bulk-manage subscribers, and pull analytics — anything doable in the web app is doable from the command line.",
+            "evidence_ids": [
+              "E24"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:R2",
+            "text": "Buttondown's RSS-to-email automation can be configured to trigger per new post as it is published.",
+            "evidence_ids": [
+              "R2"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R3",
+            "text": "Buttondown's RSS-to-email automation can instead be configured to trigger weekly on a chosen day and time, matching a weekly-digest pull preference.",
+            "evidence_ids": [
+              "R3"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R4",
+            "text": "Buttondown's RSS-to-email templates can be built as a digest that loops over multiple feed items collected during the chosen cadence.",
+            "evidence_ids": [
+              "R4"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R6",
+            "text": "Buttondown's RSS-to-email automation is explicitly gated to a paid tier (the Basic plan), not the free tier.",
+            "evidence_ids": [
+              "R6"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R7",
+            "text": "On Buttondown's pricing page, RSS-to-email is listed as a paid add-on costing an extra $9/month, separate from the base free offering.",
+            "evidence_ids": [
+              "R7"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R8",
+            "text": "The free Buttondown base plan (first 100 subscribers) is described as including only a specific set of features, with RSS-to-email listed separately as an add-on rather than as part of that free base.",
+            "evidence_ids": [
+              "R8"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R9",
+            "text": "Buttondown requires the user to manually construct the email template that pulls in RSS feed content; there is no stated no-code default template.",
+            "evidence_ids": [
+              "R9"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R10",
+            "text": "For a digest (weekly/monthly) RSS email, the user must author a loop over feed items in the template, rather than relying on an automatic default digest format.",
+            "evidence_ids": [
+              "R10"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R11",
+            "text": "A digest email cannot be created at all when the cadence is set to trigger on every new item, which forces the loop-template approach specifically onto the weekly/monthly branch.",
+            "evidence_ids": [
+              "R11"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R12",
+            "text": "Image rendering fidelity from RSS content has a stated limitation: base-64 encoded images in the feed are not supported and will not display in most email clients.",
+            "evidence_ids": [
+              "R12"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R13",
+            "text": "Buttondown's enclosure handling is selective: only image enclosures are surfaced into the email template field, and non-image enclosures such as podcast audio files are skipped rather than carried into the email.",
+            "evidence_ids": [
+              "R13"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          }
+        ],
+        "forbidden_claims": [],
+        "withheld_claims": [
+          {
+            "id": "evidence:E1",
+            "text": "Cassidy Williams's newsletter on Buttondown grew from a fairly small list to over 15,000 subscribers without performance problems.",
+            "evidence_ids": [
+              "E1"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E2",
+            "text": "When a customer reported a security vulnerability to Buttondown on a Friday afternoon, Buttondown acknowledged and fixed it in under two hours, on a Friday night.",
+            "evidence_ids": [
+              "E2"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E3",
+            "text": "Buttondown lets users turn tracking pixels off so subscribers are not tracked.",
+            "evidence_ids": [
+              "E3"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E6",
+            "text": "Buttondown offers a supporter single-tier and pay-what-you-want payment option, and built custom additional payment support for one customer within a couple of days of the request.",
+            "evidence_ids": [
+              "E6"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E7",
+            "text": "Buttondown has a free version of its product that one customer described as generous.",
+            "evidence_ids": [
+              "E7"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E8",
+            "text": "Buttondown offers a plan named \"Basic\" that a customer upgraded to.",
+            "evidence_ids": [
+              "E8"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E10",
+            "text": "Buttondown supports API access and Markdown for building newsletter-writing workflows.",
+            "evidence_ids": [
+              "E10"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E11",
+            "text": "Buttondown provides privacy-focused sending and sign-up forms, a Markdown-only editor, and a default template styled to look like a blog post.",
+            "evidence_ids": [
+              "E11"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E12",
+            "text": "James Whatley, Senior Strategy Director at The LEGO Group, is a named Buttondown customer.",
+            "evidence_ids": [
+              "E12"
+            ],
+            "reason": "Ranked WITHHOLD for this audience."
+          },
+          {
+            "id": "evidence:E17",
+            "text": "Buttondown does not charge newsletter owners extra for paid subscribers, so they keep all of the revenue they make.",
+            "evidence_ids": [
+              "E17"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E20",
+            "text": "Buttondown's surveys have response rates 200% higher than the industry average.",
+            "evidence_ids": [
+              "E20"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E21",
+            "text": "Buttondown takes no cut of newsletter sponsorships; creators keep 100% of every sponsorship, minus Stripe's processing fee.",
+            "evidence_ids": [
+              "E21"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E22",
+            "text": "Buttondown lets users create as many distinct newsletters as they'd like, charging only based on total subscriber count.",
+            "evidence_ids": [
+              "E22"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E23",
+            "text": "Buttondown supports over 40 integrations for embedding videos, GIFs, songs, posts, and other content.",
+            "evidence_ids": [
+              "E23"
+            ],
+            "reason": "Ranked WITHHOLD for this audience."
+          },
+          {
+            "id": "evidence:R1",
+            "text": "Buttondown allows sending emails from a custom domain the user controls, and this is available to all accounts regardless of plan.",
+            "evidence_ids": [
+              "R1"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:R5",
+            "text": "A digest email cannot be used with the per-post ('every new item') cadence, confirming that the digest format only works with the weekly/monthly cadence options.",
+            "evidence_ids": [
+              "R5"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          }
+        ],
+        "warnings": [
+          "Claim 'James Whatley, Senior Strategy Director at The LEGO Group, is a named Buttondown customer.' rests on withheld or forbidden evidence (E12) and is not campaign-safe.",
+          "Claim 'Buttondown supports over 40 integrations for embedding videos, GIFs, songs, posts, and other content.' rests on withheld or forbidden evidence (E23) and is not campaign-safe."
+        ]
+      }
+    }
+  }
+}

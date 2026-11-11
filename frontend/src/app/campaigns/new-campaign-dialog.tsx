@@ -95,8 +95,12 @@ const TIER_LABELS: Record<EmailTier, string> = {
 //: person writing to another, where a template scores worse with filters and
 //: converts worse. So the choice follows the thing being made, and the user
 //: can still override it.
-const TIER_FOR_TYPE: Record<ContentType, EmailTier> = {
-  custom_email: "plain",
+//:
+//: A custom email is either, and only the server has both facts that decide
+//: it - whether there is a brand and whether the reader is cold - so it sends
+//: no tier and lets render_html.resolve_tier answer.
+const TIER_FOR_TYPE: Record<ContentType, EmailTier | null> = {
+  custom_email: null,
   cart_recovery: "branded",
   launch_email: "branded",
   //: Never rendered - a LinkedIn message is pasted into a message box, where
@@ -1013,11 +1017,11 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
                 <p className="text-xs text-muted-foreground">
                   {emailTier === "branded"
                     ? usingExistingBrand
-                      ? "Set the logo, colour and footer on the brand page, or it renders as plain."
+                      ? "Set the logo, colour and footer on the brand page - until then it uses the brand's name and a neutral blue."
                       : "Nothing to brand it with until this campaign is attached to a brand."
                     : emailTier === "plain"
                       ? "One person writing to another. The right answer for cold outreach."
-                      : "Cart recovery and launches come out branded; anything cold stays plain."}
+                      : "Launches, cart recovery and a brand's mail to its own readers come out branded; cold outreach stays plain."}
                 </p>
               </div>
 
@@ -1026,13 +1030,17 @@ export function NewCampaignDialog({ trigger, prefill, autoOpen, defaultBrandId }
                 <Input
                   id="cta-url"
                   type="url"
+                  list="brand-cta-options"
                   placeholder="https://yourproduct.com/cart"
                   value={ctaUrl}
                   onChange={(e) => setCtaUrl(e.target.value)}
                 />
+                <datalist id="brand-cta-options">
+                  {brandKnowledge?.artifacts.offer.calls_to_action.filter((action) => action.url?.startsWith("http"))
+                    .map((action, index) => <option key={index} value={action.url ?? ""}>{action.label}</option>)}
+                </datalist>
                 <p className="text-xs text-muted-foreground">
-                  The writer never invents a link. Without one here the brand&rsquo;s website is
-                  used, and with neither the call to action stays a marked slot for you to fill.
+                  Choose a saved action or enter the exact destination. A single activation email with a saved action can use the direct approach.
                 </p>
               </div>
             </div>

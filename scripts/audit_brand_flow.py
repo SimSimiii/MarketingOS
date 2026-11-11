@@ -107,6 +107,8 @@ def main():
             body = case.get("audience_map_options", {})
         if action == "dossier":
             body = dict(case.get("dossier_options", {}))
+            if body.pop("rebuild", False):
+                paths["dossier"] = "audience/relevance/rebuild"
         if action in {"research", "dossier"}:
             body["segment"] = case["audience_segment"]
             if model := case.get(action + "_model"):

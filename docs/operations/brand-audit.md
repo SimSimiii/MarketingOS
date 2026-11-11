@@ -12,6 +12,38 @@ vient de `MARKETINGOS_TOKEN`, jamais d'un fichier de traces.
 
 ## Créer le cas et lire le site
 
+L’aperçu de la marque propose **Prepare campaign**. Ce parcours part de l’URL
+enregistrée ou des sources existantes et affiche automatiquement la progression.
+Il utilise une lecture resserrée des sources, un profil concurrent au plus et
+jusqu’à trois hypothèses d’audience. Les questions produit qui peuvent changer
+la recommandation déclenchent une vérification officielle bornée. Une fois
+l’audience jugée compatible, le parcours enregistre le brief d’un email
+en mode Fast et rend la main pour vérifier la cible avant la génération.
+Si la préparation s’arrête, les étapes enregistrées peuvent être réutilisées.
+Le dossier resserré conserve le niveau Deep pour la décision de pertinence.
+Pour une audience proposée automatiquement, le même appel distingue désormais
+la compatibilité de toute la cible et un `first_email_scope` répondant à la
+demande exacte de l'utilisateur. Le second peut autoriser un email borné sans
+valider la cible complète. Ses références doivent être licenciées, inclure un
+mécanisme produit et satisfaire la demande ; les exigences utilisateur manquantes,
+capacités requises inconnues et faits WITHHOLD ne sont pas contournés. L'autorisation
+ne vaut pas pour une autre demande. Le refus initial et les promesses exclues
+restent conservés, et les conditions suivent la stratégie et les réécritures.
+Quand l'analyste propose un premier usage complet, un second jugement fermé
+vérifie les étapes dans l'offre effectivement proposée. Il peut retirer une
+fonction facultative dont l'accès reste incertain, en conservant l'objectif et
+les exclusions. Il utilise le même extrait de preuves, sans recherche web.
+Le budget est d'une vérification par proposition automatique complète.
+Une préparation achète au plus une récupération officielle, partagée entre les
+deux cibles examinées. Si le premier concurrent reste invérifiable, le scan
+essaie au plus une autre alternative connue et conserve l'échec initial.
+Une recommandation GO/GO_NARROW ne relance pas la recherche pour des questions
+facultatives ; ses conditions restent attachées aux affirmations autorisées.
+Lors d’une vérification nécessaire, le chercheur reçoit un extrait borné des
+sources déjà capturées pour retrouver un mécanisme absent du ledger. Le budget
+reste de deux appels : localisation puis extraction sur les pages vérifiées.
+Le parcours détaillé ci-dessous sert à examiner ou enrichir chaque étape.
+
 Créer un dossier `docs/optimization/<cas>/` avec ce `case.json` :
 
 ```json
@@ -31,8 +63,15 @@ garder les labels « audit » dans le dossier du cas et le nom de campagne.
 La création de la marque **n'importe pas son site**. Il faut ensuite appeler
 `POST /api/knowledge` avec `brand_id` et **uniquement l'URL principale**. Les valeurs
 par défaut sont `crawl=true`, `max_pages=12`. Le crawl suit maintenant les liens
-découverts jusqu'à deux niveaux, sur le site et ses sous-domaines de documentation
+découverts jusqu'à trois niveaux, sur le site et ses sous-domaines de documentation
 liés (docs, help, support, developers), avec un budget de pages borné.
+Un inventaire `llms.txt` lié par le site peut servir à découvrir les guides ; il
+ne devient pas une preuve produit. Les destinations restent limitées au site et
+au même budget de requêtes. Les variantes HTML/Markdown d'un article de documentation
+sont dédupliquées. Lors de la relecture d'une marque existante, les audiences déjà
+choisies dans ses trois campagnes les plus récentes orientent la priorité des liens,
+sans fournir de fait supplémentaire ; les tarifs restent dans la couverture de marque.
+Cette priorité n'ajoute aucun appel modèle et n'impose aucun réglage au parcours minimal.
 Il ne garantit ni une lecture exhaustive ni la lecture d'une documentation sur un
 autre domaine. Un échec ou un contenu vide peut réduire le nombre de documents.
 Contrôler les URL effectivement importées ; la présence d'un index `/docs` ne prouve

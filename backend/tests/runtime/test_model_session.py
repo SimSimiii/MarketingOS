@@ -37,6 +37,17 @@ def session(provider, prompts_dir: Path, events: EventBus | None = None, **kwarg
 
 
 @pytest.mark.asyncio
+async def test_preparation_effort_hint_is_passed_without_changing_model_or_tools(fake_provider, prompts_dir):
+    await session(fake_provider, prompts_dir, effort="medium").text(
+        role="dummy", tier=ModelTier.BALANCED, system_prompt="Read the supplied facts.", task="Summarise.",
+    )
+    request = fake_provider.calls[0]
+    assert request.effort == "medium"
+    assert request.model == ModelRouter().resolve("dummy", ModelTier.BALANCED)
+    assert request.tools == []
+
+
+@pytest.mark.asyncio
 async def test_a_call_renders_its_prompt_from_disk(fake_provider: FakeAIProvider, prompts_dir: Path):
     """Prompts are never hardcoded in Python - that survived the redesign."""
     await session(fake_provider, prompts_dir).text(

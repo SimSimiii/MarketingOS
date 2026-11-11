@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Mail, RefreshCw, TriangleAlert } from "lucide-react";
@@ -77,6 +77,7 @@ interface StoredReport {
      * rather than a score. */
     read_reported?: boolean;
     relevant?: boolean | null;
+    unresolved?: string[];
     /** What the cold readers actually said about the version that shipped -
      * the only output in the system that says what to write instead, rather
      * than passing verdict on what was written. */
@@ -144,6 +145,9 @@ export function ExecutionLiveView({
 }) {
   const router = useRouter();
   const [assets, setAssets] = useState<GeneratedAsset[]>(initialAssets);
+  const replaceAsset = useCallback((next: GeneratedAsset) => {
+    setAssets((current) => current.map((item) => (item.id === next.id ? next : item)));
+  }, []);
   const [finalSnapshot, setFinalSnapshot] = useState<
     Awaited<ReturnType<typeof api.getExecutionResult>> | null
   >(null);
@@ -153,7 +157,7 @@ export function ExecutionLiveView({
   const restart = useRunLauncher(campaignId, "restart");
   const [now, setNow] = useState(() => Date.now());
 
-  const { events, phase, refresh, updatedAt } = useExecutionStream(executionId);
+  const { events, phase, refresh, updatedAt } = useExecutionStream(executionId, !TERMINAL.includes(initialStatus));
   const run = useMemo(() => reduceRun(events), [events]);
 
   const status = run.finalStatus ?? initialStatus;
@@ -164,6 +168,12 @@ export function ExecutionLiveView({
   const needsReview = review.needsReview;
   const report = reportFromResult(currentResult);
   const questions = report?.questions ?? [];
+  const isLinkedIn = assets.some((asset) => asset.asset_type === "linkedin_message");
+  const hasEdits = assets.some((asset) => asset.asset_metadata?.edited === true);
+  const editedPositions = new Set(assets.filter((asset) => asset.asset_metadata?.edited === true).map((asset) => asset.position));
+  const originalFindings = (report?.emails ?? [])
+    .filter((line) => !editedPositions.has(line.position))
+    .flatMap((line) => (line.unresolved ?? []).map((issue) => ({ position: line.position, issue })));
 
   // Deliverables land mid-run: refetch whenever another email is accepted, and
   // once more when the run ends so the final rows are authoritative.
@@ -244,7 +254,16 @@ export function ExecutionLiveView({
           </p>
         </div>
       ) : (
-        assets.map((asset) => <AssetCard key={asset.id} asset={asset} />)
+        assets.map((asset) => (
+          <AssetCard
+            key={asset.id}
+            asset={asset}
+            // Only once the run is over: an edit made while the sequence pass
+            // may still rework this email would be overwritten by it.
+            executionId={isLive ? undefined : executionId}
+            onAssetChange={replaceAsset}
+          />
+        ))
       )}
     </section>
   );
@@ -352,6 +371,14 @@ export function ExecutionLiveView({
 
       {needsReview && <Notice tone="warning" title="Drafts need review">
         <ul className="list-inside list-disc">{review.reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul>
+        {originalFindings.length > 0 && (
+          <ul className="mt-2 list-inside list-disc">
+            {originalFindings.slice(0, 5).map(({ position, issue }) => (
+              <li key={`${position}:${issue}`}>Email {position} — {issue}</li>
+            ))}
+          </ul>
+        )}
+        {hasEdits && <p className="mt-2">The run reviewed the original drafts. Open Adjust to see the checks for an edited version.</p>}
       </Notice>}
 
       {/* A run that stopped to ask is not a failure, and showing it as one -
@@ -403,7 +430,7 @@ export function ExecutionLiveView({
             </p>
             <p className="mt-1 text-lg font-semibold tracking-tight">
               Delivered {report.delivered} of {report.promised}{" "}
-              {report.reads_expected === false ? "LinkedIn message" : "email"}
+              {isLinkedIn ? "LinkedIn message" : "email"}
               {report.promised === 1 ? "" : "s"}
             </p>
             <div
@@ -421,8 +448,10 @@ export function ExecutionLiveView({
               />
             </div>
             <p className="mt-2.5 text-xs leading-relaxed text-muted-foreground">
-              {report.reads_expected === false
-                ? "Every claim passed the evidence gate; no cold-reader panel grades this channel."
+              {hasEdits
+                ? "An edited version is selected. Its source review is available on the email."
+                : report.reads_expected === false
+                ? report.delivered > 0 ? "The delivered copy passed its independent source review." : null
                 : needsAttention
                   ? `${toLookAt} thing${toLookAt === 1 ? "" : "s"} to look at before you send - see “How the copy tested” below.`
                   : "Every email passed its checks and its cold read."}
@@ -430,7 +459,7 @@ export function ExecutionLiveView({
           </div>
           {/* A channel no cold reader has ever read has no score, and a 0.0
               here would be read as one. */}
-          {report.reads_expected !== false && (
+          {report.reads_expected !== false && !hasEdits && (
             <div className="flex items-center gap-4 sm:shrink-0 sm:border-l sm:border-white/[0.07] sm:pl-8">
               <ScoreRing value={averagePull(report)} label="Average cold-read score" />
               <div>
@@ -472,7 +501,9 @@ export function ExecutionLiveView({
               {report.emails.map((line) => (
                 <li key={line.position} className="tabular-nums">
                   #{line.position} &ldquo;{line.subject}&rdquo; -{" "}
-                  {line.read_reported === false
+                  {report.reads_expected === false
+                    ? "source review passed"
+                    : line.read_reported === false
                     ? "no cold reader reported back"
                     : `${line.pull.toFixed(0)}/10`}{" "}
                   after {line.revisions} rewrite{line.revisions === 1 ? "" : "s"}
@@ -528,7 +559,7 @@ export function ExecutionLiveView({
 
       {/* The number above says something is wrong; this says what. Both come
           from the same already-paid-for cold read. */}
-      {report && <ReaderVerdictCard emails={report.emails} />}
+      {report && report.reads_expected !== false && <ReaderVerdictCard emails={report.emails} />}
 
       {run.knowledge && (
         <Disclosure

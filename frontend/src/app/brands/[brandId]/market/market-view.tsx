@@ -210,6 +210,7 @@ export function MarketView({
             key={`${initialAudience.map?.mapped_at ?? "none"}:${initialAudience.prospects.length}:${initialAudience.research.map((item) => item.version).join("-")}:${initialAudience.relevance.map((item) => `${item.status}-${item.generation_version ?? 0}`).join("-")}`}
             brandId={brand.id}
             audience={initialAudience}
+            focusAudience={searchParams.get("audience")}
             onMap={(options) => start("audience", options)}
             onProspect={findProspects}
             onResearch={researchAudience}

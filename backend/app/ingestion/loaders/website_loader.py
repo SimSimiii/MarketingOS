@@ -9,6 +9,7 @@ from app.ingestion.loaders.base import Loader
 from app.ingestion.loaders.html_extract import extract_content
 from app.ingestion.loaders.public_content import content_issues, is_access_wall
 from app.ingestion.loaders.rendered_page import render_public_html
+from app.ingestion.loaders.site_identity import read_identity
 
 
 class WebsiteLoader(Loader):
@@ -34,7 +35,8 @@ class WebsiteLoader(Loader):
             source=source,
             source_type=self.source_type,
             fetched_at=datetime.now(UTC),
-            metadata={"title": title, "description": description, "content_issues": content_issues(markdown)},
+            metadata={"title": title, "description": description, "content_issues": content_issues(markdown),
+                      "identity": read_identity(html, source).as_metadata()},
         )
 
     async def fetch(self, url: str) -> str:

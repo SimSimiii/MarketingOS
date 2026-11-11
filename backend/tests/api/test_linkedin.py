@@ -231,6 +231,7 @@ def test_message_requires_knowledge(client, provider):
 
 
 def test_message_repairs_unsupported_claim_without_web(client, provider, engine):
+    provider.review("The quantified claim has no source.")
     brand_id = brand(client)
     knowledge(engine, brand_id)
     provider.push("linkedin_writer", json.dumps({"body": "Our app saves 95% of your time."}))
@@ -241,12 +242,13 @@ def test_message_repairs_unsupported_claim_without_web(client, provider, engine)
     assert started.status_code == 202, started.text
     row = await_run(client, brand_id, started.json()["id"])
     assert row["state"] == "completed", row
-    assert row["calls"] == 2
+    assert row["calls"] == 4
     assert row["result"]["characters"] <= 200
     assert all(not request.tools for request in provider.requests_for("linkedin_writer"))
 
 
 def test_invalid_message_never_ships(client, provider, engine):
+    provider.review("The quantified claim has no source.")
     brand_id = brand(client)
     knowledge(engine, brand_id)
     provider.set_default("linkedin_writer", json.dumps({"body": "Hello [Name], we save 99% of your time."}))
@@ -255,7 +257,7 @@ def test_invalid_message_never_ships(client, provider, engine):
     })
     row = await_run(client, brand_id, started.json()["id"])
     assert row["state"] == "failed"
-    assert row["calls"] == 2
+    assert row["calls"] == 3
     assert not row["result"].get("body")
     with Session(engine) as db:
         assert db.get(LinkedInRun, UUID(row["id"])).active_key is None
@@ -321,7 +323,7 @@ def test_overlong_connection_note_is_rewritten(client, provider, engine):
     })
     row = await_run(client, brand_id, started.json()["id"])
     assert row["state"] == "completed"
-    assert row["calls"] == 2
+    assert row["calls"] == 3
     assert row["result"]["characters"] <= 200
 
 

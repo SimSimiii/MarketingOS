@@ -170,6 +170,7 @@ class CampaignIntelligence(BaseModel):
     """The selected audience, discovery hypotheses and verified context."""
 
     selected_audience: str
+    first_email_scope_applied: bool = False
     selected_need: str = ""
     situation: IntelligenceObservation | None = None
     problems: list[IntelligenceProblem] = Field(default_factory=list)
@@ -189,6 +190,8 @@ class CampaignIntelligence(BaseModel):
     readiness: CampaignReadiness | None = None
     recommendation_reasons: list[str] = Field(default_factory=list)
     eligible_subsegment: str = ""
+    scope_constraints: list[str] = Field(default_factory=list)
+    scope_workflow_steps: list[str] = Field(default_factory=list)
     recommended_next_action: str = ""
     allowed_claims: list[str] = Field(default_factory=list)
     allowed_evidence_ids: list[str] = Field(default_factory=list)
@@ -229,8 +232,12 @@ class CampaignIntelligence(BaseModel):
         ]
         if self.selected_need:
             lines.extend([
-                f"Discovery job hypothesis (not an additional campaign requirement): {self.selected_need}",
+                ("Documented-use scope for this request: " if self.first_email_scope_applied
+                 else "Discovery job hypothesis (not an additional campaign requirement): ") + self.selected_need,
                 (
+                    "The user's request and the qualified campaign scope govern this draft. "
+                    "The automatically mapped audience remains a hypothesis, not a promise of every desired outcome. "
+                    if self.first_email_scope_applied else
                     "The exact selected audience above supplies the target constraints. This "
                     "mapped hypothesis may mix a desired result with suggested methods. Those "
                     "methods are optional, not user instructions or proof of buyer needs. Choose "
@@ -313,6 +320,13 @@ class CampaignIntelligence(BaseModel):
                 )
             if self.dossier_current and self.recommended_next_action:
                 lines.append("Recommended next action: " + self.recommended_next_action)
+            if self.dossier_current and self.scope_constraints:
+                lines.append("Required scope and documented setup:")
+                lines.extend("- " + item for item in self.scope_constraints)
+            if self.dossier_current and self.scope_workflow_steps:
+                lines.append("Workflow considered by the dossier. Choose the steps relevant to the "
+                             "email; verify independently what is available through the chosen CTA.")
+                lines.extend("- " + item for item in self.scope_workflow_steps)
             lines.append(
                 "The claims below are the complete set of product facts this campaign may "
                 "assert. Anything not listed is unavailable to you, however true it is "
@@ -646,7 +660,7 @@ class CampaignIntelligence(BaseModel):
     def constraints_for(self, evidence_ids: list[str], ledger: EvidenceLedger) -> list[str]:
         """Safety constraints mechanically implied by selected, still-licensed ids."""
         selected = set(evidence_ids) & ledger.ids
-        caveats: list[str] = []
+        caveats: list[str] = list(self.scope_constraints)
         for problem in self.problems:
             if self._conditional_problem(problem, list(selected)):
                 caveats.append(
@@ -806,6 +820,7 @@ def build_campaign_intelligence(
     dossier_status: RelevanceStatus | None,
     ledger: EvidenceLedger,
     selected_need: str = "",
+    campaign_request: str = "",
 ) -> CampaignIntelligence:
     trace = CampaignIntelligenceTrace(
         selected_audience=selected_audience,
@@ -854,7 +869,7 @@ def build_campaign_intelligence(
         # contract would then license or reject entirely different facts.
         trace.warn("Ignored stale dossier claims and rankings after knowledge or interpretation changed.")
         return context
-    _add_dossier(context, dossier, ledger)
+    _add_dossier(context, dossier, ledger, campaign_request=campaign_request)
     context.admit_automatically_recovered(ledger)
     return context
 
@@ -875,7 +890,8 @@ def adapt_researched_audience(
         situation=situation,
         situation_grounding=research.situation.grounding if research.situation else base.situation_grounding,
         situation_provenance=[_provenance(ref, research) for ref in research.situation.evidence] if research.situation else base.situation_provenance,
-        job_to_be_done=desired.text if desired is not None else base.job_to_be_done,
+        job_to_be_done=(context.selected_need if context.first_email_scope_applied
+                        else desired.text if desired is not None else base.job_to_be_done),
         trigger=trigger or base.trigger,
         sophistication=research.sophistication or base.sophistication,
         pains=[_problem_fact(item, research) for item in research.problems],
@@ -911,7 +927,8 @@ def attach_selected_dossier_objection(
 
 
 def _add_dossier(
-    context: CampaignIntelligence, dossier: RelevanceDossier, ledger: EvidenceLedger
+    context: CampaignIntelligence, dossier: RelevanceDossier, ledger: EvidenceLedger,
+    *, campaign_request: str = "",
 ) -> None:
     valid_evidence = ledger.ids
     valid_problems = {item.id for item in context.problems}
@@ -922,12 +939,35 @@ def _add_dossier(
         :MAX_VALIDATION_WARNINGS
     ]
     if dossier.schema_version >= 2 and dossier.recommendation is not None:
-        recommendation = dossier.recommendation
+        from app.market.relevance import recommendation_for_request
+
+        recommendation = (recommendation_for_request(dossier, campaign_request)
+                          if context.dossier_current else dossier.recommendation)
+        scoped = recommendation is not dossier.recommendation and context.dossier_current
         context.recommendation_state = recommendation.state
         context.readiness = recommendation.readiness
         context.recommendation_reasons = list(recommendation.reasons)
         if context.dossier_current:
             context.eligible_subsegment = recommendation.eligible_subsegment.strip()
+            if scoped and dossier.first_email_scope is not None:
+                context.first_email_scope_applied = True
+                scope = dossier.first_email_scope
+                context.selected_need = scope.workflow
+                need = dossier.defining_need_fit
+                context.scope_workflow_steps = list(scope.setup_conditions)
+                context.scope_constraints = _distinct([
+                    *("Do not promise: " + text for text in scope.excluded_promises),
+                    *(["Not established: " + text for text in need.unverified_requirements] if need else []),
+                    "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit.",
+                ])
+            elif dossier.defining_need_fit is not None:
+                need = dossier.defining_need_fit
+                context.scope_constraints = _distinct([
+                    *(["Restrict this campaign to " + need.supported_alternative + "."]
+                      if need.supported_alternative else []),
+                    *need.setup_conditions,
+                    *([need.caveat] if need.caveat else []),
+                ])
             context.recommended_next_action = recommendation.recommended_next_action.strip()
             if recommendation.state is RecommendationState.RECOMMENDED_NARROW:
                 context.trace.qualified_subsegment = context.eligible_subsegment

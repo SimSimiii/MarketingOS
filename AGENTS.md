@@ -1,5 +1,27 @@
 # AGENTS.md
 
+## Primary product goal
+
+MarketingOS's primary paid workflow is **one affiliate acquisition email**. An
+affiliate promotes a specific product or service to a prospect audience and
+wants purchases credited through their affiliate link. A single email can be
+used for a list of recipients in the affiliate's sending tool.
+
+Offer an explicit, guided acquisition choice in the product. The current guided
+deliverable is one email. Use the available offer, audience, proof and competitor
+analysis to propose a buyer and a reason to buy. Offer a recommended choice
+and supported alternatives where available. Keep an optional custom brief and
+allow the affiliate to override the proposed inputs. A freeform prompt is
+optional on the guided path.
+
+Keep the reader's purchase decision, the affiliate's identity, the merchant offer
+and the supplied affiliate URL consistent through planning, writing, review,
+revision and export. Treat setup details as relevant when they change the buying
+decision. Use real acquisition briefs with prospective buyers and a purchase path
+when assessing readiness for this workflow. Activation and onboarding results
+measure a separate workflow. Report editorial assessments separately from any
+measured purchases, and use subscription billing for live model evaluations.
+
 ## Autonomous campaign quality optimization
 
 For autonomous optimization from real campaigns, load
@@ -163,7 +185,20 @@ API key from the subprocess environment — with the key visible, the CLI silent
 API-key billing and charges a card. That filter is the first thing each provider's suite
 tests; do not weaken it, and do not put `ANTHROPIC_API_KEY` in `.env`.
 
-### Checks that block are deterministic; judgment never blocks
+### Mechanical checks and AI source review
+
+The user's November 2026 instruction supersedes the former deterministic-only
+delivery policy. Production copy uses `mechanical_gate` for envelope/merge-field
+checks and `ClaimReviewer` for meaning, source entailment, plan terms and user
+directions. Legacy regex gates remain diagnostic/evaluation instruments, not
+delivery vetoes. Do not restore keyword, acronym or short-plan-name blockers.
+The independent model must cite exact source quotes; code validates references
+and binds approval to the exact text, brief and knowledge. Every changed draft,
+local proposal and selected subject needs its own review; editorial taste stays
+advisory. Forecast includes one source-review call per distinct draft plus the
+runtime's bounded JSON repair. No web or recursive research in this reviewer.
+
+Historical rationale for the previous policy:
 
 `app/marketing/gates.py` reads every draft back and licenses each number, price, quotation and
 URL against the Evidence Ledger or the user's own material. `clarity_gate` beside it blocks a

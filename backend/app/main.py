@@ -12,8 +12,10 @@ from app.core.database import engine, init_db
 from app.orchestration.execution_manager import reap_orphaned_executions
 from app.runtime.work_limits import WorkLimitError
 from app.services.credit_service import assert_payment_mode_safe
+from app.services.draft_review import reap_local_draft_reviews
 from app.services.email_analysis_service import reap_email_analyses
 from app.services.linkedin_service import reap_linkedin_runs
+from app.services.revision_service import reap_email_revisions
 
 settings = get_settings()
 logger = logging.getLogger("marketingos.main")
@@ -29,6 +31,8 @@ async def lifespan(app: FastAPI):
             )
     reap_linkedin_runs(engine)
     reap_email_analyses(engine)
+    reap_local_draft_reviews(engine)
+    reap_email_revisions(engine)
     # A run left RUNNING can only mean the previous process died mid-campaign
     # (crash, restart) - there is no in-memory registry entry for it in this
     # process, so it can never finish or be cancelled. Fail it explicitly

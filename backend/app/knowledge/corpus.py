@@ -24,6 +24,7 @@ _HEADING_RE = re.compile(r"^(#{1,6})\s+(.+)$")
 _PARAGRAPH_SPLIT_RE = re.compile(r"\n\s*\n")
 _WORD_RE = re.compile(r"[a-z0-9][a-z0-9'\-]+")
 _WHITESPACE_RE = re.compile(r"\s+")
+MARKDOWN_LINK_RE = re.compile(r"(?<!!)\[[^\[\]\n]+\]\(([^\s()]+)\)")
 
 #: A section longer than this is packed into several chunks. A heading-only
 #: split leaves single-heading pages as one indivisible blob, which is the
@@ -309,3 +310,16 @@ def fold(text: str, limit: int | None = None) -> str:
     even only its punctuation - is not verbatim any more.
     """
     return collapse(text.translate(_PUNCTUATION_FOLD).replace("…", "..."), limit).lower()
+
+
+def contains_quote(quote: str, source: str, *, normalized: bool = False) -> bool:
+    """Match literal words, allowing a plain quotation of visible link text.
+
+    Strip destinations from the SOURCE only. Stripping the candidate as well
+    would let an invented hyperlink target become licensed evidence. Keep
+    ordinary word order, qualifications and literal URLs unchanged.
+    """
+    needle = fold(quote)
+    haystack = source if normalized else fold(source)
+    visible = re.sub(r"\[([^\]\n]+)\]\((?:https?://|/|#)[^\s)]+\)", r"\1", haystack)
+    return needle in haystack or needle in visible

@@ -72,5 +72,10 @@ class Campaign(SQLModel, table=True):
     #: app.ai.model_router.ModelRouter. Distinct from `policy` so a user can
     #: pick a model for one role without adopting a whole preset.
     model_overrides: dict[str, str] | None = Field(default=None, sa_column=Column(JSON))
+    #: Optional content choices made before a run: facts to include or
+    #: exclude, and free directions scoped to one email or the sequence - the
+    #: serialized app.marketing.steering.CampaignSteering. None, the default,
+    #: is a run nobody steered, which is the whole of the minimal path.
+    steering: dict | None = Field(default=None, sa_column=Column(JSON))
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

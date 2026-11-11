@@ -1,0 +1,599 @@
+{
+  "id": "dd62eb71-6c21-4f3c-8d6c-e8c78fd98596",
+  "campaign_id": "0675a7f9-ffbf-4054-b603-d58997cf2205",
+  "status": "failed",
+  "needs_review": false,
+  "outcome_status": "failed",
+  "review_reasons": [],
+  "error_message": "Email 1 failed automatic checks after repair: A factual approval has no source citation.; A factual approval has no source citation.; A factual approval has no source citation.; A factual approval has no source citation.; \"Your Featurebase workspace is where this changelog entry belongs.\": This asserts that a Featurebase workspace is the location for a changelog entry. No supplied source documents changelog creation, placement, or publication in a Featurebase workspace.; A factual approval has no source citation.; A factual approval has no source citation.; A factual approval has no source citation.; A factual approval has no source citation.; No literal source establishes that Featurebase workspaces contain or publish changelog entries.; The actual user request requires a specific, documented first step. The draft repeats the final action but supplies no source-documented product step; the provided materials contain none.",
+  "started_at": "2026-11-11T04:16:37.910621Z",
+  "completed_at": "2026-11-11T04:21:28.681670Z",
+  "created_at": "2026-11-11T04:16:37.910621Z",
+  "total_input_tokens": 163831,
+  "total_output_tokens": 23361,
+  "total_cache_read_tokens": 55552,
+  "estimated_cost_usd": 1.6115,
+  "recommendation_snapshot": {
+    "campaign_id": "0675a7f9-ffbf-4054-b603-d58997cf2205",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "b1a22c1f-f462-4aad-bfa9-773b10da8923",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 The already-shipped change provides the subject for the requested first changelog entry."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:16:38.166622Z",
+      "completed_at": "2026-11-11T04:18:22.268631Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 42665,
+      "output_tokens": 7678,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15872,
+      "cost_usd": 0.584358,
+      "duration_ms": 103718.10980001464,
+      "attempt": 1
+    },
+    {
+      "id": "80b9a39e-ac25-4010-80e1-c4aa1ad55083",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · first draft",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "subject": "Your first changelog entry"
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:18:23.295521Z",
+      "completed_at": "2026-11-11T04:18:48.830797Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 16060,
+      "output_tokens": 2251,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.202359,
+      "duration_ms": 25357.741000130773,
+      "attempt": 1
+    },
+    {
+      "id": "8ef5c7f4-b25b-48fd-b8fe-d860e8a16220",
+      "agent_id": "claim_reviewer",
+      "agent_name": "Claim Reviewer",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · checking claims against sources"
+      },
+      "output_data": {
+        "semantic_review": {
+          "key": "86b8c355f32a4283d641c268a4f9b40288865a5904b5db4fb54fee9851b32ac5",
+          "approved": false,
+          "decision": {
+            "verdict": "revise",
+            "claims": [
+              {
+                "text": "Subject: Your first changelog entry",
+                "status": "supported",
+                "explanation": "The user explicitly requires an email prompting the reader to publish their first changelog entry. This is a campaign premise, not a sourced product claim.",
+                "citations": []
+              },
+              {
+                "text": "Preview text: Use the change you have already shipped as its subject.",
+                "status": "supported",
+                "explanation": "The user confirms that the reader has one already-shipped change to announce. Treating it as the entry's subject is advice based on that supplied premise.",
+                "citations": []
+              },
+              {
+                "text": "Your first changelog entry already has a subject: the change you have shipped.",
+                "status": "supported",
+                "explanation": "This restates the user-supplied premise and recommended focus; it does not introduce an external product fact.",
+                "citations": []
+              },
+              {
+                "text": "It gives you one concrete update to work from, without having to choose another topic for the first publication.",
+                "status": "supported",
+                "explanation": "This is the direct practical consequence of using the confirmed shipped change as the topic, not a measurable product outcome.",
+                "citations": []
+              },
+              {
+                "text": "Your Featurebase workspace is where this changelog entry belongs.",
+                "status": "unsupported",
+                "explanation": "This asserts that a Featurebase workspace is the location for a changelog entry. No supplied source documents changelog creation, placement, or publication in a Featurebase workspace.",
+                "citations": []
+              },
+              {
+                "text": "Keep the entry about the shipped change, then publish it as the first item in your changelog.",
+                "status": "supported",
+                "explanation": "This is the user-mandated action and content direction, not an independently asserted access, interface, or outcome claim.",
+                "citations": []
+              },
+              {
+                "text": "That keeps this first action tied to completed product work, rather than a placeholder created only to fill the changelog.",
+                "status": "supported",
+                "explanation": "If the entry concerns the confirmed shipped change, it is logically tied to completed work. The passage does not claim a measured customer or business outcome.",
+                "citations": []
+              },
+              {
+                "text": "Publish your first changelog entry →",
+                "status": "supported",
+                "explanation": "This is the single action expressly required by the user. It contains no unverified URL or additional entitlement claim.",
+                "citations": []
+              },
+              {
+                "text": "- Featurebase",
+                "status": "supported",
+                "explanation": "The user explicitly requested an email from the Featurebase team.",
+                "citations": []
+              }
+            ],
+            "findings": [
+              {
+                "text": "Your Featurebase workspace is where this changelog entry belongs.",
+                "kind": "factual",
+                "explanation": "No literal source establishes that Featurebase workspaces contain or publish changelog entries."
+              },
+              {
+                "text": "Publish your first changelog entry →",
+                "kind": "instruction",
+                "explanation": "The actual user request requires a specific, documented first step. The draft repeats the final action but supplies no source-documented product step; the provided materials contain none."
+              }
+            ],
+            "summary": "The draft follows the language, length, single-action, and no-unverified-URL requirements, but it makes one unsupported workspace/changelog claim and cannot satisfy the explicitly requested documented first step with the supplied evidence.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The draft preserves the intended practical benefit: the already-shipped change supplies a concrete topic, so the reader need not choose another one.",
+              "original_passage": "It gives you one concrete update to work from, without having to choose another topic for the first publication.",
+              "revised_passage": ""
+            }
+          },
+          "version": 3,
+          "sources": {}
+        },
+        "passed": false
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:18:48.858552Z",
+      "completed_at": "2026-11-11T04:19:32.944522Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 13598,
+      "output_tokens": 3800,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.229133,
+      "duration_ms": 43913.89389988035,
+      "attempt": 1
+    },
+    {
+      "id": "550c16bb-a1ff-45ed-8cbd-a4bd0cfbf811",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 1 reader(s)",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "pull": 5
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:19:32.984794Z",
+      "completed_at": "2026-11-11T04:19:50.612581Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 3645,
+      "output_tokens": 1022,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.066169,
+      "duration_ms": 17554.595000110567,
+      "attempt": 1
+    },
+    {
+      "id": "bbc6ae7b-3baa-4232-89cf-8fa9f4c9a341",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "Announce what you shipped"
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:19:50.785396Z",
+      "completed_at": "2026-11-11T04:20:07.406102Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 18502,
+      "output_tokens": 1219,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.190935,
+      "duration_ms": 16378.414200153202,
+      "attempt": 2
+    },
+    {
+      "id": "c543be6c-3b1a-4e59-a7fe-614c49581bc0",
+      "agent_id": "claim_reviewer",
+      "agent_name": "Claim Reviewer",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · checking claims against sources"
+      },
+      "output_data": {
+        "semantic_review": {
+          "key": "ea2c9b702419989cf7a210f94a2411338a375fbbbe19c74210ab57571920e641",
+          "approved": false,
+          "decision": {
+            "verdict": "revise",
+            "claims": [
+              {
+                "text": "Turn completed product work into your first changelog entry.",
+                "status": "unsupported",
+                "explanation": "The sources do not establish that completed work can be made into a Featurebase changelog entry or that this route is available to the reader.",
+                "citations": []
+              },
+              {
+                "text": "Shipping the change completed the product work.",
+                "status": "unsupported",
+                "explanation": "The confirmed premise is only that one change has shipped. It does not establish that shipping completed all product work associated with it.",
+                "citations": []
+              },
+              {
+                "text": "Publishing its changelog entry completes the announcement.",
+                "status": "unsupported",
+                "explanation": "No supplied source documents changelog publication or establishes that publication completes an announcement.",
+                "citations": []
+              },
+              {
+                "text": "Featurebase is a customer support and feedback platform.",
+                "status": "supported",
+                "explanation": "The captured sources describe Featurebase as a help desk and show it turning customer support into product-roadmap input, jointly supporting the stated category.",
+                "citations": [
+                  {
+                    "source_id": "proposition:product:0",
+                    "quote": "## The complete help desk for your team and AI"
+                  },
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "“Featurebase helps us **turn customer support into actionable items** for our product roadmap, which has been very effective.”"
+                  }
+                ]
+              },
+              {
+                "text": "For your first changelog entry, use the change you have already shipped as the subject.",
+                "status": "supported",
+                "explanation": "This is the requested recommendation and uses the user-confirmed already-shipped change; it does not add an external factual claim requiring product documentation.",
+                "citations": []
+              },
+              {
+                "text": "You do not need to choose a different update just to begin.",
+                "status": "unsupported",
+                "explanation": "This asserts that the shipped change is eligible for the initial changelog workflow, but no supplied source documents that workflow or its content requirements.",
+                "citations": []
+              },
+              {
+                "text": "The first entry can be about real, completed work—not a placeholder.",
+                "status": "unsupported",
+                "explanation": "No source establishes what a first Featurebase changelog entry may contain or whether placeholders are otherwise expected or permitted.",
+                "citations": []
+              },
+              {
+                "text": "Publish your first changelog entry →",
+                "status": "unsupported",
+                "explanation": "The action is user-mandated, but the supplied sources do not document a publication route, access entitlement, or destination. The CTA therefore has no source-backed actionable destination.",
+                "citations": []
+              },
+              {
+                "text": "- Featurebase",
+                "status": "supported",
+                "explanation": "The user explicitly requested an email from the Featurebase team, so the signature follows the authorized sender identity.",
+                "citations": []
+              }
+            ],
+            "findings": [
+              {
+                "text": "Shipping the change completed the product work.",
+                "kind": "factual",
+                "explanation": "This expands the confirmed fact that a change shipped into the unsupported claim that product work was completed."
+              },
+              {
+                "text": "Publishing its changelog entry completes the announcement.",
+                "kind": "factual",
+                "explanation": "The announcement effect and completion claim are not documented by any supplied source."
+              },
+              {
+                "text": "You do not need to choose a different update just to begin.",
+                "kind": "factual",
+                "explanation": "The sources do not establish eligibility of the shipped change for the first-entry workflow."
+              },
+              {
+                "text": "The first entry can be about real, completed work—not a placeholder.",
+                "kind": "factual",
+                "explanation": "The permitted content of a first changelog entry is undocumented."
+              },
+              {
+                "text": "Publish your first changelog entry →",
+                "kind": "instruction",
+                "explanation": "The actual request explicitly requires a specific, documented first step. The email supplies only the final publication action, while the source set provides no documented first step that could support one."
+              }
+            ],
+            "summary": "The email follows the requested language, length, sender, single-action focus, and one-CTA structure. Revision is required because it omits the explicitly requested documented first step and makes unsupported claims about completed product work, announcement completion, and first-entry eligibility. No exact CTA destination was supplied, so omitting a URL is not itself a violation.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The central intended benefit remains explicit: the reader can treat the already-shipped change as the subject of the first entry. Its retention does not resolve the missing documentation for changelog eligibility or publication.",
+              "original_passage": "For your first changelog entry, use the change you have already shipped as the subject.",
+              "revised_passage": ""
+            }
+          },
+          "version": 3,
+          "sources": {
+            "proposition:product:0": "[Featurebase – AI support platform that improves your product › The complete help desk for your team and AI; document_id=d09777c7-f1dd-43cd-b2ae-a98f7872d5a5; source=https://www.featurebase.app/; aliases=https://www.featurebase.app/; chunk=117]",
+            "proposition:product:1": "[Featurebase – AI support platform that improves your product › Trusted by fast-growing software companies.; document_id=d09777c7-f1dd-43cd-b2ae-a98f7872d5a5; source=https://www.featurebase.app/; aliases=https://www.featurebase.app/; chunk=196]"
+          }
+        },
+        "passed": false
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:20:07.437594Z",
+      "completed_at": "2026-11-11T04:21:26.089266Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 13809,
+      "output_tokens": 7391,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.338551,
+      "duration_ms": 78445.45760005713,
+      "attempt": 2
+    },
+    {
+      "id": "a62013c9-464b-404c-bc7f-7fb6fe19c02a",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 1 reader(s)",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 0.0
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:21:26.120846Z",
+      "completed_at": "2026-11-11T04:21:28.611789Z",
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.0,
+      "duration_ms": 0.0,
+      "attempt": 2
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "failed",
+    "report": {
+      "request": "Write exactly one English activation email from the Featurebase team. Reader: A product manager with a Featurebase workspace and one already-shipped change to announce. Ask them to do one thing: Publish the first changelog entry. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+      "effective_audience": "A product manager with a Featurebase workspace and one already-shipped change to announce.",
+      "audience_scope": "",
+      "assessment_method": "Simulated reader's interest, uncalibrated; no response or conversion prediction",
+      "delivered": 0,
+      "promised": 1,
+      "contract_violations": [
+        "the user asked for 1 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [
+        "Some linked source pages could not be read; the corpus is partial: https://www.featurebase.app/ - Use only the readable captured facts; do not infer missing prices, features or proof.",
+        "No customer names, quotes or case studies found - the copy can describe the product but cannot prove anyone uses it"
+      ],
+      "what_would_help_most": "Can this source be supplied in a readable form or its missing details verified?",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "Email 1 failed automatic checks after repair: A factual approval has no source citation.; A factual approval has no source citation.; A factual approval has no source citation.; A factual approval has no source citation.; \"Your Featurebase workspace is where this changelog entry belongs.\": This asserts that a Featurebase workspace is the location for a changelog entry. No supplied source documents changelog creation, placement, or publication in a Featurebase workspace.; A factual approval has no source citation.; A factual approval has no source citation.; A factual approval has no source citation.; A factual approval has no source citation.; No literal source establishes that Featurebase workspaces contain or publish changelog entries.; The actual user request requires a specific, documented first step. The draft repeats the final action but supplies no source-documented product step; the provided materials contain none.",
+        "Effective audience: A product manager with a Featurebase workspace and one already-shipped change to announce."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "One activation email for an existing Featurebase customer: a product manager who already has a workspace and one shipped change. The requested action remains publishing that change as the first changelog entry. Because the supplied evidence does not document changelog publishing or its destination, the brief must not claim a product payoff, invent a first step, or supply a URL.",
+      "pipeline_version": 2,
+      "strategy_mode": "planned",
+      "focused_activation": false,
+      "intent": {
+        "objective": "activation",
+        "objective_source": "user",
+        "reader_relationship": "customer",
+        "relationship_source": "user",
+        "announcement": "",
+        "reason_now": "",
+        "desired_action": "Publish the first changelog entry",
+        "required_fact": "",
+        "required_source_url": ""
+      },
+      "reader": "Selected audience (user-stated constraints): A product manager with a Featurebase workspace and one already-shipped change to announce..\nNo further recipient situation is established. Compiled market context is research to check for applicability, not a replacement biography.",
+      "reader_segment": "Product managers at scaling software companies",
+      "reader_profile_override": "A product manager with a Featurebase workspace and one already-shipped change to announce.",
+      "reader_scope": "",
+      "fixed_cta_url": "",
+      "promise": "Prompt the reader to use the already-shipped change as the subject of their first changelog entry, without asserting an undocumented publishing workflow or result.",
+      "orientation": "Featurebase is the workspace in which this product manager has been asked to publish a first changelog entry.",
+      "arc": "A single activation prompt anchored in the confirmed shipped change and limited to the requested publishing action.",
+      "sequence_rationale": "One email is sufficient because the reader, source material, and requested action are already defined. No ledger fact verifies the changelog workflow, destination, interface controls, access conditions, or operational payoff, so unrelated evidence must not be assigned merely to satisfy the evidence field. The draft may preserve the requested action but cannot include a documented first step or explain a product-specific benefit until changelog documentation is supplied. Can this source be supplied in a readable form or its missing details verified?",
+      "emails": [
+        {
+          "problem_ids": [],
+          "offer_id": "offering",
+          "action_id": "",
+          "selection_reason": "The requested activation task is to publish the already-shipped change as the first changelog entry. No supported alternative would preserve that campaign objective and audience more faithfully.",
+          "next_step_url": "",
+          "destination_kind": "offline",
+          "destination_rejected": false,
+          "argument_issue": "No supplied ledger fact documents changelog creation or publication, proves what publishing lets the reader do, or provides an exact destination. The requested action is preserved, but a supported first step, product-specific payoff, and web CTA cannot be specified without additional documentation.",
+          "value_case": {
+            "reader_benefit": "",
+            "mechanism": "",
+            "evidence_ids": [],
+            "decision_conditions": []
+          },
+          "claim_conditions": [
+            "Treat the Featurebase workspace, already-shipped change, and requested first changelog entry as user-confirmed context.",
+            "Do not state that changelog access is included in any plan or available under the reader's permissions.",
+            "Do not name interface controls, navigation, publication behavior, notification behavior, or a destination until documentation verifies them."
+          ],
+          "position": 1,
+          "user_request": "Write exactly one English activation email from the Featurebase team. Reader: A product manager with a Featurebase workspace and one already-shipped change to announce. Ask them to do one thing: Publish the first changelog entry. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+          "target_audience": "",
+          "job": "Prompt the reader to publish the shipped change as their first changelog entry.",
+          "single_idea": "The already-shipped change provides the subject for the requested first changelog entry.",
+          "felt_need": "I have one shipped change to announce.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: the shipped change has not yet been used for the requested changelog task. After: the reader sees that change as the subject of the first entry they are being asked to publish.",
+          "evidence_ids": [],
+          "must_not_say": [
+            "Any specific dashboard path, menu name, button label, field, publication step, or URL not present in the supplied documentation.",
+            "That publishing creates a customer-facing update, sends notifications, or makes the change visible on a particular surface.",
+            "That changelog access is available on every plan or available to this reader under particular permissions.",
+            "That publishing takes a stated amount of time.",
+            "That the entry will increase engagement, adoption, retention, revenue, transparency, or support efficiency.",
+            "Pricing, trials, migrations, AI support features, security claims, integrations, or customer proof.",
+            "That customers requested this change or will respond positively to it."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "",
+          "tone": "Direct, practical, and restrained.",
+          "call_to_action": "Publish your first changelog entry",
+          "next_step_decision": "Whether to complete the requested first changelog publication using the already-shipped change.",
+          "next_step_value": "",
+          "next_step_evidence_ids": [],
+          "next_step_limit": "The supplied material does not establish how to publish, where to go, who has access, what publication produces, or whether customers are notified.",
+          "subject_strategy": "Connect the confirmed shipped change to the requested first changelog entry without implying urgency, interface knowledge, or an unsupported outcome.",
+          "must_not_reuse": [],
+          "steering": {
+            "directions": [
+              "Write exactly one English activation email.",
+              "Keep the body under 150 words, excluding subject, preview, and signature.",
+              "Ask for only one action: publish the first changelog entry.",
+              "Do not invent a documented first step when none is supplied.",
+              "Use one CTA and do not attach an unverified URL."
+            ],
+            "include_evidence_ids": [],
+            "exclude_evidence_ids": [
+              "E1",
+              "E2",
+              "E3",
+              "E4",
+              "E5",
+              "E6",
+              "E7",
+              "E8",
+              "E9",
+              "E10",
+              "E11",
+              "E12",
+              "E13",
+              "E14",
+              "E15",
+              "E16",
+              "E17",
+              "E18",
+              "E19",
+              "E20",
+              "E21",
+              "E22"
+            ],
+            "use": [
+              "The confirmed Featurebase workspace",
+              "The confirmed already-shipped change",
+              "Short paragraphs and direct language"
+            ],
+            "avoid": [
+              "Acquisition framing",
+              "Multiple actions",
+              "Unsupported plan, access, timing, interface, notification, visibility, or outcome claims",
+              "Assigning unrelated ledger evidence to the changelog action"
+            ],
+            "context_only": [
+              "The reader is a product manager and existing customer.",
+              "Publishing the first changelog entry is the user-mandated action."
+            ],
+            "excluded_values": [
+              "Pricing",
+              "AI support",
+              "Migration",
+              "Security",
+              "Integrations",
+              "Social proof"
+            ]
+          }
+        }
+      ],
+      "voice_notes": "Match Featurebase's direct, practical register. Address the reader as “you,” use short paragraphs, and keep the focus on the requested publishing action without filling the evidence gap with marketing language.",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "one English activation email"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "0675a7f9-ffbf-4054-b603-d58997cf2205",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

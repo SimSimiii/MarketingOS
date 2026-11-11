@@ -1,0 +1,26 @@
+{
+  "http_status": 409,
+  "response": {
+    "detail": "This version fails the current automatic checks. Ask for another adjustment."
+  },
+  "selected_revision_id": "7d74ec1b-e92d-4e13-a721-43e59a7df1ba",
+  "checked_revision": {
+    "id": "8c58a6fc-efb0-4c97-bc2a-73a77629196e",
+    "state": "blocked",
+    "checks": {
+      "issues": [
+        {
+          "gate": "overlap",
+          "detail": "\"est une plateforme tout en un\" already appears in email 1 - the reader may have read that one, and a repeated phrase is what makes a sequence feel automated",
+          "severity": "blocking"
+        },
+        {
+          "gate": "call-to-action",
+          "detail": "the email asks the reader to 'Comparer les capacités de Startup', which is not one of the actions this product supports (Commencez gratuitement, Commencer, Contactez notre support, Tarifs, Migration gratuite, Configuration DNS gratuite, Bibliothèque de templates, Tutoriels vidéo)",
+          "severity": "advisory"
+        }
+      ]
+    },
+    "error": "This version fails the current automatic checks. Ask for another adjustment."
+  }
+}

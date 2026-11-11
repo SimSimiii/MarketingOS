@@ -179,6 +179,24 @@ def profile(
     )
 
 
+def test_explicit_unknown_billing_cannot_become_a_customer_safe_contract_claim():
+    entry = Evidence(
+        id="E-price", kind=EvidenceKind.PRICE, claim="Pro costs €20 per month",
+        verbatim="Pro €20 per month", strength=EvidenceStrength.STRONG,
+        context=EvidenceContext(subject="Pro", claim_scope="offer",
+                                source_kind="official_documentation",
+                                limitations="Billing period/annual terms not specified."),
+    )
+    result = build_claim_contract(
+        profile=profile(product_claims=[ProductClaim(
+            text=entry.claim, evidence_ids=[entry.id], visibility=ClaimVisibility.CUSTOMER,
+        )]), ledger=EvidenceLedger(entries=[entry]), ranked=[], fits=[],
+    )
+    assert entry.id not in result.allowed_evidence_ids
+    assert any(entry.id in row.evidence_ids and "confirmation" in row.reason
+               for row in result.forbidden_claims)
+
+
 def contract(**kwargs) -> ClaimContract:
     return build_claim_contract(
         profile=kwargs.pop("profile", None) or profile(**kwargs),

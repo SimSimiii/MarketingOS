@@ -47,4 +47,7 @@ def test_every_launcher_goes_through_the_one_place_that_holds_the_task():
         "can be collected mid-run"
     )
     assert "create_job_task(" in inspect.getsource(market_service._spawn)
-    assert source.count("_spawn(") == 7, "one definition and six launchers"
+    launchers = [method for name, method in vars(market_service.MarketService).items()
+                 if name.startswith("launch_") and callable(method)]
+    assert len(launchers) == 7
+    assert all("_spawn(" in inspect.getsource(method) for method in launchers)

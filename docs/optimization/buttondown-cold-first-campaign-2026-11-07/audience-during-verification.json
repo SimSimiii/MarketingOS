@@ -1,0 +1,2007 @@
+{
+  "brand_id": "62dc9b0b-fb1f-4294-becb-894c2bf45402",
+  "map": {
+    "summary": "3 audience(s) mapped; 0 worth exploring first. Commercial priority is a hypothesis, not a response-rate forecast.",
+    "options": {
+      "geography": "",
+      "language": "",
+      "exclusions": "",
+      "objective": "customers",
+      "mode": "refresh"
+    },
+    "validation_note": "Product profile changed; compatibility rechecked. Checked 5 pages; 0 fetch failure(s). Quotes are source-verified; interpretations and purchase intent are hypotheses.",
+    "reading": "Assessment summary. Verified quotations do not establish demand or purchase intent; commercial priority remains a hypothesis.\n- Developer or technical creator automating newsletter operations: hypothesis; product compatibility supported; audience evidence limited (5 quoted source(s)); use or purchase unknown; reachability venue identified.\n- Growing solo newsletter writer needing help: hypothesis; product compatibility supported; audience evidence limited (1 quoted source(s)); use or purchase unknown; reachability unknown.\n- Substack creator switching platforms over revenue cut and ownership concerns: hypothesis; product compatibility supported; audience evidence absent (0 quoted source(s)); use or purchase unknown; reachability unknown.",
+    "note": "Coverage gap: targeted reddit searches returned blog/review-site content rather than actual Reddit threads, so no raw community-forum quotes were captured for any segment — all three rest on vendor documentation, review sites, or self-published migration posts. No case study was found explicitly naming a creator using the sponsorships or paid-subscriptions add-ons, so no fourth monetization-focused segment could be supported with evidence in this budget.",
+    "searched": [
+      "Buttondown API newsletter developer reddit",
+      "Buttondown \"team\" collaborator editor newsletter reddit",
+      "\"Buttondown\" migrating from Substack reddit newsletter writer",
+      "Buttondown sponsorships paid subscriptions creator newsletter case study"
+    ],
+    "mapped_at": "2026-11-07T10:01:50.456687Z",
+    "segments": [
+      {
+        "name": "Developer or technical creator automating newsletter operations",
+        "organization": "Independent developer, indie hacker, or technical content creator running a newsletter as part of a product, blog, or personal brand",
+        "workflow": "Wants to trigger newsletter sends, manage subscribers and pull analytics from their own code/CI rather than a web dashboard, often wiring the newsletter into an existing site, SaaS product, or automation stack (e.g. building an MCP server or CLI wrapper around it)",
+        "need": "Confirm the API (and webhooks) are available on the free tier, documented well enough to self-generate a client or integration, and not gated behind a paid add-on",
+        "buyer_role": "Developer/founder (self-serve signup)",
+        "user_role": "Same person — developer-operator",
+        "current_alternative": "Manual dashboard use of Buttondown/Substack/ConvertKit, or custom SMTP + self-built subscriber DB, or a third-party MCP/CLI someone else already built",
+        "assessment": {
+          "compatibility": "supported",
+          "evidence_strength": "limited",
+          "findability": "verified",
+          "usage_or_purchase": "unknown",
+          "reachability": "venue_identified",
+          "counterevidence_summary": [
+            "An independent developer-infrastructure review site warns that Buttondown's single-developer operation is an ongoing risk for teams building automation on top of its API. — Flags a general vendor-continuity risk relevant to engineers depending on the API, but does not describe a specific blocked workflow, pricing gate, or lost purchase. Minor condition; does not exclude this audience."
+          ],
+          "counterevidence": 1,
+          "priority": "hypothesis",
+          "reasons": [
+            "A real third-party MCP server (glama.ai) wrapping draft, listing, analytics and scheduling endpoints, plus Buttondown's own API docs confirming programmatic subscriber/send management, matches this candidate's described automation workflow.",
+            "No first-person buyer complaint or confirmation that the API/webhooks sit on the free tier (the candidate's central objection) was found in this fetched corpus; the strongest evidence is a build artifact and vendor documentation, not buyer testimony.",
+            "Re-ranked on matching researched sources (4 fetched)."
+          ],
+          "unknowns": [
+            "Whether the API and webhooks are available on Buttondown's free tier rather than gated behind a paid plan is not confirmed by any fetched source.",
+            "Whether the vaguely-described 'generous' rate limits are sufficient for this candidate's specific automated workflow remains unverified.",
+            "1 unsupported or duplicate quotation(s) discarded.",
+            "Review the counterevidence before prioritising this audience."
+          ],
+          "evidence": [
+            {
+              "claim": "Buttondown's own API documentation confirms the core programmatic subscriber- and send-management capability this candidate's workflow requires.",
+              "quote": "This means that with a few lines in your language of choice, you're able to programmatically keep track of your subscribers, send out new emails, and more.",
+              "url": "https://docs.buttondown.com/api-introduction",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T09:59:46.001356Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "The glama.ai MCP directory links to a Reddit discussion thread, giving a concrete public venue where developers building Buttondown integrations can be found.",
+              "quote": "Reddit Discussion",
+              "url": "https://glama.ai/mcp/servers/The-Focus-AI/buttondown-mcp/blob/3c29c827f4cb1d262927c060e29f5b4c3daa1dc6/newsletter.md",
+              "kind": "access",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T09:59:46.717726Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "An independent developer-infrastructure review site warns that Buttondown's single-developer operation is an ongoing risk for teams building automation on top of its API.",
+              "quote": "Single-developer team is a real risk",
+              "url": "https://emailfordevelopers.com/providers/buttondown/",
+              "kind": "counterevidence",
+              "impact": "minor",
+              "impact_reason": "Flags a general vendor-continuity risk relevant to engineers depending on the API, but does not describe a specific blocked workflow, pricing gate, or lost purchase.",
+              "fetched_at": "2026-11-07T09:59:45.962979Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "They build and publish open-source CLI tools that call the provider's API directly for routine newsletter operations such as listing emails.",
+              "quote": "buttondown emails list",
+              "url": "https://github.com/the-focus-ai/buttondown-mcp",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:02:10.259711Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "They build and publish open-source CLI tools that call the provider's API directly for routine newsletter operations such as listing emails.",
+              "quote": "`list_emails`: List all emails with optional status filtering",
+              "url": "https://github.com/the-focus-ai/buttondown-mcp",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:02:10.259711Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "They manage draft creation, scheduling, analytics, list and tag operations as discrete, named functions rather than as ad hoc dashboard clicks.",
+              "quote": "Email draft management (create, update, delete)",
+              "url": "https://github.com/the-focus-ai/buttondown-mcp",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:02:10.259711Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "They store API credentials via environment variables or a password manager rather than hardcoding keys in their integration code.",
+              "quote": "1Password integration for API key management",
+              "url": "https://github.com/the-focus-ai/buttondown-mcp",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:02:10.259711Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "They store API credentials via environment variables or a password manager rather than hardcoding keys in their integration code.",
+              "quote": "export BUTTONDOWN_API_KEY=your_api_key",
+              "url": "https://github.com/the-focus-ai/buttondown-mcp",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:02:10.259711Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "They connect the newsletter API to conversational AI tooling (e.g. Claude Code) via an MCP server so the newsletter can be operated by chat command.",
+              "quote": "claude mcp add buttondown -- npx -y buttondown-mcp",
+              "url": "https://glama.ai/mcp/servers/dgalarza/buttondown-mcp",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:02:13.540348Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "GitHub hosts independently published open-source CLI/MCP integrations for the newsletter provider's API.",
+              "quote": "ModelContextProtocal server for interacting with buttondown",
+              "url": "https://github.com/the-focus-ai/buttondown-mcp",
+              "kind": "access",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:02:10.259711Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "glama.ai's MCP server directory lists a Buttondown MCP server with a cataloged set of callable tools.",
+              "quote": "15 tools",
+              "url": "https://glama.ai/mcp/servers/dgalarza/buttondown-mcp",
+              "kind": "access",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:02:13.540348Z",
+              "direct_buyer_voice": false
+            }
+          ]
+        },
+        "kind": "core",
+        "added_by": "cartographer",
+        "who": "",
+        "why_them": "",
+        "trigger": "Needs to connect the newsletter to an existing codebase, app, or automation workflow (e.g. posting via email-to-send, building an unofficial MCP server, or scripting via CLI)",
+        "pains": [
+          "Worried the API might be locked behind a paid tier instead of available from day one",
+          "No official SDK or MCP server means they must generate or hand-roll a client themselves",
+          "Needs to confirm rate limits won't block an automated workflow"
+        ],
+        "objection": "The API is probably a paid add-on I'd have to unlock.",
+        "angle": "",
+        "sophistication": "solution_aware",
+        "fit": 0,
+        "basis": "Public evidence of third-party developers already building on the API (an unofficial MCP server on glama.ai, a dev.to walkthrough of producing newsletters with Buttondown, review sites framing it as developer-friendly) but no first-party usage telemetry and no direct buyer complaint thread found in this search pass — inferred from build artifacts and review commentary rather than a forum post describing the pain.",
+        "population": "unknown",
+        "signals": [
+          "sig_third_party_integration_built",
+          "sig_cli_or_api_usage_mentioned",
+          "sig_openapi_client_generation"
+        ],
+        "where": [
+          "glama.ai MCP server directory",
+          "dev.to developer posts",
+          "emailfordevelopers.com provider reviews"
+        ],
+        "unobvious": false,
+        "researchable": true,
+        "researchability": "medium",
+        "researchability_reasons": [
+          "3 useful observable signals and 3 specific research venues.",
+          "The audience is anchored in a concrete workflow or situation.",
+          "No clear trigger narrows the research.",
+          "No population basis is stated."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [
+            {
+              "code": "sig_third_party_integration_built",
+              "description": "Has published or referenced a custom integration, MCP server, or CLI usage built against the Buttondown API"
+            }
+          ],
+          "required_workflow_signals": [
+            {
+              "code": "wf_sends_via_api_or_script",
+              "description": "Sends or manages newsletter content programmatically rather than solely through the web dashboard"
+            }
+          ],
+          "required_product_capabilities": [
+            "fact_3ae64a9ca55a7b71",
+            "fact_33d3b2cc9f080cf9",
+            "fact_375f992bbc52f5bc",
+            "fact_e19b9255065078f5"
+          ],
+          "optional_signals": [
+            {
+              "code": "sig_mentions_rate_limits",
+              "description": "Discusses or asks about API rate limits"
+            }
+          ],
+          "hard_disqualifiers": [
+            {
+              "code": "no_newsletter_product",
+              "description": "No newsletter or subscriber list exists yet",
+              "outcome": "EXCLUDED"
+            }
+          ],
+          "eligible_subsegments": [],
+          "excluded_subsegments": [],
+          "max_team_size": null
+        }
+      },
+      {
+        "name": "Growing solo newsletter writer needing help",
+        "organization": "Solo-run newsletter that has grown past one person's bandwidth (editorial, subscriber support, or operations)",
+        "workflow": "Drafts, edits and sends issues alone today; wants to bring in an editor/proofreader, a subscriber-support person, or an operations collaborator without giving them billing or API access",
+        "need": "Add collaborators with scoped permissions (drafts-only, no billing/API) without the added people counting toward subscriber-based billing",
+        "buyer_role": "Newsletter owner (account holder, pays the bill)",
+        "user_role": "Owner plus invited editor/collaborator",
+        "current_alternative": "Emailing drafts back and forth via Google Docs, or giving a collaborator full account/password access with no permission control",
+        "assessment": {
+          "compatibility": "supported",
+          "evidence_strength": "limited",
+          "findability": "unknown",
+          "usage_or_purchase": "unknown",
+          "reachability": "unknown",
+          "counterevidence_summary": [],
+          "counterevidence": 0,
+          "priority": "hypothesis",
+          "reasons": [
+            "Buttondown's own Teams FAQ directly confirms unlimited, billing-neutral collaborators with role-scoped sending vs. drafting permissions, matching the candidate's stated need and objection almost verbatim.",
+            "All evidence in this pass is vendor-authored marketing/FAQ copy; no independent buyer account, forum post, or review site was fetched to confirm a real solo newsletter owner has faced or voiced this growth-stage pain."
+          ],
+          "unknowns": [
+            "Whether any real solo-newsletter owner has actually hit this collaboration/billing concern, versus Buttondown describing a hypothetical persona, is unconfirmed by any buyer-voice source in this corpus.",
+            "No findable venue (forum thread, review site, social post) for reaching this audience was present in the fetched pages.",
+            "No verified venue or example establishes findability yet."
+          ],
+          "evidence": [
+            {
+              "claim": "Buttondown's Teams FAQ directly confirms that collaborators never count toward subscriber-based billing, addressing the candidate's stated objection that adding help will raise their tier.",
+              "quote": "No. Team members are collaborators, not subscribers. They don't affect your billing at all.",
+              "url": "https://buttondown.com/features/teams",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T09:59:46.240972Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "Buttondown's marketing names the pre-Teams workaround as emailing drafts via Google Docs, matching the candidate's stated current alternative.",
+              "quote": "No more emailing Google Docs back and forth.",
+              "url": "https://buttondown.com/features/teams",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T09:59:46.240972Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "Role-scoped permissions letting an owner restrict a collaborator to drafting only, versus granting full sending rights, are confirmed by the vendor, matching the access-control need described.",
+              "quote": "You can give collaborators full sending permissions or restrict them to drafting only.",
+              "url": "https://buttondown.com/features/teams",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T09:59:46.240972Z",
+              "direct_buyer_voice": false
+            }
+          ]
+        },
+        "kind": "core",
+        "added_by": "cartographer",
+        "who": "",
+        "why_them": "",
+        "trigger": "The newsletter has grown past what one person can manage alone",
+        "pains": [
+          "Reviewing drafts by emailing Google Docs back and forth is slow and awkward",
+          "Fear that adding a helper will bump subscriber-priced billing or expose billing/API keys to someone who shouldn't see them"
+        ],
+        "objection": "Adding collaborators to help run the newsletter will push me into a higher subscriber-priced tier.",
+        "angle": "",
+        "sophistication": "problem_aware",
+        "fit": 0,
+        "basis": "Buttondown's own Teams feature page, docs, and a 2026 product-blog post on team member notes describe scoped permissions and unlimited collaborators; corroborated by independent review sites (Woodpecker) covering the feature, but no direct forum/buyer-voice thread describing the pain was found in this pass — the trigger and pain are inferred from the product's own framing plus review-site commentary, not a first-person complaint.",
+        "population": "unknown",
+        "signals": [
+          "sig_invited_collaborator_mentioned",
+          "sig_drafts_shared_externally"
+        ],
+        "where": [
+          "buttondown.com/features/teams product page",
+          "Buttondown blog (team member notes post)",
+          "Woodpecker and other third-party Buttondown reviews"
+        ],
+        "unobvious": false,
+        "researchable": true,
+        "researchability": "medium",
+        "researchability_reasons": [
+          "2 useful observable signals and 3 specific research venues.",
+          "The audience is anchored in a concrete workflow or situation.",
+          "No clear trigger narrows the research.",
+          "No population basis is stated."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [
+            {
+              "code": "sig_solo_to_team_transition",
+              "description": "Newsletter previously run by one person now seeking a second set of hands"
+            }
+          ],
+          "required_workflow_signals": [
+            {
+              "code": "wf_draft_review_workflow",
+              "description": "Has an existing or desired draft-review step involving a second person"
+            }
+          ],
+          "required_product_capabilities": [
+            "fact_e1868252c368390c",
+            "fact_d5153209f0c9c749"
+          ],
+          "optional_signals": [
+            {
+              "code": "sig_mentions_billing_concern",
+              "description": "Explicitly worries that adding help will raise their bill"
+            }
+          ],
+          "hard_disqualifiers": [
+            {
+              "code": "single_permanent_solo_writer",
+              "description": "Explicitly states they will never bring on anyone else",
+              "outcome": "ADJACENT"
+            }
+          ],
+          "eligible_subsegments": [],
+          "excluded_subsegments": [],
+          "max_team_size": null
+        }
+      },
+      {
+        "name": "Substack creator switching platforms over revenue cut and ownership concerns",
+        "organization": "Independent newsletter publisher currently operating on Substack (often with paid subscribers) considering or actively migrating to another ESP",
+        "workflow": "Publishes paid and/or free issues on Substack, manages paid-subscriber billing through Substack's built-in Stripe integration, and maintains an archive of past posts with existing URLs",
+        "need": "Move posts, subscriber list and paid-subscription billing off Substack to a platform that takes no cut of subscription or sponsorship revenue, while preserving old archive links",
+        "buyer_role": "Newsletter owner/publisher",
+        "user_role": "Same person — solo creator",
+        "current_alternative": "Substack (and its 10% fee on paid subscriptions, plus its platform-wide content-moderation policies)",
+        "assessment": {
+          "compatibility": "supported",
+          "evidence_strength": "absent",
+          "findability": "unknown",
+          "usage_or_purchase": "unknown",
+          "reachability": "unknown",
+          "counterevidence_summary": [],
+          "counterevidence": 0,
+          "priority": "hypothesis",
+          "reasons": [
+            "None of the fetched pages (Buttondown API docs, the Teams feature page, a Buttondown-MCP directory listing, a founder-interview podcast post, and a developer-infrastructure review site) contain any content about Substack, platform revenue cuts, archive-link preservation, or a migration announcement.",
+            "The candidate's own basis cites a LinkedIn post, a Substack departure post, and third-party migration guides as its support, but none of those sources were part of this fetched corpus, so no quotation can be produced for this pass."
+          ],
+          "unknowns": [
+            "Whether Buttondown's generic migration-support-via-email capability actually preserves archive URLs and billing continuity, as this workflow requires, is unconfirmed in the fetched corpus.",
+            "Whether any real Substack creator has publicly complained about platform fees or policy and switched to Buttondown remains unverified in this pass; no such page was fetched.",
+            "No verified venue or example establishes findability yet."
+          ],
+          "evidence": []
+        },
+        "kind": "core",
+        "added_by": "cartographer",
+        "who": "",
+        "why_them": "",
+        "trigger": "Objects to Substack's revenue cut, to specific Substack platform/moderation decisions, or to a feature/visibility conflict (e.g. cross-platform disputes) that makes staying untenable",
+        "pains": [
+          "Losing a percentage of paid-subscription revenue to the platform",
+          "Publication's reputation or distribution affected by platform-wide moderation or policy decisions outside their control",
+          "Risk of broken archive links and lost subscribers during a DIY migration"
+        ],
+        "objection": "Migrating platforms risks losing paid subscribers, archive links, or billing continuity.",
+        "angle": "",
+        "sophistication": "problem_aware",
+        "fit": 0,
+        "basis": "Multiple independent, dated firsthand migration accounts found (a LinkedIn post describing a personal move from Substack to Buttondown, a Substack-hosted post by a different writer titled 'I've migrated to another newsletter provider', and third-party migration how-to guides) — stronger buyer-voice support than the other two segments, though exact financial/political triggers vary by writer and are not uniformly confirmed.",
+        "population": "unknown",
+        "signals": [
+          "sig_public_migration_post",
+          "sig_substack_dissatisfaction_statement"
+        ],
+        "where": [
+          "LinkedIn creator posts",
+          "Substack posts announcing a platform departure",
+          "third-party Substack-to-Buttondown migration guides"
+        ],
+        "unobvious": false,
+        "researchable": true,
+        "researchability": "medium",
+        "researchability_reasons": [
+          "2 useful observable signals and 3 specific research venues.",
+          "The audience is anchored in a concrete workflow or situation.",
+          "No clear trigger narrows the research.",
+          "No population basis is stated."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [
+            {
+              "code": "sig_public_migration_post",
+              "description": "Has publicly posted about leaving or planning to leave Substack (or a comparable incumbent ESP)"
+            }
+          ],
+          "required_workflow_signals": [
+            {
+              "code": "wf_has_paid_or_archived_substack_publication",
+              "description": "Currently runs a Substack publication with either paid subscribers or a public archive to preserve"
+            }
+          ],
+          "required_product_capabilities": [
+            "fact_546d67420cbdbe1f"
+          ],
+          "optional_signals": [
+            {
+              "code": "sig_mentions_platform_cut_or_policy",
+              "description": "Cites the revenue cut or a platform policy/moderation decision as a reason to leave"
+            }
+          ],
+          "hard_disqualifiers": [
+            {
+              "code": "no_existing_publication",
+              "description": "Has no existing newsletter or subscriber base to migrate",
+              "outcome": "EXCLUDED"
+            }
+          ],
+          "eligible_subsegments": [],
+          "excluded_subsegments": [],
+          "max_team_size": null
+        }
+      }
+    ]
+  },
+  "prospects": [],
+  "research": [
+    {
+      "audience_name": "Developer or technical creator automating newsletter operations",
+      "audience_fingerprint": "5c7fe90bd83438e25b7f1ed562036bab831912545a8628c8cba6efb05c1fe646",
+      "candidate_kind": "core",
+      "definition": {
+        "schema_version": 2,
+        "required_structural_signals": [
+          {
+            "code": "sig_third_party_integration_built",
+            "description": "Has published or referenced a custom integration, MCP server, or CLI usage built against the Buttondown API"
+          }
+        ],
+        "required_workflow_signals": [
+          {
+            "code": "wf_sends_via_api_or_script",
+            "description": "Sends or manages newsletter content programmatically rather than solely through the web dashboard"
+          }
+        ],
+        "required_product_capabilities": [
+          "fact_3ae64a9ca55a7b71",
+          "fact_33d3b2cc9f080cf9",
+          "fact_375f992bbc52f5bc",
+          "fact_e19b9255065078f5"
+        ],
+        "optional_signals": [
+          {
+            "code": "sig_mentions_rate_limits",
+            "description": "Discusses or asks about API rate limits"
+          }
+        ],
+        "hard_disqualifiers": [
+          {
+            "code": "no_newsletter_product",
+            "description": "No newsletter or subscriber list exists yet",
+            "outcome": "EXCLUDED"
+          }
+        ],
+        "eligible_subsegments": [],
+        "excluded_subsegments": [],
+        "max_team_size": null
+      },
+      "situation": {
+        "text": "Developers and technical creators build their own CLI and Model Context Protocol (MCP) server integrations around the Buttondown newsletter API to manage newsletters, drafts, scheduling, subscribers, tags, and analytics programmatically rather than through the web dashboard.",
+        "grounding": "grounded",
+        "evidence": [
+          {
+            "source_id": "S3",
+            "quote": "A comprehensive TypeScript integration for the Buttondown newsletter service, providing both a CLI interface and a Model Context Protocol (MCP) server for managing newsletters, drafts, and analytics."
+          },
+          {
+            "source_id": "S4",
+            "quote": "An MCP (Model Context Protocol) server for interacting with the [Buttondown](https://buttondown.com) newsletter API."
+          }
+        ],
+        "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+      },
+      "incumbent_behaviour": [
+        {
+          "text": "They build and publish open-source CLI tools that call the provider's API directly for routine newsletter operations such as listing emails.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S3",
+              "quote": "buttondown emails list"
+            },
+            {
+              "source_id": "S3",
+              "quote": "`list_emails`: List all emails with optional status filtering"
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        },
+        {
+          "text": "They manage draft creation, scheduling, analytics, list and tag operations as discrete, named functions rather than as ad hoc dashboard clicks.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S3",
+              "quote": "Email draft management (create, update, delete)"
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        },
+        {
+          "text": "They store API credentials via environment variables or a password manager rather than hardcoding keys in their integration code.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S3",
+              "quote": "1Password integration for API key management"
+            },
+            {
+              "source_id": "S3",
+              "quote": "export BUTTONDOWN_API_KEY=your_api_key"
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        },
+        {
+          "text": "They connect the newsletter API to conversational AI tooling (e.g. Claude Code) via an MCP server so the newsletter can be operated by chat command.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S4",
+              "quote": "claude mcp add buttondown -- npx -y buttondown-mcp"
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        }
+      ],
+      "sophistication": "product_aware",
+      "sophistication_basis": {
+        "text": "The integrations built by this audience are modeled on the provider's actual API response shapes rather than a generic abstraction, indicating detailed, product-specific familiarity.",
+        "grounding": "grounded",
+        "evidence": [
+          {
+            "source_id": "S3",
+            "quote": "Real API response-based types"
+          }
+        ],
+        "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+      },
+      "problems": [],
+      "buyer_phrases": [],
+      "triggers": [
+        {
+          "text": "Developers want the newsletter operated conversationally from within an AI assistant rather than through the dashboard or raw API calls, prompting MCP server construction.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S4",
+              "quote": "claude mcp add buttondown -- npx -y buttondown-mcp"
+            },
+            {
+              "source_id": "S3",
+              "quote": "Model Context Protocol (MCP) server for AI/LLM integration"
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        }
+      ],
+      "desired_outcomes": [
+        {
+          "text": "Wants to create, update, schedule, and send drafts and retrieve analytics, subscriber, and tag data programmatically through one integration surface.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S3",
+              "quote": "Email draft management (create, update, delete)"
+            },
+            {
+              "source_id": "S3",
+              "quote": "Analytics retrieval and formatting"
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        }
+      ],
+      "signals": [
+        {
+          "text": "sig_third_party_integration_built: at least two independently authored open-source MCP/CLI integrations for the same newsletter provider exist and cross-reference each other.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S3",
+              "quote": "ModelContextProtocal server for interacting with buttondown"
+            },
+            {
+              "source_id": "S4",
+              "quote": "Related MCP server: [Buttondown MCP Server](/mcp/servers/The-Focus-AI/buttondown-mcp)"
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        },
+        {
+          "text": "sig_cli_or_api_usage_mentioned: published projects document explicit CLI command usage against the provider's API.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S3",
+              "quote": "buttondown emails list"
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        }
+      ],
+      "where": [
+        {
+          "text": "GitHub hosts independently published open-source CLI/MCP integrations for the newsletter provider's API.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S3",
+              "quote": "ModelContextProtocal server for interacting with buttondown"
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        },
+        {
+          "text": "glama.ai's MCP server directory lists a Buttondown MCP server with a cataloged set of callable tools.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S4",
+              "quote": "15 tools"
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        },
+        {
+          "text": "emailfordevelopers.com frames its Buttondown coverage around which API a backend engineer would choose to operate, an editorial framing by the review site rather than a confirmed statement from this audience.",
+          "grounding": "inferred",
+          "evidence": [
+            {
+              "source_id": "S2",
+              "quote": "The question here is which one a backend engineer would rather operate."
+            }
+          ],
+          "inference_basis": "Tier 3 review site's own editorial framing of its target reader; not corroborated by a first-person statement from the audience."
+        }
+      ],
+      "sources": [
+        {
+          "id": "S1",
+          "requested_url": "https://docs.buttondown.com/api-introduction",
+          "final_url": "https://docs.buttondown.com/api-introduction",
+          "title": "API introduction | Buttondown Docs",
+          "tier": 3,
+          "venue": "Buttondown docs",
+          "fetched_at": "2026-11-07T10:02:09.494774Z",
+          "published_date": null,
+          "publication_date_basis": "unknown",
+          "content_hash": "bad8c81785d55f9f85dac1c8153f83384903264d9b10f313cb65e65ecedce7f9"
+        },
+        {
+          "id": "S2",
+          "requested_url": "https://emailfordevelopers.com/providers/buttondown/",
+          "final_url": "https://emailfordevelopers.com/providers/buttondown/",
+          "title": "Buttondown: newsletter platform review",
+          "tier": 3,
+          "venue": "emailfordevelopers.com",
+          "fetched_at": "2026-11-07T10:02:09.421150Z",
+          "published_date": "2026-04-30",
+          "publication_date_basis": "page_structured_publication_date",
+          "content_hash": "3c700066c4b6c655e5280e4555414a1b6a873c5077d27f6021c03bf13f3f3df5"
+        },
+        {
+          "id": "S3",
+          "requested_url": "https://github.com/the-focus-ai/buttondown-mcp",
+          "final_url": "https://github.com/the-focus-ai/buttondown-mcp",
+          "title": "GitHub - The-Focus-AI/buttondown-mcp: ModelContextProtocal server for interacting with buttondown · GitHub",
+          "tier": 2,
+          "venue": "GitHub (the-focus-ai/buttondown-mcp)",
+          "fetched_at": "2026-11-07T10:02:10.259711Z",
+          "published_date": null,
+          "publication_date_basis": "unknown",
+          "content_hash": "2174aa80989a9f9b304c614578f42ebba4809cd39b0821d5c260e33196c454d0"
+        },
+        {
+          "id": "S4",
+          "requested_url": "https://glama.ai/mcp/servers/dgalarza/buttondown-mcp",
+          "final_url": "https://glama.ai/mcp/servers/dgalarza/buttondown-mcp",
+          "title": "Buttondown MCP Server by dgalarza | Glama",
+          "tier": 2,
+          "venue": "Glama.ai MCP directory",
+          "fetched_at": "2026-11-07T10:02:13.540348Z",
+          "published_date": null,
+          "publication_date_basis": "unknown",
+          "content_hash": "537b6268fae945c0c43a766f6bfd613cd15c31738c6a10ec608d9590f368625b"
+        }
+      ],
+      "dropped_claims": 0,
+      "interpretation_warnings": [
+        "Publication date unknown; retrieval today does not establish current applicability. Developers and technical creators build their own CLI and Model Context Protocol (MCP) server integrations around the Buttondown newsletter API to manage newsletters, drafts, scheduling, subscribers, tags, and analytics programmatically rather than through the web dashboard.",
+        "Publication date unknown; retrieval today does not establish current applicability. The integrations built by this audience are modeled on the provider's actual API response shapes rather than a generic abstraction, indicating detailed, product-specific familiarity.",
+        "Publication date unknown; retrieval today does not establish current applicability. They build and publish open-source CLI tools that call the provider's API directly for routine newsletter operations such as listing emails.",
+        "Publication date unknown; retrieval today does not establish current applicability. They manage draft creation, scheduling, analytics, list and tag operations as discrete, named functions rather than as ad hoc dashboard clicks.",
+        "Publication date unknown; retrieval today does not establish current applicability. They store API credentials via environment variables or a password manager rather than hardcoding keys in their integration code.",
+        "Publication date unknown; retrieval today does not establish current applicability. They connect the newsletter API to conversational AI tooling (e.g. Claude Code) via an MCP server so the newsletter can be operated by chat command.",
+        "Publication date unknown; retrieval today does not establish current applicability. Developers want the newsletter operated conversationally from within an AI assistant rather than through the dashboard or raw API calls, prompting MCP server construction.",
+        "Publication date unknown; retrieval today does not establish current applicability. Wants to create, update, schedule, and send drafts and retrieve analytics, subscriber, and tag data programmatically through one integration surface.",
+        "Publication date unknown; retrieval today does not establish current applicability. sig_third_party_integration_built: at least two independently authored open-source MCP/CLI integrations for the same newsletter provider exist and cross-reference each other.",
+        "Publication date unknown; retrieval today does not establish current applicability. sig_cli_or_api_usage_mentioned: published projects document explicit CLI command usage against the provider's API.",
+        "Publication date unknown; retrieval today does not establish current applicability. GitHub hosts independently published open-source CLI/MCP integrations for the newsletter provider's API.",
+        "Publication date unknown; retrieval today does not establish current applicability. glama.ai's MCP server directory lists a Buttondown MCP server with a cataloged set of callable tools."
+      ],
+      "researched_at": "2026-11-07T10:04:00.972876Z",
+      "id": "48bb86aa-cc63-47c1-8950-56ceb3e0e91b",
+      "brand_id": "62dc9b0b-fb1f-4294-becb-894c2bf45402",
+      "audience_key": "developer or technical creator automating newsletter operations",
+      "version": 1,
+      "source_map_id": "e341fbb5-b95c-43e2-b708-44a06b73774d",
+      "source_map_version": 1,
+      "created_at": "2026-11-07T10:04:00.981423"
+    }
+  ],
+  "relevance": [
+    {
+      "audience_name": "Developer or technical creator automating newsletter operations",
+      "status": "stale",
+      "stale_reasons": [
+        "knowledge_changed",
+        "capability_profile_changed",
+        "company_qualification_changed"
+      ],
+      "missing_prerequisites": [],
+      "dossier_id": "7b858073-9563-41ac-85b3-58786f41f6af",
+      "generation_version": 1,
+      "created_at": "2026-11-07T10:08:25.826751",
+      "dossier": {
+        "schema_version": 2,
+        "interpretation_version": 22,
+        "audience_research_id": "48bb86aa-cc63-47c1-8950-56ceb3e0e91b",
+        "audience_name": "Developer or technical creator automating newsletter operations",
+        "audience_research_version": 1,
+        "knowledge_id": "95a4a3b4-bc15-4c93-a878-beb37550bde8",
+        "knowledge_version": 1,
+        "market_scan_id": "0c2e732e-8163-4309-ae0b-66b61c4cef04",
+        "market_scan_version": 1,
+        "capability_profile_id": "fe5cea12-a0a1-44df-9c71-1ddd8f3229b1",
+        "capability_profile_version": 1,
+        "qualification_fingerprint": "e57cf6b651d4cdc471f363f511a9bacdb0443014f5fb81782a10dba4f360d2cc",
+        "built_at": "2026-11-07T10:08:25.820832Z",
+        "orientation": "Buttondown is an email-newsletter platform whose REST API and OpenAPI specification are published on every plan, including the free plan, for people who want to operate the newsletter from their own code, CLI, or MCP server rather than its web dashboard.",
+        "defining_need_fit": {
+          "status": "partial",
+          "supported_alternative": "",
+          "setup_conditions": [],
+          "evidence_ids": [
+            "E1",
+            "E3",
+            "E4",
+            "E2"
+          ],
+          "capability_ids": [
+            "fact_3ae64a9ca55a7b71",
+            "fact_33d3b2cc9f080cf9",
+            "fact_375f992bbc52f5bc"
+          ],
+          "unverified_requirements": [
+            "Whether webhooks are available on the free tier, or are gated behind a paid add-on, is not established by the selected evidence."
+          ],
+          "decision_gaps": [
+            "Buttondown's documentation does not state whether webhooks exist and, if so, whether they are available on the free tier or require a paid add-on.",
+            "Buttondown's documentation gives no quantified API rate-limit numbers (requests per minute/hour) — only that limits are 'generous enough for most use cases' — which would materially affect CI/automation design for this workflow."
+          ],
+          "supported_core_workflow": "",
+          "unverified_requirement_basis": {
+            "Whether webhooks are available on the free tier, or are gated behind a paid add-on, is not established by the selected evidence.": "and webhooks"
+          },
+          "caveat": "No official SDK or MCP server ships from Buttondown (E3, E4): self-generating a client or MCP integration depends on third-party OpenAPI tooling, and the stated API rate limit (E2) is described as 'generous' rather than quantified.",
+          "why": "E1 establishes that the API itself is available on every plan including free and is not gated behind a paid add-on, and E3/E4 establish that Buttondown deliberately documents an OpenAPI spec specifically so any caller — including CLI/MCP builders — can self-generate a typed client or integration; but the selected ledger contains no webhook evidence at all, so the full conjunction in the need ('the API (and webhooks)... on the free tier') is only partially confirmed."
+        },
+        "ranked_relevance": [
+          {
+            "evidence_id": "E1",
+            "band": "LEAD",
+            "why": "Directly confirms the API is available on all plans including free, the core free-tier-access component of the stated need.",
+            "problem_ids": [],
+            "territory": null
+          },
+          {
+            "evidence_id": "E3",
+            "band": "LEAD",
+            "why": "States Buttondown deliberately skips SDKs and instead invests in its OpenAPI spec so any caller can generate a typed client, directly answering 'documented well enough to self-generate a client or integration.'.",
+            "problem_ids": [],
+            "territory": null
+          },
+          {
+            "evidence_id": "E4",
+            "band": "SUPPORT",
+            "why": "Documents the mechanism and reasoning behind the no-MCP-server decision and points builders to the same OpenAPI spec, the documented exception underlying this audience's own MCP-wrapper workflow.",
+            "problem_ids": [],
+            "territory": null
+          },
+          {
+            "evidence_id": "E2",
+            "band": "SUPPORT",
+            "why": "Documents that the API is rate-limited (a real documented behavior/exception) relevant to programmatic, CI-triggered sends, though the threshold itself is unquantified.",
+            "problem_ids": [],
+            "territory": null
+          },
+          {
+            "evidence_id": "E14",
+            "band": "WITHHOLD",
+            "why": "Confirms a real $79/month paid add-on exists, but it gates team collaboration seats, not API access, so citing it against the 'not gated behind a paid add-on' question would mischaracterize what is actually gated.",
+            "problem_ids": [],
+            "territory": null
+          },
+          {
+            "evidence_id": "E20",
+            "band": "WITHHOLD",
+            "why": "Documents a team-billing mechanic (collaborators don't count as subscribers) that is immaterial to a solo indie developer's individual code/CI workflow.",
+            "problem_ids": [],
+            "territory": null
+          },
+          {
+            "evidence_id": "E21",
+            "band": "WITHHOLD",
+            "why": "Documents unlimited Teams collaborators, a multi-person collaboration capability not material to this audience's individual automation workflow.",
+            "problem_ids": [],
+            "territory": null
+          },
+          {
+            "evidence_id": "E11",
+            "band": "CONTEXT",
+            "why": "Notes 40+ integrations exist as general breadth; background context for 'wiring into an existing stack' but not specific to the free-tier API/webhook/documentation question actually at issue.",
+            "problem_ids": [],
+            "territory": "open"
+          }
+        ],
+        "problem_fits": [],
+        "segment_objections": [
+          {
+            "objection": "Buttondown ships no official SDK or MCP server, raising doubt about whether a self-built client or integration is actually well-supported.",
+            "severity": "moderate",
+            "answer": "Buttondown deliberately invests in its OpenAPI spec instead of maintaining SDKs or an MCP server, specifically so any caller can generate a typed client or build their own MCP wrapper.",
+            "grounding": "inferred",
+            "evidence_ids": [
+              "E3",
+              "E4"
+            ],
+            "provenance": []
+          },
+          {
+            "objection": "Webhook availability and its tier/add-on gating are unconfirmed, which blocks evaluating event-driven automation (e.g., CI triggers on subscriber or send events) against the stated free-tier requirement.",
+            "severity": "strong",
+            "answer": "",
+            "grounding": "inferred",
+            "evidence_ids": [],
+            "provenance": []
+          }
+        ],
+        "silences": [],
+        "evidence": [
+          {
+            "id": "E1",
+            "kind": "feature",
+            "claim": "The API is available on all plans, including the free plan.",
+            "verbatim": "Yes. The API is available on all plans, including free.",
+            "source": "https://buttondown.com/features/api",
+            "document_id": "0874adf9-41b2-4443-9926-37660bba6d8f",
+            "context": {
+              "subject": "Buttondown API",
+              "source_kind": "official_documentation",
+              "claim_scope": "offer",
+              "conditions": "Applies to all plans including the free tier",
+              "temporal_scope": "",
+              "limitations": "",
+              "verification": "quote_verified_in_material"
+            },
+            "source_references": [
+              {
+                "document_id": "0874adf9-41b2-4443-9926-37660bba6d8f",
+                "source": "https://buttondown.com/features/api",
+                "source_type": "website"
+              }
+            ],
+            "strength": "strong",
+            "category": "commercial",
+            "value_band": "supporting"
+          },
+          {
+            "id": "E2",
+            "kind": "feature",
+            "claim": "The Buttondown API is rate-limited, but the limits are generous enough for most use cases.",
+            "verbatim": "Yes. The API is rate-limited to prevent abuse, but the limits are generous enough for most use cases.",
+            "source": "https://buttondown.com/features/api",
+            "document_id": "0874adf9-41b2-4443-9926-37660bba6d8f",
+            "context": {
+              "subject": "Buttondown API",
+              "source_kind": "official_documentation",
+              "claim_scope": "capability",
+              "conditions": "Rate limit exists to prevent abuse",
+              "temporal_scope": "",
+              "limitations": "\"Generous enough for most use cases\" is vague and unquantified",
+              "verification": "quote_verified_in_material"
+            },
+            "source_references": [
+              {
+                "document_id": "0874adf9-41b2-4443-9926-37660bba6d8f",
+                "source": "https://buttondown.com/features/api",
+                "source_type": "website"
+              }
+            ],
+            "strength": "weak",
+            "category": "technical",
+            "value_band": "background"
+          },
+          {
+            "id": "E3",
+            "kind": "feature",
+            "claim": "Buttondown deliberately does not offer official SDKs, investing instead in its OpenAPI spec so any caller can generate a typed client.",
+            "verbatim": "No, and that's deliberate. We'd rather invest in making our [OpenAPI spec](https://docs.buttondown.com/api-introduction) as good as humanly possible — which benefits every caller regardless of language or framework — than maintain a fleet of SDKs that inevitably lag behind the API itself.",
+            "source": "https://buttondown.com/features/api",
+            "document_id": "0874adf9-41b2-4443-9926-37660bba6d8f",
+            "context": {
+              "subject": "Buttondown API",
+              "source_kind": "official_documentation",
+              "claim_scope": "capability",
+              "conditions": "No official SDKs provided; third-party generators like openapi-typescript or openapi-python-client recommended instead",
+              "temporal_scope": "",
+              "limitations": "",
+              "verification": "quote_verified_in_material"
+            },
+            "source_references": [
+              {
+                "document_id": "0874adf9-41b2-4443-9926-37660bba6d8f",
+                "source": "https://buttondown.com/features/api",
+                "source_type": "website"
+              }
+            ],
+            "strength": "strong",
+            "category": "technical",
+            "value_band": "supporting"
+          },
+          {
+            "id": "E4",
+            "kind": "feature",
+            "claim": "Buttondown does not offer an official MCP server, for the same reasons it does not ship SDKs, and instead points users to its OpenAPI spec to build their own.",
+            "verbatim": "No, for essentially the same reasons we don't ship official SDKs: an MCP server is a thin, opinionated wrapper around our API, and we'd rather keep refining the [OpenAPI spec](https://docs.buttondown.com/api-introduction) underneath so every caller benefits.",
+            "source": "https://buttondown.com/features/api",
+            "document_id": "0874adf9-41b2-4443-9926-37660bba6d8f",
+            "context": {
+              "subject": "Buttondown API",
+              "source_kind": "official_documentation",
+              "claim_scope": "capability",
+              "conditions": "No official MCP server; suggests pointing an LLM at the API spec to build one",
+              "temporal_scope": "",
+              "limitations": "",
+              "verification": "quote_verified_in_material"
+            },
+            "source_references": [
+              {
+                "document_id": "0874adf9-41b2-4443-9926-37660bba6d8f",
+                "source": "https://buttondown.com/features/api",
+                "source_type": "website"
+              }
+            ],
+            "strength": "strong",
+            "category": "technical",
+            "value_band": "supporting"
+          },
+          {
+            "id": "E11",
+            "kind": "integration",
+            "claim": "Buttondown supports over 40 integrations.",
+            "verbatim": "We support [over 40 integrations](/features/integrations).",
+            "source": "https://buttondown.com/features",
+            "document_id": "13245faa-8fdf-4d7f-b46d-e53ddb2b257b",
+            "context": {
+              "subject": "Buttondown integrations",
+              "source_kind": "vendor_statement",
+              "claim_scope": "capability",
+              "conditions": "",
+              "temporal_scope": "",
+              "limitations": "",
+              "verification": "quote_verified_in_material"
+            },
+            "source_references": [
+              {
+                "document_id": "13245faa-8fdf-4d7f-b46d-e53ddb2b257b",
+                "source": "https://buttondown.com/features",
+                "source_type": "website"
+              }
+            ],
+            "strength": "moderate",
+            "category": "technical",
+            "value_band": "background"
+          },
+          {
+            "id": "E14",
+            "kind": "price",
+            "claim": "The Teams add-on costs $79/month",
+            "verbatim": "[Teams](/features/teams) +$79/month",
+            "source": "https://buttondown.com/pricing",
+            "document_id": "0b8dc96b-584b-42c7-8bab-f06303467f24",
+            "context": {
+              "subject": "Buttondown Teams add-on",
+              "source_kind": "vendor_statement",
+              "claim_scope": "offer",
+              "conditions": "add-on to base subscriber plan",
+              "temporal_scope": "",
+              "limitations": "",
+              "verification": "quote_verified_in_material"
+            },
+            "source_references": [
+              {
+                "document_id": "0b8dc96b-584b-42c7-8bab-f06303467f24",
+                "source": "https://buttondown.com/pricing",
+                "source_type": "website"
+              }
+            ],
+            "strength": "strong",
+            "category": "commercial",
+            "value_band": "headline"
+          },
+          {
+            "id": "E20",
+            "kind": "feature",
+            "claim": "Team members/collaborators on Buttondown are not counted as subscribers and do not affect billing",
+            "verbatim": "No. Team members are collaborators, not subscribers. They don't affect your billing at all.",
+            "source": "https://buttondown.com/features/teams",
+            "document_id": "7516d1cc-c24f-4b4f-89d7-bf07a1086046",
+            "context": {
+              "subject": "Buttondown Teams",
+              "source_kind": "official_documentation",
+              "claim_scope": "capability",
+              "conditions": "",
+              "temporal_scope": "",
+              "limitations": "",
+              "verification": "quote_verified_in_material"
+            },
+            "source_references": [
+              {
+                "document_id": "7516d1cc-c24f-4b4f-89d7-bf07a1086046",
+                "source": "https://buttondown.com/features/teams",
+                "source_type": "website"
+              }
+            ],
+            "strength": "strong",
+            "category": "commercial",
+            "value_band": "supporting"
+          },
+          {
+            "id": "E21",
+            "kind": "feature",
+            "claim": "There is no limit on the number of collaborators that can be invited to a Buttondown Teams account",
+            "verbatim": "No. You can invite as many collaborators as you need.",
+            "source": "https://buttondown.com/features/teams",
+            "document_id": "7516d1cc-c24f-4b4f-89d7-bf07a1086046",
+            "context": {
+              "subject": "Buttondown Teams",
+              "source_kind": "official_documentation",
+              "claim_scope": "capability",
+              "conditions": "",
+              "temporal_scope": "",
+              "limitations": "",
+              "verification": "quote_verified_in_material"
+            },
+            "source_references": [
+              {
+                "document_id": "7516d1cc-c24f-4b4f-89d7-bf07a1086046",
+                "source": "https://buttondown.com/features/teams",
+                "source_type": "website"
+              }
+            ],
+            "strength": "strong",
+            "category": "product",
+            "value_band": "supporting"
+          }
+        ],
+        "validation_counts": {
+          "dropped_items": 0,
+          "normalized_items": 1
+        },
+        "validation_warnings": [
+          "Normalized ranking for evidence 'E3'."
+        ],
+        "verified_product_questions": [],
+        "recommendation": {
+          "state": "DISCOVERY_ONLY",
+          "readiness": "DISCOVERY_ONLY",
+          "reasons": [
+            "The defining audience need is not fully supported by verified product evidence; a broader subsegment label does not resolve it.",
+            "Whether webhooks are available on the free tier, or are gated behind a paid add-on, is not established by the selected evidence."
+          ],
+          "eligible_subsegment": "",
+          "qualified_companies": [],
+          "adjacent_companies": [],
+          "excluded_companies": [],
+          "unverified_companies": [],
+          "allowed_claims": [
+            "The API is available on all plans, including the free plan.",
+            "The Buttondown API is rate-limited, but the limits are generous enough for most use cases.",
+            "Buttondown deliberately does not offer official SDKs, investing instead in its OpenAPI spec so any caller can generate a typed client.",
+            "Buttondown does not offer an official MCP server, for the same reasons it does not ship SDKs, and instead points users to its OpenAPI spec to build their own.",
+            "Buttondown supports over 40 integrations.",
+            "Users can post to Buttondown by sending an email to a specific posting address from the email address they joined Buttondown with, and it will be sent out to subscribers.",
+            "The maximum attachment file size in Buttondown is two megabytes, with larger sizes possibly available by emailing support",
+            "Buttondown allows up to 3 file attachments in a single email",
+            "Attachments under 1 MB deliver more reliably than the 2 MB limit allows",
+            "Buttondown lets account owners give collaborators full sending permissions or restrict them to drafting only, depending on assigned role",
+            "Buttondown offers migration help via email for customers moving their newsletter from another platform"
+          ],
+          "allowed_evidence_ids": [
+            "E1",
+            "E2",
+            "E3",
+            "E4",
+            "E11",
+            "E12",
+            "E17",
+            "E18",
+            "E19",
+            "E22",
+            "E24"
+          ],
+          "forbidden_claims": [],
+          "forbidden_capability_ids": [],
+          "forbidden_evidence_ids": [
+            "E14",
+            "E20",
+            "E21"
+          ],
+          "unresolved_objections": [
+            "Webhook availability and its tier/add-on gating are unconfirmed, which blocks evaluating event-driven automation (e.g., CI triggers on subscriber or send events) against the stated free-tier requirement."
+          ],
+          "recommended_next_action": "Gather direct product and company evidence before treating this as an outreach list.",
+          "override_risk": "Generating now will require audience-level hypotheses and may produce a weak campaign because company-specific fit is unresolved.",
+          "claim_contract": {
+            "contract_version": 1,
+            "verified_product_claims": [
+              {
+                "id": "evidence:E1",
+                "text": "The API is available on all plans, including the free plan.",
+                "evidence_ids": [
+                  "E1"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E2",
+                "text": "The Buttondown API is rate-limited, but the limits are generous enough for most use cases.",
+                "evidence_ids": [
+                  "E2"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E3",
+                "text": "Buttondown deliberately does not offer official SDKs, investing instead in its OpenAPI spec so any caller can generate a typed client.",
+                "evidence_ids": [
+                  "E3"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E4",
+                "text": "Buttondown does not offer an official MCP server, for the same reasons it does not ship SDKs, and instead points users to its OpenAPI spec to build their own.",
+                "evidence_ids": [
+                  "E4"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E5",
+                "text": "Buttondown does not charge extra for paid subscribers, so creators keep all of the revenue they make from paid subscriptions.",
+                "evidence_ids": [
+                  "E5"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E6",
+                "text": "Buttondown will migrate a customer's mailing list to Buttondown for free, regardless of list size.",
+                "evidence_ids": [
+                  "E6"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E7",
+                "text": "Buttondown is GDPR-compliant and does not collect any data about users or their subscribers by default.",
+                "evidence_ids": [
+                  "E7"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E8",
+                "text": "Buttondown's surveys have response rates 200% higher than the industry average.",
+                "evidence_ids": [
+                  "E8"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E9",
+                "text": "For sponsorships, Buttondown takes no cut — the newsletter owner keeps 100% of every sponsorship, minus Stripe's processing fee.",
+                "evidence_ids": [
+                  "E9"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E10",
+                "text": "Customers can create as many distinct newsletters as they'd like; they are only charged based on their total subscriber count, not the number of newsletters.",
+                "evidence_ids": [
+                  "E10"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E11",
+                "text": "Buttondown supports over 40 integrations.",
+                "evidence_ids": [
+                  "E11"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E12",
+                "text": "Users can post to Buttondown by sending an email to a specific posting address from the email address they joined Buttondown with, and it will be sent out to subscribers.",
+                "evidence_ids": [
+                  "E12"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E13",
+                "text": "Buttondown's plan costs nothing for a newsletter's first 100 subscribers",
+                "evidence_ids": [
+                  "E13"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E14",
+                "text": "The Teams add-on costs $79/month",
+                "evidence_ids": [
+                  "E14"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E15",
+                "text": "Registered 501(c)(3) non-profits (or their country's equivalent) can get a 50% discount on their Buttondown plan by emailing proof of registry",
+                "evidence_ids": [
+                  "E15"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E16",
+                "text": "Buttondown's listed prices assume sending at most one email a day to the entire subscriber base; sending more requires contacting Buttondown about usage-based pricing",
+                "evidence_ids": [
+                  "E16"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E17",
+                "text": "The maximum attachment file size in Buttondown is two megabytes, with larger sizes possibly available by emailing support",
+                "evidence_ids": [
+                  "E17"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E18",
+                "text": "Buttondown allows up to 3 file attachments in a single email",
+                "evidence_ids": [
+                  "E18"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E19",
+                "text": "Attachments under 1 MB deliver more reliably than the 2 MB limit allows",
+                "evidence_ids": [
+                  "E19"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E20",
+                "text": "Team members/collaborators on Buttondown are not counted as subscribers and do not affect billing",
+                "evidence_ids": [
+                  "E20"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E21",
+                "text": "There is no limit on the number of collaborators that can be invited to a Buttondown Teams account",
+                "evidence_ids": [
+                  "E21"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E22",
+                "text": "Buttondown lets account owners give collaborators full sending permissions or restrict them to drafting only, depending on assigned role",
+                "evidence_ids": [
+                  "E22"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E23",
+                "text": "Nick Disabato of Draft said running things with Buttondown has been massively simpler and easier, with easier queuing, higher deliverability, and fewer bugs",
+                "evidence_ids": [
+                  "E23"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E24",
+                "text": "Buttondown offers migration help via email for customers moving their newsletter from another platform",
+                "evidence_ids": [
+                  "E24"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              }
+            ],
+            "campaign_allowed_claims": [
+              {
+                "id": "evidence:E1",
+                "text": "The API is available on all plans, including the free plan.",
+                "evidence_ids": [
+                  "E1"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E2",
+                "text": "The Buttondown API is rate-limited, but the limits are generous enough for most use cases.",
+                "evidence_ids": [
+                  "E2"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E3",
+                "text": "Buttondown deliberately does not offer official SDKs, investing instead in its OpenAPI spec so any caller can generate a typed client.",
+                "evidence_ids": [
+                  "E3"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E4",
+                "text": "Buttondown does not offer an official MCP server, for the same reasons it does not ship SDKs, and instead points users to its OpenAPI spec to build their own.",
+                "evidence_ids": [
+                  "E4"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E11",
+                "text": "Buttondown supports over 40 integrations.",
+                "evidence_ids": [
+                  "E11"
+                ],
+                "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+              },
+              {
+                "id": "evidence:E12",
+                "text": "Users can post to Buttondown by sending an email to a specific posting address from the email address they joined Buttondown with, and it will be sent out to subscribers.",
+                "evidence_ids": [
+                  "E12"
+                ],
+                "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+              },
+              {
+                "id": "evidence:E17",
+                "text": "The maximum attachment file size in Buttondown is two megabytes, with larger sizes possibly available by emailing support",
+                "evidence_ids": [
+                  "E17"
+                ],
+                "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+              },
+              {
+                "id": "evidence:E18",
+                "text": "Buttondown allows up to 3 file attachments in a single email",
+                "evidence_ids": [
+                  "E18"
+                ],
+                "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+              },
+              {
+                "id": "evidence:E19",
+                "text": "Attachments under 1 MB deliver more reliably than the 2 MB limit allows",
+                "evidence_ids": [
+                  "E19"
+                ],
+                "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+              },
+              {
+                "id": "evidence:E22",
+                "text": "Buttondown lets account owners give collaborators full sending permissions or restrict them to drafting only, depending on assigned role",
+                "evidence_ids": [
+                  "E22"
+                ],
+                "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+              },
+              {
+                "id": "evidence:E24",
+                "text": "Buttondown offers migration help via email for customers moving their newsletter from another platform",
+                "evidence_ids": [
+                  "E24"
+                ],
+                "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+              }
+            ],
+            "forbidden_claims": [],
+            "withheld_claims": [
+              {
+                "id": "evidence:E5",
+                "text": "Buttondown does not charge extra for paid subscribers, so creators keep all of the revenue they make from paid subscriptions.",
+                "evidence_ids": [
+                  "E5"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              },
+              {
+                "id": "evidence:E6",
+                "text": "Buttondown will migrate a customer's mailing list to Buttondown for free, regardless of list size.",
+                "evidence_ids": [
+                  "E6"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              },
+              {
+                "id": "evidence:E7",
+                "text": "Buttondown is GDPR-compliant and does not collect any data about users or their subscribers by default.",
+                "evidence_ids": [
+                  "E7"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              },
+              {
+                "id": "evidence:E8",
+                "text": "Buttondown's surveys have response rates 200% higher than the industry average.",
+                "evidence_ids": [
+                  "E8"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              },
+              {
+                "id": "evidence:E9",
+                "text": "For sponsorships, Buttondown takes no cut — the newsletter owner keeps 100% of every sponsorship, minus Stripe's processing fee.",
+                "evidence_ids": [
+                  "E9"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              },
+              {
+                "id": "evidence:E10",
+                "text": "Customers can create as many distinct newsletters as they'd like; they are only charged based on their total subscriber count, not the number of newsletters.",
+                "evidence_ids": [
+                  "E10"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              },
+              {
+                "id": "evidence:E13",
+                "text": "Buttondown's plan costs nothing for a newsletter's first 100 subscribers",
+                "evidence_ids": [
+                  "E13"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              },
+              {
+                "id": "evidence:E14",
+                "text": "The Teams add-on costs $79/month",
+                "evidence_ids": [
+                  "E14"
+                ],
+                "reason": "Ranked WITHHOLD for this audience."
+              },
+              {
+                "id": "evidence:E15",
+                "text": "Registered 501(c)(3) non-profits (or their country's equivalent) can get a 50% discount on their Buttondown plan by emailing proof of registry",
+                "evidence_ids": [
+                  "E15"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              },
+              {
+                "id": "evidence:E16",
+                "text": "Buttondown's listed prices assume sending at most one email a day to the entire subscriber base; sending more requires contacting Buttondown about usage-based pricing",
+                "evidence_ids": [
+                  "E16"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              },
+              {
+                "id": "evidence:E20",
+                "text": "Team members/collaborators on Buttondown are not counted as subscribers and do not affect billing",
+                "evidence_ids": [
+                  "E20"
+                ],
+                "reason": "Ranked WITHHOLD for this audience."
+              },
+              {
+                "id": "evidence:E21",
+                "text": "There is no limit on the number of collaborators that can be invited to a Buttondown Teams account",
+                "evidence_ids": [
+                  "E21"
+                ],
+                "reason": "Ranked WITHHOLD for this audience."
+              },
+              {
+                "id": "evidence:E23",
+                "text": "Nick Disabato of Draft said running things with Buttondown has been massively simpler and easier, with easier queuing, higher deliverability, and fewer bugs",
+                "evidence_ids": [
+                  "E23"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              }
+            ],
+            "warnings": [
+              "Claim 'The Teams add-on costs $79/month' rests on withheld or forbidden evidence (E14) and is not campaign-safe.",
+              "Claim 'Team members/collaborators on Buttondown are not counted as subscribers and do not affect billing' rests on withheld or forbidden evidence (E20) and is not campaign-safe.",
+              "Claim 'There is no limit on the number of collaborators that can be invited to a Buttondown Teams account' rests on withheld or forbidden evidence (E21) and is not campaign-safe."
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "capability_profile": {
+    "schema_version": 2,
+    "version": 2,
+    "knowledge_id": "4b7a354d-7fd7-4d87-99d5-8755ae65cf48",
+    "knowledge_version": 2,
+    "ledger_fingerprint": "4a5e81a4c0afe2c7da9da7631cf885f0cd24ef11c57a516cfc7315a3af67809c",
+    "derivation_version": 3,
+    "capabilities": [
+      {
+        "id": "fact_375f992bbc52f5bc",
+        "label": "The Buttondown API is rate-limited, but the limits are generous enough for most use cases.",
+        "description": "Source: official_documentation; Subject: Buttondown API; Rate limit exists to prevent abuse; \"Generous enough for most use cases\" is vague and unquantified",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E2",
+            "claim": "The Buttondown API is rate-limited, but the limits are generous enough for most use cases.",
+            "quote": "Yes. The API is rate-limited to prevent abuse, but the limits are generous enough for most use cases.",
+            "source_identifier": "https://buttondown.com/features/api"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_3ae64a9ca55a7b71",
+        "label": "Buttondown deliberately does not offer official SDKs, investing instead in its OpenAPI spec so any caller can generate a typed client.",
+        "description": "Source: official_documentation; Subject: Buttondown API; No official SDKs provided; third-party generators like openapi-typescript or openapi-python-client recommended instead",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E3",
+            "claim": "Buttondown deliberately does not offer official SDKs, investing instead in its OpenAPI spec so any caller can generate a typed client.",
+            "quote": "No, and that's deliberate. We'd rather invest in making our [OpenAPI spec](https://docs.buttondown.com/api-introduction) as good as humanly possible — which benefits every caller regardless of language or framework — than maintain a fleet of SDKs that inevitably lag behind the API itself.",
+            "source_identifier": "https://buttondown.com/features/api"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_33d3b2cc9f080cf9",
+        "label": "Buttondown does not offer an official MCP server, for the same reasons it does not ship SDKs, and instead points users to its OpenAPI spec to build their own.",
+        "description": "Source: official_documentation; Subject: Buttondown API; No official MCP server; suggests pointing an LLM at the API spec to build one",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E4",
+            "claim": "Buttondown does not offer an official MCP server, for the same reasons it does not ship SDKs, and instead points users to its OpenAPI spec to build their own.",
+            "quote": "No, for essentially the same reasons we don't ship official SDKs: an MCP server is a thin, opinionated wrapper around our API, and we'd rather keep refining the [OpenAPI spec](https://docs.buttondown.com/api-introduction) underneath so every caller benefits.",
+            "source_identifier": "https://buttondown.com/features/api"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_e19b9255065078f5",
+        "label": "Buttondown supports over 40 integrations.",
+        "description": "Source: vendor_statement; Subject: Buttondown integrations",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E11",
+            "claim": "Buttondown supports over 40 integrations.",
+            "quote": "We support [over 40 integrations](/features/integrations).",
+            "source_identifier": "https://buttondown.com/features"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_fd60caed827a2fba",
+        "label": "Users can post to Buttondown by sending an email to a specific posting address from the email address they joined Buttondown with, and it will be sent out to subscribers.",
+        "description": "Source: official_documentation; Subject: Buttondown send-from-your-own-email feature; Must send from the same email address used to join Buttondown",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E12",
+            "claim": "Users can post to Buttondown by sending an email to a specific posting address from the email address they joined Buttondown with, and it will be sent out to subscribers.",
+            "quote": "Send an email to `[email protected]` from the email address that you joined Buttondown with, and we'll send it out to your subscribers.",
+            "source_identifier": "https://buttondown.com/features"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_f06f926acbfb921e",
+        "label": "The maximum attachment file size in Buttondown is two megabytes, with larger sizes possibly available by emailing support",
+        "description": "Source: official_documentation; Subject: Buttondown email attachments; exceptions beyond 2 MB require emailing Buttondown support",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E17",
+            "claim": "The maximum attachment file size in Buttondown is two megabytes, with larger sizes possibly available by emailing support",
+            "quote": "Two megabytes. (If you *really* need more than that, email us and we might be able to figure something out for you.)",
+            "source_identifier": "https://docs.buttondown.com/fancy-mode"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_0ed57560c74380c9",
+        "label": "Buttondown allows up to 3 file attachments in a single email",
+        "description": "Source: official_documentation; Subject: Buttondown email attachments; per single email",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E18",
+            "claim": "Buttondown allows up to 3 file attachments in a single email",
+            "quote": "You can only attach up to 3 files in a single email.",
+            "source_identifier": "https://docs.buttondown.com/fancy-mode"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_4beaa8c66b5c9455",
+        "label": "Attachments under 1 MB deliver more reliably than the 2 MB limit allows",
+        "description": "Source: official_documentation; Subject: Buttondown email attachments; attachments under 1 MB, versus the 2 MB hard limit; 'more reliably' is not quantified",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E19",
+            "claim": "Attachments under 1 MB deliver more reliably than the 2 MB limit allows",
+            "quote": "Keep sizes small: even though the limit is 2 MB, smaller attachments (under 1 MB) will deliver more reliably.",
+            "source_identifier": "https://docs.buttondown.com/fancy-mode"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_e1868252c368390c",
+        "label": "There is no limit on the number of collaborators that can be invited to a Buttondown Teams account",
+        "description": "Source: official_documentation; Subject: Buttondown Teams",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E21",
+            "claim": "There is no limit on the number of collaborators that can be invited to a Buttondown Teams account",
+            "quote": "No. You can invite as many collaborators as you need.",
+            "source_identifier": "https://buttondown.com/features/teams"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_d5153209f0c9c749",
+        "label": "Buttondown lets account owners give collaborators full sending permissions or restrict them to drafting only, depending on assigned role",
+        "description": "Source: official_documentation; Subject: Buttondown Teams; permission level depends on the collaborator's assigned role",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E22",
+            "claim": "Buttondown lets account owners give collaborators full sending permissions or restrict them to drafting only, depending on assigned role",
+            "quote": "It depends on their role. You can give collaborators full sending permissions or restrict them to drafting only.",
+            "source_identifier": "https://buttondown.com/features/teams"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_546d67420cbdbe1f",
+        "label": "Buttondown offers migration help via email for customers moving their newsletter from another platform",
+        "description": "Source: official_documentation; Subject: Buttondown migration support; customer must contact support via email or the contact form",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E24",
+            "claim": "Buttondown offers migration help via email for customers moving their newsletter from another platform",
+            "quote": "Are you moving your newsletter to Buttondown from another platform? Just send us an email to [[email protected]](/cdn-cgi/l/email-protection#ddbeb2b3beb4b8afbab89dbfa8a9a9b2b3b9b2aab3f3beb2b0) or use [the form](#contact-us) below and we'll get you set up!",
+            "source_identifier": "https://buttondown.com/support"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      }
+    ],
+    "constraints": [],
+    "claims": [
+      {
+        "text": "The API is available on all plans, including the free plan.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E1"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "The Buttondown API is rate-limited, but the limits are generous enough for most use cases.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E2"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown deliberately does not offer official SDKs, investing instead in its OpenAPI spec so any caller can generate a typed client.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E3"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown does not offer an official MCP server, for the same reasons it does not ship SDKs, and instead points users to its OpenAPI spec to build their own.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E4"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown does not charge extra for paid subscribers, so creators keep all of the revenue they make from paid subscriptions.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E5"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown will migrate a customer's mailing list to Buttondown for free, regardless of list size.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E6"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown is GDPR-compliant and does not collect any data about users or their subscribers by default.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E7"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown's surveys have response rates 200% higher than the industry average.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E8"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "For sponsorships, Buttondown takes no cut — the newsletter owner keeps 100% of every sponsorship, minus Stripe's processing fee.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E9"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Customers can create as many distinct newsletters as they'd like; they are only charged based on their total subscriber count, not the number of newsletters.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E10"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown supports over 40 integrations.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E11"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Users can post to Buttondown by sending an email to a specific posting address from the email address they joined Buttondown with, and it will be sent out to subscribers.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E12"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown's plan costs nothing for a newsletter's first 100 subscribers",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E13"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "The Teams add-on costs $79/month",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E14"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Registered 501(c)(3) non-profits (or their country's equivalent) can get a 50% discount on their Buttondown plan by emailing proof of registry",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E15"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown's listed prices assume sending at most one email a day to the entire subscriber base; sending more requires contacting Buttondown about usage-based pricing",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E16"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "The maximum attachment file size in Buttondown is two megabytes, with larger sizes possibly available by emailing support",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E17"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown allows up to 3 file attachments in a single email",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E18"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Attachments under 1 MB deliver more reliably than the 2 MB limit allows",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E19"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Team members/collaborators on Buttondown are not counted as subscribers and do not affect billing",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E20"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "There is no limit on the number of collaborators that can be invited to a Buttondown Teams account",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E21"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown lets account owners give collaborators full sending permissions or restrict them to drafting only, depending on assigned role",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E22"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Nick Disabato of Draft said running things with Buttondown has been massively simpler and easier, with easier queuing, higher deliverability, and fewer bugs",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E23"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown offers migration help via email for customers moving their newsletter from another platform",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E24"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown's API documentation gives explicit quantified rate limits: 600 requests per minute across all API endpoints, and a separate limit of 100 requests per day on the subscriber-creation endpoint.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "R1"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      }
+    ],
+    "id": "eebb3104-e022-4cdb-a967-57e139d9ce52",
+    "brand_id": "62dc9b0b-fb1f-4294-becb-894c2bf45402",
+    "created_at": "2026-11-07T10:09:28.242852"
+  },
+  "note": ""
+}

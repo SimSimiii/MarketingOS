@@ -19,6 +19,7 @@ import type {
   RelevanceStatus,
   Brand,
   BrandCreateRequest,
+  BrandIdentity,
   BrandStyleUpdate,
   BrandKnowledge,
   BrandOverview,
@@ -29,6 +30,10 @@ import type {
   CampaignGenerationAdvice,
   CampaignPolicyUpdate,
   CampaignResult,
+  CampaignSteering,
+  EmailRevision,
+  EmailRevisionHistory,
+  SteeringCheck,
   ExecutionLog,
   ExecutionTimeline,
   GeneratedAsset,
@@ -57,6 +62,7 @@ import type {
   UserSettingsUpdate,
 } from "@/lib/types";
 import type { EmailAnalysis, EmailAnalysisCapabilities, EmailAnalysisRequest } from "@/lib/email-analysis-types";
+import type { ApiSchemas } from "@/lib/api-schema";
 
 /** Where the bearer token comes from.
  *
@@ -229,6 +235,14 @@ export function createApi(auth: AuthSource) {
       }),
     getKnowledgeCompilation: (brandId: string) =>
       request<CompilationStatus>(`/brands/${brandId}/knowledge/compile`),
+    reviewDraft: (brandId: string, data: ApiSchemas["DraftReviewRequest"]) =>
+      request<ApiSchemas["DraftReviewJobRead"]>(`/brands/${brandId}/draft-review`, {
+        method: "POST", body: JSON.stringify(data),
+      }),
+    getDraftReview: (brandId: string, jobId: string) =>
+      request<ApiSchemas["DraftReviewJobRead"]>(`/brands/${brandId}/draft-review/${jobId}`),
+    getLatestDraftReview: (brandId: string) =>
+      request<ApiSchemas["DraftReviewJobRead"] | null>(`/brands/${brandId}/draft-review`),
     listCampaigns: (includeArchived = false, page?: { limit?: number; offset?: number; brandId?: string }) => {
       if (!page) return pages<Campaign>(`/campaigns?include_archived=${includeArchived}`);
       const query = new URLSearchParams({ include_archived: String(includeArchived), limit: String(page.limit ?? 100), offset: String(page.offset ?? 0) });
@@ -255,6 +269,10 @@ export function createApi(auth: AuthSource) {
       request<Campaign>(`/campaigns/${id}/policy`, { method: "PUT", body: JSON.stringify(data) }),
     /** What running this campaign will cost, before it is run. Free and
      * instant - nothing behind this endpoint calls a model. */
+    /** What the analyses offer to steer, and what the saved choices collide on. */
+    getCampaignSteering: (id: string) => request<SteeringCheck>(`/campaigns/${id}/steering`),
+    updateCampaignSteering: (id: string, data: CampaignSteering) =>
+      request<SteeringCheck>(`/campaigns/${id}/steering`, { method: "PUT", body: JSON.stringify(data) }),
     getCampaignForecast: (id: string) => request<RunForecast>(`/campaigns/${id}/forecast`),
     getCampaignGenerationAdvice: (id: string) =>
       request<CampaignGenerationAdvice>(`/campaigns/${id}/generation-advice`),
@@ -275,6 +293,35 @@ export function createApi(auth: AuthSource) {
       request<CampaignResult>(`/executions/${executionId}/result`),
     getExecutionAssets: (executionId: string) =>
       request<GeneratedAsset[]>(`/executions/${executionId}/assets`),
+    /** Every proposed edit of one email, with the original it started from. */
+    getEmailRevisions: (executionId: string, assetId: string) =>
+      request<EmailRevisionHistory>(`/executions/${executionId}/assets/${assetId}/revisions`),
+    /** Ask for one change to a finished email. Bounded and asynchronous: poll
+     * getEmailRevisions until the proposal leaves "running". */
+    requestEmailRevision: (
+      executionId: string,
+      assetId: string,
+      data: { instruction: string; base_revision_id?: string | null },
+    ) =>
+      request<EmailRevision>(`/executions/${executionId}/assets/${assetId}/revisions`, {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    acceptEmailRevision: (executionId: string, assetId: string, revisionId: string) =>
+      request<EmailRevisionHistory>(
+        `/executions/${executionId}/assets/${assetId}/revisions/${revisionId}/accept`,
+        { method: "POST" },
+      ),
+    rejectEmailRevision: (executionId: string, assetId: string, revisionId: string) =>
+      request<EmailRevisionHistory>(
+        `/executions/${executionId}/assets/${assetId}/revisions/${revisionId}/reject`,
+        { method: "POST" },
+      ),
+    restoreOriginalEmail: (executionId: string, assetId: string) =>
+      request<EmailRevisionHistory>(
+        `/executions/${executionId}/assets/${assetId}/restore-original`,
+        { method: "POST" },
+      ),
     cancelExecution: (executionId: string) =>
       request<{ status: string }>(`/executions/${executionId}/cancel`, { method: "POST" }),
     /** Everything broadcast for this run so far, replayed from the database -
@@ -358,12 +405,15 @@ export function createApi(auth: AuthSource) {
       request<Brand>("/brands", { method: "POST", body: JSON.stringify(data) }),
     getBrandKnowledge: (id: string) => request<BrandKnowledge>(`/brands/${id}/knowledge`),
     /** How this brand's email looks once it is rendered. Every field optional —
-     * a brand with none of it set still renders, in the typographic tier. */
+     * a brand with none of it set still renders, with its name as a wordmark. */
     updateBrandStyle: (id: string, data: BrandStyleUpdate) =>
       request<Brand>(`/brands/${id}/style`, {
         method: "PATCH",
         body: JSON.stringify(data),
       }),
+    /** The logo and colour the brand's home page declares. Saves nothing. */
+    detectBrandStyle: (id: string) =>
+      request<BrandIdentity>(`/brands/${id}/style/detect`, { method: "POST" }),
 
     /** Every model the picker can offer and every agent one can be pinned to.
      * Static for the lifetime of a build, so callers are free to fetch it once
@@ -423,6 +473,10 @@ export function createApi(auth: AuthSource) {
       request<MarketJob>(`/market/${brandId}/proof/hunt`, { method: "POST" }),
     /** Where the running (or last finished) job for one brand got to. */
     getMarketJob: (brandId: string) => request<MarketJob | null>(`/market/${brandId}/job`),
+    prepareFirstCampaign: (brandId: string, objective: string) => request<MarketJob>(`/market/${brandId}/first-campaign`, {
+      method: "POST",
+      body: JSON.stringify({ objective }),
+    }),
     /** Every market job this server knows about, running ones first. Not
      * brand-scoped: the live board asks what is happening anywhere. */
     listMarketJobs: () => request<MarketJob[]>("/market/jobs"),

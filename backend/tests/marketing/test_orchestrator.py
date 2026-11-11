@@ -12,9 +12,12 @@ import pytest
 from sqlalchemy.pool import StaticPool
 from sqlmodel import Session, SQLModel, create_engine, select
 
+from app.knowledge.artifacts import CallToAction
 from app.knowledge.ledger import Evidence, EvidenceKind
 from app.market.audience_research import FetchedSource, SourceTier
 from app.market.material_research import MaterialRecovery
+from app.marketing.briefs import CampaignBrief, EmailBrief
+from app.marketing.email_copy import parse_email
 from app.models.agent_execution import AgentExecution
 from app.models.brand import Brand
 from app.models.campaign import Campaign
@@ -29,7 +32,9 @@ from tests.marketing.conftest import (
     CRITIQUE_REVISE,
     RoleScriptedProvider,
     artifacts_fixture,
+    campaign_brief,
     default_answers,
+    email_draft,
 )
 
 SITE = """# Notewright
@@ -43,6 +48,25 @@ PRICING = """# Pricing
 
 Solo is $9/month. Team is $29/month. Enterprise is quoted.
 """
+
+
+@pytest.mark.parametrize("scheme", ["https", "HTTPS"])
+def test_render_uses_only_the_resolved_button_destination(session, provider, scheme):
+    wrong = "https://canny.io/pricing"
+    correct = f"{scheme}://canny.io/integrations/intercom"
+    campaign = make_campaign(session)
+    orchestrator = CampaignOrchestrator(session, provider)
+    email = parse_email(email_draft(cta="Connect Intercom to Autopilot"), 1)
+    brief = EmailBrief(call_to_action=f"Review the documentation: {wrong}")
+    artifacts = artifacts_fixture()
+    artifacts.offer.calls_to_action.append(CallToAction(label="See pricing", url=wrong))
+    plain, html, _ = orchestrator.render_email(campaign, email, brief, artifacts)
+    assert wrong not in plain and wrong not in html
+    brief.next_step_url = correct
+    plain, html, _ = orchestrator.render_email(campaign, email, brief, artifacts)
+    assert correct in plain
+    assert f'href="{correct}"' in html
+    assert wrong not in html
 
 
 @pytest.fixture
@@ -166,6 +190,7 @@ async def test_a_run_records_every_role_turn_and_the_emails_that_shipped(
     # decision, one row - the timeline is a list of judgments made, not of
     # model calls billed.
     assert {row.agent_id for row in rows} == {
+        "claim_reviewer",
         "strategist",
         "email_writer",
         "blind_reader",
@@ -183,6 +208,77 @@ async def test_a_run_records_every_role_turn_and_the_emails_that_shipped(
     assert all(asset.asset_type == AssetType.EMAIL for asset in assets)
     assert all(asset.content.startswith("Subject: ") for asset in assets)
     assert {asset.position for asset in assets} == {1, 2, 3}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("intent", "expected"),
+    [(None, "branded"), ({"reader_relationship": "cold"}, "plain")],
+)
+async def test_with_no_tier_chosen_the_writer_and_the_renderer_agree_on_one(
+    session: Session, provider: RoleScriptedProvider, intent, expected
+):
+    """A brand writing to readers who are not cold comes out branded, cold
+    outreach stays plain - and the writer is told the same answer the
+    renderer draws, so a headline is never written for a layout that drops
+    it."""
+    brand = Brand(name="Notewright", website_url="https://notewright.example/")
+    session.add(brand)
+    session.commit()
+    session.refresh(brand)
+    add_document(session, None, brand)
+    campaign = make_campaign(session, brand=brand, intent=intent)
+
+    await CampaignOrchestrator(session, provider).run(campaign)
+
+    assets = session.exec(select(GeneratedAsset)).all()
+    assert assets
+    assert {asset.asset_metadata["tier"] for asset in assets} == {expected}
+    prompt = provider.requests_for("email_writer")[0].system_prompt or ""
+    if expected == "branded":
+        assert "laid out as mail from the company" in prompt
+        assert all('href="https://notewright.example/"' in asset.content_html for asset in assets)
+    else:
+        assert "laid out as a plain letter" in prompt
+        assert all("notewright.example" not in asset.content_html for asset in assets)
+
+
+def test_a_branded_email_shows_the_photograph_of_the_page_its_button_leads_to(
+    session: Session, provider: RoleScriptedProvider
+):
+    """The crawler recorded the product page's own photograph; the email whose
+    button leads there shows it, and no other email does."""
+    brand = Brand(name="Cabaia", website_url="https://www.cabaia.fr/")
+    session.add(brand)
+    session.commit()
+    session.refresh(brand)
+    session.add(
+        KnowledgeDocument(
+            brand_id=brand.id, title="Duffle", source_type="website", content=SITE,
+            source_url="https://www.cabaia.fr/products/duffle",
+            document_metadata={"identity": {
+                "image_url": "https://cdn.example/duffle.jpg", "image_alt": "Duffle Adventurer",
+                "image_width": 1200, "image_height": 1200,
+            }},
+        )
+    )
+    session.commit()
+    brief = CampaignBrief.model_validate_json(campaign_brief(count=1)).emails[0]
+    email = parse_email(email_draft(), 1)
+    orchestrator = CampaignOrchestrator(session, provider)
+
+    def rendered(**overrides) -> str:
+        campaign = make_campaign(session, brand=brand, **overrides)
+        _, html, _ = orchestrator.render_email(campaign, email, brief, None)
+        return html or ""
+
+    shown = rendered(cta_url="https://cabaia.fr/products/duffle/?variant=2")
+    assert 'src="https://cdn.example/duffle.jpg"' in shown
+    assert 'alt="Duffle Adventurer"' in shown
+    assert "duffle.jpg" not in rendered(
+        cta_url="https://www.cabaia.fr/products/duffle", intent={"reader_relationship": "cold"}
+    ), "cold mail is a letter, and a letter has no product shot"
+    assert "<img" not in rendered(cta_url="https://www.cabaia.fr/products/tote")
 
 
 @pytest.mark.asyncio

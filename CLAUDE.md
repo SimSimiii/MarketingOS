@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+Read [Primary product goal](AGENTS.md#primary-product-goal) before planning
+product work or campaign evaluations. It defines the guided affiliate
+acquisition workflow and the commercial evaluation scope.
+
 ## Branch policy
 
 Make all changes and commits on the branch that is currently checked out. Do not create

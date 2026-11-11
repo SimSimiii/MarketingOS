@@ -10,6 +10,7 @@ from app.knowledge.artifacts import (
     OfferSheet,
     Segment,
 )
+from app.knowledge.corpus import Document, SourceCorpus
 from app.knowledge.ledger import Evidence, EvidenceKind, EvidenceLedger, EvidenceStrength
 from app.marketing.briefs import ArgumentOption, CampaignBrief, EmailBrief
 from app.marketing.contract import parse_contract
@@ -69,6 +70,33 @@ def test_an_unspecified_user_destination_cannot_be_invented_by_the_strategist():
         parse_contract("Write exactly 1 email"), KnowledgeArtifacts(),
     )
     assert normalized.fixed_cta_url == ""
+
+
+@pytest.mark.parametrize("source_host", ["canny.io", "canny.io.other.test"])
+def test_official_link_can_resolve_the_plan_without_falling_back_to_recovered_pricing(source_host):
+    correct = "https://help.canny.io/articles/merging"
+    price = "https://canny.io/pricing"
+    corpus = SourceCorpus.from_documents([Document(
+        id="help", title="Feedback", source=f"https://{source_host}/features",
+        content=f"See [how to merge posts]({correct}).",
+    )])
+    artifacts = KnowledgeArtifacts(evidence=EvidenceLedger(entries=[Evidence(
+        id="R1", kind=EvidenceKind.FEATURE, claim="Plans include a feedback board.",
+        verbatim="Plans include a feedback board.", source=price,
+    )]))
+    brief = CampaignBrief(emails=[EmailBrief(
+        call_to_action="See how to merge posts", next_step_url=correct, evidence_ids=["R1"],
+    )])
+    normalized = Strategist(None)._normalize(
+        brief, parse_contract("Write exactly 1 email"), artifacts,
+        corpus=corpus, identity_url="https://canny.io",
+    ).emails[0]
+    if source_host == "canny.io":
+        assert normalized.next_step_url == correct
+        assert normalized.call_to_action == "See how to merge posts"
+    else:
+        assert normalized.destination_rejected
+        assert normalized.next_step_url == ""
 
 
 @pytest.mark.parametrize("proof_order", [["R1", "R2"], ["R2", "R1"]])

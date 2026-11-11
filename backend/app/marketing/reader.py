@@ -32,7 +32,8 @@ logger = logging.getLogger("marketingos.marketing")
 
 ROLE_ID = "blind_reader"
 
-#: Editorial adequacy threshold for a simulated reader, never a send prediction.
+#: Where a simulated reader starts wanting what is sold enough to click (see
+#: prompts/reader.md). A reaction to one email, never a send prediction.
 PULL_THRESHOLD = 7
 
 #: Historical serialization compatibility only. New reader calls do not ask
@@ -55,7 +56,7 @@ def pull_from_clicks(clicks_in_100: int) -> int:
 
 
 class ReaderAssessment(BaseModel):
-    """Current model response: editorial feedback with no invented frequencies."""
+    """Current model response: one reader's reaction, with no invented frequencies."""
 
     opened: bool = False
     stopped_at: str = ""
@@ -86,9 +87,13 @@ class ReaderAssessment(BaseModel):
     #: a verdict on what was written, and this is the only field that says what
     #: to write instead - in the reader's own words rather than a critic's.
     to_click_it_would_have_to: str = ""
-    #: Uncalibrated editorial assessment. No probability or performance unit.
+    #: How much this reader wants what the email sells. For a while this asked
+    #: whether the email was adequate - clear, specific, supported - and that
+    #: is the question the loop then optimised: tidy emails nobody wanted
+    #: scored 7. Uncalibrated either way: no probability or performance unit.
     pull: int = Field(default=0, ge=0, le=10)
     fixes: list[str] = Field(default_factory=list)
+    material_revision: str = Field(default="", max_length=600)
     #: Which reader this was, when a panel read the same draft.
     persona: str = ""
     #: False when this reader never came back with anything - a malformed
@@ -116,7 +121,7 @@ class BlindRead(ReaderAssessment):
 
     @property
     def landed(self) -> bool:
-        """Whether this simulated reading clears the editorial threshold.
+        """Whether this simulated reader wants it enough to click.
 
         Comprehension first, and as a veto rather than as a term. A click
         estimate on an email the reader could not parse is not a low score -
@@ -137,7 +142,8 @@ class BlindRead(ReaderAssessment):
             f"- Where they stopped reading: {self.stopped_at or 'they read to the end'}",
             f"- What would stop them clicking: {self.biggest_doubt or 'nothing they named'}",
         ]
-        lines.append(f"- AI simulation assessment (uncalibrated): {self.pull}/10")
+        lines.append(f"- Would they click today? {'yes' if self.would_act else 'no'}")
+        lines.append(f"- How much they want it (AI simulation, uncalibrated): {self.pull}/10")
         if self.situation_matches is False:
             lines.append("- SUBSTANTIAL AUDIENCE MISMATCH: " + self.relevance_feedback)
         elif self.relevance_feedback:
@@ -153,6 +159,8 @@ class BlindRead(ReaderAssessment):
             )
         if self.fixes:
             lines.append("- Lines they would cut or change: " + "; ".join(self.fixes))
+        if self.material_revision:
+            lines.append("- Material revision: " + self.material_revision)
         return "\n".join(lines)
 
 
@@ -192,6 +200,20 @@ class PanelRead(BaseModel):
         return statistics.median(read.pull for read in self.reported) if self.reported else 0.0
 
     @property
+    def acting(self) -> float:
+        """The share of readers who said they would click today.
+
+        Asked of every reader from the start and, until now, reported but
+        never counted - so a draft two readers would act on could lose to one
+        nobody would, on a score. It is the nearest thing a simulation has to
+        the outcome the email exists for, which is why `EmailVersion.measured`
+        reads it first. A share rather than a count: two versions of an email
+        do not always get the same number of readers back.
+        """
+        reported = self.reported
+        return sum(read.would_act for read in reported) / len(reported) if reported else 0.0
+
+    @property
     def clicks_in_100(self) -> float:
         """Historical payload compatibility; new reads never supply this value."""
         estimates = [
@@ -216,6 +238,12 @@ class PanelRead(BaseModel):
     def relevant(self) -> bool:
         """A substantive mismatch from any reported scenario requires attention."""
         return not any(read.situation_matches is False for read in self.reported)
+
+    @property
+    def material_revision(self) -> str:
+        reasons = [read.material_revision.strip() for read in self.reported]
+        actionable = [reason for reason in reasons if reason]
+        return actionable[0] if len(actionable) * 2 > len(reasons) else ""
 
     @property
     def confused(self) -> list[BlindRead]:
@@ -269,7 +297,7 @@ class PanelRead(BaseModel):
                 if len(reported) > 1
                 else "they could not say what it was"
             )
-        return f"AI simulation assessment {self.pull:.0f}/10 (uncalibrated)"
+        return f"AI simulation: wants it {self.pull:.0f}/10 (uncalibrated)"
 
     def render(self) -> str:
         if len(self.reads) == 1:

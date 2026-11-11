@@ -440,4 +440,35 @@ def test_a_campaign_that_asks_for_nothing_stays_plain(client: TestClient):
     ).json()
 
     assert (campaign["policy"] or {}).get("email_tier") is None
+    assert campaign["email_tier"] == "plain"
     assert campaign["cta_url"] is None
+
+
+def test_a_brand_campaign_that_asks_for_nothing_reports_the_look_it_will_get(
+    client: TestClient,
+):
+    """Nothing is stored - the default follows the brand and the reader - so
+    the console is told what will render instead of guessing "plain"."""
+    brand_id = client.post("/api/brands", json={"name": "Cabaia"}).json()["id"]
+
+    def create(intent: dict | None) -> dict:
+        response = client.post(
+            "/api/campaigns",
+            json={
+                "name": "Acquisition",
+                "request": "Write exactly 1 acquisition email for the selected audience",
+                "brand_id": brand_id,
+                "intent": intent,
+            },
+        )
+        assert response.status_code == 201, response.text
+        return response.json()
+
+    to_own_readers = create(None)
+    cold = create({"objective": "acquisition", "reader_relationship": "cold"})
+
+    assert (to_own_readers["policy"] or {}).get("email_tier") is None
+    assert to_own_readers["email_tier"] == "branded"
+    assert cold["email_tier"] == "plain"
+    fetched = client.get(f"/api/campaigns/{to_own_readers['id']}").json()
+    assert fetched["email_tier"] == "branded"

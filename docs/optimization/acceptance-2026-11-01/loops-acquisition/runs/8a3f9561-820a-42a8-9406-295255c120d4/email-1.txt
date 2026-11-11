@@ -1,0 +1,18 @@
+Subject: Two Supabase jobs, two Loops setup paths
+Preview text: The Send Email Hook sends auth email. Contact sync brings users into onboarding workflows.
+
+Separate Auth sending from onboarding sync
+
+Hi there,
+
+Loops is an email sending platform for SaaS teams that can cover two Supabase jobs: sending Auth email and bringing synced users into onboarding workflows.
+
+They use separate paths. Configure the Send Email Hook for authentication messages, then configure contact sync to add Supabase users to a Loops audience and trigger workflows. Sending through Loops requires a verified Loops sending domain.
+
+Supabase’s authentication-email rate limit remains a separate setting to review. Changing the sending path does not change that Supabase control.
+
+Loops’ Supabase integration documentation shows where Auth sending ends and contact sync begins. You can compare both paths and their requirements before creating an account or changing production infrastructure.
+
+Read the Supabase integration docs → https://loops.so/docs/integrations/supabase
+
+- Loops

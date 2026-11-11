@@ -8,6 +8,7 @@ test by hand on every run.
 """
 
 import re
+from dataclasses import replace
 from html.parser import HTMLParser
 
 import pytest
@@ -17,7 +18,9 @@ from app.marketing.render_html import (
     MAX_EMAIL_BYTES,
     BrandStyle,
     EmailTier,
+    Picture,
     render_html,
+    resolve_tier,
     text_alternative,
 )
 
@@ -272,6 +275,167 @@ def test_a_brand_with_no_style_at_all_still_renders():
     assert "<img" not in html
 
 
+def test_the_wordmark_links_to_the_brand_site_and_the_footer_names_it():
+    """Most brands never upload a logo, so the name is their mark. The footer
+    that fell back to the same name now says where the company lives."""
+    style = BrandStyle(name="Cabaia", website_url="https://www.cabaia.fr/")
+    html = render_html(_email(), EmailTier.BRANDED, style)
+
+    assert html.count('href="https://www.cabaia.fr/"') == 2
+    assert ">cabaia.fr</a>" in html
+
+
+def test_a_footer_that_already_names_the_site_does_not_name_it_twice():
+    style = BrandStyle(
+        name="Cabaia",
+        website_url="https://www.cabaia.fr/",
+        footer_lines=("Cabaia SAS", "cabaia.fr - 12 rue des Lilas, Paris"),
+    )
+    html = render_html(_email(), EmailTier.BRANDED, style)
+
+    assert ">cabaia.fr</a>" not in html
+    assert "cabaia.fr - 12 rue des Lilas, Paris" in html
+
+
+def test_a_plain_email_grows_no_masthead_from_the_site_alone():
+    """Plain is one person writing to another. A website on the brand is not
+    a reason to give the letter a header or a footer."""
+    style = BrandStyle(name="Cabaia", website_url="https://www.cabaia.fr/")
+
+    assert "cabaia.fr" not in render_html(_email(), EmailTier.PLAIN, style)
+
+
+def test_a_site_that_is_not_a_web_address_is_never_linked():
+    style = BrandStyle(name="Cabaia", website_url="javascript:alert(1)")
+
+    assert "javascript:" not in render_html(_email(), EmailTier.BRANDED, style)
+
+
+# ------------------------------------------------------------- the product
+
+DUFFLE = Picture(
+    url="https://www.cabaia.fr/cdn/shop/files/duffle.jpg?v=1",
+    alt='Duffle "Reykjavik" <grand>',
+    width=1200,
+    height=1200,
+)
+
+
+def test_the_product_sits_under_the_headline_and_leads_where_the_button_does():
+    """A reader who taps a photograph of a bag expects to land on the bag."""
+    style = replace(BRAND, cta_url="https://www.cabaia.fr/products/duffle", picture=DUFFLE)
+
+    html = render_html(_email(headline="Partir le vendredi soir"), EmailTier.BRANDED, style)
+
+    assert 'src="https://www.cabaia.fr/cdn/shop/files/duffle.jpg?v=1"' in html
+    assert html.count('href="https://www.cabaia.fr/products/duffle"') == 2
+    assert 'alt="Duffle &quot;Reykjavik&quot; &lt;grand&gt;"' in html
+    assert html.index("Partir le vendredi soir") < html.index("duffle.jpg") < html.index("Hi there,")
+
+
+def test_a_square_photograph_is_set_smaller_than_a_landscape_one():
+    """A square shot at the full measure is 528px tall and pushes the whole
+    argument below the fold."""
+    def rendered(picture: Picture) -> str:
+        return render_html(_email(), EmailTier.BRANDED, replace(BRAND, picture=picture))
+
+    assert 'width="360"' in rendered(DUFFLE)
+    assert 'width="528"' in rendered(replace(DUFFLE, width=1200, height=630))
+    assert 'width="360"' in rendered(replace(DUFFLE, width=0, height=0))
+
+
+def test_a_plain_email_never_carries_a_photograph():
+    html = render_html(_email(), EmailTier.PLAIN, replace(BRAND, picture=DUFFLE))
+
+    assert "duffle.jpg" not in html
+
+
+def test_a_picture_that_is_not_a_web_address_is_dropped():
+    style = replace(BRAND, picture=Picture(url="javascript:alert(1)"))
+
+    assert "javascript:" not in render_html(_email(), EmailTier.BRANDED, style)
+
+
+def test_a_quoted_customer_is_set_as_a_testimonial_not_as_an_offer():
+    """A number inside somebody's sentence is theirs; set at hero size it
+    would become ours."""
+    body = (
+        "A weekend away starts on Friday, straight from the office desk.\n\n"
+        "> « **Le seul sac** qui tient tout mon week-end. »\n> — Julie, cliente\n\n"
+        "The bag opens wide enough for the laptop and the shoes."
+    )
+
+    html = render_html(_email(body=body), EmailTier.BRANDED, BRAND)
+
+    assert "&mdash; Julie, cliente" in html
+    assert "qui tient tout mon week-end. »" in html
+    assert "font-size:34px" not in html
+
+
+def test_a_speaker_named_after_the_quotation_on_one_line_is_found_too():
+    body = (
+        "A weekend away starts on Friday, straight from the office desk.\n\n"
+        "> “It holds everything for two nights.” - Julie, verified buyer\n\n"
+        "The bag opens wide enough for the laptop and the shoes."
+    )
+
+    html = render_html(_email(body=body), EmailTier.PLAIN, BRAND)
+
+    assert "&mdash; Julie, verified buyer" in html
+    assert "“It holds everything for two nights.”" in html
+
+
+# ------------------------------------------------------------- the colour
+
+
+def test_a_pale_brand_colour_keeps_its_button_and_gets_dark_words_on_it():
+    """Yellow is a fine button and an unreadable link."""
+    style = replace(BRAND, primary_color="#ffd400", cta_url="https://x.example/")
+
+    html = render_html(_email(headline="New season", eyebrow="Nouveau"), EmailTier.BRANDED, style)
+
+    button = re.search(r'background-color:#ffd400;border-radius:8px;"><a [^>]*?;color:(#[0-9a-f]{6})', html)
+    assert button is not None and button.group(1) == "#14161a"
+    assert 'color:#8a7200;">Nouveau</p>' in html, "the eyebrow, darkened until it reads"
+
+
+def test_a_colour_too_pale_to_see_on_white_is_never_a_surface():
+    style = replace(BRAND, primary_color="#faf7f0", cta_url="https://x.example/")
+
+    html = render_html(_email(), EmailTier.BRANDED, style)
+
+    assert "background-color:#faf7f0" not in html
+
+
+# ------------------------------------------------------------- which tier
+
+
+@pytest.mark.parametrize(
+    ("requested", "has_brand", "relationship", "expected"),
+    [
+        # A choice the user made wins, whoever is reading.
+        ("plain", True, "subscriber", EmailTier.PLAIN),
+        ("branded", False, "cold", EmailTier.BRANDED),
+        # A brand writing to anyone who is not cold looks like a company -
+        # including a reader nobody described, who has not bought but is not
+        # cold for that.
+        (None, True, "unknown", EmailTier.BRANDED),
+        (None, True, "prospect", EmailTier.BRANDED),
+        (None, True, "subscriber", EmailTier.BRANDED),
+        (None, True, "customer", EmailTier.BRANDED),
+        # Cold outreach looks like a person, and no brand has nothing to brand.
+        (None, True, "cold", EmailTier.PLAIN),
+        (None, False, "subscriber", EmailTier.PLAIN),
+        # A stored value that is not a tier is no choice at all.
+        ("fancy", True, "unknown", EmailTier.BRANDED),
+    ],
+)
+def test_with_no_choice_the_tier_follows_who_is_reading(
+    requested, has_brand, relationship, expected
+):
+    assert resolve_tier(requested, has_brand=has_brand, relationship=relationship) is expected
+
+
 # ------------------------------------------------------------- the text part
 
 
@@ -308,3 +472,16 @@ def test_text_export_keeps_the_html_action_destination_without_html_escaping():
 @pytest.mark.parametrize("url", ["javascript:alert(1)", "https://example.com/a\nb", ""])
 def test_text_export_does_not_add_an_invalid_or_missing_destination(url):
     assert text_alternative(_email(), BrandStyle(cta_url=url)) == text_alternative(_email())
+
+
+@pytest.mark.parametrize("tier", [EmailTier.PLAIN, EmailTier.BRANDED])
+def test_explicit_sender_footer_survives_both_export_formats(tier):
+    style = BrandStyle(footer_lines=("Société Exemple", "12 rue des Lilas"),
+                       unsubscribe_url="https://example.com/unsubscribe?a=1&b=2")
+    email = _email()
+    markup = render_html(email, brand=style, tier=tier)
+    text = text_alternative(email, style)
+    assert "12 rue des Lilas" in markup
+    assert "12 rue des Lilas" in text
+    assert "https://example.com/unsubscribe?a=1&amp;b=2" in markup
+    assert "https://example.com/unsubscribe?a=1&b=2" in text

@@ -1,0 +1,18 @@
+.....................................................F.................. [ 97%]
+..                                                                       [100%]
+================================== FAILURES ===================================
+____________ test_an_option_too_long_for_an_inbox_is_not_sendable _____________
+tests\marketing\test_subject_lines.py:131: in test_an_option_too_long_for_an_inbox_is_not_sendable
+    assert SubjectOption(subject="same words", preview="Same words").sendable is False
+E   AssertionError: assert True is False
+E    +  where True = SubjectOption(subject='same words', preview='Same words', approach='').sendable
+E    +    where SubjectOption(subject='same words', preview='Same words', approach='') = SubjectOption(subject='same words', preview='Same words')
+============================== warnings summary ===============================
+.venv\Lib\site-packages\starlette\testclient.py:53
+  C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/marketing/test_subject_lines.py::test_an_option_too_long_for_an_inbox_is_not_sendable
+1 failed, 73 passed, 1 warning in 59.69s

@@ -1,0 +1,2 @@
+
+7 novembre — parcours vierge : 9 pages, 11 appels, arrêt à la limite de préparation après une recherche sans problème vérifiable ; aucun email, non noté. Le budget de huit minutes est inférieur au temps réel de compilation/cartographie/recherche. La reprise relancerait aussi cette recherche vide pourtant terminée. Correction prévue : budget de préparation de quinze minutes, toujours deux audiences et recherches bornées, et réutilisation des recherches terminées même sans problème vérifié. Ne pas inventer de problème pour obtenir un avis positif.

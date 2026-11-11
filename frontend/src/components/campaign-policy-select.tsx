@@ -33,11 +33,11 @@ function currentPreset(campaign: Campaign): PolicyPreset {
 
 /** What this campaign's emails will actually render as.
  *
- * An absent tier renders plain, so an unset one and an explicit "plain" are
- * the same picture to the reader; showing them as different states would
- * invent a distinction the output does not have. */
+ * The server's answer, not the stored choice: with none stored the default
+ * follows the brand and the reader, and showing an unset tier as "plain"
+ * would describe an email the reader never gets. */
 function currentTier(campaign: Campaign): EmailTier {
-  return campaign.policy?.email_tier === "branded" ? "branded" : "plain";
+  return campaign.email_tier;
 }
 
 export function CampaignPolicySelect({ campaign }: { campaign: Campaign }) {
@@ -111,7 +111,7 @@ export function CampaignPolicySelect({ campaign }: { campaign: Campaign }) {
         {currentTier(campaign) === "branded" && (
           <p className="text-xs leading-relaxed text-muted-foreground">
             {campaign.brand_id
-              ? "Set the logo, colour and footer on the brand page, or it renders as plain."
+              ? "Set the logo, colour and footer on the brand page - until then it uses the brand's name and a neutral blue."
               : "Nothing to brand it with until this campaign is attached to a brand."}
           </p>
         )}

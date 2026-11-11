@@ -1,0 +1,665 @@
+{
+  "id": "f50abdb9-8461-4854-b0ec-84365f0104a7",
+  "campaign_id": "6dbe89d3-7866-4313-badd-a6042a62e114",
+  "status": "completed",
+  "needs_review": false,
+  "outcome_status": "completed",
+  "review_reasons": [],
+  "error_message": null,
+  "started_at": "2026-11-11T03:52:55.601823Z",
+  "completed_at": "2026-11-11T03:56:50.527319Z",
+  "created_at": "2026-11-11T03:52:55.601823Z",
+  "total_input_tokens": 82808,
+  "total_output_tokens": 21940,
+  "total_cache_read_tokens": 0,
+  "estimated_cost_usd": 0.6072,
+  "recommendation_snapshot": {
+    "campaign_id": "6dbe89d3-7866-4313-badd-a6042a62e114",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "506ebfd8-1d08-4057-a919-fc6eff7644c6",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Import that CSV now — Loops maps its columns straight to contact properties, including custom ones, and can add everyone in the file to a mailing list in the same upload, so the list is usable the moment it lands."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T03:52:55.698418Z",
+      "completed_at": "2026-11-11T03:54:41.496854Z",
+      "model": "sonnet",
+      "input_tokens": 2,
+      "output_tokens": 9525,
+      "cache_creation_input_tokens": 30289,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.238131,
+      "duration_ms": 105645.8436998073,
+      "attempt": 1
+    },
+    {
+      "id": "69504eea-154e-451d-816c-d212e1b2c8b9",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · first draft",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "subject": "Import your CSV into Loops"
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T03:54:41.780151Z",
+      "completed_at": "2026-11-11T03:55:30.903372Z",
+      "model": "sonnet",
+      "input_tokens": 2,
+      "output_tokens": 4628,
+      "cache_creation_input_tokens": 23933,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.159048,
+      "duration_ms": 49011.47729996592,
+      "attempt": 1
+    },
+    {
+      "id": "59495587-23ec-4ace-96d9-077717d70bd6",
+      "agent_id": "claim_reviewer",
+      "agent_name": "Claim Reviewer",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · checking claims against sources"
+      },
+      "output_data": {
+        "semantic_review": {
+          "key": "46871b53a4b74fe9e7284ff7af87dcef2020bd9c0b8cd6395cce7ab4da850573",
+          "approved": true,
+          "decision": {
+            "verdict": "supported",
+            "claims": [
+              {
+                "text": "Map your columns to contacts in the same upload",
+                "status": "supported",
+                "explanation": "Matches the documented CSV-import mechanism: columns map to contact properties and everyone in the file can be added to a mailing list during the same upload.",
+                "citations": [
+                  {
+                    "source_id": "E31",
+                    "quote": "Upload your contacts as a CSV. Columns map to contact properties, including custom ones, and you can add everyone in the file to a mailing list during the upload."
+                  }
+                ]
+              },
+              {
+                "text": "outside Loops, the email platform for SaaS teams",
+                "status": "supported",
+                "explanation": "Exact vendor description of Loops as the email sending platform for SaaS teams.",
+                "citations": [
+                  {
+                    "source_id": "E1",
+                    "quote": "Loops is the email sending platform for SaaS teams."
+                  }
+                ]
+              },
+              {
+                "text": "Until it's imported, those contacts can't be grouped into segments, kept current, or used to trigger a single email.",
+                "status": "supported",
+                "explanation": "Reasonable, non-exaggerated inference from documented mechanics: segments and property sync operate on contacts already in Loops, and workflows/transactional sends require a contact record created via import, so a CSV sitting outside the platform cannot yet participate in any of these.",
+                "citations": [
+                  {
+                    "source_id": "E6",
+                    "quote": "Segments stay current as properties change."
+                  },
+                  {
+                    "source_id": "E3",
+                    "quote": "Set up [onboarding, activation, upgrade, and winback emails](./workflows) once, then improve them over time."
+                  },
+                  {
+                    "source_id": "proposition:mechanism:1",
+                    "quote": "### Add contacts\nImport your list and keep each person’s opt-in status.\n\n[### Sync properties\n\nKeep details like plan and role up to date on every contact.]"
+                  }
+                ]
+              },
+              {
+                "text": "Uploading that file maps each column straight to contact properties, including any custom ones you track — and adds everyone in it to a mailing list in the same step, so the list works right away.",
+                "status": "supported",
+                "explanation": "Directly supported by the FAQ: columns map to contact properties including custom ones, and everyone in the file can be added to a mailing list during that same upload, so the described one-step outcome matches the source.",
+                "citations": [
+                  {
+                    "source_id": "E31",
+                    "quote": "Upload your contacts as a CSV. Columns map to contact properties, including custom ones, and you can add everyone in the file to a mailing list during the upload."
+                  }
+                ]
+              },
+              {
+                "text": "Every plan, including Free, lets you upload as many contacts as you want.",
+                "status": "supported",
+                "explanation": "Near-verbatim match to the pricing-page statement on unlimited contact uploads across all plans including Free.",
+                "citations": [
+                  {
+                    "source_id": "E28",
+                    "quote": "Every plan, including Free, lets you upload as many contacts as you'd like."
+                  }
+                ]
+              },
+              {
+                "text": "Once they're in, those properties and that list are what you'll build segments and onboarding emails on next.",
+                "status": "supported",
+                "explanation": "Forward-looking statement consistent with documented capabilities: segments operate on synced properties, and onboarding emails are a documented workflow type, both reachable once contacts exist in Loops.",
+                "citations": [
+                  {
+                    "source_id": "E6",
+                    "quote": "Segments stay current as properties change."
+                  },
+                  {
+                    "source_id": "E3",
+                    "quote": "Set up [onboarding, activation, upgrade, and winback emails](./workflows) once, then improve them over time."
+                  }
+                ]
+              },
+              {
+                "text": "See how CSV import maps columns →",
+                "status": "supported",
+                "explanation": "CTA accurately describes what the linked page shows (column-to-property mapping and mailing-list addition during upload) and the destination resolves to the documented product-email FAQ containing that exact content; no entitlement or access claim is implied beyond viewing the explanation.",
+                "citations": [
+                  {
+                    "source_id": "E31",
+                    "quote": "Columns map to contact properties, including custom ones, and you can add everyone in the file to a mailing list during the upload."
+                  },
+                  {
+                    "source_id": "cta:1",
+                    "quote": "Resolved link: https://loops.so/product-email"
+                  }
+                ]
+              }
+            ],
+            "findings": [],
+            "summary": "Every material assertion—CSV-to-property mapping, same-upload mailing-list addition, unlimited uploads on every plan including Free, and the forward-looking segment/onboarding framing—is either a verbatim or tightly entailed match to the supplied FAQ and pricing quotes (E31, E28, E6, E3). No plan/limit conflation, no unsupported access or outcome claims, and the single CTA points to the documented page that contains the cited mapping behavior. No factual or instruction violations found.",
+            "benefit_retention": null
+          },
+          "version": 3,
+          "sources": {
+            "E31": "https://loops.so/product-email",
+            "E1": "https://loops.so/",
+            "E6": "https://loops.so/",
+            "E3": "https://loops.so/",
+            "proposition:mechanism:1": "[Product Email and Lifecycle Email | Loops › Add contacts; document_id=d15f8418-42ef-419b-a1b8-357dd289d012; source=https://loops.so/product-email; aliases=https://loops.so/product-email; chunk=4]",
+            "E28": "https://loops.so/pricing",
+            "cta:1": "Source page: https://loops.so/"
+          }
+        },
+        "passed": true
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T03:55:30.922187Z",
+      "completed_at": "2026-11-11T03:56:31.584235Z",
+      "model": "sonnet",
+      "input_tokens": 2,
+      "output_tokens": 6337,
+      "cache_creation_input_tokens": 22733,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.170884,
+      "duration_ms": 60564.55440004356,
+      "attempt": 1
+    },
+    {
+      "id": "7666e195-52e8-47f1-a5e1-45799142b6c8",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 1 reader(s)",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T03:56:31.598104Z",
+      "completed_at": "2026-11-11T03:56:50.467319Z",
+      "model": "sonnet",
+      "input_tokens": 2,
+      "output_tokens": 1450,
+      "cache_creation_input_tokens": 5845,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.039144,
+      "duration_ms": 18816.28270004876,
+      "attempt": 1
+    }
+  ],
+  "assets": [
+    {
+      "id": "b82526ca-700b-4e8e-89b9-157d5e9ef6dd",
+      "asset_type": "email",
+      "title": "Import your CSV into Loops",
+      "content": "Subject: Import your CSV into Loops\nPreview text: Map your columns to contacts in the same upload\n\nImport your CSV to create usable contacts\n\nHi there,\n\nYour subscriber list is sitting in a CSV, outside Loops, the email platform for SaaS teams. Until it's imported, those contacts can't be grouped into segments, kept current, or used to trigger a single email.\n\nUploading that file maps each column straight to contact properties, including any custom ones you track — and adds everyone in it to a mailing list in the same step, so the list works right away.\n\nEvery plan, including Free, lets you upload as many contacts as you want. Once they're in, those properties and that list are what you'll build segments and onboarding emails on next.\n\nSee how CSV import maps columns → https://loops.so/product-email\n\n- Loops",
+      "content_html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n<meta name=\"x-apple-disable-message-reformatting\" />\n<meta name=\"color-scheme\" content=\"light\" />\n<meta name=\"supported-color-schemes\" content=\"light\" />\n<title>Import your CSV into Loops</title>\n</head>\n<body style=\"margin:0;padding:0;background-color:#eceef3;-webkit-text-size-adjust:100%;\">\n<div style=\"display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;\">Map your columns to contacts in the same upload&#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; </div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#eceef3;\">\n<tr><td align=\"center\" style=\"padding:24px 12px;\">\n<table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;background-color:#ffffff;border-radius:12px;\">\n<tr><td style=\"background-color:#1a56db;height:4px;font-size:0;line-height:0;\">&nbsp;</td></tr>\n<tr><td style=\"padding:26px 36px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:18px;font-weight:800;letter-spacing:0.3px;color:#14161a;\"><a href=\"https://loops.so/\" style=\"color:#14161a;text-decoration:none;\">Loops</a></td></tr>\n<tr><td style=\"padding:26px 36px 10px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#1a56db;\">FIRST STEP</p></td></tr>\n<tr><td style=\"padding:0 36px 20px;\"><h1 style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:29px;line-height:1.2;font-weight:800;letter-spacing:-0.5px;color:#14161a;\">Import your CSV to create usable contacts</h1></td></tr>\n<tr><td style=\"padding:10px 36px 16px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Hi there,</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:17px;line-height:1.6;color:#3d434d;\">Your subscriber list is sitting in a CSV, outside Loops, the email platform for SaaS teams. Until it&#x27;s imported, those contacts can&#x27;t be grouped into segments, kept current, or used to trigger a single email.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Uploading that file maps each column straight to contact properties, including any custom ones you track — and adds everyone in it to a mailing list in the same step, so the list works right away.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Every plan, including Free, lets you upload as many contacts as you want. Once they&#x27;re in, those properties and that list are what you&#x27;ll build segments and onboarding emails on next.</p></td></tr>\n<tr><td style=\"padding:6px 36px 22px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td style=\"border-top:1px solid #e6e9ef;font-size:0;line-height:0;\">&nbsp;</td></tr></table></td></tr>\n<tr><td align=\"center\" style=\"padding:4px 36px 8px;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"center\" style=\"background-color:#1a56db;border-radius:8px;\"><a href=\"https://loops.so/product-email\" style=\"display:inline-block;padding:16px 40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;\">See how CSV import maps columns</a></td></tr></table></td></tr>\n<tr><td style=\"padding:22px 36px 20px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6;color:#767d89;\">- Loops</p></td></tr>\n<tr><td align=\"center\" style=\"padding:22px 36px 28px;background-color:#fafbfc;border-top:1px solid #e6e9ef;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:12px;line-height:1.7;color:#767d89;\">Loops<br /><a href=\"https://loops.so/\" style=\"color:#767d89;text-decoration:underline;\">loops.so</a></td></tr>\n</table>\n</td></tr>\n</table>\n</body>\n</html>\n",
+      "position": 1,
+      "asset_metadata": {
+        "position": 1,
+        "role": "activation — first action after signup, get the CSV imported",
+        "language": "en",
+        "subject": "Import your CSV into Loops",
+        "preview_text": "Map your columns to contacts in the same upload",
+        "eyebrow": "FIRST STEP",
+        "headline": "Import your CSV to create usable contacts",
+        "greeting": "Hi there,",
+        "body": "Your subscriber list is sitting in a CSV, outside Loops, the email platform for SaaS teams. Until it's imported, those contacts can't be grouped into segments, kept current, or used to trigger a single email.\n\nUploading that file maps each column straight to contact properties, including any custom ones you track — and adds everyone in it to a mailing list in the same step, so the list works right away.\n\nEvery plan, including Free, lets you upload as many contacts as you want. Once they're in, those properties and that list are what you'll build segments and onboarding emails on next.",
+        "call_to_action": "See how CSV import maps columns",
+        "sign_off": "- Loops",
+        "postscript": "",
+        "pull": 7,
+        "semantic_review": {
+          "key": "46871b53a4b74fe9e7284ff7af87dcef2020bd9c0b8cd6395cce7ab4da850573",
+          "approved": true,
+          "decision": {
+            "verdict": "supported",
+            "claims": [
+              {
+                "text": "Map your columns to contacts in the same upload",
+                "status": "supported",
+                "explanation": "Matches the documented CSV-import mechanism: columns map to contact properties and everyone in the file can be added to a mailing list during the same upload.",
+                "citations": [
+                  {
+                    "source_id": "E31",
+                    "quote": "Upload your contacts as a CSV. Columns map to contact properties, including custom ones, and you can add everyone in the file to a mailing list during the upload."
+                  }
+                ]
+              },
+              {
+                "text": "outside Loops, the email platform for SaaS teams",
+                "status": "supported",
+                "explanation": "Exact vendor description of Loops as the email sending platform for SaaS teams.",
+                "citations": [
+                  {
+                    "source_id": "E1",
+                    "quote": "Loops is the email sending platform for SaaS teams."
+                  }
+                ]
+              },
+              {
+                "text": "Until it's imported, those contacts can't be grouped into segments, kept current, or used to trigger a single email.",
+                "status": "supported",
+                "explanation": "Reasonable, non-exaggerated inference from documented mechanics: segments and property sync operate on contacts already in Loops, and workflows/transactional sends require a contact record created via import, so a CSV sitting outside the platform cannot yet participate in any of these.",
+                "citations": [
+                  {
+                    "source_id": "E6",
+                    "quote": "Segments stay current as properties change."
+                  },
+                  {
+                    "source_id": "E3",
+                    "quote": "Set up [onboarding, activation, upgrade, and winback emails](./workflows) once, then improve them over time."
+                  },
+                  {
+                    "source_id": "proposition:mechanism:1",
+                    "quote": "### Add contacts\nImport your list and keep each person’s opt-in status.\n\n[### Sync properties\n\nKeep details like plan and role up to date on every contact.]"
+                  }
+                ]
+              },
+              {
+                "text": "Uploading that file maps each column straight to contact properties, including any custom ones you track — and adds everyone in it to a mailing list in the same step, so the list works right away.",
+                "status": "supported",
+                "explanation": "Directly supported by the FAQ: columns map to contact properties including custom ones, and everyone in the file can be added to a mailing list during that same upload, so the described one-step outcome matches the source.",
+                "citations": [
+                  {
+                    "source_id": "E31",
+                    "quote": "Upload your contacts as a CSV. Columns map to contact properties, including custom ones, and you can add everyone in the file to a mailing list during the upload."
+                  }
+                ]
+              },
+              {
+                "text": "Every plan, including Free, lets you upload as many contacts as you want.",
+                "status": "supported",
+                "explanation": "Near-verbatim match to the pricing-page statement on unlimited contact uploads across all plans including Free.",
+                "citations": [
+                  {
+                    "source_id": "E28",
+                    "quote": "Every plan, including Free, lets you upload as many contacts as you'd like."
+                  }
+                ]
+              },
+              {
+                "text": "Once they're in, those properties and that list are what you'll build segments and onboarding emails on next.",
+                "status": "supported",
+                "explanation": "Forward-looking statement consistent with documented capabilities: segments operate on synced properties, and onboarding emails are a documented workflow type, both reachable once contacts exist in Loops.",
+                "citations": [
+                  {
+                    "source_id": "E6",
+                    "quote": "Segments stay current as properties change."
+                  },
+                  {
+                    "source_id": "E3",
+                    "quote": "Set up [onboarding, activation, upgrade, and winback emails](./workflows) once, then improve them over time."
+                  }
+                ]
+              },
+              {
+                "text": "See how CSV import maps columns →",
+                "status": "supported",
+                "explanation": "CTA accurately describes what the linked page shows (column-to-property mapping and mailing-list addition during upload) and the destination resolves to the documented product-email FAQ containing that exact content; no entitlement or access claim is implied beyond viewing the explanation.",
+                "citations": [
+                  {
+                    "source_id": "E31",
+                    "quote": "Columns map to contact properties, including custom ones, and you can add everyone in the file to a mailing list during the upload."
+                  },
+                  {
+                    "source_id": "cta:1",
+                    "quote": "Resolved link: https://loops.so/product-email"
+                  }
+                ]
+              }
+            ],
+            "findings": [],
+            "summary": "Every material assertion—CSV-to-property mapping, same-upload mailing-list addition, unlimited uploads on every plan including Free, and the forward-looking segment/onboarding framing—is either a verbatim or tightly entailed match to the supplied FAQ and pricing quotes (E31, E28, E6, E3). No plan/limit conflation, no unsupported access or outcome claims, and the single CTA points to the documented page that contains the cited mapping behavior. No factual or instruction violations found.",
+            "benefit_retention": null
+          },
+          "version": 3,
+          "sources": {
+            "E31": "https://loops.so/product-email",
+            "E1": "https://loops.so/",
+            "E6": "https://loops.so/",
+            "E3": "https://loops.so/",
+            "proposition:mechanism:1": "[Product Email and Lifecycle Email | Loops › Add contacts; document_id=d15f8418-42ef-419b-a1b8-357dd289d012; source=https://loops.so/product-email; aliases=https://loops.so/product-email; chunk=4]",
+            "E28": "https://loops.so/pricing",
+            "cta:1": "Source page: https://loops.so/"
+          }
+        },
+        "revisions": 0,
+        "single_idea": "Import that CSV now — Loops maps its columns straight to contact properties, including custom ones, and can add everyone in the file to a mailing list in the same upload, so the list is usable the moment it lands.",
+        "evidence_ids": [
+          "E31",
+          "E28",
+          "E3"
+        ],
+        "tier": "branded",
+        "sequence_review_pending": false,
+        "selected_brief": {
+          "problem_ids": [],
+          "offer_id": "offering",
+          "action_id": "",
+          "selection_reason": "CSV import with column mapping is the only documented mechanism that matches the requested action exactly, and it's reachable without any plan upgrade or new account step — the reader already has one.",
+          "next_step_url": "https://loops.so/product-email",
+          "destination_kind": "web",
+          "destination_rejected": false,
+          "argument_issue": "",
+          "value_case": {
+            "reader_benefit": "Once the CSV is imported, those subscribers exist as Loops contacts with their properties mapped and, if chosen, already on a mailing list — ready for the segments and onboarding workflows the reader will build next.",
+            "mechanism": "Uploading a CSV maps its columns to contact properties, including custom ones, and lets the reader add everyone in the file to a mailing list during the same upload (E31); this isn't capped by plan, since every plan allows uploading as many contacts as wanted (E28).",
+            "evidence_ids": [
+              "E31",
+              "E28"
+            ],
+            "decision_conditions": []
+          },
+          "claim_conditions": [],
+          "position": 1,
+          "user_request": "Write exactly one English activation email from the Loops team. Reader: A SaaS operator who just opened a Loops account and already has a CSV of subscribers. Ask them to do one thing: Import the first contacts from that CSV. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+          "target_audience": "",
+          "job": "Get the reader to import their CSV of subscribers into Loops as the first action in their new account.",
+          "single_idea": "Import that CSV now — Loops maps its columns straight to contact properties, including custom ones, and can add everyone in the file to a mailing list in the same upload, so the list is usable the moment it lands.",
+          "felt_need": "They have a list of subscribers sitting in a CSV and a brand-new Loops account, but nothing in that account is usable yet.",
+          "status_quo": "The subscriber list currently lives in a CSV file outside Loops.",
+          "why_it_fails": "A CSV sitting outside the platform can't be segmented, kept current, or used to trigger a workflow — none of that happens until the contacts are actually inside Loops.",
+          "mechanism": "Uploading the CSV maps its columns directly to contact properties, including any custom ones, and lets the reader add everyone in the file to a mailing list during that same upload — so the import itself is what sets the list up for segmenting and workflows afterward.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: treats the CSV import as a data-migration chore to schedule later. After: sees it as the one upload that makes the spreadsheet usable right away.",
+          "evidence_ids": [
+            "E31",
+            "E28",
+            "E3"
+          ],
+          "must_not_say": [
+            "specific subscribed-contact or send limits by plan — this email's job is the import step, not plan comparison",
+            "the migration/workflow-rebuilding and Enterprise support language from E31's fuller quote — only the CSV-mapping step is relevant to a reader who isn't migrating from another tool",
+            "any claim about activation speed, open rates or other results from importing",
+            "pricing tiers, branding differences, or team-seat terms",
+            "any in-app URL or screen not documented in the evidence"
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "Worried the upload will scramble custom columns or lose details that matter — Loops maps CSV columns straight to contact properties, including custom ones, as part of the same upload.",
+          "tone": "direct, practical, matter-of-fact — a quick first-step nudge, not a sales pitch.",
+          "call_to_action": "See how the CSV import maps your columns",
+          "next_step_decision": "How this CSV's columns will map to contact properties, including custom ones, and whether to add the list to a mailing list during the upload.",
+          "next_step_value": "Shows that CSV columns map to contact properties, including custom ones, and that everyone in the file can be added to a mailing list during the same upload.",
+          "next_step_evidence_ids": [
+            "E31"
+          ],
+          "next_step_limit": "Doesn't show the actual upload screen inside the reader's account or any plan-specific sending limits.",
+          "subject_strategy": "Name the concrete next step (import the CSV) rather than a generic welcome, so a reader who already registered recognizes this as their actual first task, not another onboarding touch.",
+          "must_not_reuse": [],
+          "steering": {
+            "directions": [],
+            "include_evidence_ids": [],
+            "exclude_evidence_ids": [],
+            "use": [],
+            "avoid": [],
+            "context_only": [],
+            "excluded_values": []
+          }
+        }
+      },
+      "created_at": "2026-11-11T03:56:50.517446Z"
+    }
+  ],
+  "result": {
+    "run_status": "completed",
+    "report": {
+      "request": "Write exactly one English activation email from the Loops team. Reader: A SaaS operator who just opened a Loops account and already has a CSV of subscribers. Ask them to do one thing: Import the first contacts from that CSV. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+      "effective_audience": "A SaaS operator who just opened a Loops account and already has a CSV of subscribers.",
+      "audience_scope": "",
+      "assessment_method": "Simulated reader's interest, uncalibrated; no response or conversion prediction",
+      "delivered": 1,
+      "promised": 1,
+      "contract_violations": [],
+      "emails": [
+        {
+          "position": 1,
+          "subject": "Import your CSV into Loops",
+          "single_idea": "Import that CSV now — Loops maps its columns straight to contact properties, including custom ones, and can add everyone in the file to a mailing list in the same upload, so the list is usable the moment it lands.",
+          "selection_reason": "CSV import with column mapping is the only documented mechanism that matches the requested action exactly, and it's reachable without any plan upgrade or new account step — the reader already has one.",
+          "problem_ids": [],
+          "action_id": "",
+          "next_step_decision": "How this CSV's columns will map to contact properties, including custom ones, and whether to add the list to a mailing list during the upload.",
+          "next_step_value": "Shows that CSV columns map to contact properties, including custom ones, and that everyone in the file can be added to a mailing list during the same upload.",
+          "next_step_url": "https://loops.so/product-email",
+          "next_step_limit": "Doesn't show the actual upload screen inside the reader's account or any plan-specific sending limits.",
+          "pull": 7.0,
+          "revisions": 0,
+          "clean": true,
+          "landed": true,
+          "rewrites_stopped_helping": false,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E31",
+            "E28",
+            "E3"
+          ],
+          "evidence_spent": [
+            "E31",
+            "E28",
+            "E3"
+          ],
+          "attributions": 0,
+          "unresolved": [],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "Loops' CSV import feature, which maps my spreadsheet columns to contact properties (including custom ones) and adds everyone to a mailing list in one upload, so I can start segmenting and sending onboarding emails.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "Profile states I just opened a Loops account and already have a CSV of subscribers. The email's entire premise - 'your subscriber list is sitting in a CSV, outside Loops... until it's imported, those contacts can't be grouped' - matches that exactly, not a generic pitch. This is the literal next action for someone in my stated position, so the premise is supported rather than assumed.",
+              "assumed_experiences": [
+                "Assumes I have a CSV ready to upload (profile-supported)",
+                "Assumes I haven't imported yet and contacts are currently unusable for segments/triggers (profile-supported, consistent with 'just opened account')",
+                "Assumes I already know what 'segments' and 'contact properties' mean in Loops (email-only, not established by the profile)"
+              ],
+              "problem_now": "Documented importance, not a hypothetical risk - the profile puts me at the exact moment this email addresses (new account, CSV not yet imported). This is the actual next step I need to take, not a future-maybe problem.",
+              "stopped_at": "",
+              "biggest_doubt": "No real doubt about whether to do this eventually - I need contacts in Loops regardless. My hesitation is only about mechanics the email doesn't cover: what happens with duplicate emails, malformed rows, or columns that don't cleanly map to existing properties.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me whether messy or duplicate rows in my CSV get handled automatically or flagged for me to fix before the list goes live.",
+              "fixes": [],
+              "opens_in_100": null,
+              "clicks_in_100": null,
+              "persona": "Selected audience (user-stated constraints): A SaaS operator who just opened a Loops account and already has a CSV of subscribers..\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.\nEstablished relationship to the sender: customer. This establishes no particular installed tools or desired reaction.",
+              "pull": 7
+            }
+          ],
+          "sameness": []
+        }
+      ],
+      "limiting_gaps": [
+        "No customer result classified as a usable metric - emails may describe documented capabilities but cannot invent measured outcomes"
+      ],
+      "what_would_help_most": "What measurable result do customers get, and how do you know?",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "Effective audience: A SaaS operator who just opened a Loops account and already has a CSV of subscribers."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "Read literally: one activation email to a SaaS operator who already created a Loops account and already has a CSV of subscribers sitting outside it. The requested next action is the import itself, not account creation or plan choice. I mapped this reader to the 'SaaS Founder/Marketer' segment — a solo or small-team operator handling marketing themselves, matching 'just opened an account' rather than an established multi-team 'Growing SaaS Product Company.' The only documented mechanism for the requested action is CSV-to-property mapping with optional mailing-list addition in the same upload (E31); there is no evidence of an in-app import URL distinct from the marketing/documentation page that describes this mechanism, so the CTA points to that documented page rather than an invented app.loops.so path. This is a single standalone email per the explicit count request.",
+      "pipeline_version": 2,
+      "strategy_mode": "planned",
+      "focused_activation": false,
+      "intent": {
+        "objective": "activation",
+        "objective_source": "user",
+        "reader_relationship": "customer",
+        "relationship_source": "user",
+        "announcement": "",
+        "reason_now": "",
+        "desired_action": "Import the first contacts from that CSV",
+        "required_fact": "",
+        "required_source_url": ""
+      },
+      "reader": "Selected audience (user-stated constraints): A SaaS operator who just opened a Loops account and already has a CSV of subscribers..\nNo further recipient situation is established. Compiled market context is research to check for applicability, not a replacement biography.",
+      "reader_segment": "SaaS Founder/Marketer",
+      "reader_profile_override": "A SaaS operator who just opened a Loops account and already has a CSV of subscribers.",
+      "reader_scope": "",
+      "fixed_cta_url": "",
+      "promise": "Importing the CSV now — with its columns mapped straight to contact properties — is what turns a spreadsheet list into contacts this reader can actually segment and build onboarding email on.",
+      "orientation": "Loops is where this reader's spreadsheet of subscribers becomes a usable email list they can run onboarding and lifecycle emails from.",
+      "arc": "Single email: move the reader from a CSV sitting outside Loops to mapped, usable contacts inside it, by naming the one documented upload step and what it sets up.",
+      "sequence_rationale": "The request is explicitly for exactly one activation email asking for one action, so there is no multi-email arc to design — the job is to make that single ask concrete and credible. The only documented mechanism for this exact action is CSV import with column-to-property mapping and optional mailing-list addition during upload (E31); unlimited upload volume on any plan (E28) removes a reason to delay or trim the list; and the existence of onboarding/lifecycle workflows (E3) is the reason importing now matters rather than later. No in-app upload URL is evidenced, so the CTA uses the documented page describing the mechanism instead of an invented dashboard link. No alternative proposition is included: a genuinely distinct commercial bet for this exact one-action request would have to invent a different next step, which the material doesn't support. The single thing that would most change this campaign: what measurable result do customers get from using Loops, and how do you know — without it, every argument here stays at the level of documented mechanism rather than proven payoff.",
+      "emails": [
+        {
+          "problem_ids": [],
+          "offer_id": "offering",
+          "action_id": "",
+          "selection_reason": "CSV import with column mapping is the only documented mechanism that matches the requested action exactly, and it's reachable without any plan upgrade or new account step — the reader already has one.",
+          "next_step_url": "https://loops.so/product-email",
+          "destination_kind": "web",
+          "destination_rejected": false,
+          "argument_issue": "",
+          "value_case": {
+            "reader_benefit": "Once the CSV is imported, those subscribers exist as Loops contacts with their properties mapped and, if chosen, already on a mailing list — ready for the segments and onboarding workflows the reader will build next.",
+            "mechanism": "Uploading a CSV maps its columns to contact properties, including custom ones, and lets the reader add everyone in the file to a mailing list during the same upload (E31); this isn't capped by plan, since every plan allows uploading as many contacts as wanted (E28).",
+            "evidence_ids": [
+              "E31",
+              "E28"
+            ],
+            "decision_conditions": []
+          },
+          "claim_conditions": [],
+          "position": 1,
+          "user_request": "Write exactly one English activation email from the Loops team. Reader: A SaaS operator who just opened a Loops account and already has a CSV of subscribers. Ask them to do one thing: Import the first contacts from that CSV. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+          "target_audience": "",
+          "job": "Get the reader to import their CSV of subscribers into Loops as the first action in their new account.",
+          "single_idea": "Import that CSV now — Loops maps its columns straight to contact properties, including custom ones, and can add everyone in the file to a mailing list in the same upload, so the list is usable the moment it lands.",
+          "felt_need": "They have a list of subscribers sitting in a CSV and a brand-new Loops account, but nothing in that account is usable yet.",
+          "status_quo": "The subscriber list currently lives in a CSV file outside Loops.",
+          "why_it_fails": "A CSV sitting outside the platform can't be segmented, kept current, or used to trigger a workflow — none of that happens until the contacts are actually inside Loops.",
+          "mechanism": "Uploading the CSV maps its columns directly to contact properties, including any custom ones, and lets the reader add everyone in the file to a mailing list during that same upload — so the import itself is what sets the list up for segmenting and workflows afterward.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: treats the CSV import as a data-migration chore to schedule later. After: sees it as the one upload that makes the spreadsheet usable right away.",
+          "evidence_ids": [
+            "E31",
+            "E28",
+            "E3"
+          ],
+          "must_not_say": [
+            "specific subscribed-contact or send limits by plan — this email's job is the import step, not plan comparison",
+            "the migration/workflow-rebuilding and Enterprise support language from E31's fuller quote — only the CSV-mapping step is relevant to a reader who isn't migrating from another tool",
+            "any claim about activation speed, open rates or other results from importing",
+            "pricing tiers, branding differences, or team-seat terms",
+            "any in-app URL or screen not documented in the evidence"
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "Worried the upload will scramble custom columns or lose details that matter — Loops maps CSV columns straight to contact properties, including custom ones, as part of the same upload.",
+          "tone": "direct, practical, matter-of-fact — a quick first-step nudge, not a sales pitch.",
+          "call_to_action": "See how the CSV import maps your columns",
+          "next_step_decision": "How this CSV's columns will map to contact properties, including custom ones, and whether to add the list to a mailing list during the upload.",
+          "next_step_value": "Shows that CSV columns map to contact properties, including custom ones, and that everyone in the file can be added to a mailing list during the same upload.",
+          "next_step_evidence_ids": [
+            "E31"
+          ],
+          "next_step_limit": "Doesn't show the actual upload screen inside the reader's account or any plan-specific sending limits.",
+          "subject_strategy": "Name the concrete next step (import the CSV) rather than a generic welcome, so a reader who already registered recognizes this as their actual first task, not another onboarding touch.",
+          "must_not_reuse": [],
+          "steering": {
+            "directions": [],
+            "include_evidence_ids": [],
+            "exclude_evidence_ids": [],
+            "use": [],
+            "avoid": [],
+            "context_only": [],
+            "excluded_values": []
+          }
+        }
+      ],
+      "voice_notes": "Keep it short and procedural, matching how this brand writes about setup — plain imperative sentences, no hype words, no superlatives about results.",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "one English activation email"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "6dbe89d3-7866-4313-badd-a6042a62e114",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

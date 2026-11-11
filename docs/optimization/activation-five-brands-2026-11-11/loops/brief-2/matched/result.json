@@ -1,0 +1,687 @@
+{
+  "id": "52f5af4b-7773-4c0f-a494-b2d6c3e4e682",
+  "campaign_id": "241514e1-ac5d-4839-b061-a153c41e2df6",
+  "status": "failed",
+  "needs_review": false,
+  "outcome_status": "failed",
+  "review_reasons": [],
+  "error_message": "Email 1 failed automatic checks after repair: \"Subject: Test your transactional email draft\": The source supports testing transactional email, but not the recipient-specific assertion that the reader has a draft; steering marks that context unverified and says never to state it as fact.; \"Preview text: Send it to yourself from the terminal and inspect what you receive.\": E32 supports terminal-based transactional email testing, but does not establish sending to the user's own address or that an email will be received for inspection.; \"Send your first test to yourself\": No supplied source says the Loops CLI can direct a transactional test to the user's own address.; \"Send your draft transactional email to your own address with the Loops CLI.\": E32 supports CLI-based transactional email testing, but not selecting a draft or sending it to the user's own address.; \"This gives you a test email you can open and inspect before deciding what to revise.\": The sources do not establish that this route produces a received, openable email or connects it to revision of the reader's draft.; \"For your first test, run the draft through the CLI with your own address as the recipient.\": The source does not document running a draft through the CLI or using the reader's own address as recipient.; \"Then inspect the email you receive.\": This presupposes successful receipt, which E32 does not guarantee or document.; \"Compare its content with your draft and decide whether the template needs changes.\": No source establishes that the CLI test sends the referenced draft or produces an email whose content can be compared with that draft.; The documented capability is only testing transactional email from the terminal; draft selection and self-addressed sending are unsupported additions.; This promises a received, inspectable email and a connection to the draft that the supplied evidence does not establish.; The wording presupposes receipt despite the instruction to avoid unsupported outcome claims.; This states the reader's draft ownership as fact even though steering explicitly labels the account-and-draft context unverified and says never to state it as fact.",
+  "started_at": "2026-11-11T04:15:12.650768Z",
+  "completed_at": "2026-11-11T04:19:48.080590Z",
+  "created_at": "2026-11-11T04:15:12.650768Z",
+  "total_input_tokens": 146424,
+  "total_output_tokens": 22089,
+  "total_cache_read_tokens": 70656,
+  "estimated_cost_usd": 1.3253,
+  "recommendation_snapshot": {
+    "campaign_id": "241514e1-ac5d-4839-b061-a153c41e2df6",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "339414ae-2a15-4a05-9bc9-5952f9faa7a7",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Run the draft through the Loops CLI and send the first transactional test to your own address so you can inspect the email that arrives."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:15:12.810623Z",
+      "completed_at": "2026-11-11T04:16:09.681305Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 19941,
+      "output_tokens": 4508,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.301117,
+      "duration_ms": 56629.66990005225,
+      "attempt": 1
+    },
+    {
+      "id": "1f73584f-3e50-427a-91f6-a69e3ddfc48d",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · first draft",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "subject": "Test your transactional email draft"
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:16:10.177600Z",
+      "completed_at": "2026-11-11T04:16:30.463264Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 15291,
+      "output_tokens": 1669,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.178747,
+      "duration_ms": 20125.278200022876,
+      "attempt": 1
+    },
+    {
+      "id": "064ee894-1f27-4d9e-bf9a-e4a07a0d45c5",
+      "agent_id": "claim_reviewer",
+      "agent_name": "Claim Reviewer",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · checking claims against sources"
+      },
+      "output_data": {
+        "semantic_review": {
+          "key": "0f8252dd37efbe46a23960d2fc26e401cd2f5ca3dfbbe0a3505b1e5924ec69bc",
+          "approved": false,
+          "decision": {
+            "verdict": "revise",
+            "claims": [
+              {
+                "text": "Subject: Test your transactional email draft",
+                "status": "unsupported",
+                "explanation": "The source supports testing transactional email, but not the recipient-specific assertion that the reader has a draft; steering marks that context unverified and says never to state it as fact.",
+                "citations": []
+              },
+              {
+                "text": "Preview text: Send it to yourself from the terminal and inspect what you receive.",
+                "status": "unsupported",
+                "explanation": "E32 supports terminal-based transactional email testing, but does not establish sending to the user's own address or that an email will be received for inspection.",
+                "citations": []
+              },
+              {
+                "text": "Send your first test to yourself",
+                "status": "unsupported",
+                "explanation": "No supplied source says the Loops CLI can direct a transactional test to the user's own address.",
+                "citations": []
+              },
+              {
+                "text": "Send your draft transactional email to your own address with the Loops CLI.",
+                "status": "unsupported",
+                "explanation": "E32 supports CLI-based transactional email testing, but not selecting a draft or sending it to the user's own address.",
+                "citations": []
+              },
+              {
+                "text": "This gives you a test email you can open and inspect before deciding what to revise.",
+                "status": "unsupported",
+                "explanation": "The sources do not establish that this route produces a received, openable email or connects it to revision of the reader's draft.",
+                "citations": []
+              },
+              {
+                "text": "Loops is an email platform for SaaS teams, and its CLI supports transactional email testing directly from your terminal.",
+                "status": "supported",
+                "explanation": "The two supplied quotes jointly support the product category and CLI testing capability.",
+                "citations": [
+                  {
+                    "source_id": "E1",
+                    "quote": "Loops is the email sending platform for SaaS teams."
+                  },
+                  {
+                    "source_id": "E32",
+                    "quote": "Loops CLI Manage contacts, send events, and test transactional email from your terminal"
+                  }
+                ]
+              },
+              {
+                "text": "For your first test, run the draft through the CLI with your own address as the recipient.",
+                "status": "unsupported",
+                "explanation": "The source does not document running a draft through the CLI or using the reader's own address as recipient.",
+                "citations": []
+              },
+              {
+                "text": "Then inspect the email you receive.",
+                "status": "unsupported",
+                "explanation": "This presupposes successful receipt, which E32 does not guarantee or document.",
+                "citations": []
+              },
+              {
+                "text": "Compare its content with your draft and decide whether the template needs changes.",
+                "status": "unsupported",
+                "explanation": "No source establishes that the CLI test sends the referenced draft or produces an email whose content can be compared with that draft.",
+                "citations": []
+              },
+              {
+                "text": "The Loops documentation shows the CLI route for testing transactional email from the terminal.",
+                "status": "supported",
+                "explanation": "The documentation explicitly identifies the Loops CLI as supporting transactional email testing from the terminal.",
+                "citations": [
+                  {
+                    "source_id": "E32",
+                    "quote": "Loops CLI Manage contacts, send events, and test transactional email from your terminal"
+                  }
+                ]
+              },
+              {
+                "text": "Run your first test →",
+                "status": "supported",
+                "explanation": "Transactional email testing through the Loops CLI is documented, and the selected CTA destination is the Loops documentation page.",
+                "citations": [
+                  {
+                    "source_id": "E32",
+                    "quote": "Loops CLI Manage contacts, send events, and test transactional email from your terminal"
+                  },
+                  {
+                    "source_id": "cta:0",
+                    "quote": "[Loops Documentation - Loops › Loops Documentation; document_id=6dab9f5e-177a-41bf-a257-784c2dc3ec0d; source=https://loops.so/docs; aliases=https://loops.so/docs; chunk=0]\n# Loops Documentation\nCopy pageCopy page\n\nLoops documentation for marketing and transactional email: quickstart, integrations, API reference, webhooks, deliverability guides, and best practices.\n\nCopy pageCopy page"
+                  }
+                ]
+              }
+            ],
+            "findings": [
+              {
+                "text": "Send your draft transactional email to your own address with the Loops CLI.",
+                "kind": "factual",
+                "explanation": "The documented capability is only testing transactional email from the terminal; draft selection and self-addressed sending are unsupported additions."
+              },
+              {
+                "text": "This gives you a test email you can open and inspect before deciding what to revise.",
+                "kind": "factual",
+                "explanation": "This promises a received, inspectable email and a connection to the draft that the supplied evidence does not establish."
+              },
+              {
+                "text": "Then inspect the email you receive.",
+                "kind": "instruction",
+                "explanation": "The wording presupposes receipt despite the instruction to avoid unsupported outcome claims."
+              },
+              {
+                "text": "your draft transactional email",
+                "kind": "instruction",
+                "explanation": "This states the reader's draft ownership as fact even though steering explicitly labels the account-and-draft context unverified and says never to state it as fact."
+              }
+            ],
+            "summary": "The general Loops product description, terminal-based CLI testing capability, documentation destination, and test CTA are supported. Revise because the draft adds unsupported claims that the CLI can run the reader's draft, address the test to the reader, and produce an email they receive and inspect; it also states context explicitly marked unverified.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The proposed reader benefit is clearly present, but its self-addressed delivery and receipt components are not supported by the supplied evidence.",
+              "original_passage": "This gives you a test email you can open and inspect before deciding what to revise.",
+              "revised_passage": "This gives you a test email you can open and inspect before deciding what to revise."
+            }
+          },
+          "version": 3,
+          "sources": {
+            "E1": "https://loops.so/",
+            "E32": "https://loops.so/docs",
+            "cta:0": "[Loops Documentation - Loops › Loops Documentation; document_id=6dab9f5e-177a-41bf-a257-784c2dc3ec0d; source=https://loops.so/docs; aliases=https://loops.so/docs; chunk=0]"
+          }
+        },
+        "passed": false
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:16:30.512424Z",
+      "completed_at": "2026-11-11T04:17:26.010687Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 15012,
+      "output_tokens": 4641,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.265675,
+      "duration_ms": 55365.75700016692,
+      "attempt": 1
+    },
+    {
+      "id": "757d0458-4e5d-4667-b8d7-145dcc943137",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 1 reader(s)",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:17:26.050928Z",
+      "completed_at": "2026-11-11T04:17:44.345746Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 3649,
+      "output_tokens": 1081,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.067971,
+      "duration_ms": 18230.67700001411,
+      "attempt": 1
+    },
+    {
+      "id": "dfa44d19-1590-4de3-9aaa-f0eff5ed80af",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "Take transactional testing to the terminal"
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:17:44.445231Z",
+      "completed_at": "2026-11-11T04:18:09.760601Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 3307,
+      "output_tokens": 2197,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 23040,
+      "cost_usd": 0.110798,
+      "duration_ms": 25110.1398000028,
+      "attempt": 2
+    },
+    {
+      "id": "e209cf35-d952-45c8-a449-b93b1e259033",
+      "agent_id": "claim_reviewer",
+      "agent_name": "Claim Reviewer",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · checking claims against sources"
+      },
+      "output_data": {
+        "semantic_review": {
+          "key": "b525a993dc7ff8a166d933487451fd8e4fe2c90e7c2d800f127d3bb03d9e89d7",
+          "approved": false,
+          "decision": {
+            "verdict": "revise",
+            "claims": [
+              {
+                "text": "Subject: Take transactional testing to the terminal",
+                "status": "supported",
+                "explanation": "Loops documentation expressly identifies terminal-based transactional email testing through the Loops CLI.",
+                "citations": [
+                  {
+                    "source_id": "E32",
+                    "quote": "Loops CLI Manage contacts, send events, and test transactional email from your terminal"
+                  }
+                ]
+              },
+              {
+                "text": "Preview text: Find the documented CLI route and run your first test.",
+                "status": "supported",
+                "explanation": "The documentation contains a Loops CLI section that identifies transactional email testing from the terminal. “Run your first test” is an invitation rather than a guaranteed outcome.",
+                "citations": [
+                  {
+                    "source_id": "source:2",
+                    "quote": "[Loops Documentation - Loops › Loops CLI; document_id=6dab9f5e-177a-41bf-a257-784c2dc3ec0d; source=https://loops.so/docs; aliases=https://loops.so/docs; chunk=8]\n## Loops CLI\nManage contacts, send events, and test transactional email from your terminal"
+                  }
+                ]
+              },
+              {
+                "text": "Run a transactional test from your terminal",
+                "status": "supported",
+                "explanation": "The documented Loops CLI capability includes testing transactional email from a terminal.",
+                "citations": [
+                  {
+                    "source_id": "E32",
+                    "quote": "Loops CLI Manage contacts, send events, and test transactional email from your terminal"
+                  }
+                ]
+              },
+              {
+                "text": "Loops is the email sending platform for SaaS teams.",
+                "status": "supported",
+                "explanation": "This matches the supplied vendor statement exactly.",
+                "citations": [
+                  {
+                    "source_id": "E1",
+                    "quote": "Loops is the email sending platform for SaaS teams."
+                  }
+                ]
+              },
+              {
+                "text": "Its CLI supports testing transactional email directly from your terminal.",
+                "status": "supported",
+                "explanation": "The supplied documentation expressly states this capability.",
+                "citations": [
+                  {
+                    "source_id": "E32",
+                    "quote": "Loops CLI Manage contacts, send events, and test transactional email from your terminal"
+                  }
+                ]
+              },
+              {
+                "text": "Open the Loops documentation and find the Loops CLI section.",
+                "status": "supported",
+                "explanation": "The captured Loops documentation contains a section titled “Loops CLI.”",
+                "citations": [
+                  {
+                    "source_id": "source:2",
+                    "quote": "[Loops Documentation - Loops › Loops CLI; document_id=6dab9f5e-177a-41bf-a257-784c2dc3ec0d; source=https://loops.so/docs; aliases=https://loops.so/docs; chunk=8]\n## Loops CLI\nManage contacts, send events, and test transactional email from your terminal"
+                  }
+                ]
+              },
+              {
+                "text": "It identifies the terminal testing route, giving you a concrete path from the documentation to your first test.",
+                "status": "supported",
+                "explanation": "The CLI section identifies transactional email testing from the terminal, so describing it as a documented route to performing a test is supported.",
+                "citations": [
+                  {
+                    "source_id": "source:2",
+                    "quote": "[Loops Documentation - Loops › Loops CLI; document_id=6dab9f5e-177a-41bf-a257-784c2dc3ec0d; source=https://loops.so/docs; aliases=https://loops.so/docs; chunk=8]\n## Loops CLI\nManage contacts, send events, and test transactional email from your terminal"
+                  }
+                ]
+              },
+              {
+                "text": "If you use a coding agent and the CLI is not set up, the documentation also includes a one-command option to install the CLI and skills.",
+                "status": "supported",
+                "explanation": "The captured documentation states that a coding agent can be enabled by installing the CLI and skills with one command.",
+                "citations": [
+                  {
+                    "source_id": "proposition:mechanism:1",
+                    "quote": "[Loops Documentation - Loops › Have an agent use Loops; document_id=6dab9f5e-177a-41bf-a257-784c2dc3ec0d; source=https://loops.so/docs; aliases=https://loops.so/docs; chunk=2]\n## Have an agent use Loops\nInstall the CLI and skills with one command so your coding agent can use Loops for you."
+                  }
+                ]
+              },
+              {
+                "text": "The prerequisite sits alongside the testing route.",
+                "status": "unsupported",
+                "explanation": "No supplied source calls the one-command coding-agent installation a prerequisite for transactional testing or establishes the asserted relationship.",
+                "citations": []
+              },
+              {
+                "text": "Use the CLI section to run your first transactional email test from the terminal.",
+                "status": "supported",
+                "explanation": "This is an invitation to use the documented CLI capability to test transactional email from the terminal.",
+                "citations": [
+                  {
+                    "source_id": "E32",
+                    "quote": "Loops CLI Manage contacts, send events, and test transactional email from your terminal"
+                  }
+                ]
+              },
+              {
+                "text": "It is the documented first step for putting Loops’ transactional testing capability to work.",
+                "status": "unsupported",
+                "explanation": "The sources document the CLI testing capability but do not designate the CLI section or this action as the first step in a required sequence.",
+                "citations": []
+              },
+              {
+                "text": "Run your first test →",
+                "status": "supported",
+                "explanation": "The CTA invites use of the documented transactional-testing capability, and the supplied destination is the Loops documentation page containing the CLI section.",
+                "citations": [
+                  {
+                    "source_id": "E32",
+                    "quote": "Loops CLI Manage contacts, send events, and test transactional email from your terminal"
+                  },
+                  {
+                    "source_id": "cta:0",
+                    "quote": "[Loops Documentation - Loops › Loops Documentation; document_id=6dab9f5e-177a-41bf-a257-784c2dc3ec0d; source=https://loops.so/docs; aliases=https://loops.so/docs; chunk=0]\n# Loops Documentation\nCopy pageCopy page\n\nLoops documentation for marketing and transactional email: quickstart, integrations, API reference, webhooks, deliverability guides, and best practices.\n\nCopy pageCopy page"
+                  }
+                ]
+              }
+            ],
+            "findings": [
+              {
+                "text": "The prerequisite sits alongside the testing route.",
+                "kind": "factual",
+                "explanation": "The supplied documentation does not establish that the coding-agent installation option is a prerequisite for the requested test."
+              },
+              {
+                "text": "It is the documented first step for putting Loops’ transactional testing capability to work.",
+                "kind": "factual",
+                "explanation": "The documentation confirms the capability but does not label this as the first step."
+              },
+              {
+                "text": "Use the CLI section to run your first transactional email test from the terminal.",
+                "kind": "instruction",
+                "explanation": "The requested action specifically requires sending the test to the reader’s own address, but the draft never states that destination."
+              },
+              {
+                "text": "It is the documented first step for putting Loops’ transactional testing capability to work.",
+                "kind": "instruction",
+                "explanation": "The request requires explaining that the reader can inspect the email they receive; the draft substitutes the generic benefit of putting the capability to work."
+              },
+              {
+                "text": "If you use a coding agent and the CLI is not set up, the documentation also includes a one-command option to install the CLI and skills.",
+                "kind": "instruction",
+                "explanation": "This introduces a separate conditional installation action despite the direction to ask for only the transactional test and avoid additional actions."
+              }
+            ],
+            "summary": "The core Loops and CLI capability claims are supported, but the draft invents a prerequisite and a documented “first step.” It also fails the required activation brief because it does not direct the test to the reader’s own address or explain that the received email can be inspected, and it adds a separate installation action.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The prior operational benefit—using the Loops CLI to test transactional email from the terminal—appears explicitly in the revised email with the same operation and consequence.",
+              "original_passage": "Loops is an email platform for SaaS teams, and its CLI supports transactional email testing directly from your terminal.",
+              "revised_passage": "Loops is the email sending platform for SaaS teams. Its CLI supports testing transactional email directly from your terminal."
+            }
+          },
+          "version": 3,
+          "factual_repair": true,
+          "sources": {
+            "E32": "https://loops.so/docs",
+            "source:2": "[Loops Documentation - Loops › Loops CLI; document_id=6dab9f5e-177a-41bf-a257-784c2dc3ec0d; source=https://loops.so/docs; aliases=https://loops.so/docs; chunk=8]",
+            "E1": "https://loops.so/",
+            "proposition:mechanism:1": "[Loops Documentation - Loops › Have an agent use Loops; document_id=6dab9f5e-177a-41bf-a257-784c2dc3ec0d; source=https://loops.so/docs; aliases=https://loops.so/docs; chunk=2]",
+            "cta:0": "[Loops Documentation - Loops › Loops Documentation; document_id=6dab9f5e-177a-41bf-a257-784c2dc3ec0d; source=https://loops.so/docs; aliases=https://loops.so/docs; chunk=0]"
+          }
+        },
+        "passed": false
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:18:09.792604Z",
+      "completed_at": "2026-11-11T04:19:31.326919Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 14905,
+      "output_tokens": 7066,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.337569,
+      "duration_ms": 81374.92459989153,
+      "attempt": 2
+    },
+    {
+      "id": "9f9e6adb-d81b-446e-89f7-49fd1702845f",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 1 reader(s)",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:19:31.364211Z",
+      "completed_at": "2026-11-11T04:19:48.008048Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 3663,
+      "output_tokens": 927,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.063463,
+      "duration_ms": 16559.598200023174,
+      "attempt": 2
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "failed",
+    "report": {
+      "request": "Write exactly one English activation email from the Loops team. Reader: A developer with a Loops account and a draft transactional template. Ask them to do one thing: Run a first transactional email test to their own address. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+      "effective_audience": "A developer with a Loops account and a draft transactional template.",
+      "audience_scope": "",
+      "assessment_method": "Simulated reader's interest, uncalibrated; no response or conversion prediction",
+      "delivered": 0,
+      "promised": 1,
+      "contract_violations": [
+        "the user asked for 1 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [
+        "No customer result classified as a usable metric - emails may describe documented capabilities but cannot invent measured outcomes"
+      ],
+      "what_would_help_most": "What measurable result do customers get, and how do you know?",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "Email 1 failed automatic checks after repair: \"Subject: Test your transactional email draft\": The source supports testing transactional email, but not the recipient-specific assertion that the reader has a draft; steering marks that context unverified and says never to state it as fact.; \"Preview text: Send it to yourself from the terminal and inspect what you receive.\": E32 supports terminal-based transactional email testing, but does not establish sending to the user's own address or that an email will be received for inspection.; \"Send your first test to yourself\": No supplied source says the Loops CLI can direct a transactional test to the user's own address.; \"Send your draft transactional email to your own address with the Loops CLI.\": E32 supports CLI-based transactional email testing, but not selecting a draft or sending it to the user's own address.; \"This gives you a test email you can open and inspect before deciding what to revise.\": The sources do not establish that this route produces a received, openable email or connects it to revision of the reader's draft.; \"For your first test, run the draft through the CLI with your own address as the recipient.\": The source does not document running a draft through the CLI or using the reader's own address as recipient.; \"Then inspect the email you receive.\": This presupposes successful receipt, which E32 does not guarantee or document.; \"Compare its content with your draft and decide whether the template needs changes.\": No source establishes that the CLI test sends the referenced draft or produces an email whose content can be compared with that draft.; The documented capability is only testing transactional email from the terminal; draft selection and self-addressed sending are unsupported additions.; This promises a received, inspectable email and a connection to the draft that the supplied evidence does not establish.; The wording presupposes receipt despite the instruction to avoid unsupported outcome claims.; This states the reader's draft ownership as fact even though steering explicitly labels the account-and-draft context unverified and says never to state it as fact.",
+        "Effective audience: A developer with a Loops account and a draft transactional template."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "A single activation email for an existing Loops user who develops transactional email and already has a draft template. The email should move them to one concrete action: use the Loops CLI to send a transactional test to their own address.",
+      "pipeline_version": 2,
+      "strategy_mode": "planned",
+      "focused_activation": false,
+      "intent": {
+        "objective": "activation",
+        "objective_source": "user",
+        "reader_relationship": "customer",
+        "relationship_source": "user",
+        "announcement": "",
+        "reason_now": "",
+        "desired_action": "Run a first transactional email test to their own address",
+        "required_fact": "",
+        "required_source_url": ""
+      },
+      "reader": "Selected audience (user-stated constraints): A developer with a Loops account and a draft transactional template..\nNo further recipient situation is established. Compiled market context is research to check for applicability, not a replacement biography.",
+      "reader_segment": "Growing SaaS Product Company",
+      "reader_profile_override": "A developer with a Loops account and a draft transactional template.",
+      "reader_scope": "",
+      "fixed_cta_url": "",
+      "promise": "The Loops CLI gives this developer a documented way to send their draft as a transactional test to their own address and inspect the email they receive.",
+      "orientation": "Loops is an email platform where developers can create and test transactional email templates.",
+      "arc": "Move directly from an existing draft to one observable activation step: a transactional test sent to the developer's own address.",
+      "sequence_rationale": "One email is sufficient because the reader, objective, and requested action are explicit. Lead with the requested test and support it with the only documented mechanism tailored to a developer performing this task: transactional email testing from the terminal through the Loops CLI. No objection is assigned because the supplied audience evidence does not establish a relevant hesitation, and inventing one would distract from the activation step. The documentation URL is the closest verified destination available; the CTA must still ask the reader to run the test, not merely read documentation. What measurable result do customers get, and how do you know?",
+      "emails": [
+        {
+          "problem_ids": [],
+          "offer_id": "offering",
+          "action_id": "",
+          "selection_reason": "The Loops CLI is specifically documented for testing transactional email from the terminal, making it the most relevant supported first step for a developer with a draft template.",
+          "next_step_url": "https://loops.so/docs",
+          "destination_kind": "web",
+          "destination_rejected": false,
+          "argument_issue": "",
+          "value_case": {
+            "reader_benefit": "The developer can receive the draft at their own address and inspect the actual test email before deciding what, if anything, to revise next.",
+            "mechanism": "Use the Loops CLI's documented transactional email testing capability from the terminal to send the draft to the developer's own address.",
+            "evidence_ids": [
+              "E32"
+            ],
+            "decision_conditions": [
+              "The reader has the Loops account and draft transactional template specified in the campaign request.",
+              "The proposed test uses the Loops CLI from a terminal."
+            ]
+          },
+          "claim_conditions": [
+            "Describe the CLI only as supporting transactional email testing from the terminal.",
+            "Frame inspection of the received email as the purpose of this test, not as a guarantee of production behavior or deliverability."
+          ],
+          "position": 1,
+          "user_request": "Write exactly one English activation email from the Loops team. Reader: A developer with a Loops account and a draft transactional template. Ask them to do one thing: Run a first transactional email test to their own address. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+          "target_audience": "",
+          "job": "Get the reader to use the Loops CLI to send their draft transactional email to their own address for the first time.",
+          "single_idea": "Run the draft through the Loops CLI and send the first transactional test to your own address so you can inspect the email that arrives.",
+          "felt_need": "I have the draft; now I need to see the email it sends.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "The Loops CLI supports testing transactional email directly from the terminal.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: the draft is still something the reader has only prepared in Loops. After: they see a specific documented way to turn it into a test email they can inspect at their own address.",
+          "evidence_ids": [
+            "E32"
+          ],
+          "must_not_say": [
+            "Do not claim a particular plan, permission, setup state, command, interface sequence, or level of access beyond the account and draft supplied by the user.",
+            "Do not promise a setup duration, guaranteed delivery, inbox placement, correct rendering, production readiness, increased engagement, or any other outcome.",
+            "Do not introduce pricing, send limits, contact management, integrations, workflows, marketing email, product email, customer names, or unrelated Loops capabilities.",
+            "Do not ask for API integration, production deployment, registration, a demo, or a second action.",
+            "Do not imply that one self-addressed test validates production behavior or delivery to other recipients."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "",
+          "tone": "Direct, practical, and lightly encouraging.",
+          "call_to_action": "Run your first transactional test",
+          "next_step_decision": "Decide whether the received test email needs changes before the reader proceeds with their template.",
+          "next_step_value": "The linked Loops documentation identifies the CLI as a way to test transactional email from the terminal; the reader can use that documented route to send the draft to their own address.",
+          "next_step_evidence_ids": [
+            "E32"
+          ],
+          "next_step_limit": "A test to one address does not establish production integration, broader inbox placement, or behavior for other recipients.",
+          "subject_strategy": "Name the concrete unfinished action—testing the transactional draft—without hype, urgency, or an unsupported outcome claim.",
+          "must_not_reuse": [],
+          "steering": {
+            "directions": [
+              "Produce exactly one English activation email.",
+              "Keep the body under 150 words excluding subject, preview, and signature.",
+              "Ask for only one action: run a first transactional email test to the reader's own address.",
+              "Use one CTA linked to the verified Loops documentation destination."
+            ],
+            "include_evidence_ids": [
+              "E32"
+            ],
+            "exclude_evidence_ids": [],
+            "use": [
+              "A specific developer-oriented first step",
+              "A concise explanation that the test lets the reader inspect the email they receive"
+            ],
+            "avoid": [
+              "Unsupported access, plan, timing, deliverability, and outcome claims",
+              "Additional actions or feature lists"
+            ],
+            "context_only": [
+              "The reader already has a Loops account and a draft transactional template."
+            ],
+            "excluded_values": []
+          }
+        }
+      ],
+      "voice_notes": "Match Loops' direct, practical voice. Use short sentences and plain developer language. Do not turn the email into documentation or invent a CLI command.",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "one English activation email"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "241514e1-ac5d-4839-b061-a153c41e2df6",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

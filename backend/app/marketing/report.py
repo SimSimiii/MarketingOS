@@ -214,7 +214,7 @@ class CampaignReport(BaseModel):
     request: str = ""
     effective_audience: str = ""
     audience_scope: str = ""
-    assessment_method: str = "Simulated editorial assessment, uncalibrated; no response or conversion prediction"
+    assessment_method: str = "Simulated reader's interest, uncalibrated; no response or conversion prediction"
     delivered: int = 0
     promised: int = 0
     contract_violations: list[str] = Field(default_factory=list)
@@ -314,7 +314,7 @@ class CampaignReport(BaseModel):
             f"Request: {self.request}",
             (
                 f"Delivered {self.delivered} of {self.promised} email(s). "
-                f"Average AI simulation assessment (uncalibrated) {self.average_pull:.1f}/10."
+                f"Average simulated reader's interest (uncalibrated) {self.average_pull:.1f}/10."
             ),
             *[line.render() for line in self.emails],
         ]

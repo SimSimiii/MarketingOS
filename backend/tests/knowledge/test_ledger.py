@@ -84,3 +84,30 @@ def test_terminal_punctuation_tolerance_preserves_the_quote_evidence_boundary(pa
         'The report is titled "Why it scored what it scored".'
     ))
     assert index.unsupported(f'In “{passage}” inspect the feedback.')
+
+
+@pytest.mark.parametrize("copy", ["1,34 kg", "1,34kg", "1.34 kg"])
+def test_a_decimal_is_one_figure_however_it_is_typeset(copy):
+    """Read as two numbers, "1,34 kg" blocked a true weight on a "34" nobody
+    wrote: the correct French spelling failed where the unspaced one passed."""
+    index = EvidenceIndex(EvidenceLedger(), source_text="1,34kg Poids")
+
+    assert index.unsupported(f"Il ne pèse que {copy}.") == []
+
+
+@pytest.mark.parametrize("copy", ["Il pèse 1,47 kg.", "Noté 4,9/5 par ses clients."])
+def test_an_invented_decimal_is_read_rather_than_skipped(copy):
+    """A rating used to yield no claim at all, so the gate had nothing to refuse."""
+    index = EvidenceIndex(EvidenceLedger(), source_text="1,34kg Poids. 4.83/5 (82 avis)")
+
+    assert [item.claim.text for item in index.unsupported(copy)]
+
+
+def test_a_rating_is_licensed_across_decimal_styles():
+    index = EvidenceIndex(EvidenceLedger(), source_text="4.83/5 (82 avis)")
+
+    assert index.unsupported("Noté 4,83/5 sur 82 avis.") == []
+
+
+def test_a_version_number_is_not_a_quantity():
+    assert [claim.normalized for claim in extract_claims("Passez à la version 1.2.3.")] == []

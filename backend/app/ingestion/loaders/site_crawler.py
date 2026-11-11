@@ -19,6 +19,7 @@ import re
 from collections import Counter
 from collections.abc import Awaitable, Callable
 from datetime import UTC, datetime
+from html import escape
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 import httpx
@@ -35,6 +36,7 @@ from app.ingestion.loaders.html_extract import (
 )
 from app.ingestion.loaders.public_content import content_issues, is_access_wall
 from app.ingestion.loaders.rendered_page import render_public_html
+from app.ingestion.loaders.site_identity import read_identity
 
 logger = logging.getLogger("marketingos.ingestion")
 
@@ -48,7 +50,7 @@ _MIN_CONTENT_CHARS = 200
 _REQUEST_TIMEOUT = 15.0
 #: Politeness, and protection against a site that answers slowly under load.
 _CONCURRENCY = 4
-_MAX_DEPTH = 2
+_MAX_DEPTH = 3
 
 
 class SiteCrawler:
@@ -59,8 +61,10 @@ class SiteCrawler:
         client: httpx.AsyncClient | None = None,
         max_pages: int = DEFAULT_MAX_PAGES,
         renderer: Callable[[str, str], Awaitable[str | None]] | None = None,
+        preserve_overview: bool = False,
     ) -> None:
         self._client = client
+        self._preserve_overview = preserve_overview
         self._max_pages = max(1, max_pages)
         self._renderer = renderer or (render_public_html if client is None else None)
 
@@ -113,7 +117,19 @@ class SiteCrawler:
         def discover(html: str, page_url: str, depth: int) -> None:
             if depth >= _MAX_DEPTH:
                 return
-            for url, priority in extract_link_candidates(html, page_url, site_root=root_url, focus=focus):
+            candidates = extract_link_candidates(html, page_url, site_root=root_url, focus=focus)
+            if urlsplit(page_url).path.endswith('/llms.txt'):
+                # Publisher-linked documentation inventory, not instructions or
+                # product evidence. Every destination still uses normal scope,
+                # fetch and page-count checks.
+                anchors = ''.join(
+                    f'<a href="{escape(target, quote=True)}">{escape(label)}</a>'
+                    for label, target in re.findall(r'\[([^\]\n]*)\]\(([^\s)]+)\)', html)
+                )
+                candidates = extract_link_candidates(
+                    anchors, page_url, site_root=root_url, focus=focus,
+                )
+            for url, priority in candidates:
                 key = _canonical(url)
                 if key not in seen and _same_site(url, root_url):
                     seen.add(key)
@@ -142,12 +158,18 @@ class SiteCrawler:
             batch = []
             for _ in range(count):
                 frontier.sort(key=lambda item: (
-                    -(item[3] + _crawl_priority(item[0]) - priority_of(item[0]) - 15 * families[_family(item[0])]),
+                    -max(125 if self._preserve_overview and _family(item[0]) == "pricing" else 0,
+                         item[3] + _crawl_priority(item[0]) - priority_of(item[0])
+                         - 15 * families[_family(item[0])]),
                     item[1], len(item[0]), item[0],
                 ))
                 item = frontier.pop(0)
                 batch.append(item)
                 families[_family(item[0])] += 1
+                if urlsplit(item[0]).path.endswith('/llms.txt'):
+                    # Discover the inventory before spending the remaining
+                    # budget on already queued SDK/reference siblings.
+                    break
             attempted += len(batch)
             results = await asyncio.gather(*(fetch(url) for url, _, _, _ in batch))
             for (requested, depth, parent, priority), page in zip(batch, results, strict=True):
@@ -156,6 +178,9 @@ class SiteCrawler:
                     continue
                 final = str(page.url)
                 seen.add(_canonical(final))
+                if urlsplit(final).path.endswith('/llms.txt'):
+                    discover(page.text, final, depth)
+                    continue
                 if _canonical(final) not in stored and (document := _to_document(final, page.text)):
                     document.metadata.update(crawl_depth=depth, requested_url=requested, discovered_from=parent,
                                              crawl_priority=priority + _crawl_priority(final) - priority_of(final),
@@ -179,21 +204,29 @@ def _to_document(url: str, html: str) -> RawDocument | None:
     issues = content_issues(markdown)
     if is_access_wall(title, markdown) or len(markdown) < _MIN_CONTENT_CHARS or "navigation_only" in issues:
         return None
+    # Read here because this is the last moment the page's HTML exists: the
+    # document keeps only its text, and the logo and photograph are not text.
     return RawDocument(
         content=markdown,
         source=url,
         source_type=SourceType.WEBSITE,
         fetched_at=datetime.now(UTC),
-        metadata={"title": title, "description": description, "crawled": True, "content_issues": issues},
+        metadata={"title": title, "description": description, "crawled": True, "content_issues": issues,
+                  "identity": read_identity(html, url).as_metadata()},
     )
 
 
 def _canonical(url: str) -> str:
     parsed = urlsplit(url)
+    path = parsed.path.rstrip("/")
+    # Documentation publishers expose HTML and Markdown representations of
+    # the same article. Reading both spends two slots without widening scope.
+    if re.match(r"/(?:docs?|documentation|help)/", path) and path.endswith('.md'):
+        path = path[:-3]
     query = [(key, value) for key, value in parse_qsl(parsed.query, keep_blank_values=True)
              if not key.lower().startswith("utm_") and key.lower() not in {"cta", "ref", "fbclid", "gclid"}]
     return urlunsplit((parsed.scheme.lower(), parsed.netloc.lower().removeprefix("www."),
-                       parsed.path.rstrip("/"), urlencode(sorted(query)), ""))
+                       path, urlencode(sorted(query)), ""))
 
 
 def _same_site(url: str, root: str) -> bool:
@@ -203,6 +236,12 @@ def _same_site(url: str, root: str) -> bool:
 def _family(url: str) -> str:
     path = urlsplit(url).path.lower()
     host = (urlsplit(url).hostname or "").split(".")[0]
+    if re.search(r"/(?:data-collection|what-we-collect)(?:/|$)", path):
+        return "data"
+    if re.search(r"/(?:data-processing-agreement|dpa)(?:/|$)", path):
+        return "agreement"
+    if re.search(r"/(?:security|trust-center)(?:/|$)", path):
+        return "trust"
     if host in {"docs", "doc", "documentation", "help", "support", "developers", "developer"} or re.search(
         r"/(?:docs?|documentation|help|support|guides?)(?:/|$)", path,
     ):
@@ -219,10 +258,22 @@ def _family(url: str) -> str:
 def _crawl_priority(url: str) -> int:
     path = urlsplit(url).path.lower()
     score = priority_of(url)
+    if path.endswith('/llms.txt'):
+        return 145
+    if _family(url) in {"data", "agreement"}:
+        return max(score, 116)
+    if _family(url) == "trust":
+        return max(score, 105)
+    if path.rstrip('/') in {'/docs', '/help', '/documentation', '/support'}:
+        return 130
+    if _family(url) == "documentation" and re.search(
+        r"/(?:integrations?|smtp)(?:/|\.|$)", path,
+    ):
+        return max(score, 135)
     if _family(url) == "catalog":
         return max(score, 90)
     if _family(url) == "documentation" and re.search(
-        r"(?:^|[/_-])(?:install(?:ation)?|setup|quickstart|getting-started|get-started|script|integration-guides)(?:[/_.-]|$)",
+        r"(?:^|[/_-])(?:install(?:ation)?|setup|quickstart|getting-started|get-started|script|integration-guides)(?:[/_.-]|$)|/guides/intro(?:\.|$)",
         path,
     ):
         # The hub already spent one documentation slot. Its diversity penalty

@@ -55,6 +55,7 @@ class MarketScanner:
         previous: MarketSnapshot | None = None,
         discover: bool = True,
         on_progress: Progress | None = None,
+        profile_limit: int | None = None,
     ) -> ScanResult:
         """Read the market once.
 
@@ -75,6 +76,7 @@ class MarketScanner:
                 artifacts.business, known=[lead.name for lead in leads],
                 public_page_requests={item.name: item.url for item in previous.rivals
                                       if not item.verified and item.url} if previous else {},
+                **({"compact": True, "limit": 3} if profile_limit is not None else {}),
             )
             leads = [lead.model_copy(update={"public_urls": found.public_pages.get(lead.name, lead.public_urls)[:2]})
                      for lead in leads]
@@ -102,9 +104,18 @@ class MarketScanner:
                 notes=notes,
             )
 
+        fallback = leads[profile_limit:profile_limit + 1] if profile_limit is not None else []
+        if profile_limit is not None and len(leads) > profile_limit:
+            leads = leads[:profile_limit]
+            notes.append("First-campaign scan profiles a subset of known alternatives.")
         say("profile", f"Reading {len(leads)} competitor site(s)")
         profiles = await self._scout.profile_all(leads, artifacts=artifacts,
                                                  previous=previous.rivals if previous else [])
+        if fallback and not any(profile.verified for profile in profiles):
+            say("profile", "The first competitor could not be verified; trying one other known alternative")
+            profiles.extend(await self._scout.profile_all(
+                fallback, artifacts=artifacts, previous=previous.rivals if previous else [],
+            ))
         readable = [profile for profile in profiles if profile.verified]
         say(
             "profile",

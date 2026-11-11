@@ -1,0 +1,346 @@
+[
+  {
+    "event": "draft",
+    "position": 1,
+    "attempt": 1,
+    "subject": "Review your failed test event",
+    "preview_text": "Check the failure context before replaying the same event.",
+    "body": "A failed test event gives you something concrete to inspect before sending it again. Open that event first and review its delivery context, so you can check the failure you are about to replay.\n\nHookdeck’s Event Gateway provides observability and control over inbound webhook activity, including issue detection and webhook replay. That keeps the review and retry focused on the same event in your test environment.\n\nOnce you have checked the context, retry that same test event from Hookdeck. Replaying it lets you run the event again after reviewing the failure, instead of treating the first attempt as a black box.",
+    "call_to_action": "Review and retry in Hookdeck",
+    "sign_off": "- Hookdeck"
+  },
+  {
+    "event": "gates",
+    "position": 1,
+    "attempt": 1,
+    "passed": false,
+    "semantic_review": {
+      "key": "19b4fe99e6d808e5088a3a519ed2950423389896d9e2c8076093d44302c47d0e",
+      "approved": false,
+      "decision": {
+        "verdict": "supported",
+        "claims": [
+          {
+            "text": "Subject: Review your failed test event",
+            "status": "supported",
+            "explanation": "The failed test event is part of the user-specified recipient context, and Hookdeck’s documented observability supports reviewing inbound events.",
+            "citations": [
+              {
+                "source_id": "E9",
+                "quote": "Handle inbound webhooks and events before they hit your app — with full observability and control."
+              }
+            ]
+          },
+          {
+            "text": "Preview text: Check the failure context before replaying the same event.",
+            "status": "supported",
+            "explanation": "Full observability supports inspecting the event, while the documented workflow describes inspecting webhook bodies and replaying relevant events.",
+            "citations": [
+              {
+                "source_id": "E9",
+                "quote": "Handle inbound webhooks and events before they hit your app — with full observability and control."
+              },
+              {
+                "source_id": "source:2",
+                "quote": "They see recent webhooks, filter by source, inspect bodies, and replay what matters."
+              }
+            ]
+          },
+          {
+            "text": "A failed test event gives you something concrete to inspect before sending it again.",
+            "status": "supported",
+            "explanation": "The failed test event is supplied recipient context. The sources document inspection and replay of events.",
+            "citations": [
+              {
+                "source_id": "source:2",
+                "quote": "They see recent webhooks, filter by source, inspect bodies, and replay what matters."
+              }
+            ]
+          },
+          {
+            "text": "Open that event first and review its delivery context, so you can check the failure you are about to replay.",
+            "status": "supported",
+            "explanation": "Hookdeck documents full observability, issue detection, and an inspect-then-replay workflow. The sentence does not promise a successful retry or a particular visible field.",
+            "citations": [
+              {
+                "source_id": "E9",
+                "quote": "Handle inbound webhooks and events before they hit your app — with full observability and control."
+              },
+              {
+                "source_id": "E12",
+                "quote": "Auto-detect issues and replay"
+              },
+              {
+                "source_id": "source:2",
+                "quote": "They see recent webhooks, filter by source, inspect bodies, and replay what matters."
+              }
+            ]
+          },
+          {
+            "text": "Hookdeck’s Event Gateway provides observability and control over inbound webhook activity, including issue detection and webhook replay.",
+            "status": "supported",
+            "explanation": "The two cited Event Gateway statements jointly entail the named inbound-event, observability, control, issue-detection, and replay capabilities.",
+            "citations": [
+              {
+                "source_id": "E9",
+                "quote": "Handle inbound webhooks and events before they hit your app — with full observability and control."
+              },
+              {
+                "source_id": "E12",
+                "quote": "Auto-detect issues and replay"
+              }
+            ]
+          },
+          {
+            "text": "That keeps the review and retry focused on the same event in your test environment.",
+            "status": "supported",
+            "explanation": "The test environment and failed event are supplied recipient context. The documented workflow supports inspecting events and replaying the relevant event without guaranteeing an outcome.",
+            "citations": [
+              {
+                "source_id": "source:2",
+                "quote": "They see recent webhooks, filter by source, inspect bodies, and replay what matters."
+              }
+            ]
+          },
+          {
+            "text": "Once you have checked the context, retry that same test event from Hookdeck.",
+            "status": "supported",
+            "explanation": "Hookdeck documents replay capability and an inspect-then-replay workflow. The sentence is an instruction, not a claim that the retry will succeed.",
+            "citations": [
+              {
+                "source_id": "E12",
+                "quote": "Auto-detect issues and replay"
+              },
+              {
+                "source_id": "source:2",
+                "quote": "They see recent webhooks, filter by source, inspect bodies, and replay what matters."
+              }
+            ]
+          },
+          {
+            "text": "Replaying it lets you run the event again after reviewing the failure, instead of treating the first attempt as a black box.",
+            "status": "supported",
+            "explanation": "Replay supports running the event again, while full observability and the documented inspection workflow support reviewing it rather than operating without visibility.",
+            "citations": [
+              {
+                "source_id": "E9",
+                "quote": "Handle inbound webhooks and events before they hit your app — with full observability and control."
+              },
+              {
+                "source_id": "E12",
+                "quote": "Auto-detect issues and replay"
+              },
+              {
+                "source_id": "source:2",
+                "quote": "They see recent webhooks, filter by source, inspect bodies, and replay what matters."
+              }
+            ]
+          },
+          {
+            "text": "Review and retry in Hookdeck →",
+            "status": "supported",
+            "explanation": "The CTA accurately names the single requested workflow. Hookdeck documents observability, inspection, and replay, and the supplied destination is its documented homepage without an added access or outcome promise.",
+            "citations": [
+              {
+                "source_id": "E9",
+                "quote": "Handle inbound webhooks and events before they hit your app — with full observability and control."
+              },
+              {
+                "source_id": "E12",
+                "quote": "Auto-detect issues and replay"
+              }
+            ]
+          },
+          {
+            "text": "- Hookdeck",
+            "status": "supported",
+            "explanation": "The signature follows the explicit request for an email from the Hookdeck team and makes no additional product claim.",
+            "citations": []
+          }
+        ],
+        "findings": [],
+        "summary": "Every material assertion is supported by the supplied recipient context and literal evidence for Event Gateway observability, issue detection, inspection, and replay. The draft stays under 150 body words, uses one CTA, asks only for the requested review-and-retry workflow, and makes no unsupported access, timing, plan, or success claim.",
+        "benefit_retention": {
+          "status": "preserved",
+          "explanation": "The draft preserves the intended benefit: inspect the failed event’s available context first, then replay that same test event without promising that the retry will succeed.",
+          "original_passage": "Open that event first and review its delivery context, so you can check the failure you are about to replay.",
+          "revised_passage": "Open that event first and review its delivery context, so you can check the failure you are about to replay."
+        }
+      },
+      "version": 3,
+      "sources": {
+        "E9": "https://hookdeck.com/",
+        "source:2": "[How Pennylane Streamlined Six Integrations and Eliminated Replay Errors with Hookdeck › The result; document_id=a2736407-3287-4284-82bc-e23cbdd0e4c4; source=https://hookdeck.com/customers/pennylane; aliases=https://hookdeck.com/customers/pennylane; chunk=6]",
+        "E12": "https://hookdeck.com/"
+      }
+    },
+    "issues": [
+      {
+        "gate": "review-reference",
+        "detail": "A factual approval has no source citation.",
+        "severity": "blocking"
+      }
+    ]
+  },
+  {
+    "event": "draft",
+    "position": 1,
+    "attempt": 2,
+    "subject": "Check the event, then retry",
+    "preview_text": "Review its delivery attempts before replaying it from Hookdeck.",
+    "body": "Start in Hookdeck’s Events section. Open the failed event in your test environment, then expand it to see the attempts made to deliver it to your webhook endpoint.\n\nHookdeck is an event gateway for observing inbound webhooks and replaying events. Reviewing the delivery attempts puts the event’s previous activity in view before you send that same event again.\n\nReview the attempts for this failed test event, then retry it from Hookdeck when you are ready. That keeps the review and replay tied to the same test event.",
+    "call_to_action": "Go to Hookdeck",
+    "sign_off": "- Hookdeck"
+  },
+  {
+    "event": "gates",
+    "position": 1,
+    "attempt": 2,
+    "passed": false,
+    "semantic_review": {
+      "key": "8f3abbcffb6da8cbe01cbcdfd145d4ddfb92f5ab4a2861ed9411c9f58355c03e",
+      "approved": false,
+      "decision": {
+        "verdict": "supported",
+        "claims": [
+          {
+            "text": "Preview text: Review its delivery attempts before replaying it from Hookdeck.",
+            "status": "supported",
+            "explanation": "The documentation shows that an event can be expanded to view its delivery attempts, while Hookdeck's Event Gateway supports replay.",
+            "citations": [
+              {
+                "source_id": "source:0",
+                "quote": "Next, open the [Events section of the Hookeck dashboard](https://dashboard.hookdeck.com/events). Click on the Event to expand the section to see the Attempts made to deliver the event to a webhook endpoint."
+              },
+              {
+                "source_id": "E12",
+                "quote": "Auto-detect issues and replay"
+              }
+            ]
+          },
+          {
+            "text": "Start in Hookdeck’s Events section.",
+            "status": "supported",
+            "explanation": "The documentation explicitly identifies the Events section of the Hookdeck dashboard.",
+            "citations": [
+              {
+                "source_id": "source:0",
+                "quote": "Next, open the [Events section of the Hookeck dashboard](https://dashboard.hookdeck.com/events)."
+              }
+            ]
+          },
+          {
+            "text": "Open the failed event in your test environment, then expand it to see the attempts made to deliver it to your webhook endpoint.",
+            "status": "supported",
+            "explanation": "The failed test event is the audience circumstance stipulated by the user request. The documented interface supports opening and expanding an event to see attempts made to deliver it to a webhook endpoint.",
+            "citations": [
+              {
+                "source_id": "source:0",
+                "quote": "Click on the Event to expand the section to see the Attempts made to deliver the event to a webhook endpoint."
+              }
+            ]
+          },
+          {
+            "text": "Hookdeck is an event gateway for observing inbound webhooks and replaying events.",
+            "status": "supported",
+            "explanation": "The supplied proposition identifies Hookdeck's Event Gateway, documents full observability for inbound webhooks and events, and states that it can replay.",
+            "citations": [
+              {
+                "source_id": "proposition:mechanism:0",
+                "quote": "### Event Gateway\nReceive webhooks\n\nHandle inbound webhooks and events before they hit your app — with full observability and control."
+              },
+              {
+                "source_id": "E12",
+                "quote": "Auto-detect issues and replay"
+              }
+            ]
+          },
+          {
+            "text": "Reviewing the delivery attempts puts the event’s previous activity in view before you send that same event again.",
+            "status": "supported",
+            "explanation": "Viewing an event's delivery attempts exposes its prior delivery activity, and replay provides the documented mechanism for sending the event again.",
+            "citations": [
+              {
+                "source_id": "source:0",
+                "quote": "Click on the Event to expand the section to see the Attempts made to deliver the event to a webhook endpoint."
+              },
+              {
+                "source_id": "E12",
+                "quote": "Auto-detect issues and replay"
+              }
+            ]
+          },
+          {
+            "text": "Review the attempts for this failed test event, then retry it from Hookdeck when you are ready.",
+            "status": "supported",
+            "explanation": "The failed test event is stipulated by the user request. Hookdeck documents viewing an event's attempts and replaying events; the wording makes no promise that the retry will succeed.",
+            "citations": [
+              {
+                "source_id": "source:0",
+                "quote": "Click on the Event to expand the section to see the Attempts made to deliver the event to a webhook endpoint."
+              },
+              {
+                "source_id": "E12",
+                "quote": "Auto-detect issues and replay"
+              }
+            ]
+          },
+          {
+            "text": "That keeps the review and replay tied to the same test event.",
+            "status": "supported",
+            "explanation": "This is the direct procedural consequence of reviewing the specified event and then replaying that same event, consistent with the documented event-level workflow.",
+            "citations": [
+              {
+                "source_id": "source:0",
+                "quote": "Click on the Event to expand the section to see the Attempts made to deliver the event to a webhook endpoint."
+              },
+              {
+                "source_id": "E12",
+                "quote": "Auto-detect issues and replay"
+              }
+            ]
+          },
+          {
+            "text": "Go to Hookdeck →",
+            "status": "supported",
+            "explanation": "The CTA makes only a navigation promise and uses the supplied selected destination, https://hookdeck.com/. It does not imply free access, a particular plan, or a guaranteed result.",
+            "citations": [
+              {
+                "source_id": "cta:0",
+                "quote": "# Never miss a *webhook*\nReliable infrastructure to work with webhooks and external events — without managing it yourself."
+              }
+            ]
+          },
+          {
+            "text": "- Hookdeck",
+            "status": "supported",
+            "explanation": "The sender identity is explicitly stipulated by the user request: the email is to be from the Hookdeck team.",
+            "citations": []
+          }
+        ],
+        "findings": [],
+        "summary": "All material product and workflow assertions are supported by the supplied documentation or by the audience circumstance explicitly stipulated in the user request. The draft stays under 150 body words, asks for the single review-and-retry action, explains the value of reviewing first, uses one CTA to the selected destination, and avoids unsupported outcomes, access, plan, and timing claims.",
+        "benefit_retention": {
+          "status": "preserved",
+          "explanation": "The draft preserves the intended benefit: the developer reviews the failed test event's visible delivery attempts before replaying that same event, without promising that replay will succeed or resolve the underlying issue.",
+          "original_passage": "Reviewing the delivery attempts puts the event’s previous activity in view before you send that same event again.",
+          "revised_passage": ""
+        }
+      },
+      "version": 3,
+      "sources": {
+        "source:0": "[Quickstart: Third party event routing with Hookdeck | Hookdeck Event Gateway Docs › Receive a webhook from GitHub in Hookdeck; document_id=4002d6af-b9d2-4d38-a5d7-b45ad6376de4; source=https://hookdeck.com/docs/use-cases/third-party-routing/quickstart; aliases=https://hookdeck.com/docs/use-cases/third-party-routing/quickstart; chunk=8]",
+        "E12": "https://hookdeck.com/",
+        "proposition:mechanism:0": "[Hookdeck - Reliable webhook infrastructure › Event Gateway; document_id=4f0bcad2-ce66-4cdd-bc3e-5cd2fdad914c; source=https://hookdeck.com/; aliases=https://hookdeck.com/; chunk=1]",
+        "cta:0": "[Hookdeck - Reliable webhook infrastructure › Never miss a *webhook*; document_id=4f0bcad2-ce66-4cdd-bc3e-5cd2fdad914c; source=https://hookdeck.com/; aliases=https://hookdeck.com/; chunk=0]"
+      }
+    },
+    "issues": [
+      {
+        "gate": "review-reference",
+        "detail": "A factual approval has no source citation.",
+        "severity": "blocking"
+      }
+    ]
+  }
+]

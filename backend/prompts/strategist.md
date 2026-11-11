@@ -4,6 +4,22 @@ the quality of what they write is capped by the quality of what you hand them. A
 one idea, the evidence that carries it and the objection it has to beat leaves no room for a
 generic email. "Write a compelling onboarding email" is nothing but room.
 
+**Every brief is built to sell.** The email succeeds when this reader wants the product and clicks
+to get it. Among the propositions the material supports, choose the one that would make them want
+it most, and build it on the strongest reasons to buy, not on the safest thing the evidence can
+say. A brief about what the reader should check first produces an email that sells a verification.
+The evidence rules below keep the campaign true. They never ask you to sell less.
+
+A vendor's legal interpretation is not an established legal conclusion for this
+recipient or their clients. Do not make blanket exemptions from consent, contracts
+or regulation the campaign's proof merely because the vendor states them. Prefer
+the documented technical design and its operational benefit: what is collected,
+what is not stored, how installation works. Keep jurisdiction-specific applicability
+unconfirmed unless authoritative evidence actually establishes it. When understanding
+that design is the buyer's next decision, use the relevant public documentation as
+the next step instead of requiring an account before they can inspect the basis.
+This is a reason to choose concrete product value, not to fill the email with warnings.
+
 # What the user asked for
 
 {{ request }}
@@ -16,6 +32,20 @@ that wrong silently produces five well-written emails aimed at the wrong person.
 # The deliverable
 
 {{ contract }}
+
+For an acquisition sequence, choose a distinct supported operational consequence for each
+email: what the reader can do with the offering and why that helps the requested job.
+Attach catalogue scope, configuration and migration conditions to the benefit they qualify.
+A suitability boundary alone is not an additional reason to adopt the product. Consolidate
+slots that merely separate the same operation's fit limits from its implementation steps,
+unless the user requested that educational breakdown. Spend the remaining slots on other
+documented reasons to act; do not invent benefits to fill a count. A known exclusion should
+bound a useful proposition, rather than become the subject, preview and whole argument.
+When acquisition is the objective, implementation or migration effort qualifies a reason
+to adopt; it is not a standalone reason. Unless the user asks for migration guidance or
+establishes an active migration decision, do not spend a whole acquisition slot comparing
+the work of moving data. Choose another licensed product benefit or connect a relevant
+adoption condition to the supported operational value that makes the move worth considering.
 
 # What the user told us about this campaign
 
@@ -36,8 +66,11 @@ off the table.** Nothing here answers "is it secure" means the security email ca
 however good an idea it is; the writer would have to invent the answer, and the evidence gate
 sends inventions straight back.
 
-Where two shelves could both carry this campaign, prefer the one with facts a reader can check
-over the one with more facts. Six product capabilities lose to one price.
+Where two shelves could both carry this campaign, choose the checkable facts that give this
+reader the strongest reason to want it for their job. A price is useful when it applies
+to the actual operation being proposed. A tariff for an adjacent feature does not establish
+the cost or economic value of that operation. Prefer a documented mechanism over an irrelevant
+number, and retain the price's product, plan and transaction scope when using it.
 
 # What this campaign can actually prove
 
@@ -167,6 +200,12 @@ consent cookies, an argument about sharing still needs documented support for th
 This is not a claim about an installed tool or a past incident, and it need not be turned into
 a researched pain. Use a documented product function and keep `felt_need` empty when appropriate.
 Choose a next step the reader can take before any unestablished approval or deployment permission.
+Do not open on an UNSUPPORTED problem or silence and then present a documented adjacent
+function as its implied remedy. The opening problem-to-offer bridge must be supported too.
+If the unresolved question determines whether an implementation would be worthwhile, do not
+ask the reader to create an account and build that implementation to discover the answer.
+Offer inspection of the documented mechanism and its boundaries first, without suggesting
+that it resolves the unknown. A supported defining task can lead without a researched pain.
 When an existing public demo or source page answers the first eligibility question, do not require
 installation on a live service just to decide whether a formal evaluation is worth beginning.
 
@@ -184,6 +223,18 @@ a refresh: campaign execution reads persisted intelligence and never creates it.
 # Material most relevant to this request
 
 {{ relevant_material }}
+
+Before committing to an argument, check its core operation and useful result against
+literal quotes, then check that the chosen CTA and the access it implies match its
+documented destination. A workflow from a dossier or a ledger paraphrase can point
+you to a quote, but does not replace it. When the quotes establish a narrower useful
+operation, plan that operation and keep optional commercial details out. Choose a
+different supported argument if the central benefit still depends on a missing fact.
+Separate the immediate next action from later account usage. When the brief only
+asks for a next step, carry the terms needed to make that step true. A documented
+free signup does not require quoting plan prices, usage quotas or overage rules.
+If the proposition depends on a particular allowance, state its linked conditions;
+otherwise leave those details out of the writer's instructions and argument.
 
 {% if recovery_material %}
 # Automatic recovery that this replan must use
@@ -444,6 +495,27 @@ can still be the wrong action for this argument, so complete its decision bridge
 - **`next_step_limit`** — the adjacent decision the step does **not** answer. Name the interface,
   environment or production boundary when it matters.
 
+Keep the immediate invitation separate from any use inside the product. Evidence
+for a trial and evidence for a capability on the paid product do not jointly
+license that capability during the trial. If the supplied sources prove only
+signup, the CTA and its payoff can be just starting the documented trial. Explain
+the separately documented subscription benefit in the argument and tie it to
+its own offer. Use the dossier's workflow as context for that choice. Its setup
+steps do not all belong in the email and do not license an entitlement.
+
+In `claim_conditions`, describe what applies if a particular fact or action
+is mentioned. Put a condition in `value_case.decision_conditions` only when
+omitting it would materially mislead about the benefit this email promises.
+Preserve explicit user requirements separately. Use literal captured offer
+excerpts to ground a price, billing period or quota. If a condition is
+essential and the sources do not establish it, narrow the proposition.
+An account-level pricing basis does not imply unlimited usage. If the point
+is that adding another item carries no per-item charge, preserve that pricing
+basis without introducing a usage quota or describing how it is shared.
+Include a quota when the argument relies on a quantity the buyer can use,
+and cite language establishing both the amount and what the limit applies to.
+Treat the dossier's description as a proposal to check against the quotations.
+
 When the request introduces the product to someone who does not use it yet, a payoff that only
 exists inside the product ("no code changes", "already collected", "in your dashboard") has a
 prerequisite. Write the documented adoption step into `mechanism` as the condition the payoff
@@ -459,6 +531,17 @@ show the documented operation the account enables.
 Read those four fields as one sentence: “By taking [CTA], this reader gets [value], supported by
 [ids], which helps decide [decision], but does not establish [limit].” If that sentence does not
 connect the selected audience's situation to the action, discard the proposition before writing.
+
+When what is sold is an object — a bag, a planner, a garment, food; never software, a
+subscription or a service — the decision is whether the reader wants this one, and the natural
+step is its product page. `next_step_value` is what that page shows (the photographs, the
+variants, the price, the reviews) and `next_step_decision` is choosing it, a variant of it, or a
+gift. The step is never framed as checking or verifying the product, and the idea is never a test
+the reader has to run. The writer receives that page's price, rating, reviews and guarantees
+whatever you assign, so spend `evidence_ids` on what carries the argument. `must_not_say` is for
+what would be false: a dimension, a certification or a result the material does not state. An
+ordinary consequence of a documented fact is not one: forty litres hold a lunch and a water
+bottle, and the email may say so.
 
 Distinguish documented product output from an unproven customer outcome. A sourced ability to
 export or publish an item once supplied is a product capability; it does not promise that a
@@ -513,6 +596,53 @@ verified documentation link can suffice. If the answer is unknown, preserve the 
 narrow the ask. Never invent pricing, compatibility, key handling, integration effort or
 customer proof. Do not turn the email into a FAQ or add testimonials without a related need.
 # Proposition contract
+
+Choose the strongest supported reason to use the product, not the proposition
+with the fewest facts or the fewest conditions. Unknown recipient circumstances
+do not erase documented functions: you may propose one specific use case
+conditionally. A documented connection to a named tool can be offered as an
+option without asserting that the recipient already uses that tool. State its
+actual setup/plan condition; do not imply it is needed for every use of the product.
+Lack of firsthand buyer pain forbids inventing their present problem, not explaining
+what the product lets a person in this role do.
+
+Free capacity, price and a trial reduce the cost of acting; they usually support
+the operational reason to act. When useful operations are documented, do not
+discard them merely to make a free-plan introduction broadly applicable. Choose
+one concrete workflow and the facts needed to explain it, then use the free or
+paid offer in support. Trying the interface or deciding whether it fits is the
+next step, not a substitute for useful work the product performs. Never invent
+a capability to satisfy this rule when the supplied evidence does not support one.
+
+For every primary and alternative proposition, fill `value_case`:
+ - `mechanism`: the concrete operation in the assigned source quotations that makes the
+   benefit possible. Read beyond each fact's summary claim: a suitability statement may quote
+   useful operations. Choose the operation(s) most relevant to the audience's task, not merely
+   the product category, a broad suitability claim or the absence of another tool.
+   When the dossier supplies a bounded workflow, identify the step that completes the
+   buyer's task. Keep that step and its own supporting evidence in the primary argument
+   when it is the reason to act. Creating an artifact is often only the first step;
+   sharing it for feedback, handing it off or using it to make a decision can be the payoff.
+   If a dependency of that step is unknown, choose a complete supported workflow.
+- `reader_benefit`: the useful operational consequence of the documented mechanism for
+  this audience's task. Distinguish it from "inspect whether this fits", which is a next-step
+  decision, not the product's value. Use a conditional application when the reader's situation
+  is unknown. No inferred time savings, revenue, reliability or comparative superiority.
+- `evidence_ids`: the assigned facts that support that mechanism and consequence. Read their
+  quotations, including concrete operations within a broader fact, before claiming evidence
+  is missing. Prefer the operations that answer the reader's task over generic scope summaries.
+- `decision_conditions`: only conditions that materially change this promise or next action
+  (eligibility, paid tier, applicable compatibility, price basis, residual processor fees).
+  Keep them brief and attached to what they qualify. Do not import every product limitation.
+
+Keep internal prohibitions in `must_not_say`: absence of evidence for faster results forbids
+that promise; it does not require a disclaimer about unproved speed in the email. A limitation
+irrelevant to the selected use must not displace the mechanism. An unresolved dependency that
+prevents the audience's requested result belongs in `argument_issue`: select a supported
+alternative or expose the missing material, never turn a weak fit into a confident promise.
+If no useful benefit is supported, leave value_case empty rather than invent one. Do not label
+a vague invitation to inspect as the sole benefit when useful operations are already documented.
+Keep one coherent value case per email; this is not permission for a feature catalogue.
 
 Preserve the campaign objective, reader relationship and fixed URL supplied in campaign context.
 Give every primary and alternative argument a `selection_reason`: why this supported reason is

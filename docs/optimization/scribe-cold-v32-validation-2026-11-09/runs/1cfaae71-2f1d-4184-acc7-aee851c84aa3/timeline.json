@@ -1,0 +1,1585 @@
+{
+  "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+  "events": [
+    {
+      "type": "execution_started",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Request: Write exactly one email. Introduce our product to a new buyer with one clear next step.",
+      "at": "2026-11-09T05:12:00.010730+00:00",
+      "campaign_id": "65150239-cc6d-4a96-8dba-57ba86473a76",
+      "request": "Write exactly one email. Introduce our product to a new buyer with one clear next step."
+    },
+    {
+      "type": "phase",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Read the request as 1 email(s) - the user said so",
+      "at": "2026-11-09T05:12:00.047451+00:00",
+      "phase": "contract",
+      "count": 1,
+      "explicit": true,
+      "kind": "single_email"
+    },
+    {
+      "type": "phase",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Reusing what we already know about this business (version 1, 24 facts)",
+      "at": "2026-11-09T05:12:00.311044+00:00",
+      "phase": "knowledge",
+      "reused": true,
+      "version": 1
+    },
+    {
+      "type": "knowledge_ready",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "knowledge_compiler",
+      "step": null,
+      "level": "info",
+      "message": "Knowledge reused: 24 facts the copy may claim, 0 gap(s)",
+      "at": "2026-11-09T05:12:00.328213+00:00",
+      "reused": true,
+      "version": 1,
+      "evidence_count": 24,
+      "segments": [
+        "IT teams",
+        "HR & L&D teams"
+      ],
+      "gaps": [],
+      "voice_learned": true,
+      "notes": [
+        "44,443 characters of material were past the reading budget and were not read.",
+        "First-campaign knowledge covers selected pages and decision-relevant evidence. Compile sources to read them in more depth."
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Researched audience and current Relevance Dossier loaded",
+      "at": "2026-11-09T05:12:00.655179+00:00",
+      "phase": "intelligence",
+      "selected_audience": "IT teams",
+      "audience_resolution_status": "audience_research_loaded",
+      "audience_research_id": "c28d99e8-624f-4f7a-ace0-1ae2f5e32f14",
+      "audience_research_version": 1,
+      "dossier_status": "current",
+      "dossier_id": "f7da9c8e-5948-4b86-8cac-52c01fa0c2eb",
+      "dossier_version": 3,
+      "dossier_schema_version": 2,
+      "stale_reasons": [],
+      "legacy_fallback_used": false,
+      "qualified_subsegment": "On the free Basic plan the buyer can create an account and, in their browser, manually walk through one IT procedure they currently only hold in their head (for example a browser-based software setup or account configuration) and have Scribe generate it as a how-to guide they can share.",
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [],
+      "validation_warnings": [
+        "P1: Historical sources (2019-07-31); present applicability is not corroborated.",
+        "P1: Single-source problem; independent corroboration is not established.",
+        "Source coverage is partial: 2 readable page(s), 2 unavailable URL(s). Findings cover only the pages read.",
+        "Moved product questions without an explicit audience requirement to decision gaps.",
+        "Defining audience need is unassessed or its references required normalization."
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "5 third-party proof point(s) available to spend",
+      "at": "2026-11-09T05:12:00.669422+00:00",
+      "phase": "proof",
+      "proof": 5,
+      "checkable": 19,
+      "asks": []
+    },
+    {
+      "type": "phase",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "1 competitor(s) read - 0 documented difference(s); 22 unmatched captured proposition(s) need verification, not an exclusivity conclusion",
+      "at": "2026-11-09T05:12:01.172242+00:00",
+      "phase": "market",
+      "rivals": 1,
+      "open_ground": [
+        "price",
+        "price",
+        "security",
+        "security",
+        "security",
+        "proof",
+        "proof",
+        "proof",
+        "proof",
+        "proof",
+        "proof",
+        "proof",
+        "proof",
+        "other",
+        "other",
+        "other",
+        "other",
+        "other",
+        "other",
+        "other",
+        "other",
+        "other"
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Written to IT teams - selected audience hypothesis; response is unmeasured",
+      "at": "2026-11-09T05:12:01.328587+00:00",
+      "phase": "audience",
+      "segment": "IT teams",
+      "mapped": true
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Strategist: Deciding what this campaign says, and in what order",
+      "at": "2026-11-09T05:12:01.340247+00:00",
+      "agent_name": "Strategist",
+      "label": "Deciding what this campaign says, and in what order"
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "debug",
+      "message": "Sent 90,642 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-09T05:12:01.493797+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 90642
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 6,942 characters in 45.9s (28,557 in / 3,247 out)",
+      "at": "2026-11-09T05:12:47.449795+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 28557,
+      "output_tokens": 3247,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.268727,
+      "duration_ms": 45944.76749992464,
+      "response_chars": 6942
+    },
+    {
+      "type": "phase",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Proposition selected for the requested campaign",
+      "at": "2026-11-09T05:12:47.467386+00:00",
+      "phase": "strategy_plan",
+      "pipeline_version": 2,
+      "strategy_mode": "planned",
+      "intent": {
+        "objective": "custom",
+        "objective_source": "inferred",
+        "reader_relationship": "unknown",
+        "relationship_source": "inferred",
+        "announcement": "",
+        "reason_now": "",
+        "desired_action": ""
+      },
+      "plan_history": [
+        {
+          "raw_plan": {
+            "interpretation": "Treat this as a single acquisition email introducing Scribe to a new IT buyer whose prior relationship is unknown. Keep the proposition narrowly focused on documenting one browser-based IT procedure with the free Basic plan, then ask the reader to sign up and try that specific task.",
+            "pipeline_version": 2,
+            "strategy_mode": "planned",
+            "intent": {
+              "objective": "acquisition",
+              "objective_source": "inferred",
+              "reader_relationship": "unknown",
+              "relationship_source": "inferred",
+              "announcement": "",
+              "reason_now": "",
+              "desired_action": "Sign up for the free Basic plan and turn one browser-based IT procedure into a how-to guide."
+            },
+            "reader": "An IT manager or sysadmin who may have a browser-based procedure that would be useful to turn into a shareable guide.",
+            "reader_segment": "IT teams",
+            "reader_profile_override": "",
+            "reader_scope": "IT teams evaluating whether Scribe can document one procedure performed in a web application. Recipient circumstances and any existing documentation practice remain unconfirmed.",
+            "fixed_cta_url": "",
+            "promise": "Scribe lets an IT team turn one browser-based procedure into a shareable how-to guide on the free Basic plan.",
+            "orientation": "Scribe is documentation software that records the steps of a procedure performed in an application and turns them into a step-by-step how-to guide for an IT team to share.",
+            "arc": "Move the reader from seeing process documentation as a separate writing task to seeing one browser-based procedure as something they can walk through and turn into a guide for free.",
+            "sequence_rationale": "One email is sufficient because the request calls for one introduction and one next step. The email should sell a concrete first use rather than catalogue plans or enterprise features: capture one useful browser procedure, generate a guide, and decide whether that workflow belongs in the team's documentation practice. The free Basic offer answers the relevant adoption objection; the desktop boundary must remain explicit but secondary.",
+            "emails": [
+              {
+                "problem_ids": [
+                  "P1"
+                ],
+                "offer_id": "offering",
+                "action_id": "sign-up-free",
+                "selection_reason": "This is the strongest supported first-use proposition for an IT buyer: it connects a concrete documentation task to an immediately available free plan without assuming an organization-wide rollout or paid commitment.",
+                "next_step_url": "https://scribehow.com/signup?plan=free",
+                "destination_kind": "web",
+                "argument_issue": "",
+                "value_case": {
+                  "reader_benefit": "If a useful IT procedure currently lives in someone's head, the team can turn one browser-based walkthrough into a guide others can use and share.",
+                  "mechanism": "On the free Basic plan, the user performs the procedure in the browser and Scribe generates a how-to guide from the steps.",
+                  "evidence_ids": [
+                    "E1",
+                    "E5"
+                  ],
+                  "decision_conditions": [
+                    "The free Basic workflow is limited to procedures performed in the browser.",
+                    "Capturing desktop-application procedures requires Pro or Enterprise."
+                  ]
+                },
+                "claim_conditions": [
+                  "Frame the undocumented-procedure situation conditionally; it is not established for every recipient.",
+                  "Keep the proposed first use to a procedure performed in a web application.",
+                  "Basic is free; desktop capture requires Pro or Enterprise."
+                ],
+                "position": 1,
+                "target_audience": "IT teams",
+                "job": "Get a new IT buyer to sign up for free and document one browser-based procedure as their first concrete test of Scribe.",
+                "single_idea": "Instead of writing one browser-based IT procedure from scratch, walk through it in Scribe and let the free Basic plan generate a how-to guide your team can share.",
+                "felt_need": "If an important browser-based setup or configuration process lives in someone's head, the team needs a practical way to turn it into a guide others can follow.",
+                "status_quo": "",
+                "why_it_fails": "",
+                "mechanism": "Create a free Basic account, perform one IT procedure in the browser, and Scribe generates the steps as a how-to guide. Keep desktop procedures outside this test because desktop capture requires Pro or Enterprise.",
+                "alternative_ideas": [],
+                "alternative_arguments": [],
+                "belief_shift": "Before: documenting a procedure means separately reconstructing and writing down its steps. After: one browser-based procedure can be captured as it is performed and generated as a guide on Scribe's free Basic plan.",
+                "evidence_ids": [
+                  "E1",
+                  "E5"
+                ],
+                "must_not_say": [
+                  "Do not claim the team can scale documentation organization-wide without a paid plan.",
+                  "Do not claim zero disruption to the team's current ticket or wiki practice.",
+                  "Do not claim avoided or reduced headcount.",
+                  "Do not claim Scribe replaces or outperforms an incumbent documentation tool.",
+                  "Do not claim guides stay current automatically or feed internal AI tools.",
+                  "Do not promise time saved or error reduction for this buyer.",
+                  "Do not claim Autocapture is available on the Basic plan.",
+                  "Do not claim sensitive-data redaction applies to Basic-plan guide generation.",
+                  "Do not imply that Basic captures procedures performed in desktop applications.",
+                  "Do not broaden the email into Pro pricing, enterprise compliance, SSO, redaction, education discounts, nonprofit discounts or team-tier rules.",
+                  "Do not present undocumented knowledge as a confirmed situation for this recipient; use a conditional application.",
+                  "Do not imply that the free browser test proves fit for an organization-wide deployment."
+                ],
+                "forbidden_evidence_ids": [],
+                "forbidden_capability_ids": [],
+                "objection": "Will I have to pay before I can see whether Scribe works for one browser-based IT procedure? No—the Basic plan is free and generates how-to guides in the browser.",
+                "tone": "Confident, direct and product-led; short and punchy without manufacturing urgency.",
+                "call_to_action": "Sign up free and capture one browser-based IT procedure.",
+                "next_step_decision": "Decide whether Scribe's browser-based guide generation is useful for documenting this kind of IT procedure.",
+                "next_step_value": "The signup gives the reader access to the free Basic plan, where they can perform one procedure in the browser and generate a how-to guide.",
+                "next_step_evidence_ids": [
+                  "E1"
+                ],
+                "next_step_limit": "This test does not establish fit for desktop-application procedures, which require Pro or Enterprise, or for an organization-wide rollout.",
+                "subject_strategy": "Make the concrete transformation the reason to open: one browser procedure can become a guide without a paid commitment. Avoid vague productivity language, unsupported savings and enterprise feature lists.",
+                "must_not_reuse": [],
+                "steering": {
+                  "directions": [],
+                  "include_evidence_ids": [],
+                  "exclude_evidence_ids": [],
+                  "use": [],
+                  "avoid": [],
+                  "context_only": [],
+                  "excluded_values": []
+                }
+              }
+            ],
+            "voice_notes": "Match Scribe's benefit-first voice: short statements, direct address and concrete verbs such as capture, walk through, generate and share. Do not use a greeting, human signature or jargon-heavy explanation.",
+            "contract": {
+              "kind": "single_email",
+              "count": 1,
+              "count_is_explicit": true,
+              "evidence": "The user explicitly requested: \"Write exactly one email.\""
+            }
+          },
+          "effective_plan": {
+            "interpretation": "Treat this as a single acquisition email introducing Scribe to a new IT buyer whose prior relationship is unknown. Keep the proposition narrowly focused on documenting one browser-based IT procedure with the free Basic plan, then ask the reader to sign up and try that specific task.",
+            "pipeline_version": 2,
+            "strategy_mode": "planned",
+            "intent": {
+              "objective": "custom",
+              "objective_source": "inferred",
+              "reader_relationship": "unknown",
+              "relationship_source": "inferred",
+              "announcement": "",
+              "reason_now": "",
+              "desired_action": ""
+            },
+            "reader": "Selected audience: IT teams.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): IT managers and sysadmins responsible for internal support documentation",
+            "reader_segment": "IT teams",
+            "reader_profile_override": "",
+            "reader_scope": "",
+            "fixed_cta_url": "",
+            "promise": "Scribe lets an IT team turn one browser-based procedure into a shareable how-to guide on the free Basic plan.",
+            "orientation": "Scribe is documentation software that records the steps of a procedure performed in an application and turns them into a step-by-step how-to guide for an IT team to share.",
+            "arc": "Move the reader from seeing process documentation as a separate writing task to seeing one browser-based procedure as something they can walk through and turn into a guide for free.",
+            "sequence_rationale": "One email is sufficient because the request calls for one introduction and one next step. The email should sell a concrete first use rather than catalogue plans or enterprise features: capture one useful browser procedure, generate a guide, and decide whether that workflow belongs in the team's documentation practice. The free Basic offer answers the relevant adoption objection; the desktop boundary must remain explicit but secondary.",
+            "emails": [
+              {
+                "problem_ids": [
+                  "P1"
+                ],
+                "offer_id": "offering",
+                "action_id": "sign-up-free",
+                "selection_reason": "This is the strongest supported first-use proposition for an IT buyer: it connects a concrete documentation task to an immediately available free plan without assuming an organization-wide rollout or paid commitment.",
+                "next_step_url": "https://scribehow.com/signup?plan=free",
+                "destination_kind": "web",
+                "argument_issue": "",
+                "value_case": {
+                  "reader_benefit": "If a useful IT procedure currently lives in someone's head, the team can turn one browser-based walkthrough into a guide others can use and share.",
+                  "mechanism": "On the free Basic plan, the user performs the procedure in the browser and Scribe generates a how-to guide from the steps.",
+                  "evidence_ids": [
+                    "E1",
+                    "E5"
+                  ],
+                  "decision_conditions": [
+                    "The free Basic workflow is limited to procedures performed in the browser.",
+                    "Capturing desktop-application procedures requires Pro or Enterprise."
+                  ]
+                },
+                "claim_conditions": [
+                  "Frame the undocumented-procedure situation conditionally; it is not established for every recipient.",
+                  "Keep the proposed first use to a procedure performed in a web application.",
+                  "Basic is free; desktop capture requires Pro or Enterprise.",
+                  "Free Basic account; guide generation happens in the browser by manually performing the steps (E1)",
+                  "Procedure must be performed in a web application, since desktop capture is a Pro or Enterprise feature (E5)",
+                  "Do not promise: No claim that the team can scale documentation organisation-wide without a paid plan",
+                  "Do not promise: No claim of zero disruption to current ticket or wiki practice",
+                  "Do not promise: No claim of avoided or reduced headcount",
+                  "Do not promise: No claim of replacing or outperforming an incumbent documentation tool",
+                  "Do not promise: No claim that guides stay current automatically or feed internal AI tools",
+                  "Do not promise: No time-saved or error-reduction promise applied to this buyer",
+                  "Do not promise: No claim that Autocapture (turning already-completed work into Scribes automatically) is available on the Basic plan — the evidence for this feature does not specify which plan tier includes it",
+                  "Do not promise: No claim that sensitive data redaction (PII/PHI) applies to Basic-plan guide generation — that protection is evidenced only for Enterprise or unspecified-plan contexts",
+                  "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit.",
+                  "Problem P1 is an inferred audience hypothesis: Some staff at technology companies report that unwritten, undocumented knowledge ('tribal knowledge') held by individuals is common and seen as important, with documentation often not treated as a first-class deliverable. Use it only conditionally (if this is relevant to the reader), not as a known current pain, behavior or outcome of the recipient. Product fit does not establish current demand or a demonstrated customer outcome.",
+                  "Historical sources (2019-07-31); present applicability is not corroborated.",
+                  "Single-source problem; independent corroboration is not established.",
+                  "The problem rests on a single 2019 forum source whose present applicability is uncorroborated, and capture of desktop-app procedures requires Pro or Enterprise (E5)."
+                ],
+                "position": 1,
+                "target_audience": "IT teams",
+                "job": "Get a new IT buyer to sign up for free and document one browser-based procedure as their first concrete test of Scribe.",
+                "single_idea": "Instead of writing one browser-based IT procedure from scratch, walk through it in Scribe and let the free Basic plan generate a how-to guide your team can share.",
+                "felt_need": "Some staff at technology companies report that unwritten, undocumented knowledge ('tribal knowledge') held by individuals is common and seen as important, with documentation often not treated as a first-class deliverable.",
+                "status_quo": "",
+                "why_it_fails": "",
+                "mechanism": "Create a free Basic account, perform one IT procedure in the browser, and Scribe generates the steps as a how-to guide. Keep desktop procedures outside this test because desktop capture requires Pro or Enterprise.",
+                "alternative_ideas": [],
+                "alternative_arguments": [],
+                "belief_shift": "Before: documenting a procedure means separately reconstructing and writing down its steps. After: one browser-based procedure can be captured as it is performed and generated as a guide on Scribe's free Basic plan.",
+                "evidence_ids": [
+                  "E1",
+                  "E5"
+                ],
+                "must_not_say": [
+                  "Do not claim the team can scale documentation organization-wide without a paid plan.",
+                  "Do not claim zero disruption to the team's current ticket or wiki practice.",
+                  "Do not claim avoided or reduced headcount.",
+                  "Do not claim Scribe replaces or outperforms an incumbent documentation tool.",
+                  "Do not claim guides stay current automatically or feed internal AI tools.",
+                  "Do not promise time saved or error reduction for this buyer.",
+                  "Do not claim Autocapture is available on the Basic plan.",
+                  "Do not claim sensitive-data redaction applies to Basic-plan guide generation.",
+                  "Do not imply that Basic captures procedures performed in desktop applications.",
+                  "Do not broaden the email into Pro pricing, enterprise compliance, SSO, redaction, education discounts, nonprofit discounts or team-tier rules.",
+                  "Do not present undocumented knowledge as a confirmed situation for this recipient; use a conditional application.",
+                  "Do not imply that the free browser test proves fit for an organization-wide deployment."
+                ],
+                "forbidden_evidence_ids": [
+                  "E13",
+                  "E14",
+                  "E15",
+                  "E16",
+                  "E17",
+                  "E18",
+                  "E20",
+                  "E21",
+                  "E24"
+                ],
+                "forbidden_capability_ids": [],
+                "objection": "Will I have to pay before I can see whether Scribe works for one browser-based IT procedure? No—the Basic plan is free and generates how-to guides in the browser.",
+                "tone": "Confident, direct and product-led; short and punchy without manufacturing urgency.",
+                "call_to_action": "Sign up free and capture one browser-based IT procedure.",
+                "next_step_decision": "Decide whether Scribe's browser-based guide generation is useful for documenting this kind of IT procedure.",
+                "next_step_value": "The signup gives the reader access to the free Basic plan, where they can perform one procedure in the browser and generate a how-to guide.",
+                "next_step_evidence_ids": [
+                  "E1"
+                ],
+                "next_step_limit": "This test does not establish fit for desktop-application procedures, which require Pro or Enterprise, or for an organization-wide rollout.",
+                "subject_strategy": "Make the concrete transformation the reason to open: one browser procedure can become a guide without a paid commitment. Avoid vague productivity language, unsupported savings and enterprise feature lists.",
+                "must_not_reuse": [],
+                "steering": {
+                  "directions": [],
+                  "include_evidence_ids": [],
+                  "exclude_evidence_ids": [],
+                  "use": [],
+                  "avoid": [],
+                  "context_only": [],
+                  "excluded_values": []
+                }
+              }
+            ],
+            "voice_notes": "Match Scribe's benefit-first voice: short statements, direct address and concrete verbs such as capture, walk through, generate and share. Do not use a greeting, human signature or jargon-heavy explanation.",
+            "contract": {
+              "kind": "single_email",
+              "count": 1,
+              "count_is_explicit": true,
+              "evidence": "one email"
+            }
+          },
+          "changed_fields": [
+            "intent",
+            "emails"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "brief_ready",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Campaign brief: Scribe lets an IT team turn one browser-based procedure into a shareable how-to guide on the free Basic plan.",
+      "at": "2026-11-09T05:12:47.477929+00:00",
+      "reader": "Selected audience: IT teams.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): IT managers and sysadmins responsible for internal support documentation",
+      "reader_segment": "IT teams",
+      "promise": "Scribe lets an IT team turn one browser-based procedure into a shareable how-to guide on the free Basic plan.",
+      "arc": "Move the reader from seeing process documentation as a separate writing task to seeing one browser-based procedure as something they can walk through and turn into a guide for free.",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Get a new IT buyer to sign up for free and document one browser-based procedure as their first concrete test of Scribe.",
+          "single_idea": "Instead of writing one browser-based IT procedure from scratch, walk through it in Scribe and let the free Basic plan generate a how-to guide your team can share.",
+          "selection_reason": "This is the strongest supported first-use proposition for an IT buyer: it connects a concrete documentation task to an immediately available free plan without assuming an organization-wide rollout or paid commitment.",
+          "problem_ids": [
+            "P1"
+          ],
+          "action_id": "sign-up-free",
+          "next_step_url": "https://scribehow.com/signup?plan=free",
+          "argument_issue": "",
+          "objection": "Will I have to pay before I can see whether Scribe works for one browser-based IT procedure? No—the Basic plan is free and generates how-to guides in the browser.",
+          "evidence_ids": [
+            "E1",
+            "E5"
+          ],
+          "must_not_say": [
+            "Do not claim the team can scale documentation organization-wide without a paid plan.",
+            "Do not claim zero disruption to the team's current ticket or wiki practice.",
+            "Do not claim avoided or reduced headcount.",
+            "Do not claim Scribe replaces or outperforms an incumbent documentation tool.",
+            "Do not claim guides stay current automatically or feed internal AI tools.",
+            "Do not promise time saved or error reduction for this buyer.",
+            "Do not claim Autocapture is available on the Basic plan.",
+            "Do not claim sensitive-data redaction applies to Basic-plan guide generation.",
+            "Do not imply that Basic captures procedures performed in desktop applications.",
+            "Do not broaden the email into Pro pricing, enterprise compliance, SSO, redaction, education discounts, nonprofit discounts or team-tier rules.",
+            "Do not present undocumented knowledge as a confirmed situation for this recipient; use a conditional application.",
+            "Do not imply that the free browser test proves fit for an organization-wide deployment."
+          ],
+          "claim_conditions": [
+            "Frame the undocumented-procedure situation conditionally; it is not established for every recipient.",
+            "Keep the proposed first use to a procedure performed in a web application.",
+            "Basic is free; desktop capture requires Pro or Enterprise.",
+            "Free Basic account; guide generation happens in the browser by manually performing the steps (E1)",
+            "Procedure must be performed in a web application, since desktop capture is a Pro or Enterprise feature (E5)",
+            "Do not promise: No claim that the team can scale documentation organisation-wide without a paid plan",
+            "Do not promise: No claim of zero disruption to current ticket or wiki practice",
+            "Do not promise: No claim of avoided or reduced headcount",
+            "Do not promise: No claim of replacing or outperforming an incumbent documentation tool",
+            "Do not promise: No claim that guides stay current automatically or feed internal AI tools",
+            "Do not promise: No time-saved or error-reduction promise applied to this buyer",
+            "Do not promise: No claim that Autocapture (turning already-completed work into Scribes automatically) is available on the Basic plan — the evidence for this feature does not specify which plan tier includes it",
+            "Do not promise: No claim that sensitive data redaction (PII/PHI) applies to Basic-plan guide generation — that protection is evidenced only for Enterprise or unspecified-plan contexts",
+            "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit.",
+            "Problem P1 is an inferred audience hypothesis: Some staff at technology companies report that unwritten, undocumented knowledge ('tribal knowledge') held by individuals is common and seen as important, with documentation often not treated as a first-class deliverable. Use it only conditionally (if this is relevant to the reader), not as a known current pain, behavior or outcome of the recipient. Product fit does not establish current demand or a demonstrated customer outcome.",
+            "Historical sources (2019-07-31); present applicability is not corroborated.",
+            "Single-source problem; independent corroboration is not established.",
+            "The problem rests on a single 2019 forum source whose present applicability is uncorroborated, and capture of desktop-app procedures requires Pro or Enterprise (E5)."
+          ],
+          "felt_need": "Some staff at technology companies report that unwritten, undocumented knowledge ('tribal knowledge') held by individuals is common and seen as important, with documentation often not treated as a first-class deliverable.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "Create a free Basic account, perform one IT procedure in the browser, and Scribe generates the steps as a how-to guide. Keep desktop procedures outside this test because desktop capture requires Pro or Enterprise.",
+          "call_to_action": "Sign up free and capture one browser-based IT procedure.",
+          "next_step_decision": "Decide whether Scribe's browser-based guide generation is useful for documenting this kind of IT procedure.",
+          "next_step_value": "The signup gives the reader access to the free Basic plan, where they can perform one procedure in the browser and generate a how-to guide.",
+          "next_step_evidence_ids": [
+            "E1"
+          ],
+          "next_step_limit": "This test does not establish fit for desktop-application procedures, which require Pro or Enterprise, or for an organization-wide rollout.",
+          "alternative_arguments": []
+        }
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Campaign intelligence applied to the normalized brief",
+      "at": "2026-11-09T05:12:47.490819+00:00",
+      "phase": "intelligence",
+      "selected_audience": "IT teams",
+      "audience_resolution_status": "audience_research_loaded",
+      "audience_research_id": "c28d99e8-624f-4f7a-ace0-1ae2f5e32f14",
+      "audience_research_version": 1,
+      "dossier_status": "current",
+      "dossier_id": "f7da9c8e-5948-4b86-8cac-52c01fa0c2eb",
+      "dossier_version": 3,
+      "dossier_schema_version": 2,
+      "stale_reasons": [],
+      "legacy_fallback_used": false,
+      "qualified_subsegment": "On the free Basic plan the buyer can create an account and, in their browser, manually walk through one IT procedure they currently only hold in their head (for example a browser-based software setup or account configuration) and have Scribe generate it as a how-to guide they can share.",
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [
+        "Free Basic account; guide generation happens in the browser by manually performing the steps (E1)",
+        "Procedure must be performed in a web application, since desktop capture is a Pro or Enterprise feature (E5)",
+        "Do not promise: No claim that the team can scale documentation organisation-wide without a paid plan",
+        "Do not promise: No claim of zero disruption to current ticket or wiki practice",
+        "Do not promise: No claim of avoided or reduced headcount",
+        "Do not promise: No claim of replacing or outperforming an incumbent documentation tool",
+        "Do not promise: No claim that guides stay current automatically or feed internal AI tools",
+        "Do not promise: No time-saved or error-reduction promise applied to this buyer",
+        "Do not promise: No claim that Autocapture (turning already-completed work into Scribes automatically) is available on the Basic plan — the evidence for this feature does not specify which plan tier includes it",
+        "Do not promise: No claim that sensitive data redaction (PII/PHI) applies to Basic-plan guide generation — that protection is evidenced only for Enterprise or unspecified-plan contexts",
+        "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit.",
+        "Problem P1 is an inferred audience hypothesis: Some staff at technology companies report that unwritten, undocumented knowledge ('tribal knowledge') held by individuals is common and seen as important, with documentation often not treated as a first-class deliverable. Use it only conditionally (if this is relevant to the reader), not as a known current pain, behavior or outcome of the recipient. Product fit does not establish current demand or a demonstrated customer outcome.",
+        "Historical sources (2019-07-31); present applicability is not corroborated.",
+        "Single-source problem; independent corroboration is not established.",
+        "The problem rests on a single 2019 forum source whose present applicability is uncorroborated, and capture of desktop-app procedures requires Pro or Enterprise (E5)."
+      ],
+      "validation_warnings": [
+        "P1: Historical sources (2019-07-31); present applicability is not corroborated.",
+        "P1: Single-source problem; independent corroboration is not established.",
+        "Source coverage is partial: 2 readable page(s), 2 unavailable URL(s). Findings cover only the pages read.",
+        "Moved product questions without an explicit audience requirement to decision gaps.",
+        "Defining audience need is unassessed or its references required normalization.",
+        "Ignored unavailable dossier ranking E16."
+      ]
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Strategist: 1 email(s) to Selected audience: IT teams.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): IT managers and sysadmins responsible for internal support documentation",
+      "at": "2026-11-09T05:12:47.524009+00:00",
+      "agent_name": "Strategist",
+      "agent_execution_id": "b6d76e09-316d-4c82-a423-30b885cccaaf",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 28557,
+      "output_tokens": 3247,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.268727,
+      "duration_ms": 45944.76749992464,
+      "attempt": 1,
+      "summary": "1 email(s) to Selected audience: IT teams.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): IT managers and sysadmins responsible for internal support documentation",
+      "assets_produced": []
+    },
+    {
+      "type": "phase",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": null,
+      "step": 1,
+      "level": "info",
+      "message": "Drafts will be read cold by: IT teams",
+      "at": "2026-11-09T05:12:47.537080+00:00",
+      "phase": "strategy",
+      "segment": "IT teams",
+      "matched": true,
+      "audience_source": "compiled"
+    },
+    {
+      "type": "phase",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": null,
+      "step": 1,
+      "level": "info",
+      "message": "Email 1 of 1: Instead of writing one browser-based IT procedure from scratch, walk through it in Scribe and let the free Basic plan generate a how-to guide your team can share.",
+      "at": "2026-11-09T05:12:48.023895+00:00",
+      "phase": "craft",
+      "position": 1
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "info",
+      "message": "Email Writer: Email 1 · first draft",
+      "at": "2026-11-09T05:12:48.034948+00:00",
+      "agent_name": "Email Writer",
+      "label": "Email 1 · first draft",
+      "position": 1,
+      "attempt": 1
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "debug",
+      "message": "Sent 65,628 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-09T05:12:48.135980+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 65628
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 984 characters in 24.0s (23,350 in / 2,057 out)",
+      "at": "2026-11-09T05:13:12.104009+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 23350,
+      "output_tokens": 2057,
+      "cache_read_input_tokens": 4480,
+      "cost_usd": 0.216254,
+      "duration_ms": 23954.203100060113,
+      "response_chars": 984
+    },
+    {
+      "type": "draft",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "info",
+      "message": "Email 1, draft 1: \"Turn one browser procedure into a guide\"",
+      "at": "2026-11-09T05:13:12.117095+00:00",
+      "position": 1,
+      "attempt": 1,
+      "subject": "Turn one browser procedure into a guide",
+      "preview_text": "Walk through the steps in a web app, then share the how-to with your team.",
+      "greeting": "Hi there,",
+      "body": "If a useful IT procedure lives in one person’s head, capture it while they perform it in a web app.\n\nScribe is documentation and workflow-capture software. On the **free Basic plan**, you walk through a browser-based software setup or account configuration, and Scribe turns those steps into a how-to guide.\n\nShare the finished guide with your team so someone else can follow the procedure instead of reconstructing it from memory.\n\nBasic covers procedures performed in the browser. Capturing desktop-application procedures requires a Pro or Enterprise account.\n\nYou can test that first browser procedure without paying for a plan.",
+      "call_to_action": "Document one browser procedure",
+      "sign_off": "- Scribe",
+      "postscript": "",
+      "word_count": 98
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "info",
+      "message": "Email Writer: Drafted \"Turn one browser procedure into a guide\"",
+      "at": "2026-11-09T05:13:12.142286+00:00",
+      "agent_name": "Email Writer",
+      "agent_execution_id": "baffde78-5b94-4505-8ead-ac0c2a7402a5",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 23350,
+      "output_tokens": 2057,
+      "cache_read_input_tokens": 4480,
+      "cost_usd": 0.216254,
+      "duration_ms": 23954.203100060113,
+      "attempt": 1,
+      "summary": "Drafted \"Turn one browser procedure into a guide\"",
+      "assets_produced": []
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "claim_reviewer",
+      "step": 3,
+      "level": "info",
+      "message": "Claim Reviewer: Email 1 · checking claims against sources",
+      "at": "2026-11-09T05:13:12.163641+00:00",
+      "agent_name": "Claim Reviewer",
+      "label": "Email 1 · checking claims against sources"
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "claim_reviewer",
+      "step": 3,
+      "level": "debug",
+      "message": "Sent 40,433 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-09T05:13:12.201406+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 40433
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "claim_reviewer",
+      "step": 3,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 6,716 characters in 64.6s (19,221 in / 5,382 out)",
+      "at": "2026-11-09T05:14:16.854638+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 19221,
+      "output_tokens": 5382,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.258089,
+      "duration_ms": 64642.73500000127,
+      "response_chars": 6716
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "claim_reviewer",
+      "step": 3,
+      "level": "info",
+      "message": "Claim Reviewer: Source review needs a correction",
+      "at": "2026-11-09T05:14:16.902056+00:00",
+      "agent_name": "Claim Reviewer",
+      "agent_execution_id": "8293f6ce-bc0f-4cc0-aa4d-5555b9fe0068",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 19221,
+      "output_tokens": 5382,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.258089,
+      "duration_ms": 64642.73500000127,
+      "attempt": 1,
+      "summary": "Source review needs a correction",
+      "assets_produced": []
+    },
+    {
+      "type": "gates",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "email_writer",
+      "step": 3,
+      "level": "warning",
+      "message": "Email 1: 6 automatic check(s) failed - \"Preview text: Walk through the steps in a web app, then share the how-to with your team.\": The sources support use with web apps, guide generation, and sharing by link or embed. They do not literally establish that Basic creates the guide specifically by recording the steps as the user walks through them.; \"Capture the process as you perform it\": The supplied excerpts mention automatic capture and web-process capture generally, but do not clearly entail this as-you-perform mechanism on the Basic plan.",
+      "at": "2026-11-09T05:14:16.913138+00:00",
+      "position": 1,
+      "attempt": 1,
+      "passed": false,
+      "semantic_review": {
+        "key": "4fd09ec2c222132bcbcce160deda0138147b216011d2dd8f4fcd90f001225723",
+        "approved": false,
+        "decision": {
+          "verdict": "uncertain",
+          "claims": [
+            {
+              "text": "Subject: Turn one browser procedure into a guide",
+              "status": "supported",
+              "explanation": "The Basic offering is described as operating in the browser and generating how-to guides.",
+              "citations": [
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                }
+              ]
+            },
+            {
+              "text": "Preview text: Walk through the steps in a web app, then share the how-to with your team.",
+              "status": "uncertain",
+              "explanation": "The sources support use with web apps, guide generation, and sharing by link or embed. They do not literally establish that Basic creates the guide specifically by recording the steps as the user walks through them.",
+              "citations": [
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                },
+                {
+                  "source_id": "source:1",
+                  "quote": "Works with any web app"
+                },
+                {
+                  "source_id": "source:1",
+                  "quote": "Shareable with link & embed"
+                }
+              ]
+            },
+            {
+              "text": "Free Basic Plan",
+              "status": "supported",
+              "explanation": "The pricing evidence identifies Basic as free.",
+              "citations": [
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                }
+              ]
+            },
+            {
+              "text": "Capture the process as you perform it",
+              "status": "uncertain",
+              "explanation": "The supplied excerpts mention automatic capture and web-process capture generally, but do not clearly entail this as-you-perform mechanism on the Basic plan.",
+              "citations": [
+                {
+                  "source_id": "source:0",
+                  "quote": "AI-powered automatic capture"
+                },
+                {
+                  "source_id": "source:0",
+                  "quote": "Capture web processes"
+                },
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                }
+              ]
+            },
+            {
+              "text": "If a useful IT procedure lives in one person’s head, capture it while they perform it in a web app.",
+              "status": "uncertain",
+              "explanation": "The undocumented-procedure situation is appropriately conditional and web-app operation is supported, but the sources do not explicitly establish that Basic captures the procedure while it is being performed.",
+              "citations": [
+                {
+                  "source_id": "source:1",
+                  "quote": "Works with any web app"
+                },
+                {
+                  "source_id": "source:0",
+                  "quote": "Capture web processes"
+                },
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                }
+              ]
+            },
+            {
+              "text": "Scribe is documentation and workflow-capture software.",
+              "status": "supported",
+              "explanation": "The sources describe automatic capture, web-process capture, and how-to-guide generation, which substantiate this product-category description.",
+              "citations": [
+                {
+                  "source_id": "source:0",
+                  "quote": "AI-powered automatic capture"
+                },
+                {
+                  "source_id": "source:0",
+                  "quote": "Capture web processes"
+                },
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                }
+              ]
+            },
+            {
+              "text": "On the free Basic plan, you walk through a browser-based software setup or account configuration, and Scribe turns those steps into a how-to guide.",
+              "status": "uncertain",
+              "explanation": "Basic is free, works in the browser, and generates how-to guides. The literal evidence does not establish the claimed causal mechanism that walking through the setup or configuration causes Scribe to turn those performed steps into the guide.",
+              "citations": [
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                },
+                {
+                  "source_id": "source:1",
+                  "quote": "Works with any web app"
+                },
+                {
+                  "source_id": "source:0",
+                  "quote": "Capture web processes"
+                }
+              ]
+            },
+            {
+              "text": "Share the finished guide with your team so someone else can follow the procedure instead of reconstructing it from memory.",
+              "status": "supported",
+              "explanation": "Basic guides are expressly shareable by link or embed, and a generated how-to guide supports another person following the documented procedure. The statement makes no measured outcome claim.",
+              "citations": [
+                {
+                  "source_id": "source:1",
+                  "quote": "Shareable with link & embed"
+                },
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                }
+              ]
+            },
+            {
+              "text": "Basic covers procedures performed in the browser.",
+              "status": "supported",
+              "explanation": "The Basic description places use in the browser and says the plan works with any web app.",
+              "citations": [
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                },
+                {
+                  "source_id": "source:1",
+                  "quote": "Works with any web app"
+                }
+              ]
+            },
+            {
+              "text": "Capturing desktop-application procedures requires a Pro or Enterprise account.",
+              "status": "supported",
+              "explanation": "The pricing FAQ expressly excludes desktop capture from Basic and identifies the desktop application as a Pro and Enterprise feature.",
+              "citations": [
+                {
+                  "source_id": "E5",
+                  "quote": "Can I capture processes on my desktop with a Scribe Basic account? No. The Scribe desktop application is a Pro and Enterprise feature."
+                }
+              ]
+            },
+            {
+              "text": "You can test that first browser procedure without paying for a plan.",
+              "status": "supported",
+              "explanation": "Basic is free and supports browser-based how-to-guide generation, so the stated browser test does not require payment.",
+              "citations": [
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                },
+                {
+                  "source_id": "source:1",
+                  "quote": "Works with any web app"
+                }
+              ]
+            },
+            {
+              "text": "Document one browser procedure →",
+              "status": "uncertain",
+              "explanation": "Together with “Free Basic Plan” and the paragraph claiming that walking through steps creates the guide, this CTA implies that the free Basic route provides the as-performed capture workflow. Browser guide generation is supported, but that specific mechanism is not established by the literal evidence.",
+              "citations": [
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                },
+                {
+                  "source_id": "source:1",
+                  "quote": "Works with any web app"
+                },
+                {
+                  "source_id": "source:1",
+                  "quote": "Shareable with link & embed"
+                }
+              ]
+            }
+          ],
+          "findings": [
+            {
+              "text": "On the free Basic plan, you walk through a browser-based software setup or account configuration, and Scribe turns those steps into a how-to guide.",
+              "kind": "factual",
+              "explanation": "The supplied quotations establish free Basic browser use and guide generation, but not that Basic records a walkthrough and converts the performed steps into the guide. This unresolved mechanism also affects the preview, heading, conditional opening, and CTA’s implied offer."
+            }
+          ],
+          "summary": "The free Basic route, browser scope, guide generation, sharing, and desktop restriction are supported. The draft remains uncertain because its central as-you-perform capture mechanism—and the same mechanism implied by the CTA—is not entailed by the supplied literal sources."
+        },
+        "version": 3
+      },
+      "issues": [
+        {
+          "gate": "claim-review",
+          "detail": "\"Preview text: Walk through the steps in a web app, then share the how-to with your team.\": The sources support use with web apps, guide generation, and sharing by link or embed. They do not literally establish that Basic creates the guide specifically by recording the steps as the user walks through them.",
+          "severity": "blocking"
+        },
+        {
+          "gate": "claim-review",
+          "detail": "\"Capture the process as you perform it\": The supplied excerpts mention automatic capture and web-process capture generally, but do not clearly entail this as-you-perform mechanism on the Basic plan.",
+          "severity": "blocking"
+        },
+        {
+          "gate": "claim-review",
+          "detail": "\"If a useful IT procedure lives in one person’s head, capture it while they perform it in a web app.\": The undocumented-procedure situation is appropriately conditional and web-app operation is supported, but the sources do not explicitly establish that Basic captures the procedure while it is being performed.",
+          "severity": "blocking"
+        },
+        {
+          "gate": "claim-review",
+          "detail": "\"On the free Basic plan, you walk through a browser-based software setup or account configuration, and Scribe turns those steps into a how-to guide.\": Basic is free, works in the browser, and generates how-to guides. The literal evidence does not establish the claimed causal mechanism that walking through the setup or configuration causes Scribe to turn those performed steps into the guide.",
+          "severity": "blocking"
+        },
+        {
+          "gate": "claim-review",
+          "detail": "\"Document one browser procedure →\": Together with “Free Basic Plan” and the paragraph claiming that walking through steps creates the guide, this CTA implies that the free Basic route provides the as-performed capture workflow. Browser guide generation is supported, but that specific mechanism is not established by the literal evidence.",
+          "severity": "blocking"
+        },
+        {
+          "gate": "claim-review",
+          "detail": "The supplied quotations establish free Basic browser use and guide generation, but not that Basic records a walkthrough and converts the performed steps into the guide. This unresolved mechanism also affects the preview, heading, conditional opening, and CTA’s implied offer.",
+          "severity": "blocking"
+        }
+      ]
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "blind_reader",
+      "step": 4,
+      "level": "info",
+      "message": "Blind Reader: Email 1 · read cold by 1 reader(s)",
+      "at": "2026-11-09T05:14:16.928178+00:00",
+      "agent_name": "Blind Reader",
+      "label": "Email 1 · read cold by 1 reader(s)",
+      "position": 1,
+      "attempt": 1
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "blind_reader",
+      "step": 4,
+      "level": "debug",
+      "message": "Sent 12,797 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-09T05:14:16.947672+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 12797
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "blind_reader",
+      "step": 4,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 2,553 characters in 18.0s (11,710 in / 1,109 out)",
+      "at": "2026-11-09T05:14:34.947013+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11710,
+      "output_tokens": 1109,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.069811,
+      "duration_ms": 17987.23590001464,
+      "response_chars": 2553
+    },
+    {
+      "type": "review",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "blind_reader",
+      "step": 4,
+      "level": "info",
+      "message": "Email 1 read cold: 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "at": "2026-11-09T05:14:34.968017+00:00",
+      "approved": false,
+      "conversion_score": 6,
+      "understood": true,
+      "summary": "Scribe offers software that records me completing a browser-based IT procedure and turns the captured steps into a guide my team can reuse, with one procedure testable on its free Basic plan.",
+      "issues": [
+        "Rewrite \"On the free Basic plan, you walk through a browser-based software setup or account configuration, and Scribe turns those steps into a how-to guide.\" to explain what is actually captured and whether sensitive information can be excluded.",
+        "Expand \"Share the finished guide with your team\" to state whether I can review, edit, or redact the generated steps before anyone else sees them."
+      ],
+      "position": 1,
+      "attempt": 1,
+      "biggest_doubt": "I would hesitate to run capture software through a software setup or account configuration without knowing what browser data it records, where that data goes, and whether credentials or other sensitive information can be excluded before sharing.",
+      "stopped_at": "",
+      "readers": [
+        {
+          "persona": "Selected audience (explicit constraints): IT teams.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): IT managers and sysadmins responsible for internal support documentation\n\nProblem context: Some staff at technology companies report that unwritten, undocumented knowledge ('tribal knowledge') held by individuals is common and seen as important, with documentation often not treated as a first-class deliverable. [Source limits: Historical sources (2019-07-31); present applicability is not corroborated.; Single-source problem; independent corroboration is not established.] (inferred); source: https://www.teamblind.com/post/is-tribal-knowledge-important-to-be-productive-in-the-team-xfrocguu",
+          "reported": true,
+          "opened": true,
+          "pull": 6,
+          "would_act": false,
+          "what_it_sells": "Scribe offers software that records me completing a browser-based IT procedure and turns the captured steps into a guide my team can reuse, with one procedure testable on its free Basic plan.",
+          "understood": true,
+          "biggest_doubt": "I would hesitate to run capture software through a software setup or account configuration without knowing what browser data it records, where that data goes, and whether credentials or other sensitive information can be excluded before sharing.",
+          "stopped_at": "",
+          "fixes": [
+            "Rewrite \"On the free Basic plan, you walk through a browser-based software setup or account configuration, and Scribe turns those steps into a how-to guide.\" to explain what is actually captured and whether sensitive information can be excluded.",
+            "Expand \"Share the finished guide with your team\" to state whether I can review, edit, or redact the generated steps before anyone else sees them."
+          ]
+        }
+      ]
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "blind_reader",
+      "step": 4,
+      "level": "info",
+      "message": "Blind Reader: Pull 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "at": "2026-11-09T05:14:34.997853+00:00",
+      "agent_name": "Blind Reader",
+      "agent_execution_id": "01fe6f47-f5f7-4ed9-ad24-06d2c38b70d2",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11710,
+      "output_tokens": 1109,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.069811,
+      "duration_ms": 17987.23590001464,
+      "attempt": 1,
+      "summary": "Pull 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "assets_produced": []
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "email_writer",
+      "step": 5,
+      "level": "info",
+      "message": "Email Writer: Email 1 · rewrite 1",
+      "at": "2026-11-09T05:14:35.010140+00:00",
+      "agent_name": "Email Writer",
+      "label": "Email 1 · rewrite 1",
+      "position": 1,
+      "attempt": 2
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "email_writer",
+      "step": 5,
+      "level": "debug",
+      "message": "Sent 74,222 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-09T05:14:35.065035+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 74222
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "email_writer",
+      "step": 5,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 1,158 characters in 24.1s (24,933 in / 1,944 out)",
+      "at": "2026-11-09T05:14:59.189151+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 24933,
+      "output_tokens": 1944,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.200645,
+      "duration_ms": 24113.998399931006,
+      "response_chars": 1158
+    },
+    {
+      "type": "draft",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "email_writer",
+      "step": 5,
+      "level": "info",
+      "message": "Email 1, draft 2: \"A free browser guide for IT\"",
+      "at": "2026-11-09T05:14:59.202623+00:00",
+      "position": 1,
+      "attempt": 2,
+      "subject": "A free browser guide for IT",
+      "preview_text": "Generate one how-to guide in your browser before considering a paid plan.",
+      "greeting": "Hi there,",
+      "body": "Start with a browser-based IT procedure that contains no credentials or sensitive data. Scribe’s **free Basic plan** generates a how-to guide in the browser, giving your team a concrete piece of documentation to assess.\n\nScribe is documentation and workflow-capture software built to generate step-by-step how-to guides. Use the finished guide to evaluate the format for a software setup, account configuration or another web-based support task.\n\nYou can generate that first browser guide without paying for a plan. Basic covers browser-based guide generation; capturing a procedure in a desktop application requires Pro or Enterprise.\n\nCreate a free Basic account and generate one non-sensitive browser guide. You’ll have a real result to consider before deciding where Scribe belongs in your documentation workflow.",
+      "call_to_action": "Try Scribe Basic free",
+      "sign_off": "- Scribe",
+      "postscript": "",
+      "word_count": 120
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "email_writer",
+      "step": 5,
+      "level": "info",
+      "message": "Email Writer: Rewrote as \"A free browser guide for IT\"",
+      "at": "2026-11-09T05:14:59.236920+00:00",
+      "agent_name": "Email Writer",
+      "agent_execution_id": "4699c388-05d7-4f78-99ce-44e57276e7b2",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 24933,
+      "output_tokens": 1944,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.200645,
+      "duration_ms": 24113.998399931006,
+      "attempt": 2,
+      "summary": "Rewrote as \"A free browser guide for IT\"",
+      "assets_produced": []
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "claim_reviewer",
+      "step": 6,
+      "level": "info",
+      "message": "Claim Reviewer: Email 1 · checking claims against sources",
+      "at": "2026-11-09T05:14:59.261797+00:00",
+      "agent_name": "Claim Reviewer",
+      "label": "Email 1 · checking claims against sources"
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "claim_reviewer",
+      "step": 6,
+      "level": "debug",
+      "message": "Sent 40,390 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-09T05:14:59.311768+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 40390
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "claim_reviewer",
+      "step": 6,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 5,932 characters in 51.5s (19,115 in / 4,076 out)",
+      "at": "2026-11-09T05:15:50.784126+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 19115,
+      "output_tokens": 4076,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.218061,
+      "duration_ms": 51458.020800026134,
+      "response_chars": 5932
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "claim_reviewer",
+      "step": 6,
+      "level": "info",
+      "message": "Claim Reviewer: Source review passed",
+      "at": "2026-11-09T05:15:50.819264+00:00",
+      "agent_name": "Claim Reviewer",
+      "agent_execution_id": "d0e061a8-d744-410b-8cfb-f224e9f0cc82",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 19115,
+      "output_tokens": 4076,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.218061,
+      "duration_ms": 51458.020800026134,
+      "attempt": 2,
+      "summary": "Source review passed",
+      "assets_produced": []
+    },
+    {
+      "type": "gates",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "email_writer",
+      "step": 6,
+      "level": "debug",
+      "message": "Email 1: every automatic check passed",
+      "at": "2026-11-09T05:15:50.830923+00:00",
+      "position": 1,
+      "attempt": 2,
+      "passed": true,
+      "semantic_review": {
+        "key": "6f5fe676e399a85d6ad9d90fd99f1e87d6a8bb9aff658caa60edca1a396b3d13",
+        "approved": true,
+        "decision": {
+          "verdict": "supported",
+          "claims": [
+            {
+              "text": "Subject: A free browser guide for IT",
+              "status": "supported",
+              "explanation": "Basic is free and generates how-to guides in the browser. “For IT” identifies the campaign audience rather than asserting recipient behavior or a measured outcome.",
+              "citations": [
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                }
+              ]
+            },
+            {
+              "text": "Preview text: Generate one how-to guide in your browser before considering a paid plan.",
+              "status": "supported",
+              "explanation": "The free Basic route supports browser guide generation without first purchasing a paid plan. “One” describes the proposed test, not a plan limit.",
+              "citations": [
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                }
+              ]
+            },
+            {
+              "text": "Generate your first IT guide for free",
+              "status": "supported",
+              "explanation": "Basic provides free browser-based how-to-guide generation; “IT” frames the proposed use case rather than claiming a special IT entitlement.",
+              "citations": [
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                }
+              ]
+            },
+            {
+              "text": "Start with a browser-based IT procedure that contains no credentials or sensitive data. Scribe’s free Basic plan generates a how-to guide in the browser, giving your team a concrete piece of documentation to assess.",
+              "status": "supported",
+              "explanation": "E1 entails free Basic browser guide generation. The first sentence instructs the reader to choose non-sensitive content and does not claim that Basic redacts or safely processes sensitive data. Basic guides are also documented as shareable, supporting team assessment.",
+              "citations": [
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                },
+                {
+                  "source_id": "source:2",
+                  "quote": "Shareable with link & embed"
+                }
+              ]
+            },
+            {
+              "text": "Scribe is documentation and workflow-capture software built to generate step-by-step how-to guides.",
+              "status": "supported",
+              "explanation": "The sources describe Scribe as generating how-to guides and capturing processes. The step-by-step characterization is expressly used for Scribe guides.",
+              "citations": [
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                },
+                {
+                  "source_id": "E5",
+                  "quote": "Can I capture processes on my desktop with a Scribe Basic account? No. The Scribe desktop application is a Pro and Enterprise feature."
+                },
+                {
+                  "source_id": "E2",
+                  "quote": "Pro Personal Produce and share step-by-step guides for any process. Ideal for solo consultants. $35 $25 per seat per month Starts at 1 seat"
+                }
+              ]
+            },
+            {
+              "text": "Use the finished guide to evaluate the format for a software setup, account configuration or another web-based support task.",
+              "status": "supported",
+              "explanation": "This proposes how the reader may evaluate the generated guide rather than promising an outcome. Basic is documented as working with web applications and generating browser-based guides.",
+              "citations": [
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                },
+                {
+                  "source_id": "source:2",
+                  "quote": "Works with any web app"
+                }
+              ]
+            },
+            {
+              "text": "You can generate that first browser guide without paying for a plan.",
+              "status": "supported",
+              "explanation": "Basic is a free plan that generates browser-based how-to guides. In context, “without paying for a plan” means without purchasing a paid plan, not that the user has no plan.",
+              "citations": [
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                }
+              ]
+            },
+            {
+              "text": "Basic covers browser-based guide generation; capturing a procedure in a desktop application requires Pro or Enterprise.",
+              "status": "supported",
+              "explanation": "E1 supports browser guide generation on Basic, while E5 explicitly excludes desktop capture from Basic and assigns the desktop application to Pro and Enterprise.",
+              "citations": [
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                },
+                {
+                  "source_id": "E5",
+                  "quote": "Can I capture processes on my desktop with a Scribe Basic account? No. The Scribe desktop application is a Pro and Enterprise feature."
+                }
+              ]
+            },
+            {
+              "text": "Create a free Basic account and generate one non-sensitive browser guide. You’ll have a real result to consider before deciding where Scribe belongs in your documentation workflow.",
+              "status": "supported",
+              "explanation": "The pricing source offers Basic as a free signup route with browser guide generation. “Non-sensitive” is an instruction limiting the proposed test, and the generated guide is the result the reader is invited to consider; no fit or rollout outcome is promised.",
+              "citations": [
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                },
+                {
+                  "source_id": "source:2",
+                  "quote": "Basic\n\nExperience the magic of Scribe in your browser and generate how-to guides.\n\nFree\n\nFree\n\nSign up"
+                }
+              ]
+            },
+            {
+              "text": "Try Scribe Basic free →",
+              "status": "supported",
+              "explanation": "The CTA accurately identifies the access route as signup for the free Basic plan, not a free trial of a paid plan.",
+              "citations": [
+                {
+                  "source_id": "E1",
+                  "quote": "Basic Experience the magic of Scribe in your browser and generate how-to guides. Free Free"
+                },
+                {
+                  "source_id": "source:2",
+                  "quote": "Sign up\n\n[Sign up](https://scribehow.com/signup?plan=free)"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "summary": "The offer route is a free Basic account. Across the subject, body, and CTA, the draft implies access to browser-based how-to-guide generation for one proposed IT procedure, while expressly excluding desktop-application capture from Basic. The supplied plan-specific evidence supports that implication, and the draft does not claim Basic redaction, Autocapture, paid-plan features, organization-wide fit, or customer outcomes."
+        },
+        "version": 3
+      }
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "blind_reader",
+      "step": 7,
+      "level": "info",
+      "message": "Blind Reader: Email 1 · read cold by 1 reader(s)",
+      "at": "2026-11-09T05:15:50.843001+00:00",
+      "agent_name": "Blind Reader",
+      "label": "Email 1 · read cold by 1 reader(s)",
+      "position": 1,
+      "attempt": 2
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "blind_reader",
+      "step": 7,
+      "level": "debug",
+      "message": "Sent 12,958 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-09T05:15:50.863837+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 12958
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "blind_reader",
+      "step": 7,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 2,447 characters in 28.8s (11,733 in / 2,341 out)",
+      "at": "2026-11-09T05:16:19.660567+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11733,
+      "output_tokens": 2341,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.164094,
+      "duration_ms": 28788.56709995307,
+      "response_chars": 2447
+    },
+    {
+      "type": "review",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "blind_reader",
+      "step": 7,
+      "level": "info",
+      "message": "Email 1 read cold: 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "at": "2026-11-09T05:16:19.673062+00:00",
+      "approved": false,
+      "conversion_score": 6,
+      "understood": true,
+      "summary": "Scribe offers software that captures a browser-based IT procedure and turns it into a step-by-step guide my team can evaluate instead of drafting one manually.",
+      "issues": [
+        "Rewrite \"Scribe’s free Basic plan generates a how-to guide in the browser\" to briefly explain what I do during capture and what becomes a guide; the current sentence names the result but leaves the operation vague.",
+        "Cut \"You’ll have a real result to consider before deciding where Scribe belongs in your documentation workflow.\" It repeats the evaluation promise without helping me judge the output.",
+        "Replace \"Try Scribe Basic free →\" with a sample-guide link as the first step, if one exists, and keep account creation as the next step."
+      ],
+      "position": 1,
+      "attempt": 2,
+      "biggest_doubt": "I cannot see what the capture process or finished guide looks like before creating an account, so I cannot judge whether this small trial is worth the setup effort.",
+      "stopped_at": "",
+      "readers": [
+        {
+          "persona": "Selected audience (explicit constraints): IT teams.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): IT managers and sysadmins responsible for internal support documentation\n\nProblem context: Some staff at technology companies report that unwritten, undocumented knowledge ('tribal knowledge') held by individuals is common and seen as important, with documentation often not treated as a first-class deliverable. [Source limits: Historical sources (2019-07-31); present applicability is not corroborated.; Single-source problem; independent corroboration is not established.] (inferred); source: https://www.teamblind.com/post/is-tribal-knowledge-important-to-be-productive-in-the-team-xfrocguu",
+          "reported": true,
+          "opened": true,
+          "pull": 6,
+          "would_act": false,
+          "what_it_sells": "Scribe offers software that captures a browser-based IT procedure and turns it into a step-by-step guide my team can evaluate instead of drafting one manually.",
+          "understood": true,
+          "biggest_doubt": "I cannot see what the capture process or finished guide looks like before creating an account, so I cannot judge whether this small trial is worth the setup effort.",
+          "stopped_at": "",
+          "fixes": [
+            "Rewrite \"Scribe’s free Basic plan generates a how-to guide in the browser\" to briefly explain what I do during capture and what becomes a guide; the current sentence names the result but leaves the operation vague.",
+            "Cut \"You’ll have a real result to consider before deciding where Scribe belongs in your documentation workflow.\" It repeats the evaluation promise without helping me judge the output.",
+            "Replace \"Try Scribe Basic free →\" with a sample-guide link as the first step, if one exists, and keep account creation as the next step."
+          ]
+        }
+      ]
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "blind_reader",
+      "step": 7,
+      "level": "info",
+      "message": "Blind Reader: Pull 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "at": "2026-11-09T05:16:19.703938+00:00",
+      "agent_name": "Blind Reader",
+      "agent_execution_id": "31ea9f55-30f6-4425-8615-523be5c4d148",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11733,
+      "output_tokens": 2341,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.164094,
+      "duration_ms": 28788.56709995307,
+      "attempt": 2,
+      "summary": "Pull 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "assets_produced": []
+    },
+    {
+      "type": "email_ready",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": "email_writer",
+      "step": 7,
+      "level": "info",
+      "message": "Email 1 ready: \"A free browser guide for IT\" (pull 6/10)",
+      "at": "2026-11-09T05:16:19.733117+00:00",
+      "position": 1,
+      "subject": "A free browser guide for IT",
+      "pull": 6,
+      "attempts": 2,
+      "clean": true
+    },
+    {
+      "type": "campaign_report",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": null,
+      "step": 7,
+      "level": "info",
+      "message": "Request: Write exactly one email. Introduce our product to a new buyer with one clear next step.\nDelivered 1 of 1 email(s). Average simulated reader's interest (uncalibrated) 6.0/10.\n- Email 1 \"A free browser guide for IT\": Instead of writing one browser-based IT procedure from scratch, walk through it in Scribe and let the free Basic plan generate a how-to guide your team can share. - pull 6/10 - still below the 7/10 floor after 1 rewrite(s)\nEmail(s) 1 did not satisfy the simulated assessment criteria. The loop stopped rewriting them; it did not decide these were ready to send.\nUnresolved before sending: Email 1: Editorial review requested: Show the operation that produces the guide: what I do while performing the browser procedure, what Scribe captures, and what the resulting document looks like. I understand the product category, but I still cannot picture using it or assessing its output without first creating an account.\nWhat would help most next time: Resolve this simulated next-step obstacle: I would have clicked if this email had shown or linked to a finished example guide that I could inspect without creating an account. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.\nEffective audience: IT teams\nAudience context: audience_research_loaded\nP1: Historical sources (2019-07-31); present applicability is not corroborated.\nP1: Single-source problem; independent corroboration is not established.\nSource coverage is partial: 2 readable page(s), 2 unavailable URL(s). Findings cover only the pages read.\nMoved product questions without an explicit audience requirement to decision gaps.\nDefining audience need is unassessed or its references required normalization.\nIgnored unavailable dossier ranking E16.\n1 email(s) came in under the floor on a run configured without more than one opening per email, a panel of cold readers rather than one, the conversion critic, alternative subject lines, more than one rewrite. These settings describe review depth, not the cause of the weak result. Check the audience fit and verified support for the reported obstacle first; additional readers or rewrites cannot supply missing evidence.",
+      "at": "2026-11-09T05:16:19.749745+00:00",
+      "delivered": 1,
+      "promised": 1,
+      "average_pull": 6.0,
+      "contract_violations": [],
+      "limiting_gaps": [],
+      "below_floor": [
+        1
+      ],
+      "what_would_help_most": "Resolve this simulated next-step obstacle: I would have clicked if this email had shown or linked to a finished example guide that I could inspect without creating an account. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence."
+    },
+    {
+      "type": "phase",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": null,
+      "step": 7,
+      "level": "info",
+      "message": "1 email(s) produced - average simulated reader's interest 6.0/10 (uncalibrated) - 1 still under the 7/10 floor when the loop stopped rewriting",
+      "at": "2026-11-09T05:16:19.760920+00:00",
+      "phase": "finished",
+      "status": "degraded",
+      "below_floor": [
+        1
+      ]
+    },
+    {
+      "type": "execution_finished",
+      "execution_id": "1cfaae71-2f1d-4184-acc7-aee851c84aa3",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Campaign run finished: degraded",
+      "at": "2026-11-09T05:16:19.835091+00:00",
+      "status": "completed",
+      "run_status": "degraded",
+      "estimated_cost_usd": 1.3957,
+      "delivered": 1
+    }
+  ],
+  "last_event_id": 51,
+  "is_running": false
+}

@@ -11,11 +11,18 @@ from app.auth.principal import Principal
 from app.auth.scope import owned
 from app.knowledge.store import ArtifactScope, ArtifactStore, fingerprint_documents
 from app.marketing.contract import linkedin_contract, parse_contract
-from app.marketing.direct import direct_brief
+from app.marketing.direct import direct_brief, focused_activation
 from app.marketing.forecast import forecast
 from app.marketing.intent import CampaignIntent
 from app.marketing.policy import resolve_policy
 from app.marketing.request import CampaignRequest
+from app.marketing.steering import (
+    CampaignSteering,
+    SteeringCheck,
+    check_steering,
+    claim_boundary,
+    steering_options,
+)
 from app.models.agent_execution import AgentExecution
 from app.models.campaign import Campaign
 from app.models.campaign_execution import CampaignExecution
@@ -221,6 +228,56 @@ class CampaignService:
         campaign.updated_at = datetime.now(UTC)
         return self._campaigns.update(campaign)
 
+    def steering_check(
+        self, campaign: Campaign, steering: CampaignSteering | None = None
+    ) -> SteeringCheck:
+        """What this campaign can be steered with, and what collides. Free:
+        a read of the stored analyses and a few set comparisons."""
+        from app.orchestration.campaign_orchestrator import _DbKnowledgeGateway
+
+        gateway = _DbKnowledgeGateway(self._session, campaign)
+        stored = gateway.load()
+        artifacts = stored.artifacts if stored else None
+        boundary: frozenset[str] = frozenset()
+        # The audience's researched claim contract, read the way a run reads
+        # it - database only, no model call - so the form never offers as
+        # "usable" a fact the run will refuse.
+        if artifacts is not None and (bundle := gateway.campaign_intelligence(artifacts)):
+            bundle.context.validate_against(bundle.artifacts.evidence)
+            artifacts = bundle.artifacts
+            boundary = claim_boundary(bundle.context, artifacts)
+        options = steering_options(
+            artifacts, gateway.positioning() if stored else None, boundary
+        )
+        current = steering or CampaignSteering.model_validate(campaign.steering or {})
+        if campaign.channel:
+            count: int | None = 1
+        else:
+            contract = parse_contract(campaign.request)
+            count = contract.count if contract.count_is_explicit else None
+        return SteeringCheck(
+            options=options,
+            conflicts=check_steering(current, options, email_count=count),
+            knowledge_ready=stored is not None,
+        )
+
+    def update_steering(self, campaign: Campaign, steering: CampaignSteering) -> SteeringCheck:
+        """Save the choices the next run will honour.
+
+        Allowed after earlier runs, unlike the brief: each run keeps the
+        choices it was planned with inside its own stored brief, so changing
+        them rewrites no history. Only a run in flight forbids it - it has
+        already read the campaign, and a change now would apply to nothing.
+        """
+        if registry.is_campaign_running(campaign.id):
+            raise CampaignAlreadyRunningError(
+                "A run is in progress. Change the content choices once it finishes."
+            )
+        campaign.steering = None if steering.is_empty else steering.model_dump(mode="json")
+        campaign.updated_at = datetime.now(UTC)
+        self._campaigns.update(campaign)
+        return self.steering_check(campaign, steering)
+
     def unarchive_campaign(self, campaign: Campaign) -> Campaign:
         campaign.status = CampaignStatus.ACTIVE
         campaign.archived_at = None
@@ -254,6 +311,7 @@ class CampaignService:
                 cta_url=campaign.cta_url,
                 policy=campaign.policy,
                 model_overrides=campaign.model_overrides,
+                steering=campaign.steering,
             )
         )
         for document in self._knowledge.list_by_campaign(campaign.id):
@@ -353,20 +411,24 @@ class CampaignService:
             and stored.fingerprint == fingerprint_documents(documents)
             and not policy.force_recompile
         )
+        brand = BrandRepository(self._session, self._principal).get(campaign.brand_id) if campaign.brand_id else None
+        request = CampaignRequest(
+            name=campaign.name, request=campaign.request,
+            intent=CampaignIntent.model_validate(campaign.intent) if campaign.intent else None,
+            cta_url=campaign.cta_url, channel=campaign.channel,
+            product_url=campaign.product_url, brand_website_url=brand.website_url if brand else None,
+        )
         estimate = forecast(
             policy,
             contract,
             material_chars=sum(document.word_count * _CHARS_PER_WORD for document in documents),
             knowledge_reused=reused,
             direct_eligible=(
-                direct_brief(CampaignRequest(
-                    name=campaign.name, request=campaign.request,
-                    intent=CampaignIntent.model_validate(campaign.intent) if campaign.intent else None,
-                    cta_url=campaign.cta_url,
-                    channel=campaign.channel,
-                ), stored.artifacts, contract, policy) is not None
+                direct_brief(request, stored.artifacts, contract, policy) is not None
                 if reused and not campaign.audience_segment and not campaign.prospect_id else None
             ),
+            focused_activation=focused_activation(request),
+            required_fact=bool(request.effective_intent.required_fact.strip()),
         )
         # Read once. Both figures below describe the same set of past runs,
         # and finding it walks every campaign the user has ever made.
@@ -426,6 +488,7 @@ class CampaignService:
             CampaignRecommendation,
             DossierState,
             RecommendationState,
+            recommendation_for_request,
         )
         from app.services.market_service import MarketService
 
@@ -440,7 +503,7 @@ class CampaignService:
 
         market = MarketService(self._session)
         status = market.relevance_status(campaign.brand_id, selected)
-        recommendation = status.dossier.recommendation if status.dossier else None
+        recommendation = recommendation_for_request(status.dossier, campaign.request) if status.dossier else None
         if recommendation is None:
             recommendation = CampaignRecommendation(
                 state=RecommendationState.DISCOVERY_ONLY,
@@ -478,6 +541,19 @@ class CampaignService:
             )
 
         reasons = list(recommendation.reasons)
+        need_fit = status.dossier.defining_need_fit if status.dossier else None
+        need_gaps = (
+            need_fit.unverified_requirements
+            if status.status is DossierState.CURRENT
+            and recommendation.readiness is CampaignReadiness.DISCOVERY_ONLY
+            and need_fit is not None
+            and need_fit.status != "addressed"
+            else []
+        )
+        if need_gaps:
+            # The persisted recommendation retains its diagnostic references.
+            # Explain the missing workflow support to the user in its own words.
+            reasons = list(need_gaps)
         selected_name = ""
         selected_qualification = None
         company_requires_override = False
@@ -512,6 +588,12 @@ class CampaignService:
             if override_required
             else recommendation.recommended_next_action
         )
+        if need_gaps and not company_requires_override:
+            message = (
+                "The available product evidence does not establish that the offer meets "
+                "this audience's main need. Add product sources addressing the gaps below, "
+                "then rebuild the relevance dossier before generating."
+            )
         return CampaignGenerationAdvice(
             campaign_id=campaign.id,
             readiness=recommendation.readiness,

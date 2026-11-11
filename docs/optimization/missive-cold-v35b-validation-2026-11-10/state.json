@@ -1,0 +1,51 @@
+{
+  "status": "validation_complete",
+  "runs": [
+    {
+      "status": "completed",
+      "execution_id": "ad07f104-f473-47f6-bfe7-2f2388d33825",
+      "launched_from": "Default UI Fast, no override",
+      "campaign_id": "8c0d37e3-9795-420c-ac63-df9edbd44aeb",
+      "code_revision": "v35b",
+      "launched_at": "2026-11-09T23:55:25.501334Z",
+      "outcome_status": "degraded",
+      "needs_review": true,
+      "review_reasons": [
+        "Some drafts retain unresolved strategy or review findings.",
+        "Some drafts still need editorial review."
+      ],
+      "last_checked_at": "2026-11-10T01:00:02.186575+01:00",
+      "result_dir": "docs\\optimization\\missive-cold-v35b-validation-2026-11-10\\runs\\ad07f104-f473-47f6-bfe7-2f2388d33825",
+      "estimated_cost_usd": 1.6171,
+      "completed_at": "2026-11-09T23:59:59.816572Z"
+    }
+  ],
+  "steps": {},
+  "quality_history": [
+    {
+      "strengths": [
+        "Automatic factual repair kept the task benefit and testimonial",
+        "Text and HTML exports retain the working signup CTA"
+      ],
+      "iteration": 1,
+      "remaining_defect": "The draft does not show how the automatically selected agency can separate work across client inboxes",
+      "execution_id": "ad07f104-f473-47f6-bfe7-2f2388d33825",
+      "score": 76,
+      "reason": "One factually approved email delivered with editorial review"
+    }
+  ],
+  "last_snapshot": "docs\\optimization\\missive-cold-v35b-validation-2026-11-10\\steps\\20261109T235544410751Z-capture.json",
+  "commercial_verdict": "not_worth_paying_for_as_targeted_acquisition_on_this_case",
+  "report": "docs/reviews/missive-validation-2026-11-10.md",
+  "preparation_replays": [
+    {
+      "calls": 8,
+      "status": "passed",
+      "report": "docs/reviews/missive-audience-replay-v36.md",
+      "selected_audience": "Customer support team sharing a help inbox",
+      "revision": "v36",
+      "original_audience": "Agency managing multiple client inboxes",
+      "result_dir": "preparation-replay-v36"
+    }
+  ]
+}

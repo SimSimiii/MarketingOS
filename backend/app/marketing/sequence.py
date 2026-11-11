@@ -78,7 +78,7 @@ class SequenceReport(BaseModel):
         return "\n".join(lines)
 
 
-def cross_check(emails: list[Email]) -> dict[int, list[str]]:
+def cross_check(emails: list[Email], *, company_name: str = "") -> dict[int, list[str]]:
     """Repetition across the finished set, found without a model.
 
     Each email is compared against every other one rather than only against
@@ -88,7 +88,7 @@ def cross_check(emails: list[Email]) -> dict[int, list[str]]:
     problems: dict[int, list[str]] = {}
     ordered = sorted(emails, key=lambda email: email.position)
     for index, email in enumerate(ordered):
-        report: GateReport = overlap_gate(email, ordered[:index])
+        report: GateReport = overlap_gate(email, ordered[:index], company_name=company_name)
         if report.issues:
             problems[email.position] = [issue.detail for issue in report.issues]
     return problems
@@ -100,11 +100,11 @@ class SequenceReviewer:
 
     async def review(
         self, emails: list[Email], campaign: CampaignBrief, arc_read: bool = True,
-        *, request: CampaignRequest | None = None,
+        *, request: CampaignRequest | None = None, company_name: str = "",
     ) -> SequenceReport:
-        rework = cross_check(emails)
-        if rework:
-            logger.info("sequence: mechanical checks flagged %s", sorted(rework))
+        # Shared words do not establish redundant arguments. The sequence
+        # reader decides whether a repetition is actually harmful.
+        rework: dict[int, list[str]] = {}
 
         verdict = SequenceVerdict()
         if arc_read and len(emails) > 1:

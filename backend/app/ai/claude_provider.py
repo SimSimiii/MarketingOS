@@ -178,6 +178,7 @@ class ClaudeProvider(AIProvider):
         tools = [_CLI_TOOL_NAMES[tool] for tool in dict.fromkeys(request.tools)]
         return ClaudeAgentOptions(
             model=request.model or self._default_model,
+            effort=request.effort if (request.model or self._default_model) in {"sonnet", "opus", "fable5"} else None,
             system_prompt=system_prompt,
             max_turns=request.max_turns
             or (_MAX_RESEARCH_TURNS if tools else _MAX_TURNS),

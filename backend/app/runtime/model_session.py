@@ -4,7 +4,7 @@ import logging
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel
 
@@ -193,6 +193,7 @@ class ModelSession:
         model_router: ModelRouter,
         execution_id: str,
         on_call: Callable[[RoleCall], None] | None = None,
+        effort: Literal["low", "medium", "high"] | None = None,
     ) -> None:
         self._provider = provider
         self._prompts = prompt_engine
@@ -200,6 +201,7 @@ class ModelSession:
         self._router = model_router
         self._execution_id = execution_id
         self._on_call = on_call
+        self._effort = effort
         from app.core.config import get_settings
 
         self._credit_meter = None
@@ -253,6 +255,7 @@ class ModelSession:
         variables: dict[str, Any] | None = None,
         system_prompt: str | None = None,
         tools: list[ResearchTool] | None = None,
+        max_turns: int | None = None,
     ) -> T:
         """One turn answered as a single JSON object matching `schema`.
 
@@ -275,7 +278,7 @@ class ModelSession:
         last_error: JsonOutputError | None = None
         for _ in range(_STRUCTURED_ATTEMPTS):
             response = await self._generate(
-                role, tier, model, system, message, template or "", tools=tools or []
+                role, tier, model, system, message, template or "", tools=tools or [], max_turns=max_turns,
             )
             try:
                 return parse_model_json(response, schema)
@@ -384,6 +387,7 @@ class ModelSession:
             role=role,
             cause=type(last).__name__,
             attempts=attempts,
+            user_message=last.user_message if isinstance(last, ProviderCallError) else "",
         ) from last
 
     async def _generate(
@@ -396,6 +400,7 @@ class ModelSession:
         template: str = "",
         tools: list[ResearchTool] | None = None,
         image=None,
+        max_turns: int | None = None,
     ) -> str:
         wanted = list(dict.fromkeys(tools or []))
         if wanted:
@@ -423,6 +428,8 @@ class ModelSession:
             template=template,
             tools=wanted,
             image=image,
+            max_turns=max_turns,
+            effort=self._effort,
         )
         hold = None
         if self._credit_meter is not None:

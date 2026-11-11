@@ -1,0 +1,858 @@
+{
+  "audience_name": "GA4 user suspecting undercounted traffic",
+  "status": "current",
+  "stale_reasons": [],
+  "missing_prerequisites": [],
+  "dossier_id": "039a8431-6186-47b8-a7b0-3bda4c71f813",
+  "generation_version": 1,
+  "created_at": "2026-11-07T09:33:42.124387",
+  "dossier": {
+    "schema_version": 2,
+    "interpretation_version": 21,
+    "audience_research_id": "da9a3bdf-d41c-4794-a143-b89bc5f93d65",
+    "audience_name": "GA4 user suspecting undercounted traffic",
+    "audience_research_version": 2,
+    "knowledge_id": "9f44dc02-1fd5-4ceb-8124-5336eecf2c02",
+    "knowledge_version": 1,
+    "market_scan_id": "ba3010e9-e026-4f13-b00d-a4883feaade1",
+    "market_scan_version": 1,
+    "capability_profile_id": "fa65ea61-b64d-4964-bd56-b99cc80382f6",
+    "capability_profile_version": 1,
+    "qualification_fingerprint": "e57cf6b651d4cdc471f363f511a9bacdb0443014f5fb81782a10dba4f360d2cc",
+    "built_at": "2026-11-07T09:33:42.121777Z",
+    "orientation": "This is a website analytics tool that counts pageviews without cookies, trackers or a consent prompt, which this buyer can install to run alongside their existing GA4 setup and see how many pageviews GA4 is missing once visitors decline cookie consent.",
+    "defining_need_fit": {
+      "status": "partial",
+      "supported_alternative": "",
+      "setup_conditions": [
+        "Install Simple Analytics to run alongside the existing GA4 tracking, with vendor-assisted setup covering proxies and custom domains where needed, as part of the 30-day comparison offer."
+      ],
+      "evidence_ids": [
+        "E1",
+        "E24",
+        "E23",
+        "E16",
+        "E15",
+        "E5",
+        "E6"
+      ],
+      "capability_ids": [
+        "fact_dbba330b97737d29",
+        "fact_a11044c433265541",
+        "fact_06ced1486822133e"
+      ],
+      "unverified_requirements": [
+        "Whether the measured pageview gap can be isolated as caused specifically by consent rejection, as opposed to blocking or general implementation differences, which Simple Analytics' own published comparison explicitly leaves open."
+      ],
+      "decision_gaps": [
+        "Does the free 30-day side-by-side comparison (E16) require booking an Enterprise-style demo as the proof-of-concept offer (E5) implies, or is it available self-serve to Free/Self-serve plan customers without a sales call?",
+        "Does Simple Analytics' own comparison documentation distinguish a consent-caused pageview gap from blocking or general implementation differences, which the Hebban case leaves mixed?",
+        "Can the 30-day side-by-side comparison run fully within the Free plan's 1-month data history and 5-website limit, or does meaningfully sizing the gap require a paid plan?"
+      ],
+      "supported_core_workflow": "An independent, consent-independent pageview count to measure and validate the size of the GA4 consent gap, run side-by-side with GA4.",
+      "unverified_requirement_basis": {
+        "Whether the measured pageview gap can be isolated as caused specifically by consent rejection, as opposed to blocking or general implementation differences, which Simple Analytics' own published comparison explicitly leaves open.": "to measure and validate the size of the GA4 consent gap"
+      },
+      "caveat": "The one quantified side-by-side result in evidence (E15, Hebban) attributes the gap to a mix of consent rejection, blocking and implementation differences rather than consent rejection alone, and the 30-day free comparison offer appears with slightly different conditions in two places (general setup help in E16 vs. an Enterprise proof-of-concept requiring a demo in E5).",
+      "why": "The required no-cookie/no-consent counting mechanism and limited non-personal data scope are documented, the side-by-side comparison offer is documented, and one real customer case demonstrates the resulting pageview-count gap actually being measured in practice."
+    },
+    "ranked_relevance": [
+      {
+        "evidence_id": "E1",
+        "band": "LEAD",
+        "why": "States the core mechanism — no cookies, trackers or consent required — that makes the pageview count independent of the consent banner driving GA4's shortfall.",
+        "problem_ids": [
+          "P1"
+        ],
+        "territory": null
+      },
+      {
+        "evidence_id": "E15",
+        "band": "LEAD",
+        "why": "The closest evidence to the defining need: a real customer ran Simple Analytics alongside GA4 and the resulting pageview gap was actually measured (431k more, 27%).",
+        "problem_ids": [
+          "P1"
+        ],
+        "territory": "open"
+      },
+      {
+        "evidence_id": "E16",
+        "band": "LEAD",
+        "why": "States the exact offer structure the defining need requires — running Simple Analytics alongside GA4 for 30 days, free, with setup help to compare the numbers.",
+        "problem_ids": [
+          "P1"
+        ],
+        "territory": null
+      },
+      {
+        "evidence_id": "E24",
+        "band": "SUPPORT",
+        "why": "Documents the specific, limited data fields collected (URL, referrer, UTM, time zone, device/browser), which is the mechanism basis for why the count can run without consent.",
+        "problem_ids": [
+          "P1"
+        ],
+        "territory": null
+      },
+      {
+        "evidence_id": "E5",
+        "band": "SUPPORT",
+        "why": "Describes the practical setup-assisted trial, including help with proxies and custom domains, needed to actually stand up a side-by-side comparison.",
+        "problem_ids": [
+          "P1"
+        ],
+        "territory": "open"
+      },
+      {
+        "evidence_id": "E23",
+        "band": "SUPPORT",
+        "why": "Documents the required non-personal-data/no-DPA capability named in the audience definition, reinforcing why the count can run without the consent gate GA4 sits behind.",
+        "problem_ids": [
+          "P1"
+        ],
+        "territory": "open"
+      },
+      {
+        "evidence_id": "E14",
+        "band": "WITHHOLD",
+        "why": "A generic customer-logo trust claim with no detail on how any of those teams used the product; immaterial to proving or sizing a GA4 consent gap for a focused first campaign.",
+        "problem_ids": [],
+        "territory": "open"
+      },
+      {
+        "evidence_id": "E6",
+        "band": "CONTEXT",
+        "why": "True regulatory background (GDPR/ePrivacy/UK GDPR/PECR compliance) but not itself the pageview-counting or comparison mechanism this first evaluation needs.",
+        "problem_ids": [],
+        "territory": "open"
+      }
+    ],
+    "problem_fits": [
+      {
+        "problem_id": "P1",
+        "verdict": "PARTIAL",
+        "evidence_ids": [
+          "E1",
+          "E24",
+          "E15",
+          "E16",
+          "E5"
+        ],
+        "capability_ids": [
+          "fact_dbba330b97737d29",
+          "fact_a11044c433265541"
+        ],
+        "blocked_by": [],
+        "caveat": "Simple Analytics can show and size a pageview discrepancy when run alongside GA4 (E15), but it does not add a gap view inside GA4 itself, and E15 attributes the discrepancy to a mix of consent rejection, blocking and implementation differences rather than consent alone, so 'closing' the gap is not addressed.",
+        "why": "The required no-consent counting capability plus a real side-by-side case (Hebban) directly address seeing and sizing a GA4 undercount, which is the core of this problem.",
+        "materiality_basis": ""
+      }
+    ],
+    "segment_objections": [
+      {
+        "objection": "The sizeable gap Simple Analytics reports when run next to GA4 may not actually be a consent-rejection effect — the one published comparison itself says the difference 'can come from consent rejection, blocking or differences in implementation,' so a skeptical buyer may doubt the comparison isolates consent as the cause.",
+        "severity": "strong",
+        "answer": "Simple Analytics' own published case is transparent that the observed gap may include blocking and implementation differences alongside consent rejection, so the side-by-side run documents a real, quantified discrepancy without overclaiming it is purely a consent effect.",
+        "grounding": "inferred",
+        "evidence_ids": [
+          "E15"
+        ],
+        "provenance": []
+      },
+      {
+        "objection": "A buyer running a non-trivial setup (proxy, custom domain) may worry that getting Simple Analytics correctly installed alongside GA4 for a fair comparison requires paid help or a sales process they weren't expecting.",
+        "severity": "moderate",
+        "answer": "Both the general comparison offer and the proof-of-concept documentation state that Simple Analytics will help set it up and optimize it for proxies and custom domains as part of the free 30-day side-by-side run.",
+        "grounding": "inferred",
+        "evidence_ids": [
+          "E16",
+          "E5"
+        ],
+        "provenance": []
+      }
+    ],
+    "silences": [],
+    "evidence": [
+      {
+        "id": "E1",
+        "kind": "feature",
+        "claim": "Simple Analytics requires no cookies, no trackers, and no consent from visitors.",
+        "verbatim": "No cookies. No trackers. **No consent required from your visitors**. Just straightforward analytics.",
+        "source": "https://docs.simpleanalytics.com",
+        "document_id": "e56a78cf-c12f-4695-bbb3-cf0842838833",
+        "context": {
+          "subject": "Simple Analytics",
+          "source_kind": "official_documentation",
+          "claim_scope": "capability",
+          "conditions": "",
+          "temporal_scope": "",
+          "limitations": "",
+          "verification": "quote_verified_in_material"
+        },
+        "source_references": [
+          {
+            "document_id": "e56a78cf-c12f-4695-bbb3-cf0842838833",
+            "source": "https://docs.simpleanalytics.com",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "trust",
+        "value_band": "supporting"
+      },
+      {
+        "id": "E5",
+        "kind": "guarantee",
+        "claim": "Simple Analytics offers a free 30-day proof of concept to test it on your own website, including help optimizing the setup for proxies and custom domains.",
+        "verbatim": "### Test it on your own website. Free for 30 days. We’ll help optimize your setup and review the comparison together, including support for proxies and custom domains where needed.",
+        "source": "https://www.simpleanalytics.com/pricing",
+        "document_id": "fbb01e47-44f6-4a02-91b1-b33dbfe28882",
+        "context": {
+          "subject": "Simple Analytics Enterprise proof of concept",
+          "source_kind": "official_documentation",
+          "claim_scope": "offer",
+          "conditions": "Run alongside GA4 for 30 days; requires booking a demo",
+          "temporal_scope": "",
+          "limitations": "",
+          "verification": "quote_verified_in_material"
+        },
+        "source_references": [
+          {
+            "document_id": "fbb01e47-44f6-4a02-91b1-b33dbfe28882",
+            "source": "https://www.simpleanalytics.com/pricing",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "commercial",
+        "value_band": "headline"
+      },
+      {
+        "id": "E6",
+        "kind": "certification",
+        "claim": "Simple Analytics is GDPR compliant from installation, satisfying the GDPR, the ePrivacy Directive, the UK GDPR, and the PECR because it only processes non-personal data.",
+        "verbatim": "Is Simple Analytics GDPR-compliant? Simple Analytics is GDPR compliant from installation. Because it only processes non-personal data, it can satisfy the requirements of the strictest privacy regulation, including the GDPR, the ePrivacy Directive, the UK GDPR, and the PECR. For more information [check our documentation](https://docs.simpleanalytics.com/compliance).",
+        "source": "https://www.simpleanalytics.com/pricing",
+        "document_id": "fbb01e47-44f6-4a02-91b1-b33dbfe28882",
+        "context": {
+          "subject": "Simple Analytics",
+          "source_kind": "official_documentation",
+          "claim_scope": "capability",
+          "conditions": "",
+          "temporal_scope": "",
+          "limitations": "",
+          "verification": "quote_verified_in_material"
+        },
+        "source_references": [
+          {
+            "document_id": "fbb01e47-44f6-4a02-91b1-b33dbfe28882",
+            "source": "https://www.simpleanalytics.com/pricing",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "trust",
+        "value_band": "supporting"
+      },
+      {
+        "id": "E14",
+        "kind": "customer",
+        "claim": "Simple Analytics is trusted by teams at Bloomberg, Michelin, Hyundai, GOV.UK, Polkadot, Bank of England, Sketch, Excalidraw and Nomads.",
+        "verbatim": "Trusted by teams at Bloomberg Michelin Hyundai GOV.UK Polkadot Bank of England Sketch Excalidraw Nomads",
+        "source": "https://www.simpleanalytics.com/customers",
+        "document_id": "d6484518-2915-48dd-9260-9c2dc793fd46",
+        "context": {
+          "subject": "Simple Analytics",
+          "source_kind": "vendor_statement",
+          "claim_scope": "unknown",
+          "conditions": "",
+          "temporal_scope": "",
+          "limitations": "list of named customer logos only; no detail on how each uses the product",
+          "verification": "quote_verified_in_material"
+        },
+        "source_references": [
+          {
+            "document_id": "d6484518-2915-48dd-9260-9c2dc793fd46",
+            "source": "https://www.simpleanalytics.com/customers",
+            "source_type": "website"
+          }
+        ],
+        "strength": "moderate",
+        "category": "proof",
+        "value_band": "supporting"
+      },
+      {
+        "id": "E15",
+        "kind": "metric",
+        "claim": "Hebban ran Simple Analytics alongside GA4 and Simple Analytics counted about 431,000 more pageviews, 27% more than GA4; the gap can come from consent rejection, blocking or differences in implementation.",
+        "verbatim": "Simple Analytics counted about 431,000 more pageviews, 27% more than GA4. The gap can come from consent rejection, blocking or differences in implementation.",
+        "source": "https://www.simpleanalytics.com/customers",
+        "document_id": "d6484518-2915-48dd-9260-9c2dc793fd46",
+        "context": {
+          "subject": "Hebban",
+          "source_kind": "customer_statement",
+          "claim_scope": "customer_outcome",
+          "conditions": "Hebban (Dutch book community) ran Simple Analytics alongside GA4 and compared reported pageview totals on its own site",
+          "temporal_scope": "",
+          "limitations": "gap attributed to consent rejection, blocking or implementation differences; not a guaranteed result for other sites",
+          "verification": "quote_verified_in_material"
+        },
+        "source_references": [
+          {
+            "document_id": "d6484518-2915-48dd-9260-9c2dc793fd46",
+            "source": "https://www.simpleanalytics.com/customers",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "proof",
+        "value_band": "headline"
+      },
+      {
+        "id": "E16",
+        "kind": "price",
+        "claim": "Run Simple Analytics alongside GA4 for 30 days, free, with setup help to compare the numbers.",
+        "verbatim": "Run Simple Analytics alongside GA4 for 30 days, free. We help you set it up and compare the numbers.",
+        "source": "https://www.simpleanalytics.com/customers",
+        "document_id": "d6484518-2915-48dd-9260-9c2dc793fd46",
+        "context": {
+          "subject": "Simple Analytics trial offer",
+          "source_kind": "vendor_statement",
+          "claim_scope": "offer",
+          "conditions": "run alongside GA4 for 30 days",
+          "temporal_scope": "",
+          "limitations": "",
+          "verification": "quote_verified_in_material"
+        },
+        "source_references": [
+          {
+            "document_id": "d6484518-2915-48dd-9260-9c2dc793fd46",
+            "source": "https://www.simpleanalytics.com/customers",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "commercial",
+        "value_band": "headline"
+      },
+      {
+        "id": "E23",
+        "kind": "guarantee",
+        "claim": "Simple Analytics does not process personal data, so a Data Processing Agreement is not required when using it.",
+        "verbatim": "Simple Analytics does not process personal data. Because of this, a DPA is not required when using Simple Analytics. This is due to the absence of personal data processing.",
+        "source": "https://www.simpleanalytics.com/data-processing-agreement",
+        "document_id": "79f1b3cb-23d8-4291-9cdb-a1b2d7464fc2",
+        "context": {
+          "subject": "Simple Analytics",
+          "source_kind": "official_documentation",
+          "claim_scope": "capability",
+          "conditions": "applies under GDPR's definition of when a DPA is required",
+          "temporal_scope": "",
+          "limitations": "",
+          "verification": "quote_verified_in_material"
+        },
+        "source_references": [
+          {
+            "document_id": "79f1b3cb-23d8-4291-9cdb-a1b2d7464fc2",
+            "source": "https://www.simpleanalytics.com/data-processing-agreement",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "trust",
+        "value_band": "supporting"
+      },
+      {
+        "id": "E24",
+        "kind": "feature",
+        "claim": "Simple Analytics processes only Page URL, Referrer, UTM parameters, Time zone, and Device and browser type as its data scope.",
+        "verbatim": "- Page URL - Referrer - UTM parameters - Time zone - Device and browser type",
+        "source": "https://www.simpleanalytics.com/data-processing-agreement",
+        "document_id": "79f1b3cb-23d8-4291-9cdb-a1b2d7464fc2",
+        "context": {
+          "subject": "Simple Analytics",
+          "source_kind": "official_documentation",
+          "claim_scope": "capability",
+          "conditions": "processed within the EU by subprocessors",
+          "temporal_scope": "",
+          "limitations": "these metrics are not linked to individuals and cannot be used to identify users",
+          "verification": "quote_verified_in_material"
+        },
+        "source_references": [
+          {
+            "document_id": "79f1b3cb-23d8-4291-9cdb-a1b2d7464fc2",
+            "source": "https://www.simpleanalytics.com/data-processing-agreement",
+            "source_type": "website"
+          }
+        ],
+        "strength": "strong",
+        "category": "technical",
+        "value_band": "supporting"
+      }
+    ],
+    "validation_counts": {
+      "dropped_items": 0,
+      "normalized_items": 0
+    },
+    "validation_warnings": [
+      "Defining audience need is unassessed or its references required normalization."
+    ],
+    "recommendation": {
+      "state": "DISCOVERY_ONLY",
+      "readiness": "DISCOVERY_ONLY",
+      "reasons": [
+        "The defining audience need is not fully supported by verified product evidence; a broader subsegment label does not resolve it.",
+        "Whether the measured pageview gap can be isolated as caused specifically by consent rejection, as opposed to blocking or general implementation differences, which Simple Analytics' own published comparison explicitly leaves open."
+      ],
+      "eligible_subsegment": "",
+      "qualified_companies": [],
+      "adjacent_companies": [],
+      "excluded_companies": [],
+      "unverified_companies": [],
+      "allowed_claims": [
+        "Simple Analytics requires no cookies, no trackers, and no consent from visitors.",
+        "The Self-serve plan costs €20/month, estimated for about 100k monthly pageviews.",
+        "The Self-serve plan includes 1 user; each additional user costs +€20/month.",
+        "The Free plan supports 1 user and 5 websites, with 1 month of analytics history, and requires displaying the free plan badge.",
+        "Simple Analytics offers a free 30-day proof of concept to test it on your own website, including help optimizing the setup for proxies and custom domains.",
+        "Website data is stored in the EU, with primary infrastructure in the Netherlands.",
+        "Data only goes to a provider outside the EU when the customer opts in to a feature that needs it, such as the AI assistant.",
+        "By default, Simple Analytics does not collect or store any data for visitors who have Do Not Track enabled.",
+        "Simple Analytics collects and stores how long a page is viewed, counting seconds only while the page is visible and not when it is hidden.",
+        "Simple Analytics collects and stores how far a visitor scrolls on a page, recorded in 5% increments.",
+        "Hebban ran Simple Analytics alongside GA4 and Simple Analytics counted about 431,000 more pageviews, 27% more than GA4; the gap can come from consent rejection, blocking or differences in implementation.",
+        "Run Simple Analytics alongside GA4 for 30 days, free, with setup help to compare the numbers.",
+        "All analytics data is processed in the Netherlands (EU-hosted).",
+        "No IP addresses are stored; they are discarded immediately.",
+        "Data is encrypted, and only Simple Analytics controls the decryption keys.",
+        "Simple Analytics is hosted on infrastructure from Worldstream and Leaseweb.",
+        "Simple Analytics does not process personal data, so a Data Processing Agreement is not required when using it.",
+        "Simple Analytics processes only Page URL, Referrer, UTM parameters, Time zone, and Device and browser type as its data scope."
+      ],
+      "allowed_evidence_ids": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E7",
+        "E8",
+        "E10",
+        "E11",
+        "E12",
+        "E15",
+        "E16",
+        "E18",
+        "E19",
+        "E20",
+        "E22",
+        "E23",
+        "E24"
+      ],
+      "forbidden_claims": [],
+      "forbidden_capability_ids": [],
+      "forbidden_evidence_ids": [
+        "E14"
+      ],
+      "unresolved_objections": [],
+      "recommended_next_action": "Gather direct product and company evidence before treating this as an outreach list.",
+      "override_risk": "Generating now will require audience-level hypotheses and may produce a weak campaign because company-specific fit is unresolved.",
+      "claim_contract": {
+        "contract_version": 1,
+        "verified_product_claims": [
+          {
+            "id": "evidence:E1",
+            "text": "Simple Analytics requires no cookies, no trackers, and no consent from visitors.",
+            "evidence_ids": [
+              "E1"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E2",
+            "text": "The Self-serve plan costs €20/month, estimated for about 100k monthly pageviews.",
+            "evidence_ids": [
+              "E2"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E3",
+            "text": "The Self-serve plan includes 1 user; each additional user costs +€20/month.",
+            "evidence_ids": [
+              "E3"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E4",
+            "text": "The Free plan supports 1 user and 5 websites, with 1 month of analytics history, and requires displaying the free plan badge.",
+            "evidence_ids": [
+              "E4"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E5",
+            "text": "Simple Analytics offers a free 30-day proof of concept to test it on your own website, including help optimizing the setup for proxies and custom domains.",
+            "evidence_ids": [
+              "E5"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E6",
+            "text": "Simple Analytics is GDPR compliant from installation, satisfying the GDPR, the ePrivacy Directive, the UK GDPR, and the PECR because it only processes non-personal data.",
+            "evidence_ids": [
+              "E6"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E7",
+            "text": "Website data is stored in the EU, with primary infrastructure in the Netherlands.",
+            "evidence_ids": [
+              "E7"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E8",
+            "text": "Data only goes to a provider outside the EU when the customer opts in to a feature that needs it, such as the AI assistant.",
+            "evidence_ids": [
+              "E8"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E9",
+            "text": "Simple Analytics only collects non-personal data, which belongs to the customer, and never sells it or shares it with anyone for their own use.",
+            "evidence_ids": [
+              "E9"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E10",
+            "text": "By default, Simple Analytics does not collect or store any data for visitors who have Do Not Track enabled.",
+            "evidence_ids": [
+              "E10"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E11",
+            "text": "Simple Analytics collects and stores how long a page is viewed, counting seconds only while the page is visible and not when it is hidden.",
+            "evidence_ids": [
+              "E11"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E12",
+            "text": "Simple Analytics collects and stores how far a visitor scrolls on a page, recorded in 5% increments.",
+            "evidence_ids": [
+              "E12"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E13",
+            "text": "31k+ users rely on Simple Analytics.",
+            "evidence_ids": [
+              "E13"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E14",
+            "text": "Simple Analytics is trusted by teams at Bloomberg, Michelin, Hyundai, GOV.UK, Polkadot, Bank of England, Sketch, Excalidraw and Nomads.",
+            "evidence_ids": [
+              "E14"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E15",
+            "text": "Hebban ran Simple Analytics alongside GA4 and Simple Analytics counted about 431,000 more pageviews, 27% more than GA4; the gap can come from consent rejection, blocking or differences in implementation.",
+            "evidence_ids": [
+              "E15"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E16",
+            "text": "Run Simple Analytics alongside GA4 for 30 days, free, with setup help to compare the numbers.",
+            "evidence_ids": [
+              "E16"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E17",
+            "text": "Simple Analytics is working toward SOC 2 Type II certification (in progress, not yet achieved).",
+            "evidence_ids": [
+              "E17"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E18",
+            "text": "All analytics data is processed in the Netherlands (EU-hosted).",
+            "evidence_ids": [
+              "E18"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E19",
+            "text": "No IP addresses are stored; they are discarded immediately.",
+            "evidence_ids": [
+              "E19"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E20",
+            "text": "Data is encrypted, and only Simple Analytics controls the decryption keys.",
+            "evidence_ids": [
+              "E20"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E21",
+            "text": "Data is deleted after account deletion, fully removed after 90 days.",
+            "evidence_ids": [
+              "E21"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E22",
+            "text": "Simple Analytics is hosted on infrastructure from Worldstream and Leaseweb.",
+            "evidence_ids": [
+              "E22"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E23",
+            "text": "Simple Analytics does not process personal data, so a Data Processing Agreement is not required when using it.",
+            "evidence_ids": [
+              "E23"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E24",
+            "text": "Simple Analytics processes only Page URL, Referrer, UTM parameters, Time zone, and Device and browser type as its data scope.",
+            "evidence_ids": [
+              "E24"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          }
+        ],
+        "campaign_allowed_claims": [
+          {
+            "id": "evidence:E1",
+            "text": "Simple Analytics requires no cookies, no trackers, and no consent from visitors.",
+            "evidence_ids": [
+              "E1"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E2",
+            "text": "The Self-serve plan costs €20/month, estimated for about 100k monthly pageviews.",
+            "evidence_ids": [
+              "E2"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E3",
+            "text": "The Self-serve plan includes 1 user; each additional user costs +€20/month.",
+            "evidence_ids": [
+              "E3"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E4",
+            "text": "The Free plan supports 1 user and 5 websites, with 1 month of analytics history, and requires displaying the free plan badge.",
+            "evidence_ids": [
+              "E4"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E5",
+            "text": "Simple Analytics offers a free 30-day proof of concept to test it on your own website, including help optimizing the setup for proxies and custom domains.",
+            "evidence_ids": [
+              "E5"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E7",
+            "text": "Website data is stored in the EU, with primary infrastructure in the Netherlands.",
+            "evidence_ids": [
+              "E7"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E8",
+            "text": "Data only goes to a provider outside the EU when the customer opts in to a feature that needs it, such as the AI assistant.",
+            "evidence_ids": [
+              "E8"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E10",
+            "text": "By default, Simple Analytics does not collect or store any data for visitors who have Do Not Track enabled.",
+            "evidence_ids": [
+              "E10"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E11",
+            "text": "Simple Analytics collects and stores how long a page is viewed, counting seconds only while the page is visible and not when it is hidden.",
+            "evidence_ids": [
+              "E11"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E12",
+            "text": "Simple Analytics collects and stores how far a visitor scrolls on a page, recorded in 5% increments.",
+            "evidence_ids": [
+              "E12"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E15",
+            "text": "Hebban ran Simple Analytics alongside GA4 and Simple Analytics counted about 431,000 more pageviews, 27% more than GA4; the gap can come from consent rejection, blocking or differences in implementation.",
+            "evidence_ids": [
+              "E15"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E16",
+            "text": "Run Simple Analytics alongside GA4 for 30 days, free, with setup help to compare the numbers.",
+            "evidence_ids": [
+              "E16"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E18",
+            "text": "All analytics data is processed in the Netherlands (EU-hosted).",
+            "evidence_ids": [
+              "E18"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E19",
+            "text": "No IP addresses are stored; they are discarded immediately.",
+            "evidence_ids": [
+              "E19"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E20",
+            "text": "Data is encrypted, and only Simple Analytics controls the decryption keys.",
+            "evidence_ids": [
+              "E20"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E22",
+            "text": "Simple Analytics is hosted on infrastructure from Worldstream and Leaseweb.",
+            "evidence_ids": [
+              "E22"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E23",
+            "text": "Simple Analytics does not process personal data, so a Data Processing Agreement is not required when using it.",
+            "evidence_ids": [
+              "E23"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E24",
+            "text": "Simple Analytics processes only Page URL, Referrer, UTM parameters, Time zone, and Device and browser type as its data scope.",
+            "evidence_ids": [
+              "E24"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          }
+        ],
+        "forbidden_claims": [],
+        "withheld_claims": [
+          {
+            "id": "evidence:E6",
+            "text": "Simple Analytics is GDPR compliant from installation, satisfying the GDPR, the ePrivacy Directive, the UK GDPR, and the PECR because it only processes non-personal data.",
+            "evidence_ids": [
+              "E6"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E9",
+            "text": "Simple Analytics only collects non-personal data, which belongs to the customer, and never sells it or shares it with anyone for their own use.",
+            "evidence_ids": [
+              "E9"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E13",
+            "text": "31k+ users rely on Simple Analytics.",
+            "evidence_ids": [
+              "E13"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E14",
+            "text": "Simple Analytics is trusted by teams at Bloomberg, Michelin, Hyundai, GOV.UK, Polkadot, Bank of England, Sketch, Excalidraw and Nomads.",
+            "evidence_ids": [
+              "E14"
+            ],
+            "reason": "Ranked WITHHOLD for this audience."
+          },
+          {
+            "id": "evidence:E17",
+            "text": "Simple Analytics is working toward SOC 2 Type II certification (in progress, not yet achieved).",
+            "evidence_ids": [
+              "E17"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E21",
+            "text": "Data is deleted after account deletion, fully removed after 90 days.",
+            "evidence_ids": [
+              "E21"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          }
+        ],
+        "warnings": [
+          "Claim 'Simple Analytics is trusted by teams at Bloomberg, Michelin, Hyundai, GOV.UK, Polkadot, Bank of England, Sketch, Excalidraw and Nomads.' rests on withheld or forbidden evidence (E14) and is not campaign-safe."
+        ]
+      }
+    }
+  }
+}

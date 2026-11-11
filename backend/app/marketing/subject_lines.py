@@ -34,7 +34,6 @@ from app.marketing.email_copy import (
     MAX_PREVIEW_CHARS,
     MAX_SUBJECT_CHARS,
     Email,
-    normalized,
 )
 from app.runtime.exceptions import ModelRuntimeError
 from app.runtime.model_session import ModelSession
@@ -74,7 +73,7 @@ class SubjectOption(BaseModel):
             and self.preview
             and len(self.subject) <= MAX_SUBJECT_CHARS
             and len(self.preview) <= MAX_PREVIEW_CHARS
-            and normalized(self.subject) != normalized(self.preview)
+            and self.subject != self.preview
         )
 
     def render(self, label: int) -> str:
@@ -101,8 +100,8 @@ class InboxVerdict(BaseModel):
 
 
 def _swapped(email: Email, option: SubjectOption) -> Email:
-    """The email this option would produce. The body is never touched - the
-    reading already on the record still describes what ships."""
+    """The email this option would produce; an inbox comparison does not
+    constitute a new panel reading of the complete subject/body combination."""
     return email.model_copy(
         update={"subject": option.subject, "preview_text": option.preview}
     )

@@ -92,6 +92,13 @@ ROLE_CATALOG: dict[str, RoleSpec] = {
             tier=ModelTier.DEEP,
         ),
         RoleSpec(
+            id="claim_reviewer",
+            label="Source reviewer",
+            blurb="Checks what each draft actually claims against its sources and instructions.",
+            phase=RolePhase.CAMPAIGN,
+            tier=ModelTier.BALANCED,
+        ),
+        RoleSpec(
             id="conversion_critic",
             label="Conversion critic",
             blurb="Catches brief drift and evidence the draft was handed but never spent.",

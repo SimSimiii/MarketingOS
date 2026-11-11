@@ -25,13 +25,19 @@ from app.knowledge.ledger import EvidenceKind
 from app.market.demand import DemandMap
 from app.market.material_research import MaterialRecovery
 from app.market.positioning import PositioningMap
-from app.marketing.briefs import ArgumentOption, CampaignBrief, EmailBrief
+from app.marketing.briefs import ArgumentOption, CampaignBrief, EmailBrief, ValueCase
 from app.marketing.contract import DeliverableContract
 from app.marketing.exceptions import StrategyError
+from app.marketing.grounding import (
+    absolute_destination,
+    captured_destination,
+    offer_source_excerpts,
+)
 from app.marketing.intelligence import CampaignIntelligence
 from app.marketing.intent import CampaignIntent
 from app.marketing.preflight import assess
 from app.marketing.request import CampaignRequest
+from app.marketing.steering import claim_boundary, render_for_strategy, steering_options
 from app.runtime.model_session import ModelSession
 
 logger = logging.getLogger("marketingos.marketing")
@@ -160,16 +166,21 @@ def _recovered_next_step(
     next_step_value: str,
     fixed_cta_url: str = "",
     action_id: str = "",
+    next_step_url: str = "",
+    corpus: SourceCorpus | None = None,
+    identity_url: str = "",
 ) -> tuple[str, str]:
     """Tie an automatically recovered payoff to its exact official page."""
     if fixed_cta_url:
         return call_to_action, next_step_value
-    urls = {
+    urls = {next_step_url} if next_step_url else {
         url.rstrip(".,;:)")
         for url in re.findall(r'https?://[^\s<>"\]]+', call_to_action)
     }
     known_destinations = {action.url for action in artifacts.offer.calls_to_action if action.url}
     if len(urls) == 1 and urls.issubset(known_destinations):
+        return call_to_action, next_step_value
+    if len(urls) == 1 and captured_destination(next(iter(urls)), corpus, identity_url=identity_url):
         return call_to_action, next_step_value
     if any(action_id == action.reference_id or call_to_action.casefold() == action.label.casefold()
            for action in artifacts.offer.calls_to_action):
@@ -337,6 +348,7 @@ def _repair_argument_dependencies(
         "felt_need": "", "status_quo": "", "why_it_fails": "",
         "mechanism": function.claim if function else "",
         "belief_shift": "", "objection": "",
+        "value_case": ValueCase(),
         "subject_strategy": "Respect the campaign objective and name only a supported proposition; do not imply novelty without user-provided or dated support.",
         "next_step_decision": "",
         "next_step_value": "",
@@ -357,7 +369,7 @@ def _repair_argument_dependencies(
 
 def _resolve_proposition_action(
     argument: EmailBrief | ArgumentOption, artifacts: KnowledgeArtifacts,
-    fixed_cta_url: str,
+    fixed_cta_url: str, corpus: SourceCorpus | None = None, identity_url: str = "",
 ) -> EmailBrief | ArgumentOption:
     # Historical briefs put the chosen link in the CTA field. Preserve that
     # explicit choice, subject to exactly the same licensing below.
@@ -366,7 +378,7 @@ def _resolve_proposition_action(
         if len(urls) == 1:
             argument = argument.model_copy(update={"next_step_url": urls.pop()})
     actions = {item.reference_id: item for item in artifacts.offer.calls_to_action}
-    updates: dict = {"offer_id": argument.offer_id or "offering"}
+    updates: dict = {"offer_id": argument.offer_id or "offering", "destination_rejected": False}
     known_offers = {"offering", *(plan.reference_id for plan in artifacts.offer.plans)}
     if argument.offer_id and argument.offer_id not in known_offers:
         updates["argument_issue"] = "The proposition references an unknown offer id. Select offering or an exact plan id from the offer sheet."
@@ -383,6 +395,7 @@ def _resolve_proposition_action(
     if action is not None and not argument.call_to_action:
         updates["call_to_action"] = action.label
 
+    origin = (action.provenance.source if action and action.provenance else "") or identity_url
     destination = fixed_cta_url or (action.url if action else "") or argument.next_step_url
     if not destination and action is None and argument.next_step_evidence_ids:
         sources = {entry.source for entry in artifacts.evidence.entries
@@ -395,11 +408,17 @@ def _resolve_proposition_action(
         licensed = {entry.source for entry in artifacts.evidence.entries
                     if entry.id in argument.evidence_ids}
         licensed.update(item.url for item in actions.values() if item.url)
-        if destination not in licensed:
+        if destination not in licensed and not captured_destination(
+            destination, corpus, identity_url=identity_url,
+        ):
             destination = ""
+            updates["destination_rejected"] = True
             updates["argument_issue"] = "The selected destination is not licensed by an assigned source or an offer action."
-    updates["next_step_url"] = destination or ""
-    if argument.destination_kind == "web" and not destination:
+    resolved = absolute_destination(destination or "", origin)
+    updates["next_step_url"] = resolved
+    if destination and not resolved:
+        updates["destination_rejected"] = True
+    if argument.destination_kind == "web" and not resolved:
         updates["argument_issue"] = (
             "The web CTA has no verified destination. Choose one exact assigned evidence source "
             "or an offer action with a URL; a brand homepage fallback does not establish the promised page."
@@ -433,6 +452,7 @@ class Strategist:
         chosen_segment: str = "",
         intelligence: CampaignIntelligence | None = None,
         recovery: MaterialRecovery | None = None,
+        repair_context: str = "",
     ) -> CampaignBrief:
         prompt_artifacts = artifacts
         prompt_intelligence = intelligence
@@ -473,9 +493,27 @@ class Strategist:
             excluded_ids=frozenset(intelligence.forbidden_evidence_ids) if intelligence else frozenset(),
         )
         prompt_artifacts = prompt_artifacts.model_copy(update={"evidence": selection.ledger})
+        offer_sources = offer_source_excerpts(
+            artifacts, corpus,
+            allowed_ids=selection.ledger.ids if intelligence and intelligence.v2_claim_boundary else None,
+        )
         variables = {
             "request": request.request,
-            "campaign_context": request.render_context(),
+            # The user's steering beside their own words, so the plan is
+            # chosen with it rather than corrected after it. The same choices
+            # are fixed into the brief in code afterwards - see
+            # app.marketing.steering.apply_steering - so this is guidance,
+            # and nothing here depends on the model having followed it.
+            "campaign_context": "\n\n".join(filter(None, (
+                request.render_context(),
+                repair_context,
+                render_for_strategy(
+                    request.steering,
+                    steering_options(
+                        artifacts, positioning, claim_boundary(intelligence, artifacts)
+                    ),
+                ),
+            ))),
             "knowledge": selection.render_manifest() + "\n" + prompt_artifacts.render_for_strategy(),
             # The shape of what exists, above the facts themselves. A hundred
             # undifferentiated entries answer "what is true" and hide "what
@@ -508,9 +546,14 @@ class Strategist:
                 prompt_intelligence.render_for_strategy() if prompt_intelligence is not None else ""
             ),
             "contract": contract.render(),
-            "relevant_material": corpus.render_search(
-                f"{request.request} {request.product_description}", _RETRIEVAL_CHUNKS
-            ),
+            "relevant_material": "\n\n".join([
+                *offer_sources.values(),
+                *(
+                    [corpus.render_search(intelligence.selected_need, 3)]
+                    if intelligence and intelligence.selected_need else []
+                ),
+                corpus.render_search(f"{request.request} {request.product_description}", _RETRIEVAL_CHUNKS),
+            ]),
             "prior_learnings": prior_learnings or "This is the first campaign for this business.",
             "recovery_material": _render_recovery(recovery, artifacts),
         }
@@ -530,6 +573,8 @@ class Strategist:
             brief, contract, artifacts, intelligence, audience_context,
             fixed_cta_url=request.cta_url or "",
             intent=request.effective_intent,
+            corpus=corpus,
+            identity_url=request.source_identity_url,
         )
 
         count_wrong = contract.count_is_explicit and len(brief.emails) != contract.count
@@ -591,6 +636,8 @@ class Strategist:
                 brief, contract, artifacts, intelligence, audience_context,
                 fixed_cta_url=request.cta_url or "",
                 intent=request.effective_intent,
+                corpus=corpus,
+                identity_url=request.source_identity_url,
             )
             if any(
                 email.call_to_action and email.next_step_value
@@ -618,6 +665,7 @@ class Strategist:
         brief.reader_scope = (
             intelligence.eligible_subsegment
             if intelligence is not None and intelligence.dossier_current
+            and not intelligence.first_email_scope_applied
             and intelligence.trace.qualified_subsegment and not request.target_market else ""
         )
         brief.reader_profile_override = (
@@ -674,6 +722,8 @@ class Strategist:
         *,
         fixed_cta_url: str = "",
         intent: CampaignIntent | None = None,
+        corpus: SourceCorpus | None = None,
+        identity_url: str = "",
     ) -> CampaignBrief:
         """Fix in code everything about a brief that has a correct answer.
 
@@ -687,6 +737,7 @@ class Strategist:
         brief.intent = intent
         brief.pipeline_version = 2
         brief.strategy_mode = "planned"
+        brief.focused_activation = False
         if intelligence is not None:
             intelligence.validate_against(artifacts.evidence)
             if intelligence.dossier_current and intelligence.orientation:
@@ -760,12 +811,21 @@ class Strategist:
             # over a set, so it is settled here rather than asked for.
             fresh = [id_ for id_ in assigned if id_ not in spent_evidence]
             if fresh and fresh != assigned:
+                # A shared operation or prerequisite can support a different
+                # argument. Removing its source destroys the value case's
+                # dependency set and silently clears the whole benefit below.
+                # Distinct arguments are a sequence concern; their explicitly
+                # required factual support must remain available to the writer.
+                required = set(email.value_case.evidence_ids) | set(email.next_step_evidence_ids)
+                retained_support = [
+                    id_ for id_ in assigned if id_ not in spent_evidence or id_ in required
+                ]
                 logger.info(
                     "strategist: email %d re-assigned %s, already spent earlier - dropped",
                     position,
-                    [id_ for id_ in assigned if id_ in spent_evidence],
+                    [id_ for id_ in assigned if id_ not in retained_support],
                 )
-                assigned = fresh
+                assigned = retained_support
             elif assigned and not fresh:
                 # Every fact it asked for is gone. A business with two proofs
                 # and a five-email sequence is the ordinary case, not an error,
@@ -805,6 +865,9 @@ class Strategist:
                 next_step_value=email.next_step_value,
                 fixed_cta_url=fixed_cta_url,
                 action_id=email.action_id,
+                next_step_url=email.next_step_url,
+                corpus=corpus,
+                identity_url=identity_url,
             )
             constraints = _distinct_constraints(
                 [
@@ -817,6 +880,7 @@ class Strategist:
             )
             felt_need = email.felt_need
             status_quo = email.status_quo
+            claim_conditions = list(email.claim_conditions)
             if intelligence is not None:
                 if intelligence.research_loaded:
                     felt_need = intelligence.normalized_felt_need(felt_need, assigned, email.problem_ids)
@@ -849,7 +913,7 @@ class Strategist:
                     for caveat in caveats
                     if " ".join(caveat.casefold().split()) not in existing_constraints
                 ]
-                constraints = _distinct_constraints([*constraints, *caveats])
+                claim_conditions = _distinct_constraints([*claim_conditions, *caveats])
                 for caveat in injected:
                     if caveat not in intelligence.trace.partial_caveats_injected:
                         intelligence.trace.partial_caveats_injected.append(caveat)
@@ -908,6 +972,9 @@ class Strategist:
                     next_step_value=alternative.next_step_value,
                     fixed_cta_url=fixed_cta_url,
                     action_id=alternative.action_id,
+                    next_step_url=alternative.next_step_url,
+                    corpus=corpus,
+                    identity_url=identity_url,
                 )
                 alternative_constraints = _distinct_constraints(
                     [
@@ -922,6 +989,7 @@ class Strategist:
                 )
                 alternative_felt_need = alternative.felt_need
                 alternative_status_quo = alternative.status_quo
+                alternative_conditions = list(alternative.claim_conditions)
                 if intelligence is not None:
                     if intelligence.research_loaded:
                         alternative_felt_need = intelligence.normalized_felt_need(
@@ -930,12 +998,13 @@ class Strategist:
                         alternative_status_quo = intelligence.normalized_status_quo(
                             alternative_status_quo
                         )
+                    alternative_conditions = _distinct_constraints([
+                        *alternative_conditions,
+                        *intelligence.constraints_for(alternative_evidence, artifacts.evidence),
+                    ])
                     alternative_constraints = _distinct_constraints(
                         [
                             *alternative_constraints,
-                            *intelligence.constraints_for(
-                                alternative_evidence, artifacts.evidence
-                            ),
                             *(
                                 intelligence.forbidden_claims
                                 if intelligence.v2_claim_boundary
@@ -954,10 +1023,13 @@ class Strategist:
                             "call_to_action": alternative_action,
                             "next_step_value": alternative_next_step_value,
                             "must_not_say": alternative_constraints,
+                            "claim_conditions": alternative_conditions,
                         }
                     ), artifacts, intelligence, fixed_cta_url=fixed_cta_url,
                 )
-                alternative_arguments.append(_resolve_proposition_action(repaired_alternative, artifacts, fixed_cta_url))
+                alternative_arguments.append(_resolve_proposition_action(
+                    repaired_alternative, artifacts, fixed_cta_url, corpus, identity_url,
+                ))
             email = email.model_copy(
                 update={
                     "position": position,
@@ -969,6 +1041,7 @@ class Strategist:
                     "felt_need": felt_need,
                     "status_quo": status_quo,
                     "must_not_say": constraints,
+                    "claim_conditions": claim_conditions,
                     "forbidden_evidence_ids": forbidden_evidence,
                     "forbidden_capability_ids": (
                         list(intelligence.forbidden_capability_ids)
@@ -987,7 +1060,7 @@ class Strategist:
                 brief.emails[position - 1], email, artifacts, intelligence,
                 fixed_cta_url=fixed_cta_url,
             )
-            email = _resolve_proposition_action(email, artifacts, fixed_cta_url)
+            email = _resolve_proposition_action(email, artifacts, fixed_cta_url, corpus, identity_url)
             if reframed:
                 reframed_positions.append(position)
                 email.alternative_ideas = []
@@ -1026,6 +1099,13 @@ class Strategist:
                         "strategist: alternative call to action %r is not on the offer sheet",
                         alternative.call_to_action,
                     )
+            email.value_case = email.value_case.for_evidence(
+                set(email.evidence_ids) - set(email.forbidden_evidence_ids)
+            )
+            for alternative in email.alternative_arguments:
+                alternative.value_case = alternative.value_case.for_evidence(
+                    set(alternative.evidence_ids) - set(email.forbidden_evidence_ids)
+                )
             normalized.append(email)
             if email.single_idea:
                 spent.append(email.single_idea)

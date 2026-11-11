@@ -1,0 +1,649 @@
+{
+  "schema_version": 2,
+  "version": 1,
+  "knowledge_id": "8d69eaaa-286b-4cff-b2c4-c5455989129d",
+  "knowledge_version": 1,
+  "ledger_fingerprint": "f047598903163b2436ebae5ec1d944a0041c2be3780ee4055e3fcd112c3f6c6e",
+  "derivation_version": 3,
+  "capabilities": [
+    {
+      "id": "fact_4f721c60ba3d0bd3",
+      "label": "The Transistor API uses API keys to authenticate all requests, sent via an HTTP header named x-api-key",
+      "description": "Source: official_documentation; Subject: Transistor API",
+      "state": "verified",
+      "evidence": [
+        {
+          "evidence_id": "E1",
+          "claim": "The Transistor API uses API keys to authenticate all requests, sent via an HTTP header named x-api-key",
+          "quote": "The Transistor API uses API keys to authenticate all requests. Your API keys can be viewed and reset in the [Account Area](https://dashboard.transistor.fm/account) of your Transistor Dashboard. Each API request must include an HTTP header `x-api-key` with its value being your API key.",
+          "source_identifier": "https://developers.transistor.fm/"
+        }
+      ],
+      "aliases": [],
+      "customer_copy_visibility": "internal",
+      "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+      "unlicensed_evidence_ids": [],
+      "origin": "derived"
+    },
+    {
+      "id": "fact_62ad10d8b63d0c9a",
+      "label": "API requests are rate-limited to 10 requests per 10 seconds; exceeding this returns a 429 HTTP error code and blocks access for 10 seconds",
+      "description": "Source: official_documentation; Subject: Transistor API",
+      "state": "verified",
+      "evidence": [
+        {
+          "evidence_id": "E2",
+          "claim": "API requests are rate-limited to 10 requests per 10 seconds; exceeding this returns a 429 HTTP error code and blocks access for 10 seconds",
+          "quote": "API requests are rate-limited to 10 requests per 10 seconds. If this limit is exceeded, you will be receive a `429` HTTP error code, and access will be blocked for 10 seconds.",
+          "source_identifier": "https://developers.transistor.fm/"
+        }
+      ],
+      "aliases": [],
+      "customer_copy_visibility": "internal",
+      "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+      "unlicensed_evidence_ids": [],
+      "origin": "derived"
+    },
+    {
+      "id": "fact_fc33363c3be1c6e4",
+      "label": "The Transistor API is built around the JSON:API specification",
+      "description": "Source: official_documentation; Subject: Transistor API",
+      "state": "verified",
+      "evidence": [
+        {
+          "evidence_id": "E3",
+          "claim": "The Transistor API is built around the JSON:API specification",
+          "quote": "The Transistor API is built around the [JSON:API](https://jsonapi.org) specification.",
+          "source_identifier": "https://developers.transistor.fm/"
+        }
+      ],
+      "aliases": [],
+      "customer_copy_visibility": "internal",
+      "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+      "unlicensed_evidence_ids": [],
+      "origin": "derived"
+    },
+    {
+      "id": "fact_04e8d318fc3e0830",
+      "label": "The API supports sparse fieldsets, letting a request specify only particular fields to return, e.g. fields[episode][]=title&fields[episode][]=media_url",
+      "description": "Source: official_documentation; Subject: Transistor API",
+      "state": "verified",
+      "evidence": [
+        {
+          "evidence_id": "E4",
+          "claim": "The API supports sparse fieldsets, letting a request specify only particular fields to return, e.g. fields[episode][]=title&fields[episode][]=media_url",
+          "quote": "Let's say you want to retrieve an Episode but only return the title and media\\_url. In your request you can specify `fields[episode][]=title&fields[episode][]=media_url`.",
+          "source_identifier": "https://developers.transistor.fm/"
+        }
+      ],
+      "aliases": [],
+      "customer_copy_visibility": "internal",
+      "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+      "unlicensed_evidence_ids": [],
+      "origin": "derived"
+    },
+    {
+      "id": "fact_aa21b6a19b1fb6ef",
+      "label": "The API supports including a resource's related resources in one request, e.g. include[]=show, and this can be combined with sparse fieldsets",
+      "description": "Source: official_documentation; Subject: Transistor API",
+      "state": "verified",
+      "evidence": [
+        {
+          "evidence_id": "E5",
+          "claim": "The API supports including a resource's related resources in one request, e.g. include[]=show, and this can be combined with sparse fieldsets",
+          "quote": "You can also return a resource's related resources in one single API request instead of multiuple requests. For example, you may want to retrieve an Episode, but also include its parent Show resource. In your request you can specify `include[]=show`.",
+          "source_identifier": "https://developers.transistor.fm/"
+        }
+      ],
+      "aliases": [],
+      "customer_copy_visibility": "internal",
+      "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+      "unlicensed_evidence_ids": [],
+      "origin": "derived"
+    },
+    {
+      "id": "fact_d71d3f2de0b76c0c",
+      "label": "The Get show analytics endpoint (GET /v1/analytics/:id) retrieves downloads-per-day for an entire podcast and defaults to the last 14 days if no date range is given",
+      "description": "Source: official_documentation; Subject: Transistor API show analytics endpoint; no start_date/end_date supplied",
+      "state": "verified",
+      "evidence": [
+        {
+          "evidence_id": "E6",
+          "claim": "The Get show analytics endpoint (GET /v1/analytics/:id) retrieves downloads-per-day for an entire podcast and defaults to the last 14 days if no date range is given",
+          "quote": "Retrieve analytics of downloads per day for an entire podcast. Defaults to the last 14 days.",
+          "source_identifier": "https://developers.transistor.fm/"
+        }
+      ],
+      "aliases": [],
+      "customer_copy_visibility": "internal",
+      "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+      "unlicensed_evidence_ids": [],
+      "origin": "derived"
+    },
+    {
+      "id": "fact_35f0dfb944bfcd63",
+      "label": "The Get all episode analytics endpoint (GET /v1/analytics/:id/episodes) retrieves downloads-per-day for all episodes of a podcast and defaults to the last 7 days",
+      "description": "Source: official_documentation; Subject: Transistor API episode analytics endpoint; no start_date/end_date supplied",
+      "state": "verified",
+      "evidence": [
+        {
+          "evidence_id": "E7",
+          "claim": "The Get all episode analytics endpoint (GET /v1/analytics/:id/episodes) retrieves downloads-per-day for all episodes of a podcast and defaults to the last 7 days",
+          "quote": "Retrieve analytics of downloads per day for all episodes of a podcast. Defaults to the last 7 days.",
+          "source_identifier": "https://developers.transistor.fm/"
+        }
+      ],
+      "aliases": [],
+      "customer_copy_visibility": "internal",
+      "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+      "unlicensed_evidence_ids": [],
+      "origin": "derived"
+    },
+    {
+      "id": "fact_aee0f18230f0f469",
+      "label": "The Get single episode analytics endpoint (GET /v1/analytics/episodes/:id) retrieves downloads-per-day for a single episode and defaults to the last 14 days",
+      "description": "Source: official_documentation; Subject: Transistor API single episode analytics endpoint; no start_date/end_date supplied",
+      "state": "verified",
+      "evidence": [
+        {
+          "evidence_id": "E8",
+          "claim": "The Get single episode analytics endpoint (GET /v1/analytics/episodes/:id) retrieves downloads-per-day for a single episode and defaults to the last 14 days",
+          "quote": "Retrieve analytics of downloads per day for a single episode. Defaults to the last 14 days.",
+          "source_identifier": "https://developers.transistor.fm/"
+        }
+      ],
+      "aliases": [],
+      "customer_copy_visibility": "internal",
+      "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+      "unlicensed_evidence_ids": [],
+      "origin": "derived"
+    },
+    {
+      "id": "fact_0f513e7871367259",
+      "label": "The Get episodes endpoint (GET /v1/episodes) retrieves a paginated list of episodes ordered by published date, filterable by show_id, query, and status (draft, scheduled, or published)",
+      "description": "Source: official_documentation; Subject: Transistor API episodes list endpoint",
+      "state": "verified",
+      "evidence": [
+        {
+          "evidence_id": "E9",
+          "claim": "The Get episodes endpoint (GET /v1/episodes) retrieves a paginated list of episodes ordered by published date, filterable by show_id, query, and status (draft, scheduled, or published)",
+          "quote": "Retrieve a paginated list of episodes ordered by published date.",
+          "source_identifier": "https://developers.transistor.fm/"
+        }
+      ],
+      "aliases": [],
+      "customer_copy_visibility": "internal",
+      "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+      "unlicensed_evidence_ids": [],
+      "origin": "derived"
+    },
+    {
+      "id": "fact_3dee4ab414815812",
+      "label": "Episodes can be filtered by status: one of draft, scheduled, or published",
+      "description": "Source: official_documentation; Subject: Transistor API episodes list endpoint",
+      "state": "verified",
+      "evidence": [
+        {
+          "evidence_id": "E10",
+          "claim": "Episodes can be filtered by status: one of draft, scheduled, or published",
+          "quote": "| status | String | One of draft scheduled published | Publishing status: published, scheduled, or draft |",
+          "source_identifier": "https://developers.transistor.fm/"
+        }
+      ],
+      "aliases": [],
+      "customer_copy_visibility": "internal",
+      "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+      "unlicensed_evidence_ids": [],
+      "origin": "derived"
+    },
+    {
+      "id": "fact_63f33daf79e66cb2",
+      "label": "Episode list results default to descending order (newest first) and default to 10 resources per page starting at page 0",
+      "description": "Source: official_documentation; Subject: Transistor API episodes list endpoint",
+      "state": "verified",
+      "evidence": [
+        {
+          "evidence_id": "E11",
+          "claim": "Episode list results default to descending order (newest first) and default to 10 resources per page starting at page 0",
+          "quote": "| order | String | One of desc asc Default: desc | Return order of episodes. Newest first (desc), or oldest first (asc) |",
+          "source_identifier": "https://developers.transistor.fm/"
+        }
+      ],
+      "aliases": [],
+      "customer_copy_visibility": "internal",
+      "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+      "unlicensed_evidence_ids": [],
+      "origin": "derived"
+    },
+    {
+      "id": "fact_03bd774a022f9760",
+      "label": "The episodes list endpoint paginates with a default page number of 0 and a default of 10 resources per page",
+      "description": "Source: official_documentation; Subject: Transistor API episodes list endpoint",
+      "state": "verified",
+      "evidence": [
+        {
+          "evidence_id": "E12",
+          "claim": "The episodes list endpoint paginates with a default page number of 0 and a default of 10 resources per page",
+          "quote": "| pagination[page] | Integer | Default: 0 | Page number | | pagination[per] | Integer | Default: 10 | Resources per page |",
+          "source_identifier": "https://developers.transistor.fm/"
+        }
+      ],
+      "aliases": [],
+      "customer_copy_visibility": "internal",
+      "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+      "unlicensed_evidence_ids": [],
+      "origin": "derived"
+    },
+    {
+      "id": "fact_5bc564ef9df65474",
+      "label": "Professional plan supports dynamic ads (pre-roll, mid-roll, post-roll)",
+      "description": "Source: official_documentation; Subject: Transistor Professional plan; Professional plan and above",
+      "state": "verified",
+      "evidence": [
+        {
+          "evidence_id": "E19",
+          "claim": "Professional plan supports dynamic ads (pre-roll, mid-roll, post-roll)",
+          "quote": "[Dynamic ads (pre-roll, mid-roll, post-roll)](https://transistor.fm/features/dynamic-ads/)",
+          "source_identifier": "https://transistor.fm/"
+        }
+      ],
+      "aliases": [],
+      "customer_copy_visibility": "internal",
+      "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+      "unlicensed_evidence_ids": [],
+      "origin": "derived"
+    },
+    {
+      "id": "fact_e843c3fbb0f1c4a0",
+      "label": "Business plan removes Transistor branding",
+      "description": "Source: official_documentation; Subject: Transistor Business plan; Business plan only",
+      "state": "verified",
+      "evidence": [
+        {
+          "evidence_id": "E22",
+          "claim": "Business plan removes Transistor branding",
+          "quote": "Remove Transistor branding",
+          "source_identifier": "https://transistor.fm/"
+        }
+      ],
+      "aliases": [],
+      "customer_copy_visibility": "internal",
+      "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+      "unlicensed_evidence_ids": [],
+      "origin": "derived"
+    },
+    {
+      "id": "fact_7f1c6a3aa8ded4cf",
+      "label": "Transistor does not charge extra for creating additional podcasts on one account",
+      "description": "Source: official_documentation; Subject: Transistor",
+      "state": "verified",
+      "evidence": [
+        {
+          "evidence_id": "E24",
+          "claim": "Transistor does not charge extra for creating additional podcasts on one account",
+          "quote": "We don't charge you for creating additional podcasts.",
+          "source_identifier": "https://transistor.fm/"
+        }
+      ],
+      "aliases": [],
+      "customer_copy_visibility": "internal",
+      "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+      "unlicensed_evidence_ids": [],
+      "origin": "derived"
+    },
+    {
+      "id": "fact_1bbfbf01770071ca",
+      "label": "Transistor generates a website automatically for a podcast after choosing a design",
+      "description": "Source: official_documentation; Subject: Transistor",
+      "state": "verified",
+      "evidence": [
+        {
+          "evidence_id": "E25",
+          "claim": "Transistor generates a website automatically for a podcast after choosing a design",
+          "quote": "Choose a design and we'll automatically generate a website for your show.",
+          "source_identifier": "https://transistor.fm/"
+        }
+      ],
+      "aliases": [],
+      "customer_copy_visibility": "internal",
+      "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+      "unlicensed_evidence_ids": [],
+      "origin": "derived"
+    },
+    {
+      "id": "fact_19ab0d89deaf8d66",
+      "label": "Transistor's analytics show average downloads per episode, popular podcast apps, number of subscribers, and trends",
+      "description": "Source: official_documentation; Subject: Transistor",
+      "state": "verified",
+      "evidence": [
+        {
+          "evidence_id": "E26",
+          "claim": "Transistor's analytics show average downloads per episode, popular podcast apps, number of subscribers, and trends",
+          "quote": "See your average downloads per episode, popular podcast apps, number of subscribers, trends.",
+          "source_identifier": "https://transistor.fm/"
+        }
+      ],
+      "aliases": [],
+      "customer_copy_visibility": "internal",
+      "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+      "unlicensed_evidence_ids": [],
+      "origin": "derived"
+    },
+    {
+      "id": "fact_d0f1eff43eff518b",
+      "label": "Transistor supports private, members-only podcasts for a company or online community",
+      "description": "Source: official_documentation; Subject: Transistor",
+      "state": "verified",
+      "evidence": [
+        {
+          "evidence_id": "E27",
+          "claim": "Transistor supports private, members-only podcasts for a company or online community",
+          "quote": "Host a members-only podcast for your company or online community.",
+          "source_identifier": "https://transistor.fm/"
+        }
+      ],
+      "aliases": [],
+      "customer_copy_visibility": "internal",
+      "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+      "unlicensed_evidence_ids": [],
+      "origin": "derived"
+    },
+    {
+      "id": "fact_6affd15a4ce0c1d3",
+      "label": "Transistor distributes podcasts to Apple Podcasts, Spotify, YouTube, Overcast, Pocket Casts, and many more",
+      "description": "Source: official_documentation; Subject: Transistor",
+      "state": "verified",
+      "evidence": [
+        {
+          "evidence_id": "E28",
+          "claim": "Transistor distributes podcasts to Apple Podcasts, Spotify, YouTube, Overcast, Pocket Casts, and many more",
+          "quote": "Get your podcast on Apple Podcasts, Spotify, YouTube, Overcast, Pocket Casts, and many more!",
+          "source_identifier": "https://transistor.fm/"
+        }
+      ],
+      "aliases": [],
+      "customer_copy_visibility": "internal",
+      "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+      "unlicensed_evidence_ids": [],
+      "origin": "derived"
+    }
+  ],
+  "constraints": [],
+  "claims": [
+    {
+      "text": "The Transistor API uses API keys to authenticate all requests, sent via an HTTP header named x-api-key",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E1"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "API requests are rate-limited to 10 requests per 10 seconds; exceeding this returns a 429 HTTP error code and blocks access for 10 seconds",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E2"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "The Transistor API is built around the JSON:API specification",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E3"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "The API supports sparse fieldsets, letting a request specify only particular fields to return, e.g. fields[episode][]=title&fields[episode][]=media_url",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E4"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "The API supports including a resource's related resources in one request, e.g. include[]=show, and this can be combined with sparse fieldsets",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E5"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "The Get show analytics endpoint (GET /v1/analytics/:id) retrieves downloads-per-day for an entire podcast and defaults to the last 14 days if no date range is given",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E6"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "The Get all episode analytics endpoint (GET /v1/analytics/:id/episodes) retrieves downloads-per-day for all episodes of a podcast and defaults to the last 7 days",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E7"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "The Get single episode analytics endpoint (GET /v1/analytics/episodes/:id) retrieves downloads-per-day for a single episode and defaults to the last 14 days",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E8"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "The Get episodes endpoint (GET /v1/episodes) retrieves a paginated list of episodes ordered by published date, filterable by show_id, query, and status (draft, scheduled, or published)",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E9"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Episodes can be filtered by status: one of draft, scheduled, or published",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E10"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Episode list results default to descending order (newest first) and default to 10 resources per page starting at page 0",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E11"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "The episodes list endpoint paginates with a default page number of 0 and a default of 10 resources per page",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E12"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Starter plan is $19/month, includes unlimited podcasts, 20,000 monthly audio downloads, and 50 private podcast subscribers",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E13"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Starter plan includes 20,000 monthly audio downloads",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E14"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Starter plan includes 50 private podcast subscribers",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E15"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Professional plan is $49/month, includes video podcast publishing, 100,000 monthly audio downloads, 500 GB file storage, 500 private podcast subscribers, and dynamic ads",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E16"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Professional plan includes 100,000 monthly audio downloads",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E17"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Professional plan includes 500 GB of file storage",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E18"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Professional plan supports dynamic ads (pre-roll, mid-roll, post-roll)",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E19"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Business plan is $99/month, includes 250,000 monthly audio downloads, 1 TB file storage, 3,000 private podcast subscribers, and removes Transistor branding",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E20"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Business plan includes 3,000 private podcast subscribers",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E21"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Business plan removes Transistor branding",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E22"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Transistor offers a 14-day free trial",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E23"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Transistor does not charge extra for creating additional podcasts on one account",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E24"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Transistor generates a website automatically for a podcast after choosing a design",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E25"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Transistor's analytics show average downloads per episode, popular podcast apps, number of subscribers, and trends",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E26"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Transistor supports private, members-only podcasts for a company or online community",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E27"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Transistor distributes podcasts to Apple Podcasts, Spotify, YouTube, Overcast, Pocket Casts, and many more",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E28"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Transistor has hosted more than 40,000 podcasts since launching in 2018",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E29"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Transistor won the Quill Award for Best Podcast Hosting",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E30"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Nathan Barry of Kit says 'Transistor is 100% the way to go' when asked which podcast host he recommends",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E31"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Stephen Robles says Transistor is his favorite podcasting platform and that HLS video lets him distribute shows in all formats his audience wants from one place",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E32"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Ali Abdaal is a named Transistor customer since 2021",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E33"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    },
+    {
+      "text": "Dan Schoonmaker of CasterKit says Transistor integrates with Zapier",
+      "visibility": "customer",
+      "evidence_ids": [
+        "E34"
+      ],
+      "reason": "Licensed by the current Evidence Ledger."
+    }
+  ],
+  "id": "7d6c7555-98b2-42eb-97b1-e71d9aa29aab",
+  "brand_id": "61e93c8b-eabb-48e2-8b09-2302421911a3",
+  "created_at": "2026-11-09T11:34:16.606696"
+}

@@ -16,18 +16,26 @@ this path is deliberately limited to product capabilities, integrations,
 setup instructions, limits and commercial facts stated in official docs.
 """
 
+import hashlib
 import logging
 import re
 from collections.abc import Sequence
-from urllib.parse import urlsplit
+from datetime import UTC, datetime
+from urllib.parse import urljoin, urlsplit
 
 from pydantic import BaseModel, Field, field_validator
 
 from app.ai.base import ResearchTool
 from app.ai.model_router import ModelTier
 from app.knowledge.artifacts import KnowledgeArtifacts
-from app.knowledge.corpus import Document, SourceCorpus, fold
-from app.knowledge.ledger import Evidence, EvidenceContext, EvidenceKind, EvidenceStrength
+from app.knowledge.corpus import MARKDOWN_LINK_RE, Document, SourceCorpus, contains_quote, fold
+from app.knowledge.ledger import (
+    Evidence,
+    EvidenceContext,
+    EvidenceKind,
+    EvidenceStrength,
+    preserve_billing_uncertainty,
+)
 from app.market.audience_research import (
     FetchedSource,
     FixedURLFetcher,
@@ -97,6 +105,7 @@ class MaterialClaim(BaseModel):
 class _MaterialDraft(BaseModel):
     claims: list[MaterialClaim] = Field(default_factory=list)
     note: str = ""
+    followup_url: str = Field(default="", max_length=2048)
 
 
 class MaterialRecovery(BaseModel):
@@ -205,6 +214,76 @@ class MaterialResearcher:
         self._session = session
         self._fetcher = fetcher or FixedURLFetcher(max_urls=MAX_MATERIAL_URLS)
 
+    async def verify_required_fact(
+        self, *, question: str, source_url: str, identity_url: str | None,
+        artifacts: KnowledgeArtifacts, corpus: SourceCorpus,
+    ) -> MaterialRecovery:
+        """Check an explicit prerequisite against captured material and at most one known URL."""
+        hosts = _identity_hosts(artifacts, identity_url)
+        if source_url and (not _within_identity(source_url, hosts) or not _official_host(source_url)):
+            return MaterialRecovery(gap=question, note="The selected page is outside the brand's official sources.")
+
+        documents = {
+            doc.id: doc for doc in corpus.documents
+            if _within_identity(doc.source, hosts) and _official_host(doc.source)
+        }
+        excerpts: dict[str, list[str]] = {}
+        linked: dict[str, str] = {}
+        captured_urls = {doc.source for doc in documents.values()}
+        for hit in corpus.search(question, limit=12):
+            if hit.document_id in documents and (not source_url or hit.source == source_url):
+                excerpts.setdefault(hit.document_id, []).append(hit.content)
+                if not source_url:
+                    for match in MARKDOWN_LINK_RE.finditer(hit.content):
+                        try:
+                            url = urljoin(hit.source, match[1])
+                        except ValueError:
+                            continue
+                        if (len(linked) < 12 and url not in captured_urls and len(url) <= 2048
+                                and _within_identity(url, hosts) and _official_host(url)):
+                            linked.setdefault(url, match[0][:300])
+        if source_url and not excerpts:
+            doc = next((doc for doc in documents.values() if doc.source == source_url), None)
+            if doc is not None:
+                excerpts[doc.id] = [doc.content[:MAX_SOURCE_CHARS]]
+
+        captured: dict[str, FetchedSource] = {}
+        samples: list[FetchedSource] = []
+        for doc_id, chunks in list(excerpts.items())[:3]:
+            doc = documents[doc_id]
+            source = FetchedSource(
+                requested_url=doc.source, final_url=doc.source, title=doc.title,
+                tier=SourceTier.INTERPRETATION, fetched_at=datetime.now(UTC),
+                content_hash=hashlib.sha256(doc.content.encode()).hexdigest(), content=doc.content,
+            )
+            captured[doc.source] = source
+            samples.append(source.model_copy(update={"content": "\n\n".join(chunks)[:MAX_SOURCE_CHARS]}))
+        if not samples and source_url:
+            samples = await self._fetch_required_source(source_url, question, hosts)
+        if not samples:
+            return MaterialRecovery(gap=question, note="No readable official page was found. Add or select a source that answers this question.")
+
+        draft = await self.synthesise(gap=question, sources=samples, linked_candidates=linked)
+        # Verify and persist full captured documents, never joined prompt excerpts.
+        recovery = verify_material(
+            gap=question, draft=draft, existing_ids=artifacts.evidence.ids,
+            fetched=[captured.get(source.final_url, source) for source in samples],
+        )
+        if not recovery.recovered and draft.followup_url in linked:
+            fetched = await self._fetch_required_source(draft.followup_url, question, hosts)
+            if fetched:
+                answer = await self.synthesise(gap=question, sources=fetched)
+                return verify_material(gap=question, draft=answer, fetched=fetched, existing_ids=artifacts.evidence.ids)
+            recovery.note = "The linked official page could not be read. Add another source that answers the question."
+        return recovery
+
+    async def _fetch_required_source(self, url: str, question: str, hosts: set[str]) -> list[FetchedSource]:
+        fetched = await self._fetcher.fetch([LocatedSource(
+            url=url, reason=question, tier=SourceTier.INTERPRETATION, venue="Brand documentation",
+        )])
+        return [source for source in fetched.sources
+                if _official_host(source.final_url) and _within_identity(source.final_url, hosts)]
+
     async def recover(
         self,
         *,
@@ -213,16 +292,22 @@ class MaterialResearcher:
         reader: str,
         request: str,
         identity_url: str | None = None,
+        corpus: SourceCorpus | None = None,
     ) -> MaterialRecovery:
         hosts = _identity_hosts(artifacts, identity_url)
         if not hosts or all(host.endswith((".example", ".invalid", ".test")) for host in hosts):
             return MaterialRecovery(gap=gap, note="Official company identity is not anchored to a public source domain; provide its website.")
+        existing_material = "\n\n".join(
+            chunk.render() for chunk in (corpus.search(gap, limit=6) if corpus else [])
+            if _official_host(chunk.source) and _within_identity(chunk.source, hosts)
+        )[:8_000]
         located = await self.locate(
             gap=gap,
             artifacts=artifacts,
             reader=reader,
             request=request,
             identity_hosts=hosts,
+            existing_material=existing_material,
         )
         located = [source for source in located if _within_identity(source.url, hosts)]
         if not located:
@@ -267,6 +352,7 @@ class MaterialResearcher:
         reader: str,
         request: str,
         identity_hosts: set[str] | None = None,
+        existing_material: str = "",
     ) -> list[OfficialSource]:
         result = await self._session.structured(
             role=ROLE_ID,
@@ -281,6 +367,7 @@ class MaterialResearcher:
                 "gap": gap,
                 "limit": MAX_MATERIAL_URLS,
                 "identity_hosts": sorted(identity_hosts or _identity_hosts(artifacts)),
+                "existing_material": existing_material,
             },
             task=(
                 "Search now. Return only exact official product, integration or platform "
@@ -306,14 +393,15 @@ class MaterialResearcher:
 
 
     async def synthesise(
-        self, *, gap: str, sources: Sequence[FetchedSource]
+        self, *, gap: str, sources: Sequence[FetchedSource], linked_candidates: dict[str, str] | None = None,
     ) -> _MaterialDraft:
         corpus = _render_corpus(sources)
         return await self._session.structured(
             role=ROLE_ID,
             tier=ModelTier.BALANCED,
             template="material_research_synthesis",
-            variables={"gap": gap, "corpus": corpus},
+            variables={"gap": gap, "corpus": corpus,
+                       "linked_candidates": "\n".join(f"{url} {anchor}" for url, anchor in (linked_candidates or {}).items())},
             task=(
                 "Using only the fetched corpus, extract the smallest set of directly useful "
                 "facts that closes the stated gap. Every fact must cite one source id and "
@@ -349,6 +437,20 @@ def _within_identity(url: str, hosts: set[str]) -> bool:
     return bool(host) and any(host == known or host.endswith("." + known) for known in hosts)
 
 
+def _evidence_identity(entry: Evidence) -> tuple[str, ...]:
+    """Equal quotes can describe different rows, plans or integration routes.
+
+    Recovery must preserve the cited fact's meaning and trust, not replace it
+    with whichever occurrence of the same quotation was indexed last.
+    """
+    context = entry.context or EvidenceContext()
+    return (
+        entry.source.rstrip("/"), str(entry.kind), fold(entry.claim),
+        fold(entry.verbatim), str(entry.strength), str(entry.user_attested),
+        *(fold(value) for value in context.model_dump().values()),
+    )
+
+
 def verify_material(
     *,
     gap: str,
@@ -362,7 +464,7 @@ def verify_material(
     used = set(existing_ids or set())
     evidence: list[Evidence] = []
     dropped = 0
-    seen: set[tuple[str, str]] = set()
+    seen: set[tuple[str, ...]] = set()
 
     for proposed in draft.claims:
         source = by_id.get(proposed.source_id)
@@ -372,30 +474,30 @@ def verify_material(
             source is None
             or not claim
             or len(fold(quote)) < _MIN_QUOTE_CHARS
-            or fold(quote) not in fold(source.content)
+            or not contains_quote(quote, source.content)
             or not _official_host(source.final_url)
         ):
             dropped += 1
             continue
-        identity = (source.final_url.rstrip("/").lower(), fold(quote))
+        evidence_id = next_recovery_id(used)
+        entry = Evidence(
+            id=evidence_id,
+            kind=proposed.kind,
+            claim=claim,
+            verbatim=quote,
+            source=source.final_url,
+            document_id=f"auto:{source.content_hash[:20]}",
+            strength=EvidenceStrength.STRONG,
+            context=(proposed.context.model_copy(update={"verification": "quote_verified_in_material"})
+                     if proposed.context else None),
+        )
+        entry = preserve_billing_uncertainty(entry, source.content)
+        identity = _evidence_identity(entry)
         if identity in seen:
             continue
         seen.add(identity)
-        evidence_id = next_recovery_id(used)
         used.add(evidence_id)
-        evidence.append(
-            Evidence(
-                id=evidence_id,
-                kind=proposed.kind,
-                claim=claim,
-                verbatim=quote,
-                source=source.final_url,
-                document_id=f"auto:{source.content_hash[:20]}",
-                strength=EvidenceStrength.STRONG,
-                context=(proposed.context.model_copy(update={"verification": "quote_verified_in_material"})
-                         if proposed.context else None),
-            )
-        )
+        evidence.append(entry)
 
     used_sources = {entry.source.rstrip("/").lower() for entry in evidence}
     return MaterialRecovery(
@@ -418,24 +520,28 @@ def apply_recovery(
 ) -> tuple[KnowledgeArtifacts, SourceCorpus]:
     """Extend the closed world and align recovery references to retained facts.
 
-    The recovery brief must use the existing id when an exact quotation was
-    already licensed, rather than advertise a new id discarded by deduplication.
+    Reuse a retained id only for the same scoped fact. A repeated quotation
+    in another section is not interchangeable with the cited evidence.
     """
 
     if not recovery.recovered:
         return artifacts, corpus
     enriched = artifacts.model_copy(deep=True)
     existing = {
-        (entry.source.rstrip("/").lower(), fold(entry.verbatim)): entry
+        _evidence_identity(entry): entry
         for entry in enriched.evidence.entries
     }
     aligned: dict[str, Evidence] = {}
     for entry in recovery.evidence:
-        key = (entry.source.rstrip("/").lower(), fold(entry.verbatim))
-        if key not in existing:
+        key = _evidence_identity(entry)
+        canonical = enriched.evidence.get(entry.id)
+        if canonical is None or _evidence_identity(canonical) != key:
+            canonical = existing.get(key)
+        if canonical is None:
+            if entry.id in enriched.evidence.ids:
+                entry = entry.model_copy(update={"id": next_recovery_id(enriched.evidence.ids)})
             enriched.evidence.entries.append(entry)
-            existing[key] = entry
-        canonical = existing[key]
+            existing[key] = canonical = entry
         aligned[canonical.id] = canonical
     recovery.evidence = list(aligned.values())
 

@@ -1,0 +1,2377 @@
+{
+  "brand_id": "298ad2c9-d89d-41d7-a1aa-85b543357c2d",
+  "map": {
+    "summary": "3 audience(s) mapped; 0 worth exploring first. Commercial priority is a hypothesis, not a response-rate forecast.",
+    "options": {
+      "geography": "",
+      "language": "",
+      "exclusions": "",
+      "objective": "customers",
+      "mode": "refresh"
+    },
+    "validation_note": "Product profile changed; compatibility rechecked. Checked 5 pages; 0 fetch failure(s). Quotes are source-verified; interpretations and purchase intent are hypotheses.",
+    "reading": "Assessment summary. Verified quotations do not establish demand or purchase intent; commercial priority remains a hypothesis.\n- A blogger with an existing site and an RSS feed, finally switching their email send-out off Mailchimp after putting it off for a while: review first; product compatibility unknown; audience evidence supported (6 quoted source(s)); use or purchase captured; reachability venue identified.\n- An independent writer turning their newsletter into paid subscriptions and sponsorships, wary of a platform taking a cut or buckling once the list grows: hypothesis; product compatibility unknown; audience evidence absent (0 quoted source(s)); use or purchase unknown; reachability unknown.\n- A developer-writer who wants their newsletter to run from scripts and CI pipelines instead of a dashboard they have to remember to click through: hypothesis; product compatibility supported; audience evidence absent (0 quoted source(s)); use or purchase unknown; reachability unknown.",
+    "note": "Could not find direct Reddit threads or forum complaints specifically about Buttondown's subscriber-count pricing scaling (only third-party review summaries); no source was found that resolves the 'bill grows with success' objection for the monetization segment. Also could not confirm a precise automation add-on price (third-party reviews cited $49/month vs. the $29/month figure in the supplied pricing data), which is a discrepancy worth flagging rather than resolving unilaterally.",
+    "searched": [
+      "Buttondown RSS-to-email Mailchimp switch blog newsletter",
+      "Buttondown paid subscriptions sponsorships \"keep 100%\" independent writer",
+      "Buttondown API CLI developer newsletter automation review",
+      "Buttondown reddit pricing complaint subscriber count expensive",
+      "\"buttondown\" API script newsletter github developer blog site:lethain.com OR site:github.com",
+      "Buttondown custom payment setup sponsorship case study creator \"didn't fit\""
+    ],
+    "mapped_at": "2026-11-05T23:43:23.489781Z",
+    "segments": [
+      {
+        "name": "A blogger with an existing site and an RSS feed, finally switching their email send-out off Mailchimp after putting it off for a while",
+        "organization": "Solo blogger or personal-site writer who already publishes on their own domain via RSS",
+        "workflow": "Writes posts on an existing blog/site, then relies on an email tool to turn the RSS feed into a newsletter send so the writing reaches inboxes without a second authoring step",
+        "need": "Automatic RSS-to-email delivery that doesn't require maintaining a parallel writing or formatting workflow",
+        "buyer_role": "Blog/site owner who pays for and configures their own email tooling",
+        "user_role": "Same person — writer and newsletter operator",
+        "current_alternative": "Mailchimp's RSS-to-email / 'RSS-Driven Campaigns' feature",
+        "assessment": {
+          "compatibility": "unknown",
+          "evidence_strength": "supported",
+          "findability": "verified",
+          "usage_or_purchase": "captured",
+          "reachability": "venue_identified",
+          "counterevidence_summary": [
+            "A reader reported being unable to access an article linked from the newsletter shortly after the Buttondown migration, a possible deliverability or link-handling concern. — The fetched text is truncated before explaining the cause; it is unclear whether this stemmed from Buttondown, the linked site, or an unrelated hosting issue. Review before prioritising."
+          ],
+          "counterevidence": 1,
+          "priority": "review_first",
+          "reasons": [
+            "Two named individuals (lethain.com, timnash.co.uk) publicly document completing an actual migration of an existing blog's newsletter from Mailchimp to Buttondown, which is observed usage rather than stated intent.",
+            "A third, independent public comment (Justus, on debbieohi's Substack) explicitly ties the RSS-to-email workflow to Mailchimp as the current alternative and names tracking/privacy as a reason to move to Buttondown, matching the candidate's stated need and current_alternative.",
+            "Buttondown's own RSS-to-email page frames the feature as replacing manual RSS-to-newsletter workarounds, which is consistent with (but does not itself prove) this audience's need.",
+            "Lethain's account independently corroborates cost/inflexibility frustration with Mailchimp as a switching trigger.",
+            "Re-ranked on matching researched sources (4 fetched)."
+          ],
+          "unknowns": [
+            "Neither lethain.com nor timnash.co.uk explicitly describes using Buttondown's automated RSS-pull feature, so it is unclear whether RSS-to-email automation itself (vs. general Mailchimp dissatisfaction) was the deciding factor for either migration.",
+            "Only two named migration accounts plus one anonymous comment were found; there is no aggregate or population-level evidence of how common this specific trigger is.",
+            "The cause of the broken-link complaint reported to Tim Nash shortly after his migration is not established by the fetched (truncated) text — unclear if it reflects a Buttondown deliverability issue or an unrelated external cause.",
+            "2 unsupported or duplicate quotation(s) discarded.",
+            "No product requirement is mapped for this audience, so compatibility is unchecked rather than doubtful.",
+            "Review the counterevidence before prioritising this audience."
+          ],
+          "evidence": [
+            {
+              "claim": "Lethain documents an actual, completed migration of his newsletter from Mailchimp to Buttondown after years of accumulated frustration.",
+              "quote": "the next newsletter on Wednesday will be coming from Buttondown rather than Mailchimp.",
+              "url": "https://lethain.com/newsletter-mailchimp-to-buttondown/",
+              "kind": "usage",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:40:15.127132Z"
+            },
+            {
+              "claim": "Cost and inflexibility of Mailchimp relative to his needs was a stated driver of the switch.",
+              "quote": "I was paying $326/month for something that was difficult to tune to work how I wanted.",
+              "url": "https://lethain.com/newsletter-mailchimp-to-buttondown/",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:40:15.127132Z"
+            },
+            {
+              "claim": "Tim Nash completed a real migration of his newsletter from Mailchimp to Buttondown.",
+              "quote": "The migration from MailChimp was actually a pretty painless exercise.",
+              "url": "https://timnash.co.uk/lessons-learnt-migrating-from-mailchimp-to-buttondown/",
+              "kind": "usage",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:40:15.067374Z"
+            },
+            {
+              "claim": "A commenter confirms Mailchimp's RSS-pull-to-digest feature as the actual current alternative in use before considering Buttondown.",
+              "quote": "mailchimp was the one of the few free services to pull the RSS feed for a weekly digest",
+              "url": "https://debbieohi.substack.com/p/why-im-switching-from-mailchimp-to/comments",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:40:15.574455Z"
+            },
+            {
+              "claim": "The same commenter's desire to stop subscriber tracking is a stated driver toward Buttondown, consistent with its privacy-focused positioning.",
+              "quote": "but golly they track everything-even when I tell them not to! Buttondown has a sparser interface but for a simple newletter it looks promising.",
+              "url": "https://debbieohi.substack.com/p/why-im-switching-from-mailchimp-to/comments",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:40:15.574455Z"
+            },
+            {
+              "claim": "The public comment thread is a concrete, open venue where a Mailchimp-to-Buttondown migrator with an existing blog surfaced and is visible/reachable.",
+              "quote": "I'm in the process of transitioning from mailchimp to button down.",
+              "url": "https://debbieohi.substack.com/p/why-im-switching-from-mailchimp-to/comments",
+              "kind": "access",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:40:15.574455Z"
+            },
+            {
+              "claim": "Buttondown frames RSS-to-email as a direct replacement for manual RSS-to-newsletter workarounds, matching the required product capability for this audience.",
+              "quote": "Quit hacking RSS into your email. Get more readers, instead.",
+              "url": "https://buttondown.com/features/rss",
+              "kind": "example",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:40:16.448792Z"
+            },
+            {
+              "claim": "A reader reported being unable to access an article linked from the newsletter shortly after the Buttondown migration, a possible deliverability or link-handling concern.",
+              "quote": "got this when trying to access your article on Ransomware via the link in your newsletter.",
+              "url": "https://timnash.co.uk/lessons-learnt-migrating-from-mailchimp-to-buttondown/",
+              "kind": "counterevidence",
+              "impact": "unknown",
+              "impact_reason": "The fetched text is truncated before explaining the cause; it is unclear whether this stemmed from Buttondown, the linked site, or an unrelated hosting issue.",
+              "fetched_at": "2026-11-05T23:40:15.067374Z"
+            },
+            {
+              "claim": "This audience's stated requirement is narrowly an automatic RSS-to-email feature without extra CRM bloat, and at least one blogger who relied on Mailchimp specifically for pulling an RSS feed into a weekly digest found it tracked recipients even after opting out of tracking.",
+              "quote": "I need an affordable replacement for Mailchimp for a basic mailing list for a blog, that can auto-generate content from the blog's RSS feed (RSS-to-Email).",
+              "url": "https://lowendtalk.com/discussion/196384/need-an-affordable-replacement-for-mailchimp-for-a-mailing-list-for-a-blog-with-rss-to-email-feature",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:49:13.007154Z"
+            },
+            {
+              "claim": "This audience's stated requirement is narrowly an automatic RSS-to-email feature without extra CRM bloat, and at least one blogger who relied on Mailchimp specifically for pulling an RSS feed into a weekly digest found it tracked recipients even after opting out of tracking.",
+              "quote": "But no extra CRM features are actually needed. Mainly needs automatic RSS-to-Email feature.",
+              "url": "https://lowendtalk.com/discussion/196384/need-an-affordable-replacement-for-mailchimp-for-a-mailing-list-for-a-blog-with-rss-to-email-feature",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:49:13.007154Z"
+            },
+            {
+              "claim": "This audience's stated requirement is narrowly an automatic RSS-to-email feature without extra CRM bloat, and at least one blogger who relied on Mailchimp specifically for pulling an RSS feed into a weekly digest found it tracked recipients even after opting out of tracking.",
+              "quote": "mailchimp was the one of the few free services to pull the RSS feed for a weekly digest...but golly they track everything-even when I tell them not to!",
+              "url": "https://debbieohi.substack.com/p/why-im-switching-from-mailchimp-to/comments",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:49:12.821317Z"
+            },
+            {
+              "claim": "Mailchimp's subscription cost is reported by bloggers as high relative to the narrow function they actually use it for, prompting cost-driven searches for cheaper alternatives.",
+              "quote": "I was paying $326/month for something that was difficult to",
+              "url": "https://lethain.com/newsletter-mailchimp-to-buttondown/",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:49:12.682228Z"
+            },
+            {
+              "claim": "Mailchimp's subscription cost is reported by bloggers as high relative to the narrow function they actually use it for, prompting cost-driven searches for cheaper alternatives.",
+              "quote": "Price. It adds up. I deal with more than one blog, the price is a little crazy, and I'm ready to move on, so I'd like to save some money if possible. Otherwise, it does everything I need it to, and actually far more.",
+              "url": "https://lowendtalk.com/discussion/196384/need-an-affordable-replacement-for-mailchimp-for-a-mailing-list-for-a-blog-with-rss-to-email-feature",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:49:13.007154Z"
+            },
+            {
+              "claim": "MailerLite",
+              "quote": "I am currently looking at various alternatives like MailerLite, Brevo (Sendinblue), ConvertKit, Moosend, EmailOctopus, AWeber, Mailjet, ActiveCampaign, Zoho Campaigns, etc...",
+              "url": "https://lowendtalk.com/discussion/196384/need-an-affordable-replacement-for-mailchimp-for-a-mailing-list-for-a-blog-with-rss-to-email-feature",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:49:13.007154Z"
+            },
+            {
+              "claim": "switched from Mailchimp to Revue",
+              "quote": "I've recently switched from Mailchimp to Revue.",
+              "url": "https://news.ycombinator.com/item?id=29766761",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:49:13.862920Z"
+            },
+            {
+              "claim": "At least one blogger set up their newsletter to run on Mailchimp following a published how-to, and it worked for them for years before frustrations accumulated.",
+              "quote": "Following Julia’s post, I set up my newsletter to run on Mailchimp,",
+              "url": "https://lethain.com/newsletter-mailchimp-to-buttondown/",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:49:12.682228Z"
+            },
+            {
+              "claim": "A commenter kept a Mailchimp account for years but reports having hardly used it, for the same reasons another blogger gave for leaving.",
+              "quote": "I have had mailchimp for years but hardly ever used for the same reasons you mentioned.",
+              "url": "https://debbieohi.substack.com/p/why-im-switching-from-mailchimp-to/comments",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:49:12.821317Z"
+            },
+            {
+              "claim": "One blogger who keeps their own blog relied on Mailchimp specifically because it was among the few free services that could pull the RSS feed into a weekly digest.",
+              "quote": "mailchimp was the one of the few free services to pull the RSS feed for a weekly digest...but golly they track everything-even when I tell them not to!",
+              "url": "https://debbieohi.substack.com/p/why-im-switching-from-mailchimp-to/comments",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:49:12.821317Z"
+            },
+            {
+              "claim": "Not every Mailchimp-using blogger automated sends from their RSS feed: one blogger's newsletter was manually written each cycle on Mailchimp despite the blog's RSS feed having existed for roughly twelve years, which contradicts assuming RSS-to-email automation is universal among this audience.",
+              "quote": "My blog had already had an RSS feed for ~12 years at that point,",
+              "url": "https://lethain.com/newsletter-mailchimp-to-buttondown/",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:49:12.682228Z"
+            },
+            {
+              "claim": "Discussions about replacing Mailchimp for a blog's RSS-to-email needs surface in general hosting/tech forums.",
+              "quote": "Need an affordable replacement for Mailchimp for a mailing list for a blog with RSS-to-email feature",
+              "url": "https://lowendtalk.com/discussion/196384/need-an-affordable-replacement-for-mailchimp-for-a-mailing-list-for-a-blog-with-rss-to-email-feature",
+              "kind": "access",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:49:13.007154Z"
+            },
+            {
+              "claim": "They also surface in Substack comment threads under posts announcing a switch away from Mailchimp.",
+              "quote": "On a slightly more substantive note, I’m in the process of transitioning from mailchimp to button down.",
+              "url": "https://debbieohi.substack.com/p/why-im-switching-from-mailchimp-to/comments",
+              "kind": "access",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:49:12.821317Z"
+            },
+            {
+              "claim": "And in Hacker News comment threads reacting to posts about migrating off Mailchimp.",
+              "quote": "I've recently switched from Mailchimp to Revue.",
+              "url": "https://news.ycombinator.com/item?id=29766761",
+              "kind": "access",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-05T23:49:13.862920Z"
+            }
+          ]
+        },
+        "kind": "core",
+        "added_by": "cartographer",
+        "who": "Individual bloggers and personal-site writers with an active RSS feed who currently push that feed to email via Mailchimp",
+        "why_them": "They already have the content and the feed; the only missing piece is a send mechanism, and public migration write-ups show real people completing this exact move from Mailchimp specifically because of RSS handling.",
+        "trigger": "Acting on a long-deferred decision to leave Mailchimp once the RSS-to-email setup there proves confusing enough",
+        "pains": [
+          "Mailchimp's RSS-to-email configuration was slow and confusing relative to competitors",
+          "Mailchimp felt cluttered and more expensive than needed for a single RSS-to-newsletter use case"
+        ],
+        "objection": "Switching platforms means re-migrating an existing list and rebuilding sending workflows, which isn't worth the hassle unless something is actually broken.",
+        "angle": "",
+        "sophistication": "solution_aware",
+        "fit": 0,
+        "basis": "Two independently published, named migration accounts (lethain.com, timnash.co.uk) plus a Substack comment thread documenting a comparable Mailchimp-RSS frustration; no aggregate figures on how common this specific pain is.",
+        "population": "unknown",
+        "signals": [
+          "public_rss_feed_present_on_blog",
+          "currently_sends_via_mailchimp",
+          "blog_predates_newsletter_signup"
+        ],
+        "where": [
+          "https://lethain.com/newsletter-mailchimp-to-buttondown/",
+          "https://timnash.co.uk/lessons-learnt-migrating-from-mailchimp-to-buttondown/",
+          "https://debbieohi.substack.com/p/why-im-switching-from-mailchimp-to/comments",
+          "https://buttondown.com/features/rss"
+        ],
+        "unobvious": false,
+        "researchable": true,
+        "researchability": "medium",
+        "researchability_reasons": [
+          "3 useful observable signals and 4 specific research venues.",
+          "The audience is anchored in a concrete workflow or situation.",
+          "No clear trigger narrows the research.",
+          "No population basis is stated."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [
+            {
+              "code": "public_rss_feed_present_on_blog",
+              "description": "Operates a blog/site with a discoverable RSS/Atom feed"
+            }
+          ],
+          "required_workflow_signals": [
+            {
+              "code": "currently_sends_via_mailchimp",
+              "description": "Currently uses Mailchimp (or a comparable ESP) to turn blog posts into email sends"
+            }
+          ],
+          "required_product_capabilities": [],
+          "optional_signals": [
+            {
+              "code": "public_migration_writeup",
+              "description": "Has publicly written about migrating email tooling"
+            }
+          ],
+          "hard_disqualifiers": [
+            {
+              "code": "no_existing_content_source",
+              "description": "No blog, feed, or existing writing to drive the newsletter",
+              "outcome": "EXCLUDED"
+            }
+          ],
+          "eligible_subsegments": [],
+          "excluded_subsegments": [],
+          "max_team_size": 1
+        }
+      },
+      {
+        "name": "An independent writer turning their newsletter into paid subscriptions and sponsorships, wary of a platform taking a cut or buckling once the list grows",
+        "organization": "Solo creator-run newsletter business monetizing via reader payments and/or sponsor-paid ad slots",
+        "workflow": "Operates a newsletter that has moved, or is moving, from a free list to charging subscribers directly and/or selling sponsorship inventory, and is actively comparing what each platform keeps versus what it takes",
+        "need": "Keep as much subscription and sponsorship revenue as possible while trusting the platform to hold up as the list and income grow",
+        "buyer_role": "Creator who both runs the publication and decides which platform to pay for",
+        "user_role": "Same person — writer, publisher, and monetization operator",
+        "current_alternative": "Substack (percentage-of-revenue cut) or Ghost/ConvertKit-style stacks requiring separate payment tooling",
+        "assessment": {
+          "compatibility": "unknown",
+          "evidence_strength": "absent",
+          "findability": "unknown",
+          "usage_or_purchase": "unknown",
+          "reachability": "unknown",
+          "counterevidence_summary": [],
+          "counterevidence": 0,
+          "priority": "hypothesis",
+          "reasons": [
+            "The candidate's cited sources for monetization-driven buying behavior (Indie Hackers post, Starter Story page, buttondown.com/features/paid-subscriptions) were not among the pages actually fetched in this corpus, so no verbatim quotes are available to support need, alternative, usage, or access for this audience.",
+            "The only fetched page overlapping this candidate's 'where' list is buttondown.com/testimonials, and its retrieved quotes (customer-service praise from Jodie Morgan and James Whatley) do not mention paid subscriptions, sponsorships, or revenue-cut comparisons."
+          ],
+          "unknowns": [
+            "Whether any real, named creator has publicly compared Buttondown's revenue cut against Substack or Ghost/ConvertKit specifically, since the supporting pages were not fetched.",
+            "Whether the stated objection (subscriber-count pricing rising alongside list growth) is something real buyers have actually raised, or only a hypothesized concern.",
+            "Whether the vendor-documented custom-payment case referenced in the candidate's basis is drawn from a page in this fetched corpus or only from unfetched sources.",
+            "No product requirement is mapped for this audience, so compatibility is unchecked rather than doubtful.",
+            "No verified venue or example establishes findability yet."
+          ],
+          "evidence": []
+        },
+        "kind": "core",
+        "added_by": "cartographer",
+        "who": "Independent newsletter writers who have started or are about to start charging subscribers and/or selling sponsorship slots",
+        "why_them": "They are the buyers for whom 'no cut' and 'no extra charge on paid subscribers' are the deciding variables, and at least one named, documented case shows the vendor building bespoke payment support for exactly this kind of buyer.",
+        "trigger": "Starting to charge for subscriptions or lining up a first sponsor, prompting a side-by-side comparison of what each platform actually keeps",
+        "pains": [
+          "The standard supporter / pay-what-you-want payment setup didn't fit their monetization model and needed something custom",
+          "Worry that a newsletter platform will take a cut of subscription or sponsorship revenue",
+          "Concern the platform will slow down or run into trouble once the subscriber list grows large"
+        ],
+        "objection": "Pricing scales with subscriber count, so growing the list this product is supposed to help grow also raises the bill — right when margins on a creator income are thinnest.",
+        "angle": "",
+        "sophistication": "solution_aware",
+        "fit": 0,
+        "basis": "One named, vendor-documented custom-payment case plus two independently published creator accounts (Indie Hackers, Starter Story) discussing monetization-driven platform choice; the core subscriber-count pricing objection remains unanswered in any source found.",
+        "population": "unknown",
+        "signals": [
+          "sells_paid_newsletter_subscription",
+          "sells_sponsorship_slots",
+          "publicly_discusses_newsletter_revenue_model"
+        ],
+        "where": [
+          "https://buttondown.com/testimonials",
+          "https://buttondown.com/features/paid-subscriptions",
+          "https://www.indiehackers.com/post/why-i-chose-substack-but-then-quickly-moved-to-buttondown-c87842e02f",
+          "https://www.starterstory.com/stories/buttondown"
+        ],
+        "unobvious": false,
+        "researchable": true,
+        "researchability": "high",
+        "researchability_reasons": [
+          "3 useful observable signals and 4 specific research venues.",
+          "The audience is anchored in a concrete workflow or situation.",
+          "A clear trigger narrows the evidence to look for.",
+          "No population basis is stated."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [
+            {
+              "code": "operates_monetized_newsletter",
+              "description": "Runs a newsletter with paid subscriptions and/or sponsorship slots, not solely free distribution"
+            }
+          ],
+          "required_workflow_signals": [
+            {
+              "code": "compares_platform_revenue_cut",
+              "description": "Publicly or observably compares what newsletter platforms keep vs. charge on subscription/sponsorship revenue"
+            }
+          ],
+          "required_product_capabilities": [],
+          "optional_signals": [
+            {
+              "code": "requested_custom_payment_setup",
+              "description": "Has asked a platform for payment configuration beyond its default tiers"
+            }
+          ],
+          "hard_disqualifiers": [
+            {
+              "code": "free_only_list_no_monetization_intent",
+              "description": "Explicitly free newsletter with no stated plan to charge subscribers or sell sponsorships",
+              "outcome": "EXCLUDED"
+            }
+          ],
+          "eligible_subsegments": [],
+          "excluded_subsegments": [],
+          "max_team_size": 1
+        }
+      },
+      {
+        "name": "A developer-writer who wants their newsletter to run from scripts and CI pipelines instead of a dashboard they have to remember to click through",
+        "organization": "Solo developer who also writes and sends a newsletter alongside their engineering work",
+        "workflow": "Manages subscribers, drafts, sends, and analytics for a newsletter by scripting against an API/CLI and folding it into existing automation or CI tooling rather than operating a web dashboard",
+        "need": "A newsletter tool whose full functionality is reachable from code so the newsletter doesn't become a recurring manual, dashboard-driven chore",
+        "buyer_role": "Developer who writes the newsletter and independently chooses/configures the tooling",
+        "user_role": "Same person — developer and newsletter author",
+        "current_alternative": "Manually operating a dashboard-first ESP (e.g., Mailchimp, Substack) with limited or no API, or hand-rolled scripts against the few APIs available",
+        "assessment": {
+          "compatibility": "supported",
+          "evidence_strength": "absent",
+          "findability": "unknown",
+          "usage_or_purchase": "unknown",
+          "reachability": "unknown",
+          "counterevidence_summary": [],
+          "counterevidence": 0,
+          "priority": "hypothesis",
+          "reasons": [
+            "Buttondown's own API documentation confirms the CLI/API capabilities this segment's workflow depends on — scripting the newsletter from CI/CD, bulk-managing subscribers, and pulling analytics without a dashboard.",
+            "The same documentation confirms rate limits are 'generous enough for most use cases,' addressing a plausible capacity concern for automation-heavy workflows.",
+            "The specific GitHub repositories and the GitHub topic page cited as this segment's evidence of real developer usage were not among the pages actually fetched in this corpus, so no usage or access evidence could be verified here."
+          ],
+          "unknowns": [
+            "Whether developers are actually using the CLI/API in the way described (no fetched repository content or usage accounts were available to confirm this beyond the vendor's own feature description).",
+            "Population size and findability of this audience — no fetched evidence establishes how many developers maintain a newsletter alongside engineering work.",
+            "Whether the stated objection (needing to generate a client due to no official SDK/MCP) is a meaningful deterrent or a minor one-time setup cost for this technically capable audience.",
+            "4 unsupported or duplicate quotation(s) discarded.",
+            "No verified venue or example establishes findability yet."
+          ],
+          "evidence": []
+        },
+        "kind": "core",
+        "added_by": "cartographer",
+        "who": "Developers who write a newsletter alongside their engineering work and manage it through code rather than a web UI",
+        "why_them": "A visible, recurring cluster of public GitHub projects shows developers already scripting Buttondown's API for exactly the described workflow — subscriber management, drafting, and sending without a dashboard — which is stronger than a stated preference, since it's observed behavior.",
+        "trigger": "Setting up or extending an automation/CI pipeline and checking whether the newsletter tool has a usable, unrestricted API before building further",
+        "pains": [
+          "Managing subscribers and pulling analytics by hand through a web dashboard is repetitive compared to scripting everything else in their workflow",
+          "No official SDK or MCP server means generating a client or wrapper before automating anything"
+        ],
+        "objection": "No official SDK or MCP server means generating a client or wrapper before automating anything, which is extra work compared to tools that hand over a ready-made SDK.",
+        "angle": "",
+        "sophistication": "product_aware",
+        "fit": 0,
+        "basis": "Multiple named, public GitHub repositories showing real developers scripting the Buttondown API for newsletter automation, plus the vendor's own documentation confirming the no-SDK/no-MCP trade-off that is this segment's main stated objection.",
+        "population": "unknown",
+        "signals": [
+          "public_api_integration_repo_exists",
+          "uses_markdown_or_cli_workflow",
+          "newsletter_tied_to_ci_or_automation_pipeline"
+        ],
+        "where": [
+          "https://github.com/topics/buttondown-api",
+          "https://github.com/Python-Community-News/Newsletter",
+          "https://github.com/sophiabrandt/json-to-buttondown-email",
+          "https://docs.buttondown.com/api-introduction"
+        ],
+        "unobvious": false,
+        "researchable": true,
+        "researchability": "high",
+        "researchability_reasons": [
+          "3 useful observable signals and 4 specific research venues.",
+          "The audience is anchored in a concrete workflow or situation.",
+          "A clear trigger narrows the evidence to look for.",
+          "No population basis is stated."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [
+            {
+              "code": "is_developer_who_writes_newsletter",
+              "description": "Works as a developer/engineer and separately authors a newsletter"
+            }
+          ],
+          "required_workflow_signals": [
+            {
+              "code": "uses_markdown_or_cli_workflow",
+              "description": "Manages newsletter content or sends via Markdown, CLI, or direct API calls rather than solely a web dashboard"
+            }
+          ],
+          "required_product_capabilities": [
+            "fact_44e3d42135cce2aa",
+            "fact_32145195ca9decee",
+            "fact_f9dd8a3b5b1e5fed",
+            "fact_8286867895a1d1ea"
+          ],
+          "optional_signals": [
+            {
+              "code": "public_api_integration_repo_exists",
+              "description": "Has published a public repository integrating with the newsletter platform's API"
+            }
+          ],
+          "hard_disqualifiers": [
+            {
+              "code": "dashboard_only_operation",
+              "description": "Explicitly manages the newsletter only through a web dashboard with no scripting or API usage",
+              "outcome": "EXCLUDED"
+            }
+          ],
+          "eligible_subsegments": [],
+          "excluded_subsegments": [],
+          "max_team_size": 1
+        }
+      }
+    ]
+  },
+  "prospects": [],
+  "research": [
+    {
+      "audience_name": "A blogger with an existing site and an RSS feed, finally switching their email send-out off Mailchimp after putting it off for a while",
+      "audience_fingerprint": "6ef169907d46431c9f7ab452f291fec34f6ce87980b2b1b6c23cd0a380a295b1",
+      "candidate_kind": "core",
+      "definition": {
+        "schema_version": 2,
+        "required_structural_signals": [
+          {
+            "code": "public_rss_feed_present_on_blog",
+            "description": "Operates a blog/site with a discoverable RSS/Atom feed"
+          }
+        ],
+        "required_workflow_signals": [
+          {
+            "code": "currently_sends_via_mailchimp",
+            "description": "Currently uses Mailchimp (or a comparable ESP) to turn blog posts into email sends"
+          }
+        ],
+        "required_product_capabilities": [],
+        "optional_signals": [
+          {
+            "code": "public_migration_writeup",
+            "description": "Has publicly written about migrating email tooling"
+          }
+        ],
+        "hard_disqualifiers": [
+          {
+            "code": "no_existing_content_source",
+            "description": "No blog, feed, or existing writing to drive the newsletter",
+            "outcome": "EXCLUDED"
+          }
+        ],
+        "eligible_subsegments": [],
+        "excluded_subsegments": [],
+        "max_team_size": 1
+      },
+      "situation": {
+        "text": "A blogger who already writes on their own site (with an existing RSS feed, in one case running for about twelve years) and who has been sending an email version of that writing out through Mailchimp, now acting on a long-deferred decision to move that send-out off Mailchimp.",
+        "grounding": "grounded",
+        "evidence": [
+          {
+            "source_id": "S1",
+            "quote": "My blog had already had an RSS feed for ~12 years at that point,"
+          },
+          {
+            "source_id": "S1",
+            "quote": "Following Julia’s post, I set up my newsletter to run on Mailchimp,"
+          }
+        ],
+        "inference_basis": ""
+      },
+      "incumbent_behaviour": [
+        {
+          "text": "At least one blogger set up their newsletter to run on Mailchimp following a published how-to, and it worked for them for years before frustrations accumulated.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S1",
+              "quote": "Following Julia’s post, I set up my newsletter to run on Mailchimp,"
+            }
+          ],
+          "inference_basis": ""
+        },
+        {
+          "text": "A commenter kept a Mailchimp account for years but reports having hardly used it, for the same reasons another blogger gave for leaving.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S2",
+              "quote": "I have had mailchimp for years but hardly ever used for the same reasons you mentioned."
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        },
+        {
+          "text": "One blogger who keeps their own blog relied on Mailchimp specifically because it was among the few free services that could pull the RSS feed into a weekly digest.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S2",
+              "quote": "mailchimp was the one of the few free services to pull the RSS feed for a weekly digest...but golly they track everything-even when I tell them not to!"
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        },
+        {
+          "text": "Not every Mailchimp-using blogger automated sends from their RSS feed: one blogger's newsletter was manually written each cycle on Mailchimp despite the blog's RSS feed having existed for roughly twelve years, which contradicts assuming RSS-to-email automation is universal among this audience.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S1",
+              "quote": "My blog had already had an RSS feed for ~12 years at that point,"
+            },
+            {
+              "source_id": "S1",
+              "quote": "Following Julia’s post, I set up my newsletter to run on Mailchimp,"
+            }
+          ],
+          "inference_basis": ""
+        }
+      ],
+      "sophistication": "product_aware",
+      "sophistication_basis": {
+        "text": "Buyers in this audience name and compare several specific competing newsletter products with pricing before deciding, rather than needing the general problem or solution category explained.",
+        "grounding": "grounded",
+        "evidence": [
+          {
+            "source_id": "S3",
+            "quote": "I am currently looking at various alternatives like MailerLite, Brevo (Sendinblue), ConvertKit, Moosend, EmailOctopus, AWeber, Mailjet, ActiveCampaign, Zoho Campaigns, etc..."
+          }
+        ],
+        "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+      },
+      "problems": [
+        {
+          "id": "P1",
+          "statement": "This audience's stated requirement is narrowly an automatic RSS-to-email feature without extra CRM bloat, and at least one blogger who relied on Mailchimp specifically for pulling an RSS feed into a weekly digest found it tracked recipients even after opting out of tracking.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S3",
+              "quote": "I need an affordable replacement for Mailchimp for a basic mailing list for a blog, that can auto-generate content from the blog's RSS feed (RSS-to-Email)."
+            },
+            {
+              "source_id": "S3",
+              "quote": "But no extra CRM features are actually needed. Mainly needs automatic RSS-to-Email feature."
+            },
+            {
+              "source_id": "S2",
+              "quote": "mailchimp was the one of the few free services to pull the RSS feed for a weekly digest...but golly they track everything-even when I tell them not to!"
+            }
+          ],
+          "corroboration": 2,
+          "cost": "",
+          "cost_evidence": null,
+          "source_count": 2,
+          "review_notes": [
+            "Publication date unknown; retrieval today does not establish current applicability."
+          ]
+        },
+        {
+          "id": "P2",
+          "statement": "Mailchimp's subscription cost is reported by bloggers as high relative to the narrow function they actually use it for, prompting cost-driven searches for cheaper alternatives.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S1",
+              "quote": "I was paying $326/month for something that was difficult to"
+            },
+            {
+              "source_id": "S3",
+              "quote": "Price. It adds up. I deal with more than one blog, the price is a little crazy, and I'm ready to move on, so I'd like to save some money if possible. Otherwise, it does everything I need it to, and actually far more."
+            }
+          ],
+          "corroboration": 2,
+          "cost": "$326/month",
+          "cost_evidence": {
+            "source_id": "S1",
+            "quote": "I was paying $326/month for something that was difficult to"
+          },
+          "source_count": 2,
+          "review_notes": []
+        }
+      ],
+      "buyer_phrases": [
+        {
+          "text": "Mainly needs automatic RSS-to-Email feature.",
+          "kind": "names_the_problem",
+          "evidence": {
+            "source_id": "S3",
+            "quote": "But no extra CRM features are actually needed. Mainly needs automatic RSS-to-Email feature."
+          }
+        },
+        {
+          "text": "they track everything-even when I tell them not to",
+          "kind": "complaint",
+          "evidence": {
+            "source_id": "S2",
+            "quote": "mailchimp was the one of the few free services to pull the RSS feed for a weekly digest...but golly they track everything-even when I tell them not to!"
+          }
+        },
+        {
+          "text": "Price. It adds up.",
+          "kind": "complaint",
+          "evidence": {
+            "source_id": "S3",
+            "quote": "Price. It adds up. I deal with more than one blog, the price is a little crazy, and I'm ready to move on, so I'd like to save some money if possible. Otherwise, it does everything I need it to, and actually far more."
+          }
+        },
+        {
+          "text": "I was paying $326/month",
+          "kind": "complaint",
+          "evidence": {
+            "source_id": "S1",
+            "quote": "I was paying $326/month for something that was difficult to"
+          }
+        },
+        {
+          "text": "MailerLite",
+          "kind": "names_a_tool",
+          "evidence": {
+            "source_id": "S3",
+            "quote": "I am currently looking at various alternatives like MailerLite, Brevo (Sendinblue), ConvertKit, Moosend, EmailOctopus, AWeber, Mailjet, ActiveCampaign, Zoho Campaigns, etc..."
+          }
+        },
+        {
+          "text": "switched from Mailchimp to Revue",
+          "kind": "names_a_tool",
+          "evidence": {
+            "source_id": "S4",
+            "quote": "I've recently switched from Mailchimp to Revue."
+          }
+        }
+      ],
+      "triggers": [
+        {
+          "text": "At least one blogger had repeatedly considered leaving Mailchimp over several years before finally acting.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S1",
+              "quote": "Every year or so I’d considered migrating off Mailchimp to something"
+            }
+          ],
+          "inference_basis": ""
+        },
+        {
+          "text": "For a forum poster, the explicit stated reason for leaving Mailchimp was price rather than any feature shortcoming.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S3",
+              "quote": "Price. It adds up. I deal with more than one blog, the price is a little crazy, and I'm ready to move on, so I'd like to save some money if possible. Otherwise, it does everything I need it to, and actually far more."
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        }
+      ],
+      "desired_outcomes": [
+        {
+          "text": "Wants to retain ownership and control of their writing by staying on domains they control rather than moving to hosted platforms.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S1",
+              "quote": "my goals remain consistent ownership of my work, on domains I control."
+            }
+          ],
+          "inference_basis": ""
+        },
+        {
+          "text": "Wants a tool limited to the RSS-to-email function itself, without extra CRM features bundled in.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S3",
+              "quote": "But no extra CRM features are actually needed. Mainly needs automatic RSS-to-Email feature."
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        }
+      ],
+      "signals": [
+        {
+          "text": "public_rss_feed_present_on_blog: the blog carries a long-standing RSS feed.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S1",
+              "quote": "My blog had already had an RSS feed for ~12 years at that point,"
+            }
+          ],
+          "inference_basis": ""
+        },
+        {
+          "text": "currently_sends_via_mailchimp: the blogger's mailing list is currently run on Mailchimp.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S3",
+              "quote": "I need an affordable replacement for Mailchimp for a basic mailing list for a blog, that can auto-generate content from the blog's RSS feed (RSS-to-Email)."
+            },
+            {
+              "source_id": "S2",
+              "quote": "I have had mailchimp for years but hardly ever used for the same reasons you mentioned."
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        },
+        {
+          "text": "blog_predates_newsletter_signup: combining the article's note that the blog's RSS feed had existed for about twelve years with its separate note that the newsletter signup page was created in 2019 implies the blog predates the newsletter.",
+          "grounding": "inferred",
+          "evidence": [
+            {
+              "source_id": "S1",
+              "quote": "My blog had already had an RSS feed for ~12 years at that point,"
+            },
+            {
+              "source_id": "S1",
+              "quote": "I set up the page to [subscribe to my newsletter on January 20th, 2019](/newsletter/),"
+            }
+          ],
+          "inference_basis": "Combines two separate statements from the same article (RSS feed age and newsletter signup creation date) to infer sequencing rather than a single direct buyer statement of that sequence."
+        }
+      ],
+      "where": [
+        {
+          "text": "Discussions about replacing Mailchimp for a blog's RSS-to-email needs surface in general hosting/tech forums.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S3",
+              "quote": "Need an affordable replacement for Mailchimp for a mailing list for a blog with RSS-to-email feature"
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        },
+        {
+          "text": "They also surface in Substack comment threads under posts announcing a switch away from Mailchimp.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S2",
+              "quote": "On a slightly more substantive note, I’m in the process of transitioning from mailchimp to button down."
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        },
+        {
+          "text": "And in Hacker News comment threads reacting to posts about migrating off Mailchimp.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S4",
+              "quote": "I've recently switched from Mailchimp to Revue."
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        }
+      ],
+      "sources": [
+        {
+          "id": "S1",
+          "requested_url": "https://lethain.com/newsletter-mailchimp-to-buttondown/",
+          "final_url": "https://lethain.com/newsletter-mailchimp-to-buttondown/",
+          "title": "Moved newsletter from Mailchimp to Buttondown. | Irrational Exuberance",
+          "tier": 1,
+          "venue": "lethain.com (personal blog)",
+          "fetched_at": "2026-11-05T23:49:12.682228Z",
+          "published_date": "2026-01-10",
+          "publication_date_basis": "page_publication_metadata",
+          "content_hash": "7f81757826f6977b0bca3668e4de18e37c764e09f2bcd5f0d9703538888f44f8"
+        },
+        {
+          "id": "S2",
+          "requested_url": "https://debbieohi.substack.com/p/why-im-switching-from-mailchimp-to/comments",
+          "final_url": "https://debbieohi.substack.com/p/why-im-switching-from-mailchimp-to/comments",
+          "title": "Comments - Why I'm switching from Mailchimp to Substack",
+          "tier": 1,
+          "venue": "Debbie Ohi Substack",
+          "fetched_at": "2026-11-05T23:49:12.821317Z",
+          "published_date": null,
+          "publication_date_basis": "unknown",
+          "content_hash": "d3064614aff56ccfb57ee56fb0acbda62010d5fd1bbd9b24eda8864b394625a9"
+        },
+        {
+          "id": "S3",
+          "requested_url": "https://lowendtalk.com/discussion/196384/need-an-affordable-replacement-for-mailchimp-for-a-mailing-list-for-a-blog-with-rss-to-email-feature",
+          "final_url": "https://lowendtalk.com/discussion/196384/need-an-affordable-replacement-for-mailchimp-for-a-mailing-list-for-a-blog-with-rss-to-email-feature",
+          "title": "Need an affordable replacement for Mailchimp for a mailing list for a blog with RSS-to-email feature — LowEndTalk",
+          "tier": 1,
+          "venue": "LowEndTalk forum",
+          "fetched_at": "2026-11-05T23:49:13.007154Z",
+          "published_date": null,
+          "publication_date_basis": "unknown",
+          "content_hash": "bd63959934d04a0874bcaad43243dc088fe57a6cc95e89590fe270dc8c7cce9b"
+        },
+        {
+          "id": "S4",
+          "requested_url": "https://news.ycombinator.com/item?id=29766761",
+          "final_url": "https://news.ycombinator.com/item?id=29766761",
+          "title": "I switched my newsletters from Substack and Mailchimp to Buttondown | Hacker News",
+          "tier": 1,
+          "venue": "Hacker News",
+          "fetched_at": "2026-11-05T23:49:13.862920Z",
+          "published_date": null,
+          "publication_date_basis": "unknown",
+          "content_hash": "34d4a23fce249110b8c1cea958b5e2aa9a102d0885cd4f0c578140379afdfe22"
+        }
+      ],
+      "dropped_claims": 1,
+      "interpretation_warnings": [
+        "Publication date unknown; retrieval today does not establish current applicability. Buyers in this audience name and compare several specific competing newsletter products with pricing before deciding, rather than needing the general problem or solution category explained.",
+        "Publication date unknown; retrieval today does not establish current applicability. A commenter kept a Mailchimp account for years but reports having hardly used it, for the same reasons another blogger gave for leaving.",
+        "Publication date unknown; retrieval today does not establish current applicability. One blogger who keeps their own blog relied on Mailchimp specifically because it was among the few free services that could pull the RSS feed into a weekly digest.",
+        "Publication date unknown; retrieval today does not establish current applicability. For a forum poster, the explicit stated reason for leaving Mailchimp was price rather than any feature shortcoming.",
+        "Publication date unknown; retrieval today does not establish current applicability. Wants a tool limited to the RSS-to-email function itself, without extra CRM features bundled in.",
+        "Publication date unknown; retrieval today does not establish current applicability. currently_sends_via_mailchimp: the blogger's mailing list is currently run on Mailchimp.",
+        "Publication date unknown; retrieval today does not establish current applicability. Discussions about replacing Mailchimp for a blog's RSS-to-email needs surface in general hosting/tech forums.",
+        "Publication date unknown; retrieval today does not establish current applicability. They also surface in Substack comment threads under posts announcing a switch away from Mailchimp.",
+        "Publication date unknown; retrieval today does not establish current applicability. And in Hacker News comment threads reacting to posts about migrating off Mailchimp.",
+        "P1: Publication date unknown; retrieval today does not establish current applicability."
+      ],
+      "researched_at": "2026-11-05T23:52:50.358361Z",
+      "id": "65752b06-0578-4896-927f-d847484676ea",
+      "brand_id": "298ad2c9-d89d-41d7-a1aa-85b543357c2d",
+      "audience_key": "a blogger with an existing site and an rss feed, finally switching their email send-out off mailchimp after putting it off for a while",
+      "version": 1,
+      "source_map_id": "93a0809a-7001-4394-ac80-71764ef80b41",
+      "source_map_version": 1,
+      "created_at": "2026-11-05T23:52:50.368013"
+    }
+  ],
+  "relevance": [
+    {
+      "audience_name": "A blogger with an existing site and an RSS feed, finally switching their email send-out off Mailchimp after putting it off for a while",
+      "status": "current",
+      "stale_reasons": [],
+      "missing_prerequisites": [],
+      "dossier_id": "b4ee19e2-8664-4e1f-8e7c-5537914c4963",
+      "generation_version": 2,
+      "created_at": "2026-11-05T23:59:21.305764",
+      "dossier": {
+        "schema_version": 2,
+        "interpretation_version": 19,
+        "audience_research_id": "65752b06-0578-4896-927f-d847484676ea",
+        "audience_name": "A blogger with an existing site and an RSS feed, finally switching their email send-out off Mailchimp after putting it off for a while",
+        "audience_research_version": 1,
+        "knowledge_id": "cbd73942-0c81-4134-862b-7ffc0f05b9b1",
+        "knowledge_version": 2,
+        "market_scan_id": "5628dda2-f1a0-480e-9517-f32840b0552d",
+        "market_scan_version": 1,
+        "capability_profile_id": "03c42046-4466-405f-ac1c-843bdc5c0e23",
+        "capability_profile_version": 2,
+        "qualification_fingerprint": "b73fa8afe8c454c3080a5dd4a875eaf1270718d9365d8c0f1507a7105383b4bd",
+        "built_at": "2026-11-05T23:59:21.301765Z",
+        "orientation": "Buttondown is browser-based software this blogger can use to automatically turn their existing RSS feed into scheduled or per-post emails, instead of relying on Mailchimp for that same job.",
+        "defining_need_fit": {
+          "status": "partial",
+          "supported_alternative": "",
+          "setup_conditions": [
+            "Choose an RSS-to-email cadence in the dashboard: per new item, weekly, or monthly (R2, R3).",
+            "For a weekly or monthly digest, build the email template using a loop over the feed's items (R4).",
+            "A digest-style template cannot be paired with the per-new-item cadence; doing so results in the email not sending (R5)."
+          ],
+          "evidence_ids": [
+            "E5",
+            "R2",
+            "R3",
+            "R4",
+            "R5"
+          ],
+          "capability_ids": [],
+          "unverified_requirements": [
+            "Whether the resulting RSS-to-email setup excludes bundled CRM-style list-management features this audience wants to avoid is not established by the selected evidence.",
+            "Whether the tracking-pixel opt-out (E3) applies to opens on automated RSS-to-email sends specifically, as opposed to manually composed emails, is not established by the selected evidence."
+          ],
+          "decision_gaps": [
+            "Which Buttondown plan tier includes RSS-to-email automation, and at what price — the ledger names 'free' and 'Basic' offers but not which unlocks this feature or its cost, which is central to a cost-driven switcher's decision.",
+            "Does disabling tracking pixels (E3) also suppress tracking on emails generated by the automated RSS-to-email pipeline, or only on manually sent emails?",
+            "Can the RSS-to-email cadence and digest template be configured via the API or CLI (E24) rather than only through the dashboard?"
+          ],
+          "caveat": "The audience's core defining action — replacing Mailchimp's RSS-to-email send-out with an equivalent — is covered by Buttondown's automatic feed-pull-and-send mechanism and its documented cadence/template mechanics, but digest and per-item cadence are mutually exclusive, and absence of CRM bloat and scope of the tracking opt-out for automated sends are not confirmed.",
+          "why": "E5 establishes the core mechanism (pull an RSS feed, send it automatically); R2–R5 establish the cadence and template options and their one documented mutual-exclusion exception, together covering the blogger's stated migration task."
+        },
+        "ranked_relevance": [
+          {
+            "evidence_id": "E9",
+            "band": "LEAD",
+            "why": "A customer's firsthand account of switching an RSS-to-email setup from Mailchimp to Buttondown mirrors this exact audience's situation and reports it as cheaper, more flexible, and less cluttered.",
+            "problem_ids": [
+              "P1",
+              "P2"
+            ],
+            "territory": null
+          },
+          {
+            "evidence_id": "E5",
+            "band": "LEAD",
+            "why": "States the core mechanism this audience needs: automatically pulling an RSS feed and sending it to subscribers, replacing the function they currently get from Mailchimp.",
+            "problem_ids": [
+              "P1"
+            ],
+            "territory": null
+          },
+          {
+            "evidence_id": "E3",
+            "band": "LEAD",
+            "why": "Directly answers the researched complaint that a Mailchimp-based RSS digest kept tracking subscribers despite opting out, via an option to turn tracking pixels off.",
+            "problem_ids": [
+              "P1"
+            ],
+            "territory": null
+          },
+          {
+            "evidence_id": "E4",
+            "band": "SUPPORT",
+            "why": "A customer's timed comparison of setting up RSS-to-email in Buttondown versus Mailchimp supports the ease of the same kind of migration this audience is making.",
+            "problem_ids": [
+              "P1"
+            ],
+            "territory": null
+          },
+          {
+            "evidence_id": "R2",
+            "band": "SUPPORT",
+            "why": "Documents the per-new-item cadence option, one of the two cadence mechanisms underlying the RSS-to-email capability this audience needs.",
+            "problem_ids": [
+              "P1"
+            ],
+            "territory": null
+          },
+          {
+            "evidence_id": "R3",
+            "band": "SUPPORT",
+            "why": "Documents the weekly cadence option, matching the weekly-digest cadence one source in this audience explicitly relied on Mailchimp for.",
+            "problem_ids": [
+              "P1"
+            ],
+            "territory": null
+          },
+          {
+            "evidence_id": "R4",
+            "band": "SUPPORT",
+            "why": "Documents how a digest-style RSS email template is built, the mechanism needed if this audience wants a multi-post weekly send rather than one email per post.",
+            "problem_ids": [
+              "P1"
+            ],
+            "territory": null
+          },
+          {
+            "evidence_id": "R5",
+            "band": "SUPPORT",
+            "why": "Documents the necessary exception that a digest template cannot be combined with the per-new-item cadence, a condition on the digest mechanism above.",
+            "problem_ids": [
+              "P1"
+            ],
+            "territory": null
+          }
+        ],
+        "problem_fits": [
+          {
+            "problem_id": "P1",
+            "verdict": "PARTIAL",
+            "evidence_ids": [
+              "E5",
+              "E3",
+              "R2",
+              "R3",
+              "R4",
+              "R5"
+            ],
+            "capability_ids": [],
+            "blocked_by": [],
+            "caveat": "Buttondown's RSS-to-email automation (E5) with configurable per-item or weekly/monthly cadence (R2, R3) and a tracking-pixel opt-out (E3) covers the audience's narrow stated need, but a digest template cannot be paired with the per-new-item cadence (R5), and the selected evidence does not confirm Buttondown excludes other CRM-style features the audience wants to avoid.",
+            "why": "Matches the audience's explicitly stated requirement for an automatic RSS-to-email feature and its complaint that a Mailchimp-based digest kept tracking subscribers after opt-out.",
+            "materiality_basis": ""
+          },
+          {
+            "problem_id": "P2",
+            "verdict": "PARTIAL",
+            "evidence_ids": [
+              "E9",
+              "E22",
+              "E7",
+              "E17",
+              "E21"
+            ],
+            "capability_ids": [],
+            "blocked_by": [],
+            "caveat": "One customer who made the same RSS-to-email migration calls Buttondown cheaper (E9), and Buttondown's commercial terms (newsletters billed only by subscriber count, no surcharge on paid subscribers or sponsorships, a free tier described as generous) support lower overhead, but no evidence in the ledger states a specific price or confirms savings against the $326/month this audience cites.",
+            "why": "Addresses the cost-driven motivation to leave Mailchimp, though the magnitude of savings is not established by the selected evidence.",
+            "materiality_basis": ""
+          }
+        ],
+        "segment_objections": [
+          {
+            "objection": "Will Buttondown still track my subscribers even after I ask it not to, the way Mailchimp did with my RSS digest?",
+            "severity": "strong",
+            "answer": "Buttondown lets users turn tracking pixels off, and is described as GDPR-compliant with no data collection about owners or subscribers by default.",
+            "grounding": "inferred",
+            "evidence_ids": [
+              "E3",
+              "E18"
+            ],
+            "provenance": []
+          },
+          {
+            "objection": "Will Buttondown actually be cheaper than Mailchimp for someone running more than one blog, given no specific prices are shown here?",
+            "severity": "moderate",
+            "answer": "A customer who made this exact RSS-to-email migration calls Buttondown cheaper, and Buttondown lets you run unlimited distinct newsletters while charging only for total subscribers.",
+            "grounding": "inferred",
+            "evidence_ids": [
+              "E9",
+              "E22"
+            ],
+            "provenance": []
+          }
+        ],
+        "silences": [],
+        "evidence": [
+          {
+            "id": "E3",
+            "kind": "feature",
+            "claim": "Buttondown lets users turn tracking pixels off so subscribers are not tracked.",
+            "verbatim": "I LOVE being able to turn tracking pixels off. I didn't even realize this was an option when I signed up and am SO HAPPY to not track people.",
+            "source": "https://buttondown.com/testimonials",
+            "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+            "context": {
+              "subject": "Buttondown tracking pixel setting",
+              "source_kind": "customer_statement",
+              "claim_scope": "capability",
+              "conditions": "",
+              "temporal_scope": "",
+              "limitations": "",
+              "verification": "source_metadata_changed_review_required"
+            },
+            "source_references": [
+              {
+                "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+                "source": "https://buttondown.com/testimonials",
+                "source_type": "website"
+              }
+            ],
+            "strength": "strong",
+            "category": "trust",
+            "value_band": "supporting"
+          },
+          {
+            "id": "E4",
+            "kind": "integration",
+            "claim": "Buttondown's RSS-to-Email feature took about 30 minutes to set up for one customer, versus the time it took to figure out the equivalent feature in Mailchimp.",
+            "verbatim": "I just tested the RSS to Email feature for one of my blogs and it was incredibly easy to set up. It took me about 30 mins to figure out the same feature in Mailchimp.",
+            "source": "https://buttondown.com/testimonials",
+            "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+            "context": {
+              "subject": "Buttondown RSS to Email feature compared with Mailchimp",
+              "source_kind": "customer_statement",
+              "claim_scope": "comparison",
+              "conditions": "one customer's personal setup-time test of both tools",
+              "temporal_scope": "",
+              "limitations": "single user's timed impression, not a controlled benchmark",
+              "verification": "source_metadata_changed_review_required"
+            },
+            "source_references": [
+              {
+                "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+                "source": "https://buttondown.com/testimonials",
+                "source_type": "website"
+              }
+            ],
+            "strength": "strong",
+            "category": "technical",
+            "value_band": "supporting"
+          },
+          {
+            "id": "E5",
+            "kind": "feature",
+            "claim": "Buttondown can take an RSS feed, automatically pull in its content, and send it to subscribers.",
+            "verbatim": "The killer feature for me: Buttondown will take an RSS feed then automatically slurp up the content (in their words) and then send it to our subscribers.",
+            "source": "https://buttondown.com/testimonials",
+            "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+            "context": {
+              "subject": "Buttondown RSS-to-email feature",
+              "source_kind": "customer_statement",
+              "claim_scope": "capability",
+              "conditions": "",
+              "temporal_scope": "",
+              "limitations": "",
+              "verification": "source_metadata_changed_review_required"
+            },
+            "source_references": [
+              {
+                "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+                "source": "https://buttondown.com/testimonials",
+                "source_type": "website"
+              }
+            ],
+            "strength": "strong",
+            "category": "product",
+            "value_band": "supporting"
+          },
+          {
+            "id": "E7",
+            "kind": "price",
+            "claim": "Buttondown has a free version of its product that one customer described as generous.",
+            "verbatim": "Hands down the easiest way to run a newsletter - and the free version is generous!",
+            "source": "https://buttondown.com/testimonials",
+            "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+            "context": {
+              "subject": "Buttondown free plan",
+              "source_kind": "customer_statement",
+              "claim_scope": "offer",
+              "conditions": "",
+              "temporal_scope": "",
+              "limitations": "no specific free-tier limits, credits or figures stated",
+              "verification": "source_metadata_changed_review_required"
+            },
+            "source_references": [
+              {
+                "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+                "source": "https://buttondown.com/testimonials",
+                "source_type": "website"
+              }
+            ],
+            "strength": "weak",
+            "category": "commercial",
+            "value_band": "background"
+          },
+          {
+            "id": "E9",
+            "kind": "feature",
+            "claim": "A customer who switched their RSS-to-email provider from Mailchimp to Buttondown found Buttondown cheaper, more flexible, and less cluttered.",
+            "verbatim": "This long weekend I fulfilled a long-standing promise to myself to switch my RSS-to-email provider from Mailchimp to Buttondown, and it's been such a great experience. It's cheaper, more flexible, less cluttered, and it's run by Justin Duke who is just delightful and answered a bunch of my questions over the weekend (even though I asked him to please not!).",
+            "source": "https://buttondown.com/testimonials",
+            "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+            "context": {
+              "subject": "Buttondown versus Mailchimp for RSS-to-email",
+              "source_kind": "customer_statement",
+              "claim_scope": "comparison",
+              "conditions": "one customer's personal migration experience, Rian van der Merwe, Director of Product at PagerDuty",
+              "temporal_scope": "",
+              "limitations": "subjective comparison with no specific prices or figures cited",
+              "verification": "source_metadata_changed_review_required"
+            },
+            "source_references": [
+              {
+                "document_id": "18db3a91-f185-4051-80e7-20263496b931",
+                "source": "https://buttondown.com/testimonials",
+                "source_type": "website"
+              }
+            ],
+            "strength": "moderate",
+            "category": "market",
+            "value_band": "background"
+          },
+          {
+            "id": "E17",
+            "kind": "guarantee",
+            "claim": "Buttondown does not charge newsletter owners extra for paid subscribers, so they keep all of the revenue they make.",
+            "verbatim": "The best part? We won't charge you extra for paid subscribers, so you'll keep all of the revenue that you make.",
+            "source": "https://buttondown.com/features",
+            "document_id": "3745b435-2972-41aa-a26a-c66bb5edca7c",
+            "context": {
+              "subject": "Buttondown Paid Subscriptions feature",
+              "source_kind": "vendor_statement",
+              "claim_scope": "offer",
+              "conditions": "",
+              "temporal_scope": "",
+              "limitations": "",
+              "verification": "source_metadata_changed_review_required"
+            },
+            "source_references": [
+              {
+                "document_id": "3745b435-2972-41aa-a26a-c66bb5edca7c",
+                "source": "https://buttondown.com/features",
+                "source_type": "website"
+              }
+            ],
+            "strength": "strong",
+            "category": "commercial",
+            "value_band": "supporting"
+          },
+          {
+            "id": "E18",
+            "kind": "certification",
+            "claim": "Buttondown is GDPR-compliant and does not collect any data about newsletter owners or their subscribers by default.",
+            "verbatim": "Buttondown is GDPR-compliant and then some. We don't collect any data about you or your subscribers by default.",
+            "source": "https://buttondown.com/features",
+            "document_id": "3745b435-2972-41aa-a26a-c66bb5edca7c",
+            "context": {
+              "subject": "Buttondown data collection and GDPR compliance",
+              "source_kind": "vendor_statement",
+              "claim_scope": "capability",
+              "conditions": "by default",
+              "temporal_scope": "",
+              "limitations": "",
+              "verification": "source_metadata_changed_review_required"
+            },
+            "source_references": [
+              {
+                "document_id": "3745b435-2972-41aa-a26a-c66bb5edca7c",
+                "source": "https://buttondown.com/features",
+                "source_type": "website"
+              }
+            ],
+            "strength": "strong",
+            "category": "trust",
+            "value_band": "supporting"
+          },
+          {
+            "id": "E21",
+            "kind": "guarantee",
+            "claim": "Buttondown takes no cut of newsletter sponsorships; creators keep 100% of every sponsorship, minus Stripe's processing fee.",
+            "verbatim": "Buttondown doesn't take a cut: you keep 100% of every sponsorship (minus Stripe's processing fee).",
+            "source": "https://buttondown.com/features",
+            "document_id": "3745b435-2972-41aa-a26a-c66bb5edca7c",
+            "context": {
+              "subject": "Buttondown Sponsorships feature",
+              "source_kind": "vendor_statement",
+              "claim_scope": "offer",
+              "conditions": "minus Stripe's processing fee",
+              "temporal_scope": "",
+              "limitations": "",
+              "verification": "source_metadata_changed_review_required"
+            },
+            "source_references": [
+              {
+                "document_id": "3745b435-2972-41aa-a26a-c66bb5edca7c",
+                "source": "https://buttondown.com/features",
+                "source_type": "website"
+              }
+            ],
+            "strength": "strong",
+            "category": "commercial",
+            "value_band": "headline"
+          },
+          {
+            "id": "E22",
+            "kind": "price",
+            "claim": "Buttondown lets users create as many distinct newsletters as they'd like, charging only based on total subscriber count.",
+            "verbatim": "Create as many distinct newsletters as you'd like – you're only charged for your total subscribers.",
+            "source": "https://buttondown.com/features",
+            "document_id": "3745b435-2972-41aa-a26a-c66bb5edca7c",
+            "context": {
+              "subject": "Buttondown unlimited newsletters pricing",
+              "source_kind": "vendor_statement",
+              "claim_scope": "offer",
+              "conditions": "charged by total subscriber count, not number of newsletters",
+              "temporal_scope": "",
+              "limitations": "",
+              "verification": "source_metadata_changed_review_required"
+            },
+            "source_references": [
+              {
+                "document_id": "3745b435-2972-41aa-a26a-c66bb5edca7c",
+                "source": "https://buttondown.com/features",
+                "source_type": "website"
+              }
+            ],
+            "strength": "strong",
+            "category": "commercial",
+            "value_band": "supporting"
+          },
+          {
+            "id": "R2",
+            "kind": "feature",
+            "claim": "Buttondown's RSS-to-email automation can be configured to trigger per new post as it is published.",
+            "verbatim": "You can have trigger a new email every time a new item is published in your RSS feed.",
+            "source": "https://docs.buttondown.com/rss-to-email",
+            "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+            "context": {
+              "subject": "Buttondown RSS-to-email cadence option",
+              "source_kind": "official_documentation",
+              "claim_scope": "one of three selectable cadence options for RSS automation",
+              "conditions": "Buttondown checks the RSS feed every thirty minutes, so triggering is not instantaneous",
+              "temporal_scope": "",
+              "limitations": "This cadence cannot be combined with a digest-style template (see separate restriction)",
+              "verification": "source_metadata_changed_review_required"
+            },
+            "source_references": [
+              {
+                "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+                "source": "https://docs.buttondown.com/rss-to-email",
+                "source_type": "website"
+              }
+            ],
+            "strength": "strong",
+            "category": "product",
+            "value_band": "supporting"
+          },
+          {
+            "id": "R3",
+            "kind": "feature",
+            "claim": "Buttondown's RSS-to-email automation can instead be configured to trigger weekly on a chosen day and time, matching a weekly-digest pull preference.",
+            "verbatim": "You can trigger a new email every week, on a day and time of your choosing.",
+            "source": "https://docs.buttondown.com/rss-to-email",
+            "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+            "context": {
+              "subject": "Buttondown RSS-to-email cadence option",
+              "source_kind": "official_documentation",
+              "claim_scope": "one of three selectable cadence options for RSS automation",
+              "conditions": "For weekly cadence, the automation only triggers if there is a new item in the RSS feed since the last check",
+              "temporal_scope": "",
+              "limitations": "",
+              "verification": "source_metadata_changed_review_required"
+            },
+            "source_references": [
+              {
+                "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+                "source": "https://docs.buttondown.com/rss-to-email",
+                "source_type": "website"
+              }
+            ],
+            "strength": "strong",
+            "category": "product",
+            "value_band": "supporting"
+          },
+          {
+            "id": "R4",
+            "kind": "feature",
+            "claim": "Buttondown's RSS-to-email templates can be built as a digest that loops over multiple feed items collected during the chosen cadence.",
+            "verbatim": "If you want to send a digest of multiple blog posts, you'd start by iterating over the list of items in the feed.",
+            "source": "https://docs.buttondown.com/rss-to-email",
+            "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+            "context": {
+              "subject": "Buttondown RSS-to-email digest template",
+              "source_kind": "official_documentation",
+              "claim_scope": "template-building behavior for digest-style RSS emails",
+              "conditions": "Requires a weekly or monthly cadence setting; relies on a {% for item in items %} loop structure",
+              "temporal_scope": "",
+              "limitations": "",
+              "verification": "source_metadata_changed_review_required"
+            },
+            "source_references": [
+              {
+                "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+                "source": "https://docs.buttondown.com/rss-to-email",
+                "source_type": "website"
+              }
+            ],
+            "strength": "strong",
+            "category": "product",
+            "value_band": "supporting"
+          },
+          {
+            "id": "R5",
+            "kind": "feature",
+            "claim": "A digest email cannot be used with the per-post ('every new item') cadence, confirming that the digest format only works with the weekly/monthly cadence options.",
+            "verbatim": "You cannot create a digest email when the schedule is set to \"every time a new item appears\". This would result in the email not being sent.",
+            "source": "https://docs.buttondown.com/rss-to-email",
+            "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+            "context": {
+              "subject": "Buttondown RSS-to-email digest/cadence compatibility restriction",
+              "source_kind": "official_documentation",
+              "claim_scope": "configuration restriction tying digest templates to non-per-item cadences",
+              "conditions": "Applies when the RSS automation's schedule is set to trigger on every new item",
+              "temporal_scope": "",
+              "limitations": "Documentation does not state what error or notification the user sees beyond the email not being sent",
+              "verification": "source_metadata_changed_review_required"
+            },
+            "source_references": [
+              {
+                "document_id": "bb7b94b5-749b-4f4f-b174-5a6dc2cd26f9",
+                "source": "https://docs.buttondown.com/rss-to-email",
+                "source_type": "website"
+              }
+            ],
+            "strength": "strong",
+            "category": "product",
+            "value_band": "supporting"
+          }
+        ],
+        "validation_counts": {
+          "dropped_items": 0,
+          "normalized_items": 0
+        },
+        "validation_warnings": [
+          "Defining audience need is unassessed or its references required normalization."
+        ],
+        "recommendation": {
+          "state": "DISCOVERY_ONLY",
+          "readiness": "DISCOVERY_ONLY",
+          "reasons": [
+            "The defining audience need is not fully supported by verified product evidence; a broader subsegment label does not resolve it.",
+            "Whether the resulting RSS-to-email setup excludes bundled CRM-style list-management features this audience wants to avoid is not established by the selected evidence.",
+            "Whether the tracking-pixel opt-out (E3) applies to opens on automated RSS-to-email sends specifically, as opposed to manually composed emails, is not established by the selected evidence."
+          ],
+          "eligible_subsegment": "",
+          "qualified_companies": [],
+          "adjacent_companies": [],
+          "excluded_companies": [],
+          "unverified_companies": [],
+          "allowed_claims": [
+            "Buttondown lets users turn tracking pixels off so subscribers are not tracked.",
+            "Buttondown's RSS-to-Email feature took about 30 minutes to set up for one customer, versus the time it took to figure out the equivalent feature in Mailchimp.",
+            "Buttondown can take an RSS feed, automatically pull in its content, and send it to subscribers.",
+            "Buttondown has a free version of its product that one customer described as generous.",
+            "A customer who switched their RSS-to-email provider from Mailchimp to Buttondown found Buttondown cheaper, more flexible, and less cluttered.",
+            "Buttondown's API is available on all plans, including the free plan.",
+            "Buttondown's API is rate-limited to prevent abuse, though the limits are generous enough for most use cases.",
+            "Buttondown deliberately does not provide official SDKs, investing instead in its OpenAPI spec so any caller can generate a typed client.",
+            "Buttondown does not ship an official MCP server and instead recommends pointing an LLM at its OpenAPI spec to build one tailored to the user's workflow.",
+            "Buttondown does not charge newsletter owners extra for paid subscribers, so they keep all of the revenue they make.",
+            "Buttondown takes no cut of newsletter sponsorships; creators keep 100% of every sponsorship, minus Stripe's processing fee.",
+            "Buttondown lets users create as many distinct newsletters as they'd like, charging only based on total subscriber count.",
+            "Buttondown supports over 40 integrations for embedding videos, GIFs, songs, posts, and other content.",
+            "Buttondown's CLI lets users script their newsletter from CI/CD pipelines, bulk-manage subscribers, and pull analytics — anything doable in the web app is doable from the command line.",
+            "Buttondown's RSS-to-email automation can be configured to trigger per new post as it is published.",
+            "Buttondown's RSS-to-email automation can instead be configured to trigger weekly on a chosen day and time, matching a weekly-digest pull preference.",
+            "Buttondown's RSS-to-email templates can be built as a digest that loops over multiple feed items collected during the chosen cadence.",
+            "A digest email cannot be used with the per-post ('every new item') cadence, confirming that the digest format only works with the weekly/monthly cadence options."
+          ],
+          "allowed_evidence_ids": [
+            "E3",
+            "E4",
+            "E5",
+            "E7",
+            "E9",
+            "E13",
+            "E14",
+            "E15",
+            "E16",
+            "E17",
+            "E21",
+            "E22",
+            "E23",
+            "E24",
+            "R2",
+            "R3",
+            "R4",
+            "R5"
+          ],
+          "forbidden_claims": [],
+          "forbidden_capability_ids": [],
+          "forbidden_evidence_ids": [],
+          "unresolved_objections": [],
+          "recommended_next_action": "Gather direct product and company evidence before treating this as an outreach list.",
+          "override_risk": "Generating now will require audience-level hypotheses and may produce a weak campaign because company-specific fit is unresolved.",
+          "claim_contract": {
+            "contract_version": 1,
+            "verified_product_claims": [
+              {
+                "id": "evidence:E1",
+                "text": "Cassidy Williams's newsletter on Buttondown grew from a fairly small list to over 15,000 subscribers without performance problems.",
+                "evidence_ids": [
+                  "E1"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E2",
+                "text": "When a customer reported a security vulnerability to Buttondown on a Friday afternoon, Buttondown acknowledged and fixed it in under two hours, on a Friday night.",
+                "evidence_ids": [
+                  "E2"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E3",
+                "text": "Buttondown lets users turn tracking pixels off so subscribers are not tracked.",
+                "evidence_ids": [
+                  "E3"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E4",
+                "text": "Buttondown's RSS-to-Email feature took about 30 minutes to set up for one customer, versus the time it took to figure out the equivalent feature in Mailchimp.",
+                "evidence_ids": [
+                  "E4"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E5",
+                "text": "Buttondown can take an RSS feed, automatically pull in its content, and send it to subscribers.",
+                "evidence_ids": [
+                  "E5"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E6",
+                "text": "Buttondown offers a supporter single-tier and pay-what-you-want payment option, and built custom additional payment support for one customer within a couple of days of the request.",
+                "evidence_ids": [
+                  "E6"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E7",
+                "text": "Buttondown has a free version of its product that one customer described as generous.",
+                "evidence_ids": [
+                  "E7"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E8",
+                "text": "Buttondown offers a plan named \"Basic\" that a customer upgraded to.",
+                "evidence_ids": [
+                  "E8"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E9",
+                "text": "A customer who switched their RSS-to-email provider from Mailchimp to Buttondown found Buttondown cheaper, more flexible, and less cluttered.",
+                "evidence_ids": [
+                  "E9"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E10",
+                "text": "Buttondown supports API access and Markdown for building newsletter-writing workflows.",
+                "evidence_ids": [
+                  "E10"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E11",
+                "text": "Buttondown provides privacy-focused sending and sign-up forms, a Markdown-only editor, and a default template styled to look like a blog post.",
+                "evidence_ids": [
+                  "E11"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E12",
+                "text": "James Whatley, Senior Strategy Director at The LEGO Group, is a named Buttondown customer.",
+                "evidence_ids": [
+                  "E12"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E13",
+                "text": "Buttondown's API is available on all plans, including the free plan.",
+                "evidence_ids": [
+                  "E13"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E14",
+                "text": "Buttondown's API is rate-limited to prevent abuse, though the limits are generous enough for most use cases.",
+                "evidence_ids": [
+                  "E14"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E15",
+                "text": "Buttondown deliberately does not provide official SDKs, investing instead in its OpenAPI spec so any caller can generate a typed client.",
+                "evidence_ids": [
+                  "E15"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E16",
+                "text": "Buttondown does not ship an official MCP server and instead recommends pointing an LLM at its OpenAPI spec to build one tailored to the user's workflow.",
+                "evidence_ids": [
+                  "E16"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E17",
+                "text": "Buttondown does not charge newsletter owners extra for paid subscribers, so they keep all of the revenue they make.",
+                "evidence_ids": [
+                  "E17"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E18",
+                "text": "Buttondown is GDPR-compliant and does not collect any data about newsletter owners or their subscribers by default.",
+                "evidence_ids": [
+                  "E18"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E19",
+                "text": "Buttondown will migrate a newsletter owner's existing list to Buttondown for free, no matter how large the list is.",
+                "evidence_ids": [
+                  "E19"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E20",
+                "text": "Buttondown's surveys have response rates 200% higher than the industry average.",
+                "evidence_ids": [
+                  "E20"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E21",
+                "text": "Buttondown takes no cut of newsletter sponsorships; creators keep 100% of every sponsorship, minus Stripe's processing fee.",
+                "evidence_ids": [
+                  "E21"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E22",
+                "text": "Buttondown lets users create as many distinct newsletters as they'd like, charging only based on total subscriber count.",
+                "evidence_ids": [
+                  "E22"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E23",
+                "text": "Buttondown supports over 40 integrations for embedding videos, GIFs, songs, posts, and other content.",
+                "evidence_ids": [
+                  "E23"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E24",
+                "text": "Buttondown's CLI lets users script their newsletter from CI/CD pipelines, bulk-manage subscribers, and pull analytics — anything doable in the web app is doable from the command line.",
+                "evidence_ids": [
+                  "E24"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:R1",
+                "text": "Buttondown allows sending emails from a custom domain the user controls, and this is available to all accounts regardless of plan.",
+                "evidence_ids": [
+                  "R1"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:R2",
+                "text": "Buttondown's RSS-to-email automation can be configured to trigger per new post as it is published.",
+                "evidence_ids": [
+                  "R2"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:R3",
+                "text": "Buttondown's RSS-to-email automation can instead be configured to trigger weekly on a chosen day and time, matching a weekly-digest pull preference.",
+                "evidence_ids": [
+                  "R3"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:R4",
+                "text": "Buttondown's RSS-to-email templates can be built as a digest that loops over multiple feed items collected during the chosen cadence.",
+                "evidence_ids": [
+                  "R4"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:R5",
+                "text": "A digest email cannot be used with the per-post ('every new item') cadence, confirming that the digest format only works with the weekly/monthly cadence options.",
+                "evidence_ids": [
+                  "R5"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              }
+            ],
+            "campaign_allowed_claims": [
+              {
+                "id": "evidence:E3",
+                "text": "Buttondown lets users turn tracking pixels off so subscribers are not tracked.",
+                "evidence_ids": [
+                  "E3"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E4",
+                "text": "Buttondown's RSS-to-Email feature took about 30 minutes to set up for one customer, versus the time it took to figure out the equivalent feature in Mailchimp.",
+                "evidence_ids": [
+                  "E4"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E5",
+                "text": "Buttondown can take an RSS feed, automatically pull in its content, and send it to subscribers.",
+                "evidence_ids": [
+                  "E5"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E7",
+                "text": "Buttondown has a free version of its product that one customer described as generous.",
+                "evidence_ids": [
+                  "E7"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E9",
+                "text": "A customer who switched their RSS-to-email provider from Mailchimp to Buttondown found Buttondown cheaper, more flexible, and less cluttered.",
+                "evidence_ids": [
+                  "E9"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E13",
+                "text": "Buttondown's API is available on all plans, including the free plan.",
+                "evidence_ids": [
+                  "E13"
+                ],
+                "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+              },
+              {
+                "id": "evidence:E14",
+                "text": "Buttondown's API is rate-limited to prevent abuse, though the limits are generous enough for most use cases.",
+                "evidence_ids": [
+                  "E14"
+                ],
+                "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+              },
+              {
+                "id": "evidence:E15",
+                "text": "Buttondown deliberately does not provide official SDKs, investing instead in its OpenAPI spec so any caller can generate a typed client.",
+                "evidence_ids": [
+                  "E15"
+                ],
+                "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+              },
+              {
+                "id": "evidence:E16",
+                "text": "Buttondown does not ship an official MCP server and instead recommends pointing an LLM at its OpenAPI spec to build one tailored to the user's workflow.",
+                "evidence_ids": [
+                  "E16"
+                ],
+                "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+              },
+              {
+                "id": "evidence:E17",
+                "text": "Buttondown does not charge newsletter owners extra for paid subscribers, so they keep all of the revenue they make.",
+                "evidence_ids": [
+                  "E17"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E21",
+                "text": "Buttondown takes no cut of newsletter sponsorships; creators keep 100% of every sponsorship, minus Stripe's processing fee.",
+                "evidence_ids": [
+                  "E21"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E22",
+                "text": "Buttondown lets users create as many distinct newsletters as they'd like, charging only based on total subscriber count.",
+                "evidence_ids": [
+                  "E22"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:E23",
+                "text": "Buttondown supports over 40 integrations for embedding videos, GIFs, songs, posts, and other content.",
+                "evidence_ids": [
+                  "E23"
+                ],
+                "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+              },
+              {
+                "id": "evidence:E24",
+                "text": "Buttondown's CLI lets users script their newsletter from CI/CD pipelines, bulk-manage subscribers, and pull analytics — anything doable in the web app is doable from the command line.",
+                "evidence_ids": [
+                  "E24"
+                ],
+                "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+              },
+              {
+                "id": "evidence:R2",
+                "text": "Buttondown's RSS-to-email automation can be configured to trigger per new post as it is published.",
+                "evidence_ids": [
+                  "R2"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:R3",
+                "text": "Buttondown's RSS-to-email automation can instead be configured to trigger weekly on a chosen day and time, matching a weekly-digest pull preference.",
+                "evidence_ids": [
+                  "R3"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:R4",
+                "text": "Buttondown's RSS-to-email templates can be built as a digest that loops over multiple feed items collected during the chosen cadence.",
+                "evidence_ids": [
+                  "R4"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              },
+              {
+                "id": "evidence:R5",
+                "text": "A digest email cannot be used with the per-post ('every new item') cadence, confirming that the digest format only works with the weekly/monthly cadence options.",
+                "evidence_ids": [
+                  "R5"
+                ],
+                "reason": "Licensed by the current Evidence Ledger."
+              }
+            ],
+            "forbidden_claims": [],
+            "withheld_claims": [
+              {
+                "id": "evidence:E1",
+                "text": "Cassidy Williams's newsletter on Buttondown grew from a fairly small list to over 15,000 subscribers without performance problems.",
+                "evidence_ids": [
+                  "E1"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              },
+              {
+                "id": "evidence:E2",
+                "text": "When a customer reported a security vulnerability to Buttondown on a Friday afternoon, Buttondown acknowledged and fixed it in under two hours, on a Friday night.",
+                "evidence_ids": [
+                  "E2"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              },
+              {
+                "id": "evidence:E6",
+                "text": "Buttondown offers a supporter single-tier and pay-what-you-want payment option, and built custom additional payment support for one customer within a couple of days of the request.",
+                "evidence_ids": [
+                  "E6"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              },
+              {
+                "id": "evidence:E8",
+                "text": "Buttondown offers a plan named \"Basic\" that a customer upgraded to.",
+                "evidence_ids": [
+                  "E8"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              },
+              {
+                "id": "evidence:E10",
+                "text": "Buttondown supports API access and Markdown for building newsletter-writing workflows.",
+                "evidence_ids": [
+                  "E10"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              },
+              {
+                "id": "evidence:E11",
+                "text": "Buttondown provides privacy-focused sending and sign-up forms, a Markdown-only editor, and a default template styled to look like a blog post.",
+                "evidence_ids": [
+                  "E11"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              },
+              {
+                "id": "evidence:E12",
+                "text": "James Whatley, Senior Strategy Director at The LEGO Group, is a named Buttondown customer.",
+                "evidence_ids": [
+                  "E12"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              },
+              {
+                "id": "evidence:E18",
+                "text": "Buttondown is GDPR-compliant and does not collect any data about newsletter owners or their subscribers by default.",
+                "evidence_ids": [
+                  "E18"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              },
+              {
+                "id": "evidence:E19",
+                "text": "Buttondown will migrate a newsletter owner's existing list to Buttondown for free, no matter how large the list is.",
+                "evidence_ids": [
+                  "E19"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              },
+              {
+                "id": "evidence:E20",
+                "text": "Buttondown's surveys have response rates 200% higher than the industry average.",
+                "evidence_ids": [
+                  "E20"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              },
+              {
+                "id": "evidence:R1",
+                "text": "Buttondown allows sending emails from a custom domain the user controls, and this is available to all accounts regardless of plan.",
+                "evidence_ids": [
+                  "R1"
+                ],
+                "reason": "No addressed or partial problem for this audience uses it."
+              }
+            ],
+            "warnings": []
+          }
+        }
+      }
+    }
+  ],
+  "capability_profile": {
+    "schema_version": 2,
+    "version": 2,
+    "knowledge_id": "cbd73942-0c81-4134-862b-7ffc0f05b9b1",
+    "knowledge_version": 2,
+    "ledger_fingerprint": "50b873606932c8c2563f39b2ba988c2c1f0f179fe57ce4e1383cabd8ad9fb04a",
+    "derivation_version": 3,
+    "capabilities": [
+      {
+        "id": "fact_8286867895a1d1ea",
+        "label": "Buttondown's API is rate-limited to prevent abuse, though the limits are generous enough for most use cases.",
+        "description": "Source: official_documentation; Subject: Buttondown API rate limits; No specific numeric limit stated.",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E14",
+            "claim": "Buttondown's API is rate-limited to prevent abuse, though the limits are generous enough for most use cases.",
+            "quote": "Yes. The API is rate-limited to prevent abuse, but the limits are generous enough for most use cases.",
+            "source_identifier": "https://buttondown.com/features/api"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_32145195ca9decee",
+        "label": "Buttondown deliberately does not provide official SDKs, investing instead in its OpenAPI spec so any caller can generate a typed client.",
+        "description": "Source: official_documentation; Subject: Buttondown API SDK support; No official SDK; relies on third-party generators like openapi-typescript or openapi-python-client.",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E15",
+            "claim": "Buttondown deliberately does not provide official SDKs, investing instead in its OpenAPI spec so any caller can generate a typed client.",
+            "quote": "No, and that's deliberate. We'd rather invest in making our [OpenAPI spec](https://docs.buttondown.com/api-introduction) as good as humanly possible — which benefits every caller regardless of language or framework — than maintain a fleet of SDKs that inevitably lag behind the API itself.",
+            "source_identifier": "https://buttondown.com/features/api"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_f9dd8a3b5b1e5fed",
+        "label": "Buttondown does not ship an official MCP server and instead recommends pointing an LLM at its OpenAPI spec to build one tailored to the user's workflow.",
+        "description": "Source: official_documentation; Subject: Buttondown API MCP server support; No official MCP server provided.",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E16",
+            "claim": "Buttondown does not ship an official MCP server and instead recommends pointing an LLM at its OpenAPI spec to build one tailored to the user's workflow.",
+            "quote": "No, for essentially the same reasons we don't ship official SDKs: an MCP server is a thin, opinionated wrapper around our API, and we'd rather keep refining the [OpenAPI spec](https://docs.buttondown.com/api-introduction) underneath so every caller benefits.",
+            "source_identifier": "https://buttondown.com/features/api"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_601f438fdce84723",
+        "label": "Buttondown supports over 40 integrations for embedding videos, GIFs, songs, posts, and other content.",
+        "description": "Source: vendor_statement; Subject: Buttondown integrations",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E23",
+            "claim": "Buttondown supports over 40 integrations for embedding videos, GIFs, songs, posts, and other content.",
+            "quote": "Need to embed videos, GIFs, songs, ~~tweets~~ posts, or anything else? We support [over 40 integrations](/features/integrations).",
+            "source_identifier": "https://buttondown.com/features"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_44e3d42135cce2aa",
+        "label": "Buttondown's CLI lets users script their newsletter from CI/CD pipelines, bulk-manage subscribers, and pull analytics — anything doable in the web app is doable from the command line.",
+        "description": "Source: vendor_statement; Subject: Buttondown CLI",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E24",
+            "claim": "Buttondown's CLI lets users script their newsletter from CI/CD pipelines, bulk-manage subscribers, and pull analytics — anything doable in the web app is doable from the command line.",
+            "quote": "Script your newsletter from CI/CD pipelines, bulk-manage subscribers, and pull analytics — if you can do it in the web app, you can do it from the command line.",
+            "source_identifier": "https://buttondown.com/features"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      }
+    ],
+    "constraints": [],
+    "claims": [
+      {
+        "text": "Cassidy Williams's newsletter on Buttondown grew from a fairly small list to over 15,000 subscribers without performance problems.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E1"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "When a customer reported a security vulnerability to Buttondown on a Friday afternoon, Buttondown acknowledged and fixed it in under two hours, on a Friday night.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E2"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown lets users turn tracking pixels off so subscribers are not tracked.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E3"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown's RSS-to-Email feature took about 30 minutes to set up for one customer, versus the time it took to figure out the equivalent feature in Mailchimp.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E4"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown can take an RSS feed, automatically pull in its content, and send it to subscribers.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E5"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown offers a supporter single-tier and pay-what-you-want payment option, and built custom additional payment support for one customer within a couple of days of the request.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E6"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown has a free version of its product that one customer described as generous.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E7"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown offers a plan named \"Basic\" that a customer upgraded to.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E8"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "A customer who switched their RSS-to-email provider from Mailchimp to Buttondown found Buttondown cheaper, more flexible, and less cluttered.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E9"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown supports API access and Markdown for building newsletter-writing workflows.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E10"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown provides privacy-focused sending and sign-up forms, a Markdown-only editor, and a default template styled to look like a blog post.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E11"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "James Whatley, Senior Strategy Director at The LEGO Group, is a named Buttondown customer.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E12"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown's API is available on all plans, including the free plan.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E13"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown's API is rate-limited to prevent abuse, though the limits are generous enough for most use cases.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E14"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown deliberately does not provide official SDKs, investing instead in its OpenAPI spec so any caller can generate a typed client.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E15"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown does not ship an official MCP server and instead recommends pointing an LLM at its OpenAPI spec to build one tailored to the user's workflow.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E16"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown does not charge newsletter owners extra for paid subscribers, so they keep all of the revenue they make.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E17"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown is GDPR-compliant and does not collect any data about newsletter owners or their subscribers by default.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E18"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown will migrate a newsletter owner's existing list to Buttondown for free, no matter how large the list is.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E19"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown's surveys have response rates 200% higher than the industry average.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E20"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown takes no cut of newsletter sponsorships; creators keep 100% of every sponsorship, minus Stripe's processing fee.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E21"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown lets users create as many distinct newsletters as they'd like, charging only based on total subscriber count.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E22"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown supports over 40 integrations for embedding videos, GIFs, songs, posts, and other content.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E23"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown's CLI lets users script their newsletter from CI/CD pipelines, bulk-manage subscribers, and pull analytics — anything doable in the web app is doable from the command line.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E24"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown allows sending emails from a custom domain the user controls, and this is available to all accounts regardless of plan.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "R1"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown's RSS-to-email automation can be configured to trigger per new post as it is published.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "R2"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown's RSS-to-email automation can instead be configured to trigger weekly on a chosen day and time, matching a weekly-digest pull preference.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "R3"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown's RSS-to-email templates can be built as a digest that loops over multiple feed items collected during the chosen cadence.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "R4"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "A digest email cannot be used with the per-post ('every new item') cadence, confirming that the digest format only works with the weekly/monthly cadence options.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "R5"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      }
+    ],
+    "id": "03c42046-4466-405f-ac1c-843bdc5c0e23",
+    "brand_id": "298ad2c9-d89d-41d7-a1aa-85b543357c2d",
+    "created_at": "2026-11-05T23:56:42.206712"
+  },
+  "note": ""
+}

@@ -1,0 +1,114 @@
+[
+  {
+    "case": "cabaia-benefit",
+    "status": "degraded",
+    "execution_id": "013514ae-10a4-44b9-99dc-6972cae7045a",
+    "delivered": 1,
+    "promised": 1,
+    "seconds": 106.6,
+    "calls": 5,
+    "transport_retries": 0,
+    "estimated_cost_usd": 1.0463,
+    "words": [
+      129
+    ]
+  },
+  {
+    "case": "cabaia-benefit-v2",
+    "status": "degraded",
+    "execution_id": "f2b5486b-5e43-484d-b214-4474309dfecb",
+    "delivered": 1,
+    "promised": 1,
+    "seconds": 96.0,
+    "calls": 6,
+    "transport_retries": 0,
+    "estimated_cost_usd": 1.193,
+    "words": [
+      130
+    ]
+  },
+  {
+    "case": "papier-benefit",
+    "status": "completed",
+    "execution_id": "73aeb21a-04ee-444a-8a64-3789361f1447",
+    "delivered": 1,
+    "promised": 1,
+    "seconds": 68.2,
+    "calls": 3,
+    "transport_retries": 0,
+    "estimated_cost_usd": 0.6814,
+    "words": [
+      130
+    ]
+  },
+  {
+    "case": "papier-benefit-v2",
+    "status": "completed",
+    "execution_id": "f417c2eb-975b-4ab0-b73c-e536130ff7d8",
+    "delivered": 1,
+    "promised": 1,
+    "seconds": 62.0,
+    "calls": 3,
+    "transport_retries": 0,
+    "estimated_cost_usd": 0.6107,
+    "words": [
+      106
+    ],
+    "revision": {
+      "calls": 1,
+      "state": "proposed",
+      "seconds": 15.4,
+      "words": 89,
+      "blocking": false,
+      "checks": {
+        "issues": []
+      }
+    }
+  },
+  {
+    "case": "systeme-benefit",
+    "status": "degraded",
+    "execution_id": "5a160c93-e470-4a9c-a702-dc1f466bde70",
+    "delivered": 1,
+    "promised": 3,
+    "seconds": 143.6,
+    "calls": 9,
+    "transport_retries": 0,
+    "estimated_cost_usd": 1.6208,
+    "words": [
+      127
+    ]
+  },
+  {
+    "case": "systeme-benefit-v2",
+    "status": "degraded",
+    "execution_id": "35945d7a-e03b-4598-abe1-5c0611a1094a",
+    "delivered": 3,
+    "promised": 3,
+    "seconds": 223.4,
+    "calls": 14,
+    "transport_retries": 0,
+    "estimated_cost_usd": 2.3082,
+    "words": [
+      138,
+      114,
+      150
+    ],
+    "revision": {
+      "calls": 1,
+      "state": "proposed",
+      "seconds": 8.8,
+      "words": 103,
+      "blocking": false,
+      "checks": {
+        "issues": [
+          {
+            "gate": "call-to-action",
+            "detail": "the email asks the reader to 'Examiner le parcours de vente', which is not one of the actions this product supports (Commencez gratuitement, Commencer, Contactez notre support, Tarifs, Migration gratuite, Configuration DNS gratuite, Bibliothèque de templates, Tutoriels vidéo)",
+            "severity": "advisory"
+          }
+        ]
+      }
+    }
+  }
+]

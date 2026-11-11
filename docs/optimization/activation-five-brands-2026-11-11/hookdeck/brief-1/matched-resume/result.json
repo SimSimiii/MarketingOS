@@ -1,0 +1,746 @@
+{
+  "id": "293e389c-474f-435d-b727-3ecf94e163ff",
+  "campaign_id": "3310bb20-dcc7-4333-8fce-659be674fcc8",
+  "status": "failed",
+  "needs_review": false,
+  "outcome_status": "failed",
+  "review_reasons": [],
+  "error_message": "Email 1 failed automatic checks after repair: \"Preview text: See what your test source sent before configuring routing or delivery.\": The supplied context establishes that the reader has a test source, but not that it has already sent a request. The sources document what happens when requests are sent, not this recipient’s activity.; \"See what reached Hookdeck\": This heading presupposes that something has already reached Hookdeck, which is not established for this recipient. The later conditional wording does not substantiate that recipient-specific assertion.; “Sent” makes an unsupported recipient-specific assertion that the test source has already transmitted a request.; This heading likewise presupposes that inbound traffic has already reached Hookdeck, although the supplied reader context establishes only a workspace and test source.",
+  "started_at": "2026-11-11T08:18:03.690092Z",
+  "completed_at": "2026-11-11T08:22:19.619726Z",
+  "created_at": "2026-11-11T08:18:03.690092Z",
+  "total_input_tokens": 170935,
+  "total_output_tokens": 19142,
+  "total_cache_read_tokens": 23808,
+  "estimated_cost_usd": 1.7703,
+  "recommendation_snapshot": {
+    "campaign_id": "3310bb20-dcc7-4333-8fce-659be674fcc8",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "9d0d04ef-e431-4ae6-8c5f-904ddec5e007",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Open the first inbound test request in Hookdeck to see what the source actually sent before moving on to routing or delivery configuration."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:18:03.864214Z",
+      "completed_at": "2026-11-11T08:18:59.316483Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 30706,
+      "output_tokens": 3985,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.365198,
+      "duration_ms": 55290.900400141254,
+      "attempt": 1
+    },
+    {
+      "id": "f798f318-31ff-4340-87bc-a1c985ed7851",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · first draft",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "subject": "Inspect your first inbound request"
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:18:59.641031Z",
+      "completed_at": "2026-11-11T08:19:16.481585Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 24516,
+      "output_tokens": 1232,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.233088,
+      "duration_ms": 16743.294599931687,
+      "attempt": 1
+    },
+    {
+      "id": "44cfc829-6821-4a74-9b8e-27097182d44e",
+      "agent_id": "claim_reviewer",
+      "agent_name": "Claim Reviewer",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · checking claims against sources"
+      },
+      "output_data": {
+        "semantic_review": {
+          "key": "97e17a070c8921929d0de736ee09dd192909651014fb8e50f4b4a0c7825b7c2f",
+          "approved": false,
+          "decision": {
+            "verdict": "revise",
+            "claims": [
+              {
+                "text": "Preview text: See what your test source sent before configuring routing or delivery.",
+                "status": "unsupported",
+                "explanation": "The supplied context establishes that the reader has a test source, but not that it has already sent a request. The sources document what happens when requests are sent, not this recipient’s activity.",
+                "citations": []
+              },
+              {
+                "text": "See what reached Hookdeck",
+                "status": "unsupported",
+                "explanation": "This heading presupposes that something has already reached Hookdeck, which is not established for this recipient. The later conditional wording does not substantiate that recipient-specific assertion.",
+                "citations": []
+              },
+              {
+                "text": "Once your test source sends an HTTP request to its Hookdeck Source URL, Hookdeck captures it as a Request.",
+                "status": "supported",
+                "explanation": "The documentation identifies the source URL as the webhook-receiving URL and defines Requests as HTTP requests Hookdeck receives from a source.",
+                "citations": [
+                  {
+                    "source_id": "proposition:mechanism:1",
+                    "quote": "The `source.url` value is the URL used to receive webhooks."
+                  },
+                  {
+                    "source_id": "source:1",
+                    "quote": "Requests are HTTP requests that Hookdeck receives from a source."
+                  }
+                ]
+              },
+              {
+                "text": "Open that inbound record to see what reached Hookdeck from the source.",
+                "status": "supported",
+                "explanation": "The documented Requests destination concerns inbound HTTP requests received from a source, while Hookdeck describes inbound traffic as observable.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "Requests are HTTP requests that Hookdeck receives from a source."
+                  },
+                  {
+                    "source_id": "E9",
+                    "quote": "Handle inbound webhooks and events before they hit your app — with full observability and control."
+                  }
+                ]
+              },
+              {
+                "text": "Hookdeck’s Event Gateway receives webhooks before they hit your application, making that incoming traffic observable and controllable.",
+                "status": "supported",
+                "explanation": "The Event Gateway proposition expressly covers inbound webhooks before the application and promises observability and control.",
+                "citations": [
+                  {
+                    "source_id": "proposition:product:0",
+                    "quote": "Receive webhooks\n\nHandle inbound webhooks and events before they hit your app — with full observability and control."
+                  }
+                ]
+              },
+              {
+                "text": "In Hookdeck’s terminology, a Request is what Hookdeck receives from a source; an Event is an outgoing request from Hookdeck.",
+                "status": "supported",
+                "explanation": "Both definitions appear literally in the documentation and distinguish inbound Requests from outgoing Events.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "Requests are HTTP requests that Hookdeck receives from a source."
+                  },
+                  {
+                    "source_id": "source:1",
+                    "quote": "Events are outgoing requests from Hookdeck."
+                  }
+                ]
+              },
+              {
+                "text": "Inspecting the Request lets you compare the captured input with what your test source was meant to send.",
+                "status": "supported",
+                "explanation": "Inbound source requests are documented as Requests, and Hookdeck describes that inbound traffic as fully observable. Comparing the visible input with the developer’s own intended input is a direct use of that capability.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "Requests are HTTP requests that Hookdeck receives from a source."
+                  },
+                  {
+                    "source_id": "E9",
+                    "quote": "Handle inbound webhooks and events before they hit your app — with full observability and control."
+                  }
+                ]
+              },
+              {
+                "text": "That gives you a concrete checkpoint before you configure routing or delivery behavior.",
+                "status": "supported",
+                "explanation": "This is a qualitative explanation of why inspecting observable inbound input is useful, without guaranteeing configuration or delivery outcomes.",
+                "citations": [
+                  {
+                    "source_id": "E9",
+                    "quote": "Handle inbound webhooks and events before they hit your app — with full observability and control."
+                  },
+                  {
+                    "source_id": "source:1",
+                    "quote": "Requests are HTTP requests that Hookdeck receives from a source."
+                  },
+                  {
+                    "source_id": "source:1",
+                    "quote": "Events are outgoing requests from Hookdeck."
+                  }
+                ]
+              },
+              {
+                "text": "Inspect your first Request →",
+                "status": "supported",
+                "explanation": "The CTA names the documented inbound object and uses the supplied documented Requests destination. It does not promise delivery or another entitlement.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "[### Requests →\n\nRequests are HTTP requests that Hookdeck receives from a source.](/docs/requests)"
+                  },
+                  {
+                    "source_id": "cta:0",
+                    "quote": "Resolved link: https://hookdeck.com/docs/requests\nLiteral link: [request docs](/docs/requests)"
+                  }
+                ]
+              }
+            ],
+            "findings": [
+              {
+                "text": "Preview text: See what your test source sent before configuring routing or delivery.",
+                "kind": "factual",
+                "explanation": "“Sent” makes an unsupported recipient-specific assertion that the test source has already transmitted a request."
+              },
+              {
+                "text": "See what reached Hookdeck",
+                "kind": "factual",
+                "explanation": "This heading likewise presupposes that inbound traffic has already reached Hookdeck, although the supplied reader context establishes only a workspace and test source."
+              }
+            ],
+            "summary": "The product mechanism, Request/Event distinction, inspection benefit, single CTA, destination, and requested constraints are supported. Revision is required because the preview and heading assert that this recipient’s test source has already sent traffic, which the supplied context and sources do not establish.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The draft retains the intended benefit: inspecting the inbound Request shows what Hookdeck received from the test source and provides a checkpoint before later routing or delivery configuration.",
+              "original_passage": "Inspecting the Request lets you compare the captured input with what your test source was meant to send. That gives you a concrete checkpoint before you configure routing or delivery behavior.",
+              "revised_passage": ""
+            }
+          },
+          "version": 3,
+          "sources": {
+            "proposition:mechanism:1": "[Quickstart: Receive Webhooks with Hookdeck | Hookdeck Event Gateway Docs › Create a connection; document_id=664cc1c5-195e-42bf-9176-f3acdea739b5; source=https://hookdeck.com/docs/use-cases/receive-webhooks/quickstart; aliases=https://hookdeck.com/docs/use-cases/receive-webhooks/quickstart; chunk=7]",
+            "source:1": "[Documentation | Hookdeck Event Gateway Docs › Inspect; document_id=e169f5a5-0696-4a1e-ac46-ae538778a638; source=https://hookdeck.com/docs; aliases=https://hookdeck.com/docs; chunk=8]",
+            "E9": "https://hookdeck.com/",
+            "proposition:product:0": "[Hookdeck - Reliable webhook infrastructure › Event Gateway; document_id=4f0bcad2-ce66-4cdd-bc3e-5cd2fdad914c; source=https://hookdeck.com/; aliases=https://hookdeck.com/; chunk=1]",
+            "cta:0": "Source page: https://hookdeck.com/pricing"
+          }
+        },
+        "passed": false
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:19:16.510428Z",
+      "completed_at": "2026-11-11T08:20:18.684772Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 31391,
+      "output_tokens": 5268,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.409168,
+      "duration_ms": 62002.555900020525,
+      "attempt": 1
+    },
+    {
+      "id": "abc5fb94-1adc-46c3-8721-535c7089f516",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 1 reader(s)",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "pull": 8
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:20:18.719652Z",
+      "completed_at": "2026-11-11T08:20:37.815811Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 3655,
+      "output_tokens": 1149,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.070059,
+      "duration_ms": 19025.68329987116,
+      "attempt": 1
+    },
+    {
+      "id": "085b4c9f-2e77-41bc-ba15-3372903d7621",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "Your test webhook’s next checkpoint"
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:20:37.965392Z",
+      "completed_at": "2026-11-11T08:21:03.103040Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 20654,
+      "output_tokens": 2101,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.234611,
+      "duration_ms": 24888.3287999779,
+      "attempt": 2
+    },
+    {
+      "id": "444d97fb-d5f5-4b4e-aadd-1548dbf49b99",
+      "agent_id": "claim_reviewer",
+      "agent_name": "Claim Reviewer",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · checking claims against sources"
+      },
+      "output_data": {
+        "semantic_review": {
+          "key": "13c6a22816d52616d925ca60309207a06d2433bb73f77a583f7ea2b29c8d451b",
+          "approved": false,
+          "decision": {
+            "verdict": "revise",
+            "claims": [
+              {
+                "text": "Preview text: Capture one inbound Request and compare its input before configuring delivery.",
+                "status": "supported",
+                "explanation": "The sources identify Requests as HTTP requests received from a source, direct users to open them in the dashboard, and describe inbound traffic as fully observable. Together, they support inspecting and comparing the received input before later configuration.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "Requests are HTTP requests that Hookdeck receives from a source."
+                  },
+                  {
+                    "source_id": "source:2",
+                    "quote": "Open the [Requests section of Hookdeck dashboard](https://dashboard.hookdeck.com/requests) to see the [Request](/docs/requests) within the UI."
+                  },
+                  {
+                    "source_id": "E9",
+                    "quote": "Handle inbound webhooks and events before they hit your app — with full observability and control."
+                  }
+                ]
+              },
+              {
+                "text": "Inspect the next Request from your test source",
+                "status": "supported",
+                "explanation": "Hookdeck documents Requests as HTTP requests received from a source and directs users to view them in the dashboard.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "Requests are HTTP requests that Hookdeck receives from a source."
+                  },
+                  {
+                    "source_id": "source:2",
+                    "quote": "Open the [Requests section of Hookdeck dashboard](https://dashboard.hookdeck.com/requests) to see the [Request](/docs/requests) within the UI."
+                  }
+                ]
+              },
+              {
+                "text": "A test webhook becomes useful when you inspect the inbound Request—not just send it.",
+                "status": "supported",
+                "explanation": "This is value framing for the documented inspection step. The sources establish that inbound requests are observable and can be opened in the dashboard after being sent.",
+                "citations": [
+                  {
+                    "source_id": "E9",
+                    "quote": "Handle inbound webhooks and events before they hit your app — with full observability and control."
+                  },
+                  {
+                    "source_id": "source:2",
+                    "quote": "Open the [Requests section of Hookdeck dashboard](https://dashboard.hookdeck.com/requests) to see the [Request](/docs/requests) within the UI."
+                  }
+                ]
+              },
+              {
+                "text": "Hookdeck is an Event Gateway that receives webhooks before they hit your application, making incoming traffic observable and controllable.",
+                "status": "supported",
+                "explanation": "The supplied Event Gateway proposition states this capability directly.",
+                "citations": [
+                  {
+                    "source_id": "proposition:product:0",
+                    "quote": "### Event Gateway\nReceive webhooks\n\nHandle inbound webhooks and events before they hit your app — with full observability and control."
+                  }
+                ]
+              },
+              {
+                "text": "When your test source sends an HTTP request to its Hookdeck Source URL, Hookdeck records it as a Request.",
+                "status": "supported",
+                "explanation": "The Source URL is documented as the URL used to receive webhooks; Hookdeck defines a Request as an HTTP request received from a source and documents successful ingestion and display in Requests.",
+                "citations": [
+                  {
+                    "source_id": "proposition:mechanism:1",
+                    "quote": "The `source.url` value is the URL used to receive webhooks."
+                  },
+                  {
+                    "source_id": "source:0",
+                    "quote": "Requests are HTTP requests that Hookdeck receives from a source."
+                  },
+                  {
+                    "source_id": "source:2",
+                    "quote": "The `status` with a value of `SUCCESS` indicates that Hookdeck has successfully ingested the HTTP request.\n\nOpen the [Requests section of Hookdeck dashboard](https://dashboard.hookdeck.com/requests) to see the [Request](/docs/requests) within the UI."
+                  }
+                ]
+              },
+              {
+                "text": "If one is already captured, inspect it. If not, send a test HTTP request to the Source URL first, then inspect the resulting Request.",
+                "status": "supported",
+                "explanation": "The quickstart explicitly documents sending a POST request to the source URL and then opening the resulting Request in Hookdeck's dashboard.",
+                "citations": [
+                  {
+                    "source_id": "source:2",
+                    "quote": "Make a `POST` request to the inbound webhook URL from the `source.url` value above:"
+                  },
+                  {
+                    "source_id": "source:2",
+                    "quote": "Open the [Requests section of Hookdeck dashboard](https://dashboard.hookdeck.com/requests) to see the [Request](/docs/requests) within the UI."
+                  }
+                ]
+              },
+              {
+                "text": "Compare the captured input with what the source was meant to send before configuring routing or delivery behavior.",
+                "status": "supported",
+                "explanation": "This recommends using the documented observable inbound Request as a checkpoint. The sources support viewing what Hookdeck received before downstream delivery, without claiming that delivery occurred.",
+                "citations": [
+                  {
+                    "source_id": "E9",
+                    "quote": "Handle inbound webhooks and events before they hit your app — with full observability and control."
+                  },
+                  {
+                    "source_id": "source:0",
+                    "quote": "Requests are HTTP requests that Hookdeck receives from a source."
+                  },
+                  {
+                    "source_id": "source:2",
+                    "quote": "Open the [Requests section of Hookdeck dashboard](https://dashboard.hookdeck.com/requests) to see the [Request](/docs/requests) within the UI."
+                  }
+                ]
+              },
+              {
+                "text": "Hookdeck calls inbound source traffic a Request; an Event is an outgoing request from Hookdeck.",
+                "status": "supported",
+                "explanation": "The documentation expressly distinguishes Requests received from a source from outgoing Events.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "Requests are HTTP requests that Hookdeck receives from a source."
+                  },
+                  {
+                    "source_id": "source:0",
+                    "quote": "Events are outgoing requests from Hookdeck."
+                  }
+                ]
+              },
+              {
+                "text": "Open the Requests documentation →",
+                "status": "supported",
+                "explanation": "The supplied CTA source confirms the exact Requests documentation destination.",
+                "citations": [
+                  {
+                    "source_id": "cta:0",
+                    "quote": "Resolved link: https://hookdeck.com/docs/requests\nLiteral link: [request docs](/docs/requests)"
+                  }
+                ]
+              },
+              {
+                "text": "- Hookdeck",
+                "status": "supported",
+                "explanation": "The cited official product material identifies Hookdeck and its Event Gateway offering.",
+                "citations": [
+                  {
+                    "source_id": "proposition:product:0",
+                    "quote": "[Hookdeck - Reliable webhook infrastructure › Event Gateway; document_id=4f0bcad2-ce66-4cdd-bc3e-5cd2fdad914c; source=https://hookdeck.com/; aliases=https://hookdeck.com/; chunk=1]"
+                  }
+                ]
+              }
+            ],
+            "findings": [
+              {
+                "text": "If not, send a test HTTP request to the Source URL first, then inspect the resulting Request.",
+                "kind": "instruction",
+                "explanation": "This asks the reader to perform an additional action—send a request—despite the explicit direction to ask them to do only one thing: inspect the first incoming test request, and the steering prohibition on multiple actions."
+              }
+            ],
+            "summary": "The material factual assertions and CTA destination are supported, and the body is under 150 words. Revision is required because the conditional instruction to send a test request adds a second requested action.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The revised passage retains the prior concrete benefit: inspecting the inbound Request lets the developer compare what Hookdeck captured with what the source was intended to send before configuring later behavior.",
+              "original_passage": "Inspecting the Request lets you compare the captured input with what your test source was meant to send.",
+              "revised_passage": "Compare the captured input with what the source was meant to send before configuring routing or delivery behavior."
+            }
+          },
+          "version": 3,
+          "factual_repair": true,
+          "sources": {
+            "source:0": "[Documentation | Hookdeck Event Gateway Docs › Inspect; document_id=e169f5a5-0696-4a1e-ac46-ae538778a638; source=https://hookdeck.com/docs; aliases=https://hookdeck.com/docs; chunk=8]",
+            "source:2": "[Quickstart: Receive Webhooks with Hookdeck | Hookdeck Event Gateway Docs › Send a test webhook request to Hookdeck; document_id=664cc1c5-195e-42bf-9176-f3acdea739b5; source=https://hookdeck.com/docs/use-cases/receive-webhooks/quickstart; aliases=https://hookdeck.com/docs/use-cases/receive-webhooks/quickstart; chunk=8]",
+            "E9": "https://hookdeck.com/",
+            "proposition:product:0": "[Hookdeck - Reliable webhook infrastructure › Event Gateway; document_id=4f0bcad2-ce66-4cdd-bc3e-5cd2fdad914c; source=https://hookdeck.com/; aliases=https://hookdeck.com/; chunk=1]",
+            "proposition:mechanism:1": "[Quickstart: Receive Webhooks with Hookdeck | Hookdeck Event Gateway Docs › Create a connection; document_id=664cc1c5-195e-42bf-9176-f3acdea739b5; source=https://hookdeck.com/docs/use-cases/receive-webhooks/quickstart; aliases=https://hookdeck.com/docs/use-cases/receive-webhooks/quickstart; chunk=7]",
+            "cta:0": "Source page: https://hookdeck.com/pricing"
+          }
+        },
+        "passed": false
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:21:03.146373Z",
+      "completed_at": "2026-11-11T08:22:01.840436Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 32537,
+      "output_tokens": 4542,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.396556,
+      "duration_ms": 58476.79979982786,
+      "attempt": 2
+    },
+    {
+      "id": "278f1e59-cac6-4a2a-886c-f66f8ebdab40",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 1 reader(s)",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:22:01.872472Z",
+      "completed_at": "2026-11-11T08:22:19.531834Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 3668,
+      "output_tokens": 865,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.061643,
+      "duration_ms": 17598.036299925297,
+      "attempt": 2
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "failed",
+    "report": {
+      "request": "Write exactly one English activation email from the Hookdeck team. Reader: A developer with a new Hookdeck workspace and a test webhook source. Ask them to do one thing: Inspect a first incoming test event. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+      "effective_audience": "A developer with a new Hookdeck workspace and a test webhook source.",
+      "audience_scope": "",
+      "assessment_method": "Simulated reader's interest, uncalibrated; no response or conversion prediction",
+      "delivered": 0,
+      "promised": 1,
+      "contract_violations": [
+        "the user asked for 1 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [],
+      "what_would_help_most": "",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "Email 1 failed automatic checks after repair: \"Preview text: See what your test source sent before configuring routing or delivery.\": The supplied context establishes that the reader has a test source, but not that it has already sent a request. The sources document what happens when requests are sent, not this recipient’s activity.; \"See what reached Hookdeck\": This heading presupposes that something has already reached Hookdeck, which is not established for this recipient. The later conditional wording does not substantiate that recipient-specific assertion.; “Sent” makes an unsupported recipient-specific assertion that the test source has already transmitted a request.; This heading likewise presupposes that inbound traffic has already reached Hookdeck, although the supplied reader context establishes only a workspace and test source.",
+        "Effective audience: A developer with a new Hookdeck workspace and a test webhook source."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "A single activation email for an existing Hookdeck customer who has a new workspace and a test webhook source. The email should help them inspect the first inbound test request in Hookdeck; it should not sell signup, plans, or unrelated capabilities. Because Hookdeck documents inbound source traffic as a Request rather than an Event, the copy should preserve the user’s intent while using the documented product term.",
+      "pipeline_version": 2,
+      "strategy_mode": "planned",
+      "focused_activation": false,
+      "intent": {
+        "objective": "activation",
+        "objective_source": "user",
+        "reader_relationship": "customer",
+        "relationship_source": "user",
+        "announcement": "",
+        "reason_now": "",
+        "desired_action": "Inspect a first incoming test event",
+        "required_fact": "",
+        "required_source_url": ""
+      },
+      "reader": "Selected audience (user-stated constraints): A developer with a new Hookdeck workspace and a test webhook source..\nNo further recipient situation is established. Compiled market context is research to check for applicability, not a replacement biography.",
+      "reader_segment": "Backend engineers managing webhook infrastructure",
+      "reader_profile_override": "A developer with a new Hookdeck workspace and a test webhook source.",
+      "reader_scope": "",
+      "fixed_cta_url": "",
+      "promise": "Inspecting the first inbound test request lets the developer see what their source sent into Hookdeck before they proceed with routing or delivery configuration.",
+      "orientation": "Hookdeck is an event gateway that receives inbound webhooks before they reach an application and makes that traffic observable and controllable.",
+      "arc": "One focused activation step: orient the reader to Hookdeck’s Request terminology, explain the value of inspecting the first captured test request, and send them to the exact Requests documentation needed to do it.",
+      "sequence_rationale": "Only one email is requested. It should move directly from the reader’s confirmed setup state to the requested activation action, without manufacturing a pain, introducing acquisition proof, or expanding into filters, transformations, retries, pricing, or production reliability.",
+      "emails": [
+        {
+          "problem_ids": [],
+          "offer_id": "offering",
+          "action_id": "",
+          "selection_reason": "This is the user-specified activation action and the smallest documented step that helps a developer understand what entered Hookdeck from their test source.",
+          "next_step_url": "https://hookdeck.com/docs/requests",
+          "destination_kind": "web",
+          "destination_rejected": false,
+          "argument_issue": "",
+          "value_case": {
+            "reader_benefit": "The developer can inspect the inbound test request and understand what their source sent into Hookdeck before configuring later event delivery behavior.",
+            "mechanism": "Hookdeck receives inbound webhooks before they hit the application and represents HTTP requests received from a source as Requests, where the developer can inspect the captured input.",
+            "evidence_ids": [
+              "E9"
+            ],
+            "decision_conditions": [
+              "The test source must send an HTTP request to its Hookdeck Source URL.",
+              "Use “Request” for the inbound item; Hookdeck reserves “Event” for an outgoing request to a destination."
+            ]
+          },
+          "claim_conditions": [
+            "Describe the item as the first inbound test request, while acknowledging the user’s intended “test event” language if needed.",
+            "Do not imply that inspecting the request proves destination delivery, production behavior, or reliability."
+          ],
+          "position": 1,
+          "user_request": "Write exactly one English activation email from the Hookdeck team. Reader: A developer with a new Hookdeck workspace and a test webhook source. Ask them to do one thing: Inspect a first incoming test event. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+          "target_audience": "",
+          "job": "Get the reader to inspect the first inbound test request captured from their source.",
+          "single_idea": "Open the first inbound test request in Hookdeck to see what the source actually sent before moving on to routing or delivery configuration.",
+          "felt_need": "",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "Have the test source send one webhook to its Hookdeck Source URL, then use Hookdeck’s Requests view to inspect the inbound request Hookdeck received.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: sending a test webhook is the end of the setup check. After: inspecting the captured Request is the next useful step because it shows what entered Hookdeck from the source.",
+          "evidence_ids": [
+            "E9"
+          ],
+          "must_not_say": [
+            "Do not claim the request was delivered to a destination; inbound Requests and outgoing Events are distinct.",
+            "Do not promise setup speed, guaranteed activation, successful delivery, debugging outcomes, or production readiness.",
+            "Do not mention plans, pricing, quotas, trials, credit cards, uptime, retries, filters, transformations, integrations, customer proof, or localhost tooling.",
+            "Do not direct the reader to the separate public Inspect tool at inspect.hookdeck.com; the requested action concerns their existing workspace and source.",
+            "Do not imply a specific provider, payload shape, endpoint, error, incident, or production workload.",
+            "Keep the connection route attached to its cited source. A native or prebuilt integration and a custom HTTP/webhook endpoint are separate setup paths unless the source explicitly equates them. A platform name alone establishes neither manual endpoint configuration nor a no-setup connector. Keep unknown setup requirements unknown; do not mix the steps or benefits of those paths."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "",
+          "tone": "Direct, practical, and encouraging; technical without sounding instructional or promotional.",
+          "call_to_action": "Inspect your first request",
+          "next_step_decision": "Decide whether the inbound request shown in Hookdeck matches what the test source was meant to send before configuring later delivery behavior.",
+          "next_step_value": "The Requests documentation explains that Requests are HTTP requests Hookdeck receives from a source and provides the documented destination for inspecting this inbound object.",
+          "next_step_evidence_ids": [
+            "E9"
+          ],
+          "next_step_limit": "This step does not establish that an outgoing Event reached a destination or that the setup is ready for production.",
+          "subject_strategy": "Signal one concrete workspace task—the first inbound request—without implying an error, urgency, completion time, or guaranteed result.",
+          "must_not_reuse": [],
+          "steering": {
+            "directions": [
+              "Write exactly one English activation email.",
+              "Keep the body under 150 words, excluding subject, preview, and signature.",
+              "Ask the reader to do only one thing: inspect the first incoming test request.",
+              "Use exactly one CTA linked to the supplied Requests documentation URL.",
+              "Explain why inspection helps this developer."
+            ],
+            "include_evidence_ids": [
+              "E9"
+            ],
+            "exclude_evidence_ids": [
+              "E2",
+              "E8",
+              "E10",
+              "E12",
+              "E16",
+              "E17",
+              "E18",
+              "E44",
+              "E52",
+              "E53",
+              "E54",
+              "E55",
+              "E56",
+              "E57",
+              "E58",
+              "E59",
+              "E60",
+              "E61",
+              "E62",
+              "E63",
+              "E64",
+              "E65",
+              "E66",
+              "E67",
+              "E68",
+              "E69"
+            ],
+            "use": [
+              "Hookdeck’s documented distinction between inbound Requests and outgoing Events",
+              "Short paragraphs and concrete product language"
+            ],
+            "avoid": [
+              "Multiple actions or links",
+              "Generic encouragement",
+              "Unsupported timing, access, plan, reliability, or outcome claims",
+              "Feature lists"
+            ],
+            "context_only": [
+              "The user called the item an incoming test event; Hookdeck documentation calls inbound source traffic a Request."
+            ],
+            "excluded_values": [
+              "Acquisition messaging",
+              "Pricing",
+              "Production reliability",
+              "Customer testimonials"
+            ]
+          }
+        }
+      ],
+      "voice_notes": "Match Hookdeck’s direct, practical style. Prefer “Request,” “source,” and “received” over broad marketing language. Do not add urgency or celebratory onboarding clichés.",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "one English activation email"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "3310bb20-dcc7-4333-8fce-659be674fcc8",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

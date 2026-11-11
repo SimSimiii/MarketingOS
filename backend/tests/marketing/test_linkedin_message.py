@@ -66,6 +66,7 @@ async def test_a_draft_that_ignores_the_confirmed_context_is_rewritten(provider,
     description of the product with a name pasted on the front, and it would
     read exactly the same sent to anybody else.
     """
+    provider.review("This uses nothing the user confirmed about Alice.", kind="editorial")
     generic = ("Hi Alice, I build Notewright, a developer tool. A merged commit gives you a "
                "diff and nothing else, so somebody writes the note afterwards.")
     provider.push(ROLE, draft(generic), draft(GOOD))
@@ -93,6 +94,7 @@ async def test_nothing_confirmed_means_nothing_to_check(provider, artifacts):
 
 @pytest.mark.asyncio
 async def test_the_disclaimer_buys_a_rewrite(provider, artifacts):
+    provider.review("Remove the no pitch disclaimer.", kind="editorial")
     provider.push(ROLE, draft(GOOD + " No pitch, genuinely asking."), draft(GOOD))
 
     result = await write(provider, artifacts)
@@ -107,6 +109,7 @@ async def test_a_tell_that_survives_the_rewrite_still_ships(provider, artifacts)
     """Advisory means advisory. A second turn is worth buying on the chance
     the writer drops the phrase; failing the whole run because it did not
     would hand the user nothing instead of something slightly worse."""
+    provider.review("The Just curious wording is weak.", kind="editorial")
     stubborn = GOOD + " Just curious."
     provider.push(ROLE, draft(stubborn), draft(stubborn))
 
@@ -120,6 +123,7 @@ async def test_a_tell_that_survives_the_rewrite_still_ships(provider, artifacts)
 async def test_a_draft_that_cannot_ship_fails_the_run(provider, artifacts):
     """An unlicensed number is the other kind of problem: it is not worse
     copy, it is a claim this business cannot stand behind."""
+    provider.review("The claimed 14 hours has no source.")
     invented = "Hi Alice - Notewright saves your nine-person team 14 hours a week on release notes."
     provider.push(ROLE, draft(invented), draft(invented))
 

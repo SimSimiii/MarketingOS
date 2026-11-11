@@ -28,8 +28,10 @@ class Brand(SQLModel, table=True):
     website_url: str | None = None
     #: How this brand's email looks when it is rendered as HTML. Kept to the
     #: few things a reader would actually notice, all optional: an email with
-    #: none of them set still renders, in the typographic tier that is the
-    #: right answer for cold mail anyway. See app.marketing.render_html.
+    #: none of them set still renders, with the name as a wordmark. A crawl
+    #: of the brand's own site fills the logo and colour it declares when
+    #: these are empty. See app.marketing.render_html and
+    #: app.services.knowledge_service.KnowledgeService._adopt_identity.
     logo_url: str | None = None
     #: Hex, used for the link and the button.
     primary_color: str | None = None

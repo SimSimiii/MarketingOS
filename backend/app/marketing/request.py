@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 
 from app.marketing.intent import CampaignIntent, infer_intent
+from app.marketing.render_html import EmailTier
+from app.marketing.steering import CampaignSteering
 from app.schemas.linkedin import LinkedInChannel
 
 
@@ -46,6 +48,19 @@ class CampaignRequest:
     #: opened the goal-conversions guide the user had picked.
     cta_url: str | None = None
     intent: CampaignIntent | None = None
+    #: What the user chose to include, exclude or ask for before the run -
+    #: see app.marketing.steering. None, the default, is the unsteered run.
+    steering: CampaignSteering | None = None
+    #: How the emails will be laid out, decided in code before anything is
+    #: written - see render_html.resolve_tier. Carried here because whether a
+    #: headline is set large or dropped is the one layout fact the writer has
+    #: to write for. None leaves the writer to judge it from the request.
+    email_tier: EmailTier | None = None
+    brand_website_url: str | None = None
+
+    @property
+    def source_identity_url(self) -> str:
+        return self.brand_website_url or self.product_url or ""
 
     @property
     def effective_intent(self) -> CampaignIntent:

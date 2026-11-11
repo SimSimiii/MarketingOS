@@ -1,0 +1,772 @@
+{
+  "id": "e4eac5e2-1fd4-463b-8022-acbd225ed4ba",
+  "campaign_id": "18f115ea-2906-4f9e-952f-27d866cffeeb",
+  "status": "failed",
+  "needs_review": false,
+  "outcome_status": "failed",
+  "review_reasons": [],
+  "error_message": "Email 1 failed automatic checks after repair: \"Give your feedback workspace a starting point\": The sources support CSV import as a possible starting route, but they do not establish that this recipient has a feedback workspace. The supplied steering explicitly marks that reader fact as unverified and says not to state it as fact.; The steering requires the Jira premise to remain conditional and specifically says the subject must not imply that the reader uses Jira. This imperative subject does not include that condition.; The steering says the reader's creation of a Featurebase workspace is context only, unverified, and must never be stated as fact. “your feedback workspace” presupposes that fact.",
+  "started_at": "2026-11-11T04:10:54.577813Z",
+  "completed_at": "2026-11-11T04:16:36.895088Z",
+  "created_at": "2026-11-11T04:10:54.577813Z",
+  "total_input_tokens": 183729,
+  "total_output_tokens": 26376,
+  "total_cache_read_tokens": 72704,
+  "estimated_cost_usd": 1.7376,
+  "recommendation_snapshot": {
+    "campaign_id": "18f115ea-2906-4f9e-952f-27d866cffeeb",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "cb602877-9962-488c-903e-456fe803b1f9",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 If existing requests are in Jira, inspect the documented CSV-import example before deciding whether to use it as the first route into Featurebase."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:10:54.827510Z",
+      "completed_at": "2026-11-11T04:13:00.963419Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 51287,
+      "output_tokens": 9867,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.712655,
+      "duration_ms": 125709.48370010592,
+      "attempt": 1
+    },
+    {
+      "id": "99384582-f96d-45ee-b078-d8b6252cbc23",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · first draft",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "subject": "A route for Jira feedback"
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:13:02.081418Z",
+      "completed_at": "2026-11-11T04:13:23.898530Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 17304,
+      "output_tokens": 1769,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.197851,
+      "duration_ms": 21595.021800138056,
+      "attempt": 1
+    },
+    {
+      "id": "c8d79518-10c6-4638-986e-563ccb989b4c",
+      "agent_id": "claim_reviewer",
+      "agent_name": "Claim Reviewer",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · checking claims against sources"
+      },
+      "output_data": {
+        "semantic_review": {
+          "key": "6b4ff2d2b6acc14ced4f7f64bdfe7b332a5f503104737d640b985b8e0607f105",
+          "approved": false,
+          "decision": {
+            "verdict": "revise",
+            "claims": [
+              {
+                "text": "Subject: A route for Jira feedback",
+                "status": "supported",
+                "explanation": "The customer story documents moving feedback from Jira to Featurebase through a CSV import.",
+                "citations": [
+                  {
+                    "source_id": "E21",
+                    "quote": "I just wanted to test how it feels to move from Jira to Featurebase. I did a quick CSV import of the feedback and had a proof of concept ready in under 15 minutes."
+                  }
+                ]
+              },
+              {
+                "text": "Preview text: See how one product team brought existing requests into Featurebase using CSV.",
+                "status": "supported",
+                "explanation": "The sources identify Awni as Amplemarket's Staff Product Manager, describe Jira as holding feature requests, and document his CSV import of that feedback into Featurebase.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "**Awni Shamah***Staff Product Manager, Amplemarket*"
+                  },
+                  {
+                    "source_id": "source:1",
+                    "quote": "“We used Jira which is totally not built for capturing feature requests. Our internal team had to submit requests on behalf of customers, which created so many bottlenecks and blind spots."
+                  },
+                  {
+                    "source_id": "E21",
+                    "quote": "I did a quick CSV import of the feedback and had a proof of concept ready in under 15 minutes."
+                  }
+                ]
+              },
+              {
+                "text": "Bring existing requests into Featurebase",
+                "status": "supported",
+                "explanation": "The documented customer example describes importing existing Jira feedback into Featurebase through CSV.",
+                "citations": [
+                  {
+                    "source_id": "E21",
+                    "quote": "I just wanted to test how it feels to move from Jira to Featurebase. I did a quick CSV import of the feedback and had a proof of concept ready in under 15 minutes."
+                  }
+                ]
+              },
+              {
+                "text": "If some of your existing feedback is in Jira, you can inspect a CSV-import route before deciding how to bring those requests into Featurebase.",
+                "status": "supported",
+                "explanation": "The premise is conditional, and the cited case study provides the stated Jira-to-Featurebase CSV route.",
+                "citations": [
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "Migrating from Jira took less than 15 minutes using a CSV export, and Awni described the process as super smooth."
+                  },
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "I did a quick CSV import of the feedback and had a proof of concept ready in under 15 minutes."
+                  }
+                ]
+              },
+              {
+                "text": "Featurebase is a feedback-management platform where product teams collect and manage product requests.",
+                "status": "supported",
+                "explanation": "The captured product material documents collecting feature requests, and the case study documents product teams managing feedback in Featurebase.",
+                "citations": [
+                  {
+                    "source_id": "proposition:mechanism:2",
+                    "quote": "AI records feedback and feature requests from every chat, email and call, all in one source of truth."
+                  },
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "**Product** uses it to [manage, prioritize, and moderate feedback](/customer-feedback)"
+                  }
+                ]
+              },
+              {
+                "text": "A CSV import can give existing Jira feedback a practical starting point there.",
+                "status": "supported",
+                "explanation": "The customer used a CSV import of Jira feedback to create a proof of concept, which supports the qualified description of it as a possible starting point.",
+                "citations": [
+                  {
+                    "source_id": "E21",
+                    "quote": "I just wanted to test how it feels to move from Jira to Featurebase. I did a quick CSV import of the feedback and had a proof of concept ready in under 15 minutes."
+                  }
+                ]
+              },
+              {
+                "text": "In Featurebase’s Amplemarket customer story, Staff Product Manager Awni Shamah says he used a CSV export to import feedback from Jira and had a proof of concept ready in under 15 minutes.",
+                "status": "supported",
+                "explanation": "The case study identifies Awni's role, documents the CSV-export route, and quotes his customer-specific proof-of-concept timing. The draft properly attributes the result rather than promising it to the reader.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "**Awni Shamah***Staff Product Manager, Amplemarket*"
+                  },
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "Migrating from Jira took less than 15 minutes using a CSV export, and Awni described the process as super smooth."
+                  },
+                  {
+                    "source_id": "E21",
+                    "quote": "I did a quick CSV import of the feedback and had a proof of concept ready in under 15 minutes."
+                  }
+                ]
+              },
+              {
+                "text": "The story shows the route he took and helps you decide whether the same approach fits the feedback you want to bring across.",
+                "status": "supported",
+                "explanation": "The linked story describes the route; inspecting a documented example to inform a decision is a reasonable description of the CTA's utility, not a guaranteed outcome.",
+                "citations": [
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "Migrating from Jira took less than 15 minutes using a CSV export, and Awni described the process as super smooth."
+                  },
+                  {
+                    "source_id": "E21",
+                    "quote": "I just wanted to test how it feels to move from Jira to Featurebase. I did a quick CSV import of the feedback and had a proof of concept ready in under 15 minutes."
+                  }
+                ]
+              },
+              {
+                "text": "Review the Jira import example →",
+                "status": "supported",
+                "explanation": "A documented Amplemarket customer-story page containing the Jira CSV-import example exists at the assigned destination.",
+                "citations": [
+                  {
+                    "source_id": "cta:1",
+                    "quote": "Resolved link: https://www.featurebase.app/customers/amplemarket"
+                  },
+                  {
+                    "source_id": "cta:1",
+                    "quote": "Literal link: [Story“Featurebase completely changed how we work.”Read story](/customers/amplemarket)"
+                  }
+                ]
+              }
+            ],
+            "findings": [
+              {
+                "text": "Review the Jira import example →",
+                "kind": "instruction",
+                "explanation": "The actual request requires the email's one action to be setting up the first feedback board. This CTA instead asks the reader to review a customer example, so the draft does not perform the requested activation task."
+              },
+              {
+                "text": "Review the Jira import example →",
+                "kind": "instruction",
+                "explanation": "The exact draft contains no link markup or URL, so it does not demonstrate that its sole CTA is linked to the required exact destination, https://www.featurebase.app/customers/amplemarket."
+              }
+            ],
+            "summary": "The factual claims are supported and the Jira premise and customer-specific timing are properly qualified. Revision is required because the email substitutes reviewing a case study for the explicitly requested action of setting up the first feedback board, and the exact CTA does not include the assigned destination.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The draft preserves the proposed reader benefit of using a documented Jira CSV-import example to decide whether that route fits existing feedback, although that benefit does not satisfy the actual requested board-setup action.",
+              "original_passage": "The story shows the route he took and helps you decide whether the same approach fits the feedback you want to bring across.",
+              "revised_passage": ""
+            }
+          },
+          "version": 3,
+          "sources": {
+            "E21": "https://www.featurebase.app/customers/amplemarket",
+            "source:1": "[Amplemarket Customer Case Study – Featurebase › “Featurebase completely changed how we work. Now everyone knows what customers really need.”; document_id=3175859e-d3db-4074-93f4-fe0b6627f06b; source=https://www.featurebase.app/customers/amplemarket; aliases=https://www.featurebase.app/customers/amplemarket; chunk=1]",
+            "proposition:mechanism:0": "[Amplemarket Customer Case Study – Featurebase › Solution; document_id=3175859e-d3db-4074-93f4-fe0b6627f06b; source=https://www.featurebase.app/customers/amplemarket; aliases=https://www.featurebase.app/customers/amplemarket; chunk=2]",
+            "proposition:mechanism:2": "[Featurebase – AI support platform that improves your product › Leo Grant; document_id=d09777c7-f1dd-43cd-b2ae-a98f7872d5a5; source=https://www.featurebase.app/; aliases=https://www.featurebase.app/; chunk=190]",
+            "cta:1": "Source page: https://www.featurebase.app/customers"
+          }
+        },
+        "passed": false
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:13:23.938838Z",
+      "completed_at": "2026-11-11T04:14:16.131779Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 14879,
+      "output_tokens": 3942,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.243641,
+      "duration_ms": 51981.07860004529,
+      "attempt": 1
+    },
+    {
+      "id": "a511ab0a-e8aa-43c3-8047-6d28c4e01938",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 1 reader(s)",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "pull": 6
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:14:16.168097Z",
+      "completed_at": "2026-11-11T04:14:32.734994Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 3672,
+      "output_tokens": 960,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.064525,
+      "duration_ms": 16504.775299923494,
+      "attempt": 1
+    },
+    {
+      "id": "8011f176-ef53-4dea-ac7d-6b2dbd5d400d",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "Start with existing Jira requests"
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:14:32.920145Z",
+      "completed_at": "2026-11-11T04:14:57.055658Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 3867,
+      "output_tokens": 1818,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 25088,
+      "cost_usd": 0.105546,
+      "duration_ms": 23900.92010004446,
+      "attempt": 2
+    },
+    {
+      "id": "99606e7e-ac84-46ff-aee9-c0f96c80fab6",
+      "agent_id": "claim_reviewer",
+      "agent_name": "Claim Reviewer",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · checking claims against sources"
+      },
+      "output_data": {
+        "semantic_review": {
+          "key": "93921ec2b02887aae1d74010af80f0ad656a47d0d7f37b94843a678f27492f1f",
+          "approved": false,
+          "decision": {
+            "verdict": "revise",
+            "claims": [
+              {
+                "text": "Subject: Start with existing Jira requests",
+                "status": "supported",
+                "explanation": "The documented customer example supports using a CSV import of existing Jira feedback as a starting route. However, the subject does not keep the reader's Jira premise conditional, which is addressed as an instruction finding.",
+                "citations": [
+                  {
+                    "source_id": "E21",
+                    "quote": "I just wanted to test how it feels to move from Jira to Featurebase. I did a quick CSV import of the feedback and had a proof of concept ready in under 15 minutes."
+                  }
+                ]
+              },
+              {
+                "text": "Preview text: Amplemarket used a CSV export to seed its Featurebase proof of concept.",
+                "status": "supported",
+                "explanation": "The case study identifies Awni Shamah as Amplemarket's Staff Product Manager and documents migration from Jira using a CSV export, followed by a Featurebase proof of concept.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "**Awni Shamah***Staff Product Manager, Amplemarket*"
+                  },
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "Migrating from Jira took less than 15 minutes using a CSV export, and Awni described the process as super smooth."
+                  },
+                  {
+                    "source_id": "E21",
+                    "quote": "I did a quick CSV import of the feedback and had a proof of concept ready in under 15 minutes."
+                  }
+                ]
+              },
+              {
+                "text": "CUSTOMER EXAMPLE",
+                "status": "supported",
+                "explanation": "The linked material is an Amplemarket customer case study.",
+                "citations": [
+                  {
+                    "source_id": "cta:0",
+                    "quote": "[Customers](/customers)Case study"
+                  },
+                  {
+                    "source_id": "source:1",
+                    "quote": "**Awni Shamah***Staff Product Manager, Amplemarket*"
+                  }
+                ]
+              },
+              {
+                "text": "Give your feedback workspace a starting point",
+                "status": "unsupported",
+                "explanation": "The sources support CSV import as a possible starting route, but they do not establish that this recipient has a feedback workspace. The supplied steering explicitly marks that reader fact as unverified and says not to state it as fact.",
+                "citations": []
+              },
+              {
+                "text": "At Amplemarket, Staff Product Manager Awni Shamah exported feedback from Jira, imported the CSV into Featurebase, and had a proof of concept ready in under 15 minutes.",
+                "status": "supported",
+                "explanation": "The case study identifies Awni's role and company and documents a Jira migration using a CSV export, a CSV import into Featurebase, and his customer-specific proof-of-concept timing.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "**Awni Shamah***Staff Product Manager, Amplemarket*"
+                  },
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "Migrating from Jira took less than 15 minutes using a CSV export, and Awni described the process as super smooth."
+                  },
+                  {
+                    "source_id": "E21",
+                    "quote": "I just wanted to test how it feels to move from Jira to Featurebase. I did a quick CSV import of the feedback and had a proof of concept ready in under 15 minutes."
+                  }
+                ]
+              },
+              {
+                "text": "Featurebase is a feedback-management platform for collecting and managing product requests.",
+                "status": "supported",
+                "explanation": "The supplied product excerpts describe Featurebase recording feedback and feature requests and being used by product teams to manage feedback.",
+                "citations": [
+                  {
+                    "source_id": "proposition:mechanism:2",
+                    "quote": "AI records feedback and feature requests from every chat, email and call, all in one source of truth."
+                  },
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "**Product** uses it to [manage, prioritize, and moderate feedback](/customer-feedback)"
+                  }
+                ]
+              },
+              {
+                "text": "If your requests are currently in Jira, Amplemarket’s example gives you a concrete starting route to consider for your workspace.",
+                "status": "supported",
+                "explanation": "The claim is conditional and accurately characterizes the documented Jira-to-Featurebase CSV import as a route the reader can consider.",
+                "citations": [
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "Migrating from Jira took less than 15 minutes using a CSV export, and Awni described the process as super smooth."
+                  },
+                  {
+                    "source_id": "E21",
+                    "quote": "I did a quick CSV import of the feedback and had a proof of concept ready in under 15 minutes."
+                  }
+                ]
+              },
+              {
+                "text": "The story follows how its product team moved existing feedback into Featurebase and began using the platform across the company.",
+                "status": "supported",
+                "explanation": "Awni, Amplemarket's Staff Product Manager, describes importing Jira feedback, and the case study states that Featurebase is used across the entire company at Amplemarket.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "**Awni Shamah***Staff Product Manager, Amplemarket*"
+                  },
+                  {
+                    "source_id": "E21",
+                    "quote": "I did a quick CSV import of the feedback and had a proof of concept ready in under 15 minutes."
+                  },
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "Today, Featurebase is used across the entire company at Amplemarket:"
+                  }
+                ]
+              },
+              {
+                "text": "After implementation, Amplemarket reports that its product team saved approximately one full day per week.",
+                "status": "supported",
+                "explanation": "The Amplemarket case study reports approximately one full day saved per week for its product team. The wording clearly attributes this as that customer's outcome.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "- ~1 full daysaved per week for the product team"
+                  }
+                ]
+              },
+              {
+                "text": "See the route they used, then decide whether CSV import fits your existing feedback.",
+                "status": "supported",
+                "explanation": "The linked story documents the customer's CSV-import route, so reviewing it can inform the reader's own decision without promising an outcome.",
+                "citations": [
+                  {
+                    "source_id": "E21",
+                    "quote": "I just wanted to test how it feels to move from Jira to Featurebase. I did a quick CSV import of the feedback and had a proof of concept ready in under 15 minutes."
+                  }
+                ]
+              },
+              {
+                "text": "[See Amplemarket’s CSV route](https://www.featurebase.app/customers/amplemarket) →",
+                "status": "supported",
+                "explanation": "The CTA points to the documented Amplemarket customer story at the exact supplied destination.",
+                "citations": [
+                  {
+                    "source_id": "cta:1",
+                    "quote": "Resolved link: https://www.featurebase.app/customers/amplemarket"
+                  },
+                  {
+                    "source_id": "cta:1",
+                    "quote": "Literal link: [Story“Featurebase completely changed how we work.”Read story](/customers/amplemarket)"
+                  }
+                ]
+              }
+            ],
+            "findings": [
+              {
+                "text": "Subject: Start with existing Jira requests",
+                "kind": "instruction",
+                "explanation": "The steering requires the Jira premise to remain conditional and specifically says the subject must not imply that the reader uses Jira. This imperative subject does not include that condition."
+              },
+              {
+                "text": "Give your feedback workspace a starting point",
+                "kind": "instruction",
+                "explanation": "The steering says the reader's creation of a Featurebase workspace is context only, unverified, and must never be stated as fact. “your feedback workspace” presupposes that fact."
+              }
+            ],
+            "summary": "The customer example, CSV mechanism, attributed timing, platform description, reported weekly saving, and CTA destination are supported. Revision is required because the subject leaves the Jira premise unqualified and the heading asserts an unverified reader workspace. The email otherwise uses one CTA and keeps the customer outcomes attributed.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The prior passage's concrete operation and consequence—Awni importing Jira feedback through CSV and obtaining a proof of concept—remain explicit in the revised email with the same customer-specific timing and attribution.",
+              "original_passage": "In Featurebase’s Amplemarket customer story, Staff Product Manager Awni Shamah says he used a CSV export to import feedback from Jira and had a proof of concept ready in under 15 minutes.",
+              "revised_passage": "At Amplemarket, Staff Product Manager Awni Shamah exported feedback from Jira, imported the CSV into Featurebase, and had a proof of concept ready in under 15 minutes."
+            }
+          },
+          "version": 3,
+          "factual_repair": true,
+          "sources": {
+            "E21": "https://www.featurebase.app/customers/amplemarket",
+            "source:1": "[Amplemarket Customer Case Study – Featurebase › “Featurebase completely changed how we work. Now everyone knows what customers really need.”; document_id=3175859e-d3db-4074-93f4-fe0b6627f06b; source=https://www.featurebase.app/customers/amplemarket; aliases=https://www.featurebase.app/customers/amplemarket; chunk=1]",
+            "proposition:mechanism:0": "[Amplemarket Customer Case Study – Featurebase › Solution; document_id=3175859e-d3db-4074-93f4-fe0b6627f06b; source=https://www.featurebase.app/customers/amplemarket; aliases=https://www.featurebase.app/customers/amplemarket; chunk=2]",
+            "cta:0": "[Amplemarket Customer Case Study – Featurebase; document_id=3175859e-d3db-4074-93f4-fe0b6627f06b; source=https://www.featurebase.app/customers/amplemarket; aliases=https://www.featurebase.app/customers/amplemarket; chunk=0]",
+            "proposition:mechanism:2": "[Featurebase – AI support platform that improves your product › Leo Grant; document_id=d09777c7-f1dd-43cd-b2ae-a98f7872d5a5; source=https://www.featurebase.app/; aliases=https://www.featurebase.app/; chunk=190]",
+            "cta:1": "Source page: https://www.featurebase.app/customers"
+          }
+        },
+        "passed": false
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:14:57.088568Z",
+      "completed_at": "2026-11-11T04:16:16.156426Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 16315,
+      "output_tokens": 6677,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.337179,
+      "duration_ms": 78851.5351000242,
+      "attempt": 2
+    },
+    {
+      "id": "2e5026a1-f341-48e1-a394-09734a6f8380",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 1 reader(s)",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T04:16:16.193136Z",
+      "completed_at": "2026-11-11T04:16:36.827275Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 3701,
+      "output_tokens": 1343,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.076247,
+      "duration_ms": 20561.010600067675,
+      "attempt": 2
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "failed",
+    "report": {
+      "request": "Write exactly one English activation email from the Featurebase team. Reader: A product manager who just created a Featurebase workspace and wants a place to collect requests. Ask them to do one thing: Set up the first feedback board. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+      "effective_audience": "A product manager who just created a Featurebase workspace and wants a place to collect requests.",
+      "audience_scope": "",
+      "assessment_method": "Simulated reader's interest, uncalibrated; no response or conversion prediction",
+      "delivered": 0,
+      "promised": 1,
+      "contract_violations": [
+        "the user asked for 1 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [
+        "Some linked source pages could not be read; the corpus is partial: https://www.featurebase.app/ - Use only the readable captured facts; do not infer missing prices, features or proof.",
+        "No customer names, quotes or case studies found - the copy can describe the product but cannot prove anyone uses it"
+      ],
+      "what_would_help_most": "Can this source be supplied in a readable form or its missing details verified?",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "Email 1 failed automatic checks after repair: \"Give your feedback workspace a starting point\": The sources support CSV import as a possible starting route, but they do not establish that this recipient has a feedback workspace. The supplied steering explicitly marks that reader fact as unverified and says not to state it as fact.; The steering requires the Jira premise to remain conditional and specifically says the subject must not imply that the reader uses Jira. This imperative subject does not include that condition.; The steering says the reader's creation of a Featurebase workspace is context only, unverified, and must never be stated as fact. “your feedback workspace” presupposes that fact.",
+        "Effective audience: A product manager who just created a Featurebase workspace and wants a place to collect requests."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "One activation email for an existing Featurebase customer who has just created a workspace. The requested board-setup action cannot be briefed truthfully because the supplied ledger contains neither a documented board-creation step nor an exact destination for it. Following the repair instruction, the proposition is narrowed to a supported first activation decision: readers who have requests in Jira can inspect the documented CSV-import example and decide whether to use that route to seed feedback in Featurebase.",
+      "pipeline_version": 2,
+      "strategy_mode": "planned",
+      "focused_activation": false,
+      "intent": {
+        "objective": "activation",
+        "objective_source": "user",
+        "reader_relationship": "customer",
+        "relationship_source": "user",
+        "announcement": "",
+        "reason_now": "",
+        "desired_action": "Set up the first feedback board",
+        "required_fact": "",
+        "required_source_url": ""
+      },
+      "reader": "Selected audience (user-stated constraints): A product manager who just created a Featurebase workspace and wants a place to collect requests..\nNo further recipient situation is established. Compiled market context is research to check for applicability, not a replacement biography.",
+      "reader_segment": "Product managers at scaling software companies",
+      "reader_profile_override": "A product manager who just created a Featurebase workspace and wants a place to collect requests.",
+      "reader_scope": "",
+      "fixed_cta_url": "",
+      "promise": "Give the reader one supported way to begin bringing existing requests into Featurebase when those requests are in Jira.",
+      "orientation": "Featurebase is a feedback-management platform where product teams can collect and manage product requests.",
+      "arc": "Move from a newly created workspace to a concrete activation decision: whether a documented Jira CSV import is relevant for bringing existing requests into Featurebase.",
+      "sequence_rationale": "The requested feedback-board CTA lacks both a verified setup step and an exact documented destination, so retaining it would require invented navigation and an unsupported next-step payoff. The repaired proposition keeps the activation objective and selected product-manager audience but conditionally uses the only documented feedback-onboarding operation with an exact source: Jira CSV import. It does not assume the reader uses Jira and does not present migration as necessary for everyone. Can this source be supplied in a readable form or its missing details verified?",
+      "emails": [
+        {
+          "problem_ids": [],
+          "offer_id": "offering",
+          "action_id": "",
+          "selection_reason": "For a product manager whose existing requests are in Jira, the documented CSV-import example provides a concrete first activation route and an exact page to inspect before deciding whether to use it.",
+          "next_step_url": "https://www.featurebase.app/customers/amplemarket",
+          "destination_kind": "web",
+          "destination_rejected": false,
+          "argument_issue": "",
+          "value_case": {
+            "reader_benefit": "If the reader currently has requests in Jira, CSV import provides a documented way to bring that feedback into Featurebase as a starting point.",
+            "mechanism": "The documented customer example describes exporting feedback to CSV and importing it from Jira into Featurebase.",
+            "evidence_ids": [
+              "E21"
+            ],
+            "decision_conditions": [
+              "This route is relevant only if the reader has feedback in Jira that can be exported as CSV.",
+              "The reported duration belongs to one customer implementation and may vary with the dataset."
+            ]
+          },
+          "claim_conditions": [
+            "Do not imply that the reader uses Jira; introduce the route conditionally.",
+            "Attribute the under-15-minute proof-of-concept result to the documented customer example rather than promising the same duration to the reader.",
+            "Do not describe CSV import as creating or configuring a feedback board; the supplied evidence establishes import, not board setup."
+          ],
+          "position": 1,
+          "user_request": "Write exactly one English activation email from the Featurebase team. Reader: A product manager who just created a Featurebase workspace and wants a place to collect requests. Ask them to do one thing: Set up the first feedback board. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+          "target_audience": "",
+          "job": "Help a reader with existing Jira feedback decide whether to use the documented CSV-import route to begin bringing those requests into Featurebase.",
+          "single_idea": "If existing requests are in Jira, inspect the documented CSV-import example before deciding whether to use it as the first route into Featurebase.",
+          "felt_need": "I need a practical way to bring existing requests into the workspace.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "A documented customer example describes importing feedback from Jira into Featurebase through CSV and having a proof of concept ready in under 15 minutes.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: the reader may not know whether existing Jira feedback can be used to begin activating the workspace. After: they can inspect a documented CSV-import example and decide whether that route applies to their requests.",
+          "evidence_ids": [
+            "E21"
+          ],
+          "must_not_say": [
+            "Do not claim that CSV import creates, configures, or publishes a feedback board.",
+            "Do not imply the reader uses Jira or needs to migrate from it.",
+            "Do not promise an import in under 15 minutes; that duration belongs to one customer’s proof of concept.",
+            "Do not invent a Settings path, Feedback menu, button label, required field, or direct workspace URL.",
+            "Do not claim availability on every plan or for every workspace role.",
+            "Do not introduce AI support, Help Desk, pricing, security, integrations, customer counts, or unrelated testimonials.",
+            "Do not add a second CTA or ask the reader to invite teammates, install a widget, or configure the Customer Portal."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "Moving existing requests into a new feedback workspace may seem like a substantial setup task.",
+          "tone": "Direct, practical, and conditional without hype.",
+          "call_to_action": "Review the Jira import example.",
+          "next_step_decision": "Decide whether CSV import is an appropriate way to bring the reader’s existing Jira feedback into Featurebase.",
+          "next_step_value": "The linked Amplemarket page provides a documented example of importing feedback from Jira into Featurebase through CSV, including that customer’s proof-of-concept experience.",
+          "next_step_evidence_ids": [
+            "E21"
+          ],
+          "next_step_limit": "The page documents one customer’s Jira CSV import; it does not establish the reader’s import duration, create a feedback board, document board-setup navigation, or confirm plan and role access.",
+          "subject_strategy": "Frame the conditional Jira-import route as a concrete activation option without implying that the reader uses Jira or promising the customer’s reported timing.",
+          "must_not_reuse": [],
+          "steering": {
+            "directions": [
+              "Produce exactly one English activation email.",
+              "Keep the body under 150 words, excluding subject, preview, and signature.",
+              "Ask for only one action: review the documented Jira CSV-import example.",
+              "Explain why that example helps a product manager decide how to begin bringing existing requests into Featurebase.",
+              "Use one CTA linked to the exact assigned source.",
+              "Keep the Jira premise conditional."
+            ],
+            "include_evidence_ids": [
+              "E21"
+            ],
+            "exclude_evidence_ids": [
+              "E1",
+              "E2",
+              "E3",
+              "E4",
+              "E5",
+              "E6",
+              "E7",
+              "E8",
+              "E9",
+              "E10",
+              "E11",
+              "E12",
+              "E13",
+              "E14",
+              "E15",
+              "E16",
+              "E17",
+              "E18",
+              "E19",
+              "E20",
+              "E22"
+            ],
+            "use": [
+              "Direct, practical language",
+              "Short paragraphs",
+              "The terms “feedback” and “requests”",
+              "Clear attribution of the customer-specific result"
+            ],
+            "avoid": [
+              "Generic onboarding encouragement",
+              "Unsupported board-setup instructions",
+              "Multiple actions",
+              "Pricing or plan language",
+              "Unqualified timing or outcome claims"
+            ],
+            "context_only": [
+              "The reader has just created a Featurebase workspace.",
+              "The reader is a product manager who wants a place to collect requests.",
+              "The requested board-creation workflow remains undocumented in the supplied evidence."
+            ],
+            "excluded_values": []
+          }
+        }
+      ],
+      "voice_notes": "Match Featurebase’s direct, practical register. Address the reader as “you,” keep paragraphs short, and avoid inflated adjectives or broad product claims.",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "one English activation email"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "18f115ea-2906-4f9e-952f-27d866cffeeb",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

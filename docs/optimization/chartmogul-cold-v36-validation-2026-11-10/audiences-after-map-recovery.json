@@ -1,0 +1,762 @@
+{
+  "brand_id": "f2d1919b-f676-4e90-83b6-09bae2de1ec1",
+  "map": {
+    "summary": "2 audience(s) mapped; 0 worth exploring first. Commercial priority is a hypothesis, not a response-rate forecast.",
+    "options": {
+      "geography": "",
+      "language": "",
+      "exclusions": "",
+      "objective": "customers",
+      "mode": "refresh"
+    },
+    "validation_note": "Checked 3 pages; 2 fetch failure(s). Quotes are source-verified; interpretations and purchase intent are hypotheses.",
+    "reading": "Assessment summary. Verified quotations do not establish demand or purchase intent; commercial priority remains a hypothesis.\n- Finance/founder preparing board decks and investor updates: review first; product compatibility unknown; audience evidence supported (3 quoted source(s)); use or purchase captured; reachability venue identified.\n- PLG-led SaaS founder/ops lead tracking free-to-paid conversion: hypothesis; product compatibility supported; audience evidence absent (1 quoted source(s)); use or purchase captured; reachability venue identified.",
+    "note": "Discovery only, not validation. Search was capped at four queries. Public evidence was richer for anonymous B2B SaaS workflows than for named buying organizations, and the recent Reddit material includes exploratory or vendor-adjacent posts that may not represent broad demand. No reliable evidence was found here for required accounting integrations, GAAP revenue recognition, complete product-event analytics, or automated multichannel lifecycle outreach; those remain qualification questions. ChartMogul ownership was taken only from the supplied product identity and its official domain, not inferred from customer logos.",
+    "searched": [
+      "SaaS founder multiple Stripe accounts subscription metrics MRR spreadsheet problem",
+      "SaaS finance board reporting MRR ARR billing data reconciliation case study",
+      "product led SaaS free trial conversion tracking spreadsheet founder complaint",
+      "ChartMogul limitations reviews pricing startup alternatives"
+    ],
+    "mapped_at": "2026-11-10T00:20:37.834454Z",
+    "segments": [
+      {
+        "name": "Finance/founder preparing board decks and investor updates",
+        "organization": "Growth-stage B2B SaaS company with recurring revenue and subscription data distributed across billing, CRM, finance systems, or spreadsheets.",
+        "workflow": "Reconcile subscription movements and produce consistent MRR, ARR, churn, retention, and expansion reporting for board meetings, investor updates, fundraising, or diligence.",
+        "need": "Maintain a defensible subscription-revenue model and explain changes without rebuilding the board pack from exports and spreadsheets each month.",
+        "buyer_role": "CFO, VP Finance, founder, Head of RevOps",
+        "user_role": "Finance analyst, RevOps lead, data analyst, founder",
+        "current_alternative": "Excel or Google Sheets reconciliation, billing-system dashboards, CRM reports, custom SQL or Power BI models, and outsourced data consulting.",
+        "assessment": {
+          "compatibility": "unknown",
+          "evidence_strength": "supported",
+          "findability": "verified",
+          "usage_or_purchase": "captured",
+          "reachability": "venue_identified",
+          "counterevidence_summary": [
+            "Some finance teams in this audience require accounting functions beyond subscription analytics, creating a material product-boundary risk. — The documented solution includes accrual schedules, deferred revenue, and accounting-system reconciliation. None is established by the supplied ChartMogul product truth, so buyers requiring the complete finance workflow may still need a separate governed data and accounting layer. Review before prioritising."
+          ],
+          "counterevidence": 1,
+          "priority": "review_first",
+          "reasons": [
+            "Two independent case studies document recurring SaaS board and investor reporting delayed by inconsistent billing, CRM, finance, and spreadsheet data.",
+            "ChartMogul's verified multi-billing and subscription-model capabilities align with part of the workflow, but the supplied product truth does not establish the complete metric set or accounting-grade reporting needed for full board-pack replacement."
+          ],
+          "unknowns": [
+            "Is the buyer seeking subscription analytics only, or also GAAP revenue recognition, accounting reconciliation, and close controls?",
+            "Does ChartMogul provide the required ARR, churn, retention, metric-traceability, and investor-export functionality beyond the supplied verified capabilities?",
+            "No product requirement is mapped for this audience, so compatibility is unchecked rather than doubtful.",
+            "Review the counterevidence before prioritising this audience."
+          ],
+          "evidence": [
+            {
+              "claim": "A $10M ARR B2B SaaS finance team had inconsistent figures across billing, accounting, and CRM systems, creating a recurring investor-reporting problem.",
+              "quote": "A B2B SaaS company at $10M ARR had outgrown their reporting infrastructure. Revenue data lived in Stripe, accounting data in QuickBooks Online, and customer data in HubSpot. None of these systems agreed with each other. The VP of Finance was maintaining 12 separate Excel workbooks to reconcile the three systems and produce investor-grade metrics. Every month was a fire drill—and trust in the numbers was eroding.",
+              "url": "https://alexnemethdata.com/case-studies/saas-reporting-rebuild/",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-10T00:19:16.614465Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "The existing workaround consumed substantial finance time and delayed board and diligence reporting.",
+              "quote": "- 12 Excel workbooks required to reconcile Stripe → QBO and produce investor metrics\n- 20+ hours per month spent on manual data reconciliation and report assembly\n- No real-time visibility into MRR, churn, expansion, or contraction\n- Revenue recognition done manually — annual contracts recognized as monthly Stripe charges hit, not on an accrual basis\n- Board meeting prep started on day 1 after close and still wasn't ready by day 10\n- Investor due diligence requests took days to fulfill because data wasn't centralized",
+              "url": "https://alexnemethdata.com/case-studies/saas-reporting-rebuild/",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-10T00:19:16.614465Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "A separate SaaS case study corroborates manual reconciliation of MRR and churn across systems for every board or investor report.",
+              "quote": "Revenue reporting was spread across CSV exports, manual spreadsheet joins, and dashboard logic baked directly into the BI layer. Every new board or investor report meant someone manually reconciling MRR and churn numbers across systems, and nobody could say with confidence why two reports sometimes told different stories.",
+              "url": "https://datadune.io/case-studies/revops-for-saas",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-10T00:19:16.573107Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "A governed custom data layer and BI dashboard are a demonstrated alternative to purchasing a packaged subscription-analytics product.",
+              "quote": "Consolidated CRM, billing, and finance data into a single governed data layer, replacing manual exports. Rebuilt core revenue metrics, including MRR, churn, and expansion, as documented, version-controlled logic instead of one-off spreadsheet formulas. Delivered a single RevOps reporting dashboard that gave the whole team one trusted number from source systems to board pack.",
+              "url": "https://datadune.io/case-studies/revops-for-saas",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-10T00:19:16.573107Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "ChartMogul reports observed use by a matching hybrid SaaS organization for automating ARR reporting.",
+              "quote": "### Lavender rebuilt ARR reporting from scratch — then automated it with ChartMogul\n\n  - PLG + enterprise SaaS with multiple products\n  - Needed one trusted ARR number across motions\n  - Years of patchwork RevOps created metric confusion",
+              "url": "https://chartmogul.com/customers/",
+              "kind": "usage",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-10T00:19:16.665354Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "ChartMogul's public customer directory identifies named organizations in the fundraising, exit, and defensible-metrics buying situation.",
+              "quote": "### Heading toward a raise or exit\n\n  - Buyers and boards asking sharper questions\n  - Diligence-grade, defensible metrics required\n  - Years of clean history matter\n\n  See:\n  [Trainerize](/stories/trainerize/), [CakeHR / Sage](/stories/cakehr-sage/)",
+              "url": "https://chartmogul.com/customers/",
+              "kind": "access",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-10T00:19:16.665354Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "Some finance teams in this audience require accounting functions beyond subscription analytics, creating a material product-boundary risk.",
+              "quote": "### Revenue Recognition Engine\n\n- • **Subscription classification:** Each Stripe subscription automatically classified as monthly, annual, or multi-year with appropriate recognition schedule\n- • **Deferred revenue tracking:** Annual payments automatically spread over the contract period. Deferred revenue balance calculated daily.\n- • **Revenue waterfall:** MRR decomposed into new, expansion, contraction, churn, and reactivation — automatically, from Stripe event data\n- • **Stripe → QBO reconciliation:** Automated matching of Stripe charges to QBO invoices/payments with exception reporting for mismatches",
+              "url": "https://alexnemethdata.com/case-studies/saas-reporting-rebuild/",
+              "kind": "counterevidence",
+              "impact": "material",
+              "impact_reason": "The documented solution includes accrual schedules, deferred revenue, and accounting-system reconciliation. None is established by the supplied ChartMogul product truth, so buyers requiring the complete finance workflow may still need a separate governed data and accounting layer.",
+              "fetched_at": "2026-11-10T00:19:16.614465Z",
+              "direct_buyer_voice": false
+            }
+          ]
+        },
+        "kind": "core",
+        "added_by": "cartographer",
+        "who": "Recurring-revenue SaaS companies where finance or RevOps must reconcile operational subscription metrics for executives, investors, or diligence.",
+        "why_them": "Two independent public case studies show the same observable workflow: billing, CRM, and finance figures disagree, spreadsheets proliferate, and board reporting becomes a recurring reconciliation exercise. ChartMogul plausibly replaces part of this workflow by normalizing subscription data, but accounting-grade reporting remains a separate requirement.",
+        "trigger": "Upcoming board meeting, financing round, diligence request, recent finance hire, multiple revenue systems, or repeated disagreement over ARR and MRR.",
+        "pains": [
+          "Different systems produce different MRR or ARR figures.",
+          "Board-pack preparation consumes days of manual exports and reconciliation.",
+          "Metric definitions are difficult to trace and defend during investor questions.",
+          "Subscription edge cases introduce quiet inconsistencies into spreadsheet models."
+        ],
+        "objection": "ChartMogul reports subscription-management metrics, not necessarily GAAP revenue recognition, accounting close, or the complete governed data model required by larger finance teams. Support for specific accounting integrations is unresolved from the supplied capability catalogue. Price-sensitive operators may prefer Stripe, spreadsheets, or a custom BI layer.",
+        "angle": "Replace the recurring pre-board reconciliation exercise with a normalized subscription model whose movements can be traced to customers and segments.",
+        "sophistication": "problem_aware",
+        "fit": 0.0,
+        "basis": "Independent consulting case studies document this workflow at growth-stage B2B SaaS companies, while ChartMogul's customer directory names matching fundraising and custom-contract situations. The supplied product brief establishes ChartMogul as the product owner and identifies subscription analytics as its category. Core MRR, ARR, churn, and retention calculation is stated in the product brief but has no supplied capability ID, so it is not encoded as a required capability. Accounting-grade revenue recognition, audit controls, and native accounting-system support remain unknown and should be qualified before outreach.",
+        "population": "unknown",
+        "signals": [
+          "Publicly identifies as a B2B SaaS or subscription-software company.",
+          "Publishes recurring-revenue metrics or mentions ARR, MRR, NRR, or churn in company materials.",
+          "Recently raised capital, entered diligence, hired a senior finance or RevOps leader, or advertises board-reporting responsibilities.",
+          "Uses separate billing, CRM, accounting, or BI systems.",
+          "Public job descriptions mention manual reporting, revenue data reconciliation, metric governance, or investor reporting."
+        ],
+        "where": [
+          "LinkedIn company pages and finance or RevOps job listings",
+          "Crunchbase and company funding announcements",
+          "SaaStr community and finance-operations discussions",
+          "Public SaaS finance and RevOps case-study directories"
+        ],
+        "unobvious": false,
+        "researchable": true,
+        "researchability": "high",
+        "researchability_reasons": [
+          "5 useful observable signals and 4 specific research venues.",
+          "The audience is anchored in a concrete workflow or situation.",
+          "A clear trigger narrows the evidence to look for.",
+          "No population basis is stated."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [
+            {
+              "code": "recurring_revenue_software_business",
+              "description": "Organization sells software through recurring subscriptions or contracts."
+            }
+          ],
+          "required_workflow_signals": [
+            {
+              "code": "board_or_investor_subscription_reporting",
+              "description": "Finance, RevOps, or leadership produces recurring-revenue metrics for board, investor, fundraising, or diligence use."
+            },
+            {
+              "code": "revenue_metric_reconciliation",
+              "description": "The organization must reconcile subscription movements or definitions across exports, spreadsheets, billing, CRM, finance, or BI sources."
+            }
+          ],
+          "required_product_capabilities": [],
+          "optional_signals": [
+            {
+              "code": "multiple_billing_systems",
+              "description": "Subscription records originate in more than one billing system."
+            },
+            {
+              "code": "complex_subscription_models",
+              "description": "Plans include tiers, add-ons, usage charges, custom contracts, or multiple components."
+            },
+            {
+              "code": "multi_currency_revenue",
+              "description": "Customers pay in multiple currencies or change billing currency."
+            },
+            {
+              "code": "recent_fundraise_or_diligence",
+              "description": "A financing, board, audit, or acquisition event increases scrutiny of recurring-revenue metrics."
+            }
+          ],
+          "hard_disqualifiers": [
+            {
+              "code": "no_recurring_revenue_model",
+              "description": "Organization has no subscription or recurring-contract revenue to analyze.",
+              "outcome": "EXCLUDED"
+            },
+            {
+              "code": "accounting_close_only",
+              "description": "The task is solely statutory accounting or GAAP revenue recognition rather than subscription analytics.",
+              "outcome": "ADJACENT"
+            }
+          ],
+          "eligible_subsegments": [
+            "Venture-backed B2B SaaS",
+            "Bootstrapped SaaS preparing for financing or exit",
+            "Hybrid self-serve and sales-led SaaS",
+            "Multi-product subscription software"
+          ],
+          "excluded_subsegments": [
+            "Pure services businesses without recurring subscriptions"
+          ],
+          "max_team_size": null
+        }
+      },
+      {
+        "name": "PLG-led SaaS founder/ops lead tracking free-to-paid conversion",
+        "organization": "Product-led SaaS company offering a free plan, freemium product, or time-limited trial alongside paid recurring plans.",
+        "workflow": "Measure the customer lifecycle from signup or trial through activation, paid conversion, expansion, downgrade, retention, and churn.",
+        "need": "Identify where free users and trial accounts fail to convert, connect conversion behavior to recurring revenue, and prioritize lifecycle improvements.",
+        "buyer_role": "Founder, Head of Growth, VP Product, COO",
+        "user_role": "Growth lead, product operations lead, lifecycle marketer, product analyst",
+        "current_alternative": "Product analytics plus Stripe exports, spreadsheet funnel models, CRM lists, warehouse queries, or separate lifecycle-marketing tools.",
+        "assessment": {
+          "compatibility": "supported",
+          "evidence_strength": "absent",
+          "findability": "verified",
+          "usage_or_purchase": "captured",
+          "reachability": "venue_identified",
+          "counterevidence_summary": [],
+          "counterevidence": 0,
+          "priority": "hypothesis",
+          "reasons": [
+            "Verified product truth directly supports free subscriptions, trials, conversion analysis, recurring-revenue impact, and onboarding from Stripe, Paddle, or another billing system.",
+            "The customer directory identifies trial-led ChartMogul users and a concrete spreadsheet failure, but all audience-specific evidence is vendor-published and does not establish purchase details or independent buyer voice."
+          ],
+          "unknowns": [
+            "Do prospects need behavioral event analytics or automated lifecycle campaigns beyond the verified subscription-lifecycle capabilities?",
+            "What signup volume, reporting complexity, budget, or organizational trigger makes this audience likely to purchase?"
+          ],
+          "evidence": [
+            {
+              "claim": "ChartMogul explicitly describes PLG-with-trials businesses as a target audience with daily conversion and churn and cohort-based decision making; this is target-customer evidence, not proof of independent demand.",
+              "quote": "### PLG with trials\n\n  - Trials converting (and churning) daily\n  - Retention cohorts drive the roadmap\n  - Subscription data feeds CRM and lifecycle workflows",
+              "url": "https://chartmogul.com/customers/",
+              "kind": "example",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-10T00:19:16.665354Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "A named trial-led SaaS account is described as using ChartMogul instead of rebuilding subscription analytics internally.",
+              "quote": "### Why LLM Pulse trusts ChartMogul over in-house subscription analytics\n\n  - Bootstrapped AI search visibility SaaS built by a three-person core team\n  - Trial-led, inbound growth driven by SEO, GEO, brand, and word of mouth\n  - Built much of its billing infrastructure in-house, but chose not to recreate subscription analytics",
+              "url": "https://chartmogul.com/customers/",
+              "kind": "usage",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-10T00:19:16.665354Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "A named PLG SaaS company encountered a spreadsheet limitation after introducing self-serve trials and more frequent subscription changes.",
+              "quote": "### Kitchn runs PLG faster with subscription truth at the center\n\n  - PLG SaaS for paid social automation (in-house teams + agencies)\n  - Expanded from annual contracts into self-serve trials\n  - Spreadsheets couldn’t keep up with faster churn and upgrades",
+              "url": "https://chartmogul.com/customers/",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-10T00:19:16.665354Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "The public customer directory supplies concrete, named PLG-with-trials organizations that can be used to identify similar accounts.",
+              "quote": "See:\n  [Kitchn](/stories/kitchn/), [Whereby](/stories/whereby/), [Buffer](/stories/buffer-growing-arpa/)",
+              "url": "https://chartmogul.com/customers/",
+              "kind": "access",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-10T00:19:16.665354Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "Whereby is presented as an observed ChartMogul customer using revenue data to manage freemium conversion at scale.",
+              "quote": "### How Whereby is Using Revenue Data to Conquer Freemium\n\n  - Navigated the freemium model with revenue data\n  - Tracked subscription revenue in one place\n  - Converted free users into paying customers at scale",
+              "url": "https://chartmogul.com/customers/",
+              "kind": "usage",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-10T00:19:16.665354Z",
+              "direct_buyer_voice": false
+            }
+          ]
+        },
+        "kind": "core",
+        "added_by": "cartographer",
+        "who": "Self-serve SaaS teams with free users or trials converting and churning frequently enough that spreadsheets no longer provide a reliable lifecycle view.",
+        "why_them": "Their operating model creates subscription states that ChartMogul explicitly supports: free subscriptions, trials, conversion, paid plans, expansion, and churn. Public methodology confirms the need to measure this lifecycle, while ChartMogul names several PLG customer examples. Evidence of active purchase intent is still limited.",
+        "trigger": "Growth in trial or freemium signup volume, declining conversion, a new self-serve motion, inconsistent funnel and revenue reports, or the need to explain retention by cohort.",
+        "pains": [
+          "Free, trial, and paid lifecycle data live in different systems.",
+          "Daily conversions, upgrades, downgrades, and churn make spreadsheet cohorts stale.",
+          "Product funnel metrics and subscription revenue metrics use different identities or definitions.",
+          "Teams struggle to identify which cohorts or plans drive durable paid conversion."
+        ],
+        "objection": "The public evidence does not establish that ChartMogul replaces a full product-analytics platform or automates every lifecycle campaign. Native CRM is stated in the product description, but specific outreach automation is not represented by a supplied capability ID and remains unknown. Small teams may view a dedicated analytics layer as excessive or expensive.",
+        "angle": "Connect the free-to-paid funnel to subscription revenue so growth teams can distinguish signup volume from durable, retained conversion.",
+        "sophistication": "solution_aware",
+        "fit": 0.0,
+        "basis": "The independent source supports the funnel-measurement workflow but is educational rather than direct purchase evidence. ChartMogul's own customer directory supplies named PLG examples, though vendor case studies are discovery evidence rather than validation. Supplied capability fact_9f2e2d266184800b directly supports free subscriptions and trials, while fact_466cc10d8d9e3075 supports onboarding from a billing system. Automated lifecycle outreach, event-level product analytics, identity resolution with product data, and pricing after the trial remain unresolved.",
+        "population": "unknown",
+        "signals": [
+          "Website visibly offers a free plan, freemium tier, or product trial.",
+          "Pricing and signup are self-serve.",
+          "Growth or product roles mention activation, trial conversion, PQLs, retention cohorts, or lifecycle experiments.",
+          "Public content discusses free-to-paid conversion, expansion, downgrade, or cohort retention.",
+          "Company is adding sales assistance to an existing self-serve motion."
+        ],
+        "where": [
+          "ProductLed community and PLG operator events",
+          "r/SaaS and founder discussions",
+          "LinkedIn growth, product operations, and lifecycle-marketing job listings",
+          "ChartMogul's public PLG customer-story directory"
+        ],
+        "unobvious": false,
+        "researchable": true,
+        "researchability": "high",
+        "researchability_reasons": [
+          "5 useful observable signals and 4 specific research venues.",
+          "The audience is anchored in a concrete workflow or situation.",
+          "A clear trigger narrows the evidence to look for.",
+          "No population basis is stated."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [
+            {
+              "code": "recurring_revenue_saas",
+              "description": "Organization sells a recurring software subscription."
+            },
+            {
+              "code": "free_or_trial_entry_motion",
+              "description": "Prospects can enter through a free plan, freemium product, or trial before becoming paying subscribers."
+            }
+          ],
+          "required_workflow_signals": [
+            {
+              "code": "tracks_free_to_paid_lifecycle",
+              "description": "Team measures or is attempting to measure signup or trial progression into paid conversion and subsequent retention."
+            },
+            {
+              "code": "subscription_changes_occur_frequently",
+              "description": "Conversions, upgrades, downgrades, or churn occur often enough to require repeatable reporting rather than an occasional manual count."
+            }
+          ],
+          "required_product_capabilities": [
+            "fact_9f2e2d266184800b",
+            "fact_466cc10d8d9e3075"
+          ],
+          "optional_signals": [
+            {
+              "code": "plg_crm_workflow",
+              "description": "Team wants revenue and customer context available to growth, sales, or lifecycle workflows."
+            },
+            {
+              "code": "multiple_subscription_plans",
+              "description": "Business operates multiple paid plans, add-ons, or usage components."
+            },
+            {
+              "code": "benchmarking_interest",
+              "description": "Team compares conversion or revenue performance with similar SaaS companies."
+            }
+          ],
+          "hard_disqualifiers": [
+            {
+              "code": "no_free_or_trial_motion",
+              "description": "Organization has no free, freemium, or trial stage in its customer lifecycle.",
+              "outcome": "EXCLUDED"
+            },
+            {
+              "code": "requires_full_product_event_analytics",
+              "description": "Qualification depends on replacing a full behavioral product-analytics system; support is not established by the supplied capability catalogue.",
+              "outcome": "UNVERIFIED"
+            },
+            {
+              "code": "requires_automated_multichannel_lifecycle_campaigns",
+              "description": "Qualification depends on native orchestration of email, in-app, SMS, or other lifecycle campaigns; support is unknown.",
+              "outcome": "UNVERIFIED"
+            }
+          ],
+          "eligible_subsegments": [
+            "Freemium B2B SaaS",
+            "Free-trial SaaS",
+            "Hybrid PLG and sales-assisted SaaS",
+            "High-volume, low-ARPA subscription software"
+          ],
+          "excluded_subsegments": [
+            "Enterprise-only software with no free or trial entry path",
+            "Non-subscription consumer products"
+          ],
+          "max_team_size": null
+        }
+      }
+    ]
+  },
+  "prospects": [],
+  "research": [],
+  "relevance": [],
+  "capability_profile": {
+    "schema_version": 2,
+    "version": 1,
+    "knowledge_id": "2c212bf0-9264-4d96-baa1-eded9d9bde3d",
+    "knowledge_version": 1,
+    "ledger_fingerprint": "a412b1e7acddd0cecefec062aa12bbf08fd844490df9e6a60d208fae3919441e",
+    "derivation_version": 3,
+    "capabilities": [
+      {
+        "id": "fact_4bab14da7303294c",
+        "label": "ChartMogul AI can recommend a target CAC by segment and payback period: Starter $500–$900 (6–10 months payback, $1,450 cash after 12 months), Growth $2,500–$4,000 (8–12 months, $5,800 cash after 12 months), Enterprise $6,000–$10,000 (9–14 months, $14,200 cash after 12 months).",
+        "description": "Source: vendor_statement; Subject: ChartMogul AI / sample customer dashboard; illustrative example output based on 1.8% monthly logo churn and 103% NRR for Growth/Enterprise; Example dashboard output, not a guaranteed result for any buyer",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E6",
+            "claim": "ChartMogul AI can recommend a target CAC by segment and payback period: Starter $500–$900 (6–10 months payback, $1,450 cash after 12 months), Growth $2,500–$4,000 (8–12 months, $5,800 cash after 12 months), Enterprise $6,000–$10,000 (9–14 months, $14,200 cash after 12 months).",
+            "quote": "**Recommended CAC by segment** | Segment | Target CAC | Payback | Cash after 12 mo | | --- | --- | --- | --- | | **Starter** | $500–$900 | 6–10 months | $1,450 | | **Growth** | $2,500–$4,000 | 8–12 months | $5,800 | | **Enterprise** | $6,000–$10,000 | 9–14 months | $14,200 |",
+            "source_identifier": "https://chartmogul.com/"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_751f115e69aeb9a0",
+        "label": "The same 80+ tools are available to ChartMogul AI and through the ChartMogul MCP server in Claude or ChatGPT, letting users combine the revenue data layer with other systems.",
+        "description": "Source: official_documentation; Subject: ChartMogul MCP server",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E9",
+            "claim": "The same 80+ tools are available to ChartMogul AI and through the ChartMogul MCP server in Claude or ChatGPT, letting users combine the revenue data layer with other systems.",
+            "quote": "The same 80+ tools are available to ChartMogul AI and through the ChartMogul MCP server in Claude or ChatGPT, where you can combine your trusted revenue data layer with other systems.",
+            "source_identifier": "https://chartmogul.com/ai-powered-analysis/"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_466cc10d8d9e3075",
+        "label": "You can connect Stripe, Paddle, or your billing system, after which ChartMogul builds your subscription model automatically and you can ask your first questions and get useful answers.",
+        "description": "Source: official_documentation; Subject: ChartMogul onboarding",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E10",
+            "claim": "You can connect Stripe, Paddle, or your billing system, after which ChartMogul builds your subscription model automatically and you can ask your first questions and get useful answers.",
+            "quote": "1. Connect Stripe, Paddle, or your billing system 2. ChartMogul builds your subscription model automatically 3. Ask your first questions and get useful answers",
+            "source_identifier": "https://chartmogul.com/ai-powered-analysis/"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_06926e77e408bf65",
+        "label": "ChartMogul supports multiple billing systems, automatically connecting subscriptions across systems to maintain accurate timelines and smooth MRR reporting for each customer",
+        "description": "Source: official_documentation; Subject: ChartMogul",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E13",
+            "claim": "ChartMogul supports multiple billing systems, automatically connecting subscriptions across systems to maintain accurate timelines and smooth MRR reporting for each customer",
+            "quote": "ChartMogul supports multiple billing systems, whether for different customer groups or during a migration. We automatically connect subscriptions across systems to maintain accurate timelines and smooth MRR reporting for each customer.",
+            "source_identifier": "https://chartmogul.com/accurate-revenue-metrics/"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_9f2e2d266184800b",
+        "label": "ChartMogul supports non-paid (free) subscriptions and free trials with plans, giving a full picture of how free trials and free users behave, when they convert, and how they impact recurring revenue",
+        "description": "Source: official_documentation; Subject: ChartMogul",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E14",
+            "claim": "ChartMogul supports non-paid (free) subscriptions and free trials with plans, giving a full picture of how free trials and free users behave, when they convert, and how they impact recurring revenue",
+            "quote": "With the support for free subscriptions and free trials with plans, ChartMogul gives you the full picture of how free trials and free users behave, when they convert, and how they impact your recurring revenue.",
+            "source_identifier": "https://chartmogul.com/accurate-revenue-metrics/"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_44dbbf4c456a5ada",
+        "label": "ChartMogul supports tiered plans, multi-component subscriptions, add-ons, and usage-based overage charges via a flexible, subscription data model battle-tested by thousands of SaaS businesses",
+        "description": "Source: official_documentation; Subject: ChartMogul",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E15",
+            "claim": "ChartMogul supports tiered plans, multi-component subscriptions, add-ons, and usage-based overage charges via a flexible, subscription data model battle-tested by thousands of SaaS businesses",
+            "quote": "ChartMogul is designed for even the most complex billing setups. Tiered plans, multi-component subscriptions, add-ons, and usage-based overages are all supported by a flexible, subscription data model battle-tested by thousands of SaaS businesses.",
+            "source_identifier": "https://chartmogul.com/accurate-revenue-metrics/"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_0ff66f5171d6eb05",
+        "label": "ChartMogul tracks revenue across multiple currencies, even when customers switch billing currency mid-lifecycle, and shows how currency movements affect MRR separately from true expansion",
+        "description": "Source: official_documentation; Subject: ChartMogul",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E16",
+            "claim": "ChartMogul tracks revenue across multiple currencies, even when customers switch billing currency mid-lifecycle, and shows how currency movements affect MRR separately from true expansion",
+            "quote": "Track revenue across multiple currencies, even when customers switch billing currency mid-lifecycle. See how currency movements affect MRR and other metrics, so you can tell true expansion from FX-driven changes.",
+            "source_identifier": "https://chartmogul.com/accurate-revenue-metrics/"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_832bf859c304c82b",
+        "label": "Companies can benchmark their revenue metrics apples-to-apples against 2,500+ peer SaaS companies, comparing by similar ARR or ARPA",
+        "description": "Source: official_documentation; Subject: ChartMogul",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E17",
+            "claim": "Companies can benchmark their revenue metrics apples-to-apples against 2,500+ peer SaaS companies, comparing by similar ARR or ARPA",
+            "quote": "Consistent enough to benchmark against 2,500+ peers The same consistency that makes your metrics trustworthy makes them comparable. Because thousands of SaaS companies model revenue the same way in ChartMogul, you can finally benchmark apples to apples. See what great actually looks like today across growth and retention, compare yourself to peers with similar ARR or ARPA, and frame your performance for your board and investors.",
+            "source_identifier": "https://chartmogul.com/accurate-revenue-metrics/"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      }
+    ],
+    "constraints": [],
+    "claims": [
+      {
+        "text": "MRR grew 3.8% last quarter, from $365.0k to $379.0k.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E1"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "45% of new Pro customers started on the free plan, and another 36% converted from a free trial; of the 1,240 such customers, 1,060 (85%) are still on Pro today.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E2"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "ARR is on track to reach $4.9M by early January (range $4.76M–$5.04M), up 6.1% from today's $4.62M, assuming current net new MRR of $7.8k per month and 1.8% logo churn.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E3"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "PeopleFlow mentions have doubled since July, almost all from lost deals in the 50–200 seat range, with losses driven mainly by product breadth and ease of setup rather than core functionality.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E4"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Net revenue retention has slipped from 108% to 101% over the last three quarterly cohorts, with the decline concentrated in self-serve customers below $150 MRR who now churn in month two at twice last year's rate; Growth and Enterprise cohorts are unchanged.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E5"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "ChartMogul AI can recommend a target CAC by segment and payback period: Starter $500–$900 (6–10 months payback, $1,450 cash after 12 months), Growth $2,500–$4,000 (8–12 months, $5,800 cash after 12 months), Enterprise $6,000–$10,000 (9–14 months, $14,200 cash after 12 months).",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E6"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "ChartMogul is trusted by over 3,000 leading software companies, including Softr, Buffer, Pitch, Signeasy, Todoist, and Teamwork.com.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E7"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Try Pro free for 14 days, then choose the plan that's right for your business.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E8"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "The same 80+ tools are available to ChartMogul AI and through the ChartMogul MCP server in Claude or ChatGPT, letting users combine the revenue data layer with other systems.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E9"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "You can connect Stripe, Paddle, or your billing system, after which ChartMogul builds your subscription model automatically and you can ask your first questions and get useful answers.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E10"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "ChartMogul is trusted by over 3,000 leading software companies",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E11"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "ChartMogul gave OneVision recurring revenue clarity down to the dollar after normalizing their data, per Joseph Kolchinsky, Founder and CEO of OneVision",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E12"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "ChartMogul supports multiple billing systems, automatically connecting subscriptions across systems to maintain accurate timelines and smooth MRR reporting for each customer",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E13"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "ChartMogul supports non-paid (free) subscriptions and free trials with plans, giving a full picture of how free trials and free users behave, when they convert, and how they impact recurring revenue",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E14"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "ChartMogul supports tiered plans, multi-component subscriptions, add-ons, and usage-based overage charges via a flexible, subscription data model battle-tested by thousands of SaaS businesses",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E15"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "ChartMogul tracks revenue across multiple currencies, even when customers switch billing currency mid-lifecycle, and shows how currency movements affect MRR separately from true expansion",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E16"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Companies can benchmark their revenue metrics apples-to-apples against 2,500+ peer SaaS companies, comparing by similar ARR or ARPA",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E17"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Sharad Chandramohan, Former CEO of Trainerize, said ChartMogul played a big role in achieving a premium valuation on ARR when the business was sold",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E18"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "ChartMogul Pro plan can be tried free for 14 days, then customers choose the plan that's right for their business",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E19"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Martin Kreienbaum, Co-Founder of Kitchn, said ChartMogul became their CRM and system of record for PLG after launching self-serve, unifying usage, revenue, and communication",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E20"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "62% of today's paying customers began on the free plan",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E21"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "The median free-to-paid conversion takes 24 days, with teams that invite colleagues or connect an integration converting much faster",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E22"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      }
+    ],
+    "id": "3294a6e6-cd51-4944-b27a-321a62954683",
+    "brand_id": "f2d1919b-f676-4e90-83b6-09bae2de1ec1",
+    "created_at": "2026-11-10T00:13:54.826359"
+  },
+  "note": ""
+}

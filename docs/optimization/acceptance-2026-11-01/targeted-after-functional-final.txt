@@ -1,0 +1,59 @@
+...................................................F..F....              [100%]
+================================== FAILURES ===================================
+___ test_a_proposal_is_checked_on_its_own_and_accepting_keeps_the_original ____
+
+client = <starlette.testclient.TestClient object at 0x000001765BDA0170>
+provider = <tests.marketing.conftest.RoleScriptedProvider object at 0x000001765B6F6420>
+
+    def test_a_proposal_is_checked_on_its_own_and_accepting_keeps_the_original(client, provider):
+        execution_id = run_campaign(client)
+        asset = _first_email(client, execution_id)
+        writer_calls = len(provider.requests_for("email_writer"))
+        reader_calls = len(provider.requests_for("blind_reader"))
+        # A body the run never wrote: the cycling default can hand back the very
+        # email being edited, which is now (correctly) reported as no change.
+        provider.push("email_writer", email_draft(subject="Release notes, shorter", body=_EDIT_BODY))
+    
+        started = _ask(client, execution_id, asset["id"], "Make it shorter")
+        assert started.status_code == 202, started.text
+        history = _settle(client, execution_id, asset["id"])
+        proposal = history["revisions"][0]
+>       assert proposal["state"] == "proposed", proposal
+E       AssertionError: {'id': 'ed805efc-87f6-4b6c-8494-bd919def170a', 'asset_id': 'd99b4d4e-abc2-4af3-80bc-9a4bca550579', 'base_revision_id': None, 'instruction': 'Make it shorter', ...}
+E       assert 'blocked' == 'proposed'
+E         
+E         - proposed
+E         + blocked
+
+tests\api\test_email_revisions.py:102: AssertionError
+_______ test_a_pass_that_changes_nothing_says_so_and_cannot_be_accepted _______
+
+client = <starlette.testclient.TestClient object at 0x000001765B23E7B0>
+provider = <tests.marketing.conftest.RoleScriptedProvider object at 0x000001765B23FA10>
+
+    def test_a_pass_that_changes_nothing_says_so_and_cannot_be_accepted(client, provider):
+        # Seen live: asked to add a figure the material does not hold, the writer
+        # rightly returned the same email - which the page then offered to accept.
+        execution_id = run_campaign(client)
+        asset = _first_email(client, execution_id)
+        same = email_draft(subject="One subject only this test uses", body=_EDIT_BODY)
+        provider.push("email_writer", same, same)
+        _ask(client, execution_id, asset["id"], "Shorter")
+        first = _settle(client, execution_id, asset["id"])["revisions"][0]
+>       assert first["state"] == "proposed"
+E       AssertionError: assert 'unchanged' == 'proposed'
+E         
+E         - proposed
+E         + unchanged
+
+tests\api\test_email_revisions.py:188: AssertionError
+============================== warnings summary ===============================
+.venv\Lib\site-packages\starlette\testclient.py:53
+  C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/api/test_email_revisions.py::test_a_proposal_is_checked_on_its_own_and_accepting_keeps_the_original
+FAILED tests/api/test_email_revisions.py::test_a_pass_that_changes_nothing_says_so_and_cannot_be_accepted
+2 failed, 57 passed, 1 warning in 30.12s

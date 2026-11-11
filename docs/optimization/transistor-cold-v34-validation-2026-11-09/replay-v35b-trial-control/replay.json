@@ -1,0 +1,219 @@
+{
+  "baseline": "3fd73d86-9641-4ac2-891f-f764bce5a6f9",
+  "models": {
+    "strategist": "gpt-5.6-sol",
+    "email_writer": "gpt-5.6-sol",
+    "claim_reviewer": "gpt-5.6-sol",
+    "blind_reader": "gpt-5.6-sol"
+  },
+  "candidate": {
+    "position": 1,
+    "role": "Introduce Transistor’s multi-show account model",
+    "language": "en",
+    "subject": "One account, more podcasts",
+    "preview_text": "Add podcasts without a separate charge for creating each one.",
+    "eyebrow": "Multiple shows",
+    "headline": "Host multiple shows in one account",
+    "greeting": "Hi there,",
+    "body": "When a new client or internal podcast needs a host, you can place it in the same Transistor account as your other shows. A paid account does not add a separate charge for creating each additional podcast.\n\nTransistor is a podcast hosting platform for carrying multiple shows in one account. From there, distribute each podcast to Apple Podcasts, Spotify, YouTube, Overcast, Pocket Casts and more.\n\nUse that account for the podcasts your agency produces, then publish each one to the listening apps its audience uses.\n\nThe free trial runs for 14 days, giving you a defined window to decide whether Transistor fits the hosting plan for your next show.\n\nDuring the free trial, you can host multiple client podcasts in the same account.",
+    "call_to_action": "Start your 14-day free trial",
+    "sign_off": "- Transistor",
+    "postscript": ""
+  },
+  "gates": {
+    "issues": [
+      {
+        "gate": "claim-review",
+        "detail": "\"During the free trial, you can host multiple client podcasts in the same account.\": The sources separately document a 14-day trial and multi-podcast hosting, but do not establish that multi-podcast creation or hosting is available during the trial. Combining those facts does not prove trial feature access.",
+        "severity": "blocking"
+      },
+      {
+        "gate": "claim-review",
+        "detail": "No supplied source establishes that the documented multi-podcast capability is available during the free trial.",
+        "severity": "blocking"
+      },
+      {
+        "gate": "claim-review",
+        "detail": "This directly violates the campaign instruction: “Do not claim that multi-show creation or distribution is available during the trial.”",
+        "severity": "blocking"
+      }
+    ],
+    "semantic_review": {
+      "key": "132aa32bd7d2fd1b88fc7959aab1163e33e4a4708be2cada108f4db2af67329b",
+      "approved": false,
+      "decision": {
+        "verdict": "revise",
+        "claims": [
+          {
+            "text": "Subject: One account, more podcasts",
+            "status": "supported",
+            "explanation": "Transistor documents hosting multiple podcasts on one account.",
+            "citations": [
+              {
+                "source_id": "source:1",
+                "quote": "## Host multiple podcasts on one account"
+              }
+            ]
+          },
+          {
+            "text": "Preview text: Add podcasts without a separate charge for creating each one.",
+            "status": "supported",
+            "explanation": "The source directly states that creating additional podcasts incurs no extra charge.",
+            "citations": [
+              {
+                "source_id": "E24",
+                "quote": "We don't charge you for creating additional podcasts."
+              }
+            ]
+          },
+          {
+            "text": "Multiple shows",
+            "status": "supported",
+            "explanation": "This heading accurately reflects the documented multi-podcast capability.",
+            "citations": [
+              {
+                "source_id": "source:1",
+                "quote": "## Host multiple podcasts on one account"
+              }
+            ]
+          },
+          {
+            "text": "Host multiple shows in one account",
+            "status": "supported",
+            "explanation": "The source explicitly documents hosting multiple podcasts on one account.",
+            "citations": [
+              {
+                "source_id": "source:1",
+                "quote": "## Host multiple podcasts on one account"
+              }
+            ]
+          },
+          {
+            "text": "When a new client or internal podcast needs a host, you can place it in the same Transistor account as your other shows.",
+            "status": "supported",
+            "explanation": "The documented capability allows multiple podcasts on one Transistor account; client and internal podcasts are proposed uses, not claimed outcomes.",
+            "citations": [
+              {
+                "source_id": "source:1",
+                "quote": "## Host multiple podcasts on one account"
+              }
+            ]
+          },
+          {
+            "text": "A paid account does not add a separate charge for creating each additional podcast.",
+            "status": "supported",
+            "explanation": "The source directly supports the absence of an extra charge for creating additional podcasts.",
+            "citations": [
+              {
+                "source_id": "E24",
+                "quote": "We don't charge you for creating additional podcasts."
+              }
+            ]
+          },
+          {
+            "text": "Transistor is a podcast hosting platform for carrying multiple shows in one account.",
+            "status": "supported",
+            "explanation": "The supplied source identifies Transistor's multi-podcast hosting capability on one account.",
+            "citations": [
+              {
+                "source_id": "source:1",
+                "quote": "## Host multiple podcasts on one account"
+              }
+            ]
+          },
+          {
+            "text": "From there, distribute each podcast to Apple Podcasts, Spotify, YouTube, Overcast, Pocket Casts and more.",
+            "status": "supported",
+            "explanation": "The listed destinations and broader distribution claim match the source.",
+            "citations": [
+              {
+                "source_id": "E28",
+                "quote": "Get your podcast on Apple Podcasts, Spotify, YouTube, Overcast, Pocket Casts, and many more!"
+              }
+            ]
+          },
+          {
+            "text": "Use that account for the podcasts your agency produces, then publish each one to the listening apps its audience uses.",
+            "status": "supported",
+            "explanation": "As a proposed workflow for the selected agency audience, this is supported by the documented multi-podcast account and distribution capabilities. It does not claim a measured outcome.",
+            "citations": [
+              {
+                "source_id": "source:1",
+                "quote": "## Host multiple podcasts on one account"
+              },
+              {
+                "source_id": "E28",
+                "quote": "Get your podcast on Apple Podcasts, Spotify, YouTube, Overcast, Pocket Casts, and many more!"
+              }
+            ]
+          },
+          {
+            "text": "The free trial runs for 14 days, giving you a defined window to decide whether Transistor fits the hosting plan for your next show.",
+            "status": "supported",
+            "explanation": "The 14-day free trial is documented, and evaluating fit during that time is ordinary framing rather than an additional product entitlement.",
+            "citations": [
+              {
+                "source_id": "E23",
+                "quote": "Start 14-day **free trial**"
+              }
+            ]
+          },
+          {
+            "text": "During the free trial, you can host multiple client podcasts in the same account.",
+            "status": "unsupported",
+            "explanation": "The sources separately document a 14-day trial and multi-podcast hosting, but do not establish that multi-podcast creation or hosting is available during the trial. Combining those facts does not prove trial feature access.",
+            "citations": [
+              {
+                "source_id": "E23",
+                "quote": "Start 14-day **free trial**"
+              },
+              {
+                "source_id": "E24",
+                "quote": "We don't charge you for creating additional podcasts."
+              },
+              {
+                "source_id": "source:1",
+                "quote": "## Host multiple podcasts on one account"
+              }
+            ]
+          },
+          {
+            "text": "Start your 14-day free trial →",
+            "status": "supported",
+            "explanation": "The selected destination is documented as the link for starting Transistor's 14-day free trial.",
+            "citations": [
+              {
+                "source_id": "cta:0",
+                "quote": "Literal link: [Start 14-day free trial](https://dashboard.transistor.fm/signup)"
+              }
+            ]
+          }
+        ],
+        "findings": [
+          {
+            "text": "During the free trial, you can host multiple client podcasts in the same account.",
+            "kind": "factual",
+            "explanation": "No supplied source establishes that the documented multi-podcast capability is available during the free trial."
+          },
+          {
+            "text": "During the free trial, you can host multiple client podcasts in the same account.",
+            "kind": "instruction",
+            "explanation": "This directly violates the campaign instruction: “Do not claim that multi-show creation or distribution is available during the trial.”"
+          }
+        ],
+        "summary": "The core multi-show, no-extra-per-podcast-charge, distribution, and 14-day-trial claims are supported. Revision is required because the draft additionally promises multi-podcast hosting during the trial, which is neither sourced nor permitted by the instructions.",
+        "benefit_retention": {
+          "status": "preserved",
+          "explanation": "The draft retains the supported core benefit: agencies can create additional podcasts in one Transistor account without an extra per-podcast charge and distribute them to major listening apps.",
+          "original_passage": "A paid account does not add a separate charge for creating each additional podcast.\n\nTransistor is a podcast hosting platform for carrying multiple shows in one account. From there, distribute each podcast to Apple Podcasts, Spotify, YouTube, Overcast, Pocket Casts and more.",
+          "revised_passage": ""
+        }
+      },
+      "version": 3
+    }
+  },
+  "rejected": true,
+  "calls": 1,
+  "elapsed_seconds": 52.609,
+  "estimated_usd": 0.2451848
+}

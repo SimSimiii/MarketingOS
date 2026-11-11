@@ -174,13 +174,13 @@ def test_readers_who_never_came_back_do_not_count_against_the_majority():
 
 
 def test_one_reader_is_reported_as_an_uncalibrated_editorial_assessment():
-    assert PanelRead(reads=[read(8)]).verdict_line() == "AI simulation assessment 8/10 (uncalibrated)"
-    assert PanelRead(reads=[read(3)]).verdict_line() == "AI simulation assessment 3/10 (uncalibrated)"
+    assert PanelRead(reads=[read(8)]).verdict_line() == "AI simulation: wants it 8/10 (uncalibrated)"
+    assert PanelRead(reads=[read(3)]).verdict_line() == "AI simulation: wants it 3/10 (uncalibrated)"
 
 
 def test_a_panel_reports_its_editorial_median_without_prediction():
     panel = PanelRead(reads=[read(8), read(8), read(3)])
-    assert panel.verdict_line() == "AI simulation assessment 8/10 (uncalibrated)"
+    assert panel.verdict_line() == "AI simulation: wants it 8/10 (uncalibrated)"
 
 
 def test_a_panel_nobody_read_says_so_rather_than_reporting_a_refusal():

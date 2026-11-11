@@ -241,6 +241,12 @@ La distinction qui porte tout : `forbidden` et `withheld` ne sont **pas** la mê
 Les confondre — ce que faisait l'ancienne liste unique — perd la différence entre un
 mensonge et une décision éditoriale, et rend le receipt illisible pour l'opérateur.
 
+Le `forbidden_evidence_ids` d'un brief, lui, reste large : tout ce que le dossier n'a pas relié
+au problème de l'audience, soit 860 faits sur 883 pour Cabaia, prix et note compris. Après la
+stratégie, `release_selling_facts` (`app/marketing/steering.py`) en retire donc les arguments de
+vente de la page où mène le bouton. Seul `forbidden` reste dehors, et ce que l'utilisateur exclut
+est appliqué après.
+
 ### 4.4 Fraîcheur : des pointeurs de version, pas une date
 
 Le dossier stocke l'`id` + la `version` de chacune de ses entrées.
@@ -282,7 +288,9 @@ Voir `app/marketing/intelligence.py`.
   ce que le produit fait à la place. C'est `why_it_fails` qui transforme une vantardise en
   argument, et il porte sur le *mécanisme de la catégorie*, jamais sur un concurrent nommé ;
 - au plus **3 faits assignés** (`MAX_EVIDENCE_PER_EMAIL`) — un brief qui en assigne six
-  demande une page produit ;
+  demande une page produit. Ils portent l'argument, pas le plafond : le rédacteur reçoit en plus
+  les arguments de vente de la page de destination (prix, note, avis, garanties), choisis en
+  code par `KnowledgeArtifacts.selling_facts` ;
 - jusqu'à **3 propositions alternatives complètes** (`MAX_ALTERNATIVE_IDEAS`) pour le
   bake-off : besoin, claim, preuve, limite, objection et CTA qui bougent ensemble.
 
@@ -338,11 +346,13 @@ les trous de la copy avec un contexte qu'aucun destinataire réel n'aura.
 
 Il rend deux choses :
 
-- **`pull`** sur 10, calibré en arithmétique d'email froid. `PULL_THRESHOLD = 7` signifie
-  « au moins 6 personnes sur 100 comme moi cliqueraient », ce qui est un très bon cold
-  email. L'échelle a été refaite parce que l'ancienne (« cette personne, interrogée à
-  brûle-pourpoint, cliquerait-elle aujourd'hui ») mesurait un événement à 3 % : tous les
-  brouillons revenaient à 1 ou 2 et l'instrument ne pouvait plus les distinguer.
+- **`pull`** sur 10 : à quel point ce lecteur a envie de ce qu'on lui vend. `PULL_THRESHOLD = 7`
+  signifie « j'ai envie de le voir, je cliquerais ». C'est la troisième échelle. La première
+  (« cette personne, interrogée à brûle-pourpoint, cliquerait-elle aujourd'hui ») mesurait un
+  événement à 3 % : tous les brouillons revenaient à 1 ou 2. La deuxième notait si le mail était
+  adéquat (clair, précis, prouvé), et la boucle a optimisé ça : des mails propres dont personne
+  n'avait envie obtenaient 7. La note reste une réaction simulée, pas une prévision de clics.
+  `would_act` (« tu cliquerais aujourd'hui ? ») passe avant elle dans le classement.
 - **`understood`** — a-t-il pu dire ce qu'on lui vendait sans deviner. C'est un **veto, pas
   un terme** : un brouillon que le panel n'a pas décodé perd contre un brouillon décodé à
   n'importe quel score, parce qu'un score de clic sur un email que personne n'a compris

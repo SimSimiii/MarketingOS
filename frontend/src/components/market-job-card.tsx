@@ -17,6 +17,7 @@ import type { MarketJob } from "@/lib/types";
  * The `kind` is an internal word ("prospects"), and a live board showing
  * internal words is a board somebody has to learn before they can read it. */
 const KIND_LABELS: Record<string, string> = {
+  first_campaign: "Preparing a first campaign",
   scan: "Reading the competition",
   proof: "Searching for proof",
   audience: "Working out who buys this",
@@ -70,7 +71,7 @@ export function MarketJobCard({ job, now }: { job: MarketJob; now: number }) {
             <div className="flex flex-wrap items-center gap-2">
               {job.brand_id ? (
                 <Link
-                  href={`/brands/${job.brand_id}/market`}
+                  href={`/brands/${job.brand_id}${job.kind === "first_campaign" ? "" : "/market"}`}
                   className="font-semibold hover:text-violet-200"
                 >
                   {job.brand_name || "a brand"}

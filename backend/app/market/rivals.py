@@ -34,6 +34,7 @@ import json
 import logging
 import re
 from datetime import UTC, datetime
+from decimal import Decimal
 from urllib.parse import urldefrag, urlsplit, urlunsplit
 
 from pydantic import BaseModel, Field, field_validator
@@ -196,6 +197,8 @@ class RivalScout:
     async def discover(
         self, business: BusinessProfile, limit: int = 6, known: list[str] | None = None,
         public_page_requests: dict[str, str] | None = None,
+        *,
+        compact: bool = False,
     ) -> _LeadList:
         """Who else sells to this buyer. The one step that reads the open web.
 
@@ -220,11 +223,13 @@ class RivalScout:
             task=(
                 "Search the web now and report who this company's buyer is really "
                 "deciding between. Every entry needs a real URL you found."
+                + (" Use at most two focused queries for this first campaign." if compact else "")
             ),
             schema=_LeadList,
             # Discovery locates URLs; profile() crawls the pages itself and
             # verifies every retained quotation against that fetched text.
             tools=[ResearchTool.WEB_SEARCH],
+            **({"max_turns": 8} if compact else {}),
         )
 
     async def profile_all(self, leads: list[RivalLead], *, artifacts: KnowledgeArtifacts | None = None,
@@ -349,12 +354,53 @@ class RivalScout:
         return review_rationale(verified)
 
 
+def _inconsistent_annual_total(text: str) -> bool:
+    """Check an explicit same-currency monthly-equivalent/annual-total pair.
+
+    No inferred billing basis or conversion between currencies. Whole-number
+    monthly displays can be rounded, so allow half their displayed unit per
+    month rather than flagging a legitimate rounded equivalent.
+    """
+    amount = r"\d+(?:,\d{3})*(?:\.\d+)?"
+    pairs = re.finditer(
+        rf"(?P<currency>[$€£])\s*(?P<monthly>{amount})\s*(?:/mo(?:nth)?|per month)"
+        r"\s*,?\s*(?:billed\s+)?(?:yearly|annually)\s*[,;]\s*"
+        rf"(?P=currency)\s*(?P<annual>{amount})\s*(?:total\s*)?(?:/yr|/year|per year)",
+        text, re.IGNORECASE,
+    )
+    for pair in pairs:
+        monthly = pair.group("monthly").replace(",", "")
+        annual_text = pair.group("annual").replace(",", "")
+        annual = Decimal(annual_text)
+        precision = len(monthly.split(".", 1)[1]) if "." in monthly else 0
+        annual_precision = len(annual_text.split(".", 1)[1]) if "." in annual_text else 0
+        tolerance = (Decimal("0.5") * Decimal(10) ** -precision * 12
+                     + Decimal("0.5") * Decimal(10) ** -annual_precision + Decimal("0.01"))
+        if abs(Decimal(monthly) * 12 - annual) > tolerance:
+            return True
+    return False
+
+
 def review_rationale(profile: RivalProfile) -> RivalProfile:
-    """Do not turn selected plan prices into a supposedly sourced range.
+    """Withhold contradictory price syntheses and unsourced price ranges.
 
     Finding both endpoint amounts somewhere in the capture does not license
-    a range covering the whole offer. Keep the capture; withhold the synthesis.
+    a range covering the whole offer, or conflicting annual totals. Keep the
+    capture; withhold the synthesis, on fresh profiles and cached reads alike.
     """
+    conflicting = [claim for claim in profile.claims.claims if _inconsistent_annual_total(claim.text)]
+    if conflicting or _inconsistent_annual_total(profile.pricing):
+        note = ("Pricing needs verification: the stated annual monthly equivalent and yearly total "
+                "are inconsistent; the conflicting synthesis was withheld.")
+        price_rationale = bool(re.search(r"[$€£]\s*\d", profile.why))
+        profile = profile.model_copy(update={
+            "claims": ClaimSet(claims=[claim for claim in profile.claims.claims if claim not in conflicting]),
+            "pricing": "Pricing needs verification; inspect the original billing terms.",
+            "unverified_claims": profile.unverified_claims + len(conflicting),
+            "note": " ".join(dict.fromkeys(filter(None, (profile.note, note)))),
+            **({"why": "", "rationale_status": "unverified", "rationale_sources": [],
+                "our_evidence_ids": []} if price_rationale else {}),
+        })
     ranges = re.findall(r"[$€£]\s*\d+(?:[.,]\d+)?\s*[-–—]\s*(?:[$€£]\s*)?\d+(?:[.,]\d+)?",
                         profile.why)
     if not ranges:

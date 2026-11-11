@@ -1,0 +1,540 @@
+{
+  "version": "v31-ai-source-review",
+  "billing": "subscription",
+  "cases": [
+    {
+      "name": "unsupported_Windows",
+      "expected_pass": false,
+      "passed": false,
+      "matches_expected": true,
+      "report": {
+        "issues": [
+          {
+            "gate": "claim-review",
+            "detail": "\"CleanShot also runs natively on Windows.\": The official FAQ explicitly says there is no Windows version and no current plan to release one.",
+            "severity": "blocking"
+          },
+          {
+            "gate": "claim-review",
+            "detail": "This directly contradicts the supplied official source stating that CleanShot has no Windows version.",
+            "severity": "blocking"
+          },
+          {
+            "gate": "claim-review",
+            "detail": "The campaign directions explicitly require leaving out claims that CleanShot covers non-Mac employees or offers a Windows version.",
+            "severity": "blocking"
+          }
+        ],
+        "semantic_review": {
+          "key": "d6f242483714a7ae20b55fd340c186103e084818d837887060a55b54f01fd883",
+          "approved": false,
+          "decision": {
+            "verdict": "revise",
+            "claims": [
+              {
+                "text": "A Pro plan for Mac teams",
+                "status": "supported",
+                "explanation": "The pricing source identifies CleanShot Pro as a plan combining the Mac app with team features, including centralized access management, SSO, and SCIM.",
+                "citations": [
+                  {
+                    "source_id": "E18",
+                    "quote": "CleanShot Pro Yearly -17% Monthly $10 per user/mo, billed annually Mac app Always up to date Cloud Unlimited storage Custom domain and branding Advanced sharing and security Team Centralized access management SSO and SCIM"
+                  }
+                ]
+              },
+              {
+                "text": "Centralize CleanShot access with single sign-on and Scim.",
+                "status": "supported",
+                "explanation": "The Pro plan includes centralized access management, SSO, and SCIM; “single sign-on” is the ordinary expansion of SSO.",
+                "citations": [
+                  {
+                    "source_id": "E18",
+                    "quote": "CleanShot Pro Yearly -17% Monthly $10 per user/mo, billed annually Mac app Always up to date Cloud Unlimited storage Custom domain and branding Advanced sharing and security Team Centralized access management SSO and SCIM"
+                  },
+                  {
+                    "source_id": "E24",
+                    "quote": "Set up SSO, SCIM, and admin controls to manage access securely as your team grows, from small startups to larger organizations."
+                  }
+                ]
+              },
+              {
+                "text": "With CleanShot Pro, an admin can bring screenshot and screen-recording seats under centralized access management, with single sign-on and Scim.",
+                "status": "supported",
+                "explanation": "The sources establish that Pro includes the Mac app and centralized access management, SSO, and SCIM; CleanShot documents screenshot capture and screen-recording functionality, while its Cloud documentation identifies admin controls.",
+                "citations": [
+                  {
+                    "source_id": "E18",
+                    "quote": "CleanShot Pro Yearly -17% Monthly $10 per user/mo, billed annually Mac app Always up to date Cloud Unlimited storage Custom domain and branding Advanced sharing and security Team Centralized access management SSO and SCIM"
+                  },
+                  {
+                    "source_id": "E24",
+                    "quote": "Set up SSO, SCIM, and admin controls to manage access securely as your team grows, from small startups to larger organizations."
+                  },
+                  {
+                    "source_id": "R6",
+                    "quote": "With CleanShot you can capture your Mac's screen in many ways. You can grab the area, fullscreen, window, or even a scrolling window."
+                  },
+                  {
+                    "source_id": "E16",
+                    "quote": "Yes. CleanShot 5.0 introduced Studio Mode, which lets you add animated zooms to specific parts of your screen recording, with smooth motion blur."
+                  }
+                ]
+              },
+              {
+                "text": "It turns CleanShot’s Mac app into software managed through one team plan.",
+                "status": "supported",
+                "explanation": "This accurately summarizes the Pro offer: one plan includes the Mac app and team-level centralized access management, SSO, and SCIM.",
+                "citations": [
+                  {
+                    "source_id": "E18",
+                    "quote": "CleanShot Pro Yearly -17% Monthly $10 per user/mo, billed annually Mac app Always up to date Cloud Unlimited storage Custom domain and branding Advanced sharing and security Team Centralized access management SSO and SCIM"
+                  }
+                ]
+              },
+              {
+                "text": "The Pro plan costs $10 per user/month, billed annually.",
+                "status": "supported",
+                "explanation": "The product, price, unit, and annual-billing condition all match the pricing source.",
+                "citations": [
+                  {
+                    "source_id": "E18",
+                    "quote": "CleanShot Pro Yearly -17% Monthly $10 per user/mo, billed annually Mac app Always up to date Cloud Unlimited storage Custom domain and branding Advanced sharing and security Team Centralized access management SSO and SCIM"
+                  }
+                ]
+              },
+              {
+                "text": "Each subscribed seat includes the always-up-to-date Mac app and requires macOS 13.0 or newer.",
+                "status": "supported",
+                "explanation": "Pro is priced per user and includes an always-up-to-date Mac app; CleanShot requires macOS 13.0 or newer.",
+                "citations": [
+                  {
+                    "source_id": "E18",
+                    "quote": "CleanShot Pro Yearly -17% Monthly $10 per user/mo, billed annually Mac app Always up to date Cloud Unlimited storage Custom domain and branding Advanced sharing and security Team Centralized access management SSO and SCIM"
+                  },
+                  {
+                    "source_id": "E12",
+                    "quote": "CleanShot requires **macOS 13.0 or newer**. Some OCR languages may require the latest macOS version to work properly."
+                  }
+                ]
+              },
+              {
+                "text": "There is no direct free trial, so evaluation starts with a paid subscription.",
+                "status": "supported",
+                "explanation": "CleanShot states that it does not provide a trial, while Pro is a paid per-user subscription. The separately mentioned Setapp trial is a third-party offer and does not contradict “no direct free trial.”",
+                "citations": [
+                  {
+                    "source_id": "E13",
+                    "quote": "We don't provide a trial, but we do have a **30-day money-back guarantee** so feel free to give the app a try. If it doesn't meet your expectations, just [let us know](mailto:hello@cleanshot.com) and you'll get a full refund. CleanShot is also available with [Setapp](https://go.setapp.com/stp226?refAppID=321), which does have a 7-day free trial."
+                  },
+                  {
+                    "source_id": "E18",
+                    "quote": "CleanShot Pro Yearly -17% Monthly $10 per user/mo, billed annually Mac app Always up to date Cloud Unlimited storage Custom domain and branding Advanced sharing and security Team Centralized access management SSO and SCIM"
+                  }
+                ]
+              },
+              {
+                "text": "The purchase is covered by a 30-day money-back guarantee; if CleanShot does not meet your expectations, contact support within that period for a full refund.",
+                "status": "supported",
+                "explanation": "The FAQ states the 30-day guarantee and promises a full refund when the customer lets CleanShot know that the app did not meet expectations.",
+                "citations": [
+                  {
+                    "source_id": "E13",
+                    "quote": "We don't provide a trial, but we do have a **30-day money-back guarantee** so feel free to give the app a try. If it doesn't meet your expectations, just [let us know](mailto:hello@cleanshot.com) and you'll get a full refund. CleanShot is also available with [Setapp](https://go.setapp.com/stp226?refAppID=321), which does have a 7-day free trial."
+                  }
+                ]
+              },
+              {
+                "text": "CleanShot also runs natively on Windows.",
+                "status": "contradicted",
+                "explanation": "The official FAQ explicitly says there is no Windows version and no current plan to release one.",
+                "citations": [
+                  {
+                    "source_id": "E15",
+                    "quote": "There's no Windows version and at the moment there are no plans on releasing one."
+                  }
+                ]
+              }
+            ],
+            "findings": [
+              {
+                "text": "CleanShot also runs natively on Windows.",
+                "kind": "factual",
+                "explanation": "This directly contradicts the supplied official source stating that CleanShot has no Windows version."
+              },
+              {
+                "text": "CleanShot also runs natively on Windows.",
+                "kind": "instruction",
+                "explanation": "The campaign directions explicitly require leaving out claims that CleanShot covers non-Mac employees or offers a Windows version."
+              }
+            ],
+            "summary": "Revision is required solely because the Windows claim is both contradicted by E15 and expressly excluded by the campaign directions. The remaining material assertions are supported. The CTA and signature add no further material factual assertions."
+          },
+          "version": 2
+        }
+      }
+    },
+    {
+      "name": "wrong_owner",
+      "expected_pass": false,
+      "passed": false,
+      "matches_expected": true,
+      "report": {
+        "issues": [
+          {
+            "gate": "claim-review",
+            "detail": "\"CleanShot is made by MacPaw.\": None of the supplied literal sources identifies MacPaw as CleanShot's maker or owner. That affiliation cannot be inferred from the product materials.",
+            "severity": "blocking"
+          },
+          {
+            "gate": "claim-review",
+            "detail": "The supplied sources do not substantiate the asserted maker or ownership relationship, so this claim must be removed or supported with a literal source.",
+            "severity": "blocking"
+          }
+        ],
+        "semantic_review": {
+          "key": "b3e6ee37acb84f0f013261ee4d660c3ba205a8603a01bed7229d95b04679feb4",
+          "approved": false,
+          "decision": {
+            "verdict": "uncertain",
+            "claims": [
+              {
+                "text": "A Pro plan for Mac teams",
+                "status": "supported",
+                "explanation": "CleanShot Pro includes the Mac app and team capabilities, while CleanShot requires macOS 13.0 or newer.",
+                "citations": [
+                  {
+                    "source_id": "E18",
+                    "quote": "CleanShot Pro Yearly -17% Monthly $10 per user/mo, billed annually Mac app Always up to date Cloud Unlimited storage Custom domain and branding Advanced sharing and security Team Centralized access management SSO and SCIM"
+                  },
+                  {
+                    "source_id": "E12",
+                    "quote": "CleanShot requires **macOS 13.0 or newer**. Some OCR languages may require the latest macOS version to work properly."
+                  }
+                ]
+              },
+              {
+                "text": "Centralize CleanShot access with single sign-on and Scim.",
+                "status": "supported",
+                "explanation": "The Pro plan expressly includes centralized access management, SSO, and SCIM.",
+                "citations": [
+                  {
+                    "source_id": "E18",
+                    "quote": "CleanShot Pro Yearly -17% Monthly $10 per user/mo, billed annually Mac app Always up to date Cloud Unlimited storage Custom domain and branding Advanced sharing and security Team Centralized access management SSO and SCIM"
+                  }
+                ]
+              },
+              {
+                "text": "With CleanShot Pro, an admin can bring screenshot and screen-recording seats under centralized access management, with single sign-on and Scim.",
+                "status": "supported",
+                "explanation": "The sources collectively establish per-user Pro seats, screenshot and recording functionality, centralized access management, SSO, SCIM, and admin controls.",
+                "citations": [
+                  {
+                    "source_id": "E18",
+                    "quote": "CleanShot Pro Yearly -17% Monthly $10 per user/mo, billed annually Mac app Always up to date Cloud Unlimited storage Custom domain and branding Advanced sharing and security Team Centralized access management SSO and SCIM"
+                  },
+                  {
+                    "source_id": "E24",
+                    "quote": "Set up SSO, SCIM, and admin controls to manage access securely as your team grows, from small startups to larger organizations."
+                  },
+                  {
+                    "source_id": "R6",
+                    "quote": "With CleanShot you can capture your Mac's screen in many ways. You can grab the area, fullscreen, window, or even a scrolling window."
+                  },
+                  {
+                    "source_id": "E7",
+                    "quote": "Add a webcam bubble to your recording so people see you, not just your screen."
+                  }
+                ]
+              },
+              {
+                "text": "It turns CleanShot’s Mac app into software managed through one team plan.",
+                "status": "supported",
+                "explanation": "CleanShot Pro packages the Mac app with team-level centralized access management, SSO, and SCIM.",
+                "citations": [
+                  {
+                    "source_id": "E18",
+                    "quote": "CleanShot Pro Yearly -17% Monthly $10 per user/mo, billed annually Mac app Always up to date Cloud Unlimited storage Custom domain and branding Advanced sharing and security Team Centralized access management SSO and SCIM"
+                  }
+                ]
+              },
+              {
+                "text": "The Pro plan costs $10 per user/month, billed annually.",
+                "status": "supported",
+                "explanation": "The price, per-user unit, monthly equivalent, and annual billing condition match the source exactly.",
+                "citations": [
+                  {
+                    "source_id": "E18",
+                    "quote": "CleanShot Pro Yearly -17% Monthly $10 per user/mo, billed annually Mac app Always up to date Cloud Unlimited storage Custom domain and branding Advanced sharing and security Team Centralized access management SSO and SCIM"
+                  }
+                ]
+              },
+              {
+                "text": "Each subscribed seat includes the always-up-to-date Mac app and requires macOS 13.0 or newer.",
+                "status": "supported",
+                "explanation": "The Pro offer is priced per user and includes an always-up-to-date Mac app; the documented system requirement is macOS 13.0 or newer.",
+                "citations": [
+                  {
+                    "source_id": "E18",
+                    "quote": "CleanShot Pro Yearly -17% Monthly $10 per user/mo, billed annually Mac app Always up to date Cloud Unlimited storage Custom domain and branding Advanced sharing and security Team Centralized access management SSO and SCIM"
+                  },
+                  {
+                    "source_id": "E12",
+                    "quote": "CleanShot requires **macOS 13.0 or newer**. Some OCR languages may require the latest macOS version to work properly."
+                  }
+                ]
+              },
+              {
+                "text": "There is no direct free trial, so evaluation starts with a paid subscription.",
+                "status": "supported",
+                "explanation": "CleanShot itself provides no trial, and the Pro offer is a paid per-user subscription. The separate Setapp trial is not presented as a direct CleanShot trial.",
+                "citations": [
+                  {
+                    "source_id": "E13",
+                    "quote": "We don't provide a trial, but we do have a **30-day money-back guarantee** so feel free to give the app a try. If it doesn't meet your expectations, just [let us know](mailto:hello@cleanshot.com) and you'll get a full refund. CleanShot is also available with [Setapp](https://go.setapp.com/stp226?refAppID=321), which does have a 7-day free trial."
+                  },
+                  {
+                    "source_id": "E18",
+                    "quote": "CleanShot Pro Yearly -17% Monthly $10 per user/mo, billed annually Mac app Always up to date Cloud Unlimited storage Custom domain and branding Advanced sharing and security Team Centralized access management SSO and SCIM"
+                  }
+                ]
+              },
+              {
+                "text": "The purchase is covered by a 30-day money-back guarantee; if CleanShot does not meet your expectations, contact support within that period for a full refund.",
+                "status": "supported",
+                "explanation": "The source states a 30-day money-back guarantee and promises a full refund when the customer reports that the app did not meet expectations; the supplied contact is CleanShot's support email.",
+                "citations": [
+                  {
+                    "source_id": "E13",
+                    "quote": "We don't provide a trial, but we do have a **30-day money-back guarantee** so feel free to give the app a try. If it doesn't meet your expectations, just [let us know](mailto:hello@cleanshot.com) and you'll get a full refund. CleanShot is also available with [Setapp](https://go.setapp.com/stp226?refAppID=321), which does have a 7-day free trial."
+                  }
+                ]
+              },
+              {
+                "text": "CleanShot is made by MacPaw.",
+                "status": "uncertain",
+                "explanation": "None of the supplied literal sources identifies MacPaw as CleanShot's maker or owner. That affiliation cannot be inferred from the product materials.",
+                "citations": []
+              }
+            ],
+            "findings": [
+              {
+                "text": "CleanShot is made by MacPaw.",
+                "kind": "factual",
+                "explanation": "The supplied sources do not substantiate the asserted maker or ownership relationship, so this claim must be removed or supported with a literal source."
+              }
+            ],
+            "summary": "All material product, plan, price, platform, trial, and refund assertions are supported. The CTA is an imperative and the signature contains no additional material factual assertion. The draft remains uncertain solely because the claimed MacPaw affiliation is not established by the supplied sources."
+          },
+          "version": 2
+        }
+      }
+    },
+    {
+      "name": "excluded_price",
+      "expected_pass": false,
+      "passed": false,
+      "matches_expected": true,
+      "report": {
+        "issues": [
+          {
+            "gate": "claim-review",
+            "detail": "\"With CleanShot Pro, an admin can bring screenshot and screen-recording seats under centralized access management, with single sign-on and Scim.\": E24 documents these controls for CleanShot Cloud, but the literal evidence does not establish that they belong specifically to the Pro plan or characterize screenshot and recording access as managed seats.",
+            "severity": "blocking"
+          },
+          {
+            "gate": "claim-review",
+            "detail": "\"It turns CleanShot’s Mac app into software managed through one team plan.\": The sources separately establish the macOS app and team access controls, but no literal source states that one team plan manages the Mac app as asserted.",
+            "severity": "blocking"
+          },
+          {
+            "gate": "claim-review",
+            "detail": "\"The Pro plan costs $10 per user/month, billed annually.\": No literal source citation supplied in the evidence set states this price, unit, and annual-billing condition. The context-only offer summary is not independent evidence.",
+            "severity": "blocking"
+          },
+          {
+            "gate": "claim-review",
+            "detail": "\"Each subscribed seat includes the always-up-to-date Mac app\": E22 supports access to the latest app for active Cloud Pro subscribers, but it does not establish that every subscribed seat includes the Mac app.",
+            "severity": "blocking"
+          },
+          {
+            "gate": "claim-review",
+            "detail": "\"evaluation starts with a paid subscription.\": E13 establishes that evaluation is not a free trial and is covered by a refund guarantee, but it does not literally establish that the required purchase is a Pro subscription.",
+            "severity": "blocking"
+          },
+          {
+            "gate": "claim-review",
+            "detail": "This directly violates the user's instruction: “Do not include the Pro price in this email.”",
+            "severity": "blocking"
+          },
+          {
+            "gate": "claim-review",
+            "detail": "The supplied literal evidence does not establish the asserted Pro-plan and seat scope.",
+            "severity": "blocking"
+          },
+          {
+            "gate": "claim-review",
+            "detail": "No supplied literal citation entails the complete one-team-plan assertion.",
+            "severity": "blocking"
+          },
+          {
+            "gate": "claim-review",
+            "detail": "The evidence supports latest-app access for active Cloud Pro subscribers but not inclusion for each subscribed seat.",
+            "severity": "blocking"
+          }
+        ],
+        "semantic_review": {
+          "key": "f457b949a8dbd41106a273322ba4c2c4d49d43976771d0473a521377f6566c37",
+          "approved": false,
+          "decision": {
+            "verdict": "revise",
+            "claims": [
+              {
+                "text": "A Pro plan for Mac teams",
+                "status": "supported",
+                "explanation": "The sources establish a CleanShot Cloud Pro subscription, a macOS requirement, and team access controls.",
+                "citations": [
+                  {
+                    "source_id": "E22",
+                    "quote": "If you are an active Cloud Pro subscriber, you always get the latest version of the app and there's no need to renew your updates."
+                  },
+                  {
+                    "source_id": "E12",
+                    "quote": "CleanShot requires **macOS 13.0 or newer**. Some OCR languages may require the latest macOS version to work properly."
+                  },
+                  {
+                    "source_id": "E24",
+                    "quote": "Set up SSO, SCIM, and admin controls to manage access securely as your team grows, from small startups to larger organizations."
+                  }
+                ]
+              },
+              {
+                "text": "Centralize CleanShot access with single sign-on and Scim.",
+                "status": "supported",
+                "explanation": "The documented SSO, SCIM, and admin controls support centralized access management.",
+                "citations": [
+                  {
+                    "source_id": "E24",
+                    "quote": "Set up SSO, SCIM, and admin controls to manage access securely as your team grows, from small startups to larger organizations."
+                  }
+                ]
+              },
+              {
+                "text": "With CleanShot Pro, an admin can bring screenshot and screen-recording seats under centralized access management, with single sign-on and Scim.",
+                "status": "uncertain",
+                "explanation": "E24 documents these controls for CleanShot Cloud, but the literal evidence does not establish that they belong specifically to the Pro plan or characterize screenshot and recording access as managed seats.",
+                "citations": [
+                  {
+                    "source_id": "E24",
+                    "quote": "Set up SSO, SCIM, and admin controls to manage access securely as your team grows, from small startups to larger organizations."
+                  }
+                ]
+              },
+              {
+                "text": "It turns CleanShot’s Mac app into software managed through one team plan.",
+                "status": "uncertain",
+                "explanation": "The sources separately establish the macOS app and team access controls, but no literal source states that one team plan manages the Mac app as asserted.",
+                "citations": [
+                  {
+                    "source_id": "E12",
+                    "quote": "CleanShot requires **macOS 13.0 or newer**. Some OCR languages may require the latest macOS version to work properly."
+                  },
+                  {
+                    "source_id": "E24",
+                    "quote": "Set up SSO, SCIM, and admin controls to manage access securely as your team grows, from small startups to larger organizations."
+                  }
+                ]
+              },
+              {
+                "text": "The Pro plan costs $10 per user/month, billed annually.",
+                "status": "uncertain",
+                "explanation": "No literal source citation supplied in the evidence set states this price, unit, and annual-billing condition. The context-only offer summary is not independent evidence.",
+                "citations": []
+              },
+              {
+                "text": "Each subscribed seat includes the always-up-to-date Mac app",
+                "status": "uncertain",
+                "explanation": "E22 supports access to the latest app for active Cloud Pro subscribers, but it does not establish that every subscribed seat includes the Mac app.",
+                "citations": [
+                  {
+                    "source_id": "E22",
+                    "quote": "If you are an active Cloud Pro subscriber, you always get the latest version of the app and there's no need to renew your updates."
+                  }
+                ]
+              },
+              {
+                "text": "requires macOS 13.0 or newer.",
+                "status": "supported",
+                "explanation": "The requirement matches the source exactly.",
+                "citations": [
+                  {
+                    "source_id": "E12",
+                    "quote": "CleanShot requires **macOS 13.0 or newer**. Some OCR languages may require the latest macOS version to work properly."
+                  }
+                ]
+              },
+              {
+                "text": "There is no direct free trial",
+                "status": "supported",
+                "explanation": "CleanShot itself provides no trial; the only documented trial is Setapp's third-party offer.",
+                "citations": [
+                  {
+                    "source_id": "E13",
+                    "quote": "We don't provide a trial, but we do have a **30-day money-back guarantee** so feel free to give the app a try. If it doesn't meet your expectations, just [let us know](mailto:hello@cleanshot.com) and you'll get a full refund. CleanShot is also available with [Setapp](https://go.setapp.com/stp226?refAppID=321), which does have a 7-day free trial."
+                  }
+                ]
+              },
+              {
+                "text": "evaluation starts with a paid subscription.",
+                "status": "uncertain",
+                "explanation": "E13 establishes that evaluation is not a free trial and is covered by a refund guarantee, but it does not literally establish that the required purchase is a Pro subscription.",
+                "citations": [
+                  {
+                    "source_id": "E13",
+                    "quote": "We don't provide a trial, but we do have a **30-day money-back guarantee** so feel free to give the app a try. If it doesn't meet your expectations, just [let us know](mailto:hello@cleanshot.com) and you'll get a full refund. CleanShot is also available with [Setapp](https://go.setapp.com/stp226?refAppID=321), which does have a 7-day free trial."
+                  }
+                ]
+              },
+              {
+                "text": "The purchase is covered by a 30-day money-back guarantee; if CleanShot does not meet your expectations, contact support within that period for a full refund.",
+                "status": "supported",
+                "explanation": "The source states the 30-day guarantee, the expectations condition, the need to contact CleanShot, and the full refund.",
+                "citations": [
+                  {
+                    "source_id": "E13",
+                    "quote": "We don't provide a trial, but we do have a **30-day money-back guarantee** so feel free to give the app a try. If it doesn't meet your expectations, just [let us know](mailto:hello@cleanshot.com) and you'll get a full refund."
+                  }
+                ]
+              }
+            ],
+            "findings": [
+              {
+                "text": "The Pro plan costs $10 per user/month, billed annually.",
+                "kind": "instruction",
+                "explanation": "This directly violates the user's instruction: “Do not include the Pro price in this email.”"
+              },
+              {
+                "text": "With CleanShot Pro, an admin can bring screenshot and screen-recording seats under centralized access management, with single sign-on and Scim.",
+                "kind": "factual",
+                "explanation": "The supplied literal evidence does not establish the asserted Pro-plan and seat scope."
+              },
+              {
+                "text": "It turns CleanShot’s Mac app into software managed through one team plan.",
+                "kind": "factual",
+                "explanation": "No supplied literal citation entails the complete one-team-plan assertion."
+              },
+              {
+                "text": "Each subscribed seat includes the always-up-to-date Mac app",
+                "kind": "factual",
+                "explanation": "The evidence supports latest-app access for active Cloud Pro subscribers but not inclusion for each subscribed seat."
+              }
+            ],
+            "summary": "Revise: the draft explicitly includes a forbidden Pro price, and several material Pro-plan and per-seat assertions lack complete literal support. The macOS requirement, direct-trial limitation, access-control capabilities, and refund terms are supported."
+          },
+          "version": 2
+        }
+      }
+    }
+  ],
+  "calls": 3,
+  "estimated_cost_usd": 0.6851724
+}

@@ -10,8 +10,8 @@ import pytest
 
 from app.ai.base import ResearchTool
 from app.knowledge.artifacts import BusinessProfile
-from app.market.claims import ClaimAxis
-from app.market.rivals import RivalLead, RivalScout
+from app.market.claims import Claim, ClaimAxis, ClaimSet
+from app.market.rivals import RivalLead, RivalProfile, RivalScout, review_rationale
 from app.runtime.exceptions import CapabilityUnavailableError
 from tests.market.conftest import ScriptedCrawler, ScriptedProvider
 
@@ -26,6 +26,38 @@ HOME_PAGE = (
     "# Alpha\n\n"
     "The fastest way to ship an agent. Supports 12 models across 4 providers.\n"
 )
+
+
+def test_inconsistent_discounted_monthly_and_annual_total_are_not_verified_by_quote_presence():
+    text = "Basic is $39/mo (or $28/mo billed yearly, $468 total/yr), including 100 responses."
+    fact = Claim(text=text, verbatim="39 USD/mo 468 USD total/yr 28 USD/mo Save 132 USD/yr",
+                 source="https://forms.example/pricing", axis=ClaimAxis.PRICE)
+    feature = Claim(text="Collect video answers", verbatim="Collect video answers.", axis=ClaimAxis.BREADTH)
+    original = RivalProfile(name="Forms", verified=True, pricing=text,
+                            why="Compare Basic $39/mo with our €20/mo plan.", rationale_status="verified",
+                            claims=ClaimSet(claims=[fact, feature]))
+    reviewed = review_rationale(original)
+    assert reviewed.claims.claims == [feature]
+    assert reviewed.unverified_claims == 1
+    assert "needs verification" in reviewed.pricing
+    assert "inconsistent" in reviewed.note
+    assert reviewed.why == "" and reviewed.rationale_status == "unverified"
+    assert original.claims.claims == [fact, feature]
+    assert original.pricing == text
+    assert review_rationale(reviewed) == reviewed
+
+
+@pytest.mark.parametrize("text", [
+    "Basic is $28/mo billed yearly, $336 total/yr.",
+    "Basic is $8.33/month billed annually, $100.00 total/year.",
+    "Basic is $28.54/mo billed yearly, $342 total/yr.",
+    "Basic is $28/mo billed yearly, €468 total/yr.",
+    "Basic is $28 per seat per month billed yearly, $468 total/yr.",
+])
+def test_annual_review_preserves_consistent_rounded_or_differently_scoped_prices(text):
+    profile = RivalProfile(name="Forms", pricing=text,
+        claims=ClaimSet(claims=[Claim(text=text, verbatim=text, axis=ClaimAxis.PRICE)]))
+    assert review_rationale(profile) == profile
 
 
 def profile_payload(**overrides: object) -> dict:

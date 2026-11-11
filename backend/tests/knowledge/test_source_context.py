@@ -2,7 +2,14 @@
 
 from app.ingestion.documents import SourceType
 from app.knowledge.artifacts import KnowledgeArtifacts
-from app.knowledge.ledger import Evidence, EvidenceContext, EvidenceKind, EvidenceLedger
+from app.knowledge.ledger import (
+    Evidence,
+    EvidenceContext,
+    EvidenceIndex,
+    EvidenceKind,
+    EvidenceLedger,
+    unconfirmed_billing,
+)
 from app.knowledge.store import (
     build_corpus,
     fingerprint_documents,
@@ -11,6 +18,33 @@ from app.knowledge.store import (
 )
 from app.market.capabilities import capability_ledger_fingerprint
 from app.models.knowledge_document import KnowledgeDocument
+
+
+def test_cached_artifact_cannot_bind_a_price_to_an_unselected_billing_control():
+    document = KnowledgeDocument(title="Pricing", source_type=SourceType.WEBSITE,
+        source_url="https://forms.example/pricing",
+        content="Pay monthlyPay yearly2 months off\n\n### Pro €20 per month")
+    entry = Evidence(id="E1", kind=EvidenceKind.PRICE, claim="Pro costs €20 per month",
+        verbatim="### Pro €20 per month", source=document.source_url, document_id=str(document.id),
+        context=EvidenceContext(subject="Pro", claim_scope="offer", conditions="Pay monthly option shown"))
+    artifacts = KnowledgeArtifacts(evidence=EvidenceLedger(entries=[entry]),
+        source_context_fingerprint=fingerprint_source_context([document]))
+    updated = refresh_provenance(artifacts, [document])
+    assert unconfirmed_billing(updated.evidence.entries[0])
+    assert not unconfirmed_billing(artifacts.evidence.entries[0]), "read adapter must not mutate stored history"
+    assert EvidenceIndex(updated.evidence, document.content).unsupported("Pro costs €20 per month, billed monthly.")
+    assert refresh_provenance(updated, [document]) == updated
+
+
+def test_plain_visible_quotation_keeps_its_source_references_when_metadata_is_refreshed():
+    document = KnowledgeDocument(title="API", source_type=SourceType.WEBSITE,
+        source_url="https://forms.example/api", content="You can [send emails](/send) from your code.")
+    artifacts = KnowledgeArtifacts(evidence=EvidenceLedger(entries=[Evidence(
+        id="E1", kind=EvidenceKind.FEATURE, claim="Send emails from your code",
+        verbatim="You can send emails from your code.", document_id=str(document.id), source=document.source_url,
+    )]))
+    updated = refresh_provenance(artifacts, [document])
+    assert updated.evidence.entries[0].source_references[0]["document_id"] == str(document.id)
 
 
 def test_capability_read_adapter_uses_the_same_source_context_as_its_creator(tmp_path):

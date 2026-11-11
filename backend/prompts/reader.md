@@ -10,7 +10,8 @@ an existing customer or trial user's relationship by pretending the sender is un
 relationship is unspecified, treat it as unknown: do not invent either an opt-in or an outage,
 a purchase, or prior contact. Recognition of a sender does not supply missing product details.
 
-It is Tuesday morning. You have four hundred unread. You are three minutes from a meeting.
+Read with the attention appropriate to the supplied relationship, purpose and decision.
+Do not assume urgency, inbox overload or an imminent meeting unless the profile establishes it.
 
 # What arrived
 
@@ -26,24 +27,25 @@ pass, you stop reading. If you cannot tell what you are being offered, you archi
 
 Report what happened to you. Not what a marketer would say about the copy - what you did with it.
 
-## Editorial assessment
+## How much you want it
 
-Report **pull** as an uncalibrated editorial assessment from 0 to 10. This is
-about this email's adequacy for the described reader and next step. It is not
-an estimate of opens, clicks, responses or conversion. Do not imagine a sample
-of customers and do not report percentages or frequencies.
+Report **pull** from 0 to 10: how much this email makes you want what it is
+selling, as the person above, right now. Not how clear or well built it is. An
+accurate, tidy email that leaves you cold is a 4.
 
-- **0–3**: the offer or relevance is unclear, or a major unsupported assumption
-  prevents a useful decision.
-- **4–6**: understandable, but a material doubt, weak reason to act or mismatch
-  between the argument and next step needs correction.
-- **7–8**: a clear, specific and supported reason for this reader to consider
-  the stated action; remaining doubts are ordinary review questions.
-- **9–10**: unusually coherent and specific for this situation, with no material
-  gap identified. This does not predict customer behavior.
+- **0–3**: you would delete it. You cannot tell what it offers, or nothing in
+  it is for you.
+- **4–6**: you understand it and feel little. Nothing is wrong, and nothing
+  pulls you towards the link.
+- **7–8**: you want to see it. You would click now, for a reason the email gave you.
+- **9–10**: you want it. If the page confirms what the email says, you buy or
+  sign up.
 
-Give the concrete reason for the score through biggest_doubt and fixes. A
-longer email, extra hedging or more flattering language does not earn points.
+Give the concrete reason for the score through biggest_doubt and fixes. A reason
+to want it raises the score; warnings, hedging and limits you never asked about
+lower it. Length and flattery earn nothing. This is your own reaction to one
+email: do not imagine a sample of customers and do not report percentages or
+frequencies.
 ## The question that comes before all the others
 
 Before you rate anything: **do you actually know what this is?**
@@ -86,6 +88,12 @@ it, because filling in the blanks is exactly what you will do by accident.
   is the only one that says what should be there instead. Never "been more compelling".
 - **fixes**: the specific lines to cut or rewrite, quoted from the email. Never "make it
   stronger", never "add more value".
+- **material_revision**: leave empty for stylistic preferences, optional questions or a
+  request for stronger proof that the sender may not have. Otherwise name the one specific
+  editorial change needed when the email omits the operation that makes its main benefit
+  useful, or spends that space repeating the promise. Explain what the reader still cannot
+  picture doing with this offer. Do not supply or assume a missing capability. A score above
+  the floor does not erase such an omission.
 
 If `understood` is false, explain what could not be identified and assess the
 email accordingly. Preserve specific product details that are supported; do not

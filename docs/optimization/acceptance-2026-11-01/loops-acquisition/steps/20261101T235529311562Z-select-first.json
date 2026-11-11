@@ -1,0 +1,240 @@
+{
+  "index": 0,
+  "segment": {
+    "name": "A Supabase or Clerk app team moving auth and onboarding email off the platform's built-in defaults before launch",
+    "organization": "Small software team shipping a production app on a managed auth provider (Supabase Auth, Clerk) — often an AI or developer-tool product",
+    "workflow": "Signup, magic-link, confirmation and reset email currently leave through the auth platform's built-in sender; going to production forces them to supply their own SMTP or API and, at the same time, they discover they still have no onboarding or lifecycle sequence",
+    "need": "One provider that takes over the auth/transactional send path on a verified domain and also runs the onboarding and activation sequence off the same contact record",
+    "buyer_role": "Technical founder or lead engineer",
+    "user_role": "Engineer configuring SMTP/DNS; whoever writes the onboarding copy afterwards",
+    "current_alternative": "Supabase's built-in email service during development, then Resend, Postmark or SES as custom SMTP with no lifecycle layer; auth templates edited in the dashboard",
+    "assessment": {
+      "compatibility": "supported",
+      "evidence_strength": "supported",
+      "findability": "verified",
+      "usage_or_purchase": "unknown",
+      "reachability": "venue_identified",
+      "counterevidence_summary": [
+        "The platform publicly steered this audience to a competing provider as the easy SMTP answer, in the same announcement that created the trigger. — A first-party recommendation from the platform the team already trusts arrives at the moment of the forced decision, and is positioned as the lower-effort option, which is a direct buying obstacle rather than a feature gap. Review before prioritising.",
+        "The recommended integration is not a configuration change but an application: a new Edge Function, signature verification and an environment variable per action type. — It is real engineering work for a team whose alternative is pasting SMTP credentials, but the same page offers a simpler SMTP route, so the obstacle is manageable rather than blocking. Minor condition; does not exclude this audience.",
+        "Any auth action type without a matching template quietly reverts to the platform's default sender, and the platform adds new action types over time, so the mapping is ongoing maintenance. — The fallback preserves delivery rather than dropping mail, but it routes some production auth email back through the rate-limited test sender the team is trying to leave, and new action types can reintroduce that silently. Minor condition; does not exclude this audience."
+      ],
+      "counterevidence": 2,
+      "priority": "review_first",
+      "reasons": [
+        "The trigger is documented in first-party platform documentation rather than vendor marketing: the built-in email provider is limited to 2 emails per hour and that limit is only configurable via custom SMTP or the Send Email hook.",
+        "The platform maintainer states on the record that the default email system is for testing only and not intended for production use, and describes cutting the rate because of abuse — a dated, compulsory decision point for any team approaching launch.",
+        "Compatibility is supported on both sides: the supplied product truth covers the Supabase and Clerk integrations, SMTP, supplied DNS records and onboarding examples, and the corpus contains a dedicated, step-by-step integration guide that the vendor calls the recommended way to send these auth emails.",
+        "Findability is verified by the public discussion thread: identifiable developers are visible at precisely this trigger, naming the providers they switched to and the problems they hit configuring custom SMTP.",
+        "Usage is not captured: nothing in the corpus shows a Supabase- or Clerk-stack team actually running its auth and onboarding mail through this product.",
+        "The second half of the candidate's thesis — that the same team has no onboarding sequence and would cover both with one choice — is not evidenced anywhere in the corpus; the integration guide explicitly limits itself to auth email and points elsewhere for contact sync and workflows."
+      ],
+      "unknowns": [
+        "No auth-specific latency, regional sending or send-rate figures appear in the corpus, so the candidate's UNVERIFIED regional-sending disqualifier stays unresolved.",
+        "Whether teams at this trigger actually bundle the lifecycle decision with the auth-email decision, or simply pick the cheapest compliant SMTP host and move on.",
+        "Whether the 2-emails-per-hour figure in current documentation and the 4-per-hour figure in the 2023 announcement reflect the same limit over time; both appear in the corpus.",
+        "Review the counterevidence before prioritising this audience."
+      ],
+      "evidence": [
+        {
+          "claim": "The platform documents a hard ceiling of two emails per hour on its built-in sender, escapable only by supplying custom SMTP or the send-email hook — the compulsory provider decision this candidate is built on.",
+          "quote": "2 emails per hour with the built-in email provider. You can configure this limit when you use custom SMTP or the Send Email hook.",
+          "url": "https://supabase.com/docs/guides/auth/rate-limits",
+          "kind": "need",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-11-01T04:04:28.525034Z"
+        },
+        {
+          "claim": "The platform maintainer states publicly that the default sender is test-only and not for production, which converts launch readiness into an email-provider purchase.",
+          "quote": "The \"default\" email system we provide is only for testing purposes - it is [not intended for production use](https://supabase.com/docs/guides/platform/going-into-prod#availability).",
+          "url": "https://github.com/orgs/supabase/discussions/15896",
+          "kind": "need",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-11-01T04:04:32.321293Z"
+        },
+        {
+          "claim": "The rate reduction was imposed abruptly because of abuse of the shared sender, which is what pushes teams off the default on a deadline rather than by plan.",
+          "quote": "Because of a few customers treating the email system as a spam system, we had to decrease the number of emails that you can send to 4 per hour.",
+          "url": "https://github.com/orgs/supabase/discussions/15896",
+          "kind": "need",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-11-01T04:04:32.321293Z"
+        },
+        {
+          "claim": "The workaround this audience reaches for is a general-purpose SMTP provider with no lifecycle layer, recommended by the platform maintainer himself.",
+          "quote": "I would personally go for AWS SES as your custom SMTP provider - it's very cheap and reputable.",
+          "url": "https://github.com/orgs/supabase/discussions/15896",
+          "kind": "alternative",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-11-01T04:04:32.321293Z"
+        },
+        {
+          "claim": "Teams in this segment are observable configuring third-party SMTP and reporting failures while doing it, which is the identifying behaviour for this trigger.",
+          "quote": "I was able to get sendgrid configured - but it seems like a bug",
+          "url": "https://github.com/orgs/supabase/discussions/15896",
+          "kind": "example",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-11-01T04:04:32.321293Z"
+        },
+        {
+          "claim": "The platform's own public discussion board is a concrete venue where teams at this exact decision point post and reply.",
+          "quote": "I relived to hear it doesn't be affected if we're using custom SMTP provider such as SendGrid.",
+          "url": "https://github.com/orgs/supabase/discussions/15896",
+          "kind": "access",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-11-01T04:04:32.321293Z"
+        },
+        {
+          "claim": "A documented, vendor-recommended path exists for taking over the whole auth send path through the platform's send-email hook.",
+          "quote": "This is the recommended way to send Supabase authentication emails with\nLoops.",
+          "url": "https://loops.so/docs/integrations/supabase/send-email",
+          "kind": "example",
+          "impact": "unknown",
+          "impact_reason": "",
+          "fetched_at": "2026-11-01T04:04:29.039379Z"
+        },
+        {
+          "claim": "The platform publicly steered this audience to a competing provider as the easy SMTP answer, in the same announcement that created the trigger.",
+          "quote": "10 August 2023 edit: We have introduced a new integration with Resend which makes it incredibly easy to set up SMTP. Read more [here](https://supabase.com/blog/supabase-integrations-marketplace#resend)",
+          "url": "https://github.com/orgs/supabase/discussions/15896",
+          "kind": "counterevidence",
+          "impact": "material",
+          "impact_reason": "A first-party recommendation from the platform the team already trusts arrives at the moment of the forced decision, and is positioned as the lower-effort option, which is a direct buying obstacle rather than a feature gap.",
+          "fetched_at": "2026-11-01T04:04:32.321293Z"
+        },
+        {
+          "claim": "The recommended integration is not a configuration change but an application: a new Edge Function, signature verification and an environment variable per action type.",
+          "quote": "Create a new Supabase Edge Function:",
+          "url": "https://loops.so/docs/integrations/supabase/send-email",
+          "kind": "counterevidence",
+          "impact": "minor",
+          "impact_reason": "It is real engineering work for a team whose alternative is pasting SMTP credentials, but the same page offers a simpler SMTP route, so the obstacle is manageable rather than blocking.",
+          "fetched_at": "2026-11-01T04:04:29.039379Z"
+        },
+        {
+          "claim": "Any auth action type without a matching template quietly reverts to the platform's default sender, and the platform adds new action types over time, so the mapping is ongoing maintenance.",
+          "quote": "You don't need to create all of them — only create templates for the action types you use, and any action type without a matching template will fall back to Supabase's default sender",
+          "url": "https://loops.so/docs/integrations/supabase/send-email",
+          "kind": "counterevidence",
+          "impact": "minor",
+          "impact_reason": "The fallback preserves delivery rather than dropping mail, but it routes some production auth email back through the rate-limited test sender the team is trying to leave, and new action types can reintroduce that silently.",
+          "fetched_at": "2026-11-01T04:04:29.039379Z"
+        }
+      ]
+    },
+    "kind": "triggered",
+    "added_by": "cartographer",
+    "who": "Teams whose repo, docs or stack page shows Supabase Auth or Clerk and who are visibly at or near production launch",
+    "why_them": "Hypothesis: the production checklist creates a dated, compulsory decision about an email provider — and the team making it is also the team with no welcome sequence, so one choice can cover both instead of two.",
+    "trigger": "Hitting Supabase's built-in limit of 2 emails per hour, or reading the production checklist that says the built-in service is not meant for production and delivers only to organization members",
+    "pains": [
+      "The built-in auth sender is rate-limited and best-effort with no SLA, and docs say it is not for production",
+      "Default auth email lands in spam often enough that teams disable verification rather than fix it",
+      "Choosing a custom SMTP provider solves auth mail but leaves onboarding and activation email unbuilt, so a second tool gets added weeks later"
+    ],
+    "objection": "Auth email is the most critical mail we send; routing it through a marketing-shaped tool sounds like a deliverability and lock-in risk.",
+    "angle": "Hypothesis only: documented Supabase and Clerk integration paths plus supplied SPF/DKIM/DMARC records make the auth path and the lifecycle path the same setup.",
+    "sophistication": "problem_aware",
+    "fit": 0.0,
+    "basis": "Supabase's own documentation and GitHub discussion establish the limit and the production warning, which is an observable, dated trigger rather than a vendor claim. Loops publishes a Supabase send-email integration and a Clerk integration, and supplies the DNS records with Verify Records flow. Missing product information: the supplied capability set does not state auth-email-specific rate limits, latency, or regional sending, and a competitor explicitly advertises regional sending for latency — unverified against Loops.",
+    "population": "unknown",
+    "signals": [
+      "Supabase Auth or Clerk visible in the repo, docs, or stack page",
+      "auth email arriving from a default platform sender rather than a branded domain",
+      "production-readiness checklist, launch date or 'beta' banner on the site",
+      "custom SMTP configuration questions in the project's issues or discussions",
+      "no welcome or onboarding email after signup despite a live product"
+    ],
+    "where": [
+      "supabase.com/docs/guides/auth/rate-limits and the going-into-prod checklist",
+      "GitHub supabase/supabase issues and discussions on email rate limits and custom SMTP",
+      "loops.so/docs/integrations/supabase/send-email and the Clerk integration docs",
+      "r/Supabase and Clerk community threads on production auth email",
+      "dev.to and MakerKit guides on configuring Supabase auth for production"
+    ],
+    "unobvious": true,
+    "researchable": true,
+    "researchability": "medium",
+    "researchability_reasons": [
+      "5 useful observable signals and 5 specific research venues.",
+      "The audience is anchored in a concrete workflow or situation.",
+      "No clear trigger narrows the research.",
+      "No population basis is stated."
+    ],
+    "definition": {
+      "schema_version": 2,
+      "required_structural_signals": [
+        {
+          "code": "managed_auth_provider_in_stack",
+          "description": "Supabase Auth, Clerk or comparable hosted auth"
+        },
+        {
+          "code": "production_launch_imminent_or_recent",
+          "description": ""
+        }
+      ],
+      "required_workflow_signals": [
+        {
+          "code": "auth_email_on_platform_default_sender",
+          "description": "Signup/reset mail still leaving via built-in provider"
+        },
+        {
+          "code": "no_onboarding_sequence_after_signup",
+          "description": ""
+        }
+      ],
+      "required_product_capabilities": [
+        "fact_45ede237b849ba4a",
+        "fact_01dcabbb3cca2cca",
+        "fact_78e60685af1e3d7e",
+        "fact_01d0084451154837",
+        "fact_cc52b9514d84aa9c",
+        "fact_0c9d91f2e49a2339",
+        "fact_04f82629c42d737a",
+        "fact_232d0ed1b966778d"
+      ],
+      "optional_signals": [
+        {
+          "code": "uses_nextjs_or_nuxt_framework",
+          "description": ""
+        },
+        {
+          "code": "public_dns_without_sending_subdomain",
+          "description": ""
+        }
+      ],
+      "hard_disqualifiers": [
+        {
+          "code": "cold_outbound_or_purchased_lists",
+          "description": "",
+          "outcome": "EXCLUDED"
+        },
+        {
+          "code": "requires_regional_sending_for_latency",
+          "description": "Unknown for Loops in the supplied material; a rival advertises it",
+          "outcome": "UNVERIFIED"
+        },
+        {
+          "code": "requires_sms_or_push_channel",
+          "description": "",
+          "outcome": "EXCLUDED"
+        }
+      ],
+      "eligible_subsegments": [
+        "Supabase-stack AI apps",
+        "Clerk-authenticated Next.js SaaS",
+        "Nuxt/Laravel app teams"
+      ],
+      "excluded_subsegments": [
+        "self-hosted mail-server teams with no intention to use a vendor"
+      ],
+      "max_team_size": 30
+    }
+  }
+}

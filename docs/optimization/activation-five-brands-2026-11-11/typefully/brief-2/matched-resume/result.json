@@ -1,0 +1,1095 @@
+{
+  "id": "b7b50b0c-ec62-490f-9dd3-1c817148cb2a",
+  "campaign_id": "00cef3d8-200d-4707-a8da-1971f556f8ae",
+  "status": "completed",
+  "needs_review": true,
+  "outcome_status": "degraded",
+  "review_reasons": [
+    "Some drafts retain unresolved strategy or review findings."
+  ],
+  "error_message": null,
+  "started_at": "2026-11-11T08:29:35.228531Z",
+  "completed_at": "2026-11-11T08:33:52.656467Z",
+  "created_at": "2026-11-11T08:29:35.228531Z",
+  "total_input_tokens": 133088,
+  "total_output_tokens": 20342,
+  "total_cache_read_tokens": 55552,
+  "estimated_cost_usd": 1.275,
+  "recommendation_snapshot": {
+    "campaign_id": "00cef3d8-200d-4707-a8da-1971f556f8ae",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "5a3c63ff-787e-4aac-a40b-55a5006da560",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Your draft is already written; check its Typefully preview, then give it a specific publication date and time so it is ready on your schedule rather than remaining only a finished draft."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:29:35.363665Z",
+      "completed_at": "2026-11-11T08:30:26.430841Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 17204,
+      "output_tokens": 3533,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.249971,
+      "duration_ms": 50902.7607999742,
+      "attempt": 1
+    },
+    {
+      "id": "ad09b720-3b39-4c0d-951d-4cfc1107560a",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · first draft",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "subject": "Schedule your finished draft"
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:30:26.513753Z",
+      "completed_at": "2026-11-11T08:30:40.145134Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 15467,
+      "output_tokens": 865,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.156035,
+      "duration_ms": 13521.99269994162,
+      "attempt": 1
+    },
+    {
+      "id": "5ab52a53-49f5-4f1c-8d3f-0172e78de946",
+      "agent_id": "claim_reviewer",
+      "agent_name": "Claim Reviewer",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · checking claims against sources"
+      },
+      "output_data": {
+        "semantic_review": {
+          "key": "127834f02a15a24479e4870a5e9f95211d84ecec0aeb4f7b111c88188c92752f",
+          "approved": false,
+          "decision": {
+            "verdict": "revise",
+            "claims": [
+              {
+                "text": "Schedule your finished draft",
+                "status": "unsupported",
+                "explanation": "The sources support Typefully as a scheduler, but they do not establish this recipient’s draft status. The steering also expressly prohibits stating that contextual detail as fact.",
+                "citations": []
+              },
+              {
+                "text": "Preview every element, then choose its publication date and time.",
+                "status": "unsupported",
+                "explanation": "E9 supports checking threads, mentions, and media, not every element. No supplied source documents choosing a specific publication date and time.",
+                "citations": []
+              },
+              {
+                "text": "Give your draft a date and time",
+                "status": "unsupported",
+                "explanation": "The supplied sources establish scheduling generally but do not document assigning a specific date and time to a draft.",
+                "citations": []
+              },
+              {
+                "text": "Before you schedule your finished draft, check its Typefully preview.",
+                "status": "unsupported",
+                "explanation": "E9 supports checking a post before it goes live, but the full passage also states the prohibited, unverified recipient-specific claim that the draft is finished.",
+                "citations": []
+              },
+              {
+                "text": "You can review the post, including threads, mentions, and media, before it goes live.",
+                "status": "supported",
+                "explanation": "This accurately restates Typefully’s documented preview capability and its before-publication condition.",
+                "citations": [
+                  {
+                    "source_id": "E9",
+                    "quote": "Check posts before they go live, including threads, mentions, and media."
+                  }
+                ]
+              },
+              {
+                "text": "Typefully is a social media scheduler",
+                "status": "supported",
+                "explanation": "The vendor explicitly describes Typefully as a social media scheduler.",
+                "citations": [
+                  {
+                    "source_id": "E1",
+                    "quote": "### The AI-powered, collaborative social media scheduler for X, LinkedIn, Bluesky, and Threads."
+                  }
+                ]
+              },
+              {
+                "text": "turns a finished draft into scheduled content with a publication date and time.",
+                "status": "unsupported",
+                "explanation": "The sources establish a scheduling product but do not document this complete draft-to-scheduled workflow or the selection of a publication date and time.",
+                "citations": []
+              },
+              {
+                "text": "Open the draft and review each element in the preview.",
+                "status": "unsupported",
+                "explanation": "E9 documents previews of threads, mentions, and media, but does not support the broader promise that each element can be reviewed.",
+                "citations": []
+              },
+              {
+                "text": "That quick check helps you confirm what you’re scheduling before you commit it to your calendar.",
+                "status": "supported",
+                "explanation": "The sources jointly support checking posts before publication and viewing scheduled content in Typefully’s scheduling calendar; confirmation is the ordinary purpose of that check.",
+                "citations": [
+                  {
+                    "source_id": "E9",
+                    "quote": "Check posts before they go live, including threads, mentions, and media."
+                  },
+                  {
+                    "source_id": "proposition:action:1",
+                    "quote": "#### A calendar built for scheduling\nSee what's scheduled, in review, and ready to ship, across the whole team."
+                  }
+                ]
+              },
+              {
+                "text": "Then choose the exact date and time you want the post to publish.",
+                "status": "unsupported",
+                "explanation": "No supplied source explicitly documents selecting an exact publication date and time.",
+                "citations": []
+              },
+              {
+                "text": "One clear decision moves the draft from written to scheduled.",
+                "status": "unsupported",
+                "explanation": "The sources do not establish that one decision alone moves a written draft into scheduled status.",
+                "citations": []
+              },
+              {
+                "text": "Schedule your draft →",
+                "status": "supported",
+                "explanation": "This CTA is consistent with Typefully’s documented scheduler category, and the supplied destination is Typefully’s documented homepage.",
+                "citations": [
+                  {
+                    "source_id": "E1",
+                    "quote": "### The AI-powered, collaborative social media scheduler for X, LinkedIn, Bluesky, and Threads."
+                  }
+                ]
+              },
+              {
+                "text": "- Typefully",
+                "status": "supported",
+                "explanation": "The requested sender and documented product are Typefully.",
+                "citations": [
+                  {
+                    "source_id": "proposition:product:0",
+                    "quote": "# content\nTypefully"
+                  }
+                ]
+              }
+            ],
+            "findings": [
+              {
+                "text": "Schedule your finished draft",
+                "kind": "instruction",
+                "explanation": "The steering says the reader’s finished-draft status is context only and must never be stated as fact. The subject and body repeatedly personalize that unverified status."
+              },
+              {
+                "text": "Preview every element, then choose its publication date and time.",
+                "kind": "factual",
+                "explanation": "“Every element” exceeds the documented preview scope, and the sources do not establish exact date-and-time selection."
+              },
+              {
+                "text": "Then choose the exact date and time you want the post to publish.",
+                "kind": "factual",
+                "explanation": "This material scheduling operation lacks literal support in the supplied sources."
+              }
+            ],
+            "summary": "Revise because the draft overstates the preview as covering every element, makes an unsupported exact date-and-time scheduling claim, and violates the instruction not to state the recipient’s finished-draft status as fact. The email otherwise follows the requested language, length, single-CTA structure, and preview-first sequence.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The draft retains the intended reader benefit: checking the documented preview before proceeding to scheduling. The unsupported scope and scheduling details require correction, but the core preview-first rationale remains present.",
+              "original_passage": "That quick check helps you confirm what you’re scheduling before you commit it to your calendar.",
+              "revised_passage": ""
+            }
+          },
+          "version": 3,
+          "sources": {
+            "E9": "https://typefully.com/",
+            "E1": "https://typefully.com/",
+            "proposition:action:1": "[Typefully: Best social media tool for creators & businesses › A calendar built for scheduling; document_id=7e5bfa93-c634-4d2f-8acb-bab125032d0b; source=https://typefully.com/; aliases=https://typefully.com/; chunk=7]"
+          }
+        },
+        "passed": false
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:30:40.173447Z",
+      "completed_at": "2026-11-11T08:31:47.349529Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 9644,
+      "output_tokens": 6030,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.264401,
+      "duration_ms": 67100.39049992338,
+      "attempt": 1
+    },
+    {
+      "id": "b8520c3b-2e8b-44a6-ae10-c43c7684749e",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 1 reader(s)",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "pull": 8
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:31:47.368596Z",
+      "completed_at": "2026-11-11T08:32:02.899300Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 3643,
+      "output_tokens": 965,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.064443,
+      "duration_ms": 15488.626200007275,
+      "attempt": 1
+    },
+    {
+      "id": "d8c7ab69-1d47-44e0-b464-1f2d4ed3c661",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "Put your post on the calendar"
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:32:02.915321Z",
+      "completed_at": "2026-11-11T08:32:25.053711Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 18121,
+      "output_tokens": 1831,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.206247,
+      "duration_ms": 22090.59159993194,
+      "attempt": 2
+    },
+    {
+      "id": "2d11239d-8458-4956-8087-2d82851f6d04",
+      "agent_id": "claim_reviewer",
+      "agent_name": "Claim Reviewer",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · checking claims against sources"
+      },
+      "output_data": {
+        "semantic_review": {
+          "key": "e0700ab552dcf49f79a1b00c94cb6a8064c7dcec08129f6a599f6481cc4a33e3",
+          "approved": true,
+          "decision": {
+            "verdict": "supported",
+            "claims": [
+              {
+                "text": "Put your post on the calendar",
+                "status": "supported",
+                "explanation": "The subject’s scheduling action is supported by Typefully’s documented scheduler and scheduling calendar.",
+                "citations": [
+                  {
+                    "source_id": "E1",
+                    "quote": "### The AI-powered, collaborative social media scheduler for X, LinkedIn, Bluesky, and Threads."
+                  },
+                  {
+                    "source_id": "proposition:action:1",
+                    "quote": "#### A calendar built for scheduling\nSee what's scheduled, in review, and ready to ship, across the whole team."
+                  }
+                ]
+              },
+              {
+                "text": "Review threads, mentions, and media before choosing when it should publish.",
+                "status": "supported",
+                "explanation": "Typefully documents checking these post elements before publication, while its scheduler supports the subsequent scheduling step.",
+                "citations": [
+                  {
+                    "source_id": "E9",
+                    "quote": "Check posts before they go live, including threads, mentions, and media."
+                  },
+                  {
+                    "source_id": "E1",
+                    "quote": "### The AI-powered, collaborative social media scheduler for X, LinkedIn, Bluesky, and Threads."
+                  }
+                ]
+              },
+              {
+                "text": "Choose when your post goes live",
+                "status": "supported",
+                "explanation": "Choosing a publication time is within the documented social-media scheduling mechanism and scheduling calendar.",
+                "citations": [
+                  {
+                    "source_id": "E1",
+                    "quote": "### The AI-powered, collaborative social media scheduler for X, LinkedIn, Bluesky, and Threads."
+                  },
+                  {
+                    "source_id": "proposition:action:1",
+                    "quote": "#### A calendar built for scheduling\nSee what's scheduled, in review, and ready to ship, across the whole team."
+                  }
+                ]
+              },
+              {
+                "text": "Start with Typefully’s post preview before you schedule.",
+                "status": "supported",
+                "explanation": "The sources document both Typefully’s pre-publication preview and its scheduling function; the order is an instruction rather than an additional product claim.",
+                "citations": [
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "#### Pixel-perfect previews before you ship\nCheck posts before they go live, including threads, mentions, and media."
+                  },
+                  {
+                    "source_id": "E1",
+                    "quote": "### The AI-powered, collaborative social media scheduler for X, LinkedIn, Bluesky, and Threads."
+                  }
+                ]
+              },
+              {
+                "text": "Typefully is a social media scheduler, and its preview lets you check threads, mentions, and media before a post goes live.",
+                "status": "supported",
+                "explanation": "Both the product category and the complete preview capability are stated directly by the sources.",
+                "citations": [
+                  {
+                    "source_id": "E1",
+                    "quote": "### The AI-powered, collaborative social media scheduler for X, LinkedIn, Bluesky, and Threads."
+                  },
+                  {
+                    "source_id": "E9",
+                    "quote": "Check posts before they go live, including threads, mentions, and media."
+                  }
+                ]
+              },
+              {
+                "text": "Use that check to confirm the post you’re about to place on your calendar.",
+                "status": "supported",
+                "explanation": "This describes the reader’s use of the documented pre-publication check before using Typefully’s scheduling calendar; it does not promise perfect rendering or another outcome.",
+                "citations": [
+                  {
+                    "source_id": "E9",
+                    "quote": "Check posts before they go live, including threads, mentions, and media."
+                  },
+                  {
+                    "source_id": "proposition:action:1",
+                    "quote": "#### A calendar built for scheduling\nSee what's scheduled, in review, and ready to ship, across the whole team."
+                  }
+                ]
+              },
+              {
+                "text": "You can see what’s scheduled, in review, and ready to ship.",
+                "status": "supported",
+                "explanation": "This is a direct, scope-safe restatement of the documented calendar capability.",
+                "citations": [
+                  {
+                    "source_id": "E7",
+                    "quote": "See what's scheduled, in review, and ready to ship, across the whole team."
+                  }
+                ]
+              },
+              {
+                "text": "Once the preview looks right, choose one specific publication date and time for the post, then schedule it in Typefully.",
+                "status": "supported",
+                "explanation": "The conditional instruction uses Typefully’s documented post preview and social-media scheduling calendar. It does not guarantee publication without completing the scheduling action.",
+                "citations": [
+                  {
+                    "source_id": "E9",
+                    "quote": "Check posts before they go live, including threads, mentions, and media."
+                  },
+                  {
+                    "source_id": "E1",
+                    "quote": "### The AI-powered, collaborative social media scheduler for X, LinkedIn, Bluesky, and Threads."
+                  },
+                  {
+                    "source_id": "proposition:action:1",
+                    "quote": "#### A calendar built for scheduling\nSee what's scheduled, in review, and ready to ship, across the whole team."
+                  }
+                ]
+              },
+              {
+                "text": "That gives the post a clear place on your calendar and completes the scheduling step.",
+                "status": "supported",
+                "explanation": "This is the direct operational consequence of completing the documented calendar-scheduling step, not a promise of reach, engagement, or guaranteed publication.",
+                "citations": [
+                  {
+                    "source_id": "proposition:action:1",
+                    "quote": "#### A calendar built for scheduling\nSee what's scheduled, in review, and ready to ship, across the whole team."
+                  }
+                ]
+              },
+              {
+                "text": "Schedule in Typefully →",
+                "status": "supported",
+                "explanation": "The single CTA requests the documented scheduling action in Typefully and introduces no unsupported access or outcome promise.",
+                "citations": [
+                  {
+                    "source_id": "E1",
+                    "quote": "### The AI-powered, collaborative social media scheduler for X, LinkedIn, Bluesky, and Threads."
+                  },
+                  {
+                    "source_id": "proposition:action:1",
+                    "quote": "#### A calendar built for scheduling\nSee what's scheduled, in review, and ready to ship, across the whole team."
+                  }
+                ]
+              }
+            ],
+            "findings": [],
+            "summary": "Every material product and workflow assertion is supported by the supplied Typefully sources. The draft uses the documented preview first, asks for one scheduling action with a specific date and time, uses one CTA to the selected destination, and keeps the body under 150 words without unsupported access, timing, or outcome claims.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The prior operational benefit was using the preview check to confirm the post before committing it to the calendar. The revised sentence preserves both that check and its consequence in the scheduling workflow.",
+              "original_passage": "That quick check helps you confirm what you’re scheduling before you commit it to your calendar.",
+              "revised_passage": "Use that check to confirm the post you’re about to place on your calendar."
+            }
+          },
+          "version": 3,
+          "factual_repair": true,
+          "sources": {
+            "E1": "https://typefully.com/",
+            "proposition:action:1": "[Typefully: Best social media tool for creators & businesses › A calendar built for scheduling; document_id=7e5bfa93-c634-4d2f-8acb-bab125032d0b; source=https://typefully.com/; aliases=https://typefully.com/; chunk=7]",
+            "E9": "https://typefully.com/",
+            "proposition:mechanism:0": "[Typefully: Best social media tool for creators & businesses › Pixel-perfect previews before you ship; document_id=7e5bfa93-c634-4d2f-8acb-bab125032d0b; source=https://typefully.com/; aliases=https://typefully.com/; chunk=10]",
+            "E7": "https://typefully.com/"
+          }
+        },
+        "passed": true
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:32:25.066166Z",
+      "completed_at": "2026-11-11T08:33:33.137970Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 9810,
+      "output_tokens": 5906,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.262009,
+      "duration_ms": 68028.59120001085,
+      "attempt": 2
+    },
+    {
+      "id": "1a71b39a-7692-4301-bc5d-7542484195aa",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 1 reader(s)",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:33:33.177223Z",
+      "completed_at": "2026-11-11T08:33:52.543603Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 3647,
+      "output_tokens": 1212,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.071885,
+      "duration_ms": 19298.29529998824,
+      "attempt": 2
+    }
+  ],
+  "assets": [
+    {
+      "id": "669b17d2-4641-407b-8b45-a2d5e6ae1ff9",
+      "asset_type": "email",
+      "title": "Put your post on the calendar",
+      "content": "Subject: Put your post on the calendar\nPreview text: Review threads, mentions, and media before choosing when it should publish.\n\nChoose when your post goes live\n\nHi there,\n\nStart with Typefully’s post preview before you schedule. Typefully is a social media scheduler, and its preview lets you check threads, mentions, and media before a post goes live.\n\nUse that check to confirm the post you’re about to place on your calendar. You can see what’s scheduled, in review, and ready to ship.\n\nOnce the preview looks right, choose one specific publication date and time for the post, then schedule it in Typefully. That gives the post a clear place on your calendar and completes the scheduling step.\n\nSchedule in Typefully → https://typefully.com/\n\n- Typefully",
+      "content_html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n<meta name=\"x-apple-disable-message-reformatting\" />\n<meta name=\"color-scheme\" content=\"light\" />\n<meta name=\"supported-color-schemes\" content=\"light\" />\n<title>Put your post on the calendar</title>\n</head>\n<body style=\"margin:0;padding:0;background-color:#eceef3;-webkit-text-size-adjust:100%;\">\n<div style=\"display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;\">Review threads, mentions, and media before choosing when it should publish.&#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; </div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#eceef3;\">\n<tr><td align=\"center\" style=\"padding:24px 12px;\">\n<table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;background-color:#ffffff;border-radius:12px;\">\n<tr><td style=\"background-color:#1a56db;height:4px;font-size:0;line-height:0;\">&nbsp;</td></tr>\n<tr><td style=\"padding:26px 36px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:18px;font-weight:800;letter-spacing:0.3px;color:#14161a;\"><a href=\"https://typefully.com/\" style=\"color:#14161a;text-decoration:none;\"><img src=\"https://typefully.com/icon/apple-icon.png\" alt=\"Typefully\" height=\"30\" style=\"display:block;border:0;height:30px;max-height:30px;width:auto;\" /></a></td></tr>\n<tr><td style=\"padding:26px 36px 10px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#1a56db;\">NEXT STEP</p></td></tr>\n<tr><td style=\"padding:0 36px 20px;\"><h1 style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:29px;line-height:1.2;font-weight:800;letter-spacing:-0.5px;color:#14161a;\">Choose when your post goes live</h1></td></tr>\n<tr><td style=\"padding:10px 36px 16px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Hi there,</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:17px;line-height:1.6;color:#3d434d;\">Start with Typefully’s post preview before you schedule. Typefully is a social media scheduler, and its preview lets you check threads, mentions, and media before a post goes live.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Use that check to confirm the post you’re about to place on your calendar. You can see what’s scheduled, in review, and ready to ship.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Once the preview looks right, choose one specific publication date and time for the post, then schedule it in Typefully. That gives the post a clear place on your calendar and completes the scheduling step.</p></td></tr>\n<tr><td style=\"padding:6px 36px 22px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td style=\"border-top:1px solid #e6e9ef;font-size:0;line-height:0;\">&nbsp;</td></tr></table></td></tr>\n<tr><td align=\"center\" style=\"padding:4px 36px 8px;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"center\" style=\"background-color:#1a56db;border-radius:8px;\"><a href=\"https://typefully.com/\" style=\"display:inline-block;padding:16px 40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;\">Schedule in Typefully</a></td></tr></table></td></tr>\n<tr><td style=\"padding:22px 36px 20px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6;color:#767d89;\">- Typefully</p></td></tr>\n<tr><td align=\"center\" style=\"padding:22px 36px 28px;background-color:#fafbfc;border-top:1px solid #e6e9ef;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:12px;line-height:1.7;color:#767d89;\">Typefully<br /><a href=\"https://typefully.com/\" style=\"color:#767d89;text-decoration:underline;\">typefully.com</a></td></tr>\n</table>\n</td></tr>\n</table>\n</body>\n</html>\n",
+      "position": 1,
+      "asset_metadata": {
+        "position": 1,
+        "role": "activation",
+        "language": "en",
+        "subject": "Put your post on the calendar",
+        "preview_text": "Review threads, mentions, and media before choosing when it should publish.",
+        "eyebrow": "NEXT STEP",
+        "headline": "Choose when your post goes live",
+        "greeting": "Hi there,",
+        "body": "Start with Typefully’s post preview before you schedule. Typefully is a social media scheduler, and its preview lets you check threads, mentions, and media before a post goes live.\n\nUse that check to confirm the post you’re about to place on your calendar. You can see what’s scheduled, in review, and ready to ship.\n\nOnce the preview looks right, choose one specific publication date and time for the post, then schedule it in Typefully. That gives the post a clear place on your calendar and completes the scheduling step.",
+        "call_to_action": "Schedule in Typefully",
+        "sign_off": "- Typefully",
+        "postscript": "",
+        "pull": 7,
+        "semantic_review": {
+          "key": "e0700ab552dcf49f79a1b00c94cb6a8064c7dcec08129f6a599f6481cc4a33e3",
+          "approved": true,
+          "decision": {
+            "verdict": "supported",
+            "claims": [
+              {
+                "text": "Put your post on the calendar",
+                "status": "supported",
+                "explanation": "The subject’s scheduling action is supported by Typefully’s documented scheduler and scheduling calendar.",
+                "citations": [
+                  {
+                    "source_id": "E1",
+                    "quote": "### The AI-powered, collaborative social media scheduler for X, LinkedIn, Bluesky, and Threads."
+                  },
+                  {
+                    "source_id": "proposition:action:1",
+                    "quote": "#### A calendar built for scheduling\nSee what's scheduled, in review, and ready to ship, across the whole team."
+                  }
+                ]
+              },
+              {
+                "text": "Review threads, mentions, and media before choosing when it should publish.",
+                "status": "supported",
+                "explanation": "Typefully documents checking these post elements before publication, while its scheduler supports the subsequent scheduling step.",
+                "citations": [
+                  {
+                    "source_id": "E9",
+                    "quote": "Check posts before they go live, including threads, mentions, and media."
+                  },
+                  {
+                    "source_id": "E1",
+                    "quote": "### The AI-powered, collaborative social media scheduler for X, LinkedIn, Bluesky, and Threads."
+                  }
+                ]
+              },
+              {
+                "text": "Choose when your post goes live",
+                "status": "supported",
+                "explanation": "Choosing a publication time is within the documented social-media scheduling mechanism and scheduling calendar.",
+                "citations": [
+                  {
+                    "source_id": "E1",
+                    "quote": "### The AI-powered, collaborative social media scheduler for X, LinkedIn, Bluesky, and Threads."
+                  },
+                  {
+                    "source_id": "proposition:action:1",
+                    "quote": "#### A calendar built for scheduling\nSee what's scheduled, in review, and ready to ship, across the whole team."
+                  }
+                ]
+              },
+              {
+                "text": "Start with Typefully’s post preview before you schedule.",
+                "status": "supported",
+                "explanation": "The sources document both Typefully’s pre-publication preview and its scheduling function; the order is an instruction rather than an additional product claim.",
+                "citations": [
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "#### Pixel-perfect previews before you ship\nCheck posts before they go live, including threads, mentions, and media."
+                  },
+                  {
+                    "source_id": "E1",
+                    "quote": "### The AI-powered, collaborative social media scheduler for X, LinkedIn, Bluesky, and Threads."
+                  }
+                ]
+              },
+              {
+                "text": "Typefully is a social media scheduler, and its preview lets you check threads, mentions, and media before a post goes live.",
+                "status": "supported",
+                "explanation": "Both the product category and the complete preview capability are stated directly by the sources.",
+                "citations": [
+                  {
+                    "source_id": "E1",
+                    "quote": "### The AI-powered, collaborative social media scheduler for X, LinkedIn, Bluesky, and Threads."
+                  },
+                  {
+                    "source_id": "E9",
+                    "quote": "Check posts before they go live, including threads, mentions, and media."
+                  }
+                ]
+              },
+              {
+                "text": "Use that check to confirm the post you’re about to place on your calendar.",
+                "status": "supported",
+                "explanation": "This describes the reader’s use of the documented pre-publication check before using Typefully’s scheduling calendar; it does not promise perfect rendering or another outcome.",
+                "citations": [
+                  {
+                    "source_id": "E9",
+                    "quote": "Check posts before they go live, including threads, mentions, and media."
+                  },
+                  {
+                    "source_id": "proposition:action:1",
+                    "quote": "#### A calendar built for scheduling\nSee what's scheduled, in review, and ready to ship, across the whole team."
+                  }
+                ]
+              },
+              {
+                "text": "You can see what’s scheduled, in review, and ready to ship.",
+                "status": "supported",
+                "explanation": "This is a direct, scope-safe restatement of the documented calendar capability.",
+                "citations": [
+                  {
+                    "source_id": "E7",
+                    "quote": "See what's scheduled, in review, and ready to ship, across the whole team."
+                  }
+                ]
+              },
+              {
+                "text": "Once the preview looks right, choose one specific publication date and time for the post, then schedule it in Typefully.",
+                "status": "supported",
+                "explanation": "The conditional instruction uses Typefully’s documented post preview and social-media scheduling calendar. It does not guarantee publication without completing the scheduling action.",
+                "citations": [
+                  {
+                    "source_id": "E9",
+                    "quote": "Check posts before they go live, including threads, mentions, and media."
+                  },
+                  {
+                    "source_id": "E1",
+                    "quote": "### The AI-powered, collaborative social media scheduler for X, LinkedIn, Bluesky, and Threads."
+                  },
+                  {
+                    "source_id": "proposition:action:1",
+                    "quote": "#### A calendar built for scheduling\nSee what's scheduled, in review, and ready to ship, across the whole team."
+                  }
+                ]
+              },
+              {
+                "text": "That gives the post a clear place on your calendar and completes the scheduling step.",
+                "status": "supported",
+                "explanation": "This is the direct operational consequence of completing the documented calendar-scheduling step, not a promise of reach, engagement, or guaranteed publication.",
+                "citations": [
+                  {
+                    "source_id": "proposition:action:1",
+                    "quote": "#### A calendar built for scheduling\nSee what's scheduled, in review, and ready to ship, across the whole team."
+                  }
+                ]
+              },
+              {
+                "text": "Schedule in Typefully →",
+                "status": "supported",
+                "explanation": "The single CTA requests the documented scheduling action in Typefully and introduces no unsupported access or outcome promise.",
+                "citations": [
+                  {
+                    "source_id": "E1",
+                    "quote": "### The AI-powered, collaborative social media scheduler for X, LinkedIn, Bluesky, and Threads."
+                  },
+                  {
+                    "source_id": "proposition:action:1",
+                    "quote": "#### A calendar built for scheduling\nSee what's scheduled, in review, and ready to ship, across the whole team."
+                  }
+                ]
+              }
+            ],
+            "findings": [],
+            "summary": "Every material product and workflow assertion is supported by the supplied Typefully sources. The draft uses the documented preview first, asks for one scheduling action with a specific date and time, uses one CTA to the selected destination, and keeps the body under 150 words without unsupported access, timing, or outcome claims.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The prior operational benefit was using the preview check to confirm the post before committing it to the calendar. The revised sentence preserves both that check and its consequence in the scheduling workflow.",
+              "original_passage": "That quick check helps you confirm what you’re scheduling before you commit it to your calendar.",
+              "revised_passage": "Use that check to confirm the post you’re about to place on your calendar."
+            }
+          },
+          "version": 3,
+          "factual_repair": true,
+          "sources": {
+            "E1": "https://typefully.com/",
+            "proposition:action:1": "[Typefully: Best social media tool for creators & businesses › A calendar built for scheduling; document_id=7e5bfa93-c634-4d2f-8acb-bab125032d0b; source=https://typefully.com/; aliases=https://typefully.com/; chunk=7]",
+            "E9": "https://typefully.com/",
+            "proposition:mechanism:0": "[Typefully: Best social media tool for creators & businesses › Pixel-perfect previews before you ship; document_id=7e5bfa93-c634-4d2f-8acb-bab125032d0b; source=https://typefully.com/; aliases=https://typefully.com/; chunk=10]",
+            "E7": "https://typefully.com/"
+          }
+        },
+        "revisions": 1,
+        "single_idea": "Your draft is already written; check its Typefully preview, then give it a specific publication date and time so it is ready on your schedule rather than remaining only a finished draft.",
+        "evidence_ids": [
+          "E9",
+          "E1"
+        ],
+        "tier": "branded",
+        "sequence_review_pending": false,
+        "selected_brief": {
+          "problem_ids": [],
+          "offer_id": "offering",
+          "action_id": "",
+          "selection_reason": "The reader has already written the draft and connected an account, so scheduling it is the smallest useful action that advances the confirmed workflow. Checking the documented preview first gives them a concrete reason to proceed: they can review the post’s threads, mentions, and media before selecting its publication time.",
+          "next_step_url": "https://typefully.com/",
+          "destination_kind": "web",
+          "destination_rejected": false,
+          "argument_issue": "",
+          "value_case": {
+            "reader_benefit": "The reader can turn the completed draft into scheduled content with an explicit publication date and time, after reviewing the elements Typefully shows before the post goes live.",
+            "mechanism": "Open the finished draft, check Typefully’s preview for threads, mentions, and media, then use scheduling to choose a specific date and time.",
+            "evidence_ids": [
+              "E9",
+              "E1"
+            ],
+            "decision_conditions": [
+              "The reader has a finished draft and connected social account, as specified by the user.",
+              "Do not state that scheduling or previewing is included in any particular plan."
+            ]
+          },
+          "claim_conditions": [
+            "Describe Typefully as supporting social media scheduling without claiming availability on a particular plan.",
+            "Limit the preview claim to posts, including threads, mentions, and media, before they go live.",
+            "Ask the reader to choose an exact date and time; do not prescribe a supposedly optimal time or promise performance."
+          ],
+          "position": 1,
+          "user_request": "Write exactly one English activation email from the Typefully team. Reader: A Typefully user with a finished draft and an already connected social account. Ask them to do one thing: Schedule that draft for a specific date and time. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+          "target_audience": "",
+          "job": "Get the reader to schedule the finished draft for an exact publication date and time.",
+          "single_idea": "Your draft is already written; check its Typefully preview, then give it a specific publication date and time so it is ready on your schedule rather than remaining only a finished draft.",
+          "felt_need": "",
+          "status_quo": "The reader currently has a finished but unscheduled draft.",
+          "why_it_fails": "",
+          "mechanism": "Typefully lets the reader check a post before it goes live, including threads, mentions, and media, and then schedule the draft through its social media scheduling product.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: finishing the draft feels like the endpoint. After: assigning one exact date and time is the step that turns it into scheduled content, and the preview provides a useful check before committing.",
+          "evidence_ids": [
+            "E9",
+            "E1"
+          ],
+          "must_not_say": [
+            "Do not claim an optimal posting date or time, increased reach, engagement, consistency, growth, or any guaranteed publishing outcome.",
+            "Do not claim that previewing guarantees perfect rendering; E9 supports checking threads, mentions, and media, while any stronger exactness statement would require presenting E10 as Fabrizio Rinaldi’s personal experience.",
+            "Do not mention pricing, free-plan eligibility, feature limits, billing, or access terms.",
+            "Do not introduce analytics, AI writing, collaboration, cross-posting, Slack, integrations, or customer-count proof.",
+            "Do not ask the reader to create another draft, connect another account, sign up, or perform a second CTA.",
+            "Do not imply the draft will publish automatically unless the scheduling action is completed.",
+            "Do not invent a timezone, deadline, urgency, or prior failed attempt."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "The reader may hesitate to commit a publication time without first checking how the completed post’s elements will appear; answer only with Typefully’s documented preview of threads, mentions, and media.",
+          "tone": "Crisp, encouraging, and momentum-driven, with short paragraphs and no manufactured urgency.",
+          "call_to_action": "Schedule your draft",
+          "next_step_decision": "Choose and commit to one exact publication date and time for the finished draft.",
+          "next_step_value": "Opening Typefully lets the existing user return to the finished draft, review its documented post preview, and take the requested scheduling action.",
+          "next_step_evidence_ids": [
+            "E9",
+            "E1"
+          ],
+          "next_step_limit": "The homepage is the exact documented Typefully destination available in the supplied material; no direct draft or scheduling URL is established. This step does not identify an optimal posting time or predict post performance.",
+          "subject_strategy": "Signal that the draft is ready for its next concrete step and foreground scheduling, without implying urgency, guaranteed results, or a recommended best time.",
+          "must_not_reuse": [],
+          "steering": {
+            "directions": [
+              "Produce exactly one English activation email.",
+              "Keep the email body under 150 words, excluding subject, preview, and signature.",
+              "Ask for one action only: schedule the finished draft for a specific date and time.",
+              "Use the documented preview as the first step and explain why it helps this reader.",
+              "Use one CTA linked to https://typefully.com/."
+            ],
+            "include_evidence_ids": [
+              "E9",
+              "E1"
+            ],
+            "exclude_evidence_ids": [
+              "E2",
+              "E3",
+              "E4",
+              "E5",
+              "E6",
+              "E7",
+              "E8",
+              "E10",
+              "E11",
+              "E12"
+            ],
+            "use": [
+              "Short, plainspoken paragraphs",
+              "A concrete scheduling instruction",
+              "Typefully’s crisp, encouraging, product-led voice"
+            ],
+            "avoid": [
+              "Multiple CTAs",
+              "Generic motivation",
+              "Unsupported plan, access, timing, or outcome claims",
+              "Feature lists"
+            ],
+            "context_only": [
+              "The reader’s draft is finished.",
+              "The reader’s social account is already connected."
+            ],
+            "excluded_values": [
+              "Optimal-time recommendations",
+              "Performance guarantees",
+              "Pricing or plan claims"
+            ]
+          }
+        }
+      },
+      "created_at": "2026-11-11T08:33:52.644891Z"
+    }
+  ],
+  "result": {
+    "run_status": "completed",
+    "report": {
+      "request": "Write exactly one English activation email from the Typefully team. Reader: A Typefully user with a finished draft and an already connected social account. Ask them to do one thing: Schedule that draft for a specific date and time. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+      "effective_audience": "A Typefully user with a finished draft and an already connected social account.",
+      "audience_scope": "",
+      "assessment_method": "Simulated reader's interest, uncalibrated; no response or conversion prediction",
+      "delivered": 1,
+      "promised": 1,
+      "contract_violations": [],
+      "emails": [
+        {
+          "position": 1,
+          "subject": "Put your post on the calendar",
+          "single_idea": "Your draft is already written; check its Typefully preview, then give it a specific publication date and time so it is ready on your schedule rather than remaining only a finished draft.",
+          "selection_reason": "The reader has already written the draft and connected an account, so scheduling it is the smallest useful action that advances the confirmed workflow. Checking the documented preview first gives them a concrete reason to proceed: they can review the post’s threads, mentions, and media before selecting its publication time.",
+          "problem_ids": [],
+          "action_id": "",
+          "next_step_decision": "Choose and commit to one exact publication date and time for the finished draft.",
+          "next_step_value": "Opening Typefully lets the existing user return to the finished draft, review its documented post preview, and take the requested scheduling action.",
+          "next_step_url": "https://typefully.com/",
+          "next_step_limit": "The homepage is the exact documented Typefully destination available in the supplied material; no direct draft or scheduling URL is established. This step does not identify an optimal posting time or predict post performance.",
+          "pull": 7.0,
+          "revisions": 1,
+          "clean": true,
+          "landed": true,
+          "rewrites_stopped_helping": false,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E9",
+            "E1"
+          ],
+          "evidence_spent": [
+            "E9",
+            "E1"
+          ],
+          "attributions": 0,
+          "unresolved": [
+            "Editorial review requested: Make the CTA’s operation explicit: say whether it opens my existing draft in the preview and scheduling flow. I can picture reviewing and choosing a time, but not what happens immediately after I click or how directly the email gets me back to the draft."
+          ],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "Typefully lets me preview my finished social post and schedule it for a specific date and time, putting it on my publishing calendar.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile establishes that I am already a Typefully customer with a finished draft and a connected social account, so the email’s proposed next step—reviewing and scheduling that post—fits my current situation. The email additionally assumes that my draft may contain threads, mentions, or media worth checking; whether those apply is unknown, but they do not undermine the fit.",
+              "assumed_experiences": [
+                "Profile-supported: I use Typefully and have a finished draft.",
+                "Profile-supported: I already have a social account connected.",
+                "Email-only: my post may include threads, mentions, or media that need checking.",
+                "Email-only: I am ready to choose a publication date and time now."
+              ],
+              "problem_now": "Scheduling the finished draft is a relevant next step now, although the profile establishes no deadline or urgency. Previewing it first addresses a plausible publishing-error risk rather than a documented problem I have experienced.",
+              "stopped_at": "Typefully is a social media scheduler, and its preview lets you check threads, mentions, and media before a post goes live.",
+              "biggest_doubt": "I am ready to schedule, but the email does not say whether the link will take me directly to my finished draft or merely open Typefully generally; that determines whether clicking saves me any effort.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me whether the link opens my finished draft directly in its preview and scheduling screen.",
+              "fixes": [
+                "Cut “Typefully is a social media scheduler” because I am already a customer and the surrounding copy already makes its function clear.",
+                "Rewrite “Schedule in Typefully →” to state the actual destination, such as “Open your draft to preview and schedule →,” if that is where the link goes.",
+                "Condense “Use that check to confirm the post you’re about to place on your calendar. You can see what’s scheduled, in review, and ready to ship.” because it shifts from my draft to a broader status summary without helping me complete this step."
+              ],
+              "opens_in_100": null,
+              "clicks_in_100": null,
+              "persona": "Selected audience (user-stated constraints): A Typefully user with a finished draft and an already connected social account..\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.\nEstablished relationship to the sender: customer. This establishes no particular installed tools or desired reaction.",
+              "pull": 7
+            }
+          ],
+          "sameness": []
+        }
+      ],
+      "limiting_gaps": [],
+      "what_would_help_most": "Resolve this simulated next-step obstacle: I would have clicked if this email had told me whether the link opens my finished draft directly in its preview and scheduling screen. Check existing verified material first; surface a supported answer or documentation link appropriate to the CTA. If absent, obtain this specific information. Reader expectations are not product evidence.",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "Effective audience: A Typefully user with a finished draft and an already connected social account."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "A single activation email for an existing Typefully customer who has completed a draft and connected a social account. The email should move that draft from finished to scheduled by asking the reader to select an exact publication date and time. Before scheduling, it should direct them to check Typefully’s documented post preview so they can review threads, mentions, and media before committing the time.",
+      "pipeline_version": 2,
+      "strategy_mode": "planned",
+      "focused_activation": false,
+      "intent": {
+        "objective": "activation",
+        "objective_source": "user",
+        "reader_relationship": "customer",
+        "relationship_source": "user",
+        "announcement": "",
+        "reason_now": "",
+        "desired_action": "Schedule that draft for a specific date and time",
+        "required_fact": "",
+        "required_source_url": ""
+      },
+      "reader": "Selected audience (user-stated constraints): A Typefully user with a finished draft and an already connected social account..\nNo further recipient situation is established. Compiled market context is research to check for applicability, not a replacement biography.",
+      "reader_segment": "Creator publishing across multiple social platforms",
+      "reader_profile_override": "A Typefully user with a finished draft and an already connected social account.",
+      "reader_scope": "",
+      "fixed_cta_url": "",
+      "promise": "A finished draft can become a concrete publishing commitment by assigning it a specific date and time in Typefully.",
+      "orientation": "Typefully is the social media scheduler where this reader can review a finished post and place it on their publishing schedule.",
+      "arc": "In one concise step, move the reader from having a finished draft to committing it to an exact publication date and time.",
+      "sequence_rationale": "Only one email was requested. It should lead with the unfinished activation step, use the documented preview as the practical first move, explain that previewing helps the reader check threads, mentions, and media before scheduling, and finish with one scheduling CTA. No invented pain, urgency, results, or plan entitlement is needed.",
+      "emails": [
+        {
+          "problem_ids": [],
+          "offer_id": "offering",
+          "action_id": "",
+          "selection_reason": "The reader has already written the draft and connected an account, so scheduling it is the smallest useful action that advances the confirmed workflow. Checking the documented preview first gives them a concrete reason to proceed: they can review the post’s threads, mentions, and media before selecting its publication time.",
+          "next_step_url": "https://typefully.com/",
+          "destination_kind": "web",
+          "destination_rejected": false,
+          "argument_issue": "",
+          "value_case": {
+            "reader_benefit": "The reader can turn the completed draft into scheduled content with an explicit publication date and time, after reviewing the elements Typefully shows before the post goes live.",
+            "mechanism": "Open the finished draft, check Typefully’s preview for threads, mentions, and media, then use scheduling to choose a specific date and time.",
+            "evidence_ids": [
+              "E9",
+              "E1"
+            ],
+            "decision_conditions": [
+              "The reader has a finished draft and connected social account, as specified by the user.",
+              "Do not state that scheduling or previewing is included in any particular plan."
+            ]
+          },
+          "claim_conditions": [
+            "Describe Typefully as supporting social media scheduling without claiming availability on a particular plan.",
+            "Limit the preview claim to posts, including threads, mentions, and media, before they go live.",
+            "Ask the reader to choose an exact date and time; do not prescribe a supposedly optimal time or promise performance."
+          ],
+          "position": 1,
+          "user_request": "Write exactly one English activation email from the Typefully team. Reader: A Typefully user with a finished draft and an already connected social account. Ask them to do one thing: Schedule that draft for a specific date and time. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+          "target_audience": "",
+          "job": "Get the reader to schedule the finished draft for an exact publication date and time.",
+          "single_idea": "Your draft is already written; check its Typefully preview, then give it a specific publication date and time so it is ready on your schedule rather than remaining only a finished draft.",
+          "felt_need": "",
+          "status_quo": "The reader currently has a finished but unscheduled draft.",
+          "why_it_fails": "",
+          "mechanism": "Typefully lets the reader check a post before it goes live, including threads, mentions, and media, and then schedule the draft through its social media scheduling product.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: finishing the draft feels like the endpoint. After: assigning one exact date and time is the step that turns it into scheduled content, and the preview provides a useful check before committing.",
+          "evidence_ids": [
+            "E9",
+            "E1"
+          ],
+          "must_not_say": [
+            "Do not claim an optimal posting date or time, increased reach, engagement, consistency, growth, or any guaranteed publishing outcome.",
+            "Do not claim that previewing guarantees perfect rendering; E9 supports checking threads, mentions, and media, while any stronger exactness statement would require presenting E10 as Fabrizio Rinaldi’s personal experience.",
+            "Do not mention pricing, free-plan eligibility, feature limits, billing, or access terms.",
+            "Do not introduce analytics, AI writing, collaboration, cross-posting, Slack, integrations, or customer-count proof.",
+            "Do not ask the reader to create another draft, connect another account, sign up, or perform a second CTA.",
+            "Do not imply the draft will publish automatically unless the scheduling action is completed.",
+            "Do not invent a timezone, deadline, urgency, or prior failed attempt."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "The reader may hesitate to commit a publication time without first checking how the completed post’s elements will appear; answer only with Typefully’s documented preview of threads, mentions, and media.",
+          "tone": "Crisp, encouraging, and momentum-driven, with short paragraphs and no manufactured urgency.",
+          "call_to_action": "Schedule your draft",
+          "next_step_decision": "Choose and commit to one exact publication date and time for the finished draft.",
+          "next_step_value": "Opening Typefully lets the existing user return to the finished draft, review its documented post preview, and take the requested scheduling action.",
+          "next_step_evidence_ids": [
+            "E9",
+            "E1"
+          ],
+          "next_step_limit": "The homepage is the exact documented Typefully destination available in the supplied material; no direct draft or scheduling URL is established. This step does not identify an optimal posting time or predict post performance.",
+          "subject_strategy": "Signal that the draft is ready for its next concrete step and foreground scheduling, without implying urgency, guaranteed results, or a recommended best time.",
+          "must_not_reuse": [],
+          "steering": {
+            "directions": [
+              "Produce exactly one English activation email.",
+              "Keep the email body under 150 words, excluding subject, preview, and signature.",
+              "Ask for one action only: schedule the finished draft for a specific date and time.",
+              "Use the documented preview as the first step and explain why it helps this reader.",
+              "Use one CTA linked to https://typefully.com/."
+            ],
+            "include_evidence_ids": [
+              "E9",
+              "E1"
+            ],
+            "exclude_evidence_ids": [
+              "E2",
+              "E3",
+              "E4",
+              "E5",
+              "E6",
+              "E7",
+              "E8",
+              "E10",
+              "E11",
+              "E12"
+            ],
+            "use": [
+              "Short, plainspoken paragraphs",
+              "A concrete scheduling instruction",
+              "Typefully’s crisp, encouraging, product-led voice"
+            ],
+            "avoid": [
+              "Multiple CTAs",
+              "Generic motivation",
+              "Unsupported plan, access, timing, or outcome claims",
+              "Feature lists"
+            ],
+            "context_only": [
+              "The reader’s draft is finished.",
+              "The reader’s social account is already connected."
+            ],
+            "excluded_values": [
+              "Optimal-time recommendations",
+              "Performance guarantees",
+              "Pricing or plan claims"
+            ]
+          }
+        }
+      ],
+      "voice_notes": "Match Typefully’s compact, energetic style. Use direct second person and make scheduling feel like the natural next move. A light emoji is optional, not required.",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "one English activation email"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "00cef3d8-200d-4707-a8da-1971f556f8ae",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

@@ -1,0 +1,188 @@
+{
+  "id": "567e38ed-2862-499f-a343-895adbb21ad7",
+  "campaign_id": "268d049c-f996-4e89-8f77-7b371652c1b3",
+  "status": "failed",
+  "needs_review": false,
+  "outcome_status": "failed",
+  "review_reasons": [],
+  "error_message": "Codex reached its usage limit. Try again at 8:47 AM (time reported by Codex).",
+  "started_at": "2026-11-11T04:20:43.533258Z",
+  "completed_at": "2026-11-11T04:20:47.772666Z",
+  "created_at": "2026-11-11T04:20:43.533258Z",
+  "total_input_tokens": 0,
+  "total_output_tokens": 0,
+  "total_cache_read_tokens": 0,
+  "estimated_cost_usd": 0.0,
+  "recommendation_snapshot": {
+    "campaign_id": "268d049c-f996-4e89-8f77-7b371652c1b3",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "14496ba9-9343-4ea6-ac86-f8dcca08cf47",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 1,
+      "status": "failed",
+      "input_data": {
+        "label": "Email 1 · first draft",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": null,
+      "error_message": "RoutingProvider call failed after 1 attempt(s): codex exec reported a failed turn: You’ve hit your usage limit. Upgrade to Pro (https://chatgpt.com/explore/pro), visit https://chatgpt.com/settings/usage to purchase more credits or try again at 8:47 AM.",
+      "started_at": "2026-11-11T04:20:44.748637Z",
+      "completed_at": "2026-11-11T04:20:47.724671Z",
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.0,
+      "duration_ms": 0.0,
+      "attempt": 1
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "provider_unavailable",
+    "report": {
+      "request": "Write exactly one English activation email from the Hookdeck team. Reader: A developer with a new Hookdeck workspace and a test webhook source. Ask them to do one thing: Inspect a first incoming test event. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available. Use this exact CTA destination: https://dashboard.hookdeck.com/signup?context=event-gateway.",
+      "effective_audience": "A developer with a new Hookdeck workspace and a test webhook source.",
+      "audience_scope": "",
+      "assessment_method": "Simulated reader's interest, uncalibrated; no response or conversion prediction",
+      "delivered": 0,
+      "promised": 1,
+      "contract_violations": [
+        "the user asked for 1 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [],
+      "what_would_help_most": "",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "Codex reached its usage limit. Try again at 8:47 AM (time reported by Codex).",
+        "Effective audience: A developer with a new Hookdeck workspace and a test webhook source.",
+        "Direct activation: one draft and an independent source review, with at most one repair."
+      ],
+      "reads_expected": false
+    },
+    "brief": {
+      "interpretation": "Write exactly one English activation email from the Hookdeck team. Reader: A developer with a new Hookdeck workspace and a test webhook source. Ask them to do one thing: Inspect a first incoming test event. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available. Use this exact CTA destination: https://dashboard.hookdeck.com/signup?context=event-gateway.",
+      "pipeline_version": 2,
+      "strategy_mode": "direct",
+      "focused_activation": true,
+      "intent": {
+        "objective": "activation",
+        "objective_source": "user",
+        "reader_relationship": "customer",
+        "relationship_source": "user",
+        "announcement": "",
+        "reason_now": "",
+        "desired_action": "Start for free",
+        "required_fact": "",
+        "required_source_url": ""
+      },
+      "reader": "A developer with a new Hookdeck workspace and a test webhook source.",
+      "reader_segment": "",
+      "reader_profile_override": "A developer with a new Hookdeck workspace and a test webhook source.",
+      "reader_scope": "",
+      "fixed_cta_url": "https://dashboard.hookdeck.com/signup?context=event-gateway",
+      "promise": "",
+      "orientation": "Provides a cloud event gateway to receive, filter, transform, route, and reliably deliver webhooks and external events from multiple sources to multiple destinations with built-in observability and control.",
+      "arc": "",
+      "sequence_rationale": "",
+      "emails": [
+        {
+          "problem_ids": [],
+          "offer_id": "offering",
+          "action_id": "action_8d3ce6d41970",
+          "selection_reason": "The user specified one email; its action is unambiguous in the offer.",
+          "next_step_url": "https://dashboard.hookdeck.com/signup?context=event-gateway",
+          "destination_kind": "web",
+          "destination_rejected": false,
+          "argument_issue": "",
+          "value_case": {
+            "reader_benefit": "",
+            "mechanism": "",
+            "evidence_ids": [],
+            "decision_conditions": []
+          },
+          "claim_conditions": [],
+          "position": 1,
+          "user_request": "Write exactly one English activation email from the Hookdeck team. Reader: A developer with a new Hookdeck workspace and a test webhook source. Ask them to do one thing: Inspect a first incoming test event. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available. Use this exact CTA destination: https://dashboard.hookdeck.com/signup?context=event-gateway.",
+          "target_audience": "",
+          "job": "Write exactly one English activation email from the Hookdeck team. Reader: A developer with a new Hookdeck workspace and a test webhook source. Ask them to do one thing: Inspect a first incoming test event. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available. Use this exact CTA destination: https://dashboard.hookdeck.com/signup?context=event-gateway.",
+          "single_idea": "",
+          "felt_need": "",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "",
+          "evidence_ids": [],
+          "must_not_say": [],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "",
+          "tone": "",
+          "call_to_action": "Start for free",
+          "next_step_decision": "",
+          "next_step_value": "",
+          "next_step_evidence_ids": [],
+          "next_step_limit": "",
+          "subject_strategy": "",
+          "must_not_reuse": [],
+          "steering": {
+            "directions": [],
+            "include_evidence_ids": [],
+            "exclude_evidence_ids": [],
+            "use": [],
+            "avoid": [],
+            "context_only": [],
+            "excluded_values": []
+          }
+        }
+      ],
+      "voice_notes": "",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "one English activation email"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "268d049c-f996-4e89-8f77-7b371652c1b3",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

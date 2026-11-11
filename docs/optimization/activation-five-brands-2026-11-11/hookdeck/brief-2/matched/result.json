@@ -1,0 +1,99 @@
+{
+  "id": "e47b51fb-131c-49c8-aa03-46a84d930628",
+  "campaign_id": "6757bd90-b3ab-4525-b0ad-60fa238e7814",
+  "status": "failed",
+  "needs_review": false,
+  "outcome_status": "failed",
+  "review_reasons": [],
+  "error_message": "Codex reached its usage limit. Try again at 8:47 AM (time reported by Codex).",
+  "started_at": "2026-11-11T04:20:49.425950Z",
+  "completed_at": "2026-11-11T04:20:52.464750Z",
+  "created_at": "2026-11-11T04:20:49.425950Z",
+  "total_input_tokens": 0,
+  "total_output_tokens": 0,
+  "total_cache_read_tokens": 0,
+  "estimated_cost_usd": 0.0,
+  "recommendation_snapshot": {
+    "campaign_id": "6757bd90-b3ab-4525-b0ad-60fa238e7814",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "3fcd2d02-b99f-4811-bae6-d6ee2083b608",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "failed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": null,
+      "error_message": "RoutingProvider call failed after 1 attempt(s): codex exec reported a failed turn: You’ve hit your usage limit. Upgrade to Pro (https://chatgpt.com/explore/pro), visit https://chatgpt.com/settings/usage to purchase more credits or try again at 8:47 AM.",
+      "started_at": "2026-11-11T04:20:49.648425Z",
+      "completed_at": "2026-11-11T04:20:52.418750Z",
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.0,
+      "duration_ms": 0.0,
+      "attempt": 1
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "provider_unavailable",
+    "report": {
+      "request": "Write exactly one English activation email from the Hookdeck team. Reader: A developer who already uses Hookdeck and has a failed event in a test environment. Ask them to do one thing: Review and retry that failed test event. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+      "effective_audience": "",
+      "audience_scope": "",
+      "assessment_method": "Simulated reader's interest, uncalibrated; no response or conversion prediction",
+      "delivered": 0,
+      "promised": 1,
+      "contract_violations": [
+        "the user asked for 1 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [],
+      "what_would_help_most": "",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "Codex reached its usage limit. Try again at 8:47 AM (time reported by Codex)."
+      ],
+      "reads_expected": true
+    },
+    "brief": null,
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "6757bd90-b3ab-4525-b0ad-60fa238e7814",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

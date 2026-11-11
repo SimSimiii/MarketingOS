@@ -1,0 +1,45 @@
+{
+  "total_real_proposals": 4,
+  "prior_papier_and_systeme": "revision-review.json; original tests retained",
+  "loops": [
+    {
+      "case": "loops-acquisition",
+      "revision_id": "100eb4e7-75b4-4c52-8f99-3717772ea213",
+      "state": "accepted",
+      "selected": true,
+      "pull_after_acceptance": null,
+      "fresh_checks": {
+        "issues": [
+          {
+            "gate": "call-to-action",
+            "detail": "the email asks the reader to 'Read the Supabase integration docs', which is not one of the actions this product supports (Start for free, Book a demo, See pricing, Read the Supabase docs, Read the Clerk docs, Request an SDK)",
+            "severity": "advisory"
+          }
+        ]
+      },
+      "ui_check_file": "loops-acquisition/revision-scope-ui-check.json",
+      "original_retained": true,
+      "new_model_calls": 1
+    },
+    {
+      "case": "loops-consideration",
+      "revision_id": "39e36149-914d-4727-8b7e-8adc37b81997",
+      "state": "accepted",
+      "selected": true,
+      "pull_after_acceptance": null,
+      "fresh_checks": {
+        "issues": [
+          {
+            "gate": "call-to-action",
+            "detail": "the email asks the reader to 'Read Loops’ Supabase guide', which is not one of the actions this product supports (Start for free, Book a demo, See pricing, Read the Supabase docs, Read the Clerk docs, Request an SDK)",
+            "severity": "advisory"
+          }
+        ]
+      },
+      "ui_check_file": "loops-consideration/revision-scope-ui-check.json",
+      "original_retained": true,
+      "new_model_calls": 1
+    }
+  ],
+  "extra_campaigns_for_revisions": 0
+}

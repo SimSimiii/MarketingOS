@@ -5,8 +5,9 @@ is the trust boundary after that call: every product and audience reference is
 resolved against the exact input snapshots, verdict mechanics are enforced in
 code, and only the normalized result can be persisted.
 
-There is deliberately no web access here and no second role.  Ranking, fit,
-objections and silences are different views of the same bounded judgment.
+There is deliberately no web access here. Ranking, fit, objections and
+silences share one judgment. An automatic first-email workflow gets one
+separate offer review before it can authorize a draft.
 """
 
 import json
@@ -32,6 +33,7 @@ from app.knowledge.ledger import (
     EvidenceStrength,
     category_of,
     context_of,
+    unconfirmed_billing,
     value_of,
 )
 from app.market.audience_research import AudienceResearch
@@ -47,7 +49,10 @@ from app.runtime.model_session import ModelSession
 
 ROLE_ID = "relevance_analyst"
 MAX_RANKED_EVIDENCE = 30
-INTERPRETATION_VERSION = 16
+INTERPRETATION_VERSION = 32
+# Older failed recovery receipts did not inspect captured source excerpts.
+# Recheck them once; later editorial changes need not repurchase that search.
+RECOVERY_SOURCE_CONTEXT_VERSION = 26
 
 
 class RelevanceBand(StrEnum):
@@ -101,11 +106,30 @@ class DefiningNeedFit(BaseModel):
     """Product support for the whole selected workflow, not a count of features."""
 
     status: Literal["addressed", "partial", "unknown"] = "unknown"
+    supported_alternative: str = ""
+    setup_conditions: list[str] = Field(default_factory=list)
     evidence_ids: list[str] = Field(default_factory=list)
     capability_ids: list[str] = Field(default_factory=list)
     unverified_requirements: list[str] = Field(default_factory=list)
+    decision_gaps: list[str] = Field(default_factory=list)
+    supported_core_workflow: str = ""
+    unverified_requirement_basis: dict[str, str] = Field(default_factory=dict)
     caveat: str = ""
     why: str = ""
+
+
+class FirstEmailScope(BaseModel):
+    """A bounded draft proposal, assessed against the actual user request separately."""
+
+    request: str = ""  # Bound by code, never trusted from the model.
+    status: Literal["addressed", "partial", "unknown"] = "unknown"
+    workflow: str = ""
+    evidence_ids: list[str] = Field(default_factory=list)
+    setup_conditions: list[str] = Field(default_factory=list)
+    excluded_promises: list[str] = Field(default_factory=list)
+    unmet_user_requirements: list[str] = Field(default_factory=list)
+    # None identifies an older saved scope that has not assessed this question.
+    audience_decision_question: str | None = Field(default=None, max_length=500)
 
 
 class RelevanceProposal(BaseModel):
@@ -113,10 +137,19 @@ class RelevanceProposal(BaseModel):
 
     orientation: str = ""
     defining_need_fit: DefiningNeedFit | None = None
+    first_email_scope: FirstEmailScope | None = None
     ranked_relevance: list[RankedRelevanceProposal] = Field(default_factory=list)
     problem_fits: list[ProblemFitProposal] = Field(default_factory=list)
     segment_objections: list[ObjectionProposal] = Field(default_factory=list)
     silences: list[SilenceProposal] = Field(default_factory=list)
+
+
+class _WholeNeedFit(DefiningNeedFit):
+    supported_alternative: Literal[""] = ""
+
+
+class _WholeNeedProposal(RelevanceProposal):
+    defining_need_fit: _WholeNeedFit | None = None
 
 
 class RankedRelevanceItem(BaseModel):
@@ -348,6 +381,7 @@ class RelevanceDossier(BaseModel):
     built_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     orientation: str = ""
     defining_need_fit: DefiningNeedFit | None = None
+    first_email_scope: FirstEmailScope | None = None
     ranked_relevance: list[RankedRelevanceItem] = Field(default_factory=list)
     problem_fits: list[ProblemFit] = Field(default_factory=list)
     segment_objections: list[Objection] = Field(default_factory=list)
@@ -355,7 +389,18 @@ class RelevanceDossier(BaseModel):
     evidence: list[DossierEvidence] = Field(default_factory=list)
     validation_counts: ValidationCounts = Field(default_factory=ValidationCounts)
     validation_warnings: list[str] = Field(default_factory=list)
+    #: Recovery-attempt receipt, not a statement that these questions were
+    #: answered. Reusable only for the same knowledge/research inputs.
+    verified_product_questions: list[str] = Field(default_factory=list)
     recommendation: CampaignRecommendation | None = None
+
+    def product_gaps_to_verify(self) -> list[str]:
+        fit = self.defining_need_fit
+        if fit is None:
+            return []
+        return list(dict.fromkeys(text.strip()[:500] for text in (
+            *fit.unverified_requirements, *fit.decision_gaps
+        ) if text.strip()))[:3]
 
 
 class DossierState(StrEnum):
@@ -385,7 +430,7 @@ class RelevanceValidationError(RuntimeError):
 
 
 class RelevanceAnalyst:
-    """Make the one closed-world relevance call and verify its answer."""
+    """Assess relevance and verify the offer for a scoped first email."""
 
     def __init__(self, session: ModelSession) -> None:
         self._session = session
@@ -408,40 +453,80 @@ class RelevanceAnalyst:
         company_qualifications: list[QualifiedCompanySnapshot] | None = None,
         qualification_fingerprint: str = "",
         preferred_evidence_ids: list[str] | None = None,
+        compact: bool = False,
+        audience_scope: dict[str, str] | None = None,
+        draft_request: str = "",
     ) -> RelevanceDossier:
+        product_context = _product_context(
+            artifacts,
+            knowledge_id,
+            knowledge_version,
+            capability_profile=capability_profile,
+            required_capability_ids=research.definition.required_product_capabilities,
+            preferred_evidence_ids=preferred_evidence_ids,
+            query=f"{research.audience_name} " + " ".join(item.statement for item in research.problems),
+            problem_queries=[research.audience_name,
+                             *(item.description for item in research.definition.required_workflow_signals),
+                             *(item.statement for item in research.problems)],
+            compact=compact,
+        )
         proposal = await self._session.structured(
             role=ROLE_ID,
+            # Compact limits scope and output, not the quality of a decision
+            # that can stop the whole first-campaign flow. Balanced repeatedly
+            # invented native/real-time/universal prerequisites in live audits.
             tier=ModelTier.DEEP,
             template="relevance_dossier",
             variables={
-                "product_context": _product_context(
-                    artifacts,
-                    knowledge_id,
-                    knowledge_version,
-                    capability_profile=capability_profile,
-                    required_capability_ids=research.definition.required_product_capabilities,
-                    preferred_evidence_ids=preferred_evidence_ids,
-                    query=f"{research.audience_name} " + " ".join(item.statement for item in research.problems),
-                    problem_queries=[research.audience_name,
-                                     *(item.description for item in research.definition.required_workflow_signals),
-                                     *(item.statement for item in research.problems)],
-                ),
+                "product_context": product_context,
                 "audience_context": _audience_context(
                     research, research_id, research_version
                 ),
                 "market_context": _market_context(
                     positioning, market_scan_id, market_scan_version, audience=research.audience_name
                 ),
+                "compact": compact,
+                "audience_scope": audience_scope or {},
+                "draft_request": draft_request,
             },
             task=(
                 "Return one campaign-independent relevance dossier. Select and license; "
                 "do not write an angle, subject, opening, CTA, sequence, or email copy. "
                 "Use only the exact evidence and problem ids supplied."
             ),
-            schema=RelevanceProposal,
+            schema=(
+                RelevanceProposal
+                if re.search(r"\b(?:or|ou)\b", fold(research.audience_name))
+                else _WholeNeedProposal
+            ),
             # This call must remain closed even if the role catalogue changes.
             tools=[],
         )
+        scope = proposal.first_email_scope
+        if compact and draft_request and scope and scope.status == "addressed" and not scope.unmet_user_requirements:
+            withheld = {item.evidence_id for item in proposal.ranked_relevance
+                        if item.band is RelevanceBand.WITHHOLD}
+            evidence = json.loads(product_context)["selected_evidence_ledger"]
+            offered = [item for item in evidence if item["id"] not in withheld]
+            reviewed = await self._session.structured(
+                role=ROLE_ID, tier=ModelTier.BALANCED, template="first_email_scope_review",
+                variables={
+                    "request": draft_request,
+                    "audience": research.audience_name,
+                    "audience_scope": audience_scope or {},
+                    "scope": scope.model_dump_json(),
+                    "evidence": json.dumps(offered, ensure_ascii=False),
+                },
+                task="Independently verify one practical workflow through the exact offer it uses.",
+                schema=FirstEmailScope,
+                tools=[],
+            )
+            if not set(reviewed.evidence_ids) <= {item["id"] for item in offered}:
+                reviewed = FirstEmailScope(status="unknown")
+            reviewed.excluded_promises = list(dict.fromkeys(
+                [*scope.excluded_promises, *reviewed.excluded_promises]
+            ))
+            proposal.first_email_scope = reviewed
         return normalize_dossier(
             proposal,
             ledger=artifacts.evidence,
@@ -458,6 +543,8 @@ class RelevanceAnalyst:
             capability_profile_version=capability_profile_version,
             company_qualifications=company_qualifications or [],
             qualification_fingerprint=qualification_fingerprint,
+            audience_scope=audience_scope if compact else None,
+            draft_request=draft_request,
         )
 
 
@@ -480,6 +567,8 @@ def normalize_dossier(
     capability_profile_version: int | None = None,
     company_qualifications: list[QualifiedCompanySnapshot] | None = None,
     qualification_fingerprint: str = "",
+    audience_scope: dict[str, str] | None = None,
+    draft_request: str = "",
 ) -> RelevanceDossier:
     """Resolve every model reference and enforce each verdict mechanically.
 
@@ -734,6 +823,50 @@ def normalize_dossier(
     need_capabilities, _ = _catalog_ids(need_fit.capability_ids, capability_ids)
     missing = list(dict.fromkeys(text.strip() for text in need_fit.unverified_requirements if text.strip()))[:8]
     need_status = need_fit.status
+    decision_gaps = list(need_fit.decision_gaps)
+    core_support = need_fit.supported_core_workflow.strip()
+    if audience_scope is not None:
+        scope_text = fold(" ".join([
+            research.audience_name, *audience_scope.values(),
+            *(item.description or item.code for item in research.definition.required_workflow_signals),
+            *(item.description or item.code for item in research.definition.required_structural_signals),
+        ]))
+        scoped_missing = [
+            text for text in missing
+            if len(basis := fold(need_fit.unverified_requirement_basis.get(text, ""))) >= 12
+            and basis in scope_text
+        ]
+        unscoped = [text for text in missing if text not in scoped_missing]
+        decision_gaps.extend(unscoped)
+        missing = scoped_missing
+        if unscoped:
+            warnings.append("Moved product questions without an explicit audience requirement to decision gaps.")
+        core = audience_scope.get("need", "").strip()
+        if core_support and missing:
+            # Preserve the stricter verdict without spending a semantic repair
+            # call on a contradictory answer. Source recovery may settle it.
+            core_support = ""
+            need_status = "partial"
+            warnings.append("Contradictory core support and missing requirements; kept the fit provisional.")
+        if need_status == "addressed" and core and fold(core_support) != fold(core):
+            need_status = "unknown"
+            warnings.append("Complete support was not tied to the exact selected core task.")
+        if (need_status == "partial" and not missing and core
+                and fold(core_support) == fold(core)
+                and (need_evidence or need_capabilities)):
+            need_status = "addressed"
+            warnings.append("The cited core workflow is supported; optional decision questions remain separate.")
+    alternative = need_fit.supported_alternative.strip()
+    # A narrower branch is legal only for an explicitly disjunctive audience,
+    # never a way to drop one of a required conjunction's components.
+    audience_name = fold(research.audience_name)
+    if alternative and (
+        not re.search(r"\b(?:or|ou)\b", audience_name)
+        or not re.search(r"(?<!\w)" + re.escape(fold(alternative)) + r"(?!\w)", audience_name)
+    ):
+        missing.append("The proposed scope is not a stated alternative in the selected audience.")
+        need_status = "partial"
+        alternative = ""
     if not (need_evidence or need_capabilities):
         need_status = "unknown"
     elif need_status == "addressed" and missing:
@@ -743,9 +876,26 @@ def normalize_dossier(
     need_fit = need_fit.model_copy(update={
         "status": need_status, "evidence_ids": need_evidence,
         "capability_ids": need_capabilities, "unverified_requirements": missing,
+        "supported_alternative": alternative,
+        "supported_core_workflow": core_support,
+        "decision_gaps": list(dict.fromkeys(
+            text.strip()[:500] for text in decision_gaps if text.strip()
+        ))[:3],
     })
     if proposal.defining_need_fit is None or need_fit != proposal.defining_need_fit:
         warnings.append("Defining audience need is unassessed or its references required normalization.")
+
+    scope = proposal.first_email_scope
+    if (draft_request and scope and scope.status == "addressed" and not scope.unmet_user_requirements
+            and scope.evidence_ids and set(scope.evidence_ids) <= set(evidence_by_id)):
+        # The same analyst selected these for the bounded email, separately
+        # from the complete audience assessment. Apply the ordinary contract
+        # checks; an explicit WITHHOLD ranking always keeps precedence.
+        already_ranked = {item.evidence_id for item in ranked}
+        ranked.extend(RankedRelevanceItem(
+            evidence_id=id_, band=RelevanceBand.SUPPORT,
+            why="Selected for the documented first-email scope; not proof of complete audience fit.",
+        ) for id_ in dict.fromkeys(scope.evidence_ids) if id_ not in already_ranked)
 
     referenced = set(need_evidence)
     referenced.update(item.evidence_id for item in ranked)
@@ -788,7 +938,70 @@ def normalize_dossier(
             companies=company_qualifications or [],
             ledger=ledger,
         )
+        scope = proposal.first_email_scope
+        if draft_request:
+            dossier.first_email_scope = (scope or FirstEmailScope()).model_copy(update={
+                "request": draft_request, "status": "unknown",
+                "audience_decision_question": (scope.audience_decision_question or "").strip() if scope else "",
+            })
+        if (draft_request and scope and scope.status == "addressed" and scope.workflow.strip()
+                and not scope.unmet_user_requirements and not (scope.audience_decision_question or "").strip()):
+            allowed = set(dossier.recommendation.allowed_evidence_ids)
+            refs = set(scope.evidence_ids)
+            mechanism = any(entry.id in refs and entry.kind in {EvidenceKind.FEATURE, EvidenceKind.INTEGRATION}
+                            for entry in ledger.entries)
+            if refs and refs <= allowed and mechanism:
+                trial = dossier.model_copy(update={"defining_need_fit": DefiningNeedFit(
+                    status="addressed", evidence_ids=scope.evidence_ids,
+                    supported_core_workflow=scope.workflow,
+                )})
+                scoped = recommend_campaign(trial, profile=capability_profile, research=research,
+                                           companies=company_qualifications or [], ledger=ledger)
+                if scoped.readiness in {CampaignReadiness.GO, CampaignReadiness.GO_NARROW}:
+                    dossier.first_email_scope = scope.model_copy(update={
+                        "request": draft_request, "audience_decision_question": "",
+                    })
+                    captured = {entry.id for entry in dossier.evidence}
+                    dossier.evidence.extend(DossierEvidence.of(entry) for entry in ledger.entries
+                                            if entry.id in refs and entry.id not in captured)
     return dossier
+
+
+def recommendation_for_request(dossier: RelevanceDossier, request: str) -> CampaignRecommendation | None:
+    """A draft licence never upgrades audience/company qualification or another request."""
+    recommendation = dossier.recommendation
+    scope = getattr(dossier, "first_email_scope", None)
+    if (recommendation is not None and recommendation.readiness is not CampaignReadiness.NO_GO
+            and scope is not None and scope.request and scope.request == request
+            and scope.unmet_user_requirements):
+        return recommendation.model_copy(update={
+            "state": RecommendationState.DISCOVERY_ONLY,
+            "readiness": CampaignReadiness.DISCOVERY_ONLY,
+            "reasons": list(scope.unmet_user_requirements),
+            "recommended_next_action": "Verify the missing requirements of your email objective or change that objective.",
+        })
+    if (recommendation is not None and recommendation.readiness is CampaignReadiness.GO_NARROW
+            and scope is not None and scope.request == request and scope.audience_decision_question):
+        return recommendation.model_copy(update={
+            "state": RecommendationState.DISCOVERY_ONLY,
+            "readiness": CampaignReadiness.DISCOVERY_ONLY,
+            "reasons": [scope.audience_decision_question],
+            "recommended_next_action": "Verify the product fact that would make this email relevant to the audience.",
+        })
+    if (recommendation is None or recommendation.readiness is not CampaignReadiness.DISCOVERY_ONLY
+            or scope is None or scope.status != "addressed" or scope.unmet_user_requirements
+            or scope.audience_decision_question
+            or not scope.request or scope.request != request or not scope.workflow.strip()
+            or not scope.evidence_ids or not set(scope.evidence_ids) <= set(recommendation.allowed_evidence_ids)):
+        return recommendation
+    return recommendation.model_copy(update={
+        "state": RecommendationState.RECOMMENDED_NARROW,
+        "readiness": CampaignReadiness.GO_NARROW,
+        "eligible_subsegment": scope.workflow,
+        "reasons": ["Verified product facts support this first-email scope: " + scope.workflow],
+        "recommended_next_action": "Draft this documented use. Treat recipient circumstances as unconfirmed.",
+        "override_risk": "This draft does not establish the broader audience hypothesis or qualify any recipient.",
+    })
 
 
 def withheld_evidence_ids(ranked: Iterable[RankedRelevanceItem]) -> set[str]:
@@ -919,7 +1132,8 @@ def build_claim_contract(
     valid_ids = ledger.ids
     withheld_evidence = withheld_evidence_ids(ranked)
     forbidden_evidence = _unverified_capability_evidence(profile) & valid_ids
-    unusable = withheld_evidence | forbidden_evidence
+    uncertain_prices = {entry.id for entry in ledger.entries if unconfirmed_billing(entry)}
+    unusable = withheld_evidence | forbidden_evidence | uncertain_prices
     relevant = relevant_evidence_ids(ranked, fits)
     verified_capability_ids = {
         evidence.evidence_id
@@ -967,7 +1181,8 @@ def build_claim_contract(
             )
             held = " ".join(
                 dict.fromkeys(
-                    _unusable_reason(item, ranked, forbidden_evidence) for item in blocked
+                    "Price payment conditions need confirmation." if item in uncertain_prices
+                    else _unusable_reason(item, ranked, forbidden_evidence) for item in blocked
                 )
             )
         elif not set(ids) & relevant:
@@ -993,6 +1208,15 @@ def build_claim_contract(
                 ),
             )
         )
+
+    for evidence_id in sorted(uncertain_prices):
+        entry = ledger.get(evidence_id)
+        forbidden.append(ContractClaim(
+            id=claim_identity(entry.claim, [evidence_id]),
+            text=entry.claim,
+            evidence_ids=[evidence_id],
+            reason="Price payment conditions need confirmation.",
+        ))
 
     for boundary in profile.constraints:
         forbidden.append(
@@ -1125,7 +1349,11 @@ def recommend_campaign(
         for item in dossier.problem_fits
         if item.verdict in {FitVerdict.UNSUPPORTED, FitVerdict.OFF_LIMITS}
     ]
+    contract = build_claim_contract(
+        profile=profile, ledger=ledger, ranked=dossier.ranked_relevance, fits=dossier.problem_fits,
+    )
     reasons: list[str] = []
+    hypothesis_only = False
 
     if required_unavailable:
         state = RecommendationState.NOT_RECOMMENDED
@@ -1151,6 +1379,10 @@ def recommend_campaign(
     elif companies and not grouped[QualificationClass.QUALIFIED]:
         state = RecommendationState.DISCOVERY_ONLY
         reasons.append("No researched company has complete direct qualification evidence.")
+    elif dossier.defining_need_fit and dossier.defining_need_fit.supported_alternative:
+        state = RecommendationState.RECOMMENDED_NARROW
+        reasons.append("Verified product evidence covers only the stated alternative: "
+                       + dossier.defining_need_fit.supported_alternative + ".")
     elif positive and not unsupported and not dossier.silences:
         if (
             partial
@@ -1166,6 +1398,14 @@ def recommend_campaign(
     elif positive or partial:
         state = RecommendationState.RECOMMENDED_NARROW
         reasons.append("The current product fit is partial or carries unresolved scope limits.")
+    elif (not research.problems and not companies and not unsupported and not dossier.silences
+          and dossier.defining_need_fit and dossier.defining_need_fit.status == "addressed"
+          and dossier.defining_need_fit.supported_core_workflow and contract.campaign_allowed_claims):
+        # A draft may evaluate a product-supported audience hypothesis. This
+        # does not establish demand, recipient circumstances or qualified leads.
+        state = RecommendationState.RECOMMENDED_NARROW
+        hypothesis_only = True
+        reasons.append("Verified product facts support this audience hypothesis; no firsthand buyer problem has been verified.")
     elif unsupported or dossier.silences:
         state = RecommendationState.DISCOVERY_ONLY
         reasons.append("Research found a need, but the current product evidence does not bridge it.")
@@ -1180,12 +1420,6 @@ def recommend_campaign(
         RecommendationState.NOT_RECOMMENDED: CampaignReadiness.NO_GO,
     }[state]
 
-    contract = build_claim_contract(
-        profile=profile,
-        ledger=ledger,
-        ranked=dossier.ranked_relevance,
-        fits=dossier.problem_fits,
-    )
     forbidden_capability_ids = [
         item.id
         for item in profile.capabilities
@@ -1197,13 +1431,15 @@ def recommend_campaign(
     # usable set, so it has to be the union, not just the rankings.
     unusable_evidence = withheld_evidence_ids(dossier.ranked_relevance) | (
         _unverified_capability_evidence(profile) & ledger.ids
-    )
+    ) | {entry.id for entry in ledger.entries if unconfirmed_billing(entry)}
     unresolved = [
         item.objection for item in dossier.segment_objections if not item.answer.strip()
     ]
     unresolved.extend(item.question or item.reason for item in dossier.silences)
 
     eligible = next(iter(research.definition.eligible_subsegments), "")
+    if dossier.defining_need_fit and dossier.defining_need_fit.supported_alternative:
+        eligible = dossier.defining_need_fit.supported_alternative
     if state is RecommendationState.NOT_RECOMMENDED:
         next_action = (
             f"Narrow the audience to {eligible}."
@@ -1238,6 +1474,11 @@ def recommend_campaign(
         next_action = "Proceed with the qualified audience and licensed claims."
         risk = "No material qualification mismatch is currently known."
 
+    if hypothesis_only:
+        next_action = "Draft a product evaluation using verified facts. Treat recipient needs as unconfirmed."
+        risk = "Audience demand and individual recipient fit remain unverified; this is an exploratory draft."
+        contract = contract.model_copy(update={"warnings": [*contract.warnings, risk]})
+
     return CampaignRecommendation(
         state=state,
         readiness=readiness,
@@ -1271,6 +1512,7 @@ def _product_context(
     preferred_evidence_ids: list[str] | None = None,
     query: str = "",
     problem_queries: list[str] | None = None,
+    compact: bool = False,
 ) -> str:
     # The catalogue describes the whole product. Pinning every capability's
     # references can consume (or exceed) the budget before pricing and other
@@ -1297,8 +1539,9 @@ def _product_context(
                       and any(fragment in fold(entry.verbatim) for fragment in fragments)), None)
         if match is not None:
             preferred.append(match.id)
-    selection = select_evidence(artifacts.evidence, query, preferred_ids=preferred, cap=48,
+    selection = select_evidence(artifacts.evidence, query, preferred_ids=preferred, cap=24 if compact else 48,
                                 problem_queries=problem_queries)
+    selected_ids = selection.ledger.ids
     evidence = []
     for entry in selection.ledger.entries:
         value = value_of(entry)
@@ -1339,7 +1582,10 @@ def _product_context(
                         "customer_copy_visibility": str(item.customer_copy_visibility),
                         "evidence_ids": [ref.evidence_id for ref in item.evidence],
                         "unlicensed_evidence_ids": item.unlicensed_evidence_ids, "note": item.note,
-                    } for item in capability_profile.capabilities],
+                    } for item in capability_profile.capabilities
+                        if not compact or item.id in required or any(
+                            ref.evidence_id in selected_ids for ref in item.evidence
+                        )],
                     "constraints": [item.model_dump(mode="json") for item in capability_profile.constraints],
                     "additional_claims": [item.model_dump(mode="json") for item in capability_profile.claims
                                           if item.text not in {entry.claim for entry in artifacts.evidence.entries}],

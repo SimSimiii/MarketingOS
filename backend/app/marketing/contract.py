@@ -30,6 +30,8 @@ _NUMBER_WORDS: dict[str, int] = {
     "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
     "seven": 7, "eight": 8, "nine": 9, "ten": 10, "eleven": 11, "twelve": 12,
     "a": 1, "an": 1, "single": 1,
+    "un": 1, "une": 1, "deux": 2, "trois": 3, "quatre": 4, "cinq": 5,
+    "sept": 7, "huit": 8, "neuf": 9, "dix": 10, "onze": 11, "douze": 12,
 }
 
 _COUNT_PATTERN = "|".join([r"\d{1,2}", *_NUMBER_WORDS])
@@ -40,6 +42,7 @@ _COUNT_PATTERN = "|".join([r"\d{1,2}", *_NUMBER_WORDS])
 #: counting something else.
 _PIVOTS = (
     "for", "about", "of", "to", "in", "on", "per", "that", "which", "from",
+    "pour", "sur", "de", "avec", "avant", "après", "et", "ou",
     "with", "before", "after", "via", "using", "into", "and", "or",
 )
 

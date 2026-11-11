@@ -5,6 +5,7 @@ assessment call for the whole map. Transport retries remain ModelSession's job.
 """
 
 import hashlib
+import json
 import re
 from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
@@ -510,6 +511,7 @@ async def validate_map(
     progress: Callable[[str], None],
     *,
     fetcher: FixedURLFetcher | None = None,
+    compact: bool = False,
 ) -> DemandMap:
     candidates: list[AudienceSegment] = []
     profile_fingerprint = product_fingerprint(profile)
@@ -549,7 +551,9 @@ async def validate_map(
     located = [LocatedSource(url=url) for url in urls]
     cache: list[dict] = []
     if candidates and located:
-        progress("Fetching up to 10 exact URLs; validating against at most 48,000 characters")
+        url_limit = 5 if compact else 10
+        budget = 20_000 if compact else MAX_MAP_CORPUS_CHARS
+        progress(f"Fetching up to {url_limit} exact URLs; validating against at most {budget:,} characters")
         cached: list[FetchedSource] = []
         if previous and options.mode == "explore":
             for payload in previous.source_cache[:10]:
@@ -560,7 +564,7 @@ async def validate_map(
                 stamp = source.fetched_at.replace(tzinfo=UTC) if source.fetched_at.tzinfo is None else source.fetched_at
                 if datetime.now(UTC) - timedelta(days=7) <= stamp <= datetime.now(UTC):
                     cached.append(source)
-        located = located[:10]
+        located = located[:url_limit]
         cached = [s for s in cached if any(p.url in {s.requested_url, s.final_url} for p in located)]
         cached_urls = {url for s in cached for url in (s.requested_url, s.final_url)}
         fetched = await (fetcher or FixedURLFetcher()).fetch(
@@ -568,7 +572,6 @@ async def validate_map(
         )
         sources = {}
         hashes: set[str] = set()
-        budget = MAX_MAP_CORPUS_CHARS
         for source in [*cached, *fetched.sources]:
             if budget <= 0:
                 break
@@ -585,15 +588,19 @@ async def validate_map(
             try:
                 assessed = await session.structured(
                     role=CARTOGRAPHER_ROLE_ID,
-                    tier=ModelTier.DEEP,
+                    tier=ModelTier.BALANCED if compact else ModelTier.DEEP,
                     template="audience_map_validate",
                     variables={
                         "candidates": "\n".join(
                             f"Candidate {i}: {item.model_dump_json()}"
                             for i, item in enumerate(candidates)
                         ),
-                        "capabilities": profile.model_dump_json() if profile else "Unknown",
+                        "capabilities": (
+                            json.dumps(profile.discovery_context(), ensure_ascii=False) if compact
+                            else profile.model_dump_json()
+                        ) if profile else "Unknown",
                         "scope": options.model_dump_json(),
+                        "compact": compact,
                         "corpus": "\n\n".join(
                             f"URL: {url}\n{source.content}" for url, source in sources.items()
                         ),

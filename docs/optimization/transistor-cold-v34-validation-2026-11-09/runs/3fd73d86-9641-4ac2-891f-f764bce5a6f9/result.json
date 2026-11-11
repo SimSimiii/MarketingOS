@@ -1,0 +1,2101 @@
+{
+  "id": "3fd73d86-9641-4ac2-891f-f764bce5a6f9",
+  "campaign_id": "f6375955-d747-4f5b-a27d-e2d8213aaae3",
+  "status": "failed",
+  "needs_review": false,
+  "outcome_status": "failed",
+  "review_reasons": [],
+  "error_message": "Email 1 failed automatic checks after repair: \"A 14-day free trial lets you create your next show as a separate podcast and see how additional shows sit inside the same account.\": E23 establishes a 14-day free trial and E24 establishes additional-podcast creation generally, but no literal source establishes that this capability is available during the trial. The promised trial entitlement and inspection experience therefore remain unresolved.; \"If you continue with Starter, $19 per month, billed monthly in USD, includes unlimited podcasts.\": The literal sources support unlimited podcasts regardless of subscription plan, but none of the supplied literal quotes states Starter's $19 price, monthly billing basis, or USD currency. The supplied fact summary cannot substitute for that missing quote.; \"Its 20,000 monthly audio downloads are shared across the whole account, so you can assess that pooled capacity against the shows you plan to host.\": The sources establish Starter's 20,000-download monthly limit but do not literally state that audio downloads are pooled across all podcasts in the account. The cited FAQ expressly discusses shared file storage, not shared audio downloads.; \"Create the next show during the trial and decide whether the one-account structure works for your agency or network.\": The trial and one-account capability are separately documented, but the sources do not establish entitlement to create the show during the trial. The agency-or-network framing is conditional and does not claim observed recipient biography.; The sources do not connect additional-podcast creation to trial access, so this trial entitlement is unresolved.; Unlimited podcasts are supported, but the literal evidence supplied does not verify the $19 price, monthly billing basis, or USD currency.; The 20,000 monthly limit is supported, but account-level pooling of audio downloads is not established by a literal quote.; This repeats the unresolved promise that show creation is available during the free trial.",
+  "started_at": "2026-11-09T11:39:06.727523Z",
+  "completed_at": "2026-11-09T11:45:15.319198Z",
+  "created_at": "2026-11-09T11:39:06.727523Z",
+  "total_input_tokens": 179555,
+  "total_output_tokens": 28938,
+  "total_cache_read_tokens": 31744,
+  "estimated_cost_usd": 2.076,
+  "recommendation_snapshot": {
+    "campaign_id": "f6375955-d747-4f5b-a27d-e2d8213aaae3",
+    "readiness": "GO_NARROW",
+    "recommendation": {
+      "state": "RECOMMENDED_NARROW",
+      "readiness": "GO_NARROW",
+      "reasons": [
+        "Verified product facts support this first-email scope: Introduce Transistor as a podcast host where a single account can carry more than one show at no extra per-podcast charge, publishing each feed to Apple Podcasts, Spotify, YouTube and other apps, with per-episode download analytics in the dashboard; the single next step is starting the 14-day free trial and creating a show."
+      ],
+      "eligible_subsegment": "Introduce Transistor as a podcast host where a single account can carry more than one show at no extra per-podcast charge, publishing each feed to Apple Podcasts, Spotify, YouTube and other apps, with per-episode download analytics in the dashboard; the single next step is starting the 14-day free trial and creating a show.",
+      "qualified_companies": [],
+      "adjacent_companies": [],
+      "excluded_companies": [],
+      "unverified_companies": [],
+      "allowed_claims": [
+        "The Transistor API uses API keys to authenticate all requests, sent via an HTTP header named x-api-key",
+        "The Transistor API is built around the JSON:API specification",
+        "The API supports sparse fieldsets, letting a request specify only particular fields to return, e.g. fields[episode][]=title&fields[episode][]=media_url",
+        "The API supports including a resource's related resources in one request, e.g. include[]=show, and this can be combined with sparse fieldsets",
+        "The Get show analytics endpoint (GET /v1/analytics/:id) retrieves downloads-per-day for an entire podcast and defaults to the last 14 days if no date range is given",
+        "The Get all episode analytics endpoint (GET /v1/analytics/:id/episodes) retrieves downloads-per-day for all episodes of a podcast and defaults to the last 7 days",
+        "The Get single episode analytics endpoint (GET /v1/analytics/episodes/:id) retrieves downloads-per-day for a single episode and defaults to the last 14 days",
+        "The Get episodes endpoint (GET /v1/episodes) retrieves a paginated list of episodes ordered by published date, filterable by show_id, query, and status (draft, scheduled, or published)",
+        "Episodes can be filtered by status: one of draft, scheduled, or published",
+        "Episode list results default to descending order (newest first) and default to 10 resources per page starting at page 0",
+        "The episodes list endpoint paginates with a default page number of 0 and a default of 10 resources per page",
+        "Starter plan is $19/month, includes unlimited podcasts, 20,000 monthly audio downloads, and 50 private podcast subscribers",
+        "Starter plan includes 20,000 monthly audio downloads",
+        "Professional plan is $49/month, includes video podcast publishing, 100,000 monthly audio downloads, 500 GB file storage, 500 private podcast subscribers, and dynamic ads",
+        "Professional plan includes 100,000 monthly audio downloads",
+        "Professional plan includes 500 GB of file storage",
+        "Business plan is $99/month, includes 250,000 monthly audio downloads, 1 TB file storage, 3,000 private podcast subscribers, and removes Transistor branding",
+        "Transistor offers a 14-day free trial",
+        "Transistor does not charge extra for creating additional podcasts on one account",
+        "Transistor generates a website automatically for a podcast after choosing a design",
+        "Transistor's analytics show average downloads per episode, popular podcast apps, number of subscribers, and trends",
+        "Transistor supports private, members-only podcasts for a company or online community",
+        "Transistor distributes podcasts to Apple Podcasts, Spotify, YouTube, Overcast, Pocket Casts, and many more",
+        "Transistor won the Quill Award for Best Podcast Hosting",
+        "Stephen Robles says Transistor is his favorite podcasting platform and that HLS video lets him distribute shows in all formats his audience wants from one place"
+      ],
+      "allowed_evidence_ids": [
+        "E1",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E16",
+        "E17",
+        "E18",
+        "E20",
+        "E23",
+        "E24",
+        "E25",
+        "E26",
+        "E27",
+        "E28",
+        "E30",
+        "E32"
+      ],
+      "forbidden_claims": [],
+      "forbidden_capability_ids": [],
+      "forbidden_evidence_ids": [
+        "E15",
+        "E19",
+        "E2",
+        "E21",
+        "E22"
+      ],
+      "unresolved_objections": [
+        "Can I actually stop each client seeing the other clients' shows in that one account?"
+      ],
+      "recommended_next_action": "Draft this documented use. Treat recipient circumstances as unconfirmed.",
+      "override_risk": "This draft does not establish the broader audience hypothesis or qualify any recipient.",
+      "claim_contract": {
+        "contract_version": 1,
+        "verified_product_claims": [
+          {
+            "id": "evidence:E1",
+            "text": "The Transistor API uses API keys to authenticate all requests, sent via an HTTP header named x-api-key",
+            "evidence_ids": [
+              "E1"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E2",
+            "text": "API requests are rate-limited to 10 requests per 10 seconds; exceeding this returns a 429 HTTP error code and blocks access for 10 seconds",
+            "evidence_ids": [
+              "E2"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E3",
+            "text": "The Transistor API is built around the JSON:API specification",
+            "evidence_ids": [
+              "E3"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E4",
+            "text": "The API supports sparse fieldsets, letting a request specify only particular fields to return, e.g. fields[episode][]=title&fields[episode][]=media_url",
+            "evidence_ids": [
+              "E4"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E5",
+            "text": "The API supports including a resource's related resources in one request, e.g. include[]=show, and this can be combined with sparse fieldsets",
+            "evidence_ids": [
+              "E5"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E6",
+            "text": "The Get show analytics endpoint (GET /v1/analytics/:id) retrieves downloads-per-day for an entire podcast and defaults to the last 14 days if no date range is given",
+            "evidence_ids": [
+              "E6"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E7",
+            "text": "The Get all episode analytics endpoint (GET /v1/analytics/:id/episodes) retrieves downloads-per-day for all episodes of a podcast and defaults to the last 7 days",
+            "evidence_ids": [
+              "E7"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E8",
+            "text": "The Get single episode analytics endpoint (GET /v1/analytics/episodes/:id) retrieves downloads-per-day for a single episode and defaults to the last 14 days",
+            "evidence_ids": [
+              "E8"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E9",
+            "text": "The Get episodes endpoint (GET /v1/episodes) retrieves a paginated list of episodes ordered by published date, filterable by show_id, query, and status (draft, scheduled, or published)",
+            "evidence_ids": [
+              "E9"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E10",
+            "text": "Episodes can be filtered by status: one of draft, scheduled, or published",
+            "evidence_ids": [
+              "E10"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E11",
+            "text": "Episode list results default to descending order (newest first) and default to 10 resources per page starting at page 0",
+            "evidence_ids": [
+              "E11"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E12",
+            "text": "The episodes list endpoint paginates with a default page number of 0 and a default of 10 resources per page",
+            "evidence_ids": [
+              "E12"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E13",
+            "text": "Starter plan is $19/month, includes unlimited podcasts, 20,000 monthly audio downloads, and 50 private podcast subscribers",
+            "evidence_ids": [
+              "E13"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E14",
+            "text": "Starter plan includes 20,000 monthly audio downloads",
+            "evidence_ids": [
+              "E14"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E15",
+            "text": "Starter plan includes 50 private podcast subscribers",
+            "evidence_ids": [
+              "E15"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E16",
+            "text": "Professional plan is $49/month, includes video podcast publishing, 100,000 monthly audio downloads, 500 GB file storage, 500 private podcast subscribers, and dynamic ads",
+            "evidence_ids": [
+              "E16"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E17",
+            "text": "Professional plan includes 100,000 monthly audio downloads",
+            "evidence_ids": [
+              "E17"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E18",
+            "text": "Professional plan includes 500 GB of file storage",
+            "evidence_ids": [
+              "E18"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E19",
+            "text": "Professional plan supports dynamic ads (pre-roll, mid-roll, post-roll)",
+            "evidence_ids": [
+              "E19"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E20",
+            "text": "Business plan is $99/month, includes 250,000 monthly audio downloads, 1 TB file storage, 3,000 private podcast subscribers, and removes Transistor branding",
+            "evidence_ids": [
+              "E20"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E21",
+            "text": "Business plan includes 3,000 private podcast subscribers",
+            "evidence_ids": [
+              "E21"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E22",
+            "text": "Business plan removes Transistor branding",
+            "evidence_ids": [
+              "E22"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E23",
+            "text": "Transistor offers a 14-day free trial",
+            "evidence_ids": [
+              "E23"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E24",
+            "text": "Transistor does not charge extra for creating additional podcasts on one account",
+            "evidence_ids": [
+              "E24"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E25",
+            "text": "Transistor generates a website automatically for a podcast after choosing a design",
+            "evidence_ids": [
+              "E25"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E26",
+            "text": "Transistor's analytics show average downloads per episode, popular podcast apps, number of subscribers, and trends",
+            "evidence_ids": [
+              "E26"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E27",
+            "text": "Transistor supports private, members-only podcasts for a company or online community",
+            "evidence_ids": [
+              "E27"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E28",
+            "text": "Transistor distributes podcasts to Apple Podcasts, Spotify, YouTube, Overcast, Pocket Casts, and many more",
+            "evidence_ids": [
+              "E28"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E29",
+            "text": "Transistor has hosted more than 40,000 podcasts since launching in 2018",
+            "evidence_ids": [
+              "E29"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E30",
+            "text": "Transistor won the Quill Award for Best Podcast Hosting",
+            "evidence_ids": [
+              "E30"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E31",
+            "text": "Nathan Barry of Kit says 'Transistor is 100% the way to go' when asked which podcast host he recommends",
+            "evidence_ids": [
+              "E31"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E32",
+            "text": "Stephen Robles says Transistor is his favorite podcasting platform and that HLS video lets him distribute shows in all formats his audience wants from one place",
+            "evidence_ids": [
+              "E32"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E33",
+            "text": "Ali Abdaal is a named Transistor customer since 2021",
+            "evidence_ids": [
+              "E33"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E34",
+            "text": "Dan Schoonmaker of CasterKit says Transistor integrates with Zapier",
+            "evidence_ids": [
+              "E34"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          }
+        ],
+        "campaign_allowed_claims": [
+          {
+            "id": "evidence:E1",
+            "text": "The Transistor API uses API keys to authenticate all requests, sent via an HTTP header named x-api-key",
+            "evidence_ids": [
+              "E1"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E3",
+            "text": "The Transistor API is built around the JSON:API specification",
+            "evidence_ids": [
+              "E3"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E4",
+            "text": "The API supports sparse fieldsets, letting a request specify only particular fields to return, e.g. fields[episode][]=title&fields[episode][]=media_url",
+            "evidence_ids": [
+              "E4"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E5",
+            "text": "The API supports including a resource's related resources in one request, e.g. include[]=show, and this can be combined with sparse fieldsets",
+            "evidence_ids": [
+              "E5"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E6",
+            "text": "The Get show analytics endpoint (GET /v1/analytics/:id) retrieves downloads-per-day for an entire podcast and defaults to the last 14 days if no date range is given",
+            "evidence_ids": [
+              "E6"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E7",
+            "text": "The Get all episode analytics endpoint (GET /v1/analytics/:id/episodes) retrieves downloads-per-day for all episodes of a podcast and defaults to the last 7 days",
+            "evidence_ids": [
+              "E7"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E8",
+            "text": "The Get single episode analytics endpoint (GET /v1/analytics/episodes/:id) retrieves downloads-per-day for a single episode and defaults to the last 14 days",
+            "evidence_ids": [
+              "E8"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E9",
+            "text": "The Get episodes endpoint (GET /v1/episodes) retrieves a paginated list of episodes ordered by published date, filterable by show_id, query, and status (draft, scheduled, or published)",
+            "evidence_ids": [
+              "E9"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E10",
+            "text": "Episodes can be filtered by status: one of draft, scheduled, or published",
+            "evidence_ids": [
+              "E10"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E11",
+            "text": "Episode list results default to descending order (newest first) and default to 10 resources per page starting at page 0",
+            "evidence_ids": [
+              "E11"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E12",
+            "text": "The episodes list endpoint paginates with a default page number of 0 and a default of 10 resources per page",
+            "evidence_ids": [
+              "E12"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E13",
+            "text": "Starter plan is $19/month, includes unlimited podcasts, 20,000 monthly audio downloads, and 50 private podcast subscribers",
+            "evidence_ids": [
+              "E13"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E14",
+            "text": "Starter plan includes 20,000 monthly audio downloads",
+            "evidence_ids": [
+              "E14"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E16",
+            "text": "Professional plan is $49/month, includes video podcast publishing, 100,000 monthly audio downloads, 500 GB file storage, 500 private podcast subscribers, and dynamic ads",
+            "evidence_ids": [
+              "E16"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E17",
+            "text": "Professional plan includes 100,000 monthly audio downloads",
+            "evidence_ids": [
+              "E17"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E18",
+            "text": "Professional plan includes 500 GB of file storage",
+            "evidence_ids": [
+              "E18"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E20",
+            "text": "Business plan is $99/month, includes 250,000 monthly audio downloads, 1 TB file storage, 3,000 private podcast subscribers, and removes Transistor branding",
+            "evidence_ids": [
+              "E20"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E23",
+            "text": "Transistor offers a 14-day free trial",
+            "evidence_ids": [
+              "E23"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E24",
+            "text": "Transistor does not charge extra for creating additional podcasts on one account",
+            "evidence_ids": [
+              "E24"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E25",
+            "text": "Transistor generates a website automatically for a podcast after choosing a design",
+            "evidence_ids": [
+              "E25"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E26",
+            "text": "Transistor's analytics show average downloads per episode, popular podcast apps, number of subscribers, and trends",
+            "evidence_ids": [
+              "E26"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E27",
+            "text": "Transistor supports private, members-only podcasts for a company or online community",
+            "evidence_ids": [
+              "E27"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E28",
+            "text": "Transistor distributes podcasts to Apple Podcasts, Spotify, YouTube, Overcast, Pocket Casts, and many more",
+            "evidence_ids": [
+              "E28"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E30",
+            "text": "Transistor won the Quill Award for Best Podcast Hosting",
+            "evidence_ids": [
+              "E30"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E32",
+            "text": "Stephen Robles says Transistor is his favorite podcasting platform and that HLS video lets him distribute shows in all formats his audience wants from one place",
+            "evidence_ids": [
+              "E32"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          }
+        ],
+        "forbidden_claims": [],
+        "withheld_claims": [
+          {
+            "id": "evidence:E2",
+            "text": "API requests are rate-limited to 10 requests per 10 seconds; exceeding this returns a 429 HTTP error code and blocks access for 10 seconds",
+            "evidence_ids": [
+              "E2"
+            ],
+            "reason": "Ranked WITHHOLD for this audience."
+          },
+          {
+            "id": "evidence:E15",
+            "text": "Starter plan includes 50 private podcast subscribers",
+            "evidence_ids": [
+              "E15"
+            ],
+            "reason": "Ranked WITHHOLD for this audience."
+          },
+          {
+            "id": "evidence:E19",
+            "text": "Professional plan supports dynamic ads (pre-roll, mid-roll, post-roll)",
+            "evidence_ids": [
+              "E19"
+            ],
+            "reason": "Ranked WITHHOLD for this audience."
+          },
+          {
+            "id": "evidence:E21",
+            "text": "Business plan includes 3,000 private podcast subscribers",
+            "evidence_ids": [
+              "E21"
+            ],
+            "reason": "Ranked WITHHOLD for this audience."
+          },
+          {
+            "id": "evidence:E22",
+            "text": "Business plan removes Transistor branding",
+            "evidence_ids": [
+              "E22"
+            ],
+            "reason": "Ranked WITHHOLD for this audience."
+          },
+          {
+            "id": "evidence:E29",
+            "text": "Transistor has hosted more than 40,000 podcasts since launching in 2018",
+            "evidence_ids": [
+              "E29"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E31",
+            "text": "Nathan Barry of Kit says 'Transistor is 100% the way to go' when asked which podcast host he recommends",
+            "evidence_ids": [
+              "E31"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E33",
+            "text": "Ali Abdaal is a named Transistor customer since 2021",
+            "evidence_ids": [
+              "E33"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E34",
+            "text": "Dan Schoonmaker of CasterKit says Transistor integrates with Zapier",
+            "evidence_ids": [
+              "E34"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          }
+        ],
+        "warnings": [
+          "Claim 'API requests are rate-limited to 10 requests per 10 seconds; exceeding this returns a 429 HTTP error code and blocks access for 10 seconds' rests on withheld or forbidden evidence (E2) and is not campaign-safe.",
+          "Claim 'Starter plan includes 50 private podcast subscribers' rests on withheld or forbidden evidence (E15) and is not campaign-safe.",
+          "Claim 'Professional plan supports dynamic ads (pre-roll, mid-roll, post-roll)' rests on withheld or forbidden evidence (E19) and is not campaign-safe.",
+          "Claim 'Business plan includes 3,000 private podcast subscribers' rests on withheld or forbidden evidence (E21) and is not campaign-safe.",
+          "Claim 'Business plan removes Transistor branding' rests on withheld or forbidden evidence (E22) and is not campaign-safe."
+        ]
+      }
+    },
+    "dossier_status": "current",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "Verified product facts support this first-email scope: Introduce Transistor as a podcast host where a single account can carry more than one show at no extra per-podcast charge, publishing each feed to Apple Podcasts, Spotify, YouTube and other apps, with per-episode download analytics in the dashboard; the single next step is starting the 14-day free trial and creating a show."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "Draft this documented use. Treat recipient circumstances as unconfirmed.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "38112034-2418-4182-8f81-011422d98991",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Transistor lets an agency create multiple distinct podcasts in one account without an additional per-podcast charge; Starter includes unlimited podcasts, with its download allowance shared across the account."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-11-09T11:39:07.749745Z",
+      "completed_at": "2026-11-09T11:41:04.578999Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 56503,
+      "output_tokens": 8564,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.715293,
+      "duration_ms": 116568.54400003795,
+      "attempt": 1
+    },
+    {
+      "id": "725590f6-e5d7-45cc-9555-465d2df169a0",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · first draft",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "subject": "Host multiple shows in one account"
+      },
+      "error_message": null,
+      "started_at": "2026-11-09T11:41:05.035610Z",
+      "completed_at": "2026-11-09T11:41:27.664170Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 15037,
+      "output_tokens": 1849,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.182115,
+      "duration_ms": 22554.0442999918,
+      "attempt": 1
+    },
+    {
+      "id": "9db9063f-379e-4624-9ba7-773d84eb7010",
+      "agent_id": "claim_reviewer",
+      "agent_name": "Claim Reviewer",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · checking claims against sources"
+      },
+      "output_data": {
+        "semantic_review": {
+          "key": "4ec4a1f940727a65342761bbc588938b3b15a13651ce7ecc5d0841cafd512830",
+          "approved": false,
+          "decision": {
+            "verdict": "uncertain",
+            "claims": [
+              {
+                "text": "Host multiple shows in one account",
+                "status": "supported",
+                "explanation": "Transistor documents hosting an unlimited number of podcasts through a single account.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "With Transistor, you have the flexibility to [host an unlimited number of podcasts](https://transistor.fm/features/host-multiple-podcasts-on-the-same-account/) using a single account."
+                  }
+                ]
+              },
+              {
+                "text": "Create separate podcasts without an additional per-podcast charge.",
+                "status": "supported",
+                "explanation": "The sources support creating additional podcasts in one account without an extra charge for creating them.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "## Host multiple podcasts on one account\nWe don't charge you for creating additional podcasts."
+                  }
+                ]
+              },
+              {
+                "text": "Create multiple podcasts in one account",
+                "status": "supported",
+                "explanation": "The single-account, multiple-podcast capability is expressly documented.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "With Transistor, you have the flexibility to [host an unlimited number of podcasts](https://transistor.fm/features/host-multiple-podcasts-on-the-same-account/) using a single account."
+                  }
+                ]
+              },
+              {
+                "text": "A 14-day free trial lets you create your next show as a separate podcast and see how additional shows sit inside the same account.",
+                "status": "uncertain",
+                "explanation": "E23 establishes a 14-day free trial and E24 establishes additional-podcast creation generally, but no literal source establishes that this capability is available during the trial. The promised trial entitlement and inspection experience therefore remain unresolved.",
+                "citations": [
+                  {
+                    "source_id": "E23",
+                    "quote": "Start 14-day **free trial**"
+                  },
+                  {
+                    "source_id": "E24",
+                    "quote": "We don't charge you for creating additional podcasts."
+                  }
+                ]
+              },
+              {
+                "text": "Transistor is a podcast hosting platform for running multiple distinct shows in one account.",
+                "status": "supported",
+                "explanation": "The sources describe Transistor as hosting multiple podcasts through one account; referring to those podcasts as distinct shows is consistent with that documented capability.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "With Transistor, you have the flexibility to [host an unlimited number of podcasts](https://transistor.fm/features/host-multiple-podcasts-on-the-same-account/) using a single account."
+                  }
+                ]
+              },
+              {
+                "text": "Creating another podcast does not add a per-podcast charge.",
+                "status": "supported",
+                "explanation": "This directly reflects Transistor's statement that it does not charge for creating additional podcasts.",
+                "citations": [
+                  {
+                    "source_id": "E24",
+                    "quote": "We don't charge you for creating additional podcasts."
+                  }
+                ]
+              },
+              {
+                "text": "If you continue with Starter, $19 per month, billed monthly in USD, includes unlimited podcasts.",
+                "status": "uncertain",
+                "explanation": "The literal sources support unlimited podcasts regardless of subscription plan, but none of the supplied literal quotes states Starter's $19 price, monthly billing basis, or USD currency. The supplied fact summary cannot substitute for that missing quote.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "Regardless of your subscription plan, you can create and manage multiple podcasts."
+                  }
+                ]
+              },
+              {
+                "text": "Its 20,000 monthly audio downloads are shared across the whole account, so you can assess that pooled capacity against the shows you plan to host.",
+                "status": "uncertain",
+                "explanation": "The sources establish Starter's 20,000-download monthly limit but do not literally state that audio downloads are pooled across all podcasts in the account. The cited FAQ expressly discusses shared file storage, not shared audio downloads.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "Let's say you're on the Starter plan with 20,000 downloads per month."
+                  },
+                  {
+                    "source_id": "E14",
+                    "quote": "[**20,000** monthly audio downloads](https://support.transistor.fm/en/article/what-constitutes-a-podcast-download-stream-listen-kv1em2/)"
+                  }
+                ]
+              },
+              {
+                "text": "Create the next show during the trial and decide whether the one-account structure works for your agency or network.",
+                "status": "uncertain",
+                "explanation": "The trial and one-account capability are separately documented, but the sources do not establish entitlement to create the show during the trial. The agency-or-network framing is conditional and does not claim observed recipient biography.",
+                "citations": [
+                  {
+                    "source_id": "E23",
+                    "quote": "Start 14-day **free trial**"
+                  },
+                  {
+                    "source_id": "source:0",
+                    "quote": "With Transistor, you have the flexibility to [host an unlimited number of podcasts](https://transistor.fm/features/host-multiple-podcasts-on-the-same-account/) using a single account."
+                  }
+                ]
+              },
+              {
+                "text": "Start your 14-day free trial →",
+                "status": "supported",
+                "explanation": "The supplied captured link uses this offer and resolves to the selected signup destination.",
+                "citations": [
+                  {
+                    "source_id": "cta:2",
+                    "quote": "Source page: https://transistor.fm/\nResolved link: https://dashboard.transistor.fm/signup\nLiteral link: [Start 14-day **free trial**](https://dashboard.transistor.fm/signup)"
+                  }
+                ]
+              },
+              {
+                "text": "- Transistor",
+                "status": "supported",
+                "explanation": "The official source materials identify Transistor as the product and offer owner discussed throughout the draft.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "[Host Unlimited Shows • Best Audio and Video Podcast Hosting • Transistor › Host multiple podcasts on one account; document_id=7926076b-6030-42ff-b105-814700dc3337; source=https://transistor.fm/; aliases=https://transistor.fm/; chunk=5]"
+                  }
+                ]
+              }
+            ],
+            "findings": [
+              {
+                "text": "A 14-day free trial lets you create your next show as a separate podcast and see how additional shows sit inside the same account.",
+                "kind": "factual",
+                "explanation": "The sources do not connect additional-podcast creation to trial access, so this trial entitlement is unresolved."
+              },
+              {
+                "text": "If you continue with Starter, $19 per month, billed monthly in USD, includes unlimited podcasts.",
+                "kind": "factual",
+                "explanation": "Unlimited podcasts are supported, but the literal evidence supplied does not verify the $19 price, monthly billing basis, or USD currency."
+              },
+              {
+                "text": "Its 20,000 monthly audio downloads are shared across the whole account, so you can assess that pooled capacity against the shows you plan to host.",
+                "kind": "factual",
+                "explanation": "The 20,000 monthly limit is supported, but account-level pooling of audio downloads is not established by a literal quote."
+              },
+              {
+                "text": "Create the next show during the trial and decide whether the one-account structure works for your agency or network.",
+                "kind": "factual",
+                "explanation": "This repeats the unresolved promise that show creation is available during the free trial."
+              }
+            ],
+            "summary": "The multi-podcast, single-account model, lack of an additional podcast-creation charge, unlimited podcasts, 20,000-download Starter limit, and 14-day trial are individually documented. Approval remains uncertain because the literal evidence does not verify Starter's stated price and billing details, account-level pooling of audio downloads, or show creation during the trial. No forbidden claim or other instruction violation appears.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The draft retains the proposed benefit: multiple separate podcasts in one Transistor account without an additional charge for creating each podcast. Evidence gaps in the price, pooled-download, and trial-entitlement details prevent full factual approval.",
+              "original_passage": "Transistor is a podcast hosting platform for running multiple distinct shows in one account. Creating another podcast does not add a per-podcast charge.",
+              "revised_passage": "Transistor is a podcast hosting platform for running multiple distinct shows in one account. Creating another podcast does not add a per-podcast charge."
+            }
+          },
+          "version": 3
+        },
+        "passed": false
+      },
+      "error_message": null,
+      "started_at": "2026-11-09T11:41:27.684582Z",
+      "completed_at": "2026-11-09T11:42:44.156413Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 20991,
+      "output_tokens": 6472,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.362088,
+      "duration_ms": 76404.47319997475,
+      "attempt": 1
+    },
+    {
+      "id": "c164600e-ba3f-43e0-a370-ab069c63efee",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 1 reader(s)",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "pull": 8
+      },
+      "error_message": null,
+      "started_at": "2026-11-09T11:42:44.176530Z",
+      "completed_at": "2026-11-09T11:43:02.890668Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 3769,
+      "output_tokens": 1132,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.070461,
+      "duration_ms": 18679.577099974267,
+      "attempt": 1
+    },
+    {
+      "id": "4d0494e7-0c39-4ad3-a83f-fc5ae7b24151",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 5,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · rewrite 1",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "subject": "A separate podcast for each show"
+      },
+      "error_message": null,
+      "started_at": "2026-11-09T11:43:02.921524Z",
+      "completed_at": "2026-11-09T11:43:41.672707Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 17999,
+      "output_tokens": 3664,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.260261,
+      "duration_ms": 38674.138299888,
+      "attempt": 2
+    },
+    {
+      "id": "650ccdb8-7fc9-498d-9721-fe853002dcc3",
+      "agent_id": "claim_reviewer",
+      "agent_name": "Claim Reviewer",
+      "sequence_order": 6,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · checking claims against sources"
+      },
+      "output_data": {
+        "semantic_review": {
+          "key": "64613d1d28e4037ebc0cb16b5a891c418ece8ca8f06a9517b2015d1f43c18cdf",
+          "approved": false,
+          "decision": {
+            "verdict": "revise",
+            "claims": [
+              {
+                "text": "A separate podcast for each show",
+                "status": "supported",
+                "explanation": "Transistor documents creating multiple podcasts in one account and states that each show receives its own feed.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "Create or import as many podcasts as you like on Transistor, and manage them together with one subscription. Each show gets its own feed, website, and analytics."
+                  }
+                ]
+              },
+              {
+                "text": "Keep multiple podcasts in one account without an additional per-podcast charge.",
+                "status": "supported",
+                "explanation": "The sources support managing multiple podcasts in one account and not charging for additional podcast creation.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "Create or import as many podcasts as you like on Transistor, and manage them together with one subscription."
+                  },
+                  {
+                    "source_id": "E24",
+                    "quote": "We don't charge you for creating additional podcasts."
+                  }
+                ]
+              },
+              {
+                "text": "Keep each show as a separate podcast",
+                "status": "supported",
+                "explanation": "Each show can be created as its own podcast and receives its own feed.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "Create or import as many podcasts as you like on Transistor, and manage them together with one subscription. Each show gets its own feed, website, and analytics."
+                  }
+                ]
+              },
+              {
+                "text": "If a client or internal show needs a host, create it as its own podcast while keeping your other podcasts in the same Transistor account.",
+                "status": "supported",
+                "explanation": "The documented one-account model permits creating and managing multiple distinct podcasts together.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "Create or import as many podcasts as you like on Transistor, and manage them together with one subscription. Each show gets its own feed, website, and analytics."
+                  }
+                ]
+              },
+              {
+                "text": "Transistor is a podcast hosting platform that can hold an unlimited number of podcasts in one account.",
+                "status": "supported",
+                "explanation": "The sources identify Transistor as podcast hosting and explicitly support unlimited podcasts in one account.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "[Podcast hosting features on Transistor › Host multiple podcasts on one account; document_id=b5976f09-e838-4e36-95c6-621608b5a13a; source=https://transistor.fm/features/; aliases=https://transistor.fm/features/; chunk=3]"
+                  },
+                  {
+                    "source_id": "prior:source:0",
+                    "quote": "With Transistor, you have the flexibility to [host an unlimited number of podcasts](https://transistor.fm/features/host-multiple-podcasts-on-the-same-account/) using a single account."
+                  }
+                ]
+              },
+              {
+                "text": "Each production remains a separate podcast, so a new show does not have to become part of an existing podcast.",
+                "status": "supported",
+                "explanation": "The source permits creating multiple podcasts and says each show gets its own feed, supporting separation rather than folding a new show into an existing podcast.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "Create or import as many podcasts as you like on Transistor, and manage them together with one subscription. Each show gets its own feed, website, and analytics."
+                  }
+                ]
+              },
+              {
+                "text": "Creating an additional podcast does not add a per-podcast charge.",
+                "status": "supported",
+                "explanation": "This directly matches the documented absence of a charge for additional podcast creation.",
+                "citations": [
+                  {
+                    "source_id": "E24",
+                    "quote": "We don't charge you for creating additional podcasts."
+                  }
+                ]
+              },
+              {
+                "text": "The account can carry one show or many without an extra fee simply because another podcast was created.",
+                "status": "supported",
+                "explanation": "Unlimited podcasts can be held in one account, and creating additional podcasts does not itself incur another charge.",
+                "citations": [
+                  {
+                    "source_id": "prior:source:0",
+                    "quote": "With Transistor, you have the flexibility to [host an unlimited number of podcasts](https://transistor.fm/features/host-multiple-podcasts-on-the-same-account/) using a single account."
+                  },
+                  {
+                    "source_id": "E24",
+                    "quote": "We don't charge you for creating additional podcasts."
+                  }
+                ]
+              },
+              {
+                "text": "For an agency or network, this gives client and internal shows a straightforward home: one account, separate podcasts, and no additional per-podcast charge.",
+                "status": "supported",
+                "explanation": "As a conditional use case, its concrete elements—one account, distinct podcasts and no charge for additional podcast creation—are documented.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "Create or import as many podcasts as you like on Transistor, and manage them together with one subscription. Each show gets its own feed, website, and analytics."
+                  },
+                  {
+                    "source_id": "E24",
+                    "quote": "We don't charge you for creating additional podcasts."
+                  }
+                ]
+              },
+              {
+                "text": "Transistor offers a 14-day free trial.",
+                "status": "supported",
+                "explanation": "The trial duration and free-trial status are stated literally.",
+                "citations": [
+                  {
+                    "source_id": "E23",
+                    "quote": "Start 14-day **free trial**"
+                  }
+                ]
+              },
+              {
+                "text": "For an agency or network, this gives client and internal shows a straightforward home: one account, separate podcasts, and no additional per-podcast charge. Transistor offers a 14-day free trial.\n\nStart your 14-day free trial →",
+                "status": "unsupported",
+                "explanation": "In context, the trial invitation reasonably implies that the described multi-podcast setup can be used through that trial route. The sources separately establish the general capability and the trial, but none states that creating multiple podcasts is included during the trial.",
+                "citations": [
+                  {
+                    "source_id": "E24",
+                    "quote": "We don't charge you for creating additional podcasts."
+                  },
+                  {
+                    "source_id": "E23",
+                    "quote": "Start 14-day **free trial**"
+                  },
+                  {
+                    "source_id": "cta:2",
+                    "quote": "Literal link: [Start 14-day **free trial**](https://dashboard.transistor.fm/signup)"
+                  }
+                ]
+              },
+              {
+                "text": "Start your 14-day free trial →",
+                "status": "supported",
+                "explanation": "The documented CTA links to the selected signup destination and promises the same 14-day free trial.",
+                "citations": [
+                  {
+                    "source_id": "cta:2",
+                    "quote": "Resolved link: https://dashboard.transistor.fm/signup\nLiteral link: [Start 14-day **free trial**](https://dashboard.transistor.fm/signup)"
+                  }
+                ]
+              },
+              {
+                "text": "- Transistor",
+                "status": "supported",
+                "explanation": "The supplied official-source titles identify the product and company as Transistor.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "[Host Unlimited Shows • Best Audio and Video Podcast Hosting • Transistor › Host multiple podcasts on one account; document_id=7926076b-6030-42ff-b105-814700dc3337; source=https://transistor.fm/; aliases=https://transistor.fm/; chunk=5]"
+                  }
+                ]
+              }
+            ],
+            "findings": [
+              {
+                "text": "For an agency or network, this gives client and internal shows a straightforward home: one account, separate podcasts, and no additional per-podcast charge.",
+                "kind": "instruction",
+                "explanation": "The campaign directions require this multi-show promise to state the decision-changing Starter conditions: $19 per month billed monthly in USD and 20,000 monthly audio downloads shared across the account. Both are omitted."
+              },
+              {
+                "text": "Start your 14-day free trial →",
+                "kind": "instruction",
+                "explanation": "The requested action is to start the trial and create the next show; the CTA asks only for trial signup."
+              },
+              {
+                "text": "For an agency or network, this gives client and internal shows a straightforward home: one account, separate podcasts, and no additional per-podcast charge. Transistor offers a 14-day free trial.\n\nStart your 14-day free trial →",
+                "kind": "factual",
+                "explanation": "This sequencing implies access to the advertised multi-podcast operation through the trial route, but no literal source establishes that entitlement during the trial."
+              }
+            ],
+            "summary": "The core one-account, separate-podcast and no-additional-per-podcast-charge claims are supported, as is the 14-day trial CTA. Revision is required because trial access to the multi-podcast operation is not established and the draft omits explicitly required Starter pricing, pooled download capacity and the create-your-next-show action.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The prior passage's concrete benefit—creating a separate podcast without an additional per-podcast charge—appears directly in the revised email with the same operation and consequence.",
+              "original_passage": "Create separate podcasts without an additional per-podcast charge.",
+              "revised_passage": "Creating an additional podcast does not add a per-podcast charge."
+            }
+          },
+          "version": 3,
+          "factual_repair": true
+        },
+        "passed": false
+      },
+      "error_message": null,
+      "started_at": "2026-11-09T11:43:41.696004Z",
+      "completed_at": "2026-11-09T11:44:54.196897Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 21788,
+      "output_tokens": 5897,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.351214,
+      "duration_ms": 72445.84090006538,
+      "attempt": 2
+    },
+    {
+      "id": "48bb5fc8-a77b-4154-84ff-9f5be76fcec4",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 7,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 1 reader(s)",
+        "position": 1,
+        "attempt": 2
+      },
+      "output_data": {
+        "pull": 7
+      },
+      "error_message": null,
+      "started_at": "2026-11-09T11:44:54.216873Z",
+      "completed_at": "2026-11-09T11:45:15.279056Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11724,
+      "output_tokens": 1360,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.134592,
+      "duration_ms": 21026.0553000262,
+      "attempt": 2
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "failed",
+    "report": {
+      "request": "Write exactly one email. Introduce our product to a new buyer with one clear next step.",
+      "effective_audience": "Network or agency running multiple shows",
+      "audience_scope": "",
+      "assessment_method": "Simulated reader's interest, uncalibrated; no response or conversion prediction",
+      "delivered": 0,
+      "promised": 1,
+      "contract_violations": [
+        "the user asked for 1 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [
+        "Some linked source pages could not be read; the corpus is partial: https://transistor.fm/ - Use only the readable captured facts; do not infer missing prices, features or proof."
+      ],
+      "what_would_help_most": "Can this source be supplied in a readable form or its missing details verified?",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "Email 1 failed automatic checks after repair: \"A 14-day free trial lets you create your next show as a separate podcast and see how additional shows sit inside the same account.\": E23 establishes a 14-day free trial and E24 establishes additional-podcast creation generally, but no literal source establishes that this capability is available during the trial. The promised trial entitlement and inspection experience therefore remain unresolved.; \"If you continue with Starter, $19 per month, billed monthly in USD, includes unlimited podcasts.\": The literal sources support unlimited podcasts regardless of subscription plan, but none of the supplied literal quotes states Starter's $19 price, monthly billing basis, or USD currency. The supplied fact summary cannot substitute for that missing quote.; \"Its 20,000 monthly audio downloads are shared across the whole account, so you can assess that pooled capacity against the shows you plan to host.\": The sources establish Starter's 20,000-download monthly limit but do not literally state that audio downloads are pooled across all podcasts in the account. The cited FAQ expressly discusses shared file storage, not shared audio downloads.; \"Create the next show during the trial and decide whether the one-account structure works for your agency or network.\": The trial and one-account capability are separately documented, but the sources do not establish entitlement to create the show during the trial. The agency-or-network framing is conditional and does not claim observed recipient biography.; The sources do not connect additional-podcast creation to trial access, so this trial entitlement is unresolved.; Unlimited podcasts are supported, but the literal evidence supplied does not verify the $19 price, monthly billing basis, or USD currency.; The 20,000 monthly limit is supported, but account-level pooling of audio downloads is not established by a literal quote.; This repeats the unresolved promise that show creation is available during the free trial.",
+        "Effective audience: Network or agency running multiple shows",
+        "Audience context: audience_research_loaded",
+        "Source coverage is partial: 2 readable page(s), 2 unavailable URL(s). Findings cover only the pages read.",
+        "Moved product questions without an explicit audience requirement to decision gaps.",
+        "Defining audience need is unassessed or its references required normalization.",
+        "Ignored unavailable dossier ranking E19.",
+        "Ignored unavailable dossier ranking E22.",
+        "Ignored unavailable dossier ranking E15.",
+        "Ignored unavailable dossier ranking E21.",
+        "Ignored unavailable dossier ranking E2.",
+        "The proposed buyer problem was not established by the selected audience research; no substitute pain was inserted.",
+        "The proposed current alternative was not established by audience research; it remains unknown.",
+        "Reframed an unlinked buyer-problem argument as the documented function or offer (E23, E24, E28); its old benefit, alternative failure story and evaluation payoff were not retained."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "I interpret “introduce our product to a new buyer” as one acquisition email for a solution-aware agency or network choosing a host for a new show. The email introduces Transistor through a supported product-led proposition: one account can hold multiple distinct podcasts without an additional per-podcast charge. The single next step is to start the 14-day free trial and create the next show.",
+      "pipeline_version": 2,
+      "strategy_mode": "planned",
+      "intent": {
+        "objective": "custom",
+        "objective_source": "inferred",
+        "reader_relationship": "unknown",
+        "relationship_source": "inferred",
+        "announcement": "",
+        "reason_now": "",
+        "desired_action": ""
+      },
+      "reader": "Selected audience: Network or agency running multiple shows.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (grounded; check applicability): Agencies offering podcast production as a client service, hosting and managing multiple client (or internal) podcasts from one place rather than running each show as a one-off project.",
+      "reader_segment": "Network or agency running multiple shows",
+      "reader_profile_override": "",
+      "reader_scope": "",
+      "fixed_cta_url": "",
+      "promise": "An agency can run more than one podcast in a Transistor account without an additional per-podcast charge.",
+      "orientation": "Transistor is a podcast hosting platform that publishes audio and video shows to the major listening apps and, on one paid account, lets an agency run more than one podcast without a per-podcast charge.",
+      "arc": "Show a solution-aware buyer how Transistor structures multi-show hosting, qualify the entry plan’s pooled capacity, then invite them to create one show during the 14-day trial.",
+      "sequence_rationale": "This is a product-led introduction, so it does not invent a buyer problem or a failing incumbent workflow. It leads with the documented multi-show account structure because that is directly useful to the selected audience, then uses the Starter terms to qualify the commercial promise and the free trial to support the requested action. No unsupported objection or recipient history is required. The single thing that would most change this campaign is a readable copy of the unavailable source page or verification of its missing details.",
+      "emails": [
+        {
+          "problem_ids": [],
+          "offer_id": "offering",
+          "action_id": "action_e9a33d64db89",
+          "selection_reason": "For an agency or network that may host multiple distinct shows, the ability to add podcasts without an additional per-podcast charge is a concrete reason to consider Transistor. The Starter terms make the account-level price and pooled download condition visible, while the 14-day trial provides a supported first step.",
+          "next_step_url": "https://dashboard.transistor.fm/signup",
+          "destination_kind": "web",
+          "argument_issue": "",
+          "value_case": {
+            "reader_benefit": "If the agency wants to host multiple shows itself, it can keep them as distinct podcasts in one Transistor account without paying an additional per-podcast charge.",
+            "mechanism": "Start a 14-day trial and create the next show as its own podcast. Transistor does not charge extra for creating additional podcasts. If the agency continues on Starter, the plan is $19 per month when billed monthly and includes unlimited podcasts with 20,000 monthly audio downloads shared across the account.",
+            "evidence_ids": [
+              "E24",
+              "E13",
+              "E23"
+            ],
+            "decision_conditions": [
+              "The multi-show proposition applies when the agency wants the podcasts held in one account.",
+              "Starter is $19 per month when billed monthly in USD.",
+              "Starter’s 20,000 monthly audio downloads are an account-level allowance shared across its podcasts."
+            ]
+          },
+          "claim_conditions": [
+            "Frame the use case conditionally because the recipient’s current account structure and number of shows are unknown.",
+            "Keep the multi-show benefit attached to one account.",
+            "State the Starter price only as $19 per month, billed monthly in USD.",
+            "Keep the 20,000 monthly audio download allowance at account level; it does not increase with each added podcast.",
+            "The trial is 14 days.",
+            "Start the 14-day free trial to create the account",
+            "Create each show as a separate podcast inside that account at no extra per-podcast charge",
+            "Submit each show's feed to the listening apps via Transistor's distribution step",
+            "Starter plan ($19/month) includes 20,000 monthly audio downloads shared across the whole account, so download allowance is a pooled account-level resource, not per-show",
+            "Do not promise: No claim that client users can be restricted to only their own show's dashboard",
+            "Do not promise: No claim of a ready-made client-facing analytics or ROI report",
+            "Do not promise: No claim about migrating existing shows off an incumbent host without disruption",
+            "Do not promise: No claim of headcount or time savings, growth outcomes, or cost comparison against any competitor",
+            "Do not promise: No claim that video publishing, dynamic ads or branding removal are available on the trial or on the entry plan",
+            "Do not promise: No claim that video publishing, dynamic ads, or branding removal are available on the trial or on the entry (Starter) plan",
+            "Do not promise: No claim that the pooled download allowance scales per added show without upgrading plans",
+            "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit."
+          ],
+          "position": 1,
+          "target_audience": "Network or agency running multiple shows",
+          "job": "Get a new buyer choosing a host for an upcoming show to start a 14-day Transistor trial and create that show.",
+          "single_idea": "Transistor lets an agency create multiple distinct podcasts in one account without an additional per-podcast charge; Starter includes unlimited podcasts, with its download allowance shared across the account.",
+          "felt_need": "",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "The reader can start a 14-day trial and create the next show as a separate podcast. Additional podcasts do not carry an extra per-podcast charge. On the $19-per-month Starter plan, unlimited podcasts share the account’s 20,000 monthly audio downloads.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: adding another client or internal show may require evaluating another hosting purchase. After: Transistor offers a documented one-account model with no additional per-podcast charge, subject to the plan’s shared account capacity.",
+          "evidence_ids": [
+            "E23",
+            "E24",
+            "E13"
+          ],
+          "must_not_say": [
+            "Do not claim that client users can be restricted to only their own show’s dashboard.",
+            "Do not claim that Transistor provides a ready-made client-facing analytics or ROI report.",
+            "Do not claim that existing shows can be migrated from another host without disruption.",
+            "Do not claim headcount savings, time savings, audience growth, revenue gains or cost superiority over a competitor.",
+            "Do not claim that video publishing, dynamic ads or branding removal are included in the trial or Starter plan.",
+            "Do not claim that the download allowance increases for every additional show; plan capacity is shared across the account.",
+            "Do not imply that the 14-day trial proves long-term plan capacity or fit.",
+            "Do not claim that every agency should own its clients’ hosting accounts.",
+            "Do not turn distribution, analytics, API functionality, private podcasts, storage or higher-tier plan features into secondary pitches.",
+            "Do not make an exclusivity or superiority claim against Buzzsprout or any other host.",
+            "Do not imply automatic placement in every podcast directory.",
+            "Do not present this documented use as proof that Transistor fits every agency or network."
+          ],
+          "forbidden_evidence_ids": [
+            "E15",
+            "E19",
+            "E2",
+            "E21",
+            "E22",
+            "E29",
+            "E31",
+            "E33",
+            "E34"
+          ],
+          "forbidden_capability_ids": [],
+          "objection": "Does adding another show mean paying another per-podcast charge, and what capacity does the entry plan provide?",
+          "tone": "Plain, practical and quietly confident.",
+          "call_to_action": "Start your 14-day free trial and create your next show.",
+          "next_step_decision": "Decide whether Transistor’s one-account structure is a workable way to host the agency’s next show alongside additional podcasts.",
+          "next_step_value": "The signup starts a 14-day free trial in which the reader can create the next show and inspect the multi-show account structure before choosing a paid plan.",
+          "next_step_evidence_ids": [
+            "E23",
+            "E24"
+          ],
+          "next_step_limit": "The trial does not establish client-specific dashboard permissions, migration from another host, or whether the shared download allowance will suit the agency’s long-term combined volume.",
+          "subject_strategy": "Make the one-account, multiple-podcast model immediately relevant to an agency or network; avoid generic hosting language, unsupported savings claims and claims of competitive uniqueness.",
+          "must_not_reuse": [],
+          "steering": {
+            "directions": [],
+            "include_evidence_ids": [],
+            "exclude_evidence_ids": [],
+            "use": [],
+            "avoid": [],
+            "context_only": [],
+            "excluded_values": []
+          }
+        }
+      ],
+      "voice_notes": "Use short, direct sentences and Transistor’s practical vocabulary: show, podcast, account, publish, distribute and feed. Explain the workflow instead of praising it. Do not add a greeting or sign-off unless the copywriter needs one.",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "one email"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "f6375955-d747-4f5b-a27d-e2d8213aaae3",
+      "readiness": "GO_NARROW",
+      "recommendation": {
+        "state": "RECOMMENDED_NARROW",
+        "readiness": "GO_NARROW",
+        "reasons": [
+          "Verified product facts support this first-email scope: Introduce Transistor as a podcast host where a single account can carry more than one show at no extra per-podcast charge, publishing each feed to Apple Podcasts, Spotify, YouTube and other apps, with per-episode download analytics in the dashboard; the single next step is starting the 14-day free trial and creating a show."
+        ],
+        "eligible_subsegment": "Introduce Transistor as a podcast host where a single account can carry more than one show at no extra per-podcast charge, publishing each feed to Apple Podcasts, Spotify, YouTube and other apps, with per-episode download analytics in the dashboard; the single next step is starting the 14-day free trial and creating a show.",
+        "qualified_companies": [],
+        "adjacent_companies": [],
+        "excluded_companies": [],
+        "unverified_companies": [],
+        "allowed_claims": [
+          "The Transistor API uses API keys to authenticate all requests, sent via an HTTP header named x-api-key",
+          "The Transistor API is built around the JSON:API specification",
+          "The API supports sparse fieldsets, letting a request specify only particular fields to return, e.g. fields[episode][]=title&fields[episode][]=media_url",
+          "The API supports including a resource's related resources in one request, e.g. include[]=show, and this can be combined with sparse fieldsets",
+          "The Get show analytics endpoint (GET /v1/analytics/:id) retrieves downloads-per-day for an entire podcast and defaults to the last 14 days if no date range is given",
+          "The Get all episode analytics endpoint (GET /v1/analytics/:id/episodes) retrieves downloads-per-day for all episodes of a podcast and defaults to the last 7 days",
+          "The Get single episode analytics endpoint (GET /v1/analytics/episodes/:id) retrieves downloads-per-day for a single episode and defaults to the last 14 days",
+          "The Get episodes endpoint (GET /v1/episodes) retrieves a paginated list of episodes ordered by published date, filterable by show_id, query, and status (draft, scheduled, or published)",
+          "Episodes can be filtered by status: one of draft, scheduled, or published",
+          "Episode list results default to descending order (newest first) and default to 10 resources per page starting at page 0",
+          "The episodes list endpoint paginates with a default page number of 0 and a default of 10 resources per page",
+          "Starter plan is $19/month, includes unlimited podcasts, 20,000 monthly audio downloads, and 50 private podcast subscribers",
+          "Starter plan includes 20,000 monthly audio downloads",
+          "Professional plan is $49/month, includes video podcast publishing, 100,000 monthly audio downloads, 500 GB file storage, 500 private podcast subscribers, and dynamic ads",
+          "Professional plan includes 100,000 monthly audio downloads",
+          "Professional plan includes 500 GB of file storage",
+          "Business plan is $99/month, includes 250,000 monthly audio downloads, 1 TB file storage, 3,000 private podcast subscribers, and removes Transistor branding",
+          "Transistor offers a 14-day free trial",
+          "Transistor does not charge extra for creating additional podcasts on one account",
+          "Transistor generates a website automatically for a podcast after choosing a design",
+          "Transistor's analytics show average downloads per episode, popular podcast apps, number of subscribers, and trends",
+          "Transistor supports private, members-only podcasts for a company or online community",
+          "Transistor distributes podcasts to Apple Podcasts, Spotify, YouTube, Overcast, Pocket Casts, and many more",
+          "Transistor won the Quill Award for Best Podcast Hosting",
+          "Stephen Robles says Transistor is his favorite podcasting platform and that HLS video lets him distribute shows in all formats his audience wants from one place"
+        ],
+        "allowed_evidence_ids": [
+          "E1",
+          "E3",
+          "E4",
+          "E5",
+          "E6",
+          "E7",
+          "E8",
+          "E9",
+          "E10",
+          "E11",
+          "E12",
+          "E13",
+          "E14",
+          "E16",
+          "E17",
+          "E18",
+          "E20",
+          "E23",
+          "E24",
+          "E25",
+          "E26",
+          "E27",
+          "E28",
+          "E30",
+          "E32"
+        ],
+        "forbidden_claims": [],
+        "forbidden_capability_ids": [],
+        "forbidden_evidence_ids": [
+          "E15",
+          "E19",
+          "E2",
+          "E21",
+          "E22"
+        ],
+        "unresolved_objections": [
+          "Can I actually stop each client seeing the other clients' shows in that one account?"
+        ],
+        "recommended_next_action": "Draft this documented use. Treat recipient circumstances as unconfirmed.",
+        "override_risk": "This draft does not establish the broader audience hypothesis or qualify any recipient.",
+        "claim_contract": {
+          "contract_version": 1,
+          "verified_product_claims": [
+            {
+              "id": "evidence:E1",
+              "text": "The Transistor API uses API keys to authenticate all requests, sent via an HTTP header named x-api-key",
+              "evidence_ids": [
+                "E1"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E2",
+              "text": "API requests are rate-limited to 10 requests per 10 seconds; exceeding this returns a 429 HTTP error code and blocks access for 10 seconds",
+              "evidence_ids": [
+                "E2"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E3",
+              "text": "The Transistor API is built around the JSON:API specification",
+              "evidence_ids": [
+                "E3"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E4",
+              "text": "The API supports sparse fieldsets, letting a request specify only particular fields to return, e.g. fields[episode][]=title&fields[episode][]=media_url",
+              "evidence_ids": [
+                "E4"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E5",
+              "text": "The API supports including a resource's related resources in one request, e.g. include[]=show, and this can be combined with sparse fieldsets",
+              "evidence_ids": [
+                "E5"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E6",
+              "text": "The Get show analytics endpoint (GET /v1/analytics/:id) retrieves downloads-per-day for an entire podcast and defaults to the last 14 days if no date range is given",
+              "evidence_ids": [
+                "E6"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E7",
+              "text": "The Get all episode analytics endpoint (GET /v1/analytics/:id/episodes) retrieves downloads-per-day for all episodes of a podcast and defaults to the last 7 days",
+              "evidence_ids": [
+                "E7"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E8",
+              "text": "The Get single episode analytics endpoint (GET /v1/analytics/episodes/:id) retrieves downloads-per-day for a single episode and defaults to the last 14 days",
+              "evidence_ids": [
+                "E8"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E9",
+              "text": "The Get episodes endpoint (GET /v1/episodes) retrieves a paginated list of episodes ordered by published date, filterable by show_id, query, and status (draft, scheduled, or published)",
+              "evidence_ids": [
+                "E9"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E10",
+              "text": "Episodes can be filtered by status: one of draft, scheduled, or published",
+              "evidence_ids": [
+                "E10"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E11",
+              "text": "Episode list results default to descending order (newest first) and default to 10 resources per page starting at page 0",
+              "evidence_ids": [
+                "E11"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E12",
+              "text": "The episodes list endpoint paginates with a default page number of 0 and a default of 10 resources per page",
+              "evidence_ids": [
+                "E12"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E13",
+              "text": "Starter plan is $19/month, includes unlimited podcasts, 20,000 monthly audio downloads, and 50 private podcast subscribers",
+              "evidence_ids": [
+                "E13"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E14",
+              "text": "Starter plan includes 20,000 monthly audio downloads",
+              "evidence_ids": [
+                "E14"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E15",
+              "text": "Starter plan includes 50 private podcast subscribers",
+              "evidence_ids": [
+                "E15"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E16",
+              "text": "Professional plan is $49/month, includes video podcast publishing, 100,000 monthly audio downloads, 500 GB file storage, 500 private podcast subscribers, and dynamic ads",
+              "evidence_ids": [
+                "E16"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E17",
+              "text": "Professional plan includes 100,000 monthly audio downloads",
+              "evidence_ids": [
+                "E17"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E18",
+              "text": "Professional plan includes 500 GB of file storage",
+              "evidence_ids": [
+                "E18"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E19",
+              "text": "Professional plan supports dynamic ads (pre-roll, mid-roll, post-roll)",
+              "evidence_ids": [
+                "E19"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E20",
+              "text": "Business plan is $99/month, includes 250,000 monthly audio downloads, 1 TB file storage, 3,000 private podcast subscribers, and removes Transistor branding",
+              "evidence_ids": [
+                "E20"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E21",
+              "text": "Business plan includes 3,000 private podcast subscribers",
+              "evidence_ids": [
+                "E21"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E22",
+              "text": "Business plan removes Transistor branding",
+              "evidence_ids": [
+                "E22"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E23",
+              "text": "Transistor offers a 14-day free trial",
+              "evidence_ids": [
+                "E23"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E24",
+              "text": "Transistor does not charge extra for creating additional podcasts on one account",
+              "evidence_ids": [
+                "E24"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E25",
+              "text": "Transistor generates a website automatically for a podcast after choosing a design",
+              "evidence_ids": [
+                "E25"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E26",
+              "text": "Transistor's analytics show average downloads per episode, popular podcast apps, number of subscribers, and trends",
+              "evidence_ids": [
+                "E26"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E27",
+              "text": "Transistor supports private, members-only podcasts for a company or online community",
+              "evidence_ids": [
+                "E27"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E28",
+              "text": "Transistor distributes podcasts to Apple Podcasts, Spotify, YouTube, Overcast, Pocket Casts, and many more",
+              "evidence_ids": [
+                "E28"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E29",
+              "text": "Transistor has hosted more than 40,000 podcasts since launching in 2018",
+              "evidence_ids": [
+                "E29"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E30",
+              "text": "Transistor won the Quill Award for Best Podcast Hosting",
+              "evidence_ids": [
+                "E30"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E31",
+              "text": "Nathan Barry of Kit says 'Transistor is 100% the way to go' when asked which podcast host he recommends",
+              "evidence_ids": [
+                "E31"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E32",
+              "text": "Stephen Robles says Transistor is his favorite podcasting platform and that HLS video lets him distribute shows in all formats his audience wants from one place",
+              "evidence_ids": [
+                "E32"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E33",
+              "text": "Ali Abdaal is a named Transistor customer since 2021",
+              "evidence_ids": [
+                "E33"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E34",
+              "text": "Dan Schoonmaker of CasterKit says Transistor integrates with Zapier",
+              "evidence_ids": [
+                "E34"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            }
+          ],
+          "campaign_allowed_claims": [
+            {
+              "id": "evidence:E1",
+              "text": "The Transistor API uses API keys to authenticate all requests, sent via an HTTP header named x-api-key",
+              "evidence_ids": [
+                "E1"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E3",
+              "text": "The Transistor API is built around the JSON:API specification",
+              "evidence_ids": [
+                "E3"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E4",
+              "text": "The API supports sparse fieldsets, letting a request specify only particular fields to return, e.g. fields[episode][]=title&fields[episode][]=media_url",
+              "evidence_ids": [
+                "E4"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E5",
+              "text": "The API supports including a resource's related resources in one request, e.g. include[]=show, and this can be combined with sparse fieldsets",
+              "evidence_ids": [
+                "E5"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E6",
+              "text": "The Get show analytics endpoint (GET /v1/analytics/:id) retrieves downloads-per-day for an entire podcast and defaults to the last 14 days if no date range is given",
+              "evidence_ids": [
+                "E6"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E7",
+              "text": "The Get all episode analytics endpoint (GET /v1/analytics/:id/episodes) retrieves downloads-per-day for all episodes of a podcast and defaults to the last 7 days",
+              "evidence_ids": [
+                "E7"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E8",
+              "text": "The Get single episode analytics endpoint (GET /v1/analytics/episodes/:id) retrieves downloads-per-day for a single episode and defaults to the last 14 days",
+              "evidence_ids": [
+                "E8"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E9",
+              "text": "The Get episodes endpoint (GET /v1/episodes) retrieves a paginated list of episodes ordered by published date, filterable by show_id, query, and status (draft, scheduled, or published)",
+              "evidence_ids": [
+                "E9"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E10",
+              "text": "Episodes can be filtered by status: one of draft, scheduled, or published",
+              "evidence_ids": [
+                "E10"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E11",
+              "text": "Episode list results default to descending order (newest first) and default to 10 resources per page starting at page 0",
+              "evidence_ids": [
+                "E11"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E12",
+              "text": "The episodes list endpoint paginates with a default page number of 0 and a default of 10 resources per page",
+              "evidence_ids": [
+                "E12"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E13",
+              "text": "Starter plan is $19/month, includes unlimited podcasts, 20,000 monthly audio downloads, and 50 private podcast subscribers",
+              "evidence_ids": [
+                "E13"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E14",
+              "text": "Starter plan includes 20,000 monthly audio downloads",
+              "evidence_ids": [
+                "E14"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E16",
+              "text": "Professional plan is $49/month, includes video podcast publishing, 100,000 monthly audio downloads, 500 GB file storage, 500 private podcast subscribers, and dynamic ads",
+              "evidence_ids": [
+                "E16"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E17",
+              "text": "Professional plan includes 100,000 monthly audio downloads",
+              "evidence_ids": [
+                "E17"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E18",
+              "text": "Professional plan includes 500 GB of file storage",
+              "evidence_ids": [
+                "E18"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E20",
+              "text": "Business plan is $99/month, includes 250,000 monthly audio downloads, 1 TB file storage, 3,000 private podcast subscribers, and removes Transistor branding",
+              "evidence_ids": [
+                "E20"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E23",
+              "text": "Transistor offers a 14-day free trial",
+              "evidence_ids": [
+                "E23"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E24",
+              "text": "Transistor does not charge extra for creating additional podcasts on one account",
+              "evidence_ids": [
+                "E24"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E25",
+              "text": "Transistor generates a website automatically for a podcast after choosing a design",
+              "evidence_ids": [
+                "E25"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E26",
+              "text": "Transistor's analytics show average downloads per episode, popular podcast apps, number of subscribers, and trends",
+              "evidence_ids": [
+                "E26"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E27",
+              "text": "Transistor supports private, members-only podcasts for a company or online community",
+              "evidence_ids": [
+                "E27"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E28",
+              "text": "Transistor distributes podcasts to Apple Podcasts, Spotify, YouTube, Overcast, Pocket Casts, and many more",
+              "evidence_ids": [
+                "E28"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E30",
+              "text": "Transistor won the Quill Award for Best Podcast Hosting",
+              "evidence_ids": [
+                "E30"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E32",
+              "text": "Stephen Robles says Transistor is his favorite podcasting platform and that HLS video lets him distribute shows in all formats his audience wants from one place",
+              "evidence_ids": [
+                "E32"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            }
+          ],
+          "forbidden_claims": [],
+          "withheld_claims": [
+            {
+              "id": "evidence:E2",
+              "text": "API requests are rate-limited to 10 requests per 10 seconds; exceeding this returns a 429 HTTP error code and blocks access for 10 seconds",
+              "evidence_ids": [
+                "E2"
+              ],
+              "reason": "Ranked WITHHOLD for this audience."
+            },
+            {
+              "id": "evidence:E15",
+              "text": "Starter plan includes 50 private podcast subscribers",
+              "evidence_ids": [
+                "E15"
+              ],
+              "reason": "Ranked WITHHOLD for this audience."
+            },
+            {
+              "id": "evidence:E19",
+              "text": "Professional plan supports dynamic ads (pre-roll, mid-roll, post-roll)",
+              "evidence_ids": [
+                "E19"
+              ],
+              "reason": "Ranked WITHHOLD for this audience."
+            },
+            {
+              "id": "evidence:E21",
+              "text": "Business plan includes 3,000 private podcast subscribers",
+              "evidence_ids": [
+                "E21"
+              ],
+              "reason": "Ranked WITHHOLD for this audience."
+            },
+            {
+              "id": "evidence:E22",
+              "text": "Business plan removes Transistor branding",
+              "evidence_ids": [
+                "E22"
+              ],
+              "reason": "Ranked WITHHOLD for this audience."
+            },
+            {
+              "id": "evidence:E29",
+              "text": "Transistor has hosted more than 40,000 podcasts since launching in 2018",
+              "evidence_ids": [
+                "E29"
+              ],
+              "reason": "No addressed or partial problem for this audience uses it."
+            },
+            {
+              "id": "evidence:E31",
+              "text": "Nathan Barry of Kit says 'Transistor is 100% the way to go' when asked which podcast host he recommends",
+              "evidence_ids": [
+                "E31"
+              ],
+              "reason": "No addressed or partial problem for this audience uses it."
+            },
+            {
+              "id": "evidence:E33",
+              "text": "Ali Abdaal is a named Transistor customer since 2021",
+              "evidence_ids": [
+                "E33"
+              ],
+              "reason": "No addressed or partial problem for this audience uses it."
+            },
+            {
+              "id": "evidence:E34",
+              "text": "Dan Schoonmaker of CasterKit says Transistor integrates with Zapier",
+              "evidence_ids": [
+                "E34"
+              ],
+              "reason": "No addressed or partial problem for this audience uses it."
+            }
+          ],
+          "warnings": [
+            "Claim 'API requests are rate-limited to 10 requests per 10 seconds; exceeding this returns a 429 HTTP error code and blocks access for 10 seconds' rests on withheld or forbidden evidence (E2) and is not campaign-safe.",
+            "Claim 'Starter plan includes 50 private podcast subscribers' rests on withheld or forbidden evidence (E15) and is not campaign-safe.",
+            "Claim 'Professional plan supports dynamic ads (pre-roll, mid-roll, post-roll)' rests on withheld or forbidden evidence (E19) and is not campaign-safe.",
+            "Claim 'Business plan includes 3,000 private podcast subscribers' rests on withheld or forbidden evidence (E21) and is not campaign-safe.",
+            "Claim 'Business plan removes Transistor branding' rests on withheld or forbidden evidence (E22) and is not campaign-safe."
+          ]
+        }
+      },
+      "dossier_status": "current",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "Verified product facts support this first-email scope: Introduce Transistor as a podcast host where a single account can carry more than one show at no extra per-podcast charge, publishing each feed to Apple Podcasts, Spotify, YouTube and other apps, with per-episode download analytics in the dashboard; the single next step is starting the 14-day free trial and creating a show."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "Draft this documented use. Treat recipient circumstances as unconfirmed.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false,
+    "intelligence": {
+      "selected_audience": "Network or agency running multiple shows",
+      "audience_resolution_status": "audience_research_loaded",
+      "audience_research_id": "af82bbd1-6d69-487f-be50-acd64bbfef8d",
+      "audience_research_version": 1,
+      "dossier_status": "current",
+      "dossier_id": "5f6e78ea-e832-4238-8e3a-08385c6f50ef",
+      "dossier_version": 1,
+      "dossier_schema_version": 2,
+      "stale_reasons": [],
+      "legacy_fallback_used": false,
+      "qualified_subsegment": "Introduce Transistor as a podcast host where a single account can carry more than one show at no extra per-podcast charge, publishing each feed to Apple Podcasts, Spotify, YouTube and other apps, with per-episode download analytics in the dashboard; the single next step is starting the 14-day free trial and creating a show.",
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [
+        "Start the 14-day free trial to create the account",
+        "Create each show as a separate podcast inside that account at no extra per-podcast charge",
+        "Submit each show's feed to the listening apps via Transistor's distribution step",
+        "Starter plan ($19/month) includes 20,000 monthly audio downloads shared across the whole account, so download allowance is a pooled account-level resource, not per-show",
+        "Do not promise: No claim that client users can be restricted to only their own show's dashboard",
+        "Do not promise: No claim of a ready-made client-facing analytics or ROI report",
+        "Do not promise: No claim about migrating existing shows off an incumbent host without disruption",
+        "Do not promise: No claim of headcount or time savings, growth outcomes, or cost comparison against any competitor",
+        "Do not promise: No claim that video publishing, dynamic ads or branding removal are available on the trial or on the entry plan",
+        "Do not promise: No claim that video publishing, dynamic ads, or branding removal are available on the trial or on the entry (Starter) plan",
+        "Do not promise: No claim that the pooled download allowance scales per added show without upgrading plans",
+        "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit."
+      ],
+      "validation_warnings": [
+        "Source coverage is partial: 2 readable page(s), 2 unavailable URL(s). Findings cover only the pages read.",
+        "Moved product questions without an explicit audience requirement to decision gaps.",
+        "Defining audience need is unassessed or its references required normalization.",
+        "Ignored unavailable dossier ranking E19.",
+        "Ignored unavailable dossier ranking E22.",
+        "Ignored unavailable dossier ranking E15.",
+        "Ignored unavailable dossier ranking E21.",
+        "Ignored unavailable dossier ranking E2.",
+        "The proposed buyer problem was not established by the selected audience research; no substitute pain was inserted.",
+        "The proposed current alternative was not established by audience research; it remains unknown.",
+        "Reframed an unlinked buyer-problem argument as the documented function or offer (E23, E24, E28); its old benefit, alternative failure story and evaluation payoff were not retained."
+      ]
+    }
+  }
+}

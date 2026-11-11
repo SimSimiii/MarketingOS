@@ -32,13 +32,14 @@ from app.knowledge.artifacts import (
     OfferSheet,
     VoiceProfile,
 )
-from app.knowledge.corpus import Document, SourceCorpus, collapse, fold
+from app.knowledge.corpus import Document, SourceCorpus, collapse, contains_quote, fold
 from app.knowledge.ledger import (
     Evidence,
     EvidenceContext,
     EvidenceKind,
     EvidenceLedger,
     EvidenceStrength,
+    preserve_billing_uncertainty,
 )
 from app.knowledge.quoted_terms import retain_billing_links, with_question
 from app.knowledge.taxonomy import FactCategory, classify
@@ -54,6 +55,7 @@ ROLE_ID = "knowledge_compiler"
 #: the quote is the entire product of this pass.
 _EVIDENCE_BATCH_CHARS = 14_000
 _PROFILE_DIGEST_CHARS = 40_000
+_PROFILE_OFFER_CHARS = 9_000
 _AUDIENCE_DIGEST_CHARS = 24_000
 _VOICE_DIGEST_CHARS = 20_000
 
@@ -80,9 +82,19 @@ _BLOCK_SPLIT_RE = re.compile(r"\n\s*\n")
 _MIN_QUOTE_CHARS = 12
 
 
+class _OfferConflict(BaseModel):
+    summary: str
+    evidence_ids: list[str] = Field(default_factory=list)
+
+
 class _ProfilePass(BaseModel):
     business: BusinessProfile
     offer: OfferSheet
+    offer_conflicts: list[_OfferConflict] = Field(default_factory=list)
+
+
+class _FirstCampaignProfile(_ProfilePass):
+    audience: AudienceModel = Field(default_factory=AudienceModel)
 
 
 class _EvidenceDraft(BaseModel):
@@ -120,8 +132,9 @@ ProgressHook = Callable[[str, str], None]
 class KnowledgeCompiler:
     """Turns a SourceCorpus into the artifacts every campaign is written from."""
 
-    def __init__(self, session: ModelSession) -> None:
+    def __init__(self, session: ModelSession, *, compact: bool = False) -> None:
         self._session = session
+        self._compact = compact
 
     async def compile(
         self,
@@ -141,21 +154,25 @@ class KnowledgeCompiler:
                 notes=["The user provided no website, document or image to read."],
             )
 
-        # Three of the four passes read only the material, so they are three
-        # independent questions about the same pages and there is no reason to
-        # ask them one at a time. Run in sequence - which is how this stood -
-        # a normal twelve-page site is ten serial deep-tier calls before the
-        # Strategist can begin, minutes of a run spent waiting for answers
-        # that never depended on each other. Only the audience pass has real
-        # inputs: it is written from the profile and the ledger, so it waits.
+        # Voice and evidence are independent. The profile uses the verified
+        # commercial excerpts so its compact digest cannot silently replace
+        # a published term with a guess. The number of calls stays the same.
         progress(
             "reading",
             f"Reading {len(corpus.documents)} document(s): what the business is, every fact "
             "the copy may claim, and how the company sounds",
         )
-        readings = [asyncio.create_task(reading) for reading in (
-            self._profile(corpus), self._evidence(corpus), self._voice(corpus)
-        )]
+        evidence_task = asyncio.create_task(self._evidence(corpus))
+
+        async def profile_from_evidence() -> _ProfilePass:
+            ledger, _ = await evidence_task
+            return await self._profile(corpus, ledger)
+
+        readings = [
+            asyncio.create_task(profile_from_evidence()),
+            evidence_task,
+            asyncio.create_task(self._voice(corpus)),
+        ]
         try:
             profile, evidence, voice = await asyncio.gather(*readings)
         except BaseException:
@@ -180,7 +197,12 @@ class KnowledgeCompiler:
 
         progress("audience", "Working out who buys this and why they hesitate")
         profile.offer, rejected_guarantees = profile.offer.ground_guarantees(ledger)
-        audience = await self._audience(corpus, profile, ledger)
+        if isinstance(profile, _FirstCampaignProfile):
+            audience = profile.audience
+            for objection in audience.objections:
+                objection.evidence_ids = []
+        else:
+            audience = await self._audience(corpus, profile, ledger)
 
         artifacts = KnowledgeArtifacts(
             business=profile.business,
@@ -189,7 +211,12 @@ class KnowledgeCompiler:
             voice=voice,
             audience=audience,
             source_document_ids=[document.id for document in corpus.documents],
-            notes=intake.notes() + ([
+            notes=intake.notes() + [
+                f"Offer terms need confirmation ({', '.join(ids)}): {conflict.summary.strip()[:400]}"
+                for conflict in profile.offer_conflicts[:4]
+                if conflict.summary.strip()
+                and len(ids := sorted(set(conflict.evidence_ids) & ledger.ids)) >= 2
+            ] + ([
                 (f"{len(rejected_guarantees)} unverified offer guarantee summary item(s) omitted; "
                  "consult the source-scoped Evidence Ledger for offer conditions.")
             ] if rejected_guarantees else []),
@@ -204,14 +231,29 @@ class KnowledgeCompiler:
 
     # -------------------------------------------------------------- passes
 
-    async def _profile(self, corpus: SourceCorpus) -> _ProfilePass:
+    async def _profile(self, corpus: SourceCorpus, ledger: EvidenceLedger) -> _ProfilePass:
+        commercial = sorted(
+            (entry for entry in ledger.entries
+             if entry.kind in {EvidenceKind.PRICE, EvidenceKind.GUARANTEE}
+             or entry.category == FactCategory.COMMERCIAL
+             or (entry.context is not None and entry.context.claim_scope == "offer")),
+            key=lambda entry: entry.kind is not EvidenceKind.PRICE,
+        )
+        excerpts: list[str] = []
+        remaining = _PROFILE_OFFER_CHARS
+        for entry in commercial:
+            excerpt = EvidenceLedger(entries=[entry]).render()
+            if len(excerpt) + 2 <= remaining:
+                excerpts.append(excerpt)
+                remaining -= len(excerpt) + 2
         return await self._session.structured(
             role=ROLE_ID,
             tier=ModelTier.BALANCED,
             template="knowledge_profile",
-            variables={"material": corpus.digest(_PROFILE_DIGEST_CHARS)},
+            variables={"material": corpus.digest(18_000 if self._compact else _PROFILE_DIGEST_CHARS),
+                       "compact": self._compact, "commercial_evidence": "\n\n".join(excerpts)},
             task="Read the material and write down what this business is and what it sells.",
-            schema=_ProfilePass,
+            schema=_FirstCampaignProfile if self._compact else _ProfilePass,
         )
 
     async def _evidence(self, corpus: SourceCorpus) -> tuple[EvidenceLedger, "_Intake"]:
@@ -227,7 +269,8 @@ class KnowledgeCompiler:
         same material twice produces the same E1..En however the calls
         happened to return.
         """
-        plan = _readings(corpus, _EVIDENCE_BATCH_CHARS, _EVIDENCE_TOTAL_CHARS)
+        plan = _readings(corpus, _EVIDENCE_BATCH_CHARS, 28_000 if self._compact else _EVIDENCE_TOTAL_CHARS,
+                         balanced=self._compact)
         gate = asyncio.Semaphore(_EVIDENCE_CONCURRENCY)
 
         async def extract(batch: list["_Reading"]) -> list[_EvidenceDraft] | BaseException:
@@ -238,7 +281,7 @@ class KnowledgeCompiler:
                         role=ROLE_ID,
                         tier=ModelTier.BALANCED,
                         template="knowledge_evidence",
-                        variables={"material": material},
+                        variables={"material": material, "compact": self._compact},
                         task=(
                             "List every checkable fact in these documents. Quote the exact "
                             "supporting text for each one and give the document id it came from."
@@ -306,6 +349,8 @@ class KnowledgeCompiler:
                         context=context,
                     )
                 )
+                if document is not None:
+                    entries[-1] = preserve_billing_uncertainty(entries[-1], document.content)
         for batch in plan.batches:
             for reading in batch:
                 # Only inspect the material within this compilation's read budget.
@@ -467,7 +512,10 @@ def find_gaps(artifacts: KnowledgeArtifacts, *, sources: list[Document] | None =
         gaps.append(
             Gap(
                 id="G-numbers",
-                missing="No measurable results found",
+                missing=("No customer result classified as a usable metric"
+                         if any(entry.context and entry.context.claim_scope == "customer_outcome"
+                                for entry in artifacts.evidence.entries)
+                         else "No measurable results found"),
                 impact="emails may describe documented capabilities but cannot invent measured outcomes",
                 question="What measurable result do customers get, and how do you know?",
                 severity="significant",
@@ -596,7 +644,7 @@ class _ReadingPlan:
     unread: int = 0
 
 
-def _readings(corpus: SourceCorpus, budget: int, total: int) -> _ReadingPlan:
+def _readings(corpus: SourceCorpus, budget: int, total: int, *, balanced: bool = False) -> _ReadingPlan:
     """Every call the evidence pass will make, and what each one reads.
 
     A document longer than one call's budget used to be *truncated* to it -
@@ -615,16 +663,32 @@ def _readings(corpus: SourceCorpus, budget: int, total: int) -> _ReadingPlan:
     readings: list[_Reading] = []
     spent = 0
     unread = 0
-    for document in corpus.documents:
+    documents = list(corpus.documents)
+    if balanced:
+        from urllib.parse import urlparse
+
+        def priority(document):
+            path = urlparse(document.source).path.strip("/")
+            if not path or path in {"en", "fr", "de", "es"}:
+                return 0
+            return 1 if re.search(r"(?:pricing|prices|plans|tarifs)", path, re.IGNORECASE) else 2
+
+        documents.sort(key=priority)
+    candidates = []
+    for document in documents:
         pieces = _split(document.content, budget)
         for index, piece in enumerate(pieces, start=1):
-            if spent + len(piece) > total:
-                unread += len(piece)
-                continue
-            spent += len(piece)
-            readings.append(
-                _Reading(document=document, text=piece, part=index, parts=len(pieces))
-            )
+            candidates.append(_Reading(document=document, text=piece, part=index, parts=len(pieces)))
+    if balanced:
+        # Read the first section of each source before another long section
+        # from one page. Retain exact text and the ordinary verification path.
+        candidates.sort(key=lambda reading: reading.part > 1)
+    for reading in candidates:
+        if spent + len(reading.text) > total:
+            unread += len(reading.text)
+            continue
+        spent += len(reading.text)
+        readings.append(reading)
     if unread:
         logger.warning(
             "knowledge compiler: %d characters past the %d-character reading budget", unread, total
@@ -661,6 +725,12 @@ def _readings(corpus: SourceCorpus, budget: int, total: int) -> _ReadingPlan:
     if len(packed) < len(batches):
         order = {id(reading): index for index, reading in enumerate(readings)}
         batches = [sorted(batch, key=lambda item: order[id(item)]) for batch in packed]
+    if balanced:
+        # Compact compilation retains its two extraction calls at most, even
+        # if whole source sections leave packing gaps.
+        cap = max(1, (total + budget - 1) // budget)
+        unread += sum(len(reading.text) for batch in batches[cap:] for reading in batch)
+        batches = batches[:cap]
     return _ReadingPlan(batches=batches, unread=unread)
 
 
@@ -686,4 +756,4 @@ def _quote_in_normalized(quote: str, haystack: str) -> bool:
     needle = fold(quote)
     if len(needle) < _MIN_QUOTE_CHARS:
         return False
-    return needle in haystack
+    return contains_quote(quote, haystack, normalized=True)

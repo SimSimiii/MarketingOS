@@ -28,6 +28,7 @@ from app.schemas.market import (
     CapabilityProfileRead,
     CapabilityProfileRequest,
     DemandMapRead,
+    FirstCampaignRequest,
     JobStatusRead,
     MapAudienceRequest,
     MarketRead,
@@ -140,6 +141,23 @@ def read_jobs(session: SessionDep, principal: PrincipalDep) -> list[JobStatusRea
     """
     visible = {brand.id for brand in BrandRepository(session, principal).list_all()}
     return [JobStatusRead(**vars(job)) for job in all_jobs() if job.brand_id in visible]
+
+
+@router.post("/{brand_id}/first-campaign", response_model=JobStatusRead, status_code=202)
+async def prepare_first_campaign(
+    brand_id: UUID, data: FirstCampaignRequest, session: SessionDep, provider: AIProviderDep,
+) -> JobStatusRead:
+    current = job_for(brand_id)
+    if current and current.kind == "first_campaign" and current.state == "running":
+        return JobStatusRead(**vars(current))
+    brand = _brand(session, brand_id)
+    try:
+        job = MarketService(session).launch_first_campaign(
+            brand, provider, session.get_bind(), objective=data.objective,
+        )
+    except MarketError as exc:
+        raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
+    return JobStatusRead(**vars(job))
 
 
 @router.get("/{brand_id}", response_model=MarketRead)

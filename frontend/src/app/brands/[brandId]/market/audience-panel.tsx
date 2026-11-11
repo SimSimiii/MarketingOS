@@ -868,6 +868,9 @@ function DossierResult({
                 ))}
               </ul>
             )}
+            {(dossier.defining_need_fit.decision_gaps ?? []).map((question) => (
+              <p key={question} className="text-amber-300">Worth verifying before the campaign — {question}</p>
+            ))}
           </div>
         )}
 
@@ -1481,6 +1484,7 @@ function AudienceAdder({
 function SegmentCard({
   brandId,
   segment,
+  initiallyExpanded,
   selected,
   prospects,
   research,
@@ -1494,6 +1498,7 @@ function SegmentCard({
 }: {
   brandId: string;
   segment: MappedSegment;
+  initiallyExpanded: boolean;
   selected: boolean;
   prospects: number;
   research?: AudienceResearch;
@@ -1505,7 +1510,7 @@ function SegmentCard({
   onChanged: () => void;
   busy: boolean;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(initiallyExpanded);
   const detailsId = useId();
   const [editing, setEditing] = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -1772,7 +1777,10 @@ function SegmentCard({
                     : "Generate relevance dossier"}
               </Button>
             )}
-            {relevance?.status === "current" && Boolean(relevance.dossier?.defining_need_fit?.unverified_requirements.length) && (
+            {relevance?.status === "current" && Boolean(
+              relevance.dossier?.defining_need_fit?.unverified_requirements.length ||
+              relevance.dossier?.defining_need_fit?.decision_gaps?.length
+            ) && (
               <Button size="sm" variant="outline" disabled={busy}
                 title="Verify missing product facts in official sources, then rebuild this dossier. Up to three model calls."
                 onClick={() => onDossier(true, true)}>
@@ -1938,6 +1946,7 @@ function ProspectCard({
 export function AudiencePanel({
   brandId,
   audience,
+  focusAudience,
   onMap,
   onProspect,
   onResearch,
@@ -1947,6 +1956,7 @@ export function AudiencePanel({
 }: {
   brandId: string;
   audience: AudienceRead;
+  focusAudience: string | null;
   onMap: (options: MapOptions) => void;
   onProspect: (segment: string) => void;
   onResearch: (segment: string) => void;
@@ -2099,6 +2109,7 @@ export function AudiencePanel({
             key={segment.name}
             brandId={brandId}
             segment={segment}
+            initiallyExpanded={focusAudience === segment.name}
             selected={selected === segment.name}
             prospects={bySegment.get(segment.name) ?? 0}
             research={researchByAudience.get(audienceKey(segment.name))}

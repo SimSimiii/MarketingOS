@@ -62,6 +62,7 @@ class RoleScriptedProvider(AIProvider):
     ) -> None:
         self.defaults: dict[str, Default] = dict(defaults or {})
         self.queues: dict[str, deque[str]] = defaultdict(deque)
+        self.source_decisions: deque[tuple[str, str]] = deque()
         self.requests: list[AIRequest] = []
         self.calls_by_role: dict[str, int] = defaultdict(int)
         #: Split two-thirds input, one-third output. Only the total matters to
@@ -80,6 +81,11 @@ class RoleScriptedProvider(AIProvider):
 
     def set_default(self, key: str, response: Default) -> "RoleScriptedProvider":
         self.defaults[key] = response
+        return self
+
+    def review(self, *rejections: str, kind: str = "factual") -> "RoleScriptedProvider":
+        """Queue independent source decisions; empty strings approve."""
+        self.source_decisions.extend((reason, kind) for reason in rejections)
         return self
 
     def requests_for(self, role: str) -> list[AIRequest]:
@@ -136,6 +142,9 @@ class RoleScriptedProvider(AIProvider):
                     # anything the test is about.
                     content = default(call_number) if callable(default) else default
                     break
+        if content is None and request.role == "claim_reviewer":
+            reason, kind = self.source_decisions.popleft() if self.source_decisions else ("", "factual")
+            content = source_review_answer(request, reject=reason, kind=kind)
         if content is None:
             raise AssertionError(
                 f"No scripted response for {' / '.join(keys) or 'an unnamed call'} "
@@ -162,6 +171,24 @@ class RoleScriptedProvider(AIProvider):
 
 
 # --------------------------------------------------------------- canned answers
+
+
+def source_review_answer(request: AIRequest, *, reject: str = "", kind: str = "factual") -> str:
+    """Script a source-review decision; this double does not judge truth.
+
+    Existing fixtures are approved by default. Tests of rejection explicitly
+    queue a negative decision rather than expecting a regex to be a reader.
+    """
+    prompt = request.system_prompt or ""
+    text = prompt.split("EXACT DRAFT\n", 1)[1].split("\n\nCAMPAIGN SCOPE", 1)[0]
+    sources = json.loads(prompt.split("LITERAL SOURCES (citation source_id keys)\n", 1)[1]
+                         .split("\n\nOFFER AND BUSINESS", 1)[0])
+    citations = [{"source_id": id_, "quote": quote} for id_, quote in list(sources.items())[:1]]
+    return json.dumps({"verdict": "revise" if reject and kind != "editorial" else "supported",
+                       "claims": [{"text": text, "status": "supported",
+                                   "explanation": "Scripted source assessment", "citations": citations}] if citations else [],
+                       "findings": [{"text": text, "kind": kind, "explanation": reject}] if reject else [],
+                       "summary": reject or "Scripted approval of the normal fixture"})
 
 
 #: Three bodies with no shared six-word run and no shared opening move, so the

@@ -1,0 +1,3 @@
+Iteration 2: concrete supported operation and useful consequence; scoped disclosure overlap fix. Same baseline inputs. No new facts.
+
+Final iteration: 81/100, internal editorial judgment, not conversion evidence. Best comparable: 81. Three complete emails; concrete product/payment/order workflow sourced in E95. Affiliation and email2-only instruction retained; shorter email1 keeps mechanism. Remaining: Editorial run remains degraded (simulated readers 6/10); migration caveats remain heavy; email3 body exactly150 words. Validation: 2112 backend tests; 34 frontend; Ruff/typecheck/API schema; saved real revision and 390/1280px renders. Targeted correction completed, not universal autonomous sellability.

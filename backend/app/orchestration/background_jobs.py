@@ -19,6 +19,7 @@ from app.orchestration.workflow_dispatch import admission_lock
 from app.runtime.work_limits import WorkLimitError
 
 MARKET_ACTIONS = {
+    "launch_first_campaign": "first_campaign",
     "launch_scan": "scan", "launch_proof_hunt": "proof", "launch_audience_map": "audience",
     "launch_prospect_search": "prospects", "launch_audience_research": "audience_research",
     "launch_relevance_dossier": "relevance_dossier",
@@ -33,7 +34,8 @@ def enabled():
 def supports(function):
     return ((function.__module__ == "app.services.market_service" and function.__name__ in MARKET_ACTIONS)
             or (function.__module__ == "app.services.knowledge_compilation" and function.__name__ == "start_compilation")
-            or (function.__module__ in {"app.services.linkedin_service", "app.services.email_analysis_service"}
+            or (function.__module__ in {"app.services.linkedin_service", "app.services.email_analysis_service",
+                                        "app.services.draft_review"}
             and function.__name__ == "launch"))
 
 
@@ -88,7 +90,8 @@ def enqueue(function, arguments):
             user.runs_used += 1
             db.add(user)
         name = function.__name__
-        category = ("email_analysis" if function.__module__ == "app.services.email_analysis_service"
+        category = ("draft_review" if function.__module__ == "app.services.draft_review"
+                    else "email_analysis" if function.__module__ == "app.services.email_analysis_service"
                     else "linkedin" if function.__module__ == "app.services.linkedin_service"
                     else "market" if name in MARKET_ACTIONS else "knowledge")
         from app.services.knowledge_compilation import CompilationJob
@@ -106,6 +109,11 @@ def enqueue(function, arguments):
                 validate_request(db, brand.id, request)
                 status = _save(db, brand.id, request, commit=False)
             payload = {"run_id": str(status.id)}
+        elif category == "draft_review":
+            from app.services.draft_review import current_knowledge
+            current_knowledge(db, brand.id)
+            status = {"state": "running"}
+            payload = arguments["request"].model_dump(mode="json")
         else:
             status = (CompilationJob(state="running", brand_id=brand.id, brand_name=brand.name)
                       if category == "knowledge" else JobStatus(kind=MARKET_ACTIONS[name], brand_id=brand.id, brand_name=brand.name))
@@ -130,6 +138,9 @@ def enqueue(function, arguments):
         if category in {"linkedin", "email_analysis"}:
             db.refresh(status)
             db.expunge(status)
+        if category == "draft_review":
+            from app.services.draft_review import snapshot
+            return snapshot(job)
         return status
 
 
@@ -147,7 +158,7 @@ def latest(category, brand_id=None):
         return by_brand
 
 
-def persist(engine, job_id, status, *, finished=False):
+def persist(engine, job_id, status, *, finished=False, refund_empty=True):
     with Session(engine) as db:
         job = db.exec(select(BackgroundJob).where(BackgroundJob.id == job_id).with_for_update()).first()
         if job and job.active:
@@ -155,7 +166,9 @@ def persist(engine, job_id, status, *, finished=False):
             if finished:
                 job.active = False
                 job.completed_at = datetime.now(UTC)
-                if job.model_calls == 0:
+                if job.category == "draft_review":
+                    job.payload = {}
+                if refund_empty and job.model_calls == 0:
                     refund(db, job)
             db.add(job)
             db.commit()
@@ -189,6 +202,8 @@ def fail(engine, job_id, message="The job was interrupted. Saved results remain 
                 db.add(run)
         if job.category == "market":
             job.status["error"] = message
+        if job.category == "draft_review":
+            job.payload = {}
         job.active = False
         job.completed_at = datetime.now(UTC)
         if job.model_calls == 0:
@@ -240,6 +255,10 @@ async def execute(engine, job_id, provider, context):
         brand = db.get(Brand, job.brand_id)
         token = current_work.set(Permit(engine, job_id, getattr(context, "get_remaining_time_in_millis", None)))
         try:
+            if job.category == "draft_review":
+                from app.services.draft_review import run_job
+                await run_job(engine, job_id, provider, distributed=True)
+                return
             if job.category in {"linkedin", "email_analysis"}:
                 from uuid import UUID
 

@@ -1,0 +1,753 @@
+{
+  "id": "d61ebbe2-8083-40d6-b3c8-3d5ac73c7f64",
+  "campaign_id": "76b30e36-8a95-42a7-8946-307ac82b9bda",
+  "status": "completed",
+  "needs_review": false,
+  "outcome_status": "completed",
+  "review_reasons": [],
+  "error_message": null,
+  "started_at": "2026-11-11T08:27:39.270960Z",
+  "completed_at": "2026-11-11T08:29:34.075864Z",
+  "created_at": "2026-11-11T08:27:39.270960Z",
+  "total_input_tokens": 78076,
+  "total_output_tokens": 7915,
+  "total_cache_read_tokens": 23808,
+  "estimated_cost_usd": 0.6906,
+  "recommendation_snapshot": {
+    "campaign_id": "76b30e36-8a95-42a7-8946-307ac82b9bda",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "9fb9a3d2-1b04-4725-89eb-9052b08ab424",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Your rough notes are enough to begin: put them into a new Typefully draft and use the writing tools to expand them into a first version."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:27:39.411385Z",
+      "completed_at": "2026-11-11T08:28:20.212997Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 24872,
+      "output_tokens": 2548,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.275416,
+      "duration_ms": 40600.03800014965,
+      "attempt": 1
+    },
+    {
+      "id": "4a53c1db-ab79-46b6-a929-f1f7443a25f8",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · first draft",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "subject": "Turn rough notes into a draft"
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:28:20.292372Z",
+      "completed_at": "2026-11-11T08:28:36.189241Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 15682,
+      "output_tokens": 1108,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.165045,
+      "duration_ms": 15772.413600003347,
+      "attempt": 1
+    },
+    {
+      "id": "99e0ff5c-cd79-4471-b9f8-9c8167ca9cb3",
+      "agent_id": "claim_reviewer",
+      "agent_name": "Claim Reviewer",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · checking claims against sources"
+      },
+      "output_data": {
+        "semantic_review": {
+          "key": "6c597d9e281a99c3bbbeab4f6d9c6d64ade4a9b0af3cc2cee61788e10356d1cf",
+          "approved": true,
+          "decision": {
+            "verdict": "supported",
+            "claims": [
+              {
+                "text": "Subject: Turn rough notes into a draft",
+                "status": "supported",
+                "explanation": "The documented editor is described as turning rough ideas into posts.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "Turn rough ideas into polished posts with a focused, high-fidelity editor."
+                  }
+                ]
+              },
+              {
+                "text": "Preview text: Give your ideas a starting shape with Typefully’s writing tools.",
+                "status": "supported",
+                "explanation": "Typefully documents an editor for developing rough ideas and AI tools that rewrite and expand drafts.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "Turn rough ideas into polished posts with a focused, high-fidelity editor."
+                  },
+                  {
+                    "source_id": "E6",
+                    "quote": "Brainstorm, rewrite, and expand drafts with AI that learns how you actually write."
+                  }
+                ]
+              },
+              {
+                "text": "Rough notes are enough to begin. Start a new Typefully draft and add the fragments, points, or half-formed sentences you want to develop.",
+                "status": "supported",
+                "explanation": "The source documents turning rough ideas into posts, and the captured interface explicitly includes a new-draft operation.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "Turn rough ideas into polished posts with a focused, high-fidelity editor."
+                  },
+                  {
+                    "source_id": "source:1",
+                    "quote": "New draft"
+                  }
+                ]
+              },
+              {
+                "text": "Typefully is a focused social-post writing workspace.",
+                "status": "supported",
+                "explanation": "The sources describe Typefully as a social-media product with a focused editor for writing posts.",
+                "citations": [
+                  {
+                    "source_id": "E1",
+                    "quote": "### The AI-powered, collaborative social media scheduler for X, LinkedIn, Bluesky, and Threads."
+                  },
+                  {
+                    "source_id": "source:0",
+                    "quote": "#### A better place to write\nTurn rough ideas into polished posts with a focused, high-fidelity editor."
+                  }
+                ]
+              },
+              {
+                "text": "Once your notes are in the draft, its AI writing tools can expand or rewrite them, giving you another way to shape the first version.",
+                "status": "supported",
+                "explanation": "The cited capability expressly covers rewriting and expanding drafts. The draft makes no unsupported plan, access, quality, or performance promise.",
+                "citations": [
+                  {
+                    "source_id": "E6",
+                    "quote": "Brainstorm, rewrite, and expand drafts with AI that learns how you actually write."
+                  }
+                ]
+              },
+              {
+                "text": "If the substance is already there, you don’t need a different topic. You need a place to start turning it into a post.",
+                "status": "supported",
+                "explanation": "This conditional guidance accurately reflects the documented ability to turn existing rough ideas into posts and does not promise a particular outcome.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "Turn rough ideas into polished posts with a focused, high-fidelity editor."
+                  }
+                ]
+              },
+              {
+                "text": "Create your first draft →",
+                "status": "supported",
+                "explanation": "The CTA asks for the single requested action, while the captured Typefully material documents a new-draft operation and the supplied destination is Typefully’s documented site rather than a claimed direct editor link.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "New draft"
+                  },
+                  {
+                    "source_id": "cta:0",
+                    "quote": "Log inSign up\n\nTypefully"
+                  }
+                ]
+              }
+            ],
+            "findings": [],
+            "summary": "All material product and action claims are supported by the supplied Typefully excerpts. The email remains under 150 body words, uses one CTA, asks for one action, and avoids unsupported plan, timing, access, and outcome claims.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The draft preserves the proposed reader value: existing rough notes can serve as the input to a first draft, which Typefully’s documented AI tools can expand or rewrite.",
+              "original_passage": "Once your notes are in the draft, its AI writing tools can expand or rewrite them, giving you another way to shape the first version.",
+              "revised_passage": ""
+            }
+          },
+          "version": 3,
+          "sources": {
+            "source:0": "[Typefully: Best social media tool for creators & businesses › A better place to write; document_id=7e5bfa93-c634-4d2f-8acb-bab125032d0b; source=https://typefully.com/; aliases=https://typefully.com/; chunk=4]",
+            "E6": "https://typefully.com/",
+            "source:1": "[Typefully: Best social media tool for creators & businesses › From startups to Fortune 500 companies, Typefully is the go-to platform for teams that want to grow their social media presence.; document_id=7e5bfa93-c634-4d2f-8acb-bab125032d0b; source=https://typefully.com/; aliases=https://typefully.com/; chunk=13]",
+            "E1": "https://typefully.com/",
+            "cta:0": "[Typefully: Best social media tool for creators & businesses; document_id=7e5bfa93-c634-4d2f-8acb-bab125032d0b; source=https://typefully.com/; aliases=https://typefully.com/; chunk=0]"
+          }
+        },
+        "passed": true
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:28:36.228861Z",
+      "completed_at": "2026-11-11T08:29:13.094889Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 10061,
+      "output_tokens": 2859,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.172607,
+      "duration_ms": 36798.34629991092,
+      "attempt": 1
+    },
+    {
+      "id": "72542f33-047b-4dc1-8e6f-b3b9c7584fc7",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 4,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 1 reader(s)",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "pull": 8
+      },
+      "error_message": null,
+      "started_at": "2026-11-11T08:29:13.125655Z",
+      "completed_at": "2026-11-11T08:29:33.976416Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 3653,
+      "output_tokens": 1400,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.077573,
+      "duration_ms": 20792.851999867707,
+      "attempt": 1
+    }
+  ],
+  "assets": [
+    {
+      "id": "6c001a47-68b8-48d3-88f4-4fea19787b6e",
+      "asset_type": "email",
+      "title": "Turn rough notes into a draft",
+      "content": "Subject: Turn rough notes into a draft\nPreview text: Give your ideas a starting shape with Typefully’s writing tools.\n\nGive your rough notes a first shape\n\nHi there,\n\nRough notes are enough to begin. Start a new Typefully draft and add the fragments, points, or half-formed sentences you want to develop.\n\nTypefully is a focused social-post writing workspace. Once your notes are in the draft, its AI writing tools can expand or rewrite them, giving you another way to shape the first version.\n\nIf the substance is already there, you don’t need a different topic. You need a place to start turning it into a post.\n\nThe first draft doesn’t need to be perfect. It just needs to begin.\n\nCreate your first draft → https://typefully.com/\n\n- Typefully",
+      "content_html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n<meta name=\"x-apple-disable-message-reformatting\" />\n<meta name=\"color-scheme\" content=\"light\" />\n<meta name=\"supported-color-schemes\" content=\"light\" />\n<title>Turn rough notes into a draft</title>\n</head>\n<body style=\"margin:0;padding:0;background-color:#eceef3;-webkit-text-size-adjust:100%;\">\n<div style=\"display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;\">Give your ideas a starting shape with Typefully’s writing tools.&#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; </div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#eceef3;\">\n<tr><td align=\"center\" style=\"padding:24px 12px;\">\n<table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;background-color:#ffffff;border-radius:12px;\">\n<tr><td style=\"background-color:#1a56db;height:4px;font-size:0;line-height:0;\">&nbsp;</td></tr>\n<tr><td style=\"padding:26px 36px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:18px;font-weight:800;letter-spacing:0.3px;color:#14161a;\"><a href=\"https://typefully.com/\" style=\"color:#14161a;text-decoration:none;\"><img src=\"https://typefully.com/icon/apple-icon.png\" alt=\"Typefully\" height=\"30\" style=\"display:block;border:0;height:30px;max-height:30px;width:auto;\" /></a></td></tr>\n<tr><td style=\"padding:26px 36px 10px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#1a56db;\">FIRST DRAFT</p></td></tr>\n<tr><td style=\"padding:0 36px 20px;\"><h1 style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:29px;line-height:1.2;font-weight:800;letter-spacing:-0.5px;color:#14161a;\">Give your rough notes a first shape</h1></td></tr>\n<tr><td style=\"padding:10px 36px 16px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Hi there,</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:17px;line-height:1.6;color:#3d434d;\">Rough notes are enough to begin. Start a new Typefully draft and add the fragments, points, or half-formed sentences you want to develop.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Typefully is a focused social-post writing workspace. Once your notes are in the draft, its AI writing tools can expand or rewrite them, giving you another way to shape the first version.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">If the substance is already there, you don’t need a different topic. You need a place to start turning it into a post.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">The first draft doesn’t need to be perfect. It just needs to begin.</p></td></tr>\n<tr><td style=\"padding:6px 36px 22px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td style=\"border-top:1px solid #e6e9ef;font-size:0;line-height:0;\">&nbsp;</td></tr></table></td></tr>\n<tr><td align=\"center\" style=\"padding:4px 36px 8px;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"center\" style=\"background-color:#1a56db;border-radius:8px;\"><a href=\"https://typefully.com/\" style=\"display:inline-block;padding:16px 40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;\">Create your first draft</a></td></tr></table></td></tr>\n<tr><td style=\"padding:22px 36px 20px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6;color:#767d89;\">- Typefully</p></td></tr>\n<tr><td align=\"center\" style=\"padding:22px 36px 28px;background-color:#fafbfc;border-top:1px solid #e6e9ef;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:12px;line-height:1.7;color:#767d89;\">Typefully<br /><a href=\"https://typefully.com/\" style=\"color:#767d89;text-decoration:underline;\">typefully.com</a></td></tr>\n</table>\n</td></tr>\n</table>\n</body>\n</html>\n",
+      "position": 1,
+      "asset_metadata": {
+        "position": 1,
+        "role": "activation",
+        "language": "en",
+        "subject": "Turn rough notes into a draft",
+        "preview_text": "Give your ideas a starting shape with Typefully’s writing tools.",
+        "eyebrow": "FIRST DRAFT",
+        "headline": "Give your rough notes a first shape",
+        "greeting": "Hi there,",
+        "body": "Rough notes are enough to begin. Start a new Typefully draft and add the fragments, points, or half-formed sentences you want to develop.\n\nTypefully is a focused social-post writing workspace. Once your notes are in the draft, its AI writing tools can expand or rewrite them, giving you another way to shape the first version.\n\nIf the substance is already there, you don’t need a different topic. You need a place to start turning it into a post.\n\nThe first draft doesn’t need to be perfect. It just needs to begin.",
+        "call_to_action": "Create your first draft",
+        "sign_off": "- Typefully",
+        "postscript": "",
+        "pull": 8,
+        "semantic_review": {
+          "key": "6c597d9e281a99c3bbbeab4f6d9c6d64ade4a9b0af3cc2cee61788e10356d1cf",
+          "approved": true,
+          "decision": {
+            "verdict": "supported",
+            "claims": [
+              {
+                "text": "Subject: Turn rough notes into a draft",
+                "status": "supported",
+                "explanation": "The documented editor is described as turning rough ideas into posts.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "Turn rough ideas into polished posts with a focused, high-fidelity editor."
+                  }
+                ]
+              },
+              {
+                "text": "Preview text: Give your ideas a starting shape with Typefully’s writing tools.",
+                "status": "supported",
+                "explanation": "Typefully documents an editor for developing rough ideas and AI tools that rewrite and expand drafts.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "Turn rough ideas into polished posts with a focused, high-fidelity editor."
+                  },
+                  {
+                    "source_id": "E6",
+                    "quote": "Brainstorm, rewrite, and expand drafts with AI that learns how you actually write."
+                  }
+                ]
+              },
+              {
+                "text": "Rough notes are enough to begin. Start a new Typefully draft and add the fragments, points, or half-formed sentences you want to develop.",
+                "status": "supported",
+                "explanation": "The source documents turning rough ideas into posts, and the captured interface explicitly includes a new-draft operation.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "Turn rough ideas into polished posts with a focused, high-fidelity editor."
+                  },
+                  {
+                    "source_id": "source:1",
+                    "quote": "New draft"
+                  }
+                ]
+              },
+              {
+                "text": "Typefully is a focused social-post writing workspace.",
+                "status": "supported",
+                "explanation": "The sources describe Typefully as a social-media product with a focused editor for writing posts.",
+                "citations": [
+                  {
+                    "source_id": "E1",
+                    "quote": "### The AI-powered, collaborative social media scheduler for X, LinkedIn, Bluesky, and Threads."
+                  },
+                  {
+                    "source_id": "source:0",
+                    "quote": "#### A better place to write\nTurn rough ideas into polished posts with a focused, high-fidelity editor."
+                  }
+                ]
+              },
+              {
+                "text": "Once your notes are in the draft, its AI writing tools can expand or rewrite them, giving you another way to shape the first version.",
+                "status": "supported",
+                "explanation": "The cited capability expressly covers rewriting and expanding drafts. The draft makes no unsupported plan, access, quality, or performance promise.",
+                "citations": [
+                  {
+                    "source_id": "E6",
+                    "quote": "Brainstorm, rewrite, and expand drafts with AI that learns how you actually write."
+                  }
+                ]
+              },
+              {
+                "text": "If the substance is already there, you don’t need a different topic. You need a place to start turning it into a post.",
+                "status": "supported",
+                "explanation": "This conditional guidance accurately reflects the documented ability to turn existing rough ideas into posts and does not promise a particular outcome.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "Turn rough ideas into polished posts with a focused, high-fidelity editor."
+                  }
+                ]
+              },
+              {
+                "text": "Create your first draft →",
+                "status": "supported",
+                "explanation": "The CTA asks for the single requested action, while the captured Typefully material documents a new-draft operation and the supplied destination is Typefully’s documented site rather than a claimed direct editor link.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "New draft"
+                  },
+                  {
+                    "source_id": "cta:0",
+                    "quote": "Log inSign up\n\nTypefully"
+                  }
+                ]
+              }
+            ],
+            "findings": [],
+            "summary": "All material product and action claims are supported by the supplied Typefully excerpts. The email remains under 150 body words, uses one CTA, asks for one action, and avoids unsupported plan, timing, access, and outcome claims.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The draft preserves the proposed reader value: existing rough notes can serve as the input to a first draft, which Typefully’s documented AI tools can expand or rewrite.",
+              "original_passage": "Once your notes are in the draft, its AI writing tools can expand or rewrite them, giving you another way to shape the first version.",
+              "revised_passage": ""
+            }
+          },
+          "version": 3,
+          "sources": {
+            "source:0": "[Typefully: Best social media tool for creators & businesses › A better place to write; document_id=7e5bfa93-c634-4d2f-8acb-bab125032d0b; source=https://typefully.com/; aliases=https://typefully.com/; chunk=4]",
+            "E6": "https://typefully.com/",
+            "source:1": "[Typefully: Best social media tool for creators & businesses › From startups to Fortune 500 companies, Typefully is the go-to platform for teams that want to grow their social media presence.; document_id=7e5bfa93-c634-4d2f-8acb-bab125032d0b; source=https://typefully.com/; aliases=https://typefully.com/; chunk=13]",
+            "E1": "https://typefully.com/",
+            "cta:0": "[Typefully: Best social media tool for creators & businesses; document_id=7e5bfa93-c634-4d2f-8acb-bab125032d0b; source=https://typefully.com/; aliases=https://typefully.com/; chunk=0]"
+          }
+        },
+        "revisions": 0,
+        "single_idea": "Your rough notes are enough to begin: put them into a new Typefully draft and use the writing tools to expand them into a first version.",
+        "evidence_ids": [
+          "E6"
+        ],
+        "tier": "branded",
+        "sequence_review_pending": false,
+        "selected_brief": {
+          "problem_ids": [],
+          "offer_id": "offering",
+          "action_id": "action_aebe0900adb2",
+          "selection_reason": "This is the closest supported action to the requested activation goal: the reader can access Typefully, place their existing notes into a draft, and use the documented AI expansion or rewriting capability to create a first version.",
+          "next_step_url": "https://typefully.com/",
+          "destination_kind": "web",
+          "destination_rejected": false,
+          "argument_issue": "",
+          "value_case": {
+            "reader_benefit": "The creator can develop the ideas already in their notes into a first social-post draft without needing a new topic.",
+            "mechanism": "Start a new draft with the rough notes, then use Typefully's AI tools to expand or rewrite the draft.",
+            "evidence_ids": [
+              "E6"
+            ],
+            "decision_conditions": [
+              "The material documents AI expansion and rewriting of drafts but does not establish availability by plan, a required amount of input, or a guaranteed draft quality."
+            ]
+          },
+          "claim_conditions": [
+            "Describe expansion and rewriting as available Typefully capabilities, not as guaranteed outcomes.",
+            "Do not claim that the homepage URL opens the draft editor directly."
+          ],
+          "position": 1,
+          "user_request": "Write exactly one English activation email from the Typefully team. Reader: A creator with a new Typefully account and rough notes for a social post. Ask them to do one thing: Create the first draft from their notes. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+          "target_audience": "",
+          "job": "Get the reader to create their first Typefully draft from the notes they already have.",
+          "single_idea": "Your rough notes are enough to begin: put them into a new Typefully draft and use the writing tools to expand them into a first version.",
+          "felt_need": "I have the substance of a post, but it is still only rough notes.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "Open a new draft, add the rough notes, and use Typefully's documented AI expansion or rewriting tools to shape a first version.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: rough notes feel like material that still needs to become a post. After: they are a sufficient starting point for creating a first draft in Typefully.",
+          "evidence_ids": [
+            "E6"
+          ],
+          "must_not_say": [
+            "Do not promise that the AI will preserve the reader's voice, because the amount of writing required for it to learn that voice is not stated.",
+            "Do not claim a particular plan includes the AI tools.",
+            "Do not promise time saved, better engagement, a polished or publication-ready result, or any performance outcome.",
+            "Do not introduce scheduling, cross-posting, analytics, collaboration, previews, customer counts, or the free plan.",
+            "Do not ask the reader to publish, schedule, upgrade, or create another account.",
+            "Do not invent UI labels beyond the documented concept of a new draft.",
+            "Do not imply the CTA URL is a direct link to the draft editor."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "The notes may feel too rough to count as a draft; answer by making them the input to Typefully's documented expand or rewrite operation, without promising the resulting quality.",
+          "tone": "Encouraging, crisp, and momentum-driven, with short plainspoken paragraphs.",
+          "call_to_action": "Create your first draft",
+          "next_step_decision": "Decide how to shape the existing notes into the first version of the social post.",
+          "next_step_value": "Access Typefully and begin a draft that its AI tools can expand or rewrite.",
+          "next_step_evidence_ids": [
+            "E6"
+          ],
+          "next_step_limit": "The documented destination is the Typefully homepage/account entry point, not a verified deep link to a new draft; this step also does not establish draft quality, publication readiness, or AI availability on a particular plan.",
+          "subject_strategy": "Make the rough notes feel immediately usable and point toward the first draft, without promising speed or a finished post.",
+          "must_not_reuse": [],
+          "steering": {
+            "directions": [
+              "Write exactly one English activation email.",
+              "Keep the body under 150 words, excluding subject, preview, and signature.",
+              "Ask the reader to do only one thing: create the first draft from their notes.",
+              "Give the specific first step: start a new Typefully draft with the rough notes.",
+              "Explain that this gives Typefully's writing tools material to expand or rewrite.",
+              "Use exactly one CTA."
+            ],
+            "include_evidence_ids": [
+              "E6"
+            ],
+            "exclude_evidence_ids": [
+              "E1",
+              "E2",
+              "E3",
+              "E4",
+              "E5",
+              "E7",
+              "E8",
+              "E9",
+              "E10",
+              "E11",
+              "E12"
+            ],
+            "use": [
+              "Crisp, encouraging, product-led language",
+              "Short paragraphs",
+              "The brand's momentum-oriented idea that starting matters more than perfection"
+            ],
+            "avoid": [
+              "Generic onboarding language",
+              "Feature lists",
+              "Unsupported plan, access, timing, or outcome claims",
+              "Multiple actions or links",
+              "Pressure to publish immediately"
+            ],
+            "context_only": [
+              "The reader already has a new account and rough notes."
+            ],
+            "excluded_values": [
+              "Scheduling",
+              "Cross-posting",
+              "Analytics",
+              "Collaboration",
+              "Previews",
+              "Pricing or free-plan promotion"
+            ]
+          }
+        }
+      },
+      "created_at": "2026-11-11T08:29:34.059788Z"
+    }
+  ],
+  "result": {
+    "run_status": "completed",
+    "report": {
+      "request": "Write exactly one English activation email from the Typefully team. Reader: A creator with a new Typefully account and rough notes for a social post. Ask them to do one thing: Create the first draft from their notes. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+      "effective_audience": "A creator with a new Typefully account and rough notes for a social post.",
+      "audience_scope": "",
+      "assessment_method": "Simulated reader's interest, uncalibrated; no response or conversion prediction",
+      "delivered": 1,
+      "promised": 1,
+      "contract_violations": [],
+      "emails": [
+        {
+          "position": 1,
+          "subject": "Turn rough notes into a draft",
+          "single_idea": "Your rough notes are enough to begin: put them into a new Typefully draft and use the writing tools to expand them into a first version.",
+          "selection_reason": "This is the closest supported action to the requested activation goal: the reader can access Typefully, place their existing notes into a draft, and use the documented AI expansion or rewriting capability to create a first version.",
+          "problem_ids": [],
+          "action_id": "action_aebe0900adb2",
+          "next_step_decision": "Decide how to shape the existing notes into the first version of the social post.",
+          "next_step_value": "Access Typefully and begin a draft that its AI tools can expand or rewrite.",
+          "next_step_url": "https://typefully.com/",
+          "next_step_limit": "The documented destination is the Typefully homepage/account entry point, not a verified deep link to a new draft; this step also does not establish draft quality, publication readiness, or AI availability on a particular plan.",
+          "pull": 8.0,
+          "revisions": 0,
+          "clean": true,
+          "landed": true,
+          "rewrites_stopped_helping": false,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "E6"
+          ],
+          "evidence_spent": [],
+          "attributions": 0,
+          "unresolved": [],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "Typefully offers a social-post writing workspace where I can paste my rough notes into a draft and use AI tools to expand or rewrite them, helping me turn fragments into a first post this week.",
+              "understood": true,
+              "situation_matches": true,
+              "relevance_feedback": "The profile explicitly says I have a new Typefully account and rough notes for a social post, so the email’s premise—“Give your rough notes a first shape”—directly matches my current situation. The email additionally suggests that I want AI help expanding or rewriting those notes; whether I prefer that assistance is unknown, but it is presented as optional.",
+              "assumed_experiences": [
+                "Profile-supported: I have a new Typefully account.",
+                "Profile-supported: I have rough notes for a social post.",
+                "Email-only: I may want to develop fragments or half-formed sentences into a post using AI writing tools.",
+                "Email-only: The substance of my intended post may already be present in my notes."
+              ],
+              "problem_now": "Turning my established rough notes into a social-post draft is relevant now, although the profile gives no deadline or urgency. Trying this in one draft sounds like a small, appropriate next step.",
+              "stopped_at": "",
+              "biggest_doubt": "I cannot yet picture the quality or degree of control I would get from “expand or rewrite”; I would want to know whether it preserves my point and voice. That doubt would not stop me from trying it once because I already have the account and suitable notes.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me I could put my existing fragments into a new draft and use Typefully’s AI tools to expand or rewrite them—which it does.",
+              "fixes": [
+                "Rewrite “Once your notes are in the draft, its AI writing tools can expand or rewrite them” to clarify, using verified details, what I select or click and whether the tool works on particular notes or the whole draft.",
+                "Replace “If the substance is already there, you don’t need a different topic. You need a place to start turning it into a post.” with a brief, concrete before-and-after example of rough notes becoming a draft, if an accurate example is available."
+              ],
+              "opens_in_100": null,
+              "clicks_in_100": null,
+              "persona": "Selected audience (user-stated constraints): A creator with a new Typefully account and rough notes for a social post..\nOnly these audience facts are established. Do not substitute a compiled market segment, invent an installed tool or experience, or infer the campaign's desired reaction. Read the email cold as this person.\nEstablished relationship to the sender: customer. This establishes no particular installed tools or desired reaction.",
+              "pull": 8
+            }
+          ],
+          "sameness": []
+        }
+      ],
+      "limiting_gaps": [],
+      "what_would_help_most": "",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "Effective audience: A creator with a new Typefully account and rough notes for a social post."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "A single activation email brief for an existing Typefully customer who already has rough notes. The email should drive one useful first action—turn those notes into a first draft—not sell signup or ask them to publish.",
+      "pipeline_version": 2,
+      "strategy_mode": "planned",
+      "focused_activation": false,
+      "intent": {
+        "objective": "activation",
+        "objective_source": "user",
+        "reader_relationship": "customer",
+        "relationship_source": "user",
+        "announcement": "",
+        "reason_now": "",
+        "desired_action": "Create the first draft from their notes",
+        "required_fact": "",
+        "required_source_url": ""
+      },
+      "reader": "Selected audience (user-stated constraints): A creator with a new Typefully account and rough notes for a social post..\nNo further recipient situation is established. Compiled market context is research to check for applicability, not a replacement biography.",
+      "reader_segment": "Creator publishing across multiple social platforms",
+      "reader_profile_override": "A creator with a new Typefully account and rough notes for a social post.",
+      "reader_scope": "",
+      "fixed_cta_url": "",
+      "promise": "Typefully can help the creator turn the rough notes they already have into a workable first draft.",
+      "orientation": "Typefully is a focused social-post writing workspace where a creator can develop rough ideas into drafts.",
+      "arc": "Move the reader from seeing rough notes as unfinished material to seeing one concrete next step: put them into a Typefully draft and use the writing tools to expand them.",
+      "sequence_rationale": "One email is sufficient because the reader, desired action, and input are already defined. Lead directly with the documented drafting operation; no invented pain, competitive story, proof point, or publishing outcome is needed. The supplied material documents the Typefully homepage as an account access destination but does not establish a dedicated draft-editor URL, so the CTA uses the verified homepage without implying a deep link.",
+      "emails": [
+        {
+          "problem_ids": [],
+          "offer_id": "offering",
+          "action_id": "action_aebe0900adb2",
+          "selection_reason": "This is the closest supported action to the requested activation goal: the reader can access Typefully, place their existing notes into a draft, and use the documented AI expansion or rewriting capability to create a first version.",
+          "next_step_url": "https://typefully.com/",
+          "destination_kind": "web",
+          "destination_rejected": false,
+          "argument_issue": "",
+          "value_case": {
+            "reader_benefit": "The creator can develop the ideas already in their notes into a first social-post draft without needing a new topic.",
+            "mechanism": "Start a new draft with the rough notes, then use Typefully's AI tools to expand or rewrite the draft.",
+            "evidence_ids": [
+              "E6"
+            ],
+            "decision_conditions": [
+              "The material documents AI expansion and rewriting of drafts but does not establish availability by plan, a required amount of input, or a guaranteed draft quality."
+            ]
+          },
+          "claim_conditions": [
+            "Describe expansion and rewriting as available Typefully capabilities, not as guaranteed outcomes.",
+            "Do not claim that the homepage URL opens the draft editor directly."
+          ],
+          "position": 1,
+          "user_request": "Write exactly one English activation email from the Typefully team. Reader: A creator with a new Typefully account and rough notes for a social post. Ask them to do one thing: Create the first draft from their notes. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+          "target_audience": "",
+          "job": "Get the reader to create their first Typefully draft from the notes they already have.",
+          "single_idea": "Your rough notes are enough to begin: put them into a new Typefully draft and use the writing tools to expand them into a first version.",
+          "felt_need": "I have the substance of a post, but it is still only rough notes.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "Open a new draft, add the rough notes, and use Typefully's documented AI expansion or rewriting tools to shape a first version.",
+          "alternative_ideas": [],
+          "alternative_arguments": [],
+          "belief_shift": "Before: rough notes feel like material that still needs to become a post. After: they are a sufficient starting point for creating a first draft in Typefully.",
+          "evidence_ids": [
+            "E6"
+          ],
+          "must_not_say": [
+            "Do not promise that the AI will preserve the reader's voice, because the amount of writing required for it to learn that voice is not stated.",
+            "Do not claim a particular plan includes the AI tools.",
+            "Do not promise time saved, better engagement, a polished or publication-ready result, or any performance outcome.",
+            "Do not introduce scheduling, cross-posting, analytics, collaboration, previews, customer counts, or the free plan.",
+            "Do not ask the reader to publish, schedule, upgrade, or create another account.",
+            "Do not invent UI labels beyond the documented concept of a new draft.",
+            "Do not imply the CTA URL is a direct link to the draft editor."
+          ],
+          "forbidden_evidence_ids": [],
+          "forbidden_capability_ids": [],
+          "objection": "The notes may feel too rough to count as a draft; answer by making them the input to Typefully's documented expand or rewrite operation, without promising the resulting quality.",
+          "tone": "Encouraging, crisp, and momentum-driven, with short plainspoken paragraphs.",
+          "call_to_action": "Create your first draft",
+          "next_step_decision": "Decide how to shape the existing notes into the first version of the social post.",
+          "next_step_value": "Access Typefully and begin a draft that its AI tools can expand or rewrite.",
+          "next_step_evidence_ids": [
+            "E6"
+          ],
+          "next_step_limit": "The documented destination is the Typefully homepage/account entry point, not a verified deep link to a new draft; this step also does not establish draft quality, publication readiness, or AI availability on a particular plan.",
+          "subject_strategy": "Make the rough notes feel immediately usable and point toward the first draft, without promising speed or a finished post.",
+          "must_not_reuse": [],
+          "steering": {
+            "directions": [
+              "Write exactly one English activation email.",
+              "Keep the body under 150 words, excluding subject, preview, and signature.",
+              "Ask the reader to do only one thing: create the first draft from their notes.",
+              "Give the specific first step: start a new Typefully draft with the rough notes.",
+              "Explain that this gives Typefully's writing tools material to expand or rewrite.",
+              "Use exactly one CTA."
+            ],
+            "include_evidence_ids": [
+              "E6"
+            ],
+            "exclude_evidence_ids": [
+              "E1",
+              "E2",
+              "E3",
+              "E4",
+              "E5",
+              "E7",
+              "E8",
+              "E9",
+              "E10",
+              "E11",
+              "E12"
+            ],
+            "use": [
+              "Crisp, encouraging, product-led language",
+              "Short paragraphs",
+              "The brand's momentum-oriented idea that starting matters more than perfection"
+            ],
+            "avoid": [
+              "Generic onboarding language",
+              "Feature lists",
+              "Unsupported plan, access, timing, or outcome claims",
+              "Multiple actions or links",
+              "Pressure to publish immediately"
+            ],
+            "context_only": [
+              "The reader already has a new account and rough notes."
+            ],
+            "excluded_values": [
+              "Scheduling",
+              "Cross-posting",
+              "Analytics",
+              "Collaboration",
+              "Previews",
+              "Pricing or free-plan promotion"
+            ]
+          }
+        }
+      ],
+      "voice_notes": "Write as the Typefully team using “we” sparingly and addressing the reader as “you.” Keep the energy light and direct; one subtle emoji is acceptable but unnecessary.",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "one English activation email"
+      }
+    },
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "76b30e36-8a95-42a7-8946-307ac82b9bda",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

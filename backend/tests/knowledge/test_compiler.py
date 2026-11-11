@@ -38,6 +38,24 @@ def corpus() -> SourceCorpus:
     )
 
 
+def test_compact_reading_preserves_home_and_pricing_before_long_testimonial_pages():
+    from app.knowledge.compiler import _readings
+
+    documents = [
+        Document(id="stories", title="Stories", source="https://example.com/customers/", content="Story paragraph.\n\n" * 2200),
+        Document(id="pricing", title="Pricing", source="https://example.com/pricing/", content="# Plus\n\n$295 per month, 20 seats included.\n\n" + "Feature details.\n\n" * 2200),
+        Document(id="home", title="Home", source="https://example.com/", content="One shared support inbox.\n\n" * 100),
+    ]
+    plan = _readings(SourceCorpus.from_documents(documents), 14_000, 28_000, balanced=True)
+    readings = [reading for batch in plan.batches for reading in batch]
+    assert len(plan.batches) <= 2
+    assert sum(len(reading.text) for reading in readings) <= 28_000
+    assert any(reading.document.id == "home" for reading in readings)
+    assert any("$295 per month, 20 seats included." in reading.text for reading in readings)
+    assert all(reading.text in reading.document.content for reading in readings)
+    assert plan.unread > 0
+
+
 def profile_answer() -> str:
     return json.dumps(
         {
@@ -112,7 +130,7 @@ async def test_fatal_pass_cancels_and_drains_sibling_readings(monkeypatch):
 
     async def fail(_corpus):
         await started.wait()
-        raise ValueError("Profile failed")
+        raise ValueError("Evidence failed")
 
     async def pending(_corpus):
         started.set()
@@ -121,21 +139,18 @@ async def test_fatal_pass_cancels_and_drains_sibling_readings(monkeypatch):
         finally:
             drained.append(True)
 
-    monkeypatch.setattr(compiler, "_profile", fail)
-    monkeypatch.setattr(compiler, "_evidence", pending)
+    monkeypatch.setattr(compiler, "_evidence", fail)
     monkeypatch.setattr(compiler, "_voice", pending)
-    with pytest.raises(ValueError, match="Profile failed"):
+    with pytest.raises(ValueError, match="Evidence failed"):
         await compiler.compile(corpus())
-    assert drained == [True, True]
+    assert drained == [True]
 
 
 def compiler_provider(*, evidence: str, voice: str) -> RoleScriptedProvider:
     """Answers keyed by template, not by call position.
 
-    All four passes are the same role, so a positional script only worked
-    while they ran strictly one after another. They do not: the three that
-    read only the material are issued concurrently, and a positional script
-    then hands the voice pass whatever the audience pass was owed. Keying by
+    All four passes are the same role and some run concurrently. A positional
+    script can hand the voice pass whatever the evidence pass was owed. Keying by
     template is what `RoleScriptedProvider` was built for - see its
     `_keys` - and it says what each answer is *for* rather than when it lands.
     """
@@ -186,6 +201,22 @@ async def test_evidence_whose_quote_is_invented_is_dropped():
     )
     artifacts = await KnowledgeCompiler(make_session(provider)).compile(corpus())
     assert artifacts.evidence.entries == []
+
+
+@pytest.mark.asyncio
+async def test_compiler_retains_a_real_mechanism_quoted_without_markdown_link_destinations():
+    quote = "Manage subscribers, send emails, create automations from your own code."
+    provider = compiler_provider(evidence=evidence_answer({
+        "kind": "feature", "claim": quote, "verbatim": quote,
+        "document_id": "d1", "strength": "strong",
+    }), voice=voice_answer())
+    source = SourceCorpus.from_documents([Document(id="d1", title="API", content=(
+        "[Manage subscribers](/subscribers), [send emails](/emails), "
+        "[create automations](/automations) from your own code."
+    ))])
+    artifacts = await KnowledgeCompiler(make_session(provider)).compile(source)
+    assert len(artifacts.evidence.entries) == 1
+    assert artifacts.evidence.entries[0].verbatim == quote
 
 
 @pytest.mark.asyncio

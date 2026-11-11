@@ -28,7 +28,7 @@ separate from explicit audience constraints.
 
 Pick the one that gets your click. Not the one that is better written, not the one a colleague
 would admire, not the one you would send if it were your company. The one that would actually
-move your thumb on a Tuesday morning with four hundred unread.
+earn your attention in the relationship and decision context supplied above.
 
 Read both messages independently before comparing them. Neither its A/B label nor its position
 is a reason to prefer a draft. A weak opening matters, but assess both by the same criteria.
@@ -39,6 +39,7 @@ Things that decide it, in the order they decide it:
   is, well enough to repeat to somebody. If one of these leaves you guessing and the other does
   not, that is the answer and nothing below it matters: you cannot want something you could not
   describe, and an email you cannot describe is one you archive.
+- whether it makes you want the thing
 - whether the subject and the first line are about something true in your week
 - whether its central premise fits the supplied audience: prefer a supported or appropriately
   conditional situation over an invented build history, team structure or prior incident.

@@ -1,0 +1,118 @@
+{
+  "status": "historical_track_superseded",
+  "runs": [
+    {
+      "execution_id": "e807a4ab-889a-4608-b613-cd65e6111352",
+      "campaign_id": "2c85d159-0927-4673-8523-7b1837156b26",
+      "status": "completed",
+      "launched_at": "2026-11-08T01:28:50.751Z",
+      "code_revision": "working-tree-v25",
+      "outcome_status": "degraded",
+      "needs_review": true,
+      "review_reasons": [
+        "Some drafts still need editorial review."
+      ],
+      "last_checked_at": "2026-11-08T01:31:32.224812+00:00",
+      "result_dir": "docs\\optimization\\tally-cold-v25-first-campaign-2026-11-08\\runs\\e807a4ab-889a-4608-b613-cd65e6111352",
+      "estimated_cost_usd": 1.036,
+      "completed_at": "2026-11-08T01:31:25.413255Z"
+    },
+    {
+      "execution_id": "e53b0b02-b438-4636-8b9c-f7165d680e28",
+      "campaign_id": "142fa23e-73b6-4946-a61a-bd794de4abd4",
+      "status": "completed",
+      "launched_at": "2026-11-08T01:36:54.377Z",
+      "code_revision": "working-tree-v26-value-argument",
+      "outcome_status": "degraded",
+      "needs_review": true,
+      "review_reasons": [
+        "Some drafts still need editorial review."
+      ],
+      "last_checked_at": "2026-11-08T01:39:23.954745+00:00",
+      "result_dir": "docs\\optimization\\tally-cold-v25-first-campaign-2026-11-08\\runs\\e53b0b02-b438-4636-8b9c-f7165d680e28",
+      "estimated_cost_usd": 0.9038,
+      "completed_at": "2026-11-08T01:39:19.445425Z"
+    }
+  ],
+  "track": "uninterrupted-cold-v25",
+  "database": "C:/Users/oussa/AppData/Local/Temp/marketingos-audit-nov08-9822e33988814c50ab7baefe229063eb.sqlite",
+  "quality_history": [
+    {
+      "iteration": 1,
+      "execution_id": "e807a4ab-889a-4608-b613-cd65e6111352",
+      "score": 72,
+      "comparable": true,
+      "track": "cold-v25-operations-audience",
+      "breakdown": {
+        "factual_support": 24,
+        "audience_and_offer": 15,
+        "specificity_and_argument": 9,
+        "continuity": 10,
+        "polish_and_rendering": 7,
+        "unsupported_or_repetition": 7
+      },
+      "strengths": [
+        "Homepage-only preparation reached a draft without manual sources or configuration",
+        "Free capacity retains its fair-use limit"
+      ],
+      "remaining_defect": "Only one broad capacity fact spent; the email sells evaluating the interface rather than a concrete operational advantage.",
+      "evidence": [
+        "email.txt",
+        "result.json",
+        "preparation-final.json"
+      ],
+      "next_action": "Same-input argument retest after planner correction; source/dossier handling v26."
+    },
+    {
+      "iteration": 2,
+      "execution_id": "e53b0b02-b438-4636-8b9c-f7165d680e28",
+      "score": 83,
+      "comparable": true,
+      "track": "cold-v25-operations-audience",
+      "breakdown": {
+        "factual_support": 24,
+        "audience_and_offer": 17,
+        "specificity_and_argument": 15,
+        "continuity": 12,
+        "polish_and_rendering": 8,
+        "unsupported_or_repetition": 7
+      },
+      "strengths": [
+        "Spends R1/E16/E17 on shared maintenance and brand-controlled customer forms",
+        "Paid-tier condition and coherent pricing-page CTA; no invented or ambiguous price"
+      ],
+      "remaining_defect": "Simulated reader still requests exact price and a more conditional opening; some repetition. Research labels a vendor-feature-based audience inference as grounded.",
+      "evidence": [
+        "email-v26.txt",
+        "result-v26.json",
+        "ui-verification-v26.json"
+      ],
+      "next_action": "Correct research grounding classification; finish Buttondown proof recovery after Claude reset; validate final cold flow.",
+      "comparison_limit": "Same ledger/audience/objective; dossier rebuilt as well as strategy/writer prompt changes, so this does not isolate one prompt effect."
+    }
+  ],
+  "brand_id": "62a18d58-b1fc-44ae-8553-fa818e104d1f",
+  "steps": {},
+  "last_snapshot": "docs\\optimization\\tally-cold-v25-first-campaign-2026-11-08\\steps\\20261108T014258717881Z-capture.json",
+  "quality_best": {
+    "score": 83,
+    "iteration": 2,
+    "execution_id": "e53b0b02-b438-4636-8b9c-f7165d680e28"
+  },
+  "deliverable_verdict": "usable_after_ordinary_review",
+  "global_audit_verdict": "incomplete",
+  "commercial_validation": "not_validated",
+  "external_blocker": null,
+  "next_action": "See final v28 homepage-only validation and final report; prior v25/v26 scores and artifacts remain historical.",
+  "current_code_interpretation": 27,
+  "final_safety_checks": {
+    "source_probe": "No paid calls after quota; v27 read adapter protects captured billing-toggle prices, even previously cached facts.",
+    "backend_full_result": "docs/reviews/backend-tests-2026-11-08-final.txt",
+    "frontend_tests": 37,
+    "lint_typecheck": "passed",
+    "backend_passed": 2246,
+    "backend_duration_seconds": 258.73,
+    "frontend_passed": 37
+  },
+  "superseded_by": "docs/optimization/tally-cold-v28-first-campaign-2026-11-08/state.json"
+}

@@ -1,0 +1,247 @@
+[
+  {
+    "sequence_order": 1,
+    "input_tokens": 36552,
+    "status": "completed",
+    "output_tokens": 7455,
+    "input_data": {
+      "label": "Deciding what this campaign says, and in what order"
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "emails": [
+        "#1 Pour une petite gamme de livres ou de produits compagnons, systeme.io permet de vendre des produits physiques depuis un tunnel ou un site sans boutique Shopify ou WooCommerce séparée ; cette adéquation doit être jugée comme celle d’un catalogue limité, pas d’une infrastructure e-commerce avancée.",
+        "#2 Une inscription obtenue dans un tunnel systeme.io peut alimenter la liste email, appliquer un tag et déclencher une séquence automatisée sans intégration externe.",
+        "#3 Lors d’une migration vers systeme.io, les contacts exportés peuvent être importés, mais les fiches de livres ou autres produits doivent être recréées manuellement faute d’import automatique documenté."
+      ]
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "9270b42b-7b8e-4033-92ad-a16e7da4436d",
+    "error_message": null,
+    "cost_usd": 0.522415,
+    "id": "efd2c7b9-8ff6-4d8d-b3b6-65790404c2d0",
+    "started_at": "2026-10-30T23:47:17.671870",
+    "duration_ms": 59309.65819999983,
+    "agent_id": "strategist",
+    "completed_at": "2026-10-30T23:48:17.242394",
+    "attempt": 1,
+    "agent_name": "Strategist",
+    "model": "gpt-5.6-sol"
+  },
+  {
+    "sequence_order": 2,
+    "input_tokens": 24934,
+    "status": "completed",
+    "output_tokens": 1910,
+    "input_data": {
+      "label": "Email 1 · first draft",
+      "position": 1,
+      "attempt": 1
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "subject": "Petite gamme de livres : quel périmètre ?"
+    },
+    "cache_read_input_tokens": 0,
+    "campaign_execution_id": "9270b42b-7b8e-4033-92ad-a16e7da4436d",
+    "error_message": null,
+    "cost_usd": 0.256772,
+    "id": "e370a84f-a412-45f2-a8fa-f0124c5a82f9",
+    "started_at": "2026-10-30T23:48:17.509974",
+    "duration_ms": 13990.53759999515,
+    "agent_id": "email_writer",
+    "completed_at": "2026-10-30T23:48:31.552912",
+    "attempt": 1,
+    "agent_name": "Email Writer",
+    "model": "gpt-5.6-sol"
+  },
+  {
+    "sequence_order": 3,
+    "input_tokens": 3979,
+    "status": "completed",
+    "output_tokens": 1467,
+    "input_data": {
+      "label": "Email 1 · read cold by 1 reader(s)",
+      "position": 1,
+      "attempt": 1
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "pull": 6
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "9270b42b-7b8e-4033-92ad-a16e7da4436d",
+    "error_message": null,
+    "cost_usd": 0.082191,
+    "id": "5dac4da6-8a48-41c3-a2a4-fd5eb8934f60",
+    "started_at": "2026-10-30T23:48:31.756441",
+    "duration_ms": 15365.579100005561,
+    "agent_id": "blind_reader",
+    "completed_at": "2026-10-30T23:48:47.166126",
+    "attempt": 1,
+    "agent_name": "Blind Reader",
+    "model": "gpt-5.6-sol"
+  },
+  {
+    "sequence_order": 4,
+    "input_tokens": 18389,
+    "status": "completed",
+    "output_tokens": 1790,
+    "input_data": {
+      "label": "Email 1 · rewrite 1",
+      "position": 1,
+      "attempt": 2
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "subject": "Du stock au paiement des livres"
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "9270b42b-7b8e-4033-92ad-a16e7da4436d",
+    "error_message": null,
+    "cost_usd": 0.207161,
+    "id": "feb585d6-861f-407c-a17e-9f4b5e3f75ef",
+    "started_at": "2026-10-30T23:48:47.175747",
+    "duration_ms": 14365.122899995185,
+    "agent_id": "email_writer",
+    "completed_at": "2026-10-30T23:49:01.580692",
+    "attempt": 2,
+    "agent_name": "Email Writer",
+    "model": "gpt-5.6-sol"
+  },
+  {
+    "sequence_order": 5,
+    "input_tokens": 11901,
+    "status": "completed",
+    "output_tokens": 1113,
+    "input_data": {
+      "label": "Email 1 · read cold by 1 reader(s)",
+      "position": 1,
+      "attempt": 2
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "pull": 6
+    },
+    "cache_read_input_tokens": 0,
+    "campaign_execution_id": "9270b42b-7b8e-4033-92ad-a16e7da4436d",
+    "error_message": null,
+    "cost_usd": 0.128598,
+    "id": "de4b59be-0616-4cb3-8e40-4318613623af",
+    "started_at": "2026-10-30T23:49:01.677026",
+    "duration_ms": 12089.455699999235,
+    "agent_id": "blind_reader",
+    "completed_at": "2026-10-30T23:49:13.806702",
+    "attempt": 2,
+    "agent_name": "Blind Reader",
+    "model": "gpt-5.6-sol"
+  },
+  {
+    "sequence_order": 6,
+    "input_tokens": 16288,
+    "status": "completed",
+    "output_tokens": 1079,
+    "input_data": {
+      "label": "Email 2 · first draft",
+      "position": 2,
+      "attempt": 1
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "subject": "Du lecteur inscrit à la séquence"
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "9270b42b-7b8e-4033-92ad-a16e7da4436d",
+    "error_message": null,
+    "cost_usd": 0.169023,
+    "id": "cbb8dcd4-8371-4850-9516-54f8b98492be",
+    "started_at": "2026-10-30T23:49:13.843811",
+    "duration_ms": 9388.393400004134,
+    "agent_id": "email_writer",
+    "completed_at": "2026-10-30T23:49:23.281448",
+    "attempt": 3,
+    "agent_name": "Email Writer",
+    "model": "gpt-5.6-sol"
+  },
+  {
+    "sequence_order": 7,
+    "input_tokens": 3989,
+    "status": "completed",
+    "output_tokens": 1522,
+    "input_data": {
+      "label": "Email 2 · read cold by 1 reader(s)",
+      "position": 2,
+      "attempt": 1
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "pull": 6
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "9270b42b-7b8e-4033-92ad-a16e7da4436d",
+    "error_message": null,
+    "cost_usd": 0.083921,
+    "id": "d8eaa990-3ff2-40a9-ac29-1f47d43eb133",
+    "started_at": "2026-10-30T23:49:23.428503",
+    "duration_ms": 16023.745999991661,
+    "agent_id": "blind_reader",
+    "completed_at": "2026-10-30T23:49:39.479443",
+    "attempt": 3,
+    "agent_name": "Blind Reader",
+    "model": "gpt-5.6-sol"
+  },
+  {
+    "sequence_order": 8,
+    "input_tokens": 17639,
+    "status": "completed",
+    "output_tokens": 1980,
+    "input_data": {
+      "label": "Email 2 · rewrite 1",
+      "position": 2,
+      "attempt": 2
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "subject": "Un parcours sans raccord externe"
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "9270b42b-7b8e-4033-92ad-a16e7da4436d",
+    "error_message": null,
+    "cost_usd": 0.206861,
+    "id": "37983aec-729c-4aef-903b-c1c08fddb6c9",
+    "started_at": "2026-10-30T23:49:39.489596",
+    "duration_ms": 15894.750100007514,
+    "agent_id": "email_writer",
+    "completed_at": "2026-10-30T23:49:55.432813",
+    "attempt": 4,
+    "agent_name": "Email Writer",
+    "model": "gpt-5.6-sol"
+  },
+  {
+    "sequence_order": 9,
+    "input_tokens": 3989,
+    "status": "completed",
+    "output_tokens": 1258,
+    "input_data": {
+      "label": "Email 2 · read cold by 1 reader(s)",
+      "position": 2,
+      "attempt": 2
+    },
+    "cache_creation_input_tokens": 0,
+    "output_data": {
+      "pull": 6
+    },
+    "cache_read_input_tokens": 7936,
+    "campaign_execution_id": "9270b42b-7b8e-4033-92ad-a16e7da4436d",
+    "error_message": null,
+    "cost_usd": 0.076001,
+    "id": "6054b952-8603-4ffa-bed8-bb0fc1c8c589",
+    "started_at": "2026-10-30T23:49:55.538206",
+    "duration_ms": 13213.26869999757,
+    "agent_id": "blind_reader",
+    "completed_at": "2026-10-30T23:50:08.780650",
+    "attempt": 4,
+    "agent_name": "Blind Reader",
+    "model": "gpt-5.6-sol"
+  }
+]

@@ -1,0 +1,17 @@
+# Rejeu du brief et de la revue sur Transistor
+
+Le dernier rejeu a produit un email validé et exportable. L’audit initial avait livré zéro email. Les rejeux reprennent le brief utilisateur, l’audience, le dossier et les sources déjà collectées. La base d’audit est ouverte en lecture seule. La stratégie et la rédaction utilisent les mêmes rôles et le même preset Fast que l’audit initial. [Audit initial](transistor-validation-2026-11-09.md) · [Email texte](../optimization/transistor-cold-v34-validation-2026-11-09/replay-v35b/email.txt) · [Email HTML](../optimization/transistor-cold-v34-validation-2026-11-09/replay-v35b/email.html)
+
+| Essai | Appels modèles | Durée de génération | Résultat |
+|---|---:|---:|---|
+| v34, depuis l’interface | 8 | 6 min 9 s | Deux brouillons bloqués. Le brief associait l’essai à une capacité d’abonnement et les citations transmises étaient incomplètes pour le prix. |
+| v35, premier rejeu | 7 | 4 min 51 s | Le plan a séparé l’inscription de l’usage. Le premier brouillon a ajouté un quota mutualisé sans preuve suffisante. Sa réécriture a retiré le quota et réintroduit une implication sur l’essai. |
+| v35b, après précision sur les quotas et la réécriture | 8 | 5 min 16 s | Premier brouillon approuvé et sélectionné. La réécriture a été bloquée pour avoir réintroduit une caractéristique écartée du brief. |
+
+Le dossier présente ses étapes de travail au stratège comme contexte. Les exclusions restent dans le brief. Le stratège choisit les conditions qui qualifient la promesse et ce que le bouton permet immédiatement. Le rédacteur et le contrôleur disposent maintenant des extraits du forfait et des conditions communes de facturation issus du corpus existant. Le contrôleur a cité le montant Starter et le passage sur la devise et la facturation mensuelle lorsqu’il a lu la deuxième version. Il a bloqué cette version pour la mention hors périmètre des abonnés privés. [Trace v35](../optimization/transistor-cold-v34-validation-2026-11-09/replay-v35/replay.json) · [Trace v35b](../optimization/transistor-cold-v34-validation-2026-11-09/replay-v35b/replay.json)
+
+Le texte retenu propose aux agences de regrouper plusieurs émissions sur un compte payant sans frais supplémentaires par émission créée. Son CTA renvoie à l’inscription à l’essai de 14 jours. Le texte et le HTML utilisent la même destination. Le lecteur simulé a compris l’offre et lui a donné 6/10. Il a demandé davantage d’informations sur le prix et les accès par client. J’attribue 81/100 à l’email retenu (25/25 sur les faits, 15/20 sur l’audience et l’offre, 14/20 sur l’argument, 12/15 sur la continuité, 8/10 sur la présentation et 7/10 sur la concision et les promesses). L’email est utilisable après relecture et se répète sur le bénéfice du compte unique. Ce rejeu évalue la correction sur les entrées archivées.
+
+Le contrôle négatif ajoute une seule phrase à une copie de l’email retenu. Elle affirme que l’essai permet d’héberger plusieurs podcasts clients. Une nouvelle revue a rejeté cette promesse faute de citation reliant la capacité à l’essai. La vérification a pris un appel et 53 secondes. Au total, les deux rejeux et ce contrôle ont utilisé 16 appels sur abonnement. [Trace du contrôle négatif](../optimization/transistor-cold-v34-validation-2026-11-09/replay-v35b-trial-control/replay.json)
+
+Les 2 291 tests backend ont réussi. Ruff et la vérification du diff ont également réussi.

@@ -8,7 +8,33 @@ every email this company ever sends.
 
 {{ material }}
 
+{% if commercial_evidence | default('') %}
+# Commercial evidence verified in the material
+
+{{ commercial_evidence }}
+
+Read the literal quotations alongside their subject and conditions. The digest
+may omit a later plan block. Use the commercial evidence for those omissions,
+including its evidence ID and literal quote in plan provenance. Keep amount,
+currency, billing unit, period and applicable plan together. Do not infer
+custom pricing from an Enterprise label or the availability of a quote.
+
+If two cited statements materially disagree about the same offer and scope,
+return an `offer_conflicts` item with `summary` and both `evidence_ids`.
+Explain the point to confirm and leave an unresolved price empty. An annual
+total and its monthly equivalent, or a project cap and a per-editor price,
+can describe different properties. Treat them as a conflict only when the
+actual statements cannot both hold under their stated scope.
+{% endif %}
+
 # How to work
+
+{% if compact | default(false) %}
+Prepare a compact profile for one first campaign. Limit each list to its few
+decision-relevant entries. In `audience`, record up to two likely buyers and
+their task as suggested by the material. These are hypotheses for later research.
+Use an empty list for evidence ids, which are assigned after extraction.
+{% endif %}
 
 **Say what is there, not what is usually there.** If the material never says what the product
 costs, the price is unknown — do not fill it with what a product like this normally costs. An

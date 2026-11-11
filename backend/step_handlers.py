@@ -69,6 +69,7 @@ def _execution_id(event: dict[str, Any]) -> UUID:
 
 
 def _run(step, event: dict[str, Any], context=None) -> dict[str, Any]:
+    from app.marketing.exceptions import CampaignError
     from app.models.campaign_execution import CampaignExecution
     from app.orchestration.workflow_dispatch import DurablePermit, execution_lock, recover
     from app.runtime.work_limits import current_work
@@ -108,7 +109,12 @@ def _run(step, event: dict[str, Any], context=None) -> dict[str, Any]:
         permit = DurablePermit(engine, execution_id, remaining)
         token = current_work.set(permit)
         try:
-            result = _run_async(step(session, execution_id, get_ai_provider()))
+            try:
+                result = _run_async(step(session, execution_id, get_ai_provider()))
+            except CampaignError as exc:
+                recover(session, execution_id, str(exc))
+                return {"execution_id": str(execution_id), "more": False,
+                        "status": execution.result["run_status"], "detail": str(exc)}
             session.refresh(state)
             state.inflight_step = None
             session.add(state)

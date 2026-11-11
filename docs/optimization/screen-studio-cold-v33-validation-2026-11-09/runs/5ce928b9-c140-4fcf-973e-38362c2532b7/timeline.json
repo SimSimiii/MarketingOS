@@ -1,0 +1,1645 @@
+{
+  "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+  "events": [
+    {
+      "type": "execution_started",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Request: Write exactly one email. Introduce our product to a new buyer with one clear next step.",
+      "at": "2026-11-09T10:27:51.633417+00:00",
+      "campaign_id": "d64f2cdd-c194-412f-8454-49cf22e191d6",
+      "request": "Write exactly one email. Introduce our product to a new buyer with one clear next step."
+    },
+    {
+      "type": "phase",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Read the request as 1 email(s) - the user said so",
+      "at": "2026-11-09T10:27:51.665600+00:00",
+      "phase": "contract",
+      "count": 1,
+      "explicit": true,
+      "kind": "single_email"
+    },
+    {
+      "type": "phase",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Reusing what we already know about this business (version 1, 11 facts)",
+      "at": "2026-11-09T10:27:51.844428+00:00",
+      "phase": "knowledge",
+      "reused": true,
+      "version": 1
+    },
+    {
+      "type": "knowledge_ready",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "knowledge_compiler",
+      "step": null,
+      "level": "info",
+      "message": "Knowledge reused: 11 facts the copy may claim, 2 gap(s)",
+      "at": "2026-11-09T10:27:51.857551+00:00",
+      "reused": true,
+      "version": 1,
+      "evidence_count": 11,
+      "segments": [
+        "Indie SaaS founder/maker creating launch & demo videos",
+        "Product/growth marketer making demo videos",
+        "Developer/creator sharing tutorials or work updates"
+      ],
+      "gaps": [
+        "Some linked source pages could not be read; the corpus is partial: https://screen.studio/",
+        "No customer result classified as a usable metric"
+      ],
+      "voice_learned": true,
+      "notes": [
+        "13 of 24 candidate fact(s) were discarded because the quote supporting them could not be found in the source.",
+        "17,655 characters of material were past the reading budget and were not read.",
+        "First-campaign knowledge covers selected pages and decision-relevant evidence. Compile sources to read them in more depth."
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Researched audience and current Relevance Dossier loaded",
+      "at": "2026-11-09T10:27:52.147887+00:00",
+      "phase": "intelligence",
+      "selected_audience": "Indie SaaS founder/maker creating launch & demo videos",
+      "audience_resolution_status": "audience_research_loaded",
+      "audience_research_id": "974bbf57-2e96-4c91-b635-29c66cfaa6e1",
+      "audience_research_version": 1,
+      "dossier_status": "current",
+      "dossier_id": "797d7a33-2610-418e-9b6c-cf2f441d3db6",
+      "dossier_version": 1,
+      "dossier_schema_version": 2,
+      "stale_reasons": [],
+      "legacy_fallback_used": false,
+      "qualified_subsegment": "Record a product walkthrough with Screen Studio on a Mac, where the cursor is recorded as synchronized movement data and added back afterwards so cursor effects can be applied after recording (E3), then export the result up to 4K at 60 fps (E6) under the Monthly plan at $29/mo, which includes all Screen Studio features (E5).",
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [],
+      "validation_warnings": [
+        "Historical sources (2022-06-16); present applicability is not corroborated. A different, better-funded startup (tl;dv) avoided self-editing and in-house production entirely, instead paying an outside creator for its launch video because it judged an agency too costly, a decision explicitly tied to budget rather than editing skill.",
+        "P1: Historical sources (2022-06-16); present applicability is not corroborated.",
+        "P1: Single-source problem; independent corroboration is not established.",
+        "P2: Single-source problem; independent corroboration is not established.",
+        "Moved product questions without an explicit audience requirement to decision gaps.",
+        "Defining audience need is unassessed or its references required normalization."
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "1 third-party proof point(s) available to spend",
+      "at": "2026-11-09T10:27:52.160204+00:00",
+      "phase": "proof",
+      "proof": 1,
+      "checkable": 10,
+      "asks": [
+        "Can this source be supplied in a readable form or its missing details verified?"
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "1 competitor(s) read - 0 documented difference(s); 11 unmatched captured proposition(s) need verification, not an exclusivity conclusion",
+      "at": "2026-11-09T10:27:52.498506+00:00",
+      "phase": "market",
+      "rivals": 1,
+      "open_ground": [
+        "price",
+        "price",
+        "price",
+        "breadth",
+        "control",
+        "proof",
+        "other",
+        "other",
+        "other",
+        "other",
+        "other"
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Written to Indie SaaS founder/maker creating launch & demo videos - selected audience hypothesis; response is unmeasured",
+      "at": "2026-11-09T10:27:52.637412+00:00",
+      "phase": "audience",
+      "segment": "Indie SaaS founder/maker creating launch & demo videos",
+      "mapped": true
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Strategist: Deciding what this campaign says, and in what order",
+      "at": "2026-11-09T10:27:52.664362+00:00",
+      "agent_name": "Strategist",
+      "label": "Deciding what this campaign says, and in what order"
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "debug",
+      "message": "Sent 96,816 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-09T10:27:52.824136+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 96816
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 8,527 characters in 83.8s (30,156 in / 6,847 out)",
+      "at": "2026-11-09T10:29:16.625428+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 30156,
+      "output_tokens": 6847,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.446658,
+      "duration_ms": 83788.1483999081,
+      "response_chars": 8527
+    },
+    {
+      "type": "phase",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Proposition selected for the requested campaign",
+      "at": "2026-11-09T10:29:16.641514+00:00",
+      "phase": "strategy_plan",
+      "pipeline_version": 2,
+      "strategy_mode": "planned",
+      "intent": {
+        "objective": "custom",
+        "objective_source": "inferred",
+        "reader_relationship": "unknown",
+        "relationship_source": "inferred",
+        "announcement": "",
+        "reason_now": "",
+        "desired_action": ""
+      },
+      "plan_history": [
+        {
+          "raw_plan": {
+            "interpretation": "Treat this as a one-email acquisition campaign for solution-aware indie SaaS founders or makers preparing a product demo on a Mac. The reader relationship is unknown, so the email should introduce Screen Studio without assuming the recipient has a launch deadline, uses a particular tool, or has tried another production route.",
+            "pipeline_version": 2,
+            "strategy_mode": "planned",
+            "intent": {
+              "objective": "acquisition",
+              "objective_source": "inferred",
+              "reader_relationship": "unknown",
+              "relationship_source": "inferred",
+              "announcement": "",
+              "reason_now": "A founder preparing launch materials may need to record a product walkthrough.",
+              "desired_action": "Download Screen Studio for Mac and try its post-recording cursor workflow on one product walkthrough."
+            },
+            "reader": "A solution-aware indie SaaS founder or maker who may be preparing a launch or feature-demo video on a Mac.",
+            "reader_segment": "Indie SaaS founder/maker creating launch & demo videos",
+            "reader_profile_override": "",
+            "reader_scope": "Limit the argument to founders recording product walkthroughs on macOS. Do not generalize this documented use to every indie founder or imply that the recipient is currently launching.",
+            "fixed_cta_url": "",
+            "promise": "Screen Studio lets a Mac-based founder record a product walkthrough, apply cursor effects after recording, and export the result at up to 4K and 60 fps.",
+            "orientation": "Screen Studio is a macOS screen recorder for creating product walkthrough videos with cursor effects that can be applied after recording.",
+            "arc": "In one email, move the reader from knowing that Screen Studio is another screen recorder to understanding its specific value for a product walkthrough, then invite them to try that workflow on a Mac.",
+            "sequence_rationale": "One email should carry one complete product-led argument: Screen Studio records synchronized mouse-movement data and adds the cursor back afterward, giving a founder post-recording control over cursor effects before a high-resolution export. This is more persuasive and better supported than leading with price, privacy, or a broad speed claim. The CTA is the smallest documented adoption step, while the copy must not imply a free trial or guaranteed production time. The single thing the user could send us that would most change this campaign is a readable copy of the missing Screen Studio source material, or verification of its missing details.",
+            "emails": [
+              {
+                "problem_ids": [
+                  "P2"
+                ],
+                "offer_id": "offering",
+                "action_id": "action_292eb5c46640",
+                "selection_reason": "The selected reader needs to create a product walkthrough, and the documented cursor mechanism gives them a concrete reason to choose Screen Studio beyond generic screen recording. The export capability completes the supported workflow.",
+                "next_step_url": "/download",
+                "destination_kind": "web",
+                "argument_issue": "",
+                "value_case": {
+                  "reader_benefit": "If the reader is creating a launch or feature demo on a Mac, they can refine how the cursor appears after the walkthrough has been recorded and export the finished video at up to 4K and 60 fps.",
+                  "mechanism": "Screen Studio records the screen without baking in the mouse cursor. It captures synchronized mouse-movement data and adds the cursor to the final video afterward, enabling cursor effects to be applied after recording.",
+                  "evidence_ids": [
+                    "E3",
+                    "E6",
+                    "E8"
+                  ],
+                  "decision_conditions": [
+                    "Screen Studio supports macOS only.",
+                    "The walkthrough must be recorded in Screen Studio for its synchronized cursor mechanism to apply.",
+                    "Export up to 4K at 60 fps is included in every plan."
+                  ]
+                },
+                "claim_conditions": [
+                  "Frame the use case conditionally because the recipient's current launch activity is unknown.",
+                  "Keep the speed concern as context only; no time-to-finished-video result is established.",
+                  "State the macOS-only boundary alongside the benefit."
+                ],
+                "position": 1,
+                "target_audience": "Indie SaaS founders and makers who create their own product walkthrough or launch videos on a Mac.",
+                "job": "Get the reader to download Screen Studio and try its post-recording cursor workflow on one product walkthrough.",
+                "single_idea": "Record the walkthrough first, then use Screen Studio's synchronized cursor data to apply cursor effects afterward before exporting at up to 4K and 60 fps.",
+                "felt_need": "When a product launch also needs descriptions, page assets, and a demo video, the reader wants the video step to remain manageable.",
+                "status_quo": "Some Product Hunt launchers use a collection of AI tools to produce their demo video and preview assets.",
+                "why_it_fails": "",
+                "mechanism": "Screen Studio captures precise mouse-movement data separately from the screen recording, synchronizes it with the video, and adds the cursor back into the final result. The reader can therefore apply cursor effects after recording rather than having the cursor permanently baked into the capture.",
+                "alternative_ideas": [],
+                "alternative_arguments": [],
+                "belief_shift": "Before: Screen Studio appears to be another way to capture a screen. After: it offers a specific workflow for refining cursor presentation after a product walkthrough has already been recorded.",
+                "evidence_ids": [
+                  "E3",
+                  "E6",
+                  "E8"
+                ],
+                "must_not_say": [
+                  "Do not claim or imply that a free trial, free tier, or money-back guarantee exists.",
+                  "Do not promise a time to finished video or generalize the self-reported five-minute customer example.",
+                  "Do not claim that zooms, motion, framing, or a professional-standard result are produced automatically.",
+                  "Do not suggest Windows support or future Windows support.",
+                  "Do not claim superiority over agencies, editors, or other tools beyond the documented cursor mechanism.",
+                  "Do not promise growth, more sales, Product Hunt success, zero disruption, headcount savings, or replacement of an incumbent workflow.",
+                  "Do not bring on-device voice enhancement or local-only recording storage into this route's argument.",
+                  "Do not claim that no manual editing is needed.",
+                  "Do not present this documented use as proof that Screen Studio fits every indie SaaS founder.",
+                  "Do not state or imply that the recipient is currently launching, has a deadline, has failed with another tool, or cannot afford an agency.",
+                  "Do not use company-logo lists or uncited testimonials as proof of this workflow."
+                ],
+                "forbidden_evidence_ids": [],
+                "forbidden_capability_ids": [],
+                "objection": "Can the cursor presentation still be adjusted after the walkthrough is recorded?",
+                "tone": "Plain, practical, and quietly confident.",
+                "call_to_action": "Download Screen Studio for Mac and record one product walkthrough.",
+                "next_step_decision": "Decide whether Screen Studio's post-recording cursor workflow suits the reader's next product demo.",
+                "next_step_value": "The download gives the reader the Mac application needed to record a walkthrough and try the synchronized cursor mechanism, with export available up to 4K and 60 fps.",
+                "next_step_evidence_ids": [
+                  "E3",
+                  "E6",
+                  "E8"
+                ],
+                "next_step_limit": "Downloading does not establish free access, trial terms, a guaranteed production time, or that the resulting video will improve launch performance.",
+                "subject_strategy": "Name the concrete post-recording control that distinguishes this walkthrough workflow—cursor effects after recording—without hype, a speed promise, or a vague invitation to make better videos.",
+                "must_not_reuse": [],
+                "steering": {
+                  "directions": [],
+                  "include_evidence_ids": [],
+                  "exclude_evidence_ids": [],
+                  "use": [],
+                  "avoid": [],
+                  "context_only": [],
+                  "excluded_values": []
+                }
+              }
+            ],
+            "voice_notes": "Use short, direct sentences and Screen Studio's practical explanatory register. Address the reader as “you” and avoid launch-marketing superlatives.",
+            "contract": {
+              "kind": "single_email",
+              "count": 1,
+              "count_is_explicit": true,
+              "evidence": "The user explicitly requested exactly one email."
+            }
+          },
+          "effective_plan": {
+            "interpretation": "Treat this as a one-email acquisition campaign for solution-aware indie SaaS founders or makers preparing a product demo on a Mac. The reader relationship is unknown, so the email should introduce Screen Studio without assuming the recipient has a launch deadline, uses a particular tool, or has tried another production route.",
+            "pipeline_version": 2,
+            "strategy_mode": "planned",
+            "intent": {
+              "objective": "custom",
+              "objective_source": "inferred",
+              "reader_relationship": "unknown",
+              "relationship_source": "inferred",
+              "announcement": "",
+              "reason_now": "",
+              "desired_action": ""
+            },
+            "reader": "Selected audience: Indie SaaS founder/maker creating launch & demo videos.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (grounded; check applicability): Indie and solo SaaS founders preparing a Product Hunt launch build their own launch/demo video and page assets as part of the process, often alongside writing descriptions and filling out their product page before going live.",
+            "reader_segment": "Indie SaaS founder/maker creating launch & demo videos",
+            "reader_profile_override": "",
+            "reader_scope": "",
+            "fixed_cta_url": "",
+            "promise": "Screen Studio lets a Mac-based founder record a product walkthrough, apply cursor effects after recording, and export the result at up to 4K and 60 fps.",
+            "orientation": "Screen Studio is a macOS screen recorder that a solo founder uses to record a product walkthrough and get a polished demo video out of it without doing manual video editing.",
+            "arc": "In one email, move the reader from knowing that Screen Studio is another screen recorder to understanding its specific value for a product walkthrough, then invite them to try that workflow on a Mac.",
+            "sequence_rationale": "One email should carry one complete product-led argument: Screen Studio records synchronized mouse-movement data and adds the cursor back afterward, giving a founder post-recording control over cursor effects before a high-resolution export. This is more persuasive and better supported than leading with price, privacy, or a broad speed claim. The CTA is the smallest documented adoption step, while the copy must not imply a free trial or guaranteed production time. The single thing the user could send us that would most change this campaign is a readable copy of the missing Screen Studio source material, or verification of its missing details.",
+            "emails": [
+              {
+                "problem_ids": [
+                  "P2"
+                ],
+                "offer_id": "offering",
+                "action_id": "action_292eb5c46640",
+                "selection_reason": "The selected reader needs to create a product walkthrough, and the documented cursor mechanism gives them a concrete reason to choose Screen Studio beyond generic screen recording. The export capability completes the supported workflow.",
+                "next_step_url": "/download",
+                "destination_kind": "web",
+                "argument_issue": "",
+                "value_case": {
+                  "reader_benefit": "If the reader is creating a launch or feature demo on a Mac, they can refine how the cursor appears after the walkthrough has been recorded and export the finished video at up to 4K and 60 fps.",
+                  "mechanism": "Screen Studio records the screen without baking in the mouse cursor. It captures synchronized mouse-movement data and adds the cursor to the final video afterward, enabling cursor effects to be applied after recording.",
+                  "evidence_ids": [
+                    "E3",
+                    "E6",
+                    "E8"
+                  ],
+                  "decision_conditions": [
+                    "Screen Studio supports macOS only.",
+                    "The walkthrough must be recorded in Screen Studio for its synchronized cursor mechanism to apply.",
+                    "Export up to 4K at 60 fps is included in every plan."
+                  ]
+                },
+                "claim_conditions": [
+                  "Frame the use case conditionally because the recipient's current launch activity is unknown.",
+                  "Keep the speed concern as context only; no time-to-finished-video result is established.",
+                  "State the macOS-only boundary alongside the benefit.",
+                  "Mac only; Screen Studio supports macOS and has no near-future Windows plans (E8)",
+                  "macOS 13.1 or later recommended (E1)",
+                  "The walkthrough must be recorded in Screen Studio for the cursor mechanism to apply (E3)",
+                  "Monthly plan at $29/mo is a paid subscription; no free trial or free tier is established by the selected evidence",
+                  "Do not promise: No free trial, free tier or money-back term is established by the selected evidence",
+                  "Do not promise: No time-to-finished-video guarantee; the ~5 minute figure is one unverified self-reported customer post (E11)",
+                  "Do not promise: No claim that zooms, motion or framing are produced automatically or to professional standard",
+                  "Do not promise: No Windows support, and no claim of future Windows support (E8)",
+                  "Do not promise: No comparison to, or superiority over, agencies, editors or other tools beyond the documented cursor mechanism wording",
+                  "Do not promise: No growth, zero-disruption, headcount-saving or incumbent-replacement outcome",
+                  "Do not promise: No claim about on-device voice cleanup or local-only data storage (E2, E9) being part of this route's workflow",
+                  "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit.",
+                  "Only one unverified self-reported customer post speaks to speed (E11), and the selected evidence documents no automatic zoom, motion or framing mechanism or any time guarantee."
+                ],
+                "position": 1,
+                "target_audience": "Indie SaaS founder/maker creating launch & demo videos",
+                "job": "Get the reader to download Screen Studio and try its post-recording cursor workflow on one product walkthrough.",
+                "single_idea": "Record the walkthrough first, then use Screen Studio's synchronized cursor data to apply cursor effects afterward before exporting at up to 4K and 60 fps.",
+                "felt_need": "A Product Hunt launcher reports wanting the demo video/asset creation step to be fast (achievable in about an hour with AI tools) rather than a slow or skill-intensive task, as part of preparing launch materials.",
+                "status_quo": "",
+                "why_it_fails": "",
+                "mechanism": "Screen Studio captures precise mouse-movement data separately from the screen recording, synchronizes it with the video, and adds the cursor back into the final result. The reader can therefore apply cursor effects after recording rather than having the cursor permanently baked into the capture.",
+                "alternative_ideas": [],
+                "alternative_arguments": [],
+                "belief_shift": "Before: Screen Studio appears to be another way to capture a screen. After: it offers a specific workflow for refining cursor presentation after a product walkthrough has already been recorded.",
+                "evidence_ids": [
+                  "E3",
+                  "E6",
+                  "E8"
+                ],
+                "must_not_say": [
+                  "Do not claim or imply that a free trial, free tier, or money-back guarantee exists.",
+                  "Do not promise a time to finished video or generalize the self-reported five-minute customer example.",
+                  "Do not claim that zooms, motion, framing, or a professional-standard result are produced automatically.",
+                  "Do not suggest Windows support or future Windows support.",
+                  "Do not claim superiority over agencies, editors, or other tools beyond the documented cursor mechanism.",
+                  "Do not promise growth, more sales, Product Hunt success, zero disruption, headcount savings, or replacement of an incumbent workflow.",
+                  "Do not bring on-device voice enhancement or local-only recording storage into this route's argument.",
+                  "Do not claim that no manual editing is needed.",
+                  "Do not present this documented use as proof that Screen Studio fits every indie SaaS founder.",
+                  "Do not state or imply that the recipient is currently launching, has a deadline, has failed with another tool, or cannot afford an agency.",
+                  "Do not use company-logo lists or uncited testimonials as proof of this workflow."
+                ],
+                "forbidden_evidence_ids": [
+                  "E7"
+                ],
+                "forbidden_capability_ids": [],
+                "objection": "Can the cursor presentation still be adjusted after the walkthrough is recorded?",
+                "tone": "Plain, practical, and quietly confident.",
+                "call_to_action": "Download Screen Studio for Mac and record one product walkthrough.",
+                "next_step_decision": "Decide whether Screen Studio's post-recording cursor workflow suits the reader's next product demo.",
+                "next_step_value": "The download gives the reader the Mac application needed to record a walkthrough and try the synchronized cursor mechanism, with export available up to 4K and 60 fps.",
+                "next_step_evidence_ids": [
+                  "E3",
+                  "E6",
+                  "E8"
+                ],
+                "next_step_limit": "Downloading does not establish free access, trial terms, a guaranteed production time, or that the resulting video will improve launch performance.",
+                "subject_strategy": "Name the concrete post-recording control that distinguishes this walkthrough workflow—cursor effects after recording—without hype, a speed promise, or a vague invitation to make better videos.",
+                "must_not_reuse": [],
+                "steering": {
+                  "directions": [],
+                  "include_evidence_ids": [],
+                  "exclude_evidence_ids": [],
+                  "use": [],
+                  "avoid": [],
+                  "context_only": [],
+                  "excluded_values": []
+                }
+              }
+            ],
+            "voice_notes": "Use short, direct sentences and Screen Studio's practical explanatory register. Address the reader as “you” and avoid launch-marketing superlatives.",
+            "contract": {
+              "kind": "single_email",
+              "count": 1,
+              "count_is_explicit": true,
+              "evidence": "one email"
+            }
+          },
+          "changed_fields": [
+            "intent",
+            "orientation",
+            "emails"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "brief_ready",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Campaign brief: Screen Studio lets a Mac-based founder record a product walkthrough, apply cursor effects after recording, and export the result at up to 4K and 60 fps.",
+      "at": "2026-11-09T10:29:16.653060+00:00",
+      "reader": "Selected audience: Indie SaaS founder/maker creating launch & demo videos.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (grounded; check applicability): Indie and solo SaaS founders preparing a Product Hunt launch build their own launch/demo video and page assets as part of the process, often alongside writing descriptions and filling out their product page before going live.",
+      "reader_segment": "Indie SaaS founder/maker creating launch & demo videos",
+      "promise": "Screen Studio lets a Mac-based founder record a product walkthrough, apply cursor effects after recording, and export the result at up to 4K and 60 fps.",
+      "arc": "In one email, move the reader from knowing that Screen Studio is another screen recorder to understanding its specific value for a product walkthrough, then invite them to try that workflow on a Mac.",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Get the reader to download Screen Studio and try its post-recording cursor workflow on one product walkthrough.",
+          "single_idea": "Record the walkthrough first, then use Screen Studio's synchronized cursor data to apply cursor effects afterward before exporting at up to 4K and 60 fps.",
+          "selection_reason": "The selected reader needs to create a product walkthrough, and the documented cursor mechanism gives them a concrete reason to choose Screen Studio beyond generic screen recording. The export capability completes the supported workflow.",
+          "problem_ids": [
+            "P2"
+          ],
+          "action_id": "action_292eb5c46640",
+          "next_step_url": "/download",
+          "argument_issue": "",
+          "objection": "Can the cursor presentation still be adjusted after the walkthrough is recorded?",
+          "evidence_ids": [
+            "E3",
+            "E6",
+            "E8"
+          ],
+          "must_not_say": [
+            "Do not claim or imply that a free trial, free tier, or money-back guarantee exists.",
+            "Do not promise a time to finished video or generalize the self-reported five-minute customer example.",
+            "Do not claim that zooms, motion, framing, or a professional-standard result are produced automatically.",
+            "Do not suggest Windows support or future Windows support.",
+            "Do not claim superiority over agencies, editors, or other tools beyond the documented cursor mechanism.",
+            "Do not promise growth, more sales, Product Hunt success, zero disruption, headcount savings, or replacement of an incumbent workflow.",
+            "Do not bring on-device voice enhancement or local-only recording storage into this route's argument.",
+            "Do not claim that no manual editing is needed.",
+            "Do not present this documented use as proof that Screen Studio fits every indie SaaS founder.",
+            "Do not state or imply that the recipient is currently launching, has a deadline, has failed with another tool, or cannot afford an agency.",
+            "Do not use company-logo lists or uncited testimonials as proof of this workflow."
+          ],
+          "claim_conditions": [
+            "Frame the use case conditionally because the recipient's current launch activity is unknown.",
+            "Keep the speed concern as context only; no time-to-finished-video result is established.",
+            "State the macOS-only boundary alongside the benefit.",
+            "Mac only; Screen Studio supports macOS and has no near-future Windows plans (E8)",
+            "macOS 13.1 or later recommended (E1)",
+            "The walkthrough must be recorded in Screen Studio for the cursor mechanism to apply (E3)",
+            "Monthly plan at $29/mo is a paid subscription; no free trial or free tier is established by the selected evidence",
+            "Do not promise: No free trial, free tier or money-back term is established by the selected evidence",
+            "Do not promise: No time-to-finished-video guarantee; the ~5 minute figure is one unverified self-reported customer post (E11)",
+            "Do not promise: No claim that zooms, motion or framing are produced automatically or to professional standard",
+            "Do not promise: No Windows support, and no claim of future Windows support (E8)",
+            "Do not promise: No comparison to, or superiority over, agencies, editors or other tools beyond the documented cursor mechanism wording",
+            "Do not promise: No growth, zero-disruption, headcount-saving or incumbent-replacement outcome",
+            "Do not promise: No claim about on-device voice cleanup or local-only data storage (E2, E9) being part of this route's workflow",
+            "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit.",
+            "Only one unverified self-reported customer post speaks to speed (E11), and the selected evidence documents no automatic zoom, motion or framing mechanism or any time guarantee."
+          ],
+          "felt_need": "A Product Hunt launcher reports wanting the demo video/asset creation step to be fast (achievable in about an hour with AI tools) rather than a slow or skill-intensive task, as part of preparing launch materials.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "Screen Studio captures precise mouse-movement data separately from the screen recording, synchronizes it with the video, and adds the cursor back into the final result. The reader can therefore apply cursor effects after recording rather than having the cursor permanently baked into the capture.",
+          "call_to_action": "Download Screen Studio for Mac and record one product walkthrough.",
+          "next_step_decision": "Decide whether Screen Studio's post-recording cursor workflow suits the reader's next product demo.",
+          "next_step_value": "The download gives the reader the Mac application needed to record a walkthrough and try the synchronized cursor mechanism, with export available up to 4K and 60 fps.",
+          "next_step_evidence_ids": [
+            "E3",
+            "E6",
+            "E8"
+          ],
+          "next_step_limit": "Downloading does not establish free access, trial terms, a guaranteed production time, or that the resulting video will improve launch performance.",
+          "alternative_arguments": []
+        }
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Campaign intelligence applied to the normalized brief",
+      "at": "2026-11-09T10:29:16.666460+00:00",
+      "phase": "intelligence",
+      "selected_audience": "Indie SaaS founder/maker creating launch & demo videos",
+      "audience_resolution_status": "audience_research_loaded",
+      "audience_research_id": "974bbf57-2e96-4c91-b635-29c66cfaa6e1",
+      "audience_research_version": 1,
+      "dossier_status": "current",
+      "dossier_id": "797d7a33-2610-418e-9b6c-cf2f441d3db6",
+      "dossier_version": 1,
+      "dossier_schema_version": 2,
+      "stale_reasons": [],
+      "legacy_fallback_used": false,
+      "qualified_subsegment": "Record a product walkthrough with Screen Studio on a Mac, where the cursor is recorded as synchronized movement data and added back afterwards so cursor effects can be applied after recording (E3), then export the result up to 4K at 60 fps (E6) under the Monthly plan at $29/mo, which includes all Screen Studio features (E5).",
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [
+        "Mac only; Screen Studio supports macOS and has no near-future Windows plans (E8)",
+        "macOS 13.1 or later recommended (E1)",
+        "The walkthrough must be recorded in Screen Studio for the cursor mechanism to apply (E3)",
+        "Monthly plan at $29/mo is a paid subscription; no free trial or free tier is established by the selected evidence",
+        "Do not promise: No free trial, free tier or money-back term is established by the selected evidence",
+        "Do not promise: No time-to-finished-video guarantee; the ~5 minute figure is one unverified self-reported customer post (E11)",
+        "Do not promise: No claim that zooms, motion or framing are produced automatically or to professional standard",
+        "Do not promise: No Windows support, and no claim of future Windows support (E8)",
+        "Do not promise: No comparison to, or superiority over, agencies, editors or other tools beyond the documented cursor mechanism wording",
+        "Do not promise: No growth, zero-disruption, headcount-saving or incumbent-replacement outcome",
+        "Do not promise: No claim about on-device voice cleanup or local-only data storage (E2, E9) being part of this route's workflow",
+        "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit.",
+        "Only one unverified self-reported customer post speaks to speed (E11), and the selected evidence documents no automatic zoom, motion or framing mechanism or any time guarantee."
+      ],
+      "validation_warnings": [
+        "Historical sources (2022-06-16); present applicability is not corroborated. A different, better-funded startup (tl;dv) avoided self-editing and in-house production entirely, instead paying an outside creator for its launch video because it judged an agency too costly, a decision explicitly tied to budget rather than editing skill.",
+        "P1: Historical sources (2022-06-16); present applicability is not corroborated.",
+        "P1: Single-source problem; independent corroboration is not established.",
+        "P2: Single-source problem; independent corroboration is not established.",
+        "Moved product questions without an explicit audience requirement to decision gaps.",
+        "Defining audience need is unassessed or its references required normalization.",
+        "Ignored unavailable dossier ranking E7.",
+        "The proposed current alternative was not established by audience research; it remains unknown."
+      ]
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Strategist: 1 email(s) to Selected audience: Indie SaaS founder/maker creating launch & demo videos.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (grounded; check applicability): Indie and solo SaaS founders preparing a Product Hunt launch build their own launch/demo video and page assets as part of the process, often alongside writing descriptions and filling out their product page before going live.",
+      "at": "2026-11-09T10:29:16.697323+00:00",
+      "agent_name": "Strategist",
+      "agent_execution_id": "62ca6c7e-d937-46a3-8c86-fc939dd87739",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 30156,
+      "output_tokens": 6847,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.446658,
+      "duration_ms": 83788.1483999081,
+      "attempt": 1,
+      "summary": "1 email(s) to Selected audience: Indie SaaS founder/maker creating launch & demo videos.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (grounded; check applicability): Indie and solo SaaS founders preparing a Product Hunt launch build their own launch/demo video and page assets as part of the process, often alongside writing descriptions and filling out their product page before going live.",
+      "assets_produced": []
+    },
+    {
+      "type": "phase",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": null,
+      "step": 1,
+      "level": "info",
+      "message": "Drafts will be read cold by: Indie SaaS founder/maker creating launch & demo videos",
+      "at": "2026-11-09T10:29:16.707788+00:00",
+      "phase": "strategy",
+      "segment": "Indie SaaS founder/maker creating launch & demo videos",
+      "matched": true,
+      "audience_source": "compiled"
+    },
+    {
+      "type": "phase",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": null,
+      "step": 1,
+      "level": "info",
+      "message": "Email 1 of 1: Record the walkthrough first, then use Screen Studio's synchronized cursor data to apply cursor effects afterward before exporting at up to 4K and 60 fps.",
+      "at": "2026-11-09T10:29:17.032763+00:00",
+      "phase": "craft",
+      "position": 1
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "info",
+      "message": "Email Writer: Email 1 · first draft",
+      "at": "2026-11-09T10:29:17.056507+00:00",
+      "agent_name": "Email Writer",
+      "label": "Email 1 · first draft",
+      "position": 1,
+      "attempt": 1
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "debug",
+      "message": "Sent 63,516 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-09T10:29:17.153408+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 63516
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 1,198 characters in 16.2s (22,887 in / 1,102 out)",
+      "at": "2026-11-09T10:29:33.322988+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 22887,
+      "output_tokens": 1102,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.216156,
+      "duration_ms": 16156.775600044057,
+      "response_chars": 1198
+    },
+    {
+      "type": "draft",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "info",
+      "message": "Email 1, draft 1: \"Adjust cursor effects after recording\"",
+      "at": "2026-11-09T10:29:33.347615+00:00",
+      "position": 1,
+      "attempt": 1,
+      "subject": "Adjust cursor effects after recording",
+      "preview_text": "Record a walkthrough on Mac, refine the cursor afterward, then export up to 4K at 60 fps.",
+      "greeting": "Hi there,",
+      "body": "If you’re creating a launch or feature demo on a Mac, record the walkthrough in Screen Studio, then refine how the cursor appears after you finish recording.\n\nScreen Studio is screen recording software built only for macOS. It records precise mouse-movement data separately from the screen, synchronizes it with the video, and adds the cursor back into the final result.\n\nBecause the cursor is not baked into the capture, you can smooth its movement or change its size and shape afterward. You can improve how viewers follow your product without recording the walkthrough again.\n\nWhen the video is ready, export it at up to 4K and 60 fps. That export option is included in every Screen Studio plan.\n\nThe Mac download gives you the application needed to record one walkthrough and try the cursor workflow for yourself.",
+      "call_to_action": "Download Screen Studio for Mac",
+      "sign_off": "- Screen Studio",
+      "postscript": "",
+      "word_count": 137
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "info",
+      "message": "Email Writer: Drafted \"Adjust cursor effects after recording\"",
+      "at": "2026-11-09T10:29:33.375842+00:00",
+      "agent_name": "Email Writer",
+      "agent_execution_id": "8bfd8d0a-f175-43fa-acae-995c80e649af",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 22887,
+      "output_tokens": 1102,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.216156,
+      "duration_ms": 16156.775600044057,
+      "attempt": 1,
+      "summary": "Drafted \"Adjust cursor effects after recording\"",
+      "assets_produced": []
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "claim_reviewer",
+      "step": 3,
+      "level": "info",
+      "message": "Claim Reviewer: Email 1 · checking claims against sources",
+      "at": "2026-11-09T10:29:33.396525+00:00",
+      "agent_name": "Claim Reviewer",
+      "label": "Email 1 · checking claims against sources"
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "claim_reviewer",
+      "step": 3,
+      "level": "debug",
+      "message": "Sent 35,919 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-09T10:29:33.472293+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 35919
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "claim_reviewer",
+      "step": 3,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 8,009 characters in 43.2s (17,538 in / 2,728 out)",
+      "at": "2026-11-09T10:30:16.729827+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 17538,
+      "output_tokens": 2728,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.165005,
+      "duration_ms": 43243.27340000309,
+      "response_chars": 8009
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "claim_reviewer",
+      "step": 3,
+      "level": "info",
+      "message": "Claim Reviewer: Source review needs a correction",
+      "at": "2026-11-09T10:30:16.771227+00:00",
+      "agent_name": "Claim Reviewer",
+      "agent_execution_id": "3c594916-d7ca-4a34-bd6d-d3cdf36af02a",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 17538,
+      "output_tokens": 2728,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.165005,
+      "duration_ms": 43243.27340000309,
+      "attempt": 1,
+      "summary": "Source review needs a correction",
+      "assets_produced": []
+    },
+    {
+      "type": "gates",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "email_writer",
+      "step": 3,
+      "level": "warning",
+      "message": "Email 1: 2 automatic check(s) failed - \"The Mac download gives you the application needed to record one walkthrough and try the cursor workflow for yourself.\": The product capabilities are documented, but the exact download route is not established as granting usable access to record and try the workflow. In conjunction with “Download Screen Studio for Mac →,” this can imply a free trial or free workflow, while the supplied evidence establishes only paid plans and explicitly establishes no free trial or free tier.; The implied offer is an unspecified Mac-download access route. The surrounding capability copy and CTA imply that this route lets the recipient record a walkthrough, use post-recording cursor controls, and export it, but no source establishes that downloading alone grants that access or that a free trial/free workflow exists. Paid-plan feature availability does not verify download-route entitlement.",
+      "at": "2026-11-09T10:30:16.781299+00:00",
+      "position": 1,
+      "attempt": 1,
+      "passed": false,
+      "semantic_review": {
+        "key": "8c18a9f9728c8db8b09d6950814a3a3a1546ef0de49985689b3382f6efc02a8b",
+        "approved": false,
+        "decision": {
+          "verdict": "uncertain",
+          "claims": [
+            {
+              "text": "Subject: Adjust cursor effects after recording",
+              "status": "supported",
+              "explanation": "Screen Studio applies cursor effects after recording.",
+              "citations": [
+                {
+                  "source_id": "source:0",
+                  "quote": "Thanks to this, it can apply many effects after the video is recorded, such as making mouse movement smooth, changing cursor size and shape, etc."
+                }
+              ]
+            },
+            {
+              "text": "Preview text: Record a walkthrough on Mac, refine the cursor afterward, then export up to 4K at 60 fps.",
+              "status": "supported",
+              "explanation": "The sources support macOS-only recording, post-recording cursor refinement, and export up to 4K at 60 fps. The draft later makes clear that the walkthrough must be recorded in Screen Studio.",
+              "citations": [
+                {
+                  "source_id": "E8",
+                  "quote": "Is the Windows version ready? No, and there are no near-future plans to add Windows support. Currently, Screen Studio only supports macOS."
+                },
+                {
+                  "source_id": "source:0",
+                  "quote": "Thanks to this, it can apply many effects after the video is recorded, such as making mouse movement smooth, changing cursor size and shape, etc."
+                },
+                {
+                  "source_id": "E6",
+                  "quote": "Export up to 4K at 60 fps"
+                }
+              ]
+            },
+            {
+              "text": "Refine the cursor after you record",
+              "status": "supported",
+              "explanation": "The documented workflow permits cursor effects after recording.",
+              "citations": [
+                {
+                  "source_id": "source:2",
+                  "quote": "Change the cursor’s size and style after you record, so every move is easier to follow."
+                }
+              ]
+            },
+            {
+              "text": "If you’re creating a launch or feature demo on a Mac, record the walkthrough in Screen Studio, then refine how the cursor appears after you finish recording.",
+              "status": "supported",
+              "explanation": "This is conditional rather than a claim about the recipient. Screen Studio is macOS-only, and its recorded cursor data permits post-recording refinement.",
+              "citations": [
+                {
+                  "source_id": "E8",
+                  "quote": "Is the Windows version ready? No, and there are no near-future plans to add Windows support. Currently, Screen Studio only supports macOS."
+                },
+                {
+                  "source_id": "E3",
+                  "quote": "It records your screen, ignoring the mouse cursor, and then adds the cursor back in the final video. This is possible because Screen Studio records precise mouse movement data and synchronizes it with the recorded video."
+                },
+                {
+                  "source_id": "source:2",
+                  "quote": "Change the cursor’s size and style after you record, so every move is easier to follow."
+                }
+              ]
+            },
+            {
+              "text": "Screen Studio is screen recording software built only for macOS.",
+              "status": "supported",
+              "explanation": "The official source says Screen Studio currently supports only macOS.",
+              "citations": [
+                {
+                  "source_id": "E8",
+                  "quote": "Is the Windows version ready? No, and there are no near-future plans to add Windows support. Currently, Screen Studio only supports macOS."
+                }
+              ]
+            },
+            {
+              "text": "It records precise mouse-movement data separately from the screen, synchronizes it with the video, and adds the cursor back into the final result.",
+              "status": "supported",
+              "explanation": "The source states that the screen capture ignores the cursor while precise cursor movement data is recorded and synchronized, after which the cursor is added to the final video.",
+              "citations": [
+                {
+                  "source_id": "E3",
+                  "quote": "It records your screen, ignoring the mouse cursor, and then adds the cursor back in the final video. This is possible because Screen Studio records precise mouse movement data and synchronizes it with the recorded video."
+                }
+              ]
+            },
+            {
+              "text": "Because the cursor is not baked into the capture, you can smooth its movement or change its size and shape afterward.",
+              "status": "supported",
+              "explanation": "The source documents the separate cursor mechanism and specifically names smoothing and size/shape changes after recording.",
+              "citations": [
+                {
+                  "source_id": "E3",
+                  "quote": "It records your screen, ignoring the mouse cursor, and then adds the cursor back in the final video. This is possible because Screen Studio records precise mouse movement data and synchronizes it with the recorded video."
+                },
+                {
+                  "source_id": "source:0",
+                  "quote": "Thanks to this, it can apply many effects after the video is recorded, such as making mouse movement smooth, changing cursor size and shape, etc."
+                }
+              ]
+            },
+            {
+              "text": "You can improve how viewers follow your product without recording the walkthrough again.",
+              "status": "supported",
+              "explanation": "Post-recording cursor styling is documented as making movement easier to follow, so the stated qualitative benefit and lack of rerecording are supported.",
+              "citations": [
+                {
+                  "source_id": "source:2",
+                  "quote": "Change the cursor’s size and style after you record, so every move is easier to follow."
+                },
+                {
+                  "source_id": "source:0",
+                  "quote": "Thanks to this, it can apply many effects after the video is recorded, such as making mouse movement smooth, changing cursor size and shape, etc."
+                }
+              ]
+            },
+            {
+              "text": "When the video is ready, export it at up to 4K and 60 fps.",
+              "status": "supported",
+              "explanation": "The export ceiling and frame rate are stated directly.",
+              "citations": [
+                {
+                  "source_id": "E6",
+                  "quote": "Export up to 4K at 60 fps"
+                }
+              ]
+            },
+            {
+              "text": "That export option is included in every Screen Studio plan.",
+              "status": "supported",
+              "explanation": "The export option is a Screen Studio feature, and both supplied Screen Studio plans state that all features are included.",
+              "citations": [
+                {
+                  "source_id": "E6",
+                  "quote": "Export up to 4K at 60 fps"
+                },
+                {
+                  "source_id": "E4",
+                  "quote": "### Yearly Save 69% $9/mo. All Screen Studio features included."
+                },
+                {
+                  "source_id": "E5",
+                  "quote": "### Monthly $29/mo. All Screen Studio features included."
+                }
+              ]
+            },
+            {
+              "text": "The Mac download gives you the application needed to record one walkthrough and try the cursor workflow for yourself.",
+              "status": "uncertain",
+              "explanation": "The product capabilities are documented, but the exact download route is not established as granting usable access to record and try the workflow. In conjunction with “Download Screen Studio for Mac →,” this can imply a free trial or free workflow, while the supplied evidence establishes only paid plans and explicitly establishes no free trial or free tier.",
+              "citations": [
+                {
+                  "source_id": "E3",
+                  "quote": "It records your screen, ignoring the mouse cursor, and then adds the cursor back in the final video. This is possible because Screen Studio records precise mouse movement data and synchronizes it with the recorded video."
+                },
+                {
+                  "source_id": "E4",
+                  "quote": "### Yearly Save 69% $9/mo. All Screen Studio features included."
+                },
+                {
+                  "source_id": "E5",
+                  "quote": "### Monthly $29/mo. All Screen Studio features included."
+                }
+              ]
+            }
+          ],
+          "findings": [
+            {
+              "text": "The Mac download gives you the application needed to record one walkthrough and try the cursor workflow for yourself.",
+              "kind": "factual",
+              "explanation": "The implied offer is an unspecified Mac-download access route. The surrounding capability copy and CTA imply that this route lets the recipient record a walkthrough, use post-recording cursor controls, and export it, but no source establishes that downloading alone grants that access or that a free trial/free workflow exists. Paid-plan feature availability does not verify download-route entitlement."
+            }
+          ],
+          "summary": "The cursor mechanism, macOS boundary, viewer-following benefit, and 4K/60 fps export claim are supported. The review remains uncertain because the download-and-try passage implies usable access through the download route without evidence of a free trial, free tier, or other entitlement.",
+          "benefit_retention": {
+            "status": "preserved",
+            "explanation": "The draft preserves the proposed benefit: a walkthrough recorded in Screen Studio on macOS can have its cursor refined afterward and be exported at up to 4K and 60 fps. The unresolved issue is access through the download route, not loss of the core benefit.",
+            "original_passage": "If the reader is creating a launch or feature demo on a Mac, they can refine how the cursor appears after the walkthrough has been recorded and export the finished video at up to 4K and 60 fps.",
+            "revised_passage": "If you’re creating a launch or feature demo on a Mac, record the walkthrough in Screen Studio, then refine how the cursor appears after you finish recording. When the video is ready, export it at up to 4K and 60 fps."
+          }
+        },
+        "version": 3
+      },
+      "issues": [
+        {
+          "gate": "claim-review",
+          "detail": "\"The Mac download gives you the application needed to record one walkthrough and try the cursor workflow for yourself.\": The product capabilities are documented, but the exact download route is not established as granting usable access to record and try the workflow. In conjunction with “Download Screen Studio for Mac →,” this can imply a free trial or free workflow, while the supplied evidence establishes only paid plans and explicitly establishes no free trial or free tier.",
+          "severity": "blocking"
+        },
+        {
+          "gate": "claim-review",
+          "detail": "The implied offer is an unspecified Mac-download access route. The surrounding capability copy and CTA imply that this route lets the recipient record a walkthrough, use post-recording cursor controls, and export it, but no source establishes that downloading alone grants that access or that a free trial/free workflow exists. Paid-plan feature availability does not verify download-route entitlement.",
+          "severity": "blocking"
+        }
+      ]
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "blind_reader",
+      "step": 4,
+      "level": "info",
+      "message": "Blind Reader: Email 1 · read cold by 1 reader(s)",
+      "at": "2026-11-09T10:30:16.794382+00:00",
+      "agent_name": "Blind Reader",
+      "label": "Email 1 · read cold by 1 reader(s)",
+      "position": 1,
+      "attempt": 1
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "blind_reader",
+      "step": 4,
+      "level": "debug",
+      "message": "Sent 14,125 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-09T10:30:16.839312+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 14125
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "blind_reader",
+      "step": 4,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 2,521 characters in 26.8s (12,064 in / 1,940 out)",
+      "at": "2026-11-09T10:30:43.610555+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 12064,
+      "output_tokens": 1940,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.097573,
+      "duration_ms": 26758.158199954778,
+      "response_chars": 2521
+    },
+    {
+      "type": "review",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "blind_reader",
+      "step": 4,
+      "level": "info",
+      "message": "Email 1 read cold: 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "at": "2026-11-09T10:30:43.631753+00:00",
+      "approved": false,
+      "conversion_score": 6,
+      "understood": true,
+      "summary": "Screen Studio is a macOS screen recorder that lets me edit the recorded cursor’s movement, size, and shape afterward, potentially saving me from re-recording a launch or feature demo.",
+      "issues": [
+        "Rewrite \"The Mac download gives you the application needed to record one walkthrough and try the cursor workflow for yourself.\" to state the actual test terms: whether payment details are required, whether the exported walkthrough is watermarked, and what happens after the test.",
+        "Rewrite \"Download Screen Studio for Mac →\" as a lower-commitment CTA such as \"See pricing and trial details →\" unless the download terms can be stated directly beside the link.",
+        "Cut \"Screen Studio is screen recording software built only for macOS.\" if the Mac-only requirement is placed clearly beside the CTA; the subject preview and opening sentence already establish the platform."
+      ],
+      "position": 1,
+      "attempt": 1,
+      "biggest_doubt": "The CTA asks me to install unfamiliar software, but I cannot tell whether the one-walkthrough test is free, whether its export is watermarked, or what I would pay afterward. The cursor feature sounds useful, but not useful enough to download blindly.",
+      "stopped_at": "",
+      "readers": [
+        {
+          "persona": "Selected audience (explicit constraints): Indie SaaS founder/maker creating launch & demo videos.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (grounded; applicability must be checked): Indie and solo SaaS founders preparing a Product Hunt launch build their own launch/demo video and page assets as part of the process, often alongside writing descriptions and filling out their product page before going live.\nSource: https://www.indiehackers.com/post/i-launched-2-apps-on-product-hunt-and-both-were-featured-heres-what-i-learned-0b24c76a3a; quote: I recently launched two apps on Product Hunt — Erla (a language learning app) and Voicr (a voice-to-polished-text app).\nSource: https://www.indiehackers.com/post/i-launched-2-apps-on-product-hunt-and-both-were-featured-heres-what-i-learned-0b24c76a3a; quote: Create your product page 3–4 days before launch and schedule it.\nProblem context: Indie/bootstrapped founders preparing a product launch video report being budget-constrained to the point that hiring professional video production (an agency) was ruled out, pushing them toward cheaper routes. [Source limits: Historical sources (2022-06-16); present applicability is not corroborated.; Single-source problem; independent corroboration is not established.] (inferred); source: https://www.indiehackers.com/post/how-we-won-product-hunt-video-of-the-year-and-2-3k-upvotes-as-a-total-newcomer-a8b6c36f2e\nProblem context: A Product Hunt launcher reports wanting the demo video/asset creation step to be fast (achievable in about an hour with AI tools) rather than a slow or skill-intensive task, as part of preparing launch materials. [Source limits: Single-source problem; independent corroboration is not established.]; source: https://www.indiehackers.com/post/i-launched-2-apps-on-product-hunt-and-both-were-featured-heres-what-i-learned-0b24c76a3a",
+          "reported": true,
+          "opened": true,
+          "pull": 6,
+          "would_act": false,
+          "what_it_sells": "Screen Studio is a macOS screen recorder that lets me edit the recorded cursor’s movement, size, and shape afterward, potentially saving me from re-recording a launch or feature demo.",
+          "understood": true,
+          "biggest_doubt": "The CTA asks me to install unfamiliar software, but I cannot tell whether the one-walkthrough test is free, whether its export is watermarked, or what I would pay afterward. The cursor feature sounds useful, but not useful enough to download blindly.",
+          "stopped_at": "",
+          "fixes": [
+            "Rewrite \"The Mac download gives you the application needed to record one walkthrough and try the cursor workflow for yourself.\" to state the actual test terms: whether payment details are required, whether the exported walkthrough is watermarked, and what happens after the test.",
+            "Rewrite \"Download Screen Studio for Mac →\" as a lower-commitment CTA such as \"See pricing and trial details →\" unless the download terms can be stated directly beside the link.",
+            "Cut \"Screen Studio is screen recording software built only for macOS.\" if the Mac-only requirement is placed clearly beside the CTA; the subject preview and opening sentence already establish the platform."
+          ]
+        }
+      ]
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "blind_reader",
+      "step": 4,
+      "level": "info",
+      "message": "Blind Reader: Pull 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "at": "2026-11-09T10:30:43.661070+00:00",
+      "agent_name": "Blind Reader",
+      "agent_execution_id": "8187d0eb-75a5-4e1b-9407-252c7e2955a3",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 12064,
+      "output_tokens": 1940,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.097573,
+      "duration_ms": 26758.158199954778,
+      "attempt": 1,
+      "summary": "Pull 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "assets_produced": []
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "email_writer",
+      "step": 5,
+      "level": "info",
+      "message": "Email Writer: Email 1 · rewrite 1",
+      "at": "2026-11-09T10:30:43.695199+00:00",
+      "agent_name": "Email Writer",
+      "label": "Email 1 · rewrite 1",
+      "position": 1,
+      "attempt": 2
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "email_writer",
+      "step": 5,
+      "level": "debug",
+      "message": "Sent 76,449 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-09T10:30:43.763964+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 76449
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "email_writer",
+      "step": 5,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 1,005 characters in 25.6s (25,768 in / 2,048 out)",
+      "at": "2026-11-09T10:31:09.354602+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 25768,
+      "output_tokens": 2048,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.210445,
+      "duration_ms": 25577.78699998744,
+      "response_chars": 1005
+    },
+    {
+      "type": "draft",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "email_writer",
+      "step": 5,
+      "level": "info",
+      "message": "Email 1, draft 2: \"Keep your cursor editable\"",
+      "at": "2026-11-09T10:31:09.367509+00:00",
+      "position": 1,
+      "attempt": 2,
+      "subject": "Keep your cursor editable",
+      "preview_text": "Adjust cursor effects after recording, then export up to 4K at 60 fps.",
+      "greeting": "Hi there,",
+      "body": "Record your product walkthrough before every cursor decision is final. With Screen Studio, you can capture it on a Mac and refine the cursor afterward.\n\nScreen Studio is screen recording software for macOS. It records synchronized mouse-movement data separately from the screen, then adds the cursor back into the finished video.\n\nThis lets you smooth its movement or change its size and shape after recording. Viewers can follow your product more clearly without another capture.\n\nEvery plan includes export up to 4K at 60 fps. The Monthly plan is $29/month, while the Yearly plan is $9/month, billed annually. Both include all Screen Studio features.",
+      "call_to_action": "Download Screen Studio for Mac",
+      "sign_off": "- Screen Studio",
+      "postscript": "",
+      "word_count": 104
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "email_writer",
+      "step": 5,
+      "level": "info",
+      "message": "Email Writer: Rewrote as \"Keep your cursor editable\"",
+      "at": "2026-11-09T10:31:09.392997+00:00",
+      "agent_name": "Email Writer",
+      "agent_execution_id": "a9038af0-9de1-4f98-8861-cac945204ac0",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 25768,
+      "output_tokens": 2048,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.210445,
+      "duration_ms": 25577.78699998744,
+      "attempt": 2,
+      "summary": "Rewrote as \"Keep your cursor editable\"",
+      "assets_produced": []
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "claim_reviewer",
+      "step": 6,
+      "level": "info",
+      "message": "Claim Reviewer: Email 1 · checking claims against sources",
+      "at": "2026-11-09T10:31:09.412113+00:00",
+      "agent_name": "Claim Reviewer",
+      "label": "Email 1 · checking claims against sources"
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "claim_reviewer",
+      "step": 6,
+      "level": "debug",
+      "message": "Sent 42,911 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-09T10:31:09.453322+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 42911
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "claim_reviewer",
+      "step": 6,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 8,294 characters in 72.9s (19,127 in / 5,892 out)",
+      "at": "2026-11-09T10:32:22.338479+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 19127,
+      "output_tokens": 5892,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.272637,
+      "duration_ms": 72872.83190002199,
+      "response_chars": 8294
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "claim_reviewer",
+      "step": 6,
+      "level": "info",
+      "message": "Claim Reviewer: Source review needs a correction",
+      "at": "2026-11-09T10:32:22.392266+00:00",
+      "agent_name": "Claim Reviewer",
+      "agent_execution_id": "21ba6110-7656-4886-a739-1e77c5e4952e",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 19127,
+      "output_tokens": 5892,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.272637,
+      "duration_ms": 72872.83190002199,
+      "attempt": 2,
+      "summary": "Source review needs a correction",
+      "assets_produced": []
+    },
+    {
+      "type": "gates",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "email_writer",
+      "step": 6,
+      "level": "warning",
+      "message": "Email 1: 6 automatic check(s) failed - \"Every plan includes export up to 4K at 60 fps.\": E6 establishes the export capability, and E4/E5 establish that the named Yearly and Monthly plans include all features. The literal excerpts do not establish that these are the exhaustive set of plans, so “Every plan” is not fully entailed.; \"The Monthly plan is $29/month, while the Yearly plan is $9/month, billed annually.\": The prices and plan names are supported. The Yearly excerpt does not literally establish that payment is collected annually rather than merely identifying a yearly commitment, so the billing cadence remains unresolved.",
+      "at": "2026-11-09T10:32:22.403321+00:00",
+      "position": 1,
+      "attempt": 2,
+      "passed": false,
+      "semantic_review": {
+        "key": "78e9d8e4798b5d82036392172bc7c1c97e874c66eac9cbe16ba0b1f154360602",
+        "approved": false,
+        "decision": {
+          "verdict": "uncertain",
+          "claims": [
+            {
+              "text": "Subject: Keep your cursor editable",
+              "status": "supported",
+              "explanation": "Screen Studio permits cursor effects, including size and shape changes, after recording.",
+              "citations": [
+                {
+                  "source_id": "source:0",
+                  "quote": "Thanks to this, it can apply many effects after the video is recorded, such as making mouse movement smooth, changing cursor size and shape, etc."
+                }
+              ]
+            },
+            {
+              "text": "Preview text: Adjust cursor effects after recording, then export up to 4K at 60 fps.",
+              "status": "supported",
+              "explanation": "The sources establish post-recording cursor effects and export up to the stated resolution and frame rate.",
+              "citations": [
+                {
+                  "source_id": "source:0",
+                  "quote": "Thanks to this, it can apply many effects after the video is recorded, such as making mouse movement smooth, changing cursor size and shape, etc."
+                },
+                {
+                  "source_id": "E6",
+                  "quote": "Export up to 4K at 60 fps"
+                }
+              ]
+            },
+            {
+              "text": "Make cursor decisions after recording",
+              "status": "supported",
+              "explanation": "Cursor movement, size, and shape can be adjusted after recording.",
+              "citations": [
+                {
+                  "source_id": "source:0",
+                  "quote": "Thanks to this, it can apply many effects after the video is recorded, such as making mouse movement smooth, changing cursor size and shape, etc."
+                }
+              ]
+            },
+            {
+              "text": "Record your product walkthrough before every cursor decision is final. With Screen Studio, you can capture it on a Mac and refine the cursor afterward.",
+              "status": "supported",
+              "explanation": "Screen Studio records the screen and synchronized cursor data for later cursor treatment, and it supports macOS only.",
+              "citations": [
+                {
+                  "source_id": "E3",
+                  "quote": "It records your screen, ignoring the mouse cursor, and then adds the cursor back in the final video. This is possible because Screen Studio records precise mouse movement data and synchronizes it with the recorded video."
+                },
+                {
+                  "source_id": "source:0",
+                  "quote": "Thanks to this, it can apply many effects after the video is recorded, such as making mouse movement smooth, changing cursor size and shape, etc."
+                },
+                {
+                  "source_id": "E8",
+                  "quote": "Is the Windows version ready? No, and there are no near-future plans to add Windows support. Currently, Screen Studio only supports macOS."
+                }
+              ]
+            },
+            {
+              "text": "Screen Studio is screen recording software for macOS.",
+              "status": "supported",
+              "explanation": "The sources describe Screen Studio recording the screen and supporting macOS only.",
+              "citations": [
+                {
+                  "source_id": "E3",
+                  "quote": "It records your screen, ignoring the mouse cursor, and then adds the cursor back in the final video."
+                },
+                {
+                  "source_id": "E8",
+                  "quote": "Currently, Screen Studio only supports macOS."
+                }
+              ]
+            },
+            {
+              "text": "It records synchronized mouse-movement data separately from the screen, then adds the cursor back into the finished video.",
+              "status": "supported",
+              "explanation": "The source expressly describes recording the screen without the cursor, recording precise mouse data, synchronizing it, and restoring the cursor in the final video.",
+              "citations": [
+                {
+                  "source_id": "E3",
+                  "quote": "It records your screen, ignoring the mouse cursor, and then adds the cursor back in the final video. This is possible because Screen Studio records precise mouse movement data and synchronizes it with the recorded video."
+                }
+              ]
+            },
+            {
+              "text": "This lets you smooth its movement or change its size and shape after recording.",
+              "status": "supported",
+              "explanation": "The cited source lists these cursor effects as post-recording capabilities.",
+              "citations": [
+                {
+                  "source_id": "source:0",
+                  "quote": "Thanks to this, it can apply many effects after the video is recorded, such as making mouse movement smooth, changing cursor size and shape, etc."
+                }
+              ]
+            },
+            {
+              "text": "Viewers can follow your product more clearly without another capture.",
+              "status": "supported",
+              "explanation": "The source connects post-recording cursor changes with making the video easier to follow, so another capture is unnecessary for those adjustments.",
+              "citations": [
+                {
+                  "source_id": "source:2",
+                  "quote": "Make your video easier to follow by changing the size of the cursor even after you have finished recording."
+                },
+                {
+                  "source_id": "source:0",
+                  "quote": "Thanks to this, it can apply many effects after the video is recorded, such as making mouse movement smooth, changing cursor size and shape, etc."
+                }
+              ]
+            },
+            {
+              "text": "Every plan includes export up to 4K at 60 fps.",
+              "status": "uncertain",
+              "explanation": "E6 establishes the export capability, and E4/E5 establish that the named Yearly and Monthly plans include all features. The literal excerpts do not establish that these are the exhaustive set of plans, so “Every plan” is not fully entailed.",
+              "citations": [
+                {
+                  "source_id": "E6",
+                  "quote": "Export up to 4K at 60 fps"
+                },
+                {
+                  "source_id": "E4",
+                  "quote": "### Yearly Save 69% $9/mo. All Screen Studio features included."
+                },
+                {
+                  "source_id": "E5",
+                  "quote": "### Monthly $29/mo. All Screen Studio features included."
+                }
+              ]
+            },
+            {
+              "text": "The Monthly plan is $29/month, while the Yearly plan is $9/month, billed annually.",
+              "status": "uncertain",
+              "explanation": "The prices and plan names are supported. The Yearly excerpt does not literally establish that payment is collected annually rather than merely identifying a yearly commitment, so the billing cadence remains unresolved.",
+              "citations": [
+                {
+                  "source_id": "E5",
+                  "quote": "### Monthly $29/mo. All Screen Studio features included."
+                },
+                {
+                  "source_id": "E4",
+                  "quote": "### Yearly Save 69% $9/mo. All Screen Studio features included."
+                }
+              ]
+            },
+            {
+              "text": "Both include all Screen Studio features.",
+              "status": "supported",
+              "explanation": "The literal excerpts for both named plans state that all Screen Studio features are included.",
+              "citations": [
+                {
+                  "source_id": "E4",
+                  "quote": "### Yearly Save 69% $9/mo. All Screen Studio features included."
+                },
+                {
+                  "source_id": "E5",
+                  "quote": "### Monthly $29/mo. All Screen Studio features included."
+                }
+              ]
+            },
+            {
+              "text": "Download Screen Studio for Mac →",
+              "status": "uncertain",
+              "explanation": "This is the access route offered by the CTA. E8 supports Mac compatibility, but no literal source establishes download availability or what access downloading alone provides. Read with the capability copy, it implies the downloaded route leads to recording, cursor editing, and export; those capabilities are supported on the paid plans, but their availability merely upon download is unresolved.",
+              "citations": [
+                {
+                  "source_id": "E8",
+                  "quote": "Currently, Screen Studio only supports macOS."
+                },
+                {
+                  "source_id": "E3",
+                  "quote": "It records your screen, ignoring the mouse cursor, and then adds the cursor back in the final video. This is possible because Screen Studio records precise mouse movement data and synchronizes it with the recorded video."
+                },
+                {
+                  "source_id": "E6",
+                  "quote": "Export up to 4K at 60 fps"
+                },
+                {
+                  "source_id": "E4",
+                  "quote": "### Yearly Save 69% $9/mo. All Screen Studio features included."
+                },
+                {
+                  "source_id": "E5",
+                  "quote": "### Monthly $29/mo. All Screen Studio features included."
+                }
+              ]
+            }
+          ],
+          "findings": [
+            {
+              "text": "Every plan includes export up to 4K at 60 fps.",
+              "kind": "factual",
+              "explanation": "The literal evidence covers the named Monthly and Yearly plans but does not prove that they exhaust every possible plan."
+            },
+            {
+              "text": "The Monthly plan is $29/month, while the Yearly plan is $9/month, billed annually.",
+              "kind": "factual",
+              "explanation": "The quoted Yearly-plan evidence does not explicitly establish annual payment collection."
+            },
+            {
+              "text": "Download Screen Studio for Mac →",
+              "kind": "factual",
+              "explanation": "The CTA is the proposed access route, but the literal sources do not establish download availability or entitlement to use the described workflow merely by downloading."
+            }
+          ],
+          "summary": "The cursor mechanism, macOS boundary, viewer benefit, export specification, named-plan prices, and feature inclusion for the Monthly and Yearly plans are supported. Approval remains uncertain because the literal evidence does not fully establish the universal “Every plan” wording, annual collection of the Yearly price, or access through the download CTA itself.",
+          "benefit_retention": {
+            "status": "preserved",
+            "explanation": "The revised passage retains the prior operational benefit: post-recording cursor changes make the product walkthrough easier to follow without recording it again.",
+            "original_passage": "You can improve how viewers follow your product without recording the walkthrough again.",
+            "revised_passage": "This lets you smooth its movement or change its size and shape after recording. Viewers can follow your product more clearly without another capture."
+          }
+        },
+        "version": 3,
+        "factual_repair": true
+      },
+      "issues": [
+        {
+          "gate": "claim-review",
+          "detail": "\"Every plan includes export up to 4K at 60 fps.\": E6 establishes the export capability, and E4/E5 establish that the named Yearly and Monthly plans include all features. The literal excerpts do not establish that these are the exhaustive set of plans, so “Every plan” is not fully entailed.",
+          "severity": "blocking"
+        },
+        {
+          "gate": "claim-review",
+          "detail": "\"The Monthly plan is $29/month, while the Yearly plan is $9/month, billed annually.\": The prices and plan names are supported. The Yearly excerpt does not literally establish that payment is collected annually rather than merely identifying a yearly commitment, so the billing cadence remains unresolved.",
+          "severity": "blocking"
+        },
+        {
+          "gate": "claim-review",
+          "detail": "\"Download Screen Studio for Mac →\": This is the access route offered by the CTA. E8 supports Mac compatibility, but no literal source establishes download availability or what access downloading alone provides. Read with the capability copy, it implies the downloaded route leads to recording, cursor editing, and export; those capabilities are supported on the paid plans, but their availability merely upon download is unresolved.",
+          "severity": "blocking"
+        },
+        {
+          "gate": "claim-review",
+          "detail": "The literal evidence covers the named Monthly and Yearly plans but does not prove that they exhaust every possible plan.",
+          "severity": "blocking"
+        },
+        {
+          "gate": "claim-review",
+          "detail": "The quoted Yearly-plan evidence does not explicitly establish annual payment collection.",
+          "severity": "blocking"
+        },
+        {
+          "gate": "claim-review",
+          "detail": "The CTA is the proposed access route, but the literal sources do not establish download availability or entitlement to use the described workflow merely by downloading.",
+          "severity": "blocking"
+        }
+      ]
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "blind_reader",
+      "step": 7,
+      "level": "info",
+      "message": "Blind Reader: Email 1 · read cold by 1 reader(s)",
+      "at": "2026-11-09T10:32:22.417846+00:00",
+      "agent_name": "Blind Reader",
+      "label": "Email 1 · read cold by 1 reader(s)",
+      "position": 1,
+      "attempt": 2
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "blind_reader",
+      "step": 7,
+      "level": "debug",
+      "message": "Sent 13,932 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-09T10:32:22.441243+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 13932
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "blind_reader",
+      "step": 7,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 2,184 characters in 21.6s (12,026 in / 1,471 out)",
+      "at": "2026-11-09T10:32:44.064832+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 12026,
+      "output_tokens": 1471,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.083199,
+      "duration_ms": 21611.036599962972,
+      "response_chars": 2184
+    },
+    {
+      "type": "review",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "blind_reader",
+      "step": 7,
+      "level": "info",
+      "message": "Email 1 read cold: 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "at": "2026-11-09T10:32:44.076876+00:00",
+      "approved": false,
+      "conversion_score": 6,
+      "understood": true,
+      "summary": "Screen Studio is macOS screen-recording software that would let me record a product walkthrough and adjust the captured cursor afterward instead of re-recording the demo.",
+      "issues": [
+        "Rewrite “Make cursor decisions after recording” as “Fix distracting cursor movement after you record your product demo” so the benefit connects immediately to the launch task I recognize.",
+        "Replace “Download Screen Studio for Mac →” with “Watch a cursor-editing example →” if such an example exists; seeing the result is a more reasonable first step than downloading unfamiliar software."
+      ],
+      "position": 1,
+      "attempt": 2,
+      "biggest_doubt": "I can understand the editing benefit, but I would not download unfamiliar software without first seeing whether the reconstructed cursor actually looks natural in a real product walkthrough.",
+      "stopped_at": "",
+      "readers": [
+        {
+          "persona": "Selected audience (explicit constraints): Indie SaaS founder/maker creating launch & demo videos.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (grounded; applicability must be checked): Indie and solo SaaS founders preparing a Product Hunt launch build their own launch/demo video and page assets as part of the process, often alongside writing descriptions and filling out their product page before going live.\nSource: https://www.indiehackers.com/post/i-launched-2-apps-on-product-hunt-and-both-were-featured-heres-what-i-learned-0b24c76a3a; quote: I recently launched two apps on Product Hunt — Erla (a language learning app) and Voicr (a voice-to-polished-text app).\nSource: https://www.indiehackers.com/post/i-launched-2-apps-on-product-hunt-and-both-were-featured-heres-what-i-learned-0b24c76a3a; quote: Create your product page 3–4 days before launch and schedule it.\nProblem context: Indie/bootstrapped founders preparing a product launch video report being budget-constrained to the point that hiring professional video production (an agency) was ruled out, pushing them toward cheaper routes. [Source limits: Historical sources (2022-06-16); present applicability is not corroborated.; Single-source problem; independent corroboration is not established.] (inferred); source: https://www.indiehackers.com/post/how-we-won-product-hunt-video-of-the-year-and-2-3k-upvotes-as-a-total-newcomer-a8b6c36f2e\nProblem context: A Product Hunt launcher reports wanting the demo video/asset creation step to be fast (achievable in about an hour with AI tools) rather than a slow or skill-intensive task, as part of preparing launch materials. [Source limits: Single-source problem; independent corroboration is not established.]; source: https://www.indiehackers.com/post/i-launched-2-apps-on-product-hunt-and-both-were-featured-heres-what-i-learned-0b24c76a3a",
+          "reported": true,
+          "opened": true,
+          "pull": 6,
+          "would_act": false,
+          "what_it_sells": "Screen Studio is macOS screen-recording software that would let me record a product walkthrough and adjust the captured cursor afterward instead of re-recording the demo.",
+          "understood": true,
+          "biggest_doubt": "I can understand the editing benefit, but I would not download unfamiliar software without first seeing whether the reconstructed cursor actually looks natural in a real product walkthrough.",
+          "stopped_at": "",
+          "fixes": [
+            "Rewrite “Make cursor decisions after recording” as “Fix distracting cursor movement after you record your product demo” so the benefit connects immediately to the launch task I recognize.",
+            "Replace “Download Screen Studio for Mac →” with “Watch a cursor-editing example →” if such an example exists; seeing the result is a more reasonable first step than downloading unfamiliar software."
+          ]
+        }
+      ]
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "blind_reader",
+      "step": 7,
+      "level": "info",
+      "message": "Blind Reader: Pull 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "at": "2026-11-09T10:32:44.103063+00:00",
+      "agent_name": "Blind Reader",
+      "agent_execution_id": "b4252ed1-3cf1-42e3-abc0-bb7bc98ceec6",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 12026,
+      "output_tokens": 1471,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.083199,
+      "duration_ms": 21611.036599962972,
+      "attempt": 2,
+      "summary": "Pull 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "assets_produced": []
+    },
+    {
+      "type": "phase",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": null,
+      "step": 7,
+      "level": "info",
+      "message": "Email 1: rewrite 1 was not preferred to the version before it - stopping rather than spending 0 more rewrite(s) on it",
+      "at": "2026-11-09T10:32:44.114116+00:00",
+      "phase": "craft",
+      "position": 1,
+      "attempt": 2,
+      "rewrites_left": 0
+    },
+    {
+      "type": "run_error",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": "email_writer",
+      "step": 7,
+      "level": "error",
+      "message": "Email 1 failed automatic checks after repair: \"The Mac download gives you the application needed to record one walkthrough and try the cursor workflow for yourself.\": The product capabilities are documented, but the exact download route is not established as granting usable access to record and try the workflow. In conjunction with “Download Screen Studio for Mac →,” this can imply a free trial or free workflow, while the supplied evidence establishes only paid plans and explicitly establishes no free trial or free tier.; The implied offer is an unspecified Mac-download access route. The surrounding capability copy and CTA imply that this route lets the recipient record a walkthrough, use post-recording cursor controls, and export it, but no source establishes that downloading alone grants that access or that a free trial/free workflow exists. Paid-plan feature availability does not verify download-route entitlement.",
+      "at": "2026-11-09T10:32:44.129166+00:00"
+    },
+    {
+      "type": "campaign_report",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": null,
+      "step": 7,
+      "level": "info",
+      "message": "Request: Write exactly one email. Introduce our product to a new buyer with one clear next step.\nDelivered 0 of 1 email(s). Average simulated reader's interest (uncalibrated) 0.0/10.\nContract problems: the user asked for 1 email(s) and the run produced 0\nWhat held the copy back: Some linked source pages could not be read; the corpus is partial: https://screen.studio/ - Use only the readable captured facts; do not infer missing prices, features or proof.; No customer result classified as a usable metric - emails may describe documented capabilities but cannot invent measured outcomes\nWhat would help most next time: Can this source be supplied in a readable form or its missing details verified?\nEmail 1 failed automatic checks after repair: \"The Mac download gives you the application needed to record one walkthrough and try the cursor workflow for yourself.\": The product capabilities are documented, but the exact download route is not established as granting usable access to record and try the workflow. In conjunction with “Download Screen Studio for Mac →,” this can imply a free trial or free workflow, while the supplied evidence establishes only paid plans and explicitly establishes no free trial or free tier.; The implied offer is an unspecified Mac-download access route. The surrounding capability copy and CTA imply that this route lets the recipient record a walkthrough, use post-recording cursor controls, and export it, but no source establishes that downloading alone grants that access or that a free trial/free workflow exists. Paid-plan feature availability does not verify download-route entitlement.\nEffective audience: Indie SaaS founder/maker creating launch & demo videos\nAudience context: audience_research_loaded\nHistorical sources (2022-06-16); present applicability is not corroborated. A different, better-funded startup (tl;dv) avoided self-editing and in-house production entirely, instead paying an outside creator for its launch video because it judged an agency too costly, a decision explicitly tied to budget rather than editing skill.\nP1: Historical sources (2022-06-16); present applicability is not corroborated.\nP1: Single-source problem; independent corroboration is not established.\nP2: Single-source problem; independent corroboration is not established.\nMoved product questions without an explicit audience requirement to decision gaps.\nDefining audience need is unassessed or its references required normalization.\nIgnored unavailable dossier ranking E7.\nThe proposed current alternative was not established by audience research; it remains unknown.",
+      "at": "2026-11-09T10:32:44.141370+00:00",
+      "delivered": 0,
+      "promised": 1,
+      "average_pull": 0.0,
+      "contract_violations": [
+        "the user asked for 1 email(s) and the run produced 0"
+      ],
+      "limiting_gaps": [
+        "Some linked source pages could not be read; the corpus is partial: https://screen.studio/ - Use only the readable captured facts; do not infer missing prices, features or proof.",
+        "No customer result classified as a usable metric - emails may describe documented capabilities but cannot invent measured outcomes"
+      ],
+      "below_floor": [],
+      "what_would_help_most": "Can this source be supplied in a readable form or its missing details verified?"
+    },
+    {
+      "type": "phase",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": null,
+      "step": 7,
+      "level": "info",
+      "message": "Email 1 failed automatic checks after repair: \"The Mac download gives you the application needed to record one walkthrough and try the cursor workflow for yourself.\": The product capabilities are documented, but the exact download route is not established as granting usable access to record and try the workflow. In conjunction with “Download Screen Studio for Mac →,” this can imply a free trial or free workflow, while the supplied evidence establishes only paid plans and explicitly establishes no free trial or free tier.; The implied offer is an unspecified Mac-download access route. The surrounding capability copy and CTA imply that this route lets the recipient record a walkthrough, use post-recording cursor controls, and export it, but no source establishes that downloading alone grants that access or that a free trial/free workflow exists. Paid-plan feature availability does not verify download-route entitlement.",
+      "at": "2026-11-09T10:32:44.151657+00:00",
+      "phase": "stopped",
+      "status": "failed"
+    },
+    {
+      "type": "execution_finished",
+      "execution_id": "5ce928b9-c140-4fcf-973e-38362c2532b7",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Campaign run finished: failed",
+      "at": "2026-11-09T10:32:44.193372+00:00",
+      "status": "failed",
+      "run_status": "failed",
+      "estimated_cost_usd": 1.4917,
+      "delivered": 0
+    }
+  ],
+  "last_event_id": 52,
+  "is_running": false
+}

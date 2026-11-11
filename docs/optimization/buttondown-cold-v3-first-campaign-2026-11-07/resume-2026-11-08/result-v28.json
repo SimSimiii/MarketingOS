@@ -1,0 +1,1984 @@
+{
+  "id": "030642a6-bb96-48ba-9e34-cf273464ade2",
+  "campaign_id": "dbf42842-0f65-4c4f-9024-3c46992762ed",
+  "status": "completed",
+  "needs_review": false,
+  "outcome_status": "completed",
+  "review_reasons": [],
+  "error_message": null,
+  "started_at": "2026-11-08T06:43:29.708352Z",
+  "completed_at": "2026-11-08T06:45:36.619990Z",
+  "created_at": "2026-11-08T06:43:29.709581Z",
+  "total_input_tokens": 74176,
+  "total_output_tokens": 9983,
+  "total_cache_read_tokens": 15872,
+  "estimated_cost_usd": 0.7786,
+  "recommendation_snapshot": {
+    "campaign_id": "dbf42842-0f65-4c4f-9024-3c46992762ed",
+    "readiness": "GO_NARROW",
+    "recommendation": {
+      "state": "RECOMMENDED_NARROW",
+      "readiness": "GO_NARROW",
+      "reasons": [
+        "The current product fit is partial or carries unresolved scope limits."
+      ],
+      "eligible_subsegment": "",
+      "qualified_companies": [],
+      "adjacent_companies": [],
+      "excluded_companies": [],
+      "unverified_companies": [],
+      "allowed_claims": [
+        "The API is available on all plans, including the free plan",
+        "Buttondown's API is rate-limited to prevent abuse, with limits described as generous enough for most use cases",
+        "Buttondown will migrate a user's mailing list to Buttondown for free, regardless of list size, via a concierge migration service",
+        "Buttondown does not charge extra for paid subscribers on its paid subscriptions feature, letting creators keep all revenue they make",
+        "Buttondown is GDPR-compliant and does not collect any data about users or their subscribers by default",
+        "Buttondown takes no cut of newsletter sponsorships; creators keep 100% of every sponsorship minus Stripe's processing fee",
+        "Buttondown supports over 40 integrations for embedding videos, GIFs, songs, posts, or other content",
+        "Buttondown lets users send a newsletter post directly from their personal or business email by emailing it in, and save it as a draft by sending to a different address",
+        "Buttondown charges users based on total subscriber count across all their newsletters, not by the number of newsletters created, so users can create unlimited distinct newsletters",
+        "Buttondown for Teams lets collaborators review emails before they go out, seeing drafts, suggesting changes, and helping ship with confidence",
+        "Teams access control lets you give an editor access to drafts but not billing, and let a marketing lead manage subscribers without touching API keys",
+        "Buttondown is free for the first 100 subscribers",
+        "The Teams add-on costs an additional $79/month",
+        "The Email attachments add-on costs an additional $9/month",
+        "Registered 501(c)(3) non-profits (or the equivalent in their country) get a 50% discount on their plan",
+        "Buttondown charges for active subscribers only, not all contacts",
+        "Buttondown's listed prices assume sending at most one email a day to the entire subscriber base; sending more requires contacting them about usage-based pricing",
+        "Buttondown webhooks let an external application react to events, with the documentation's own example being pointing a webhook at Slack to create a notification.",
+        "Exceeding the daily subscriber-creation cap does not return a standard rate-limit 429; instead it returns a 400 that points the caller to the imports endpoint as the supported bulk-onboarding path.",
+        "Buttondown's public API documents a POST /v1/emails endpoint that creates an email, and the sample request shows it can be created with a status implying it is sent/scheduled from code.",
+        "Creating an email via the API instantly triggers sending, based on tags and email type provided — confirming the emails endpoint composes and sends newsletter emails programmatically.",
+        "The API supports scheduling a newsletter send by setting status and publish_date on a POST to /v1/emails.",
+        "A draft email can be sent out by updating its status to 'about_to_send', at which point Buttondown automatically begins sending it.",
+        "POST /v1/subscribers is rate limited to one hundred requests per day by default, growing over time, with a contact path for higher limits, and import via CSV is suggested specifically for initial bulk import rather than ongoing volume."
+      ],
+      "allowed_evidence_ids": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E7",
+        "E8",
+        "E9",
+        "E10",
+        "E11",
+        "E12",
+        "E15",
+        "E16",
+        "E17",
+        "E18",
+        "E19",
+        "E20",
+        "R6",
+        "R10",
+        "R12",
+        "R13",
+        "R14",
+        "R15",
+        "R16"
+      ],
+      "forbidden_claims": [],
+      "forbidden_capability_ids": [],
+      "forbidden_evidence_ids": [],
+      "unresolved_objections": [
+        "Does Buttondown publish runnable example scripts or a hosted trigger mechanism that would let an operator automate sends without running their own server?"
+      ],
+      "recommended_next_action": "Draft only around the addressed needs and the dossier's scope limits. No companies have been qualified; verify recipient fit before outreach.",
+      "override_risk": "Generating outside the eligible slice risks writing to a structurally similar company whose actual need the product cannot support.",
+      "claim_contract": {
+        "contract_version": 1,
+        "verified_product_claims": [
+          {
+            "id": "evidence:E1",
+            "text": "The API is available on all plans, including the free plan",
+            "evidence_ids": [
+              "E1"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E2",
+            "text": "Buttondown's API is rate-limited to prevent abuse, with limits described as generous enough for most use cases",
+            "evidence_ids": [
+              "E2"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E3",
+            "text": "Buttondown will migrate a user's mailing list to Buttondown for free, regardless of list size, via a concierge migration service",
+            "evidence_ids": [
+              "E3"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E4",
+            "text": "Buttondown does not charge extra for paid subscribers on its paid subscriptions feature, letting creators keep all revenue they make",
+            "evidence_ids": [
+              "E4"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E5",
+            "text": "Buttondown is GDPR-compliant and does not collect any data about users or their subscribers by default",
+            "evidence_ids": [
+              "E5"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E6",
+            "text": "Buttondown's surveys have response rates 200% higher than the industry average",
+            "evidence_ids": [
+              "E6"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E7",
+            "text": "Buttondown takes no cut of newsletter sponsorships; creators keep 100% of every sponsorship minus Stripe's processing fee",
+            "evidence_ids": [
+              "E7"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E8",
+            "text": "Buttondown supports over 40 integrations for embedding videos, GIFs, songs, posts, or other content",
+            "evidence_ids": [
+              "E8"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E9",
+            "text": "Buttondown lets users send a newsletter post directly from their personal or business email by emailing it in, and save it as a draft by sending to a different address",
+            "evidence_ids": [
+              "E9"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E10",
+            "text": "Buttondown charges users based on total subscriber count across all their newsletters, not by the number of newsletters created, so users can create unlimited distinct newsletters",
+            "evidence_ids": [
+              "E10"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E11",
+            "text": "Buttondown for Teams lets collaborators review emails before they go out, seeing drafts, suggesting changes, and helping ship with confidence",
+            "evidence_ids": [
+              "E11"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E12",
+            "text": "Teams access control lets you give an editor access to drafts but not billing, and let a marketing lead manage subscribers without touching API keys",
+            "evidence_ids": [
+              "E12"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E13",
+            "text": "Team members do not count toward subscriber limits and don't affect billing at all",
+            "evidence_ids": [
+              "E13"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E14",
+            "text": "There is no limit on how many collaborators can be invited to a Buttondown team",
+            "evidence_ids": [
+              "E14"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E15",
+            "text": "Buttondown is free for the first 100 subscribers",
+            "evidence_ids": [
+              "E15"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E16",
+            "text": "The Teams add-on costs an additional $79/month",
+            "evidence_ids": [
+              "E16"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E17",
+            "text": "The Email attachments add-on costs an additional $9/month",
+            "evidence_ids": [
+              "E17"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E18",
+            "text": "Registered 501(c)(3) non-profits (or the equivalent in their country) get a 50% discount on their plan",
+            "evidence_ids": [
+              "E18"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E19",
+            "text": "Buttondown charges for active subscribers only, not all contacts",
+            "evidence_ids": [
+              "E19"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E20",
+            "text": "Buttondown's listed prices assume sending at most one email a day to the entire subscriber base; sending more requires contacting them about usage-based pricing",
+            "evidence_ids": [
+              "E20"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R1",
+            "text": "Buttondown documents an email export mechanism that downloads a CSV plus a folder containing the contents of each email as Markdown files.",
+            "evidence_ids": [
+              "R1"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R2",
+            "text": "Buttondown's terms of service include a content policy prohibiting hosting or publishing material that advocates violence against protected classes, maliciously impersonates others, or infringes intellectual property rights.",
+            "evidence_ids": [
+              "R2"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R3",
+            "text": "All Buttondown API endpoints are limited to 600 requests per minute.",
+            "evidence_ids": [
+              "R3"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R4",
+            "text": "The subscriber-creation endpoint POST /v1/subscribers is limited to 100 requests per day, separate from the general endpoint limit.",
+            "evidence_ids": [
+              "R4"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R5",
+            "text": "Exceeding the rate limit returns a 429 status with a Retry-After header indicating how many seconds to wait before retrying.",
+            "evidence_ids": [
+              "R5"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R6",
+            "text": "Buttondown webhooks let an external application react to events, with the documentation's own example being pointing a webhook at Slack to create a notification.",
+            "evidence_ids": [
+              "R6"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R7",
+            "text": "Buttondown's own integrations page states that broader third-party connections beyond its directly listed integrations are reached via its API and third-party tools like Zapier, not via documented native CRM, Slack, GitHub, or Sheets integrations.",
+            "evidence_ids": [
+              "R7"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R8",
+            "text": "Buttondown's CSV import for migrating subscribers brings in more than just email address — it can also import subscribe date, tags, metadata, and notes",
+            "evidence_ids": [
+              "R8"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R9",
+            "text": "Only the email address is a required field for subscriber import; all other data (subscribe date, tags, metadata, notes) is optional",
+            "evidence_ids": [
+              "R9"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R10",
+            "text": "Exceeding the daily subscriber-creation cap does not return a standard rate-limit 429; instead it returns a 400 that points the caller to the imports endpoint as the supported bulk-onboarding path.",
+            "evidence_ids": [
+              "R10"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R11",
+            "text": "Buttondown lets you serve your newsletter archives from your own domain instead of a buttondown.com address",
+            "evidence_ids": [
+              "R11"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R12",
+            "text": "Buttondown's public API documents a POST /v1/emails endpoint that creates an email, and the sample request shows it can be created with a status implying it is sent/scheduled from code.",
+            "evidence_ids": [
+              "R12"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R13",
+            "text": "Creating an email via the API instantly triggers sending, based on tags and email type provided — confirming the emails endpoint composes and sends newsletter emails programmatically.",
+            "evidence_ids": [
+              "R13"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R14",
+            "text": "The API supports scheduling a newsletter send by setting status and publish_date on a POST to /v1/emails.",
+            "evidence_ids": [
+              "R14"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R15",
+            "text": "A draft email can be sent out by updating its status to 'about_to_send', at which point Buttondown automatically begins sending it.",
+            "evidence_ids": [
+              "R15"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R16",
+            "text": "POST /v1/subscribers is rate limited to one hundred requests per day by default, growing over time, with a contact path for higher limits, and import via CSV is suggested specifically for initial bulk import rather than ongoing volume.",
+            "evidence_ids": [
+              "R16"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R17",
+            "text": "The Imports API is documented as a bulk, asynchronous CSV upload mechanism for bringing subscriber data into Buttondown, not described as an ongoing/programmatic high-volume signup path.",
+            "evidence_ids": [
+              "R17"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          }
+        ],
+        "campaign_allowed_claims": [
+          {
+            "id": "evidence:E1",
+            "text": "The API is available on all plans, including the free plan",
+            "evidence_ids": [
+              "E1"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E2",
+            "text": "Buttondown's API is rate-limited to prevent abuse, with limits described as generous enough for most use cases",
+            "evidence_ids": [
+              "E2"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E3",
+            "text": "Buttondown will migrate a user's mailing list to Buttondown for free, regardless of list size, via a concierge migration service",
+            "evidence_ids": [
+              "E3"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E4",
+            "text": "Buttondown does not charge extra for paid subscribers on its paid subscriptions feature, letting creators keep all revenue they make",
+            "evidence_ids": [
+              "E4"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E5",
+            "text": "Buttondown is GDPR-compliant and does not collect any data about users or their subscribers by default",
+            "evidence_ids": [
+              "E5"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E7",
+            "text": "Buttondown takes no cut of newsletter sponsorships; creators keep 100% of every sponsorship minus Stripe's processing fee",
+            "evidence_ids": [
+              "E7"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E8",
+            "text": "Buttondown supports over 40 integrations for embedding videos, GIFs, songs, posts, or other content",
+            "evidence_ids": [
+              "E8"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E9",
+            "text": "Buttondown lets users send a newsletter post directly from their personal or business email by emailing it in, and save it as a draft by sending to a different address",
+            "evidence_ids": [
+              "E9"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E10",
+            "text": "Buttondown charges users based on total subscriber count across all their newsletters, not by the number of newsletters created, so users can create unlimited distinct newsletters",
+            "evidence_ids": [
+              "E10"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E11",
+            "text": "Buttondown for Teams lets collaborators review emails before they go out, seeing drafts, suggesting changes, and helping ship with confidence",
+            "evidence_ids": [
+              "E11"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E12",
+            "text": "Teams access control lets you give an editor access to drafts but not billing, and let a marketing lead manage subscribers without touching API keys",
+            "evidence_ids": [
+              "E12"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E15",
+            "text": "Buttondown is free for the first 100 subscribers",
+            "evidence_ids": [
+              "E15"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:E16",
+            "text": "The Teams add-on costs an additional $79/month",
+            "evidence_ids": [
+              "E16"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E17",
+            "text": "The Email attachments add-on costs an additional $9/month",
+            "evidence_ids": [
+              "E17"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E18",
+            "text": "Registered 501(c)(3) non-profits (or the equivalent in their country) get a 50% discount on their plan",
+            "evidence_ids": [
+              "E18"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E19",
+            "text": "Buttondown charges for active subscribers only, not all contacts",
+            "evidence_ids": [
+              "E19"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:E20",
+            "text": "Buttondown's listed prices assume sending at most one email a day to the entire subscriber base; sending more requires contacting them about usage-based pricing",
+            "evidence_ids": [
+              "E20"
+            ],
+            "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+          },
+          {
+            "id": "evidence:R6",
+            "text": "Buttondown webhooks let an external application react to events, with the documentation's own example being pointing a webhook at Slack to create a notification.",
+            "evidence_ids": [
+              "R6"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R10",
+            "text": "Exceeding the daily subscriber-creation cap does not return a standard rate-limit 429; instead it returns a 400 that points the caller to the imports endpoint as the supported bulk-onboarding path.",
+            "evidence_ids": [
+              "R10"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R12",
+            "text": "Buttondown's public API documents a POST /v1/emails endpoint that creates an email, and the sample request shows it can be created with a status implying it is sent/scheduled from code.",
+            "evidence_ids": [
+              "R12"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R13",
+            "text": "Creating an email via the API instantly triggers sending, based on tags and email type provided — confirming the emails endpoint composes and sends newsletter emails programmatically.",
+            "evidence_ids": [
+              "R13"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R14",
+            "text": "The API supports scheduling a newsletter send by setting status and publish_date on a POST to /v1/emails.",
+            "evidence_ids": [
+              "R14"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R15",
+            "text": "A draft email can be sent out by updating its status to 'about_to_send', at which point Buttondown automatically begins sending it.",
+            "evidence_ids": [
+              "R15"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          },
+          {
+            "id": "evidence:R16",
+            "text": "POST /v1/subscribers is rate limited to one hundred requests per day by default, growing over time, with a contact path for higher limits, and import via CSV is suggested specifically for initial bulk import rather than ongoing volume.",
+            "evidence_ids": [
+              "R16"
+            ],
+            "reason": "Licensed by the current Evidence Ledger."
+          }
+        ],
+        "forbidden_claims": [],
+        "withheld_claims": [
+          {
+            "id": "evidence:E6",
+            "text": "Buttondown's surveys have response rates 200% higher than the industry average",
+            "evidence_ids": [
+              "E6"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E13",
+            "text": "Team members do not count toward subscriber limits and don't affect billing at all",
+            "evidence_ids": [
+              "E13"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:E14",
+            "text": "There is no limit on how many collaborators can be invited to a Buttondown team",
+            "evidence_ids": [
+              "E14"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:R1",
+            "text": "Buttondown documents an email export mechanism that downloads a CSV plus a folder containing the contents of each email as Markdown files.",
+            "evidence_ids": [
+              "R1"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:R2",
+            "text": "Buttondown's terms of service include a content policy prohibiting hosting or publishing material that advocates violence against protected classes, maliciously impersonates others, or infringes intellectual property rights.",
+            "evidence_ids": [
+              "R2"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:R3",
+            "text": "All Buttondown API endpoints are limited to 600 requests per minute.",
+            "evidence_ids": [
+              "R3"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:R4",
+            "text": "The subscriber-creation endpoint POST /v1/subscribers is limited to 100 requests per day, separate from the general endpoint limit.",
+            "evidence_ids": [
+              "R4"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:R5",
+            "text": "Exceeding the rate limit returns a 429 status with a Retry-After header indicating how many seconds to wait before retrying.",
+            "evidence_ids": [
+              "R5"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:R7",
+            "text": "Buttondown's own integrations page states that broader third-party connections beyond its directly listed integrations are reached via its API and third-party tools like Zapier, not via documented native CRM, Slack, GitHub, or Sheets integrations.",
+            "evidence_ids": [
+              "R7"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:R8",
+            "text": "Buttondown's CSV import for migrating subscribers brings in more than just email address — it can also import subscribe date, tags, metadata, and notes",
+            "evidence_ids": [
+              "R8"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:R9",
+            "text": "Only the email address is a required field for subscriber import; all other data (subscribe date, tags, metadata, notes) is optional",
+            "evidence_ids": [
+              "R9"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:R11",
+            "text": "Buttondown lets you serve your newsletter archives from your own domain instead of a buttondown.com address",
+            "evidence_ids": [
+              "R11"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          },
+          {
+            "id": "evidence:R17",
+            "text": "The Imports API is documented as a bulk, asynchronous CSV upload mechanism for bringing subscriber data into Buttondown, not described as an ongoing/programmatic high-volume signup path.",
+            "evidence_ids": [
+              "R17"
+            ],
+            "reason": "No addressed or partial problem for this audience uses it."
+          }
+        ],
+        "warnings": []
+      }
+    },
+    "dossier_status": "current",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "The current product fit is partial or carries unresolved scope limits."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "Draft only around the addressed needs and the dossier's scope limits. No companies have been qualified; verify recipient fit before outreach.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "5f985a86-666e-4510-a28d-b3be3ab752a8",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "completed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": {
+        "emails": [
+          "#1 Buttondown can take a newsletter produced by the reader’s own code and schedule its send through a documented API request, with API access available on the free plan."
+        ]
+      },
+      "error_message": null,
+      "started_at": "2026-11-08T06:43:30.912130Z",
+      "completed_at": "2026-11-08T06:45:01.897355Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 30434,
+      "output_tokens": 7745,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.482171,
+      "duration_ms": 90727.40209999029,
+      "attempt": 1
+    },
+    {
+      "id": "8eb14f4c-89a1-4ba5-ab01-fecf097ef73c",
+      "agent_id": "email_writer",
+      "agent_name": "Email Writer",
+      "sequence_order": 2,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · first draft",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "subject": "Schedule newsletters from your own code"
+      },
+      "error_message": null,
+      "started_at": "2026-11-08T06:45:02.321922Z",
+      "completed_at": "2026-11-08T06:45:17.780986Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 23951,
+      "output_tokens": 1032,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.222568,
+      "duration_ms": 15340.186899993569,
+      "attempt": 1
+    },
+    {
+      "id": "84dff9e9-854d-482a-b590-21a8a0ca0836",
+      "agent_id": "blind_reader",
+      "agent_name": "Blind Reader",
+      "sequence_order": 3,
+      "status": "completed",
+      "input_data": {
+        "label": "Email 1 · read cold by 1 reader(s)",
+        "position": 1,
+        "attempt": 1
+      },
+      "output_data": {
+        "pull": 8
+      },
+      "error_message": null,
+      "started_at": "2026-11-08T06:45:17.827435Z",
+      "completed_at": "2026-11-08T06:45:36.554922Z",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 3919,
+      "output_tokens": 1206,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.073881,
+      "duration_ms": 18697.903299937025,
+      "attempt": 1
+    }
+  ],
+  "assets": [
+    {
+      "id": "79ee3c1e-bee4-4d08-bab5-fe95373d1148",
+      "asset_type": "email",
+      "title": "Schedule newsletters from your own code",
+      "content": "Subject: Schedule newsletters from your own code\nPreview text: Keep your content logic and use one documented API request to schedule delivery.\n\nKeep your newsletter logic in your code\n\nHi there,\n\nBuild the newsletter in your own code, then schedule its delivery through Buttondown.\n\nButtondown is an email newsletter platform for creating, scheduling, and sending emails through an API. Your code stays in charge of how the content comes together.\n\nWhen your script is ready, authenticate with a Buttondown API token and post the email to `/v1/emails`. Add `status: scheduled` and a future `publish_date` to set the send time.\n\nAPI access, including scheduling, is available on the free plan. Buttondown handles the scheduled newsletter send after your own code prepares and submits the request.\n\nThe official documentation shows the request in Python, Ruby, JavaScript, and cURL, so you can see whether it fits the workflow you want to run.\n\nSee the scheduling request → https://docs.buttondown.com/scheduling-emails-via-the-api\n\n- Buttondown",
+      "content_html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n<meta name=\"x-apple-disable-message-reformatting\" />\n<meta name=\"color-scheme\" content=\"light\" />\n<meta name=\"supported-color-schemes\" content=\"light\" />\n<title>Schedule newsletters from your own code</title>\n</head>\n<body style=\"margin:0;padding:0;background-color:#eceef3;-webkit-text-size-adjust:100%;\">\n<div style=\"display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;\">Keep your content logic and use one documented API request to schedule delivery.&#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; </div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#eceef3;\">\n<tr><td align=\"center\" style=\"padding:24px 12px;\">\n<table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%;max-width:600px;background-color:#ffffff;border-radius:12px;\">\n<tr><td style=\"background-color:#0069ff;height:4px;font-size:0;line-height:0;\">&nbsp;</td></tr>\n<tr><td style=\"padding:26px 36px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:18px;font-weight:800;letter-spacing:0.3px;color:#14161a;\"><a href=\"https://buttondown.com/\" style=\"color:#14161a;text-decoration:none;\">Buttondown</a></td></tr>\n<tr><td style=\"padding:26px 36px 10px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#0069ff;\">API scheduling</p></td></tr>\n<tr><td style=\"padding:0 36px 20px;\"><h1 style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:29px;line-height:1.2;font-weight:800;letter-spacing:-0.5px;color:#14161a;\">Keep your newsletter logic in your code</h1></td></tr>\n<tr><td style=\"padding:10px 36px 16px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Hi there,</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:17px;line-height:1.6;color:#3d434d;\">Build the newsletter in your own code, then schedule its delivery through Buttondown.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">Buttondown is an email newsletter platform for creating, scheduling, and sending emails through an API. Your code stays in charge of how the content comes together.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">When your script is ready, authenticate with a Buttondown API token and post the email to `/v1/emails`. Add `status: scheduled` and a future `publish_date` to set the send time.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">API access, including scheduling, is available on the free plan. Buttondown handles the scheduled newsletter send after your own code prepares and submits the request.</p></td></tr>\n<tr><td style=\"padding:0 36px 18px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#3d434d;\">The official documentation shows the request in Python, Ruby, JavaScript, and cURL, so you can see whether it fits the workflow you want to run.</p></td></tr>\n<tr><td style=\"padding:6px 36px 22px;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td style=\"border-top:1px solid #e6e9ef;font-size:0;line-height:0;\">&nbsp;</td></tr></table></td></tr>\n<tr><td align=\"center\" style=\"padding:4px 36px 8px;\"><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"center\" style=\"background-color:#0069ff;border-radius:8px;\"><a href=\"https://docs.buttondown.com/scheduling-emails-via-the-api\" style=\"display:inline-block;padding:16px 40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;\">See the scheduling request</a></td></tr></table></td></tr>\n<tr><td style=\"padding:22px 36px 20px;\"><p style=\"margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6;color:#767d89;\">- Buttondown</p></td></tr>\n<tr><td align=\"center\" style=\"padding:22px 36px 28px;background-color:#fafbfc;border-top:1px solid #e6e9ef;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:12px;line-height:1.7;color:#767d89;\">Buttondown<br /><a href=\"https://buttondown.com/\" style=\"color:#767d89;text-decoration:underline;\">buttondown.com</a></td></tr>\n</table>\n</td></tr>\n</table>\n</body>\n</html>\n",
+      "position": 1,
+      "asset_metadata": {
+        "position": 1,
+        "role": "Introduce Buttondown’s API scheduling",
+        "language": "en",
+        "subject": "Schedule newsletters from your own code",
+        "preview_text": "Keep your content logic and use one documented API request to schedule delivery.",
+        "eyebrow": "API scheduling",
+        "headline": "Keep your newsletter logic in your code",
+        "greeting": "Hi there,",
+        "body": "Build the newsletter in your own code, then schedule its delivery through Buttondown.\n\nButtondown is an email newsletter platform for creating, scheduling, and sending emails through an API. Your code stays in charge of how the content comes together.\n\nWhen your script is ready, authenticate with a Buttondown API token and post the email to `/v1/emails`. Add `status: scheduled` and a future `publish_date` to set the send time.\n\nAPI access, including scheduling, is available on the free plan. Buttondown handles the scheduled newsletter send after your own code prepares and submits the request.\n\nThe official documentation shows the request in Python, Ruby, JavaScript, and cURL, so you can see whether it fits the workflow you want to run.",
+        "call_to_action": "See the scheduling request",
+        "sign_off": "- Buttondown",
+        "postscript": "",
+        "pull": 8,
+        "revisions": 0,
+        "single_idea": "Buttondown can take a newsletter produced by the reader’s own code and schedule its send through a documented API request, with API access available on the free plan.",
+        "evidence_ids": [
+          "R14",
+          "R12",
+          "E1"
+        ],
+        "tier": "branded",
+        "sequence_review_pending": false,
+        "selected_brief": {
+          "problem_ids": [
+            "P1"
+          ],
+          "offer_id": "offering",
+          "action_id": "",
+          "selection_reason": "This audience wants control over how newsletter content is assembled and includes budget-conscious operators. The documented scheduling API gives them a concrete way to connect their own logic to newsletter delivery, while free-plan API access lowers the commercial barrier without becoming the main proposition.",
+          "next_step_url": "https://docs.buttondown.com/scheduling-emails-via-the-api",
+          "destination_kind": "web",
+          "argument_issue": "",
+          "value_case": {
+            "reader_benefit": "If the reader assembles newsletters in their own code, they can keep that logic there and use Buttondown’s API to schedule the resulting newsletter email for delivery.",
+            "mechanism": "A script authenticates with a Buttondown API token and posts an email to /v1/emails with its status and publish_date set for the scheduled send.",
+            "evidence_ids": [
+              "R14",
+              "R12",
+              "E1"
+            ],
+            "decision_conditions": [
+              "The reader must supply and run the code that prepares and submits the request.",
+              "Requests require a Buttondown API token.",
+              "API access, including API scheduling, is available on the free plan."
+            ]
+          },
+          "claim_conditions": [
+            "Authenticate the API request with a Buttondown token.",
+            "Set the email’s status and publish_date to schedule it.",
+            "The reader remains responsible for the external automation logic and trigger.",
+            "Authenticate requests with a Buttondown API token in the Authorization header (R12).",
+            "Set the email's status and publish_date fields to schedule a send, or update a draft's status to 'about_to_send' to dispatch it (R14, R15).",
+            "Create a webhook for the specific event and point its URL at your own application to react to Buttondown events (R6).",
+            "Use the CSV-file imports endpoint for bulk subscriber loads rather than per-subscriber POSTs (R10).",
+            "The stated mechanism is an API, and it is documented for drafting, scheduling, sending and subscriber creation, but the named tools have no documented native connectors — those links depend on generic API, webhook or Zapier use (R7, R6) — and programmatic subscriber creation is capped at 100/day by default with CSV import as the documented bulk path (R16, R10).",
+            "Problem P1 is an inferred audience hypothesis: On a tight hobby-project budget, the vendor's built-in newsletter automation (RSS-to-email) sits above what the operator can pay for, so they fall back to the API tier and write their own automation logic instead. Use it only conditionally (if this is relevant to the reader), not as a known current pain, behavior or outcome of the recipient. Product fit does not establish current demand or a demonstrated customer outcome.",
+            "Historical sources (2023-10-02); present applicability is not corroborated.",
+            "Single-source problem; independent corroboration is not established.",
+            "The selected evidence establishes that the API and API scheduling are available on all plans including free and that the first 100 subscribers cost nothing, but it does not establish the price of the built-in RSS-to-email automation the operator rejected, nor remove the need to write the automation logic."
+          ],
+          "position": 1,
+          "target_audience": "Developer-minded newsletter operator",
+          "job": "Get the reader to inspect Buttondown’s documented scheduling request and decide whether it fits the newsletter workflow they want to control in code.",
+          "single_idea": "Buttondown can take a newsletter produced by the reader’s own code and schedule its send through a documented API request, with API access available on the free plan.",
+          "felt_need": "On a tight hobby-project budget, the vendor's built-in newsletter automation (RSS-to-email) sits above what the operator can pay for, so they fall back to the API tier and write their own automation logic instead.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "Buttondown documents POST /v1/emails for creating an email. Supplying status and publish_date schedules the send; the request authenticates with an API token.",
+          "alternative_ideas": [],
+          "alternative_arguments": [
+            {
+              "problem_ids": [],
+              "offer_id": "offering",
+              "action_id": "",
+              "selection_reason": "For a developer-minded operator, being able to retrieve newsletter content in ordinary file formats is a distinct reason to consider the platform. The public export documentation answers that control question before adoption.",
+              "next_step_url": "https://docs.buttondown.com/data-exports-email",
+              "destination_kind": "web",
+              "argument_issue": "",
+              "value_case": {
+                "reader_benefit": "The operator can retrieve their Buttondown email records and message contents as files they can inspect and store outside the dashboard.",
+                "mechanism": "Starting an email export from the Emails tab downloads a CSV and a folder containing each email’s contents as Markdown files.",
+                "evidence_ids": [
+                  "R1"
+                ],
+                "decision_conditions": [
+                  "The export is initiated from the Emails tab in the Buttondown dashboard.",
+                  "The documented mechanism covers email content; it does not establish a complete export of every kind of account or engagement data."
+                ]
+              },
+              "claim_conditions": [
+                "Describe the output specifically as a CSV plus email contents in Markdown files.",
+                "Do not characterize the export as self-hosting, legal ownership, or a complete platform backup.",
+                "Authenticate requests with a Buttondown API token in the Authorization header (R12).",
+                "Set the email's status and publish_date fields to schedule a send, or update a draft's status to 'about_to_send' to dispatch it (R14, R15).",
+                "Create a webhook for the specific event and point its URL at your own application to react to Buttondown events (R6).",
+                "Use the CSV-file imports endpoint for bulk subscriber loads rather than per-subscriber POSTs (R10).",
+                "The stated mechanism is an API, and it is documented for drafting, scheduling, sending and subscriber creation, but the named tools have no documented native connectors — those links depend on generic API, webhook or Zapier use (R7, R6) — and programmatic subscriber creation is capped at 100/day by default with CSV import as the documented bulk path (R16, R10)."
+              ],
+              "single_idea": "Buttondown provides a documented way to download email data as a CSV and each email’s contents as Markdown files.",
+              "felt_need": "",
+              "status_quo": "",
+              "why_it_fails": "",
+              "mechanism": "From the Emails tab, the operator initiates an export that downloads a CSV and a folder of Markdown files containing the emails.",
+              "belief_shift": "Before: adopting a newsletter platform may mean leaving published email content accessible only through its interface. After: Buttondown documents a file-based email export whose exact contents can be inspected before adoption.",
+              "evidence_ids": [
+                "R1"
+              ],
+              "must_not_say": [
+                "That the export proves outright ownership of the archive.",
+                "That it is a complete backup of subscribers, engagement data, consent records, settings, or the entire account.",
+                "That exported content becomes independently hosted.",
+                "That the export guarantees an easy or lossless migration to another provider."
+              ],
+              "objection": "If I publish my newsletter there, can I retrieve the email content in ordinary files?",
+              "call_to_action": "Review the official documentation: https://docs.buttondown.com/data-exports-email",
+              "next_step_decision": "Decide whether the documented CSV-and-Markdown export provides acceptable access to newsletter email content.",
+              "next_step_value": "The official page documents this verified fact: Buttondown documents an email export mechanism that downloads a CSV plus a folder containing the contents of each email as Markdown files.",
+              "next_step_evidence_ids": [
+                "R1"
+              ],
+              "next_step_limit": "The page does not establish legal ownership, retention rights, a complete account backup, or export coverage for subscriber engagement and consent data.",
+              "subject_strategy": "Lead with the concrete CSV-and-Markdown export rather than broad claims about ownership, portability, or avoiding lock-in."
+            }
+          ],
+          "belief_shift": "Before: Buttondown may appear to require operating a newsletter primarily through its interface or paid automation features. After: the reader sees a documented API route for scheduling a newsletter produced by their own code, available on the free plan.",
+          "evidence_ids": [
+            "R14",
+            "R12",
+            "E1"
+          ],
+          "must_not_say": [
+            "That Buttondown writes, hosts, or triggers the reader’s external automation logic.",
+            "That the workflow eliminates the need to run code or maintain whatever environment executes it.",
+            "That Buttondown provides native CRM, Slack, GitHub, or Google Sheets connectors for this workflow.",
+            "That API scheduling resolves complaints about dense documentation.",
+            "That the API is unlimited, faster, easier, or more reliable than alternatives.",
+            "That a specific recipient currently uses scripts, spreadsheets, GitHub Actions, Google Apps Script, or any other named stack.",
+            "That the built-in RSS-to-email automation has any current price not established by the licensed evidence.",
+            "That Buttondown will save a quantified amount of time or produce subscriber, engagement, or revenue gains.",
+            "Named customer adoption, testimonials, case studies, or comparative superiority.",
+            "Subscriber-import limits, sponsorships, paid subscriptions, teams, attachments, custom domains, privacy claims, and other unrelated features.",
+            "Do not state or imply that every reader uses Scheduling. Present this integration conditionally (for example, 'If you use Scheduling...') unless the user-supplied campaign context establishes it.",
+            "Do not state or imply that every reader uses Create. Present this integration conditionally (for example, 'If you use Create...') unless the user-supplied campaign context establishes it."
+          ],
+          "forbidden_evidence_ids": [
+            "E13",
+            "E14",
+            "E6"
+          ],
+          "forbidden_capability_ids": [],
+          "objection": "Is API-based scheduling restricted to a paid plan?",
+          "tone": "Plainspoken, technically concrete, and lightly inviting; confident without hype.",
+          "call_to_action": "Review the official documentation: https://docs.buttondown.com/scheduling-emails-via-the-api",
+          "next_step_decision": "Decide whether Buttondown’s documented status-and-publish-date request can serve as the scheduling step in the reader’s code-driven newsletter workflow.",
+          "next_step_value": "The official page documents this verified fact: The API supports scheduling a newsletter send by setting status and publish_date on a POST to /v1/emails.",
+          "next_step_evidence_ids": [
+            "R14"
+          ],
+          "next_step_limit": "Reading the documentation does not provide a hosted trigger, validate a particular programming stack, establish native third-party connectors, or remove the need to build and run the surrounding automation logic.",
+          "subject_strategy": "Signal a concrete code-driven scheduling capability and its free-plan availability; avoid generic “newsletter automation” language that could imply Buttondown supplies the reader’s entire automation workflow.",
+          "must_not_reuse": [],
+          "steering": {
+            "directions": [],
+            "include_evidence_ids": [],
+            "exclude_evidence_ids": [],
+            "use": [],
+            "avoid": [],
+            "context_only": [],
+            "excluded_values": []
+          }
+        }
+      },
+      "created_at": "2026-11-08T06:45:36.607783Z"
+    }
+  ],
+  "result": {
+    "run_status": "completed",
+    "report": {
+      "request": "Write exactly one email. Introduce our product to a new buyer with one clear next step.",
+      "effective_audience": "Developer-minded newsletter operator",
+      "audience_scope": "",
+      "assessment_method": "Simulated reader's interest, uncalibrated; no response or conversion prediction",
+      "delivered": 1,
+      "promised": 1,
+      "contract_violations": [],
+      "emails": [
+        {
+          "position": 1,
+          "subject": "Schedule newsletters from your own code",
+          "single_idea": "Buttondown can take a newsletter produced by the reader’s own code and schedule its send through a documented API request, with API access available on the free plan.",
+          "selection_reason": "This audience wants control over how newsletter content is assembled and includes budget-conscious operators. The documented scheduling API gives them a concrete way to connect their own logic to newsletter delivery, while free-plan API access lowers the commercial barrier without becoming the main proposition.",
+          "problem_ids": [
+            "P1"
+          ],
+          "action_id": "",
+          "next_step_decision": "Decide whether Buttondown’s documented status-and-publish-date request can serve as the scheduling step in the reader’s code-driven newsletter workflow.",
+          "next_step_value": "The official page documents this verified fact: The API supports scheduling a newsletter send by setting status and publish_date on a POST to /v1/emails.",
+          "next_step_url": "https://docs.buttondown.com/scheduling-emails-via-the-api",
+          "next_step_limit": "Reading the documentation does not provide a hosted trigger, validate a particular programming stack, establish native third-party connectors, or remove the need to build and run the surrounding automation logic.",
+          "pull": 8,
+          "revisions": 0,
+          "clean": true,
+          "landed": true,
+          "rewrites_stopped_helping": false,
+          "read_reported": true,
+          "understood": true,
+          "relevant": true,
+          "evidence_assigned": [
+            "R14",
+            "R12",
+            "E1"
+          ],
+          "evidence_spent": [
+            "R14",
+            "R12",
+            "E1"
+          ],
+          "attributions": 0,
+          "unresolved": [],
+          "reader_verdicts": [
+            {
+              "what_it_sells": "Buttondown is a newsletter platform whose API lets my code submit an email now and schedule Buttondown to send it later, potentially removing a manual send step from my week.",
+              "understood": true,
+              "situation_matches": null,
+              "relevance_feedback": "The profile explicitly establishes only that I am a developer-minded newsletter operator. Running newsletter content and sending from my own code is inferred from observed market context, not established as my workflow. The email addresses that workflow directly and conditionally enough to be plausible, but whether I currently have a script or need scheduled API delivery remains unknown.",
+              "assumed_experiences": [
+                "Email-only: I build or want to build newsletter content in my own code.",
+                "Email-only: I have a script that can authenticate with an API token and submit an email.",
+                "Email-only: handing scheduled delivery to Buttondown would improve my workflow.",
+                "Profile-supported: I operate a newsletter and am comfortable evaluating a developer-oriented API workflow."
+              ],
+              "problem_now": "Scheduled delivery from code is relevant to the kind of workflow I could plausibly run, and the free-plan claim lowers the barrier to investigating it. The profile does not establish that I currently perform a manual send, face a budget constraint, or need to change my process now.",
+              "stopped_at": "",
+              "biggest_doubt": "Before relying on this, I do not know what limits or conditions apply to API scheduling on the free plan, including sending volume, subscriber limits, and whether scheduled sends require any additional setup.",
+              "to_click_it_would_have_to": "I would have clicked if this email had told me the main free-plan limits that apply to scheduled API sends; the precise endpoint and low-effort documentation CTA are enough for me to click anyway.",
+              "fixes": [
+                "Rewrite \"API access, including scheduling, is available on the free plan.\" as \"API scheduling is available on the free plan up to [specific subscriber/send limits], with [any relevant condition].\"",
+                "Rewrite \"The official documentation shows the request in Python, Ruby, JavaScript, and cURL, so you can see whether it fits the workflow you want to run.\" as \"See complete scheduling examples in Python, Ruby, JavaScript, and cURL, including authentication, timezone handling, and the API response.\""
+              ],
+              "opens_in_100": null,
+              "clicks_in_100": null,
+              "persona": "Selected audience (explicit constraints): Developer-minded newsletter operator.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): A hobby-project or small-team operator runs a newsletter on Buttondown but drives the content and sending from their own code and spreadsheets rather than Buttondown's web UI, writing Google Apps Script against the Buttondown API to pull RSS feeds and post emails, and tolerating a manual trigger step because their requirements never specified fully automatic sending.\nSource: https://blog.agical.se/en/posts/full-source-code--newsletter-automation-using-buttondown--x--google-sheets/; quote: I decided to use [Google\nApps\nScript](https://www.google.com/script/start/) in this publishing sheet, even if it would mean we have\nto send the newsletter out manually.\nProblem context: On a tight hobby-project budget, the vendor's built-in newsletter automation (RSS-to-email) sits above what the operator can pay for, so they fall back to the API tier and write their own automation logic instead. [Source limits: Historical sources (2023-10-02); present applicability is not corroborated.; Single-source problem; independent corroboration is not established.] (inferred); source: https://blog.agical.se/en/posts/full-source-code--newsletter-automation-using-buttondown--x--google-sheets/\nProblem context: The operator wants to avoid maintaining a server to run their newsletter automation, and found the vendor's API documentation dense enough that getting the integration right took considerable time. [Source limits: Historical sources (2023-10-02); present applicability is not corroborated.; Single-source problem; independent corroboration is not established.] (inferred); source: https://blog.agical.se/en/posts/full-source-code--newsletter-automation-using-buttondown--x--google-sheets/",
+              "pull": 8
+            }
+          ],
+          "sameness": []
+        }
+      ],
+      "limiting_gaps": [
+        "No customer names, quotes or case studies found - the copy can describe the product but cannot prove anyone uses it"
+      ],
+      "what_would_help_most": "Which customers or quotes may we name?",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 7,
+      "notes": [
+        "Effective audience: Developer-minded newsletter operator",
+        "Audience context: audience_research_loaded",
+        "Historical sources (2023-10-02); present applicability is not corroborated. A hobby-project or small-team operator runs a newsletter on Buttondown but drives the content and sending from their own code and spreadsheets rather than Buttondown's web UI, writing Google Apps Script against the Buttondown API to pull RSS feeds and post emails, and tolerating a m…",
+        "Historical sources (2023-10-02); present applicability is not corroborated. The operator already knew the vendor offered a built-in RSS-to-email automation feature and specifically evaluated the paid API tier against it before deciding to build a custom integration, indicating awareness of available solutions rather than just the underlying problem.",
+        "Historical sources (2023-10-02); present applicability is not corroborated. The operator stores newsletter configuration and a send log in a Google Sheet (named ranges, a log sheet) and drives the Buttondown API from Apps Script rather than a server, authenticating with a token read from Document Properties.",
+        "Publication date unknown; retrieval today does not establish current applicability. Other developer-minded operators run comparable automations as scheduled scripts outside a web UI: a Node.js script invoked by GitHub Actions on a cron schedule that creates a Buttondown draft from a JSON blog feed, and CLI scripts (publish-issue-draft, subscribe-reader, adv…",
+        "Historical sources (2023-10-02); present applicability is not corroborated. A hobby/side project's tight budget, combined with the built-in automation feature costing more than the API tier, is the stated reason the operator moved to building their own API-based automation.",
+        "Historical sources (2023-10-02); present applicability is not corroborated. The operator wants full control over how content summaries are constructed, rather than accepting a fixed automation template.",
+        "Publication date unknown; retrieval today does not establish current applicability. A separate engineering-services codebase wraps the Buttondown API as credential-blind functions and CLI scripts for creating drafts, sending, and listing/subscribing readers, evidencing programmatic/CLI-driven newsletter operations distinct from the web UI.",
+        "Historical sources (2023-10-02); present applicability is not corroborated. The operator's own technical writeup of the automation lives on a personal/company engineering blog (blog.agical.se), and comparable projects surface as public GitHub repositories wrapping the Buttondown API.",
+        "P1: Historical sources (2023-10-02); present applicability is not corroborated.",
+        "P1: Single-source problem; independent corroboration is not established.",
+        "P2: Historical sources (2023-10-02); present applicability is not corroborated.",
+        "P2: Single-source problem; independent corroboration is not established.",
+        "All 2 problems rely on one source; problem count is not corroboration.",
+        "Orientation was shortened or removed by deterministic validation."
+      ],
+      "reads_expected": true
+    },
+    "brief": {
+      "interpretation": "I interpret “introduce our product to a new buyer” as a single acquisition email for a prospective developer-minded newsletter operator, not onboarding for an existing customer. The email should introduce Buttondown through one concrete use case—scheduling newsletter sends from the reader’s own code—and ask them to inspect the public implementation documentation.",
+      "pipeline_version": 2,
+      "strategy_mode": "planned",
+      "intent": {
+        "objective": "custom",
+        "objective_source": "inferred",
+        "reader_relationship": "unknown",
+        "relationship_source": "inferred",
+        "announcement": "",
+        "reason_now": "",
+        "desired_action": ""
+      },
+      "reader": "Selected audience: Developer-minded newsletter operator.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): A hobby-project or small-team operator runs a newsletter on Buttondown but drives the content and sending from their own code and spreadsheets rather than Buttondown's web UI, writing Google Apps Script against the Buttondown API to pull RSS feeds and post emails, and tolerating a manual trigger step because their requirements never specified fully automatic sending.",
+      "reader_segment": "Developer-minded newsletter operator",
+      "reader_profile_override": "",
+      "reader_scope": "",
+      "fixed_cta_url": "",
+      "promise": "Buttondown can serve as the sending layer behind a newsletter workflow the reader controls in code: its API can schedule newsletter emails, and API access is available on the free plan.",
+      "orientation": "Buttondown is an email newsletter platform that lets developer-minded operators create, schedule, and send newsletter emails through an API.",
+      "arc": "In one email, move the reader from seeing Buttondown as another newsletter interface to understanding one concrete, documented use: scheduling a newsletter send from their own code, then inspecting the exact mechanism before signing up.",
+      "sequence_rationale": "A single-email acquisition campaign needs one complete reason to want Buttondown, not a catalogue. API scheduling is the strongest fit for this solution-aware audience: it supports control over newsletter assembly, has a concrete implementation mechanism, and is available on the free plan. The public scheduling documentation is the appropriate first step because it lets a developer inspect the request and conditions before creating an account. No customer proof is used because the licensed campaign boundary does not establish any named customer or outcome claim. Which customers or quotes may we name?",
+      "emails": [
+        {
+          "problem_ids": [
+            "P1"
+          ],
+          "offer_id": "offering",
+          "action_id": "",
+          "selection_reason": "This audience wants control over how newsletter content is assembled and includes budget-conscious operators. The documented scheduling API gives them a concrete way to connect their own logic to newsletter delivery, while free-plan API access lowers the commercial barrier without becoming the main proposition.",
+          "next_step_url": "https://docs.buttondown.com/scheduling-emails-via-the-api",
+          "destination_kind": "web",
+          "argument_issue": "",
+          "value_case": {
+            "reader_benefit": "If the reader assembles newsletters in their own code, they can keep that logic there and use Buttondown’s API to schedule the resulting newsletter email for delivery.",
+            "mechanism": "A script authenticates with a Buttondown API token and posts an email to /v1/emails with its status and publish_date set for the scheduled send.",
+            "evidence_ids": [
+              "R14",
+              "R12",
+              "E1"
+            ],
+            "decision_conditions": [
+              "The reader must supply and run the code that prepares and submits the request.",
+              "Requests require a Buttondown API token.",
+              "API access, including API scheduling, is available on the free plan."
+            ]
+          },
+          "claim_conditions": [
+            "Authenticate the API request with a Buttondown token.",
+            "Set the email’s status and publish_date to schedule it.",
+            "The reader remains responsible for the external automation logic and trigger.",
+            "Authenticate requests with a Buttondown API token in the Authorization header (R12).",
+            "Set the email's status and publish_date fields to schedule a send, or update a draft's status to 'about_to_send' to dispatch it (R14, R15).",
+            "Create a webhook for the specific event and point its URL at your own application to react to Buttondown events (R6).",
+            "Use the CSV-file imports endpoint for bulk subscriber loads rather than per-subscriber POSTs (R10).",
+            "The stated mechanism is an API, and it is documented for drafting, scheduling, sending and subscriber creation, but the named tools have no documented native connectors — those links depend on generic API, webhook or Zapier use (R7, R6) — and programmatic subscriber creation is capped at 100/day by default with CSV import as the documented bulk path (R16, R10).",
+            "Problem P1 is an inferred audience hypothesis: On a tight hobby-project budget, the vendor's built-in newsletter automation (RSS-to-email) sits above what the operator can pay for, so they fall back to the API tier and write their own automation logic instead. Use it only conditionally (if this is relevant to the reader), not as a known current pain, behavior or outcome of the recipient. Product fit does not establish current demand or a demonstrated customer outcome.",
+            "Historical sources (2023-10-02); present applicability is not corroborated.",
+            "Single-source problem; independent corroboration is not established.",
+            "The selected evidence establishes that the API and API scheduling are available on all plans including free and that the first 100 subscribers cost nothing, but it does not establish the price of the built-in RSS-to-email automation the operator rejected, nor remove the need to write the automation logic."
+          ],
+          "position": 1,
+          "target_audience": "Developer-minded newsletter operator",
+          "job": "Get the reader to inspect Buttondown’s documented scheduling request and decide whether it fits the newsletter workflow they want to control in code.",
+          "single_idea": "Buttondown can take a newsletter produced by the reader’s own code and schedule its send through a documented API request, with API access available on the free plan.",
+          "felt_need": "On a tight hobby-project budget, the vendor's built-in newsletter automation (RSS-to-email) sits above what the operator can pay for, so they fall back to the API tier and write their own automation logic instead.",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "Buttondown documents POST /v1/emails for creating an email. Supplying status and publish_date schedules the send; the request authenticates with an API token.",
+          "alternative_ideas": [],
+          "alternative_arguments": [
+            {
+              "problem_ids": [],
+              "offer_id": "offering",
+              "action_id": "",
+              "selection_reason": "For a developer-minded operator, being able to retrieve newsletter content in ordinary file formats is a distinct reason to consider the platform. The public export documentation answers that control question before adoption.",
+              "next_step_url": "https://docs.buttondown.com/data-exports-email",
+              "destination_kind": "web",
+              "argument_issue": "",
+              "value_case": {
+                "reader_benefit": "The operator can retrieve their Buttondown email records and message contents as files they can inspect and store outside the dashboard.",
+                "mechanism": "Starting an email export from the Emails tab downloads a CSV and a folder containing each email’s contents as Markdown files.",
+                "evidence_ids": [
+                  "R1"
+                ],
+                "decision_conditions": [
+                  "The export is initiated from the Emails tab in the Buttondown dashboard.",
+                  "The documented mechanism covers email content; it does not establish a complete export of every kind of account or engagement data."
+                ]
+              },
+              "claim_conditions": [
+                "Describe the output specifically as a CSV plus email contents in Markdown files.",
+                "Do not characterize the export as self-hosting, legal ownership, or a complete platform backup.",
+                "Authenticate requests with a Buttondown API token in the Authorization header (R12).",
+                "Set the email's status and publish_date fields to schedule a send, or update a draft's status to 'about_to_send' to dispatch it (R14, R15).",
+                "Create a webhook for the specific event and point its URL at your own application to react to Buttondown events (R6).",
+                "Use the CSV-file imports endpoint for bulk subscriber loads rather than per-subscriber POSTs (R10).",
+                "The stated mechanism is an API, and it is documented for drafting, scheduling, sending and subscriber creation, but the named tools have no documented native connectors — those links depend on generic API, webhook or Zapier use (R7, R6) — and programmatic subscriber creation is capped at 100/day by default with CSV import as the documented bulk path (R16, R10)."
+              ],
+              "single_idea": "Buttondown provides a documented way to download email data as a CSV and each email’s contents as Markdown files.",
+              "felt_need": "",
+              "status_quo": "",
+              "why_it_fails": "",
+              "mechanism": "From the Emails tab, the operator initiates an export that downloads a CSV and a folder of Markdown files containing the emails.",
+              "belief_shift": "Before: adopting a newsletter platform may mean leaving published email content accessible only through its interface. After: Buttondown documents a file-based email export whose exact contents can be inspected before adoption.",
+              "evidence_ids": [
+                "R1"
+              ],
+              "must_not_say": [
+                "That the export proves outright ownership of the archive.",
+                "That it is a complete backup of subscribers, engagement data, consent records, settings, or the entire account.",
+                "That exported content becomes independently hosted.",
+                "That the export guarantees an easy or lossless migration to another provider."
+              ],
+              "objection": "If I publish my newsletter there, can I retrieve the email content in ordinary files?",
+              "call_to_action": "Review the official documentation: https://docs.buttondown.com/data-exports-email",
+              "next_step_decision": "Decide whether the documented CSV-and-Markdown export provides acceptable access to newsletter email content.",
+              "next_step_value": "The official page documents this verified fact: Buttondown documents an email export mechanism that downloads a CSV plus a folder containing the contents of each email as Markdown files.",
+              "next_step_evidence_ids": [
+                "R1"
+              ],
+              "next_step_limit": "The page does not establish legal ownership, retention rights, a complete account backup, or export coverage for subscriber engagement and consent data.",
+              "subject_strategy": "Lead with the concrete CSV-and-Markdown export rather than broad claims about ownership, portability, or avoiding lock-in."
+            }
+          ],
+          "belief_shift": "Before: Buttondown may appear to require operating a newsletter primarily through its interface or paid automation features. After: the reader sees a documented API route for scheduling a newsletter produced by their own code, available on the free plan.",
+          "evidence_ids": [
+            "R14",
+            "R12",
+            "E1"
+          ],
+          "must_not_say": [
+            "That Buttondown writes, hosts, or triggers the reader’s external automation logic.",
+            "That the workflow eliminates the need to run code or maintain whatever environment executes it.",
+            "That Buttondown provides native CRM, Slack, GitHub, or Google Sheets connectors for this workflow.",
+            "That API scheduling resolves complaints about dense documentation.",
+            "That the API is unlimited, faster, easier, or more reliable than alternatives.",
+            "That a specific recipient currently uses scripts, spreadsheets, GitHub Actions, Google Apps Script, or any other named stack.",
+            "That the built-in RSS-to-email automation has any current price not established by the licensed evidence.",
+            "That Buttondown will save a quantified amount of time or produce subscriber, engagement, or revenue gains.",
+            "Named customer adoption, testimonials, case studies, or comparative superiority.",
+            "Subscriber-import limits, sponsorships, paid subscriptions, teams, attachments, custom domains, privacy claims, and other unrelated features.",
+            "Do not state or imply that every reader uses Scheduling. Present this integration conditionally (for example, 'If you use Scheduling...') unless the user-supplied campaign context establishes it.",
+            "Do not state or imply that every reader uses Create. Present this integration conditionally (for example, 'If you use Create...') unless the user-supplied campaign context establishes it."
+          ],
+          "forbidden_evidence_ids": [
+            "E13",
+            "E14",
+            "E6"
+          ],
+          "forbidden_capability_ids": [],
+          "objection": "Is API-based scheduling restricted to a paid plan?",
+          "tone": "Plainspoken, technically concrete, and lightly inviting; confident without hype.",
+          "call_to_action": "Review the official documentation: https://docs.buttondown.com/scheduling-emails-via-the-api",
+          "next_step_decision": "Decide whether Buttondown’s documented status-and-publish-date request can serve as the scheduling step in the reader’s code-driven newsletter workflow.",
+          "next_step_value": "The official page documents this verified fact: The API supports scheduling a newsletter send by setting status and publish_date on a POST to /v1/emails.",
+          "next_step_evidence_ids": [
+            "R14"
+          ],
+          "next_step_limit": "Reading the documentation does not provide a hosted trigger, validate a particular programming stack, establish native third-party connectors, or remove the need to build and run the surrounding automation logic.",
+          "subject_strategy": "Signal a concrete code-driven scheduling capability and its free-plan availability; avoid generic “newsletter automation” language that could imply Buttondown supplies the reader’s entire automation workflow.",
+          "must_not_reuse": [],
+          "steering": {
+            "directions": [],
+            "include_evidence_ids": [],
+            "exclude_evidence_ids": [],
+            "use": [],
+            "avoid": [],
+            "context_only": [],
+            "excluded_values": []
+          }
+        }
+      ],
+      "voice_notes": "Use Buttondown’s short, direct rhythm. Explain the API operation in ordinary language, retain the precise field names where useful, and avoid inflated developer jargon or claims of effortless automation.",
+      "contract": {
+        "kind": "single_email",
+        "count": 1,
+        "count_is_explicit": true,
+        "evidence": "one email"
+      }
+    },
+    "knowledge_version": 7,
+    "recommendation_at_generation": {
+      "campaign_id": "dbf42842-0f65-4c4f-9024-3c46992762ed",
+      "readiness": "GO_NARROW",
+      "recommendation": {
+        "state": "RECOMMENDED_NARROW",
+        "readiness": "GO_NARROW",
+        "reasons": [
+          "The current product fit is partial or carries unresolved scope limits."
+        ],
+        "eligible_subsegment": "",
+        "qualified_companies": [],
+        "adjacent_companies": [],
+        "excluded_companies": [],
+        "unverified_companies": [],
+        "allowed_claims": [
+          "The API is available on all plans, including the free plan",
+          "Buttondown's API is rate-limited to prevent abuse, with limits described as generous enough for most use cases",
+          "Buttondown will migrate a user's mailing list to Buttondown for free, regardless of list size, via a concierge migration service",
+          "Buttondown does not charge extra for paid subscribers on its paid subscriptions feature, letting creators keep all revenue they make",
+          "Buttondown is GDPR-compliant and does not collect any data about users or their subscribers by default",
+          "Buttondown takes no cut of newsletter sponsorships; creators keep 100% of every sponsorship minus Stripe's processing fee",
+          "Buttondown supports over 40 integrations for embedding videos, GIFs, songs, posts, or other content",
+          "Buttondown lets users send a newsletter post directly from their personal or business email by emailing it in, and save it as a draft by sending to a different address",
+          "Buttondown charges users based on total subscriber count across all their newsletters, not by the number of newsletters created, so users can create unlimited distinct newsletters",
+          "Buttondown for Teams lets collaborators review emails before they go out, seeing drafts, suggesting changes, and helping ship with confidence",
+          "Teams access control lets you give an editor access to drafts but not billing, and let a marketing lead manage subscribers without touching API keys",
+          "Buttondown is free for the first 100 subscribers",
+          "The Teams add-on costs an additional $79/month",
+          "The Email attachments add-on costs an additional $9/month",
+          "Registered 501(c)(3) non-profits (or the equivalent in their country) get a 50% discount on their plan",
+          "Buttondown charges for active subscribers only, not all contacts",
+          "Buttondown's listed prices assume sending at most one email a day to the entire subscriber base; sending more requires contacting them about usage-based pricing",
+          "Buttondown webhooks let an external application react to events, with the documentation's own example being pointing a webhook at Slack to create a notification.",
+          "Exceeding the daily subscriber-creation cap does not return a standard rate-limit 429; instead it returns a 400 that points the caller to the imports endpoint as the supported bulk-onboarding path.",
+          "Buttondown's public API documents a POST /v1/emails endpoint that creates an email, and the sample request shows it can be created with a status implying it is sent/scheduled from code.",
+          "Creating an email via the API instantly triggers sending, based on tags and email type provided — confirming the emails endpoint composes and sends newsletter emails programmatically.",
+          "The API supports scheduling a newsletter send by setting status and publish_date on a POST to /v1/emails.",
+          "A draft email can be sent out by updating its status to 'about_to_send', at which point Buttondown automatically begins sending it.",
+          "POST /v1/subscribers is rate limited to one hundred requests per day by default, growing over time, with a contact path for higher limits, and import via CSV is suggested specifically for initial bulk import rather than ongoing volume."
+        ],
+        "allowed_evidence_ids": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5",
+          "E7",
+          "E8",
+          "E9",
+          "E10",
+          "E11",
+          "E12",
+          "E15",
+          "E16",
+          "E17",
+          "E18",
+          "E19",
+          "E20",
+          "R6",
+          "R10",
+          "R12",
+          "R13",
+          "R14",
+          "R15",
+          "R16"
+        ],
+        "forbidden_claims": [],
+        "forbidden_capability_ids": [],
+        "forbidden_evidence_ids": [],
+        "unresolved_objections": [
+          "Does Buttondown publish runnable example scripts or a hosted trigger mechanism that would let an operator automate sends without running their own server?"
+        ],
+        "recommended_next_action": "Draft only around the addressed needs and the dossier's scope limits. No companies have been qualified; verify recipient fit before outreach.",
+        "override_risk": "Generating outside the eligible slice risks writing to a structurally similar company whose actual need the product cannot support.",
+        "claim_contract": {
+          "contract_version": 1,
+          "verified_product_claims": [
+            {
+              "id": "evidence:E1",
+              "text": "The API is available on all plans, including the free plan",
+              "evidence_ids": [
+                "E1"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E2",
+              "text": "Buttondown's API is rate-limited to prevent abuse, with limits described as generous enough for most use cases",
+              "evidence_ids": [
+                "E2"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E3",
+              "text": "Buttondown will migrate a user's mailing list to Buttondown for free, regardless of list size, via a concierge migration service",
+              "evidence_ids": [
+                "E3"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E4",
+              "text": "Buttondown does not charge extra for paid subscribers on its paid subscriptions feature, letting creators keep all revenue they make",
+              "evidence_ids": [
+                "E4"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E5",
+              "text": "Buttondown is GDPR-compliant and does not collect any data about users or their subscribers by default",
+              "evidence_ids": [
+                "E5"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E6",
+              "text": "Buttondown's surveys have response rates 200% higher than the industry average",
+              "evidence_ids": [
+                "E6"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E7",
+              "text": "Buttondown takes no cut of newsletter sponsorships; creators keep 100% of every sponsorship minus Stripe's processing fee",
+              "evidence_ids": [
+                "E7"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E8",
+              "text": "Buttondown supports over 40 integrations for embedding videos, GIFs, songs, posts, or other content",
+              "evidence_ids": [
+                "E8"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E9",
+              "text": "Buttondown lets users send a newsletter post directly from their personal or business email by emailing it in, and save it as a draft by sending to a different address",
+              "evidence_ids": [
+                "E9"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E10",
+              "text": "Buttondown charges users based on total subscriber count across all their newsletters, not by the number of newsletters created, so users can create unlimited distinct newsletters",
+              "evidence_ids": [
+                "E10"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E11",
+              "text": "Buttondown for Teams lets collaborators review emails before they go out, seeing drafts, suggesting changes, and helping ship with confidence",
+              "evidence_ids": [
+                "E11"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E12",
+              "text": "Teams access control lets you give an editor access to drafts but not billing, and let a marketing lead manage subscribers without touching API keys",
+              "evidence_ids": [
+                "E12"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E13",
+              "text": "Team members do not count toward subscriber limits and don't affect billing at all",
+              "evidence_ids": [
+                "E13"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E14",
+              "text": "There is no limit on how many collaborators can be invited to a Buttondown team",
+              "evidence_ids": [
+                "E14"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E15",
+              "text": "Buttondown is free for the first 100 subscribers",
+              "evidence_ids": [
+                "E15"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E16",
+              "text": "The Teams add-on costs an additional $79/month",
+              "evidence_ids": [
+                "E16"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E17",
+              "text": "The Email attachments add-on costs an additional $9/month",
+              "evidence_ids": [
+                "E17"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E18",
+              "text": "Registered 501(c)(3) non-profits (or the equivalent in their country) get a 50% discount on their plan",
+              "evidence_ids": [
+                "E18"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E19",
+              "text": "Buttondown charges for active subscribers only, not all contacts",
+              "evidence_ids": [
+                "E19"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E20",
+              "text": "Buttondown's listed prices assume sending at most one email a day to the entire subscriber base; sending more requires contacting them about usage-based pricing",
+              "evidence_ids": [
+                "E20"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R1",
+              "text": "Buttondown documents an email export mechanism that downloads a CSV plus a folder containing the contents of each email as Markdown files.",
+              "evidence_ids": [
+                "R1"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R2",
+              "text": "Buttondown's terms of service include a content policy prohibiting hosting or publishing material that advocates violence against protected classes, maliciously impersonates others, or infringes intellectual property rights.",
+              "evidence_ids": [
+                "R2"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R3",
+              "text": "All Buttondown API endpoints are limited to 600 requests per minute.",
+              "evidence_ids": [
+                "R3"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R4",
+              "text": "The subscriber-creation endpoint POST /v1/subscribers is limited to 100 requests per day, separate from the general endpoint limit.",
+              "evidence_ids": [
+                "R4"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R5",
+              "text": "Exceeding the rate limit returns a 429 status with a Retry-After header indicating how many seconds to wait before retrying.",
+              "evidence_ids": [
+                "R5"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R6",
+              "text": "Buttondown webhooks let an external application react to events, with the documentation's own example being pointing a webhook at Slack to create a notification.",
+              "evidence_ids": [
+                "R6"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R7",
+              "text": "Buttondown's own integrations page states that broader third-party connections beyond its directly listed integrations are reached via its API and third-party tools like Zapier, not via documented native CRM, Slack, GitHub, or Sheets integrations.",
+              "evidence_ids": [
+                "R7"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R8",
+              "text": "Buttondown's CSV import for migrating subscribers brings in more than just email address — it can also import subscribe date, tags, metadata, and notes",
+              "evidence_ids": [
+                "R8"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R9",
+              "text": "Only the email address is a required field for subscriber import; all other data (subscribe date, tags, metadata, notes) is optional",
+              "evidence_ids": [
+                "R9"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R10",
+              "text": "Exceeding the daily subscriber-creation cap does not return a standard rate-limit 429; instead it returns a 400 that points the caller to the imports endpoint as the supported bulk-onboarding path.",
+              "evidence_ids": [
+                "R10"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R11",
+              "text": "Buttondown lets you serve your newsletter archives from your own domain instead of a buttondown.com address",
+              "evidence_ids": [
+                "R11"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R12",
+              "text": "Buttondown's public API documents a POST /v1/emails endpoint that creates an email, and the sample request shows it can be created with a status implying it is sent/scheduled from code.",
+              "evidence_ids": [
+                "R12"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R13",
+              "text": "Creating an email via the API instantly triggers sending, based on tags and email type provided — confirming the emails endpoint composes and sends newsletter emails programmatically.",
+              "evidence_ids": [
+                "R13"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R14",
+              "text": "The API supports scheduling a newsletter send by setting status and publish_date on a POST to /v1/emails.",
+              "evidence_ids": [
+                "R14"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R15",
+              "text": "A draft email can be sent out by updating its status to 'about_to_send', at which point Buttondown automatically begins sending it.",
+              "evidence_ids": [
+                "R15"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R16",
+              "text": "POST /v1/subscribers is rate limited to one hundred requests per day by default, growing over time, with a contact path for higher limits, and import via CSV is suggested specifically for initial bulk import rather than ongoing volume.",
+              "evidence_ids": [
+                "R16"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R17",
+              "text": "The Imports API is documented as a bulk, asynchronous CSV upload mechanism for bringing subscriber data into Buttondown, not described as an ongoing/programmatic high-volume signup path.",
+              "evidence_ids": [
+                "R17"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            }
+          ],
+          "campaign_allowed_claims": [
+            {
+              "id": "evidence:E1",
+              "text": "The API is available on all plans, including the free plan",
+              "evidence_ids": [
+                "E1"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E2",
+              "text": "Buttondown's API is rate-limited to prevent abuse, with limits described as generous enough for most use cases",
+              "evidence_ids": [
+                "E2"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E3",
+              "text": "Buttondown will migrate a user's mailing list to Buttondown for free, regardless of list size, via a concierge migration service",
+              "evidence_ids": [
+                "E3"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E4",
+              "text": "Buttondown does not charge extra for paid subscribers on its paid subscriptions feature, letting creators keep all revenue they make",
+              "evidence_ids": [
+                "E4"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E5",
+              "text": "Buttondown is GDPR-compliant and does not collect any data about users or their subscribers by default",
+              "evidence_ids": [
+                "E5"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E7",
+              "text": "Buttondown takes no cut of newsletter sponsorships; creators keep 100% of every sponsorship minus Stripe's processing fee",
+              "evidence_ids": [
+                "E7"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E8",
+              "text": "Buttondown supports over 40 integrations for embedding videos, GIFs, songs, posts, or other content",
+              "evidence_ids": [
+                "E8"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E9",
+              "text": "Buttondown lets users send a newsletter post directly from their personal or business email by emailing it in, and save it as a draft by sending to a different address",
+              "evidence_ids": [
+                "E9"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E10",
+              "text": "Buttondown charges users based on total subscriber count across all their newsletters, not by the number of newsletters created, so users can create unlimited distinct newsletters",
+              "evidence_ids": [
+                "E10"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E11",
+              "text": "Buttondown for Teams lets collaborators review emails before they go out, seeing drafts, suggesting changes, and helping ship with confidence",
+              "evidence_ids": [
+                "E11"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E12",
+              "text": "Teams access control lets you give an editor access to drafts but not billing, and let a marketing lead manage subscribers without touching API keys",
+              "evidence_ids": [
+                "E12"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E15",
+              "text": "Buttondown is free for the first 100 subscribers",
+              "evidence_ids": [
+                "E15"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:E16",
+              "text": "The Teams add-on costs an additional $79/month",
+              "evidence_ids": [
+                "E16"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E17",
+              "text": "The Email attachments add-on costs an additional $9/month",
+              "evidence_ids": [
+                "E17"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E18",
+              "text": "Registered 501(c)(3) non-profits (or the equivalent in their country) get a 50% discount on their plan",
+              "evidence_ids": [
+                "E18"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E19",
+              "text": "Buttondown charges for active subscribers only, not all contacts",
+              "evidence_ids": [
+                "E19"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:E20",
+              "text": "Buttondown's listed prices assume sending at most one email a day to the entire subscriber base; sending more requires contacting them about usage-based pricing",
+              "evidence_ids": [
+                "E20"
+              ],
+              "reason": "Verified supporting fact: explain the mechanism or offer conditions; editorial ranking still chooses the primary argument."
+            },
+            {
+              "id": "evidence:R6",
+              "text": "Buttondown webhooks let an external application react to events, with the documentation's own example being pointing a webhook at Slack to create a notification.",
+              "evidence_ids": [
+                "R6"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R10",
+              "text": "Exceeding the daily subscriber-creation cap does not return a standard rate-limit 429; instead it returns a 400 that points the caller to the imports endpoint as the supported bulk-onboarding path.",
+              "evidence_ids": [
+                "R10"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R12",
+              "text": "Buttondown's public API documents a POST /v1/emails endpoint that creates an email, and the sample request shows it can be created with a status implying it is sent/scheduled from code.",
+              "evidence_ids": [
+                "R12"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R13",
+              "text": "Creating an email via the API instantly triggers sending, based on tags and email type provided — confirming the emails endpoint composes and sends newsletter emails programmatically.",
+              "evidence_ids": [
+                "R13"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R14",
+              "text": "The API supports scheduling a newsletter send by setting status and publish_date on a POST to /v1/emails.",
+              "evidence_ids": [
+                "R14"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R15",
+              "text": "A draft email can be sent out by updating its status to 'about_to_send', at which point Buttondown automatically begins sending it.",
+              "evidence_ids": [
+                "R15"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            },
+            {
+              "id": "evidence:R16",
+              "text": "POST /v1/subscribers is rate limited to one hundred requests per day by default, growing over time, with a contact path for higher limits, and import via CSV is suggested specifically for initial bulk import rather than ongoing volume.",
+              "evidence_ids": [
+                "R16"
+              ],
+              "reason": "Licensed by the current Evidence Ledger."
+            }
+          ],
+          "forbidden_claims": [],
+          "withheld_claims": [
+            {
+              "id": "evidence:E6",
+              "text": "Buttondown's surveys have response rates 200% higher than the industry average",
+              "evidence_ids": [
+                "E6"
+              ],
+              "reason": "No addressed or partial problem for this audience uses it."
+            },
+            {
+              "id": "evidence:E13",
+              "text": "Team members do not count toward subscriber limits and don't affect billing at all",
+              "evidence_ids": [
+                "E13"
+              ],
+              "reason": "No addressed or partial problem for this audience uses it."
+            },
+            {
+              "id": "evidence:E14",
+              "text": "There is no limit on how many collaborators can be invited to a Buttondown team",
+              "evidence_ids": [
+                "E14"
+              ],
+              "reason": "No addressed or partial problem for this audience uses it."
+            },
+            {
+              "id": "evidence:R1",
+              "text": "Buttondown documents an email export mechanism that downloads a CSV plus a folder containing the contents of each email as Markdown files.",
+              "evidence_ids": [
+                "R1"
+              ],
+              "reason": "No addressed or partial problem for this audience uses it."
+            },
+            {
+              "id": "evidence:R2",
+              "text": "Buttondown's terms of service include a content policy prohibiting hosting or publishing material that advocates violence against protected classes, maliciously impersonates others, or infringes intellectual property rights.",
+              "evidence_ids": [
+                "R2"
+              ],
+              "reason": "No addressed or partial problem for this audience uses it."
+            },
+            {
+              "id": "evidence:R3",
+              "text": "All Buttondown API endpoints are limited to 600 requests per minute.",
+              "evidence_ids": [
+                "R3"
+              ],
+              "reason": "No addressed or partial problem for this audience uses it."
+            },
+            {
+              "id": "evidence:R4",
+              "text": "The subscriber-creation endpoint POST /v1/subscribers is limited to 100 requests per day, separate from the general endpoint limit.",
+              "evidence_ids": [
+                "R4"
+              ],
+              "reason": "No addressed or partial problem for this audience uses it."
+            },
+            {
+              "id": "evidence:R5",
+              "text": "Exceeding the rate limit returns a 429 status with a Retry-After header indicating how many seconds to wait before retrying.",
+              "evidence_ids": [
+                "R5"
+              ],
+              "reason": "No addressed or partial problem for this audience uses it."
+            },
+            {
+              "id": "evidence:R7",
+              "text": "Buttondown's own integrations page states that broader third-party connections beyond its directly listed integrations are reached via its API and third-party tools like Zapier, not via documented native CRM, Slack, GitHub, or Sheets integrations.",
+              "evidence_ids": [
+                "R7"
+              ],
+              "reason": "No addressed or partial problem for this audience uses it."
+            },
+            {
+              "id": "evidence:R8",
+              "text": "Buttondown's CSV import for migrating subscribers brings in more than just email address — it can also import subscribe date, tags, metadata, and notes",
+              "evidence_ids": [
+                "R8"
+              ],
+              "reason": "No addressed or partial problem for this audience uses it."
+            },
+            {
+              "id": "evidence:R9",
+              "text": "Only the email address is a required field for subscriber import; all other data (subscribe date, tags, metadata, notes) is optional",
+              "evidence_ids": [
+                "R9"
+              ],
+              "reason": "No addressed or partial problem for this audience uses it."
+            },
+            {
+              "id": "evidence:R11",
+              "text": "Buttondown lets you serve your newsletter archives from your own domain instead of a buttondown.com address",
+              "evidence_ids": [
+                "R11"
+              ],
+              "reason": "No addressed or partial problem for this audience uses it."
+            },
+            {
+              "id": "evidence:R17",
+              "text": "The Imports API is documented as a bulk, asynchronous CSV upload mechanism for bringing subscriber data into Buttondown, not described as an ongoing/programmatic high-volume signup path.",
+              "evidence_ids": [
+                "R17"
+              ],
+              "reason": "No addressed or partial problem for this audience uses it."
+            }
+          ],
+          "warnings": []
+        }
+      },
+      "dossier_status": "current",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "The current product fit is partial or carries unresolved scope limits."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "Draft only around the addressed needs and the dossier's scope limits. No companies have been qualified; verify recipient fit before outreach.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false,
+    "intelligence": {
+      "selected_audience": "Developer-minded newsletter operator",
+      "audience_resolution_status": "audience_research_loaded",
+      "audience_research_id": "b3a577c7-5f49-4fac-827c-2a5b19f587ba",
+      "audience_research_version": 1,
+      "dossier_status": "current",
+      "dossier_id": "22ad1fde-7683-4959-82a0-d28cb58f4b68",
+      "dossier_version": 8,
+      "dossier_schema_version": 2,
+      "stale_reasons": [],
+      "legacy_fallback_used": false,
+      "qualified_subsegment": "",
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [
+        "Authenticate requests with a Buttondown API token in the Authorization header (R12).",
+        "Set the email's status and publish_date fields to schedule a send, or update a draft's status to 'about_to_send' to dispatch it (R14, R15).",
+        "Create a webhook for the specific event and point its URL at your own application to react to Buttondown events (R6).",
+        "Use the CSV-file imports endpoint for bulk subscriber loads rather than per-subscriber POSTs (R10).",
+        "The stated mechanism is an API, and it is documented for drafting, scheduling, sending and subscriber creation, but the named tools have no documented native connectors — those links depend on generic API, webhook or Zapier use (R7, R6) — and programmatic subscriber creation is capped at 100/day by default with CSV import as the documented bulk path (R16, R10).",
+        "Problem P1 is an inferred audience hypothesis: On a tight hobby-project budget, the vendor's built-in newsletter automation (RSS-to-email) sits above what the operator can pay for, so they fall back to the API tier and write their own automation logic instead. Use it only conditionally (if this is relevant to the reader), not as a known current pain, behavior or outcome of the recipient. Product fit does not establish current demand or a demonstrated customer outcome.",
+        "Historical sources (2023-10-02); present applicability is not corroborated.",
+        "Single-source problem; independent corroboration is not established.",
+        "The selected evidence establishes that the API and API scheduling are available on all plans including free and that the first 100 subscribers cost nothing, but it does not establish the price of the built-in RSS-to-email automation the operator rejected, nor remove the need to write the automation logic."
+      ],
+      "validation_warnings": [
+        "Historical sources (2023-10-02); present applicability is not corroborated. A hobby-project or small-team operator runs a newsletter on Buttondown but drives the content and sending from their own code and spreadsheets rather than Buttondown's web UI, writing Google Apps Script against the Buttondown API to pull RSS feeds and post emails, and tolerating a m…",
+        "Historical sources (2023-10-02); present applicability is not corroborated. The operator already knew the vendor offered a built-in RSS-to-email automation feature and specifically evaluated the paid API tier against it before deciding to build a custom integration, indicating awareness of available solutions rather than just the underlying problem.",
+        "Historical sources (2023-10-02); present applicability is not corroborated. The operator stores newsletter configuration and a send log in a Google Sheet (named ranges, a log sheet) and drives the Buttondown API from Apps Script rather than a server, authenticating with a token read from Document Properties.",
+        "Publication date unknown; retrieval today does not establish current applicability. Other developer-minded operators run comparable automations as scheduled scripts outside a web UI: a Node.js script invoked by GitHub Actions on a cron schedule that creates a Buttondown draft from a JSON blog feed, and CLI scripts (publish-issue-draft, subscribe-reader, adv…",
+        "Historical sources (2023-10-02); present applicability is not corroborated. A hobby/side project's tight budget, combined with the built-in automation feature costing more than the API tier, is the stated reason the operator moved to building their own API-based automation.",
+        "Historical sources (2023-10-02); present applicability is not corroborated. The operator wants full control over how content summaries are constructed, rather than accepting a fixed automation template.",
+        "Publication date unknown; retrieval today does not establish current applicability. A separate engineering-services codebase wraps the Buttondown API as credential-blind functions and CLI scripts for creating drafts, sending, and listing/subscribing readers, evidencing programmatic/CLI-driven newsletter operations distinct from the web UI.",
+        "Historical sources (2023-10-02); present applicability is not corroborated. The operator's own technical writeup of the automation lives on a personal/company engineering blog (blog.agical.se), and comparable projects surface as public GitHub repositories wrapping the Buttondown API.",
+        "P1: Historical sources (2023-10-02); present applicability is not corroborated.",
+        "P1: Single-source problem; independent corroboration is not established.",
+        "P2: Historical sources (2023-10-02); present applicability is not corroborated.",
+        "P2: Single-source problem; independent corroboration is not established.",
+        "All 2 problems rely on one source; problem count is not corroboration.",
+        "Orientation was shortened or removed by deterministic validation."
+      ]
+    }
+  }
+}

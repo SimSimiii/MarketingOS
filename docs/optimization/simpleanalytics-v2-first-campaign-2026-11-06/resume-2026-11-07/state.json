@@ -1,0 +1,131 @@
+{
+  "status": "validated_scoped_draft",
+  "runs": [
+    {
+      "execution_id": "bf31b3f4-95d5-4c37-8b05-a8ccc320e5de",
+      "campaign_id": "059d39d0-f742-4d09-9b61-a6fc61a3678c",
+      "status": "completed",
+      "outcome_status": "degraded",
+      "needs_review": true,
+      "review_reasons": [
+        "Some drafts still need editorial review."
+      ],
+      "last_checked_at": "2026-11-07T10:36:39.674721+00:00",
+      "result_dir": "docs\\optimization\\simpleanalytics-v2-first-campaign-2026-11-06\\resume-2026-11-07\\runs\\bf31b3f4-95d5-4c37-8b05-a8ccc320e5de",
+      "estimated_cost_usd": 1.0929,
+      "completed_at": "2026-11-07T10:36:36.093064Z"
+    },
+    {
+      "execution_id": "f092c42c-bfc6-4c74-bd80-2c7d2d0ce557",
+      "campaign_id": "059d39d0-f742-4d09-9b61-a6fc61a3678c",
+      "status": "completed",
+      "launched_at": "2026-11-07T10:40:41.144147+00:00",
+      "code_revision": "working-tree",
+      "outcome_status": "degraded",
+      "needs_review": true,
+      "review_reasons": [
+        "Some drafts still need editorial review."
+      ],
+      "last_checked_at": "2026-11-07T10:43:34.315663+00:00",
+      "result_dir": "docs\\optimization\\simpleanalytics-v2-first-campaign-2026-11-06\\resume-2026-11-07\\runs\\f092c42c-bfc6-4c74-bd80-2c7d2d0ce557",
+      "estimated_cost_usd": 1.0084,
+      "completed_at": "2026-11-07T10:43:28.672251Z"
+    },
+    {
+      "execution_id": "babd06cc-cd66-47dc-863b-048f8ba7b8fc",
+      "campaign_id": "059d39d0-f742-4d09-9b61-a6fc61a3678c",
+      "status": "completed",
+      "launched_at": "2026-11-07T10:44:55.204879+00:00",
+      "code_revision": "working-tree",
+      "outcome_status": "completed",
+      "needs_review": false,
+      "review_reasons": [],
+      "last_checked_at": "2026-11-07T10:46:37.878337+00:00",
+      "result_dir": "docs\\optimization\\simpleanalytics-v2-first-campaign-2026-11-06\\resume-2026-11-07\\runs\\babd06cc-cd66-47dc-863b-048f8ba7b8fc",
+      "estimated_cost_usd": 0.6414,
+      "completed_at": "2026-11-07T10:46:34.863614Z"
+    }
+  ],
+  "quality_history": [
+    {
+      "iteration": 1,
+      "execution_id": "bf31b3f4-95d5-4c37-8b05-a8ccc320e5de",
+      "score": 75,
+      "comparable": true,
+      "comparison_track": "agency-v23",
+      "breakdown": {
+        "facts": 21,
+        "audience": 17,
+        "argument": 12,
+        "continuity": 10,
+        "rendering": 8,
+        "restraint": 7
+      },
+      "strengths": [
+        "Concrete per-site setup",
+        "Readable responsive branded email"
+      ],
+      "remaining_defect": "Categorical vendor legal conclusions and signup CTA before sufficient technical explanation.",
+      "evidence": "before-email files and saved cold-read report",
+      "next_action": "Replace legal conclusions with documented technical behaviour."
+    },
+    {
+      "iteration": 2,
+      "execution_id": "f092c42c-bfc6-4c74-bd80-2c7d2d0ce557",
+      "score": null,
+      "comparable": false,
+      "comparison_track": "invalid-cached-prompt-test",
+      "remaining_defect": "The intended prompt edit was not loaded because the server retained its cached template.",
+      "evidence": "Saved run and PromptEngine source-cache behaviour",
+      "next_action": "Restart before the corrected comparison; retain this unsuccessful experimental run."
+    },
+    {
+      "iteration": 3,
+      "execution_id": "babd06cc-cd66-47dc-863b-048f8ba7b8fc",
+      "score": 82,
+      "comparable": true,
+      "comparison_track": "agency-v23",
+      "breakdown": {
+        "facts": 24,
+        "audience": 17,
+        "argument": 12,
+        "continuity": 13,
+        "rendering": 8,
+        "restraint": 8
+      },
+      "strengths": [
+        "Concrete data fields and identifier/storage properties",
+        "No blanket legal exemption; public source opens without signup, copy/export verified"
+      ],
+      "remaining_defect": "Still an informative evaluation email rather than a strong general acquisition pitch; recipient applicability and a partial source corpus require ordinary review.",
+      "evidence": "Final email, official DPA/data-collection pages, UI export and 390/1280 render checks",
+      "next_action": "Keep the reviewed scoped draft; finish the cold first-start validation after Claude quota resets."
+    }
+  ],
+  "quality_best": {
+    "iteration": 3,
+    "execution_id": "babd06cc-cd66-47dc-863b-048f8ba7b8fc",
+    "score": 82,
+    "comparable": true,
+    "comparison_track": "agency-v23",
+    "breakdown": {
+      "facts": 24,
+      "audience": 17,
+      "argument": 12,
+      "continuity": 13,
+      "rendering": 8,
+      "restraint": 8
+    },
+    "strengths": [
+      "Concrete data fields and identifier/storage properties",
+      "No blanket legal exemption; public source opens without signup, copy/export verified"
+    ],
+    "remaining_defect": "Still an informative evaluation email rather than a strong general acquisition pitch; recipient applicability and a partial source corpus require ordinary review.",
+    "evidence": "Final email, official DPA/data-collection pages, UI export and 390/1280 render checks",
+    "next_action": "Keep the reviewed scoped draft; finish the cold first-start validation after Claude quota resets."
+  },
+  "verdict": "Usable source-backed evaluation draft for agencies after normal review; full cold-platform sellability remains unvalidated.",
+  "global_audit": "incomplete_quota_limited",
+  "steps": {},
+  "last_snapshot": "docs\\optimization\\simpleanalytics-v2-first-campaign-2026-11-06\\resume-2026-11-07\\steps\\20261107T105756840590Z-capture.json"
+}

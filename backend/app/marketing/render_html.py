@@ -22,13 +22,17 @@ sentence carries the offer and has no business knowing what colour it is.
 
 Two tiers, because "more designed" is not the same as "better":
 
-- PLAIN is for cold and one-to-one sales mail, and is the default. A person
-  writing to a person does not send a newsletter, and a branded template with
-  a hero image raises spam scores and depresses replies on exactly the mail
-  this system writes most. What it fixes is real though: web-safe typography,
-  real spacing, a readable measure, one obvious link.
-- BRANDED is for announcements and newsletters, where looking like a company
-  is the honest signal. Logo, brand colour, a real button, a footer.
+- PLAIN is for cold and one-to-one sales mail. A person writing to a person
+  does not send a newsletter, and a branded template with a hero image raises
+  spam scores and depresses replies on cold mail. What it fixes is real
+  though: web-safe typography, real spacing, a readable measure, one obvious
+  link.
+- BRANDED is for mail a reader expects from a company - a brand writing to
+  its own readers, an announcement, a cart reminder - where looking like a
+  company is the honest signal. Logo, brand colour, a real button, a footer,
+  and a photograph of the product when the button leads to its page.
+
+Which one a campaign gets when nobody chose is `resolve_tier`.
 
 Both are table-based with inline styles, which is not how anyone would write
 a web page and is the only thing that survives Outlook, Gmail's clipping and
@@ -44,6 +48,14 @@ from urllib.parse import urljoin, urlsplit
 
 from langdetect import LangDetectException, detect
 
+from app.core.colour import (
+    MIN_SURFACE_CONTRAST,
+    MIN_TEXT_CONTRAST,
+    WHITE,
+    contrast,
+    darken_to,
+    parse_colour,
+)
 from app.knowledge.artifacts import OfferSheet
 from app.marketing.email_copy import CALLOUT_PREFIX, Email
 
@@ -63,6 +75,21 @@ _CONTENT_WIDTH = 600
 _SANS = (
     "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif"
 )
+
+#: The accent when a brand has none, and the one any unreadable value falls
+#: back to.
+DEFAULT_ACCENT = "#1a56db"
+#: The ink a button label switches to when the brand colour is too light to
+#: carry white text - a yellow button keeps its yellow and gets dark words.
+_LABEL_INK = "#14161a"
+#: How wide a photograph is set when it is square, taller than wide, or of a
+#: shape the page did not declare. A square product shot at the full measure
+#: is 528px tall and pushes the whole argument below the fold on a laptop; at
+#: this width it reads as the product on a page rather than as the page.
+_PICTURE_WIDTH = 360
+#: Height over width at or under which a photograph is landscape enough to
+#: take the full measure.
+_LANDSCAPE = 0.75
 
 
 def style_for_action(
@@ -116,6 +143,45 @@ class EmailTier(StrEnum):
     BRANDED = "branded"
 
 
+def resolve_tier(requested: object, *, has_brand: bool, relationship: str) -> EmailTier:
+    """The tier a campaign renders in: the user's choice, or a default that
+    follows who is reading.
+
+    Plain used to be the default for everything, on the theory that this
+    system mostly writes cold sales sequences. But a shop writing to its own
+    list got the same treatment - Cabaia's and Papier's acquisition emails on
+    31 October 2026 arrived as a note with no name at the top, no button and
+    no colour: a company declining to look like one in the one place its
+    readers expect it to.
+
+    So with no choice stored, cold outreach stays plain, because there
+    looking like a person is the honest signal, and so does a campaign with
+    no brand, which has nothing to brand it with. Everything else is a brand
+    writing to its own readers and is branded. "unknown" falls on that side
+    on purpose: a reader who has not bought is not a cold reader, which is
+    the line `CampaignIntent.render` already draws for the strategy.
+    """
+    if requested in tuple(EmailTier):
+        return EmailTier(requested)
+    if not has_brand or relationship == "cold":
+        return EmailTier.PLAIN
+    return EmailTier.BRANDED
+
+
+@dataclass(frozen=True)
+class Picture:
+    """A photograph of what the button sells - the Open Graph image of the
+    product page it points at, which the crawler recorded. See
+    app.ingestion.loaders.site_identity for why only a product page's."""
+
+    url: str
+    #: What it shows, for the reader whose client blocked it.
+    alt: str = ""
+    #: As the page declared them; zero when it did not.
+    width: int = 0
+    height: int = 0
+
+
 @dataclass(frozen=True)
 class BrandStyle:
     """The few things a branded email needs to look like it came from someone.
@@ -129,8 +195,14 @@ class BrandStyle:
     #: Absolute URL. Remote images are blocked by default in most clients, so
     #: the logo must never be the only thing carrying the brand.
     logo_url: str = ""
-    #: Hex, e.g. "#1a56db". Used for links and the button.
-    primary_color: str = "#1a56db"
+    #: The business's own site. The wordmark links to it and the footer names
+    #: it, so a reader who wants the company rather than this one offer has
+    #: somewhere to go that is not the button.
+    website_url: str = ""
+    #: Hex, e.g. "#1a56db". Used for links and the button - through `accent`,
+    #: `fill` and `on_fill`, never directly, because a colour typed into a form
+    #: or declared by a site is not guaranteed to be readable on white.
+    primary_color: str = DEFAULT_ACCENT
     #: What goes in the footer under the sign-off - who is sending this, and
     #: any postal address the law where the user operates requires.
     footer_lines: tuple[str, ...] = ()
@@ -146,13 +218,38 @@ class BrandStyle:
     #: says "Unsubscribe" over a dead link is worse than one that does not
     #: mention it - so the line only renders when there is somewhere to go.
     unsubscribe_url: str = ""
+    #: Set per email, never per brand: the photograph of the page this
+    #: email's button leads to, when that page is a product page.
+    picture: Picture | None = None
+
+    @property
+    def colour(self) -> str:
+        return parse_colour(self.primary_color) or DEFAULT_ACCENT
 
     @property
     def accent(self) -> str:
-        return self.primary_color if _HEX_RE.fullmatch(self.primary_color) else "#1a56db"
+        """The brand colour where it is text - a link, the eyebrow, the hero
+        figure - darkened only as far as it takes to read on white. A pale
+        brand orange becomes a deeper orange, not the default blue."""
+        return darken_to(self.colour, MIN_TEXT_CONTRAST)
+
+    @property
+    def fill(self) -> str:
+        """The brand colour where it is a surface - the button, the rule
+        across the top - exactly as given. Only a colour too pale to show on
+        the white card at all is replaced, by its readable `accent`."""
+        if contrast(self.colour, WHITE) < MIN_SURFACE_CONTRAST:
+            return self.accent
+        return self.colour
+
+    @property
+    def on_fill(self) -> str:
+        """The button label: white, unless dark ink reads better on the fill."""
+        if contrast(self.fill, WHITE) >= contrast(self.fill, _LABEL_INK):
+            return WHITE
+        return _LABEL_INK
 
 
-_HEX_RE = re.compile(r"#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})")
 _BULLET_PREFIXES = ("-", "*", "•", "–", "—")
 _PARAGRAPH_SPLIT_RE = re.compile(r"\n\s*\n")
 _BOLD_RE = re.compile(r"\*\*(.+?)\*\*", re.DOTALL)
@@ -179,6 +276,12 @@ def _safe_url(value: str, *, allow_mailto: bool = False) -> str:
     if allow_mailto and parsed.scheme.lower() == "mailto" and parsed.path:
         return html.escape(value, quote=True)
     return ""
+
+
+def _display_host(url: str) -> str:
+    """A site the way a reader would type it - `cabaia.fr`, not
+    `https://www.cabaia.fr/`. Only called on a URL `_safe_url` accepted."""
+    return (urlsplit(url.strip()).hostname or "").removeprefix("www.")
 
 
 @dataclass(frozen=True)
@@ -276,26 +379,32 @@ def render_html(
     """One sendable HTML document for one email.
 
     Self-contained: every style is inline, there is no <style> block to be
-    stripped, no script, and no remote asset except a logo the user supplied.
+    stripped, no script, and no remote asset but two the brand published
+    itself - its logo and the photograph on the page the button leads to.
 
     The two tiers assemble different documents rather than one document with
     decorations bolted on - see `_Scale`. A branded email opens on an eyebrow
-    and a headline and gives its offer a hero figure; a plain one opens on the
-    greeting and never sets anything larger than its body, because that is
-    what one person writing to another looks like.
+    and a headline, shows the product, and gives its offer a hero figure; a
+    plain one opens on the greeting and never sets anything larger than its
+    body, because that is what one person writing to another looks like.
     """
     style = brand or BrandStyle()
     scale = _scale(tier)
     branded = tier is EmailTier.BRANDED
 
     blocks: list[str] = []
+    opened = False
     if branded:
         blocks.append(_header(style, scale))
         if email.headline.strip():
             if email.eyebrow.strip():
                 blocks.append(_eyebrow(email.eyebrow, style, scale))
             blocks.append(_headline(email.headline, scale))
-    blocks.append(_greeting(email.greeting, scale, lead=branded and bool(email.headline)))
+            opened = True
+        if picture := _picture(style, scale, after_headline=opened):
+            blocks.append(picture)
+            opened = True
+    blocks.append(_greeting(email.greeting, scale, lead=opened))
     blocks.extend(_body_blocks(email.body, style, scale))
     if branded:
         blocks.append(_divider(scale))
@@ -303,7 +412,7 @@ def render_html(
     blocks.append(_signoff(email.sign_off, scale))
     if email.postscript.strip():
         blocks.append(_postscript(email.postscript, scale))
-    if branded:
+    if branded or style.footer_lines or style.unsubscribe_url:
         blocks.append(_footer(style, scale))
 
     language = email.language
@@ -331,7 +440,17 @@ def text_alternative(email: Email, style: BrandStyle | None = None) -> str:
     from app.marketing.email_copy import render_email
 
     url = html.unescape(_safe_url(style.cta_url)) if style is not None else ""
-    return render_email(email, cta_url=url)
+    rendered = render_email(email, cta_url=url)
+    if style is not None:
+        lines = list(style.footer_lines)
+        unsubscribe = html.unescape(_safe_url(style.unsubscribe_url, allow_mailto=True))
+        if unsubscribe:
+            if not lines and style.name:
+                lines.append(style.name)
+            lines.append(f"Unsubscribe: {unsubscribe}")
+        if lines:
+            rendered += "\n\n" + "\n".join(lines)
+    return rendered
 
 
 # ------------------------------------------------------------------ internals
@@ -428,6 +547,42 @@ def _headline(text: str, scale: _Scale) -> str:
         f'line-height:1.2;font-weight:800;letter-spacing:-0.5px;color:{scale.ink};">'
         f"{html.escape(text.strip())}</h1>",
         padding=f"0 {scale.pad}px 20px",
+    )
+
+
+def _picture(style: BrandStyle, scale: _Scale, *, after_headline: bool) -> str:
+    """The thing the button sells, as the reader will see it on its page.
+
+    For an object - a bag, a planner - the photograph is the argument the
+    copy can only point at, and the one a product page already made. It
+    links where the button does, because a reader who taps a picture of a
+    bag expects to land on the bag.
+
+    Full width only when the page declares it landscape; see
+    `_PICTURE_WIDTH` for why a square one is set smaller. The alt text is
+    styled because most readers see it before the image: clients block
+    remote images on first open, and unstyled alt text is a line of Times
+    New Roman in the middle of the email.
+    """
+    picture = style.picture
+    source = _safe_url(picture.url) if picture is not None else ""
+    if picture is None or not source:
+        return ""
+    full = _CONTENT_WIDTH - 2 * scale.pad
+    landscape = picture.width > 0 and picture.height / picture.width <= _LANDSCAPE
+    width = full if landscape else _PICTURE_WIDTH
+    image = (
+        f'<img src="{source}" alt="{html.escape(picture.alt.strip(), quote=True)}" '
+        f'width="{width}" style="display:block;width:100%;max-width:{width}px;height:auto;'
+        f"margin:0 auto;border:0;border-radius:{scale.corner - 4}px;font-family:{_SANS};"
+        f'font-size:14px;line-height:1.4;color:{scale.muted};" />'
+    )
+    if link := _safe_url(style.cta_url):
+        image = f'<a href="{link}" style="display:block;text-decoration:none;">{image}</a>'
+    top = 0 if after_headline else 24
+    return (
+        f'<tr><td align="center" style="padding:{top}px {scale.pad}px 14px;">'
+        f"{image}</td></tr>\n"
     )
 
 
@@ -564,7 +719,26 @@ def _callout(lines: list[str], style: BrandStyle, scale: _Scale) -> str:
     Quiet on the plain tier: no fill, no hero, just the rule and the spacing.
     A person writing to a person does not send tinted boxes, and the same
     sentence still deserves to be set apart.
+
+    A block that opens on a quotation mark is a customer speaking rather than
+    an offer, and is set as one: the words in ink, the name under them, and
+    no hero figure - a number inside somebody's sentence is theirs, and
+    setting it at 34px would make it ours.
     """
+    if testimonial := _testimonial(lines):
+        quote, speaker = testimonial
+        inner = scale.para(
+            "<br />".join(_inline(line, scale) for line in quote),
+            size=17 if scale.hero else scale.body_size,
+            colour=scale.ink,
+        )
+        if speaker:
+            inner += (
+                f'<p style="margin:10px 0 0;font-family:{_SANS};font-size:13px;'
+                f'line-height:1.4;color:{scale.muted};">&mdash; {html.escape(speaker)}</p>'
+            )
+        return _callout_cell(inner, style, scale)
+
     text = "\n".join(lines)
     figure = ""
     if scale.hero and (match := _BOLD_RE.search(text)):
@@ -581,7 +755,34 @@ def _callout(lines: list[str], style: BrandStyle, scale: _Scale) -> str:
         )
     if rest:
         inner += scale.para(rest, size=15 if figure else scale.body_size)
+    return _callout_cell(inner, style, scale)
 
+
+#: How a quotation opens and closes in the languages this writes in -
+#: French guillemets, English curly quotes, and the straight ones a model
+#: types when it is not thinking about typography.
+_QUOTE_OPENERS = ("«", "“", '"', "„", "‘", "‹")
+_QUOTE_CLOSERS = "»”\"’›"
+#: The speaker on a line of their own: "- Julie, verified buyer".
+_SPEAKER_LINE_RE = re.compile(r"^[—–-]\s*(\S.*)$")
+#: The speaker after the closing mark on the same line: `« ... » — Julie`.
+_SPEAKER_TAIL_RE = re.compile(rf"^(.*[{_QUOTE_CLOSERS}])\s*[—–-]\s*([^{_QUOTE_CLOSERS}]+)$", re.DOTALL)
+
+
+def _testimonial(lines: list[str]) -> tuple[list[str], str] | None:
+    """(the quoted lines, who said them) when a callout is a quotation."""
+    if not lines or not lines[0].lstrip("*").startswith(_QUOTE_OPENERS):
+        return None
+    if len(lines) > 1 and (match := _SPEAKER_LINE_RE.match(lines[-1])):
+        return lines[:-1], match.group(1).strip()
+    if match := _SPEAKER_TAIL_RE.match(lines[-1]):
+        return [*lines[:-1], match.group(1).strip()], match.group(2).strip()
+    return lines, ""
+
+
+def _callout_cell(inner: str, style: BrandStyle, scale: _Scale) -> str:
+    """The box round a callout - filled on the branded tier, a rule on the
+    plain one."""
     if scale.hero:
         cell = (
             f'background-color:{_CALLOUT_FILL};border:1px solid {scale.line};'
@@ -634,10 +835,10 @@ def _cta(label: str, style: BrandStyle, tier: EmailTier, scale: _Scale) -> str:
     return (
         f'<tr><td align="center" style="padding:4px {scale.pad}px 8px;">'
         f'<table role="presentation" cellpadding="0" cellspacing="0" border="0">'
-        f'<tr><td align="center" style="background-color:{style.accent};'
+        f'<tr><td align="center" style="background-color:{style.fill};'
         f'border-radius:8px;">'
         f'<a href="{href}" style="display:inline-block;padding:16px 40px;'
-        f'font-family:{_SANS};font-size:16px;font-weight:700;color:#ffffff;'
+        f'font-family:{_SANS};font-size:16px;font-weight:700;color:{style.on_fill};'
         f'text-decoration:none;letter-spacing:0.2px;">{text}</a>'
         "</td></tr></table></td></tr>\n"
     )
@@ -684,9 +885,14 @@ def _header(style: BrandStyle, scale: _Scale) -> str:
     that is only a logo is a header that is usually blank - the alt text is
     the company name for exactly that reason. The rule above it carries the
     brand when the logo does not, and cannot be blocked by anything.
+
+    Without a logo the name is the brand's only mark, so it is set as a
+    wordmark - larger and heavier than anything in the body - rather than as
+    one more line of text. Either way it links to the brand's own site,
+    which is where a reader expects the top of a company's email to go.
     """
     rule = (
-        f'<tr><td style="background-color:{style.accent};height:4px;font-size:0;'
+        f'<tr><td style="background-color:{style.fill};height:4px;font-size:0;'
         'line-height:0;">&nbsp;</td></tr>\n'
     )
     logo_url = _safe_url(style.logo_url)
@@ -699,9 +905,11 @@ def _header(style: BrandStyle, scale: _Scale) -> str:
             f'alt="{html.escape(style.name, quote=True)}" height="30" '
             'style="display:block;border:0;height:30px;max-height:30px;width:auto;" />'
         )
+    if site := _safe_url(style.website_url):
+        inner = f'<a href="{site}" style="color:{scale.ink};text-decoration:none;">{inner}</a>'
     return rule + (
-        f'<tr><td style="padding:26px {scale.pad}px 0;font-family:{_SANS};font-size:15px;'
-        f'font-weight:700;letter-spacing:0.2px;color:{scale.ink};">{inner}</td></tr>\n'
+        f'<tr><td style="padding:26px {scale.pad}px 0;font-family:{_SANS};font-size:18px;'
+        f'font-weight:800;letter-spacing:0.3px;color:{scale.ink};">{inner}</td></tr>\n'
     )
 
 
@@ -712,12 +920,26 @@ def _footer(style: BrandStyle, scale: _Scale) -> str:
     A footer that says "Unsubscribe" over a dead link is worse than one that
     does not mention it: the reader clicks, nothing happens, and the next
     thing they press is the spam button.
+
+    The brand's site goes under the sender lines unless they already name
+    it. Without it a footer that falls back to the brand's name says the
+    same word as the header and nothing a reader can act on.
     """
     lines = list(style.footer_lines) or ([style.name] if style.name else [])
+    site = _safe_url(style.website_url)
+    host = _display_host(style.website_url) if site else ""
+    if host and any(host.lower() in line.lower() for line in lines):
+        host = ""
     unsubscribe_url = _safe_url(style.unsubscribe_url, allow_mailto=True)
-    if not lines and not unsubscribe_url:
+    if not lines and not unsubscribe_url and not host:
         return ""
     body = "<br />".join(html.escape(line) for line in lines)
+    if host:
+        link = (
+            f'<a href="{site}" style="color:{scale.muted};text-decoration:underline;">'
+            f"{html.escape(host)}</a>"
+        )
+        body = f"{body}<br />{link}" if body else link
     if unsubscribe_url:
         body += (
             f'<br /><br /><a href="{unsubscribe_url}" style="color:{scale.muted};'

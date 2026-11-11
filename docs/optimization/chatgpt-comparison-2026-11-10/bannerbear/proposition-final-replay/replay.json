@@ -1,0 +1,936 @@
+{
+  "baseline": "f3a3b5c0-c8c1-47c9-8fc9-bedd8b37244d",
+  "models": {
+    "strategist": "gpt-5.6-sol",
+    "email_writer": "gpt-5.6-sol",
+    "claim_reviewer": "gpt-5.6-sol",
+    "blind_reader": "gpt-5.6-sol"
+  },
+  "draft_replayed": "docs\\optimization\\chatgpt-comparison-2026-11-10\\bannerbear\\proposition-review-replay\\replay.json",
+  "archived_attempt": 1,
+  "plan": {
+    "interpretation": "Treat this as a single acquisition email introducing Bannerbear to a solution-aware marketing or growth buyer at an ecommerce or SaaS company. The recipient's current tools and workflow are unknown, so the email conditionally proposes one documented use: connect a data source to a branded image template and evaluate generated product banners or social posts through the free trial.",
+    "pipeline_version": 2,
+    "strategy_mode": "planned",
+    "intent": {
+      "objective": "custom",
+      "objective_source": "inferred",
+      "reader_relationship": "unknown",
+      "relationship_source": "inferred",
+      "announcement": "",
+      "reason_now": "",
+      "desired_action": ""
+    },
+    "reader": "Selected audience: Marketing/growth team at an ecommerce or SaaS company.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): Marketing, growth, or content ops staff at ecommerce stores and SaaS companies who currently bottleneck on manual design for recurring visual assets",
+    "reader_segment": "Marketing/growth team at an ecommerce or SaaS company",
+    "reader_profile_override": "",
+    "reader_scope": "",
+    "fixed_cta_url": "",
+    "promise": "Bannerbear can turn a branded image template and data from a supported source into automatically rendered marketing visuals, and the buyer can evaluate that workflow with 30 trial credits without providing a credit card.",
+    "orientation": "Bannerbear is an API and template tool that renders branded images, videos and PDFs automatically from data you already keep in tools like Airtable or a Zapier trigger, instead of each asset being laid out by hand.",
+    "arc": "State the concrete data-to-template operation, show the supported connection routes, then offer a bounded hands-on trial as the single next step.",
+    "sequence_rationale": "One email is enough because the requested introduction and next action form one decision: whether to begin a bounded evaluation of a recurring branded-image workflow. The primary proposition leads with useful product operation rather than making the free offer the product benefit; the trial terms reduce the commitment required to test that operation. No researched pain, incumbent workflow or customer result is established, so the brief does not manufacture one. The alternative proposition is reserved as a genuinely different commercial bet for an API-oriented reader: batching up to 100 renders in one call and inspecting the documented API before signup. The single thing the user could send us that would most change this campaign: Which customers or quotes may we name?",
+    "emails": [
+      {
+        "problem_ids": [],
+        "offer_id": "offering",
+        "action_id": "action_aba6d6029cc6",
+        "selection_reason": "This is the strongest supported introduction for the selected reader because it joins a concrete marketing operation—driving branded image generation from an existing data source—to a low-commitment trial that lets the buyer evaluate it directly.",
+        "next_step_url": "https://app.bannerbear.com/users/sign_up?trial=automate",
+        "destination_kind": "web",
+        "argument_issue": "",
+        "value_case": {
+          "reader_benefit": "If the team has recurring product banners or social posts to produce, it can use one branded template with data supplied through a supported native integration or Zapier to render variations without laying out each variation separately.",
+          "mechanism": "Create an image template, then connect a supported data source through one of Bannerbear's 50+ direct integrations or Zapier so the source values drive rendered output. The trial provides a bounded environment for the first evaluation.",
+          "evidence_ids": [
+            "E8",
+            "E12",
+            "E13"
+          ],
+          "decision_conditions": [
+            "The connection route depends on the team's data source and may use a supported direct integration or Zapier.",
+            "The free trial includes 30 API credits and is limited to one workspace, three image templates, three animation templates, three workflows and three instant URLs."
+          ]
+        },
+        "claim_conditions": [
+          "Describe the proposed product-banner or social-post workflow conditionally because the recipient's current workload is unconfirmed.",
+          "Attach the 30-credit allowance and no-credit-card condition specifically to the free trial.",
+          "Do not imply that every data source has a native connector; present Zapier as a separate supported route.",
+          "Do not imply that the trial establishes production-scale suitability or economics.",
+          "Do not promise: No claim of time saved, cost saved, reduced headcount or that a designer is no longer needed.",
+          "Do not promise: No claim of growth, conversion lift or any marketing outcome from the generated visuals.",
+          "Do not promise: No claim of replacing or outperforming Figma, Canva, Photoshop or any competitor.",
+          "Do not promise: No claim of zero disruption to an existing workflow or of unlimited volume; credits and plan allowances apply.",
+          "Do not promise: No claim that every named source (Google Sheet, any specific CMS) has a native connector, or that the 100-render batch call is included in the trial.",
+          "Do not promise: No claim that every named source (Google Sheet, any specific CMS) has a native connector.",
+          "Do not promise: No claim that a 100-render single-call batch is included or practical within the trial's 30-credit allowance.",
+          "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit."
+        ],
+        "position": 1,
+        "user_request": "Write exactly one email. Introduce our product to a new buyer with one clear next step.",
+        "target_audience": "Marketing/growth team at an ecommerce or SaaS company",
+        "job": "Get the reader to start a bounded trial of one data-to-template image-generation workflow.",
+        "single_idea": "If the team produces recurring product banners or social posts, Bannerbear can feed data from a supported integration or Zapier into a branded template and render the variations automatically; a 30-credit trial lets the buyer evaluate that workflow without entering a credit card.",
+        "felt_need": "",
+        "status_quo": "",
+        "why_it_fails": "",
+        "mechanism": "The buyer creates a branded image template in the trial workspace, then uses a supported direct integration or Zapier to supply changing data for rendered variations. The trial includes 30 API credits and does not require a credit card.",
+        "alternative_ideas": [],
+        "alternative_arguments": [
+          {
+            "problem_ids": [],
+            "offer_id": "offering",
+            "action_id": "action_905cc1af721f",
+            "selection_reason": "This is a viable alternative for a more technical buyer because it leads with a distinct operational advantage—requesting up to 100 renders in one API call—and offers public API documentation as the smallest next step for assessing implementation fit.",
+            "next_step_url": "https://developers.bannerbear.com/v5/",
+            "destination_kind": "web",
+            "argument_issue": "",
+            "value_case": {
+              "reader_benefit": "For a campaign that needs many branded image variations, the team can request up to 100 renders in one API call rather than issuing a separate call for every render.",
+              "mechanism": "Bannerbear's Image API accepts a batch of up to 100 renders in a single call, while its documented REST API, OpenAPI specifications and language libraries provide the implementation surface developers can inspect.",
+              "evidence_ids": [
+                "E14",
+                "E9"
+              ],
+              "decision_conditions": [
+                "The 100-render figure applies to the Image API's single-call batch capability.",
+                "The available evidence does not establish that a 100-render batch is included or practical within the 30-credit trial."
+              ]
+            },
+            "claim_conditions": [
+              "Keep the batch claim to up to 100 renders in one API call.",
+              "Do not translate fewer API calls into an unsupported claim about time, labor or cost saved.",
+              "Do not imply that inspecting the API reference proves compatibility with the reader's stack.",
+              "Do not promise: No claim of time saved, cost saved, reduced headcount or that a designer is no longer needed.",
+              "Do not promise: No claim of growth, conversion lift or any marketing outcome from the generated visuals.",
+              "Do not promise: No claim of replacing or outperforming Figma, Canva, Photoshop or any competitor.",
+              "Do not promise: No claim of zero disruption to an existing workflow or of unlimited volume; credits and plan allowances apply.",
+              "Do not promise: No claim that every named source (Google Sheet, any specific CMS) has a native connector, or that the 100-render batch call is included in the trial.",
+              "Do not promise: No claim that every named source (Google Sheet, any specific CMS) has a native connector.",
+              "Do not promise: No claim that a 100-render single-call batch is included or practical within the trial's 30-credit allowance.",
+              "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit."
+            ],
+            "single_idea": "A team preparing many branded image variations can batch up to 100 renders in one Image API call and inspect the documented REST API before deciding whether the integration fits.",
+            "felt_need": "",
+            "status_quo": "",
+            "why_it_fails": "",
+            "mechanism": "The Image API supports up to 100 renders in one call; the API documentation, OpenAPI specifications and language libraries expose the implementation surface for review.",
+            "belief_shift": "Before: Bannerbear may appear to require one API request per image. After: the reader understands that the Image API supports batches of up to 100 renders in one call and can inspect the documented interface before committing.",
+            "evidence_ids": [
+              "E14",
+              "E9"
+            ],
+            "must_not_say": [
+              "No claim of time saved, cost saved, reduced headcount or that a designer is no longer needed.",
+              "No claim of growth, conversion lift or any marketing outcome from the generated visuals.",
+              "No claim of replacing or outperforming Figma, Canva, Photoshop or any competitor.",
+              "No claim of zero disruption to an existing workflow or of unlimited volume; credits and plan allowances apply.",
+              "No claim that every named source (Google Sheet, any specific CMS) has a native connector, or that the 100-render batch call is included in the trial.",
+              "No claim that every named source (Google Sheet, any specific CMS) has a native connector.",
+              "No claim that a 100-render single-call batch is included or practical within the trial's 30-credit allowance.",
+              "Do not claim that the Automate plan costs $49 USD per month.",
+              "Do not claim customer adoption, customer results, comparative superiority or exclusivity.",
+              "Automate plan costs $49 USD per month"
+            ],
+            "objection": "Can our developers inspect the integration surface before we commit to building against it?",
+            "call_to_action": "Review the API reference.",
+            "next_step_decision": "Decide whether Bannerbear's REST API and batch-render interface warrant a technical evaluation for the team's image-generation workflow.",
+            "next_step_value": "The destination provides the API reference for inspecting the documented interface; the licensed product evidence also establishes OpenAPI specifications and libraries for major languages.",
+            "next_step_evidence_ids": [
+              "E9"
+            ],
+            "next_step_limit": "Reading the reference does not prove compatibility with the team's specific stack, production performance, credit requirements or implementation effort.",
+            "subject_strategy": "Lead with the concrete batch unit—up to 100 renders in one API call—to earn attention from an API-aware reader without promising speed, savings or trial availability."
+          }
+        ],
+        "belief_shift": "Before: Bannerbear is only a generic image-automation category name. After: the reader sees a specific evaluation path—one branded template, a supported data connection and 30 trial credits with no credit card required.",
+        "evidence_ids": [
+          "E12",
+          "E13",
+          "E8"
+        ],
+        "must_not_say": [
+          "No claim of time saved, cost saved, reduced headcount or that a designer is no longer needed.",
+          "No claim of growth, conversion lift or any marketing outcome from the generated visuals.",
+          "No claim of replacing or outperforming Figma, Canva, Photoshop or any competitor.",
+          "No claim of zero disruption to an existing workflow or of unlimited volume; credits and plan allowances apply.",
+          "No claim that every named source (Google Sheet, any specific CMS) has a native connector, or that the 100-render batch call is included in the trial.",
+          "No claim that every named source (Google Sheet, any specific CMS) has a native connector.",
+          "No claim that a 100-render single-call batch is included or practical within the trial's 30-credit allowance.",
+          "Do not claim that the Automate plan costs $49 USD per month.",
+          "Do not claim the recipient currently creates assets manually, uses any named tool or has an established production bottleneck.",
+          "Do not claim customer adoption, customer results, comparative superiority or exclusivity.",
+          "Do not add uptime, company history, font count, synchronous-rendering details, paid-plan credits, PDFs, videos, MCP or the 100-render batch capability; they are separate arguments and would turn this introduction into a feature list.",
+          "Keep the connection route attached to its cited source. A native or prebuilt integration and a custom HTTP/webhook endpoint are separate setup paths unless the source explicitly equates them. A platform name alone establishes neither manual endpoint configuration nor a no-setup connector. Keep unknown setup requirements unknown; do not mix the steps or benefits of those paths.",
+          "Automate plan costs $49 USD per month"
+        ],
+        "forbidden_evidence_ids": [
+          "E10",
+          "E11",
+          "E16",
+          "E17",
+          "E19",
+          "E2",
+          "E20",
+          "E22",
+          "E23",
+          "E4",
+          "E5",
+          "E6",
+          "E7"
+        ],
+        "forbidden_capability_ids": [],
+        "objection": "Do I need to provide a credit card before I can try the workflow?",
+        "tone": "Direct, technical and inviting; confident without hype.",
+        "call_to_action": "Start the free trial.",
+        "next_step_decision": "Decide whether Bannerbear is worth continuing with for one recurring branded-image workflow after a bounded hands-on evaluation.",
+        "next_step_value": "The signup starts a free trial with 30 API credits and no credit card required; the trial account supports one workspace and up to three image templates, alongside its other documented trial limits.",
+        "next_step_evidence_ids": [
+          "E12",
+          "E13"
+        ],
+        "next_step_limit": "The trial signup and allowance do not establish that the reader's particular data source is supported, what implementation effort it requires, or whether the workflow is suitable for production volume.",
+        "subject_strategy": "Name the concrete data-to-template evaluation rather than using a vague automation promise; use the no-credit-card trial as the reason opening the email can lead to immediate action, not as the entire subject.",
+        "must_not_reuse": [],
+        "steering": {
+          "directions": [],
+          "include_evidence_ids": [],
+          "exclude_evidence_ids": [],
+          "use": [],
+          "avoid": [],
+          "context_only": [],
+          "excluded_values": []
+        }
+      }
+    ],
+    "voice_notes": "",
+    "contract": {
+      "kind": "single_email",
+      "count": 1,
+      "count_is_explicit": true,
+      "evidence": "one email"
+    }
+  },
+  "versions": [
+    {
+      "attempt": 1,
+      "email": {
+        "position": 1,
+        "role": "Introduce Bannerbear through one bounded workflow",
+        "language": "en",
+        "subject": "Test a data-to-template image workflow",
+        "preview_text": "Connect one branded template to your data and render product banners or social posts.",
+        "eyebrow": "Free trial",
+        "headline": "Render branded visuals from your data",
+        "greeting": "Hi there,",
+        "body": "Create one branded image template, connect a supported data source, and render product-banner or social-post variations from changing values.\n\nBannerbear is an image generation API and template tool. It turns supplied data into automatically rendered marketing visuals based on your design.\n\nIf recurring visuals are part of your work, use one of Bannerbear’s 50+ direct integrations or connect through Zapier. The data supplies each variation, so you do not have to lay out every version separately.\n\nThe free trial includes 30 API credits with no credit card required. It gives you one workspace and up to three image templates to evaluate the workflow with a small first batch.",
+        "call_to_action": "Start the free trial",
+        "sign_off": "- Bannerbear",
+        "postscript": ""
+      },
+      "gates": {
+        "issues": [
+          {
+            "gate": "review-reference",
+            "detail": "AI review cited an absent source or quotation.",
+            "severity": "blocking"
+          },
+          {
+            "gate": "review-reference",
+            "detail": "AI review cited an absent source or quotation.",
+            "severity": "blocking"
+          },
+          {
+            "gate": "review-reference",
+            "detail": "AI review cited an absent source or quotation.",
+            "severity": "blocking"
+          }
+        ],
+        "semantic_review": {
+          "key": "147a6ab0d66dc66acd6f3edb37ee880eee76e566e589fd0f458314a704254810",
+          "approved": false,
+          "decision": {
+            "verdict": "supported",
+            "claims": [
+              {
+                "text": "Subject: Test a data-to-template image workflow",
+                "status": "supported",
+                "explanation": "Bannerbear documents template-based image generation driven by an image-data payload, and the documented CTA starts a trial in which the workflow can be tested.",
+                "citations": [
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "Generate template-based images for social media, ecommerce and more via API or AI tools"
+                  },
+                  {
+                    "source_id": "proposition:action:0",
+                    "quote": "Start a free trial with 30 API Credits — no credit card required"
+                  }
+                ]
+              },
+              {
+                "text": "Preview text: Connect one branded template to your data and render product banners or social posts.",
+                "status": "supported",
+                "explanation": "The sources jointly document template-based generation for social media and ecommerce, data supplied as IMAGE_DATA, integrations, and on-brand template output.",
+                "citations": [
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "Generate template-based images for social media, ecommerce and more via API or AI tools"
+                  },
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "body: IMAGE_DATA"
+                  },
+                  {
+                    "source_id": "E8",
+                    "quote": "Bannerbear supports direct integrations with 50+ tools like Airtable, Notion, Wordpress, Ghost and many more. Plus Zapier integration and MCP for AI Agents."
+                  },
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "Forms: Hosted forms that let your team or your customers generate on‑brand images from a template without touching the API. Embeddable in your own site."
+                  }
+                ]
+              },
+              {
+                "text": "Free trial",
+                "status": "supported",
+                "explanation": "The offer is explicitly described as a free trial.",
+                "citations": [
+                  {
+                    "source_id": "E13",
+                    "quote": "Start a free trial with 30 API credits, no credit card required"
+                  }
+                ]
+              },
+              {
+                "text": "Render branded visuals from your data",
+                "status": "supported",
+                "explanation": "The captured sources document on-brand, template-based image generation and an image-data payload for rendering.",
+                "citations": [
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "Forms: Hosted forms that let your team or your customers generate on‑brand images from a template without touching the API. Embeddable in your own site."
+                  },
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "Generate template-based images for social media, ecommerce and more via API or AI tools"
+                  },
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "body: IMAGE_DATA"
+                  }
+                ]
+              },
+              {
+                "text": "Create one branded image template, connect a supported data source, and render product-banner or social-post variations from changing values.",
+                "status": "supported",
+                "explanation": "The trial permits image templates and working integrations; Bannerbear documents integrations plus template-based social-media and ecommerce rendering from IMAGE_DATA. Together these support the described data-to-template operation.",
+                "citations": [
+                  {
+                    "source_id": "source:1",
+                    "quote": "Everything, at a smaller scale: one workspace, three image templates, three animation templates, three workflows and three instant URLs. The APIs, tools and integrations all work as they do on a paid plan."
+                  },
+                  {
+                    "source_id": "E8",
+                    "quote": "Bannerbear supports direct integrations with 50+ tools like Airtable, Notion, Wordpress, Ghost and many more. Plus Zapier integration and MCP for AI Agents."
+                  },
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "Generate template-based images for social media, ecommerce and more via API or AI tools"
+                  },
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "body: IMAGE_DATA"
+                  },
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "Forms: Hosted forms that let your team or your customers generate on‑brand images from a template without touching the API. Embeddable in your own site."
+                  }
+                ]
+              },
+              {
+                "text": "Bannerbear is an image generation API and template tool.",
+                "status": "supported",
+                "explanation": "The product source explicitly identifies an Image Generation API for template-based images, while the pricing material identifies template-based rendering and tools.",
+                "citations": [
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "# Image Generation API\nGenerate template-based images for social media, ecommerce and more via API or AI tools"
+                  },
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "API credits\n:   The unit for template‑based rendering."
+                  }
+                ]
+              },
+              {
+                "text": "It turns supplied data into automatically rendered marketing visuals based on your design.",
+                "status": "supported",
+                "explanation": "Bannerbear explicitly describes automatic generation of template-based marketing assets, and its API example supplies IMAGE_DATA to the image endpoint. The template is the documented design basis for the render.",
+                "citations": [
+                  {
+                    "source_id": "proposition:product:0",
+                    "quote": "Bannerbear helps you auto-generate template-based social media videos, ecommerce banners and more with our API"
+                  },
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "Generate template-based images for social media, ecommerce and more via API or AI tools"
+                  },
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "body: IMAGE_DATA"
+                  }
+                ]
+              },
+              {
+                "text": "If recurring visuals are part of your work, use one of Bannerbear’s 50+ direct integrations or connect through Zapier.",
+                "status": "supported",
+                "explanation": "This is a conditional suggestion, not a claim about the recipient. The stated integration routes and count are directly documented.",
+                "citations": [
+                  {
+                    "source_id": "E8",
+                    "quote": "Bannerbear supports direct integrations with 50+ tools like Airtable, Notion, Wordpress, Ghost and many more. Plus Zapier integration and MCP for AI Agents."
+                  }
+                ]
+              },
+              {
+                "text": "The data supplies each variation, so you do not have to lay out every version separately.",
+                "status": "supported",
+                "explanation": "The documented mechanism sends IMAGE_DATA to generate template-based images automatically. Reusing the template with supplied data supports the stated consequence that each output need not be laid out separately.",
+                "citations": [
+                  {
+                    "source_id": "proposition:product:0",
+                    "quote": "Bannerbear helps you auto-generate template-based social media videos, ecommerce banners and more with our API"
+                  },
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "Generate template-based images for social media, ecommerce and more via API or AI tools"
+                  },
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "body: IMAGE_DATA"
+                  }
+                ]
+              },
+              {
+                "text": "The free trial includes 30 API credits with no credit card required.",
+                "status": "supported",
+                "explanation": "The offer, credit quantity, and no-card condition match the source exactly.",
+                "citations": [
+                  {
+                    "source_id": "E13",
+                    "quote": "Start a free trial with 30 API credits, no credit card required"
+                  }
+                ]
+              },
+              {
+                "text": "It gives you one workspace and up to three image templates to evaluate the workflow with a small first batch.",
+                "status": "supported",
+                "explanation": "The trial explicitly includes one workspace and three image templates. One image render consumes one API credit, so the 30-credit trial provides a bounded initial batch; “small” is a reasonable qualitative description rather than a new numerical promise.",
+                "citations": [
+                  {
+                    "source_id": "E12",
+                    "quote": "Everything, at a smaller scale: one workspace, three image templates, three animation templates, three workflows and three instant URLs."
+                  },
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "The unit for template‑based rendering. One image render is one credit; PDFs, animations and video operations like trimming, resizing and overlays cost more depending on the work involved."
+                  },
+                  {
+                    "source_id": "E13",
+                    "quote": "Start a free trial with 30 API credits, no credit card required"
+                  }
+                ]
+              },
+              {
+                "text": "Start the free trial →",
+                "status": "supported",
+                "explanation": "The documented destination is a literal Start a Free Trial signup link, and the offer is a free trial.",
+                "citations": [
+                  {
+                    "source_id": "cta:0",
+                    "quote": "Literal link: [Start a Free Trial](https://app.bannerbear.com/users/sign_up?trial=automate)"
+                  },
+                  {
+                    "source_id": "E13",
+                    "quote": "Start a free trial with 30 API credits, no credit card required"
+                  }
+                ]
+              },
+              {
+                "text": "- Bannerbear",
+                "status": "supported",
+                "explanation": "The product and cited sources consistently identify the offering as Bannerbear.",
+                "citations": [
+                  {
+                    "source_id": "proposition:product:0",
+                    "quote": "[API for Automated Image and Video Generation - Bannerbear › Automate & Scale Your Marketing; document_id=c21ebd22-678a-49a7-966f-0329a8ed92ee; source=https://www.bannerbear.com/; aliases=https://www.bannerbear.com/; chunk=0]"
+                  }
+                ]
+              }
+            ],
+            "findings": [],
+            "summary": "Every material assertion is supported by the supplied literal sources, including the data-to-template mechanism, supported integration routes, trial entitlement and limits, and CTA destination. The draft is exactly one email with one clear next step and respects the stated exclusions.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The draft preserves the intended reader value: recurring product-banner or social-post variations can be rendered from supplied data through supported integrations or Zapier using a reusable branded template, with a bounded 30-credit trial for evaluation.",
+              "original_passage": "If the team has recurring product banners or social posts to produce, it can use one branded template with data supplied through a supported native integration or Zapier to render variations without laying out each variation separately.",
+              "revised_passage": "If recurring visuals are part of your work, use one of Bannerbear’s 50+ direct integrations or connect through Zapier. The data supplies each variation, so you do not have to lay out every version separately."
+            }
+          },
+          "version": 3
+        }
+      },
+      "read": {
+        "reads": [
+          {
+            "opened": true,
+            "stopped_at": "",
+            "what_it_sells": "Bannerbear offers an API and template tool that connects changing data to a branded design so I could generate recurring product banners or social posts without laying out each version manually.",
+            "understood": true,
+            "situation_matches": true,
+            "relevance_feedback": "The profile establishes that I work in marketing/growth at an ecommerce or SaaS company, and the email conditionally addresses recurring visual work rather than asserting that I definitely have it. Whether recurring asset production is actually a current bottleneck for me, and whether my data source is supported, remain unknown.",
+            "assumed_experiences": [
+              "Profile-supported: I work on a marketing/growth team at an ecommerce or SaaS company.",
+              "Email-only and conditional: recurring product banners or social posts are part of my work.",
+              "Email-only: I have changing data that could supply visual variations.",
+              "Email-only: manually laying out each visual variation creates enough work to justify automation.",
+              "Email-only: one of the direct integrations or Zapier could connect to my current data source."
+            ],
+            "problem_now": "Automating recurring visual production is plausibly relevant to my role, but the profile does not establish that manual design is my current bottleneck or that I need to solve it now.",
+            "biggest_doubt": "I cannot tell whether my actual data source is supported or how much setup is required before I can render a useful first batch, so the free trial may still cost more time than it saves.",
+            "would_act": false,
+            "to_click_it_would_have_to": "I would have clicked if this email had told me which common ecommerce or SaaS data sources are supported and what the smallest end-to-end test requires.",
+            "pull": 6,
+            "fixes": [
+              "Rewrite “connect a supported data source” to name several representative supported sources and link that detail to the first-batch workflow.",
+              "Replace “use one of Bannerbear’s 50+ direct integrations or connect through Zapier” with a concrete example such as the source, fields, template, and resulting batch, without implying any integration not actually available.",
+              "Tighten “It gives you one workspace and up to three image templates to evaluate the workflow with a small first batch” by stating what I would need to provide and roughly what I could render with the 30 credits."
+            ],
+            "material_revision": "",
+            "persona": "Selected audience (explicit constraints): Marketing/growth team at an ecommerce or SaaS company.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): Marketing, growth, or content ops staff at ecommerce stores and SaaS companies who currently bottleneck on manual design for recurring visual assets\n\n",
+            "reported": true,
+            "opens_in_100": null,
+            "clicks_in_100": null
+          }
+        ]
+      }
+    },
+    {
+      "attempt": 2,
+      "email": {
+        "position": 1,
+        "role": "introduction",
+        "language": "en",
+        "subject": "Turn Airtable data into images",
+        "preview_text": "Try one branded template with Airtable or a Zapier-supported source.",
+        "eyebrow": "FREE TRIAL",
+        "headline": "Render a branded image from your own data",
+        "greeting": "Hi there,",
+        "body": "Connect Airtable directly to a branded template and use changing values to render product banners or social posts. Not using Airtable? Bannerbear also integrates directly with Notion, WordPress and Ghost, with Zapier available as a separate route.\n\nBannerbear is an image generation API and template tool. Your data supplies the variations; the template keeps the design consistent across the rendered images.\n\nA first test can stay inside one trial workspace: create one image template, connect a supported direct integration or a Zapier-supported source, then render sample variations with your own content.\n\nThe free trial includes **30 API credits** and requires no credit card. It supports up to three image templates, giving you room to test the workflow with more than one design.",
+        "call_to_action": "Start the free trial",
+        "sign_off": "- Bannerbear",
+        "postscript": ""
+      },
+      "gates": {
+        "issues": [],
+        "semantic_review": {
+          "key": "4b0147f3d771faf00dc725a62bb5c56d2e1841ae027041a6d28f2c0949e03e7b",
+          "approved": true,
+          "decision": {
+            "verdict": "supported",
+            "claims": [
+              {
+                "text": "Subject: Turn Airtable data into images",
+                "status": "supported",
+                "explanation": "Bannerbear documents Airtable as a direct data integration and describes its product as generating template-based images.",
+                "citations": [
+                  {
+                    "source_id": "E8",
+                    "quote": "Bannerbear supports direct integrations with 50+ tools like Airtable, Notion, Wordpress, Ghost and many more. Plus Zapier integration and MCP for AI Agents."
+                  },
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "Generate template-based images for social media, ecommerce and more via API or AI tools"
+                  }
+                ]
+              },
+              {
+                "text": "Preview text: Try one branded template with Airtable or a Zapier-supported source.",
+                "status": "supported",
+                "explanation": "The sources jointly support template-based, on-brand image generation, direct Airtable integration, sources available through Zapier, and a trial offering everything at a smaller scale.",
+                "citations": [
+                  {
+                    "source_id": "E8",
+                    "quote": "Bannerbear supports direct integrations with 50+ tools like Airtable, Notion, Wordpress, Ghost and many more. Plus Zapier integration and MCP for AI Agents."
+                  },
+                  {
+                    "source_id": "E15",
+                    "quote": "50+ native integration, 9,000+ via Zapier"
+                  },
+                  {
+                    "source_id": "E12",
+                    "quote": "Everything, at a smaller scale: one workspace, three image templates, three animation templates, three workflows and three instant URLs."
+                  },
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "Forms\n:   Hosted forms that let your team or your customers generate on‑brand images from a template without touching the API. Embeddable in your own site."
+                  }
+                ]
+              },
+              {
+                "text": "FREE TRIAL",
+                "status": "supported",
+                "explanation": "The documented offer is explicitly a free trial.",
+                "citations": [
+                  {
+                    "source_id": "E13",
+                    "quote": "Start a free trial with 30 API credits, no credit card required"
+                  }
+                ]
+              },
+              {
+                "text": "Render a branded image from your own data",
+                "status": "supported",
+                "explanation": "The sources describe importing data, template-based image rendering, and generating on-brand images from templates.",
+                "citations": [
+                  {
+                    "source_id": "source:0",
+                    "quote": "## Import Your Data\nBannerbear supports direct integrations with 50+ tools like Airtable, Notion, Wordpress, Ghost and many more. Plus Zapier integration and MCP for AI Agents."
+                  },
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "Generate template-based images for social media, ecommerce and more via API or AI tools"
+                  },
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "Forms\n:   Hosted forms that let your team or your customers generate on‑brand images from a template without touching the API. Embeddable in your own site."
+                  }
+                ]
+              },
+              {
+                "text": "Connect Airtable directly to a branded template and use changing values to render product banners or social posts. Not using Airtable? Bannerbear also integrates directly with Notion, WordPress and Ghost, with Zapier available as a separate route.",
+                "status": "supported",
+                "explanation": "Bannerbear documents all four named tools as direct integrations and Zapier separately. Its product sources support template-based images for social media and ecommerce banners, with imported data driving the operation.",
+                "citations": [
+                  {
+                    "source_id": "E8",
+                    "quote": "Bannerbear supports direct integrations with 50+ tools like Airtable, Notion, Wordpress, Ghost and many more. Plus Zapier integration and MCP for AI Agents."
+                  },
+                  {
+                    "source_id": "proposition:product:0",
+                    "quote": "Bannerbear helps you auto-generate template-based social media videos, ecommerce banners and more with our API"
+                  },
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "Generate template-based images for social media, ecommerce and more via API or AI tools"
+                  }
+                ]
+              },
+              {
+                "text": "Bannerbear is an image generation API and template tool. Your data supplies the variations; the template keeps the design consistent across the rendered images.",
+                "status": "supported",
+                "explanation": "Bannerbear is explicitly described as an image-generation API producing template-based images. The import-data source and documented versioned-template behavior support data-driven output governed by a consistent template design.",
+                "citations": [
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "# Image Generation API\nGenerate template-based images for social media, ecommerce and more via API or AI tools"
+                  },
+                  {
+                    "source_id": "source:0",
+                    "quote": "## Import Your Data\nBannerbear supports direct integrations with 50+ tools like Airtable, Notion, Wordpress, Ghost and many more. Plus Zapier integration and MCP for AI Agents."
+                  },
+                  {
+                    "source_id": "proposition:mechanism:2",
+                    "quote": "Yes. Pass `version` to render against a specific saved version of the template, so a design change does not alter what an existing integration produces."
+                  }
+                ]
+              },
+              {
+                "text": "A first test can stay inside one trial workspace: create one image template, connect a supported direct integration or a Zapier-supported source, then render sample variations with your own content.",
+                "status": "supported",
+                "explanation": "The trial is documented as offering everything at a smaller scale, including one workspace and up to three image templates. Other sources establish direct integrations, Zapier sources, imported data, and template-based rendering.",
+                "citations": [
+                  {
+                    "source_id": "E12",
+                    "quote": "Everything, at a smaller scale: one workspace, three image templates, three animation templates, three workflows and three instant URLs."
+                  },
+                  {
+                    "source_id": "E8",
+                    "quote": "Bannerbear supports direct integrations with 50+ tools like Airtable, Notion, Wordpress, Ghost and many more. Plus Zapier integration and MCP for AI Agents."
+                  },
+                  {
+                    "source_id": "E15",
+                    "quote": "50+ native integration, 9,000+ via Zapier"
+                  },
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "Generate template-based images for social media, ecommerce and more via API or AI tools"
+                  }
+                ]
+              },
+              {
+                "text": "The free trial includes 30 API credits and requires no credit card.",
+                "status": "supported",
+                "explanation": "This exactly matches the documented trial offer.",
+                "citations": [
+                  {
+                    "source_id": "E13",
+                    "quote": "Start a free trial with 30 API credits, no credit card required"
+                  },
+                  {
+                    "source_id": "E1",
+                    "quote": "Start a free trial with 30 API Credits — no credit card required"
+                  }
+                ]
+              },
+              {
+                "text": "It supports up to three image templates, giving you room to test the workflow with more than one design.",
+                "status": "supported",
+                "explanation": "The trial explicitly permits three image templates; therefore testing more than one template design is within the documented limit.",
+                "citations": [
+                  {
+                    "source_id": "E12",
+                    "quote": "Everything, at a smaller scale: one workspace, three image templates, three animation templates, three workflows and three instant URLs."
+                  }
+                ]
+              },
+              {
+                "text": "Start the free trial →",
+                "status": "supported",
+                "explanation": "The selected destination is documented as a Start a Free Trial signup link, and the corresponding offer is a free trial with 30 credits and no card requirement.",
+                "citations": [
+                  {
+                    "source_id": "cta:0",
+                    "quote": "Literal link: [Start a Free Trial](https://app.bannerbear.com/users/sign_up?trial=automate)"
+                  },
+                  {
+                    "source_id": "proposition:action:0",
+                    "quote": "Start a free trial with 30 API Credits — no credit card required"
+                  }
+                ]
+              }
+            ],
+            "findings": [],
+            "summary": "Every material factual assertion is supported by the supplied literal sources. The draft accurately presents the integration and template-rendering mechanism, preserves the trial's workspace and template limits, states the 30-credit/no-card offer correctly, and provides one documented next step without making a forbidden outcome, price, or competitive claim.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The draft preserves the proposed value: a buyer can evaluate a recurring branded-image workflow by supplying changing data through a supported direct integration or Zapier and rendering variations from a template within the bounded trial.",
+              "original_passage": "Connect Airtable directly to a branded template and use changing values to render product banners or social posts.",
+              "revised_passage": ""
+            }
+          },
+          "version": 3
+        }
+      },
+      "read": {
+        "reads": [
+          {
+            "opened": true,
+            "stopped_at": "",
+            "what_it_sells": "Bannerbear offers an API and template tool that turns values from Airtable or other supported data sources into consistent branded banners and social images, potentially reducing recurring manual design work.",
+            "understood": true,
+            "situation_matches": null,
+            "relevance_feedback": "The offer is aimed at my marketing/growth role and conditionally accommodates sources besides Airtable. However, the profile only suggests that manual production of recurring visual assets may be a bottleneck; it does not establish that this is my current workflow, that I use any named source, or that I need data-driven images now.",
+            "assumed_experiences": [
+              "Profile-supported: I work on a marketing/growth team at an ecommerce or SaaS company.",
+              "Email-only: I regularly produce product banners or social posts whose content changes with structured data.",
+              "Email-only and conditional: I use Airtable, Notion, WordPress, Ghost, or a Zapier-supported source.",
+              "Not established by the profile: manual design is currently a meaningful bottleneck for me."
+            ],
+            "problem_now": "Automating recurring visual production could matter in my role, but whether it is a current problem for me—and whether my assets are structured enough for this workflow—is unknown.",
+            "biggest_doubt": "I can picture the template and data connection, but not the ongoing workflow: the email does not tell me whether rendering can happen automatically when data changes, in batches, or only through manual/API actions. Without that, I cannot judge whether it would actually remove work.",
+            "would_act": false,
+            "to_click_it_would_have_to": "I would have clicked if this email had told me exactly what triggers a render after setup and where the finished images are delivered.",
+            "pull": 6,
+            "fixes": [
+              "Rewrite \"Connect Airtable directly to a branded template and use changing values to render product banners or social posts.\" to state the concrete sequence: what action or event starts a render and what happens to the resulting image.",
+              "Replace \"A first test can stay inside one trial workspace\" with a short example showing one source record, the fields inserted into the template, and the resulting asset.",
+              "Trim \"It supports up to three image templates, giving you room to test the workflow with more than one design.\" The three-template fact is enough; the rest repeats its obvious implication."
+            ],
+            "material_revision": "Add the missing operational step between connecting data and receiving images. I still cannot picture whether I would update a record, run a batch, call the API, or perform another action, nor where the rendered asset would appear. Phrase any available modes as factual options rather than implying an unsupported capability.",
+            "persona": "Selected audience (explicit constraints): Marketing/growth team at an ecommerce or SaaS company.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): Marketing, growth, or content ops staff at ecommerce stores and SaaS companies who currently bottleneck on manual design for recurring visual assets\n\n",
+            "reported": true,
+            "opens_in_100": null,
+            "clicks_in_100": null
+          }
+        ]
+      }
+    }
+  ],
+  "passed": true,
+  "selected_attempt": 2,
+  "selected_brief": {
+    "problem_ids": [],
+    "offer_id": "offering",
+    "action_id": "action_aba6d6029cc6",
+    "selection_reason": "This is the strongest supported introduction for the selected reader because it joins a concrete marketing operation—driving branded image generation from an existing data source—to a low-commitment trial that lets the buyer evaluate it directly.",
+    "next_step_url": "https://app.bannerbear.com/users/sign_up?trial=automate",
+    "destination_kind": "web",
+    "argument_issue": "",
+    "value_case": {
+      "reader_benefit": "If the team has recurring product banners or social posts to produce, it can use one branded template with data supplied through a supported native integration or Zapier to render variations without laying out each variation separately.",
+      "mechanism": "Create an image template, then connect a supported data source through one of Bannerbear's 50+ direct integrations or Zapier so the source values drive rendered output. The trial provides a bounded environment for the first evaluation.",
+      "evidence_ids": [
+        "E8",
+        "E12",
+        "E13"
+      ],
+      "decision_conditions": [
+        "The connection route depends on the team's data source and may use a supported direct integration or Zapier.",
+        "The free trial includes 30 API credits and is limited to one workspace, three image templates, three animation templates, three workflows and three instant URLs."
+      ]
+    },
+    "claim_conditions": [
+      "Describe the proposed product-banner or social-post workflow conditionally because the recipient's current workload is unconfirmed.",
+      "Attach the 30-credit allowance and no-credit-card condition specifically to the free trial.",
+      "Do not imply that every data source has a native connector; present Zapier as a separate supported route.",
+      "Do not imply that the trial establishes production-scale suitability or economics.",
+      "Do not promise: No claim of time saved, cost saved, reduced headcount or that a designer is no longer needed.",
+      "Do not promise: No claim of growth, conversion lift or any marketing outcome from the generated visuals.",
+      "Do not promise: No claim of replacing or outperforming Figma, Canva, Photoshop or any competitor.",
+      "Do not promise: No claim of zero disruption to an existing workflow or of unlimited volume; credits and plan allowances apply.",
+      "Do not promise: No claim that every named source (Google Sheet, any specific CMS) has a native connector, or that the 100-render batch call is included in the trial.",
+      "Do not promise: No claim that every named source (Google Sheet, any specific CMS) has a native connector.",
+      "Do not promise: No claim that a 100-render single-call batch is included or practical within the trial's 30-credit allowance.",
+      "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit."
+    ],
+    "position": 1,
+    "user_request": "Write exactly one email. Introduce our product to a new buyer with one clear next step.",
+    "target_audience": "Marketing/growth team at an ecommerce or SaaS company",
+    "job": "Get the reader to start a bounded trial of one data-to-template image-generation workflow.",
+    "single_idea": "If the team produces recurring product banners or social posts, Bannerbear can feed data from a supported integration or Zapier into a branded template and render the variations automatically; a 30-credit trial lets the buyer evaluate that workflow without entering a credit card.",
+    "felt_need": "",
+    "status_quo": "",
+    "why_it_fails": "",
+    "mechanism": "The buyer creates a branded image template in the trial workspace, then uses a supported direct integration or Zapier to supply changing data for rendered variations. The trial includes 30 API credits and does not require a credit card.",
+    "alternative_ideas": [],
+    "alternative_arguments": [
+      {
+        "problem_ids": [],
+        "offer_id": "offering",
+        "action_id": "action_905cc1af721f",
+        "selection_reason": "This is a viable alternative for a more technical buyer because it leads with a distinct operational advantage—requesting up to 100 renders in one API call—and offers public API documentation as the smallest next step for assessing implementation fit.",
+        "next_step_url": "https://developers.bannerbear.com/v5/",
+        "destination_kind": "web",
+        "argument_issue": "",
+        "value_case": {
+          "reader_benefit": "For a campaign that needs many branded image variations, the team can request up to 100 renders in one API call rather than issuing a separate call for every render.",
+          "mechanism": "Bannerbear's Image API accepts a batch of up to 100 renders in a single call, while its documented REST API, OpenAPI specifications and language libraries provide the implementation surface developers can inspect.",
+          "evidence_ids": [
+            "E14",
+            "E9"
+          ],
+          "decision_conditions": [
+            "The 100-render figure applies to the Image API's single-call batch capability.",
+            "The available evidence does not establish that a 100-render batch is included or practical within the 30-credit trial."
+          ]
+        },
+        "claim_conditions": [
+          "Keep the batch claim to up to 100 renders in one API call.",
+          "Do not translate fewer API calls into an unsupported claim about time, labor or cost saved.",
+          "Do not imply that inspecting the API reference proves compatibility with the reader's stack.",
+          "Do not promise: No claim of time saved, cost saved, reduced headcount or that a designer is no longer needed.",
+          "Do not promise: No claim of growth, conversion lift or any marketing outcome from the generated visuals.",
+          "Do not promise: No claim of replacing or outperforming Figma, Canva, Photoshop or any competitor.",
+          "Do not promise: No claim of zero disruption to an existing workflow or of unlimited volume; credits and plan allowances apply.",
+          "Do not promise: No claim that every named source (Google Sheet, any specific CMS) has a native connector, or that the 100-render batch call is included in the trial.",
+          "Do not promise: No claim that every named source (Google Sheet, any specific CMS) has a native connector.",
+          "Do not promise: No claim that a 100-render single-call batch is included or practical within the trial's 30-credit allowance.",
+          "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit."
+        ],
+        "single_idea": "A team preparing many branded image variations can batch up to 100 renders in one Image API call and inspect the documented REST API before deciding whether the integration fits.",
+        "felt_need": "",
+        "status_quo": "",
+        "why_it_fails": "",
+        "mechanism": "The Image API supports up to 100 renders in one call; the API documentation, OpenAPI specifications and language libraries expose the implementation surface for review.",
+        "belief_shift": "Before: Bannerbear may appear to require one API request per image. After: the reader understands that the Image API supports batches of up to 100 renders in one call and can inspect the documented interface before committing.",
+        "evidence_ids": [
+          "E14",
+          "E9"
+        ],
+        "must_not_say": [
+          "No claim of time saved, cost saved, reduced headcount or that a designer is no longer needed.",
+          "No claim of growth, conversion lift or any marketing outcome from the generated visuals.",
+          "No claim of replacing or outperforming Figma, Canva, Photoshop or any competitor.",
+          "No claim of zero disruption to an existing workflow or of unlimited volume; credits and plan allowances apply.",
+          "No claim that every named source (Google Sheet, any specific CMS) has a native connector, or that the 100-render batch call is included in the trial.",
+          "No claim that every named source (Google Sheet, any specific CMS) has a native connector.",
+          "No claim that a 100-render single-call batch is included or practical within the trial's 30-credit allowance.",
+          "Do not claim that the Automate plan costs $49 USD per month.",
+          "Do not claim customer adoption, customer results, comparative superiority or exclusivity.",
+          "Automate plan costs $49 USD per month"
+        ],
+        "objection": "Can our developers inspect the integration surface before we commit to building against it?",
+        "call_to_action": "Review the API reference.",
+        "next_step_decision": "Decide whether Bannerbear's REST API and batch-render interface warrant a technical evaluation for the team's image-generation workflow.",
+        "next_step_value": "The destination provides the API reference for inspecting the documented interface; the licensed product evidence also establishes OpenAPI specifications and libraries for major languages.",
+        "next_step_evidence_ids": [
+          "E9"
+        ],
+        "next_step_limit": "Reading the reference does not prove compatibility with the team's specific stack, production performance, credit requirements or implementation effort.",
+        "subject_strategy": "Lead with the concrete batch unit—up to 100 renders in one API call—to earn attention from an API-aware reader without promising speed, savings or trial availability."
+      }
+    ],
+    "belief_shift": "Before: Bannerbear is only a generic image-automation category name. After: the reader sees a specific evaluation path—one branded template, a supported data connection and 30 trial credits with no credit card required.",
+    "evidence_ids": [
+      "E12",
+      "E13",
+      "E8"
+    ],
+    "must_not_say": [
+      "No claim of time saved, cost saved, reduced headcount or that a designer is no longer needed.",
+      "No claim of growth, conversion lift or any marketing outcome from the generated visuals.",
+      "No claim of replacing or outperforming Figma, Canva, Photoshop or any competitor.",
+      "No claim of zero disruption to an existing workflow or of unlimited volume; credits and plan allowances apply.",
+      "No claim that every named source (Google Sheet, any specific CMS) has a native connector, or that the 100-render batch call is included in the trial.",
+      "No claim that every named source (Google Sheet, any specific CMS) has a native connector.",
+      "No claim that a 100-render single-call batch is included or practical within the trial's 30-credit allowance.",
+      "Do not claim that the Automate plan costs $49 USD per month.",
+      "Do not claim the recipient currently creates assets manually, uses any named tool or has an established production bottleneck.",
+      "Do not claim customer adoption, customer results, comparative superiority or exclusivity.",
+      "Do not add uptime, company history, font count, synchronous-rendering details, paid-plan credits, PDFs, videos, MCP or the 100-render batch capability; they are separate arguments and would turn this introduction into a feature list.",
+      "Keep the connection route attached to its cited source. A native or prebuilt integration and a custom HTTP/webhook endpoint are separate setup paths unless the source explicitly equates them. A platform name alone establishes neither manual endpoint configuration nor a no-setup connector. Keep unknown setup requirements unknown; do not mix the steps or benefits of those paths.",
+      "Automate plan costs $49 USD per month"
+    ],
+    "forbidden_evidence_ids": [
+      "E10",
+      "E11",
+      "E16",
+      "E17",
+      "E19",
+      "E2",
+      "E20",
+      "E22",
+      "E23",
+      "E4",
+      "E5",
+      "E6",
+      "E7"
+    ],
+    "forbidden_capability_ids": [],
+    "objection": "Do I need to provide a credit card before I can try the workflow?",
+    "tone": "Direct, technical and inviting; confident without hype.",
+    "call_to_action": "Start the free trial.",
+    "next_step_decision": "Decide whether Bannerbear is worth continuing with for one recurring branded-image workflow after a bounded hands-on evaluation.",
+    "next_step_value": "The signup starts a free trial with 30 API credits and no credit card required; the trial account supports one workspace and up to three image templates, alongside its other documented trial limits.",
+    "next_step_evidence_ids": [
+      "E12",
+      "E13"
+    ],
+    "next_step_limit": "The trial signup and allowance do not establish that the reader's particular data source is supported, what implementation effort it requires, or whether the workflow is suitable for production volume.",
+    "subject_strategy": "Name the concrete data-to-template evaluation rather than using a vague automation promise; use the no-credit-card trial as the reason opening the email can lead to immediate action, not as the entire subject.",
+    "must_not_reuse": [],
+    "steering": {
+      "directions": [],
+      "include_evidence_ids": [],
+      "exclude_evidence_ids": [],
+      "use": [],
+      "avoid": [],
+      "context_only": [],
+      "excluded_values": []
+    }
+  },
+  "landed": false,
+  "calls": 5,
+  "elapsed_seconds": 180.484
+}

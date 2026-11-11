@@ -1,0 +1,101 @@
+{
+  "id": "8cc03c9d-0f8f-4f2b-8546-f121248ac46b",
+  "campaign_id": "18b0fc9c-f2bf-488d-bcb4-f35f3263a889",
+  "status": "failed",
+  "needs_review": false,
+  "outcome_status": "failed",
+  "review_reasons": [],
+  "error_message": "Codex reached its usage limit. Try again at 8:47 AM (time reported by Codex).",
+  "started_at": "2026-11-11T04:20:38.019328Z",
+  "completed_at": "2026-11-11T04:20:41.200586Z",
+  "created_at": "2026-11-11T04:20:38.020327Z",
+  "total_input_tokens": 0,
+  "total_output_tokens": 0,
+  "total_cache_read_tokens": 0,
+  "estimated_cost_usd": 0.0,
+  "recommendation_snapshot": {
+    "campaign_id": "18b0fc9c-f2bf-488d-bcb4-f35f3263a889",
+    "readiness": "GO",
+    "recommendation": null,
+    "dossier_status": "missing",
+    "selected_company_name": "",
+    "selected_company_qualification": null,
+    "reasons": [
+      "No persisted market recommendation applies to this campaign."
+    ],
+    "override_required": false,
+    "can_generate": true,
+    "user_message": "No audience-level qualification recommendation applies.",
+    "override_explicit": false
+  },
+  "generated_despite_recommendation": false,
+  "agent_executions": [
+    {
+      "id": "13a78366-7903-42bc-9313-8297d04fce28",
+      "agent_id": "strategist",
+      "agent_name": "Strategist",
+      "sequence_order": 1,
+      "status": "failed",
+      "input_data": {
+        "label": "Deciding what this campaign says, and in what order"
+      },
+      "output_data": null,
+      "error_message": "RoutingProvider call failed after 1 attempt(s): codex exec reported a failed turn: You’ve hit your usage limit. Upgrade to Pro (https://chatgpt.com/explore/pro), visit https://chatgpt.com/settings/usage to purchase more credits or try again at 8:47 AM.",
+      "started_at": "2026-11-11T04:20:38.224850Z",
+      "completed_at": "2026-11-11T04:20:41.126354Z",
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cost_usd": 0.0,
+      "duration_ms": 0.0,
+      "attempt": 1
+    }
+  ],
+  "assets": [],
+  "result": {
+    "run_status": "provider_unavailable",
+    "report": {
+      "request": "Write exactly one English activation email from the Customerly team. Reader: A Customerly support lead who has a draft answer to one frequently asked question. Ask them to do one thing: Create the first help-center article. Use a specific, documented first step and explain why it helps this reader. Keep the email under 150 words excluding subject, preview and signature. Avoid unsupported access, plan, timing and outcome claims. Use one CTA with an exact documented destination if available.",
+      "effective_audience": "",
+      "audience_scope": "",
+      "assessment_method": "Simulated reader's interest, uncalibrated; no response or conversion prediction",
+      "delivered": 0,
+      "promised": 1,
+      "contract_violations": [
+        "the user asked for 1 email(s) and the run produced 0"
+      ],
+      "emails": [],
+      "limiting_gaps": [
+        "Some linked source pages could not be read; the corpus is partial: https://www.customerly.io/ - Use only the readable captured facts; do not infer missing prices, features or proof."
+      ],
+      "what_would_help_most": "Can this source be supplied in a readable form or its missing details verified?",
+      "questions": [],
+      "sequence_summary": "",
+      "knowledge_version": 1,
+      "notes": [
+        "Codex reached its usage limit. Try again at 8:47 AM (time reported by Codex)."
+      ],
+      "reads_expected": true
+    },
+    "brief": null,
+    "knowledge_version": 1,
+    "recommendation_at_generation": {
+      "campaign_id": "18b0fc9c-f2bf-488d-bcb4-f35f3263a889",
+      "readiness": "GO",
+      "recommendation": null,
+      "dossier_status": "missing",
+      "selected_company_name": "",
+      "selected_company_qualification": null,
+      "reasons": [
+        "No persisted market recommendation applies to this campaign."
+      ],
+      "override_required": false,
+      "can_generate": true,
+      "user_message": "No audience-level qualification recommendation applies.",
+      "override_explicit": false
+    },
+    "generated_despite_recommendation": false
+  }
+}

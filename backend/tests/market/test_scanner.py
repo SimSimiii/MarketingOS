@@ -248,6 +248,23 @@ async def test_an_unreadable_competitor_is_reported_not_hidden(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("first_readable,second_readable", [(False, True), (False, False), (True, True)])
+async def test_compact_scan_tries_only_one_fallback_when_first_is_unreadable(
+    provider, session, first_readable, second_readable,
+):
+    provider.push("rival_profile", ALPHA_PROFILE)
+    leads = [RivalLead(name="Alpha" if first_readable else "Ghost", url="https://alpha.example" if first_readable else "https://ghost.example"),
+             RivalLead(name="Alpha" if second_readable else "Ghost2", url="https://alpha.example" if second_readable else "https://ghost2.example"),
+             RivalLead(name="Must not be read", url="https://beta.example")]
+    result = await scanner_for(provider, session, PAGES).scan(
+        artifacts=artifacts(), known=leads, discover=False, profile_limit=1,
+    )
+    assert len(result.snapshot.rivals) == (1 if first_readable else 2)
+    assert result.snapshot.positioning.rivals_profiled == int(first_readable or second_readable)
+    assert all(profile.name != "Must not be read" for profile in result.snapshot.rivals)
+
+
+@pytest.mark.asyncio
 async def test_a_competitor_already_on_the_list_is_not_added_twice(
     provider: ScriptedProvider, session
 ) -> None:

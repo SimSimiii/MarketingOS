@@ -150,6 +150,8 @@ async def test_critic_gets_selected_audience_stage_intent_and_actual_candidate(p
 async def test_feedback_survives_format_repair_and_revised_claims_are_checked(
     provider: RoleScriptedProvider, artifacts: KnowledgeArtifacts, unsupported: bool,
 ):
+    if unsupported:
+        provider.review("", "The $9876 price is unsupported.")
     edit = Edit(
         line="See what each answer cost.", severity="major",
         problem="Only daily aggregate spend is documented.",
@@ -255,4 +257,6 @@ async def test_strategy_failure_pivots_with_the_complete_alternative(provider, a
     assert "What it asks for: Read the setup guide" in final_prompt
     assert "Evidence it spends: E2" in final_prompt
     assert alternative.next_step_decision in final_prompt
-    assert alternative.next_step_limit in final_prompt
+    # Carried with the argument for the critic, and kept from the writer.
+    assert outcome.selected_brief.next_step_limit == alternative.next_step_limit
+    assert alternative.next_step_limit not in final_prompt

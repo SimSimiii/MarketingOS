@@ -30,6 +30,39 @@ ACTUAL_INTERPRETATION = (
 )
 
 
+@pytest.mark.parametrize("path", ["pricing", "features", "help/team-collaboration"])
+def test_product_material_does_not_establish_buyer_circumstances_on_creation_or_read(path):
+    quote = "Google Sheets integration\nNotion integration\nAirtable integration"
+    source = fetched(f"https://forms.example/{path}", SourceTier.BEHAVIOURAL, quote)
+    observation = SourcedObservation(
+        text="Operations leads at growing companies run intake forms connected to their team tools.",
+        grounding=Grounding.GROUNDED, evidence=[EvidenceReference(source_id="S1", quote=quote)],
+    )
+    fresh = verify_research(segment(), _ResearchDraft(situation=observation), [source])
+    assert fresh.situation.grounding is Grounding.INFERRED
+    assert fresh.situation.evidence[0].quote == quote
+    assert "not observed buyer adoption" in fresh.situation.inference_basis
+    stored = fresh.model_copy(deep=True)
+    stored.situation.grounding = Grounding.GROUNDED
+    reviewed = review_research_interpretations(stored)
+    assert reviewed.situation.grounding is Grounding.INFERRED
+    assert stored.situation.grounding is Grounding.GROUNDED
+    assert review_research_interpretations(reviewed) == reviewed
+    assert not reviewed.problems
+
+
+@pytest.mark.parametrize("url,tier", [
+    ("https://jobs.example/vacancy", SourceTier.BEHAVIOURAL),
+    ("https://forms.example/pricing", SourceTier.BUYER_VOICE),
+])
+def test_source_scope_review_keeps_actual_job_signals_and_buyer_quotations(url, tier):
+    quote = "Our support team uses a shared inbox to handle warranty requests."
+    research = verify_research(segment(), _ResearchDraft(situation=SourcedObservation(
+        text=quote, evidence=[EvidenceReference(source_id="S1", quote=quote)],
+    )), [fetched(url, tier, quote)])
+    assert research.situation.grounding is Grounding.GROUNDED
+
+
 def test_exact_saved_native_module_interpretation_is_reviewed_without_losing_the_quote():
     original = AudienceResearch(
         audience_name="Builders", candidate_kind="adjacent",

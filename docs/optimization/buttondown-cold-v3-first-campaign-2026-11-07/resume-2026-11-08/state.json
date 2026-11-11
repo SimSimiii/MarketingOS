@@ -1,0 +1,100 @@
+{
+  "status": "complete_reviewed_scope",
+  "runs": [
+    {
+      "execution_id": "030642a6-bb96-48ba-9e34-cf273464ade2",
+      "campaign_id": "dbf42842-0f65-4c4f-9024-3c46992762ed",
+      "status": "completed",
+      "launched_at": "2026-11-08T06:43:31.164Z",
+      "code_revision": "working-tree-v28",
+      "outcome_status": "completed",
+      "needs_review": false,
+      "review_reasons": [],
+      "last_checked_at": "2026-11-08T06:45:48.534848+00:00",
+      "result_dir": "docs\\optimization\\buttondown-cold-v3-first-campaign-2026-11-07\\resume-2026-11-08\\runs\\030642a6-bb96-48ba-9e34-cf273464ade2",
+      "estimated_cost_usd": 0.7786,
+      "completed_at": "2026-11-08T06:45:36.619990Z"
+    }
+  ],
+  "database": "C:\\Users\\oussa\\AppData\\Local\\Temp\\marketingos-audit-nov08-9822e33988814c50ab7baefe229063eb.sqlite",
+  "source_case": "../case.json",
+  "next_action": "Accepted paid-quality result for the reviewed email-generation scope; no further model calls needed.",
+  "steps": {},
+  "last_snapshot": "docs\\optimization\\buttondown-cold-v3-first-campaign-2026-11-07\\resume-2026-11-08\\steps\\20261108T070929870461Z-capture.json",
+  "external_blocker": null,
+  "quality_history": [
+    {
+      "iteration": 3,
+      "score": null,
+      "execution_id": null,
+      "comparable": false,
+      "reason": "No delivered email; Claude quota interrupted the live source-recovery test.",
+      "evidence": [
+        "preparation-v26-quota-blocked.json"
+      ],
+      "next_action": "After reset, restart against the recorded isolated DB and click Prepare campaign for this saved brand. The developer dossier still lacks API-send evidence; automatic recovery now receives captured source excerpts and formatting-safe quote matching. Verify the recovered ledger and actual email; do not enter docs URLs manually."
+    },
+    {
+      "iteration": 4,
+      "execution_id": "030642a6-bb96-48ba-9e34-cf273464ade2",
+      "score": 87,
+      "comparable": false,
+      "track": "resumed-developer-api-scheduling",
+      "breakdown": {
+        "factual_support": 24,
+        "audience_and_offer": 18,
+        "specificity_and_argument": 16,
+        "continuity": 13,
+        "polish_and_rendering": 8,
+        "unsupported_or_repetition": 8
+      },
+      "strengths": [
+        "Documented scheduling endpoint and free-plan access explain a useful developer workflow",
+        "API fields, future timestamp requirement and public next-step documentation checked against captured source"
+      ],
+      "remaining_defect": "Some repetition and literal inline-code punctuation; normal brand polish only.",
+      "evidence": [
+        "result-v28.json",
+        "email-v28.txt",
+        "ui-verification-v28.json"
+      ],
+      "next_action": "Accepted paid-quality result for the reviewed email-generation scope; no further model calls needed."
+    }
+  ],
+  "current_code_interpretation": 28,
+  "final_safety_checks": {
+    "source_probe": "No paid calls after quota; v27 read adapter protects captured billing-toggle prices, even previously cached facts.",
+    "backend_full_result": "docs/reviews/backend-tests-2026-11-08-final.txt",
+    "frontend_tests": 37,
+    "lint_typecheck": "passed",
+    "backend_passed": 2246,
+    "backend_duration_seconds": 258.73,
+    "frontend_passed": 37
+  },
+  "quality_best": {
+    "score": 87,
+    "iteration": 4,
+    "execution_id": "030642a6-bb96-48ba-9e34-cf273464ade2"
+  },
+  "deliverable_verdict": "paid_quality_after_ordinary_brand_review",
+  "global_audit_verdict": "sellable_for_source_grounded_email_drafting",
+  "commercial_validation": "not_validated",
+  "minimal_flow_configuration": {
+    "extra_source_urls": 0,
+    "manual_fact_choices": 0,
+    "manual_instructions": 0,
+    "model_pins": 0,
+    "generate_anyway": false
+  },
+  "final_checks": {
+    "backend_passed": 2257,
+    "backend_seconds": 375.88,
+    "frontend_passed": 37,
+    "ruff": "passed",
+    "frontend_lint": "passed",
+    "typescript": "passed",
+    "diff_check": "passed",
+    "result": "docs/reviews/backend-tests-2026-11-08-complete.txt"
+  },
+  "stop_reason": "sellable_result_bar_met_in_reviewed_scope"
+}

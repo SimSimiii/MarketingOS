@@ -128,7 +128,7 @@ def _in_digits(text: str) -> str:
     return _NUMBER_WORD_RE.sub(lambda m: _NUMBER_WORDS[m.group(0).lower()], text)
 
 
-def _values(text: str) -> set[str]:
+def _values(text: str, *, include_urls: bool = True) -> set[str]:
     """Every checkable figure in a piece of text, normalised.
 
     Reuses the claim extractor the evidence gate runs on the other side of the
@@ -142,7 +142,7 @@ def _values(text: str) -> set[str]:
     return {
         claim.normalized
         for claim in extract_claims(_in_digits(text))
-        if claim.kind is not ClaimKind.QUOTE
+        if claim.kind is not ClaimKind.QUOTE and (include_urls or claim.kind is not ClaimKind.URL)
     }
 
 
@@ -268,10 +268,13 @@ def _carries(
         # A sender's name or unrelated shared number is not a testimonial.
         # This remains a lexical hint, never a semantic attribution guarantee.
         return bool(distinctive_names)
-    licensed_values = _values(licensing)
+    # Documentation URLs in a quote are often references, not the fact
+    # assigned to the email. A capability can be used without printing its URL.
+    licensed_values = _values(licensing, include_urls=False)
     if licensed_values:
         return bool(licensed_values & values)
-    terms = set(re.findall(r"[a-z]{4,}", licensing.casefold())) - _SUPPORT_STOPWORDS - background_names
+    licensing_words = re.sub(r"https?://[^\s)\]]+", "", licensing.casefold())
+    terms = set(re.findall(r"[a-z]{4,}", licensing_words)) - _SUPPORT_STOPWORDS - background_names
     return len(terms & set(re.findall(r"[a-z]{4,}", flat))) >= 3
 
 

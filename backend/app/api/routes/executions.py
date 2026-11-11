@@ -4,20 +4,29 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Request, status
 from fastapi.responses import StreamingResponse
+from sqlmodel import Session
 
-from app.api.deps import CampaignServiceDep
+from app.api.deps import AIProviderDep, CampaignServiceDep, SessionDep
 from app.api.public_output import public_output
+from app.core.config import get_settings
+from app.marketing.revision import MAX_REVISIONS_PER_EMAIL
+from app.models.campaign_execution import CampaignExecution
 from app.models.enums import LogLevel
+from app.models.generated_asset import GeneratedAsset
 from app.orchestration.live_broker import CLOSE, broker
 from app.schemas.campaign import (
     AgentExecutionRead,
     CampaignExecutionDetail,
     CampaignExecutionRead,
     CampaignResultRead,
+    EmailRevisionCreate,
+    EmailRevisionHistory,
+    EmailRevisionRead,
     GeneratedAssetRead,
     RunningExecutionRead,
 )
 from app.schemas.execution_log import ExecutionLogRead, ExecutionTimeline
+from app.services import revision_service as revisions
 from app.services.campaign_service import CampaignService, ExecutionNotCancellableError
 
 router = APIRouter(prefix="/executions", tags=["executions"])
@@ -96,6 +105,120 @@ def get_execution_assets(
     if service.get_execution(execution_id) is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Execution not found")
     return _assets(service, execution_id)
+
+
+def _owned_asset(
+    service: CampaignService, session: Session, execution_id: UUID, asset_id: UUID
+) -> tuple[CampaignExecution, GeneratedAsset]:
+    """Resolve through `get_execution`, the scoped choke point, then make
+    sure the asset is one of that run's - an asset id alone is no handle."""
+    execution = service.get_execution(execution_id)
+    if execution is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Execution not found")
+    asset = session.get(GeneratedAsset, asset_id)
+    if asset is None or asset.campaign_execution_id != execution.id:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Email not found")
+    return execution, asset
+
+
+def _history(session: Session, asset: GeneratedAsset) -> EmailRevisionHistory:
+    original = revisions.original_of(asset)
+    selected = revisions.selected_revision_id(asset)
+    available = not get_settings().credit_billing_enabled
+    return EmailRevisionHistory(
+        asset=GeneratedAssetRead.model_validate(asset),
+        original_title=original.get("title") or asset.title,
+        original_content=original.get("content") or asset.content,
+        selected_revision_id=UUID(selected) if selected else None,
+        revisions=[EmailRevisionRead.model_validate(row) for row in revisions.history(session, asset)],
+        max_revisions=MAX_REVISIONS_PER_EMAIL,
+        available=available,
+        reason="" if available else "Model edits are unavailable in credit billing mode.",
+    )
+
+
+def _revision_error(exc: revisions.RevisionError) -> HTTPException:
+    return HTTPException(exc.status_code, str(exc))
+
+
+@router.get("/{execution_id}/assets/{asset_id}/revisions", response_model=EmailRevisionHistory)
+def list_email_revisions(
+    execution_id: UUID, asset_id: UUID, service: CampaignServiceDep, session: SessionDep
+) -> EmailRevisionHistory:
+    """Every proposal for one email, with the original it started from."""
+    _, asset = _owned_asset(service, session, execution_id, asset_id)
+    return _history(session, asset)
+
+
+@router.post(
+    "/{execution_id}/assets/{asset_id}/revisions",
+    response_model=EmailRevisionRead,
+    status_code=status.HTTP_202_ACCEPTED,
+)
+async def request_email_revision(
+    execution_id: UUID, asset_id: UUID, data: EmailRevisionCreate,
+    service: CampaignServiceDep, session: SessionDep, provider: AIProviderDep,
+) -> EmailRevisionRead:
+    """Ask for a change to one finished email. Bounded: one writer pass, and
+    one repair only if that pass broke a check. Nothing else in the campaign
+    is re-run, and the email is unchanged until a proposal is accepted."""
+    execution, asset = _owned_asset(service, session, execution_id, asset_id)
+    campaign = service.get_campaign(execution.campaign_id)
+    if campaign is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Campaign not found")
+    try:
+        row = revisions.launch(
+            session, campaign, execution, asset, provider,
+            data.instruction, data.base_revision_id,
+        )
+    except revisions.RevisionError as exc:
+        raise _revision_error(exc) from exc
+    return EmailRevisionRead.model_validate(row)
+
+
+@router.post(
+    "/{execution_id}/assets/{asset_id}/revisions/{revision_id}/accept",
+    response_model=EmailRevisionHistory,
+)
+def accept_email_revision(
+    execution_id: UUID, asset_id: UUID, revision_id: UUID,
+    service: CampaignServiceDep, session: SessionDep,
+) -> EmailRevisionHistory:
+    _, asset = _owned_asset(service, session, execution_id, asset_id)
+    try:
+        asset = revisions.accept(session, asset, revision_id)
+    except revisions.RevisionError as exc:
+        raise _revision_error(exc) from exc
+    return _history(session, asset)
+
+
+@router.post(
+    "/{execution_id}/assets/{asset_id}/revisions/{revision_id}/reject",
+    response_model=EmailRevisionHistory,
+)
+def reject_email_revision(
+    execution_id: UUID, asset_id: UUID, revision_id: UUID,
+    service: CampaignServiceDep, session: SessionDep,
+) -> EmailRevisionHistory:
+    _, asset = _owned_asset(service, session, execution_id, asset_id)
+    try:
+        revisions.reject(session, asset, revision_id)
+    except revisions.RevisionError as exc:
+        raise _revision_error(exc) from exc
+    return _history(session, asset)
+
+
+@router.post(
+    "/{execution_id}/assets/{asset_id}/restore-original", response_model=EmailRevisionHistory
+)
+def restore_original_email(
+    execution_id: UUID, asset_id: UUID, service: CampaignServiceDep, session: SessionDep
+) -> EmailRevisionHistory:
+    _, asset = _owned_asset(service, session, execution_id, asset_id)
+    try:
+        return _history(session, revisions.restore_original(session, asset))
+    except revisions.RevisionError as exc:
+        raise _revision_error(exc) from exc
 
 
 @router.post("/{execution_id}/cancel", status_code=status.HTTP_202_ACCEPTED)

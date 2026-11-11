@@ -1,0 +1,23 @@
+﻿Schedule newsletters from your own code
+---------------------------------------
+
+Subject: Schedule newsletters from your own code
+Preview text: Keep your content logic and use one documented API request to schedule delivery.
+
+Keep your newsletter logic in your code
+
+Hi there,
+
+Build the newsletter in your own code, then schedule its delivery through Buttondown.
+
+Buttondown is an email newsletter platform for creating, scheduling, and sending emails through an API. Your code stays in charge of how the content comes together.
+
+When your script is ready, authenticate with a Buttondown API token and post the email to `/v1/emails`. Add `status: scheduled` and a future `publish_date` to set the send time.
+
+API access, including scheduling, is available on the free plan. Buttondown handles the scheduled newsletter send after your own code prepares and submits the request.
+
+The official documentation shows the request in Python, Ruby, JavaScript, and cURL, so you can see whether it fits the workflow you want to run.
+
+See the scheduling request → https://docs.buttondown.com/scheduling-emails-via-the-api
+
+- Buttondown

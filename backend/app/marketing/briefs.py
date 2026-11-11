@@ -20,6 +20,41 @@ from app.marketing.contract import DeliverableContract
 from app.marketing.intent import CampaignIntent
 
 
+class ValueCase(BaseModel):
+    """Proposed reader value, not new factual authority.
+
+    The strategist distinguishes operational value from the CTA's payoff and
+    visible decision conditions from internal prohibitions. Missing in old briefs.
+    """
+
+    reader_benefit: str = ""
+    mechanism: str = ""
+    evidence_ids: list[str] = Field(default_factory=list)
+    decision_conditions: list[str] = Field(default_factory=list)
+
+    def for_evidence(self, allowed: set[str]) -> "ValueCase":
+        # All dependencies are necessary: never keep a benefit with just the
+        # surviving half of its support after normalization or user exclusions.
+        if not self.reader_benefit.strip() or not self.evidence_ids or not set(self.evidence_ids) <= allowed:
+            return ValueCase()
+        return self
+
+    def render(self, allowed: set[str]) -> str:
+        value = self.for_evidence(allowed)
+        if not value.reader_benefit:
+            return ""
+        return (
+            "Reader value to explain (proposed interpretation; verify against quoted evidence): "
+            + value.reader_benefit + "\nSupporting evidence: " + ", ".join(value.evidence_ids)
+            + "\nConcrete operation that makes this useful: " + (value.mechanism or "check assigned quotations")
+            + "\nConditions to check for the specific promise made in the draft: "
+            + ("; ".join(value.decision_conditions) or "none identified; still check source conditions")
+            + "\nInclude only qualifications necessary for that promise to be accurate. "
+            "Preserve the supported mechanism and its useful consequence through edits. "
+            "Internal prohibitions constrain claims; they are not an instruction to list warnings.\n"
+        )
+
+
 class PropositionLinks(BaseModel):
     problem_ids: list[str] = Field(default_factory=list)
     offer_id: str = ""
@@ -27,6 +62,7 @@ class PropositionLinks(BaseModel):
     selection_reason: str = ""
     next_step_url: str = ""
     destination_kind: Literal["web", "reply", "offline"] = "web"
+    destination_rejected: bool = False
     argument_issue: str = Field(
         default="",
         description=(
@@ -35,6 +71,20 @@ class PropositionLinks(BaseModel):
             "limits; known exclusions belong in must_not_say or next_step_limit."
         ),
     )
+    value_case: ValueCase = Field(default_factory=ValueCase)
+    claim_conditions: list[str] = Field(default_factory=list)
+
+    def render_conditions(self) -> str:
+        if not self.claim_conditions:
+            return ""
+        return (
+            "Conditions that apply to the relevant claim or action:\n"
+            + "\n".join(f"- {item}" for item in self.claim_conditions)
+            + "\nIf the draft makes a claim, keep the conditions needed to make that claim true. "
+            "These planning notes do not require mentioning optional terms. Details about a price, "
+            "quota or optional step apply only if the draft relies on that specific term. "
+            "The user's explicit requirements and exclusions still apply.\n"
+        )
 
 
 class ArgumentOption(PropositionLinks):
@@ -70,7 +120,9 @@ class ArgumentOption(PropositionLinks):
     def render(self) -> str:
         evidence = ", ".join(self.evidence_ids) or "none assigned"
         return (
-            f"Idea: {self.single_idea}\n"
+            self.value_case.render(set(self.evidence_ids))
+            + self.render_conditions()
+            + f"Idea: {self.single_idea}\n"
             f"Need: {self.felt_need or 'not established'}\n"
             f"Current approach: {self.status_quo or 'not established'}\n"
             f"Its supported limitation: {self.why_it_fails or 'not established'}\n"
@@ -88,10 +140,50 @@ class ArgumentOption(PropositionLinks):
         )
 
 
+class EmailSteering(BaseModel):
+    """The slice of the user's own choices one email has to honour.
+
+    Set in code by `app.marketing.steering.apply_steering`, never by a model.
+    It lives on the brief so it is persisted with the run, read again by the
+    post-generation editor, and rendered into every writer and critic call -
+    which is what keeps a preference alive through every rewrite rather than
+    in the one prompt that first heard it. Empty for a run nobody steered,
+    and then it renders nothing at all.
+    """
+
+    directions: list[str] = Field(default_factory=list)
+    include_evidence_ids: list[str] = Field(default_factory=list)
+    exclude_evidence_ids: list[str] = Field(default_factory=list)
+    use: list[str] = Field(default_factory=list)
+    avoid: list[str] = Field(default_factory=list)
+    context_only: list[str] = Field(default_factory=list)
+    #: Normalized figures and quotations found only in excluded material -
+    #: what `steering_gate` blocks.
+    excluded_values: list[str] = Field(default_factory=list)
+
+    @property
+    def is_empty(self) -> bool:
+        return not (self.directions or self.use or self.avoid or self.context_only
+                    or self.excluded_values or self.include_evidence_ids)
+
+    def render(self) -> str:
+        if self.is_empty:
+            return ""
+        lines = [("User steering for this email (the user's own preferences: honour them, "
+                  "but evidence limits and automatic checks still win):")]
+        lines += [f"- Use: {line}" for line in self.use]
+        lines += [f"- Do not use, mention or argue from: {line}" for line in self.avoid]
+        lines += [f"- Context only, not verified - never state it as fact: {line}"
+                  for line in self.context_only]
+        lines += [f"- Direction: {line}" for line in self.directions]
+        return "\n".join(lines)
+
+
 class EmailBrief(PropositionLinks):
     """One slot in the sequence, decided before any of it is written."""
 
     position: int = 1
+    user_request: str = ""
     #: Pinned by normalization from the selected audience, never chosen by the
     #: planner or changed by switching to another proposition.
     target_audience: str = ""
@@ -196,6 +288,8 @@ class EmailBrief(PropositionLinks):
     subject_strategy: str = ""
     #: Angles, proofs and opening moves already spent by earlier emails.
     must_not_reuse: list[str] = Field(default_factory=list)
+    #: What the user asked of this email before the run. See EmailSteering.
+    steering: EmailSteering = Field(default_factory=EmailSteering)
 
     def primary_argument(self) -> ArgumentOption:
         return ArgumentOption(
@@ -218,17 +312,29 @@ class EmailBrief(PropositionLinks):
         )
 
     def with_argument(self, argument: ArgumentOption) -> "EmailBrief":
-        """Return this slot with one whole argument applied atomically."""
+        """Return this slot with one whole argument applied atomically.
+
+        A fact the user asked for moves with the slot, not with the argument:
+        pivoting to another idea is the loop's decision, and it does not get
+        to drop the user's.
+        """
+        evidence_ids = list(dict.fromkeys([
+            *argument.evidence_ids, *self.steering.include_evidence_ids,
+        ]))
         return self.model_copy(
             update={
                 **argument.model_dump(include=set(PropositionLinks.model_fields)),
+                "value_case": argument.value_case.model_copy(deep=True),
+                "claim_conditions": list(dict.fromkeys([
+                    *self.claim_conditions, *argument.claim_conditions,
+                ])),
                 "single_idea": argument.single_idea,
                 "felt_need": argument.felt_need,
                 "status_quo": argument.status_quo,
                 "why_it_fails": argument.why_it_fails,
                 "mechanism": argument.mechanism,
                 "belief_shift": argument.belief_shift,
-                "evidence_ids": list(argument.evidence_ids),
+                "evidence_ids": evidence_ids,
                 # Safety and scope constraints from the slot remain binding;
                 # the alternative may narrow them further.
                 "must_not_say": list(dict.fromkeys([
@@ -251,7 +357,7 @@ class EmailBrief(PropositionLinks):
                             *(
                                 evidence_id
                                 for evidence_id in self.evidence_ids
-                                if evidence_id not in argument.evidence_ids
+                                if evidence_id not in evidence_ids
                             ),
                         ]
                     )
@@ -297,10 +403,17 @@ class EmailBrief(PropositionLinks):
             for index, (label, value) in enumerate(written, start=1)
         )
 
-    def render(self) -> str:
+    def render(self, *, for_writer: bool = False) -> str:
         # Deliberately without either alternative field. A writer shown the
         # arguments this email could have used gestures at all of them; the
         # alternatives belong to the loop, and each draft receives one only.
+        #
+        # `for_writer` drops what the next step does not validate. The critic
+        # needs that line to catch a promise past it; a writer handed it
+        # publishes it. "14 pouces ne précise pas les dimensions internes" went
+        # from this field into Cabaia's email almost word for word, which is a
+        # reservation the reader never asked for. `must_not_say` stays, and it
+        # is what keeps the claim out.
         return (
             (
                 f"Selected audience constraint (campaign target, not observed biography): {self.target_audience}\n"
@@ -309,6 +422,8 @@ class EmailBrief(PropositionLinks):
                 "a plan that changes this target; do not promise the target outcome.\n"
                 if self.target_audience else ""
             )
+            + self.value_case.render(set(self.evidence_ids) - set(self.forbidden_evidence_ids))
+            + self.render_conditions()
             + f"Proposition references: problems={', '.join(self.problem_ids) or 'none required'}; offer={self.offer_id or 'unspecified'}; action={self.action_id or 'unspecified'}\n"
             f"Why this proposition: {self.selection_reason or 'not supplied'}\n"
             f"Destination: {self.next_step_url or 'not fixed'}\n"
@@ -326,9 +441,11 @@ class EmailBrief(PropositionLinks):
             f"Decision that step enables: {self.next_step_decision or 'not established'}\n"
             f"What the step actually delivers: {self.next_step_value or 'not established'}\n"
             f"Evidence for that payoff: {', '.join(self.next_step_evidence_ids) or 'none assigned'}\n"
-            f"What the step does not validate: {self.next_step_limit or 'not established'}\n"
-            f"Subject approach: {self.subject_strategy or 'concrete, no clickbait'}\n"
+            + ("" if for_writer else
+               f"What the step does not validate: {self.next_step_limit or 'not established'}\n")
+            + f"Subject approach: {self.subject_strategy or 'concrete, no clickbait'}\n"
             f"Do not reuse: {'; '.join(self.must_not_reuse) or 'nothing spent yet'}"
+            + (f"\n{steering}" if (steering := self.steering.render()) else "")
         )
 
     def summary(self) -> str:
@@ -344,6 +461,7 @@ class CampaignBrief(BaseModel):
     interpretation: str = ""
     pipeline_version: int = 2
     strategy_mode: Literal["planned", "direct"] = "planned"
+    focused_activation: bool = False
     intent: CampaignIntent | None = None
     #: Audience context reconstructed from the selected segment and user input.
     #: The strategist's expanded persona is not evidence about the recipient.

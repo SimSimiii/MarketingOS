@@ -6,9 +6,9 @@ keep the better version. This protocol was the best thing in the old codebase
 and it was a private method of one specialist; here it is the centre of the
 system.
 
-Two rules hold it together. Only the deterministic gates can block - taste
-never blocks, or a run spends its budget arguing with a model about a
-sentence. And a rewrite is kept only if it actually came back better, because
+Two rules hold it together. Mechanical validity and an independent AI source
+review control delivery; editorial taste stays advisory. A rewrite is kept
+only if it actually came back better, because
 rewriting copy that already worked usually sands the edges off it.
 
 The loop starts wide and then narrows. Several candidates are drafted, screened
@@ -46,6 +46,7 @@ that has already been measured twice.
 
 import asyncio
 import logging
+import re
 from dataclasses import dataclass, field
 from functools import reduce
 
@@ -57,12 +58,15 @@ from app.marketing.briefs import CampaignBrief, EmailBrief
 from app.marketing.cancellation import CancellationToken
 from app.marketing.critic import ConversionCritic, Critique
 from app.marketing.email_copy import Email, normalized, render_review
-from app.marketing.gates import GateReport, planned_call_to_action_gate, run_all
+from app.marketing.exceptions import CraftError
+from app.marketing.gates import GateIssue, GateReport, mechanical_gate
+from app.marketing.grounding import ClaimReviewer, FactualRepair, factual_repair
 from app.marketing.observer import RunObserver
 from app.marketing.reader import BlindReader, PanelRead
 from app.marketing.request import CampaignRequest
 from app.marketing.subject_lines import SubjectBakeOff
 from app.marketing.substantiation import Substantiation
+from app.marketing.substantiation import assess as assess_substantiation
 from app.marketing.tournament import Duel, PreferenceJudge
 from app.marketing.writer import EmailWriter
 from app.runtime.exceptions import ProviderError
@@ -111,12 +115,47 @@ _OPENING_MOVES: tuple[str, ...] = (
     ),
 )
 
-#: How many words of the opening two drafts have to share before they count as
-#: the same draft. Long enough that the match is a shared move rather than a
-#: shared idiom, short enough to catch the failure it exists for: in a measured
-#: run two of three candidates came back with the same subject and the same
-#: first sentence, and both were read cold at full price.
-_SAME_OPENING_WORDS = 8
+def check_draft(
+    draft: Email,
+    brief: EmailBrief,
+    *,
+    artifacts: KnowledgeArtifacts,
+    evidence: EvidenceIndex,
+    previous: list[Email],
+    merge_fields: list[str] | tuple[str, ...] = (),
+    positioning: PositioningMap | None = None,
+) -> tuple[GateReport, Substantiation]:
+    """Shared mechanical checks and diagnostic counters, without semantic approval.
+
+    Campaigns and local edits both pair this with ClaimReviewer. These free
+    checks alone never establish that the prose is supported by its sources.
+    """
+    # Legacy regex gates remain available as diagnostic/evaluation instruments.
+    # They do not adjudicate language in the production delivery path.
+    substantiation = assess_substantiation(
+        draft,
+        [
+            entry
+            for id_ in brief.evidence_ids
+            if (entry := artifacts.evidence.get(id_)) is not None
+        ],
+        artifacts.evidence.entries,
+        company_name=artifacts.business.company_name,
+    )
+    gates = mechanical_gate(draft, merge_fields)
+    if brief.destination_rejected:
+        gates.issues.append(GateIssue(
+            gate="cta-destination",
+            detail="The planned button destination could not be verified. Select a source-backed destination.",
+        ))
+    for url in re.findall(r'https?://[^\s<>"\]]+', draft.call_to_action, flags=re.IGNORECASE):
+        if brief.next_step_url not in {url, url.rstrip(".,;:)")}:
+            gates.issues.append(GateIssue(
+                gate="cta-destination",
+                detail="The CTA contains a URL different from the planned destination. Use plain text for its label.",
+            ))
+            break
+    return gates, substantiation
 
 
 def _opening_line(email: Email) -> str:
@@ -228,6 +267,7 @@ class EmailVersion:
     #: The claim this draft argued, when it is not the brief's own. Set on
     #: bake-off candidates and on a pivot.
     idea: str = ""
+    factual_repair: FactualRepair | None = None
 
     @property
     def ships(self) -> bool:
@@ -251,7 +291,7 @@ class EmailVersion:
         return self.critique is not None
 
     @property
-    def measured(self) -> tuple[int, int, int, float, int, int]:
+    def measured(self) -> tuple[int, int, int, float, float]:
         """What the free checks and the cold reader made of this version.
 
         Separate from `score` because it is the half of the judgment that does
@@ -268,34 +308,30 @@ class EmailVersion:
         panel could not decode losing to one it could is not a close call -
         it is the whole difference between an email and a paragraph.
 
-        Substantiation comes *after* pull and never before it. It is a
-        tiebreak, and only a tiebreak: how much a stranger wanted the thing is
-        the question the loop exists to move, and a rule that put proof above
-        it would ship a well-cited email nobody would open. Where it earns its
-        place is the case the bake-off's own docstring names - candidates that
-        come back 5, 5 and 4, where the scores have said which one to throw
-        away and nothing at all about the other two. Between two drafts a
-        cold reader could not separate, the one that put the evidence on the
-        page is the better email, and that is not a matter of opinion.
+        Then who would act, then how much they want it. An email exists to get
+        the click, so a draft more readers would click beats one they merely
+        rate higher.
+
+        Evidence-spend counters are diagnostic only. Source entailment is
+        reviewed independently; editorial comparisons belong to the models.
         """
         return (
             0 if self.gates.blocking else 1,
             1 if self.read.understood else 0,
             1 if self.read.relevant else 0,
+            self.read.acting,
             self.read.pull,
-            len(self.substantiation.carried),
-            self.substantiation.attributions,
         )
 
     @property
-    def score(self) -> tuple[int, int, int, int, float]:
+    def score(self) -> tuple[int, int, int, int, float, float]:
         """How to choose between two versions of the same email.
 
         Ordered by what a user would actually care about: an email with an
         unsupported claim or a broken structure is not in the running however
         well it reads, then whether a stranger could say what it was selling,
-        then the critic's verdict, then how much the cold reader wanted the
-        thing.
+        then the critic's verdict, then who would act on it and how much the
+        cold reader wanted the thing.
 
         Only valid between two versions the critic treated alike - see
         `better_of`, which is what `EmailOutcome.best` actually uses.
@@ -305,6 +341,7 @@ class EmailVersion:
             1 if self.read.understood else 0,
             1 if self.read.relevant else 0,
             1 if self.approved else 0,
+            self.read.acting,
             self.read.pull,
         )
 
@@ -327,8 +364,8 @@ def better_of(left: EmailVersion, right: EmailVersion) -> EmailVersion:
     Then the critic's verdict, but *only when it judged both*: the final attempt deliberately goes uncritiqued, and scoring an
     unasked version as approved would hand it a point it never earned, letting
     a draft nobody vetted beat one the critic had explicitly sent back. Then
-    how much the cold reader wanted the thing, which is the question the whole
-    loop exists to move.
+    who would act on it and how much the cold reader wanted the thing, which
+    is the question the whole loop exists to move.
 
     Ties go to the earlier version: if a rewrite did not measurably improve
     anything, the draft that already worked stands.
@@ -352,16 +389,11 @@ def better_of(left: EmailVersion, right: EmailVersion) -> EmailVersion:
         return left if left.read.relevant else right
     if left.critic_judged and right.critic_judged and left.approved is not right.approved:
         return left if left.approved else right
+    if left.read.acting != right.read.acting:
+        return left if left.read.acting > right.read.acting else right
     if left.read.pull != right.read.pull:
         return left if left.read.pull > right.read.pull else right
-    # Two versions a cold reader could not separate. The one still standing on
-    # the material is the one to keep - and without this the tie went to
-    # whichever was written first, which is how a rewrite that quietly dropped
-    # the proof paragraph inherited the title.
-    if left.substantiation.loses_explicit_support(right.substantiation):
-        return right
-    if right.substantiation.loses_explicit_support(left.substantiation):
-        return left
+    # No editorial preference was established. Keep the earlier reviewed text.
     return left if left.attempt <= right.attempt else right
 
 
@@ -445,9 +477,12 @@ class CraftLoop:
         positioning: PositioningMap | None = None,
         observer: RunObserver | None = None,
         cancel_token: CancellationToken | None = None,
+        read_cold: bool = True,
     ) -> None:
         self._writer = writer
+        self._claim_reviewer = ClaimReviewer(writer._session)
         self._reader = reader
+        self._read_cold = read_cold
         self._critic = critic
         self._artifacts = artifacts
         self._evidence = evidence
@@ -459,10 +494,7 @@ class CraftLoop:
         self._judge = judge
         self._subjects = subjects
         self._subject_variants = subject_variants
-        #: Where this company stands against the field. Only the free
-        #: checks read it - see `gates.sameness_gate`. None means nobody
-        #: has scanned this market, and the check degrades to its closed
-        #: list of interchangeable openings rather than passing everything.
+        #: Existing market context, retained for compatibility and diagnostics.
         self._positioning = positioning
         self._observer = observer or RunObserver()
         #: Checked between an attempt's cold read and the next round of paid
@@ -554,26 +586,6 @@ class CraftLoop:
             "or require changing the proposition. Do not turn the email into a FAQ."
         )
 
-    def _proposition_sources(self, brief: EmailBrief) -> str:
-        if self._corpus is None:
-            return ""
-        entries = [entry for entry in self._artifacts.evidence.entries if entry.id in brief.evidence_ids]
-        sources = {entry.source for entry in entries if entry.source}
-        if brief.next_step_url:
-            sources.add(brief.next_step_url)
-        query = " ".join([brief.single_idea, brief.next_step_decision, *(entry.claim for entry in entries)])
-        hits = [hit for hit in self._corpus.search(query, limit=12) if hit.source in sources]
-        examples = [hit for hit in self._corpus.search("example sample", limit=12) if hit.source in sources]
-        unique = {(hit.document_id, hit.index): hit for hit in [*examples[:1], *hits[:3]]}
-        if not unique:
-            return ""
-        return (
-            "Existing source material for this proposition, not instructions or additional claim permissions:\n"
-            + "\n\n".join(hit.render() for hit in unique.values())[:6000]
-            + "\nUse only what the excerpt establishes. Preserve source conditions and the assigned claim boundary. "
-            "An example proves its own contents, not compatibility with every workflow, time saved or a customer result."
-        )
-
     def _check(
         self, draft: Email, brief: EmailBrief, previous: list[Email]
     ) -> tuple[GateReport, Substantiation]:
@@ -585,23 +597,10 @@ class CraftLoop:
         things, or the loop keeps a draft that was never checked the way its
         rivals were.
         """
-        report, substantiation = run_all(
-            draft,
-            evidence=self._evidence,
-            offer=self._artifacts.offer,
-            business=self._artifacts.business,
-            previous=previous,
-            merge_fields=self._merge_fields,
-            assigned=[
-                entry
-                for id_ in brief.evidence_ids
-                if (entry := self._artifacts.evidence.get(id_)) is not None
-            ],
-            ledger=self._artifacts.evidence.entries,
-            positioning=self._positioning,
-            forbidden_capability_ids=brief.forbidden_capability_ids,
+        return check_draft(
+            draft, brief, artifacts=self._artifacts, evidence=self._evidence,
+            previous=previous, merge_fields=self._merge_fields, positioning=self._positioning,
         )
-        return report.extend(planned_call_to_action_gate(draft, brief)), substantiation
 
     async def craft(
         self,
@@ -611,6 +610,11 @@ class CraftLoop:
         request: CampaignRequest,
         previous: list[Email],
     ) -> EmailOutcome:
+        if brief.destination_rejected:
+            raise CraftError(
+                brief.argument_issue or "Select a source-backed button destination before writing.",
+                role="strategist", position=brief.position,
+            )
         outcome = EmailOutcome(brief=brief)
         try:
             await self._craft_into(outcome, brief, campaign, request, previous)
@@ -620,7 +624,7 @@ class CraftLoop:
                 raise
             if outcome.best not in safe:
                 outcome.champion_attempt = reduce(better_of, safe).attempt
-            outcome.interruption = str(exc)
+            outcome.interruption = str(exc.details.get("user_message") or exc)
             self._observer.on_role_failed(str(exc.details.get("role", "craft")), str(exc))
         if self._critic is not None:
             for version in outcome.versions:
@@ -628,6 +632,25 @@ class CraftLoop:
         if not outcome.best.gates.blocking:
             self._observer.on_email_accepted(brief.position, outcome.best)
         return outcome
+
+    async def _review_claims(
+        self, draft: Email, brief: EmailBrief, report: GateReport, repair: FactualRepair | None = None,
+    ) -> GateReport:
+        if report.blocking:
+            return report
+        if self._cancelled():
+            return report.extend(GateReport(issues=[GateIssue(
+                gate="claim-review", detail="Cancelled before this version's AI source review.",
+            )]))
+        self._observer.on_role_started("claim_reviewer", f"Email {brief.position} · checking claims against sources")
+        reviewed = await self._claim_reviewer.review(
+            email=draft, brief=brief, artifacts=self._artifacts, hints=report, corpus=self._corpus,
+            repair=repair,
+        )
+        self._observer.on_role_finished("claim_reviewer",
+            "Source review passed" if reviewed.passed else "Source review needs a correction",
+            {"semantic_review": reviewed.semantic_review, "passed": reviewed.passed})
+        return report.extend(reviewed)
 
     async def _craft_into(
         self,
@@ -645,11 +668,12 @@ class CraftLoop:
             brief, campaign, request, previous
         )
         outcome.discarded = discarded
+        repair = None
 
         for attempt in range(1, self._max_revisions + 2):
             champion = outcome.best if outcome.versions else None
             version = await self._judge_draft(
-                draft, brief, attempt, previous, screened=screened, idea=idea
+                draft, brief, attempt, previous, screened=screened, idea=idea, repair=repair,
             )
             screened = None
             outcome.versions.append(version)
@@ -673,6 +697,7 @@ class CraftLoop:
                 # deep-tier call, 49 seconds and 13% of the run for nothing.
                 pivot_brief = self._pivot_brief(outcome) if stalled else None
                 if pivot_brief is not None and not last_attempt:
+                    repair = None
                     pivot = pivot_brief.single_idea
                     outcome.pivoted_to = pivot
                     self._observer.on_phase(
@@ -703,11 +728,12 @@ class CraftLoop:
                 break
 
             version.critique = await self._critique(version, brief, campaign, attempt)
-            if version.ships:
+            if version.ships and not version.read.material_revision:
                 break
             if version.critique is not None and version.critique.requires_new_strategy:
                 pivot_brief = self._pivot_brief(outcome)
                 if pivot_brief is not None:
+                    repair = None
                     pivot = pivot_brief.single_idea
                     outcome.pivoted_to = pivot
                     self._observer.on_phase(
@@ -755,12 +781,14 @@ class CraftLoop:
                 version.describe(),
             )
             idea = version.idea
+            repair = self._repair_for(version, brief)
             draft = await self._revise(
                 version, brief, campaign, request, previous, attempt + 1,
                 critique_notes=version.critique.render() if version.critique else "",
                 history=_history(outcome.versions, outcome.discarded),
+                repair=repair,
             )
-            if _unchanged(draft, version.email):
+            if draft == version.email:
                 # Nothing changed, so nothing needs measuring again: the gates
                 # would return the same report and a cold read would return a
                 # different number for the same words, which is noise the loop
@@ -793,6 +821,7 @@ class CraftLoop:
         sequence pass finding that it repeats email 2's opening move, say."""
         champion = outcome.best
         attempt = len(outcome.versions) + 1
+        repair = self._repair_for(champion, outcome.brief)
         draft = await self._revise(
             champion,
             outcome.brief,
@@ -802,9 +831,10 @@ class CraftLoop:
             attempt,
             critique_notes=instruction,
             history=_history(outcome.versions, outcome.discarded),
+            repair=repair,
         )
         version = await self._judge_draft(
-            draft, outcome.brief, attempt, previous, idea=champion.idea
+            draft, outcome.brief, attempt, previous, idea=champion.idea, repair=repair,
         )
         outcome.versions.append(version)
         if await self._prefers(version, champion, outcome.brief):
@@ -850,7 +880,6 @@ class CraftLoop:
             request=request,
             artifacts=self._artifacts,
             previous=previous,
-            source_context=self._proposition_sources(brief),
         )
         self._observer.on_draft(brief.position, 1, draft)
         self._observer.on_role_finished(
@@ -867,7 +896,7 @@ class CraftLoop:
     ) -> tuple[Email, tuple[GateReport, Substantiation, PanelRead], list[EmailVersion], str]:
         """Several arguments written, one kept.
 
-        Only the free checks and the cold read decide the winner. The critic
+        Mechanical checks, source judgment and the cold read decide the winner. The critic
         and every rewrite are spent afterwards on the survivor, where they
         compound, instead of being split across drafts that are about to be
         thrown away - three half-refined candidates are worse than one refined
@@ -897,7 +926,6 @@ class CraftLoop:
                     artifacts=self._artifacts,
                     previous=previous,
                     opening_move=move,
-                    source_context=self._proposition_sources(candidate),
                 )
                 for candidate, move in bets
             ),
@@ -936,7 +964,11 @@ class CraftLoop:
             {"subjects": [draft.subject for _, draft in kept], "dropped": len(duplicates)},
         )
 
-        checked = [self._check(draft, candidate, previous) for candidate, draft in kept]
+        checked = []
+        for candidate, draft in kept:
+            gates, substantiation = self._check(draft, candidate, previous)
+            gates = await self._review_claims(draft, candidate, gates)
+            checked.append((gates, substantiation))
         # A candidate a blocking gate has already vetoed cannot win this
         # bake-off however well it reads: `EmailVersion.measured` puts the gate
         # first and the score second, so the comparison is settled before
@@ -1066,16 +1098,8 @@ class CraftLoop:
         judge the loop falls back to the numbers, and to the old rule that a
         tie leaves the incumbent standing.
 
-        The second deterministic rule is the mirror of the first, and it exists
-        because the judge was measured and could not see it. On the bench, an
-        email with its whole proof paragraph deleted - nothing invented, no
-        gate tripped, every remaining claim now unbacked - took half the votes
-        against the original. So a rewrite that carries strictly less of what
-        this email was built on does not take the title, whatever the ballot
-        says: the vote is a measurement of an instrument that has been shown
-        blind to exactly this, and losing the evidence is not a matter of
-        taste. Adding proof is never blocked, and a rewrite that trades one
-        support for another is not weaker - see `Substantiation.weaker_than`.
+        Evidence retention is judged in context by the source reviewer and
+        preference reader, not by lexical overlap or a counter veto.
         """
         if bool(challenger.gates.blocking) is not bool(champion.gates.blocking):
             return not challenger.gates.blocking
@@ -1088,26 +1112,9 @@ class CraftLoop:
             # attempt - after which the receipt says a rewrite was preferred
             # when no word moved. The incumbent stands, as it does on any tie.
             return False
-        if challenger.substantiation.loses_explicit_support(champion.substantiation):
-            logger.info(
-                "craft: email %d attempt %d dropped evidence the version before it carried "
-                "- not taking the title",
-                brief.position,
-                challenger.attempt,
-            )
-            self._observer.on_phase(
-                "craft",
-                f"Email {brief.position}: rewrite {challenger.attempt - 1} left out proof the "
-                "version before it had on the page - keeping the one that argues from the "
-                "material",
-                {
-                    "position": brief.position,
-                    "attempt": challenger.attempt,
-                    "carried": list(challenger.substantiation.carried),
-                    "was_carrying": list(champion.substantiation.carried),
-                },
-            )
-            return False
+        if (self._judge is None and challenger.read.landed and champion.read.landed
+                and bool(challenger.read.material_revision) != bool(champion.read.material_revision)):
+            return not challenger.read.material_revision
         if self._judge is not None and challenger.read.has_verdict and champion.read.has_verdict:
             if challenger.read.relevant != champion.read.relevant:
                 self._observer.on_phase(
@@ -1222,6 +1229,12 @@ class CraftLoop:
             },
         )
 
+    def _repair_for(self, version: EmailVersion, brief: EmailBrief) -> FactualRepair | None:
+        return version.factual_repair or factual_repair(
+            version.email, _brief_for_idea(brief, version.idea),
+            self._artifacts, version.gates, self._corpus,
+        )
+
     async def _revise(
         self,
         version: EmailVersion,
@@ -1232,6 +1245,7 @@ class CraftLoop:
         attempt: int,
         critique_notes: str,
         history: str = "",
+        repair: FactualRepair | None = None,
     ) -> Email:
         self._observer.on_role_started(
             "email_writer",
@@ -1250,9 +1264,10 @@ class CraftLoop:
             read=version.read,
             critique_notes="\n\n".join(filter(None, (
                 critique_notes, self._selected_review_facts(version.critique, active_brief),
-                self._review_sources(version.read),
+                self._review_sources(version.read, active_brief),
             ))),
             history=history,
+            repair=repair,
         )
         self._observer.on_draft(brief.position, attempt, draft)
         self._observer.on_role_finished(
@@ -1268,6 +1283,7 @@ class CraftLoop:
         previous: list[Email],
         screened: tuple[GateReport, Substantiation, PanelRead] | None = None,
         idea: str = "",
+        repair: FactualRepair | None = None,
     ) -> EmailVersion:
         """Free checks first, then the cold reader.
 
@@ -1287,20 +1303,23 @@ class CraftLoop:
         else:
             active_brief = _brief_for_idea(brief, idea)
             gates, substantiation = self._check(draft, active_brief, previous)
+            gates = await self._review_claims(draft, active_brief, gates, repair)
             self._observer.on_gates(brief.position, attempt, gates)
 
-            self._observer.on_role_started(
-                "blind_reader",
-                f"Email {brief.position} · read cold by {len(self._personas)} reader(s)",
-                {"position": brief.position, "attempt": attempt},
-            )
-            read = await self._reader.read(draft, self._personas)
-            self._observer.on_read(brief.position, attempt, read)
-            self._observer.on_role_finished(
-                "blind_reader",
-                f"Pull {read.pull:.0f}/10 - {read.verdict_line()}",
-                {"pull": read.pull},
-            )
+            read = PanelRead()
+            if self._read_cold:
+                self._observer.on_role_started(
+                    "blind_reader",
+                    f"Email {brief.position} · read cold by {len(self._personas)} reader(s)",
+                    {"position": brief.position, "attempt": attempt},
+                )
+                read = await self._reader.read(draft, self._personas)
+                self._observer.on_read(brief.position, attempt, read)
+                self._observer.on_role_finished(
+                    "blind_reader",
+                    f"Pull {read.pull:.0f}/10 - {read.verdict_line()}",
+                    {"pull": read.pull},
+                )
         return EmailVersion(
             attempt=attempt,
             email=draft,
@@ -1308,6 +1327,7 @@ class CraftLoop:
             substantiation=substantiation,
             read=read,
             idea=idea or brief.single_idea,
+            factual_repair=repair,
         )
 
     async def _critique(
@@ -1380,10 +1400,9 @@ class CraftLoop:
         by-product of replacing the body - and because there is no point paying
         to optimise the line on a draft that is about to be thrown away.
 
-        The body is untouched, so the reading already on the record still
-        describes what ships. It describes it conservatively: the pull that was
-        measured was measured with the subject the body arrived with, and this
-        step only ever swaps in a line more of a hundred people would open.
+        The body is untouched. The existing panel assessment describes the
+        earlier subject/body combination, not a fresh read of this final pair;
+        inbox comparisons are simulated preferences, not measured open rates.
 
         Every alternative is gated *before* it is read, because a subject can
         repeat an earlier email's word for word or carry a figure the ledger
@@ -1396,6 +1415,8 @@ class CraftLoop:
         if self._subjects is None or self._subject_variants < 1:
             return
         best = outcome.best
+        if best.gates.blocking:
+            return
         active_brief = _brief_for_idea(brief, best.idea)
         # Checked once per distinct line: the screen and the swap that follows
         # it ask the same question of the same email, and `_check` walks the
@@ -1409,12 +1430,11 @@ class CraftLoop:
             return checked[key]
 
         def clean(candidate: Email) -> bool:
-            # A draft that was already blocked cannot be made worse by a
-            # subject that is blocked too, and screening those out would leave
-            # the field empty on exactly the emails most in need of a better
-            # line. Only a line that breaks something the draft had not is out.
+            # Existing defects need not empty the field, but they cannot
+            # license an additional failure introduced by the new header.
             gates, _ = check(candidate)
-            return not gates.blocking or bool(best.gates.blocking)
+            existing = {(issue.gate, issue.detail) for issue in best.gates.blocking}
+            return all((issue.gate, issue.detail) in existing for issue in gates.blocking)
 
         self._observer.on_role_started(
             "subject_writer",
@@ -1435,10 +1455,15 @@ class CraftLoop:
             ),
         )
         self._observer.on_role_finished("subject_writer", summary, {"subject": improved.subject})
-        if improved.subject == best.email.subject:
+        if (improved.subject, improved.preview_text) == (best.email.subject, best.email.preview_text):
+            return
+        gates, substantiation = check(improved)
+        gates = await self._review_claims(improved, active_brief, gates, best.factual_repair)
+        self._observer.on_gates(brief.position, best.attempt, gates)
+        if gates.blocking:
             return
         best.email = improved
-        best.gates, best.substantiation = check(improved)
+        best.gates, best.substantiation = gates, substantiation
 
 
 def _brief_for_idea(brief: EmailBrief, idea: str) -> EmailBrief:
@@ -1488,30 +1513,17 @@ def _unchanged(draft: Email, previous: Email) -> bool:
 def _distinct(
     drafted: list[tuple[EmailBrief, Email]],
 ) -> tuple[list[tuple[EmailBrief, Email]], list[tuple[EmailBrief, Email]]]:
-    """Candidates that are actually different, and the repeats.
-
-    A bake-off exists to buy alternatives, and two drafts with the same subject
-    or the same first sentence are one alternative bought twice. Screened here,
-    before the cold reads, because the reads are what the duplicates would cost
-    - in a measured run two of three candidates came back with the same subject
-    line and each was read at full price to establish that they scored the
-    same.
-
-    Kept in the order they were written, and the first of any group survives:
-    the candidates are ranked by the strategist and the earlier one is the
-    better-ranked bet.
+    """Drop only identical rendered copies. Shared subjects/openings can
+    develop different arguments; their relevance is a model decision.
     """
     kept: list[tuple[EmailBrief, Email]] = []
     repeats: list[tuple[EmailBrief, Email]] = []
-    seen_subjects: set[str] = set()
-    seen_openings: set[str] = set()
+    seen: set[str] = set()
     for candidate, draft in drafted:
-        subject = normalized(draft.subject)
-        opening = " ".join(normalized(_opening_line(draft)).split()[:_SAME_OPENING_WORDS])
-        if subject in seen_subjects or (opening and opening in seen_openings):
+        text = render_review(draft)
+        if text in seen:
             repeats.append((candidate, draft))
             continue
-        seen_subjects.add(subject)
-        seen_openings.add(opening)
+        seen.add(text)
         kept.append((candidate, draft))
     return kept, repeats

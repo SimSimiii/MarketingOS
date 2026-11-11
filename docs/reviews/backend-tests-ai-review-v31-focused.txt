@@ -1,0 +1,19 @@
+....................................F.....                               [100%]
+================================== FAILURES ===================================
+__ test_a_proposal_that_breaks_a_check_is_repaired_once_then_cannot_be_used ___
+tests\api\test_email_revisions.py:163: in test_a_proposal_that_breaks_a_check_is_repaired_once_then_cannot_be_used
+    assert proposal["state"] == "blocked", proposal
+E   AssertionError: {'id': '96d54df3-88b0-4cb8-b6d3-4633bad20094', 'asset_id': 'be6fdb57-116a-4e2a-9f01-6f7f65578787', 'base_revision_id': None, 'instruction': 'Add a stronger number', ...}
+E   assert 'proposed' == 'blocked'
+E     
+E     - blocked
+E     + proposed
+============================== warnings summary ===============================
+.venv\Lib\site-packages\starlette\testclient.py:53
+  C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/api/test_email_revisions.py::test_a_proposal_that_breaks_a_check_is_repaired_once_then_cannot_be_used
+1 failed, 41 passed, 1 warning in 20.81s

@@ -59,9 +59,15 @@ export interface Campaign {
   archived_at: string | null;
   /** {"preset": "fast" | "balanced" | "maximum", ...field overrides} or null. */
   policy: Record<string, unknown> | null;
+  /** What the emails will render as: the stored choice, or the server's
+   * default when there is none (render_html.resolve_tier). Read this rather
+   * than policy.email_tier, which is only the choice. */
+  email_tier: EmailTier;
   /** What this campaign delivers when it is not email. Null for every email
    * campaign, which is most of them. */
   channel: LinkedInChannel | null;
+  /** Optional content choices made before a run; null when nobody steered. */
+  steering?: CampaignSteering | null;
   model_overrides: Record<string, string> | null;
   created_at: string;
   updated_at: string;
@@ -87,7 +93,8 @@ export interface CampaignCreateRequest {
   audience_segment?: string | null;
   prospect_id?: string | null;
   cta_url?: string | null;
-  /** Omitted/null takes the system default, which is "plain". */
+  /** Omitted/null lets the server choose: branded for a brand writing to
+   * its own readers, plain for cold outreach or a campaign with no brand. */
   email_tier?: EmailTier | null;
   policy_preset?: PolicyPreset | null;
   model_overrides?: Record<string, string> | null;
@@ -108,7 +115,9 @@ export interface Brand {
   name: string;
   website_url: string | null;
   /** How this brand's emails look once rendered. All optional - a brand with
-   * none of it set still renders, in the typographic tier. */
+   * none of it set still renders, with its name as a wordmark. Crawling the
+   * brand's own site fills the logo and colour it declares when these are
+   * empty. */
   logo_url: string | null;
   primary_color: string | null;
   footer_lines: string[] | null;
@@ -149,6 +158,16 @@ export interface BrandStyleUpdate {
   primary_color?: string | null;
   footer_lines?: string[] | null;
   unsubscribe_url?: string | null;
+}
+
+/** What the brand's own home page declares about its look. A suggestion for
+ * the appearance form - the request that finds it saves nothing. */
+export interface BrandIdentity {
+  logo_url: string | null;
+  primary_color: string | null;
+  /** Why something the site declared was not used: an SVG logo, a theme
+   * colour too pale for a white email. */
+  notes: string[];
 }
 
 export type Grounding = "grounded" | "inferred" | "user_stated" | "vendor_claim";
@@ -430,6 +449,18 @@ export interface AgentExecution {
   attempt: number;
 }
 
+type Schemas = import("./api-schema").ApiSchemas;
+/** What to include, exclude or ask for before a run - all of it optional. */
+export type CampaignSteering = Schemas["CampaignSteering"];
+export type SteeringItem = Schemas["SteeringItem"];
+export type SteeringInstruction = Schemas["SteeringInstruction"];
+export type SteeringOption = Schemas["SteeringOption"];
+export type SteeringConflict = Schemas["SteeringConflict"];
+export type SteeringCheck = Schemas["SteeringCheck"];
+/** One proposed edit of a finished email, with the checks run on its own text. */
+export type EmailRevision = Schemas["EmailRevisionRead"];
+export type EmailRevisionHistory = Schemas["EmailRevisionHistory"];
+
 /** A finished deliverable, ready to copy and paste. */
 export interface GeneratedAsset {
   id: string;
@@ -646,6 +677,8 @@ export type LiveExecutionEvent = LiveEventBase &
           next_step_limit?: string;
           /** What this email deliberately leaves out, though it could say it. */
           must_not_say?: string[];
+          /** Applicable setup and scope context, distinct from prohibited claims. */
+          claim_conditions?: string[];
         }[];
       }
     /** One role's turn: a writer draft, a cold read, a critique. */
@@ -1465,11 +1498,26 @@ export interface RelevanceDossier {
   qualification_fingerprint: string;
   built_at: string;
   orientation: string;
+  first_email_scope?: {
+    request: string;
+    status: "addressed" | "partial" | "unknown";
+    workflow: string;
+    evidence_ids: string[];
+    setup_conditions: string[];
+    excluded_promises: string[];
+    unmet_user_requirements: string[];
+    audience_decision_question?: string | null;
+  } | null;
   defining_need_fit?: {
     status: "addressed" | "partial" | "unknown";
+    supported_alternative: string;
+    setup_conditions: string[];
     evidence_ids: string[];
     capability_ids: string[];
     unverified_requirements: string[];
+    decision_gaps?: string[];
+    supported_core_workflow?: string;
+    unverified_requirement_basis?: Record<string, string>;
     caveat: string;
     why: string;
   } | null;
@@ -1480,6 +1528,8 @@ export interface RelevanceDossier {
   evidence: RelevanceEvidence[];
   validation_counts: { dropped_items: number; normalized_items: number };
   validation_warnings: string[];
+  /** Questions researched for these inputs; this does not certify an answer. */
+  verified_product_questions?: string[];
   recommendation: CampaignRecommendation | null;
 }
 
@@ -1610,6 +1660,8 @@ export interface MarketJob {
   output_tokens: number;
   cache_read_tokens: number;
   cost_usd: number;
+  campaign_id?: string | null;
+  audience?: string;
 }
 export interface CompilationStatus {
   state: "idle" | "running" | "completed" | "failed";

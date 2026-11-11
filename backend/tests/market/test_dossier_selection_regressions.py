@@ -39,6 +39,20 @@ def test_cross_language_mechanism_competes_under_the_same_retrieval_budget(query
     assert selected.ledger.get("Z").verbatim == claim
 
 
+def test_rate_limit_question_retrieves_actual_plan_capacity_without_widening_budget():
+    claim = "The paid plan allows up to 1000 emails per second."
+    capacity = Evidence(id="Z", kind=EvidenceKind.FEATURE, claim=claim, verbatim=claim,
+                        context=EvidenceContext(claim_scope="capability", source_kind="official_documentation"))
+    noise = [Evidence(id=f"A{i}", kind=EvidenceKind.FEATURE,
+                      claim="Supabase auth email rate limits require configuration.",
+                      verbatim="Supabase auth email rate limits require configuration.") for i in range(20)]
+    selected = select_evidence(EvidenceLedger(entries=[*noise, capacity]),
+                               "Supabase auth email rate limits", cap=3)
+    assert "Z" in selected.ledger.ids
+    assert len(selected.ledger.entries) == 3
+    assert selected.ledger.get("Z").claim == claim
+
+
 def test_mandatory_conditions_do_not_hide_the_list_capture_mechanism():
     assigned = Evidence(id="REQUIRED", kind=EvidenceKind.FEATURE, claim="Product catalogue",
                         verbatim="Product catalogue", source="docs",

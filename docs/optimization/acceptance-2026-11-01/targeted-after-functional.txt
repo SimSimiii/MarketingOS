@@ -1,0 +1,301 @@
+..............F........FFFF.......................F..F....               [100%]
+================================== FAILURES ===================================
+_ test_current_dossier_and_research_change_the_normalized_brief_without_an_extra_call _
+
+    @pytest.mark.asyncio
+    async def test_current_dossier_and_research_change_the_normalized_brief_without_an_extra_call():
+        intelligence, _ = context()
+        adapted = adapt_researched_audience(artifacts(), research(), intelligence)
+        provider = RoleScriptedProvider({"strategist": strategist_answer()})
+    
+        brief = await Strategist(make_session(provider)).build(
+            request=request(),
+            artifacts=adapted,
+            corpus=SourceCorpus(),
+            contract=parse_contract(request().request),
+            intelligence=intelligence,
+        )
+    
+        assert provider.calls_by_role == {"strategist": 1}
+        assert brief.orientation == "A shared-inbox triage tool for repair shops."
+        assert brief.emails[0].felt_need == (
+            "Repeat warranty questions consume the first hour of the day."
+        )
+        assert brief.emails[0].status_quo == "", "An invented spreadsheet must not become another observed workflow by list order"
+        assert any("single researched problem" in warning for warning in intelligence.trace.validation_warnings)
+        assert brief.emails[0].evidence_ids == ["E1"]
+>       assert brief.emails[0].must_not_say == [
+            "It reduces repeat triage; it does not eliminate every warranty question."
+        ]
+E       AssertionError: assert [] == ['It reduces ...ty question.']
+E         
+E         Right contains one more item: 'It reduces repeat triage; it does not eliminate every warranty question.'
+E         Use -v to get more diff
+
+tests\marketing\test_campaign_intelligence.py:653: AssertionError
+_ test_v2_problem_bridge_and_scope_limit_survive_into_the_writer[False-ADDRESSED] _
+
+verdict = <FitVerdict.ADDRESSED: 'ADDRESSED'>, inferred = False
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("verdict", [FitVerdict.ADDRESSED, FitVerdict.SOLVED])
+    @pytest.mark.parametrize("inferred", [False, True])
+    async def test_v2_problem_bridge_and_scope_limit_survive_into_the_writer(verdict, inferred):
+        row = research_row()
+        status = dossier_status(row)
+        assert status.dossier is not None
+        status.dossier.schema_version = 2
+        status.dossier.recommendation = CampaignRecommendation(
+            state=RecommendationState.RECOMMENDED_NARROW,
+            readiness=CampaignReadiness.GO_NARROW,
+            allowed_claims=["licensed product fact 1"],
+            allowed_evidence_ids=["E1"],
+        )
+        setup = "Connect the documented inbox API before sending."
+        status.dossier.defining_need_fit = DefiningNeedFit(
+            status="addressed", evidence_ids=["E1"],
+            supported_alternative="Shared inbox", setup_conditions=[setup],
+            caveat="The alternative ticketing migration remains unverified.",
+        )
+        caveat = "Collection operations are supported; higher participation is not established."
+        status.dossier.problem_fits = [ProblemFit(
+            problem_id="P1", verdict=verdict, evidence_ids=["E1"],
+            capability_ids=["collection"], caveat=caveat,
+        )]
+        intelligence = build_campaign_intelligence(
+            selected_audience=row.audience_name,
+            match=resolve_audience_research(row.audience_name, [row]),
+            dossier_status=status, ledger=ledger(),
+        )
+        if inferred:
+            intelligence.problems[0].grounding = str(Grounding.INFERRED)
+            intelligence.problems[0].review_notes = ["Historical sources; current demand unknown."]
+        provider = RoleScriptedProvider(default_answers())
+        provider.set_default("strategist", strategist_answer(evidence=["E1"]))
+        current_artifacts = adapt_researched_audience(artifacts(), research(), intelligence)
+        brief = await Strategist(make_session(provider)).build(
+            request=request(), artifacts=current_artifacts, corpus=SourceCorpus(),
+            contract=parse_contract(request().request), intelligence=intelligence,
+        )
+    
+        assert [fit.verdict for fit in intelligence.problem_fits] == [verdict]
+>       assert caveat in brief.emails[0].must_not_say
+E       AssertionError: assert 'Collection operations are supported; higher participation is not established.' in []
+E        +  where [] = EmailBrief(problem_ids=[], offer_id='offering', action_id='action_e4bd31965a01', selection_reason='', next_step_url='h...irections=[], include_evidence_ids=[], exclude_evidence_ids=[], use=[], avoid=[], context_only=[], excluded_values=[])).must_not_say
+
+tests\marketing\test_campaign_intelligence.py:874: AssertionError
+_ test_v2_problem_bridge_and_scope_limit_survive_into_the_writer[False-SOLVED] _
+
+verdict = <FitVerdict.SOLVED: 'SOLVED'>, inferred = False
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("verdict", [FitVerdict.ADDRESSED, FitVerdict.SOLVED])
+    @pytest.mark.parametrize("inferred", [False, True])
+    async def test_v2_problem_bridge_and_scope_limit_survive_into_the_writer(verdict, inferred):
+        row = research_row()
+        status = dossier_status(row)
+        assert status.dossier is not None
+        status.dossier.schema_version = 2
+        status.dossier.recommendation = CampaignRecommendation(
+            state=RecommendationState.RECOMMENDED_NARROW,
+            readiness=CampaignReadiness.GO_NARROW,
+            allowed_claims=["licensed product fact 1"],
+            allowed_evidence_ids=["E1"],
+        )
+        setup = "Connect the documented inbox API before sending."
+        status.dossier.defining_need_fit = DefiningNeedFit(
+            status="addressed", evidence_ids=["E1"],
+            supported_alternative="Shared inbox", setup_conditions=[setup],
+            caveat="The alternative ticketing migration remains unverified.",
+        )
+        caveat = "Collection operations are supported; higher participation is not established."
+        status.dossier.problem_fits = [ProblemFit(
+            problem_id="P1", verdict=verdict, evidence_ids=["E1"],
+            capability_ids=["collection"], caveat=caveat,
+        )]
+        intelligence = build_campaign_intelligence(
+            selected_audience=row.audience_name,
+            match=resolve_audience_research(row.audience_name, [row]),
+            dossier_status=status, ledger=ledger(),
+        )
+        if inferred:
+            intelligence.problems[0].grounding = str(Grounding.INFERRED)
+            intelligence.problems[0].review_notes = ["Historical sources; current demand unknown."]
+        provider = RoleScriptedProvider(default_answers())
+        provider.set_default("strategist", strategist_answer(evidence=["E1"]))
+        current_artifacts = adapt_researched_audience(artifacts(), research(), intelligence)
+        brief = await Strategist(make_session(provider)).build(
+            request=request(), artifacts=current_artifacts, corpus=SourceCorpus(),
+            contract=parse_contract(request().request), intelligence=intelligence,
+        )
+    
+        assert [fit.verdict for fit in intelligence.problem_fits] == [verdict]
+>       assert caveat in brief.emails[0].must_not_say
+E       AssertionError: assert 'Collection operations are supported; higher participation is not established.' in []
+E        +  where [] = EmailBrief(problem_ids=[], offer_id='offering', action_id='action_e4bd31965a01', selection_reason='', next_step_url='h...irections=[], include_evidence_ids=[], exclude_evidence_ids=[], use=[], avoid=[], context_only=[], excluded_values=[])).must_not_say
+
+tests\marketing\test_campaign_intelligence.py:874: AssertionError
+_ test_v2_problem_bridge_and_scope_limit_survive_into_the_writer[True-ADDRESSED] _
+
+verdict = <FitVerdict.ADDRESSED: 'ADDRESSED'>, inferred = True
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("verdict", [FitVerdict.ADDRESSED, FitVerdict.SOLVED])
+    @pytest.mark.parametrize("inferred", [False, True])
+    async def test_v2_problem_bridge_and_scope_limit_survive_into_the_writer(verdict, inferred):
+        row = research_row()
+        status = dossier_status(row)
+        assert status.dossier is not None
+        status.dossier.schema_version = 2
+        status.dossier.recommendation = CampaignRecommendation(
+            state=RecommendationState.RECOMMENDED_NARROW,
+            readiness=CampaignReadiness.GO_NARROW,
+            allowed_claims=["licensed product fact 1"],
+            allowed_evidence_ids=["E1"],
+        )
+        setup = "Connect the documented inbox API before sending."
+        status.dossier.defining_need_fit = DefiningNeedFit(
+            status="addressed", evidence_ids=["E1"],
+            supported_alternative="Shared inbox", setup_conditions=[setup],
+            caveat="The alternative ticketing migration remains unverified.",
+        )
+        caveat = "Collection operations are supported; higher participation is not established."
+        status.dossier.problem_fits = [ProblemFit(
+            problem_id="P1", verdict=verdict, evidence_ids=["E1"],
+            capability_ids=["collection"], caveat=caveat,
+        )]
+        intelligence = build_campaign_intelligence(
+            selected_audience=row.audience_name,
+            match=resolve_audience_research(row.audience_name, [row]),
+            dossier_status=status, ledger=ledger(),
+        )
+        if inferred:
+            intelligence.problems[0].grounding = str(Grounding.INFERRED)
+            intelligence.problems[0].review_notes = ["Historical sources; current demand unknown."]
+        provider = RoleScriptedProvider(default_answers())
+        provider.set_default("strategist", strategist_answer(evidence=["E1"]))
+        current_artifacts = adapt_researched_audience(artifacts(), research(), intelligence)
+        brief = await Strategist(make_session(provider)).build(
+            request=request(), artifacts=current_artifacts, corpus=SourceCorpus(),
+            contract=parse_contract(request().request), intelligence=intelligence,
+        )
+    
+        assert [fit.verdict for fit in intelligence.problem_fits] == [verdict]
+>       assert caveat in brief.emails[0].must_not_say
+E       AssertionError: assert 'Collection operations are supported; higher participation is not established.' in []
+E        +  where [] = EmailBrief(problem_ids=[], offer_id='offering', action_id='action_e4bd31965a01', selection_reason='', next_step_url='h...irections=[], include_evidence_ids=[], exclude_evidence_ids=[], use=[], avoid=[], context_only=[], excluded_values=[])).must_not_say
+
+tests\marketing\test_campaign_intelligence.py:874: AssertionError
+_ test_v2_problem_bridge_and_scope_limit_survive_into_the_writer[True-SOLVED] _
+
+verdict = <FitVerdict.SOLVED: 'SOLVED'>, inferred = True
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("verdict", [FitVerdict.ADDRESSED, FitVerdict.SOLVED])
+    @pytest.mark.parametrize("inferred", [False, True])
+    async def test_v2_problem_bridge_and_scope_limit_survive_into_the_writer(verdict, inferred):
+        row = research_row()
+        status = dossier_status(row)
+        assert status.dossier is not None
+        status.dossier.schema_version = 2
+        status.dossier.recommendation = CampaignRecommendation(
+            state=RecommendationState.RECOMMENDED_NARROW,
+            readiness=CampaignReadiness.GO_NARROW,
+            allowed_claims=["licensed product fact 1"],
+            allowed_evidence_ids=["E1"],
+        )
+        setup = "Connect the documented inbox API before sending."
+        status.dossier.defining_need_fit = DefiningNeedFit(
+            status="addressed", evidence_ids=["E1"],
+            supported_alternative="Shared inbox", setup_conditions=[setup],
+            caveat="The alternative ticketing migration remains unverified.",
+        )
+        caveat = "Collection operations are supported; higher participation is not established."
+        status.dossier.problem_fits = [ProblemFit(
+            problem_id="P1", verdict=verdict, evidence_ids=["E1"],
+            capability_ids=["collection"], caveat=caveat,
+        )]
+        intelligence = build_campaign_intelligence(
+            selected_audience=row.audience_name,
+            match=resolve_audience_research(row.audience_name, [row]),
+            dossier_status=status, ledger=ledger(),
+        )
+        if inferred:
+            intelligence.problems[0].grounding = str(Grounding.INFERRED)
+            intelligence.problems[0].review_notes = ["Historical sources; current demand unknown."]
+        provider = RoleScriptedProvider(default_answers())
+        provider.set_default("strategist", strategist_answer(evidence=["E1"]))
+        current_artifacts = adapt_researched_audience(artifacts(), research(), intelligence)
+        brief = await Strategist(make_session(provider)).build(
+            request=request(), artifacts=current_artifacts, corpus=SourceCorpus(),
+            contract=parse_contract(request().request), intelligence=intelligence,
+        )
+    
+        assert [fit.verdict for fit in intelligence.problem_fits] == [verdict]
+>       assert caveat in brief.emails[0].must_not_say
+E       AssertionError: assert 'Collection operations are supported; higher participation is not established.' in []
+E        +  where [] = EmailBrief(problem_ids=[], offer_id='offering', action_id='action_e4bd31965a01', selection_reason='', next_step_url='h...irections=[], include_evidence_ids=[], exclude_evidence_ids=[], use=[], avoid=[], context_only=[], excluded_values=[])).must_not_say
+
+tests\marketing\test_campaign_intelligence.py:874: AssertionError
+___ test_a_proposal_is_checked_on_its_own_and_accepting_keeps_the_original ____
+
+client = <starlette.testclient.TestClient object at 0x0000025C6E759F40>
+provider = <tests.marketing.conftest.RoleScriptedProvider object at 0x0000025C6E737A70>
+
+    def test_a_proposal_is_checked_on_its_own_and_accepting_keeps_the_original(client, provider):
+        execution_id = run_campaign(client)
+        asset = _first_email(client, execution_id)
+        writer_calls = len(provider.requests_for("email_writer"))
+        reader_calls = len(provider.requests_for("blind_reader"))
+        # A body the run never wrote: the cycling default can hand back the very
+        # email being edited, which is now (correctly) reported as no change.
+        provider.push("email_writer", email_draft(subject="Release notes, shorter", body=_BODIES[1]))
+    
+        started = _ask(client, execution_id, asset["id"], "Make it shorter")
+        assert started.status_code == 202, started.text
+        history = _settle(client, execution_id, asset["id"])
+        proposal = history["revisions"][0]
+>       assert proposal["state"] == "proposed", proposal
+E       AssertionError: {'id': '52c86521-8029-4747-a65d-ced2de78433c', 'asset_id': '00a894cc-1477-454f-a5fb-05d0fc19522c', 'base_revision_id': None, 'instruction': 'Make it shorter', ...}
+E       assert 'blocked' == 'proposed'
+E         
+E         - proposed
+E         + blocked
+
+tests\api\test_email_revisions.py:95: AssertionError
+_______ test_a_pass_that_changes_nothing_says_so_and_cannot_be_accepted _______
+
+client = <starlette.testclient.TestClient object at 0x0000025C6E75CC80>
+provider = <tests.marketing.conftest.RoleScriptedProvider object at 0x0000025C6D875FA0>
+
+    def test_a_pass_that_changes_nothing_says_so_and_cannot_be_accepted(client, provider):
+        # Seen live: asked to add a figure the material does not hold, the writer
+        # rightly returned the same email - which the page then offered to accept.
+        execution_id = run_campaign(client)
+        asset = _first_email(client, execution_id)
+        same = email_draft(subject="One subject only this test uses", body=_BODIES[2])
+        provider.push("email_writer", same, same)
+        _ask(client, execution_id, asset["id"], "Shorter")
+        first = _settle(client, execution_id, asset["id"])["revisions"][0]
+>       assert first["state"] == "proposed"
+E       AssertionError: assert 'blocked' == 'proposed'
+E         
+E         - proposed
+E         + blocked
+
+tests\api\test_email_revisions.py:181: AssertionError
+============================== warnings summary ===============================
+.venv\Lib\site-packages\starlette\testclient.py:53
+  C:\Users\oussa\Desktop\Workspace\projects\MarketingOS\backend\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/marketing/test_campaign_intelligence.py::test_current_dossier_and_research_change_the_normalized_brief_without_an_extra_call
+FAILED tests/marketing/test_campaign_intelligence.py::test_v2_problem_bridge_and_scope_limit_survive_into_the_writer[False-ADDRESSED]
+FAILED tests/marketing/test_campaign_intelligence.py::test_v2_problem_bridge_and_scope_limit_survive_into_the_writer[False-SOLVED]
+FAILED tests/marketing/test_campaign_intelligence.py::test_v2_problem_bridge_and_scope_limit_survive_into_the_writer[True-ADDRESSED]
+FAILED tests/marketing/test_campaign_intelligence.py::test_v2_problem_bridge_and_scope_limit_survive_into_the_writer[True-SOLVED]
+FAILED tests/api/test_email_revisions.py::test_a_proposal_is_checked_on_its_own_and_accepting_keeps_the_original
+FAILED tests/api/test_email_revisions.py::test_a_pass_that_changes_nothing_says_so_and_cannot_be_accepted
+7 failed, 51 passed, 1 warning in 29.98s

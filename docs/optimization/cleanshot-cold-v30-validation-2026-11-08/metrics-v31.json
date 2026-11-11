@@ -1,0 +1,102 @@
+{
+  "revision": "v31-ai-source-review",
+  "scope": "Generated email/LinkedIn delivery, rewrites, selected subject, local edits, version selection and restoration",
+  "branch": "master",
+  "baseline_execution": "258d1499-2d6d-431a-9270-f0c309a45661",
+  "execution": "19107648-aa8d-4e35-982a-bc898befef22",
+  "baseline_delivered": 0,
+  "delivered": 1,
+  "run_status": "completed",
+  "outcome_status": "completed",
+  "needs_review": false,
+  "campaign_model_calls": 5,
+  "forecast": {
+    "low": 4,
+    "high": 10
+  },
+  "campaign_seconds": 186.962,
+  "campaign_estimated_usd": 1.118,
+  "reader_interest": 7,
+  "reader_understood": true,
+  "reader_relevant": true,
+  "reader_is_simulation": true,
+  "behavioral_cases": [
+    {
+      "name": "original_SCIM",
+      "expected_pass": true,
+      "passed": true,
+      "matches_expected": true
+    },
+    {
+      "name": "short_Pro_plan",
+      "expected_pass": true,
+      "passed": true,
+      "matches_expected": true
+    },
+    {
+      "name": "wrong_billing",
+      "expected_pass": false,
+      "passed": false,
+      "matches_expected": true
+    },
+    {
+      "name": "invented_free_trial",
+      "expected_pass": false,
+      "passed": false,
+      "matches_expected": true
+    },
+    {
+      "name": "unsupported_Windows",
+      "expected_pass": false,
+      "passed": false,
+      "matches_expected": true
+    },
+    {
+      "name": "wrong_owner",
+      "expected_pass": false,
+      "passed": false,
+      "matches_expected": true
+    },
+    {
+      "name": "excluded_price",
+      "expected_pass": false,
+      "passed": false,
+      "matches_expected": true
+    }
+  ],
+  "behavioral_model_calls": 7,
+  "behavioral_estimated_usd": 1.707102,
+  "local_revision": {
+    "id": "2d70ac6b-bc4e-4677-b31a-46035690dcb1",
+    "writer_passes": 1,
+    "model_calls": 2,
+    "input_tokens": 44694,
+    "output_tokens": 5085,
+    "source_review_approved": true,
+    "accept_http": 200,
+    "restore_original_http": 200,
+    "original_content_preserved": true,
+    "old_reader_score_not_inherited": true
+  },
+  "total_observed_model_calls": 15,
+  "billing": "configured subscriptions, API keys filtered by existing providers",
+  "commercial_validation": "not_validated",
+  "whole_brand_journey_reaudited": false,
+  "render": {
+    "desktop_width": 1280,
+    "mobile_width": 390,
+    "no_horizontal_overflow": true,
+    "cta_http": 200,
+    "cta": "https://cleanshot.com/pricing"
+  },
+  "backend_full_suite_passed": 2280,
+  "additional_migration_and_reviewer_tests_passed": 19,
+  "frontend_tests_passed": 37,
+  "local_instruction_model_recheck": {
+    "cases": 1,
+    "calls": 1,
+    "passed": true,
+    "estimated_usd": 0.1823768
+  },
+  "latest_edit_and_reviewer_tests_passed": 19
+}

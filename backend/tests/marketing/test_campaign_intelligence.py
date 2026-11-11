@@ -38,6 +38,7 @@ from app.market.relevance import (
     CampaignReadiness,
     CampaignRecommendation,
     ClaimContract,
+    DefiningNeedFit,
     DossierSilence,
     DossierState,
     FitVerdict,
@@ -649,10 +650,11 @@ async def test_current_dossier_and_research_change_the_normalized_brief_without_
     assert brief.emails[0].status_quo == "", "An invented spreadsheet must not become another observed workflow by list order"
     assert any("single researched problem" in warning for warning in intelligence.trace.validation_warnings)
     assert brief.emails[0].evidence_ids == ["E1"]
-    assert brief.emails[0].must_not_say == [
+    assert brief.emails[0].must_not_say == []
+    assert brief.emails[0].claim_conditions == [
         "It reduces repeat triage; it does not eliminate every warranty question."
     ]
-    assert intelligence.trace.partial_caveats_injected == brief.emails[0].must_not_say
+    assert intelligence.trace.partial_caveats_injected == brief.emails[0].claim_conditions
 
 
 def test_synthetic_research_problem_cannot_borrow_an_unrelated_capability():
@@ -842,6 +844,12 @@ async def test_v2_problem_bridge_and_scope_limit_survive_into_the_writer(verdict
         allowed_claims=["licensed product fact 1"],
         allowed_evidence_ids=["E1"],
     )
+    setup = "Connect the documented inbox API before sending."
+    status.dossier.defining_need_fit = DefiningNeedFit(
+        status="addressed", evidence_ids=["E1"],
+        supported_alternative="Shared inbox", setup_conditions=[setup],
+        caveat="The alternative ticketing migration remains unverified.",
+    )
     caveat = "Collection operations are supported; higher participation is not established."
     status.dossier.problem_fits = [ProblemFit(
         problem_id="P1", verdict=verdict, evidence_ids=["E1"],
@@ -864,13 +872,17 @@ async def test_v2_problem_bridge_and_scope_limit_survive_into_the_writer(verdict
     )
 
     assert [fit.verdict for fit in intelligence.problem_fits] == [verdict]
-    assert caveat in brief.emails[0].must_not_say
+    assert caveat in brief.emails[0].claim_conditions
+    assert setup in intelligence.render_for_strategy()
+    assert setup in brief.emails[0].claim_conditions
+    assert setup not in brief.emails[0].must_not_say
     assert research().problems[0].statement == brief.emails[0].felt_need
     await EmailWriter(make_session(provider)).draft(
         brief=brief.emails[0], campaign=brief, request=request(),
         artifacts=current_artifacts, previous=[],
     )
     assert caveat in (provider.requests_for("email_writer")[0].system_prompt or "")
+    assert setup in (provider.requests_for("email_writer")[0].system_prompt or "")
     if inferred:
         prompt = provider.requests_for("email_writer")[0].system_prompt or ""
         assert "Use it only conditionally" in prompt

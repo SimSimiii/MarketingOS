@@ -1,0 +1,51 @@
+{
+  "status": "fix_validated_on_new_brand",
+  "runs": [],
+  "quality_history": [
+    {
+      "iteration": 1,
+      "score": null,
+      "reason": "No email delivered",
+      "comparable": false,
+      "evidence": [
+        "prepare-final.json",
+        "relevance-final.json",
+        "campaigns-final.json",
+        "ui-final-no-email.png"
+      ]
+    }
+  ],
+  "protocol": {
+    "operator": "Marketing operator at Help Scout",
+    "job": "Prepare and obtain one source-grounded acquisition email from only the homepage, without assembling evidence or writing the brief manually",
+    "promised_deliverable": "One useful email ready for normal brand review, copying and export",
+    "audience_hypothesis": "Small support teams moving from a shared email inbox; hypothesis only, not provided to the application",
+    "scope": "Corrections authorized after failed baseline; live validation on a new brand required.",
+    "commercial_validation": "not_validated",
+    "code_changes_allowed_for_this_test": true
+  },
+  "steps": {},
+  "last_snapshot": "docs\\optimization\\helpscout-final-validation-2026-11-08\\steps\\20261108T073300042390Z-capture.json",
+  "brand_id": "c4299a50-b3a8-4d6a-8737-cd29d529a153",
+  "external_blocker": null,
+  "quota_failure": false,
+  "verdict": "not_ready_to_sell_default_homepage_to_email_flow",
+  "quality_best": null,
+  "remaining_defects": [],
+  "next_action": "Implementation and new-brand validation complete; see Crisp report. Help Scout baseline remains an unmodified failed run, not a claimed delivered email.",
+  "report": "docs/reviews/helpscout-final-validation-2026-11-08.md",
+  "metrics": "final-metrics.json",
+  "product_code_changes": 0,
+  "stop_reason": "Fix validated on new brand as requested",
+  "baseline_verdict": "not_ready_to_sell_default_homepage_to_email_flow",
+  "baseline_defects": [
+    "System-generated target constraints block delivery despite supported useful mechanisms",
+    "Default flow ends after 17 calls with no email and an open research task",
+    "Single failed competitor fetch leaves zero verified market profiles"
+  ],
+  "validated_by": {
+    "case": "C:/Users/oussa/Desktop/Workspace/projects/MarketingOS/docs/optimization/crisp-cold-v29b-first-campaign-2026-11-08",
+    "report": "docs/reviews/crisp-fixes-validation-2026-11-08.md",
+    "execution": "b67d5895-4397-4b25-8495-70685774885a"
+  }
+}

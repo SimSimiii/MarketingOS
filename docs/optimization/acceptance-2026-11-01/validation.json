@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-11-05T03:30:28.892173+00:00",
+  "functional_bar_met_before_unit_checks": true,
+  "all_selected_emails": {
+    "count": 8,
+    "scenarios": 6,
+    "brands": 3,
+    "blocking_failures": 0,
+    "evidence": "all-selected-deterministic-checks.json"
+  },
+  "backend_targeted_pytest": {
+    "status": "passed",
+    "count": 59,
+    "warnings": 1,
+    "seconds": 28.31,
+    "log": "targeted-after-functional-confirmed.txt"
+  },
+  "full_backend_suite": {
+    "status": "not_rerun_at_user_request",
+    "historical_last_count": 2177,
+    "historical_log": "backend-tests-fixed-sender-identity.log",
+    "note": "Historical suite predates the latest corrections; not presented as validation of those corrections."
+  },
+  "backend_ruff": "passed app tests",
+  "frontend_eslint": "passed",
+  "frontend_types": "passed npm run typecheck",
+  "changed_diff_whitespace": "passed; only LF/CRLF notices",
+  "source_dependency_replay": "systeme-sequence/captured-support-dependency-replay.json",
+  "stale_selection_rejected": "systeme-sequence/selection-recheck-proof.json",
+  "selected_sequence_ui": "systeme-sequence/final-ui-check.json",
+  "selected_sequence_render": "systeme-sequence/final-selected/render-check.json",
+  "selected_loops_ui": "loops-consideration/claim-context-revision-ui-check.json",
+  "model_calls_known_minimum": 804,
+  "temporary_servers": "stopped; no listeners8000/3000",
+  "no_active_executions_before_stop": true
+}

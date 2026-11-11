@@ -1,0 +1,102 @@
+{
+  "value": {
+    "status": "needs_work",
+    "evidence": "No email after 17 calls and 608.401 seconds",
+    "consequence": "A customer seeking an email has no usable deliverable"
+  },
+  "effort": {
+    "status": "needs_work",
+    "evidence": "Only name/homepage/default objective were needed; final UI hands the user an open research task",
+    "consequence": "The client becomes responsible for rescuing the result"
+  },
+  "reliability": {
+    "status": "needs_work",
+    "evidence": "Job state done, empty API error, zero campaigns",
+    "consequence": "Technical completion does not establish delivery"
+  },
+  "factual_controls": {
+    "status": "pass",
+    "evidence": "Unverified AI-to-Shopify-data access and non-disruptive migration not promised",
+    "consequence": "Preserves factual boundaries"
+  },
+  "economy": {
+    "status": "needs_work",
+    "evidence": "17 calls, four opus dossier passes, 10m08s, no output",
+    "consequence": "Preparation spend without first-email value"
+  },
+  "usability": {
+    "status": "needs_work",
+    "evidence": "Actual UI ends on Check before drafting / Review audiences",
+    "consequence": "No copy/export/edit possible"
+  },
+  "reuse": {
+    "status": "not_measured",
+    "evidence": "Knowledge saved; no subsequent campaign run to manufacture a pass",
+    "consequence": "Potential reuse is not counted as observed paid value"
+  },
+  "commercial_validation": "not_validated",
+  "utility_verdict": "not_ready_to_sell_default_homepage_to_email_flow",
+  "stages": [
+    {
+      "stage": "Import des sources",
+      "score": 7.5,
+      "evidence": "documents-initial.json; documents-final.json",
+      "finding": "Sept pages initiales puis récupération automatique : douze documents, dix URL distinctes. Homepage partielle et corpus non exhaustif signalés."
+    },
+    {
+      "stage": "Connaissances",
+      "score": 7,
+      "evidence": "knowledge-final.json; ui-knowledge-base.txt",
+      "finding": "33 entrées citables et provenance explicite; contexte et citations distingués. Lecture initiale resserrée; prix des paliers sans mode de facturation explicite dans les cartes."
+    },
+    {
+      "stage": "Catalogue de capacités",
+      "score": 6,
+      "evidence": "audiences-final.json",
+      "finding": "Trois capacités dérivées vérifiées. Catalogue étroit malgré le mécanisme AI Answers documenté dans le ledger."
+    },
+    {
+      "stage": "Concurrents",
+      "score": 2,
+      "evidence": "market-final.json",
+      "finding": "Quatre alternatives découvertes; Zendesk seul candidat profilé, site illisible, zéro comparaison vérifiée."
+    },
+    {
+      "stage": "Positionnement",
+      "score": 2,
+      "evidence": "market-final.json; ui-market.txt",
+      "finding": "Absence de lecture concurrente correctement affichée; aucune différenciation comparative établie."
+    },
+    {
+      "stage": "Audiences",
+      "score": 5,
+      "evidence": "audiences-final.json",
+      "finding": "Trois hypothèses distinctes. Les deux premières introduisent des conditions ambitieuses générées par le système qui empêchent la recommandation."
+    },
+    {
+      "stage": "Recherche de besoin",
+      "score": 7,
+      "evidence": "audience-research.json; audiences-final.json",
+      "finding": "Quatre fils Shopify cités avec dates et corroboration limitée; pour SaaS un seul contenu de revue, date inconnue. Deux éléments non vérifiables éliminés."
+    },
+    {
+      "stage": "Dossier de pertinence",
+      "score": 5,
+      "evidence": "relevance-final.json",
+      "finding": "Les limites Shopify et migration sont conservées; un problème ADDRESSED et plusieurs preuves LEAD subsistent, sans livrable borné proposé."
+    },
+    {
+      "stage": "Génération et livraison",
+      "score": null,
+      "status": "not_delivered",
+      "evidence": "prepare-final.json; campaigns-final.json",
+      "finding": "Aucune campagne créée; aucun email. Texte, rendu, CTA, ajustement et export non testables sur cette nouvelle marque."
+    },
+    {
+      "stage": "Consultation du résultat",
+      "score": 5,
+      "evidence": "ui-final-overview.txt; ui-final-no-email.png",
+      "finding": "Progression et faits lisibles; sortie Review audiences après dix minutes, message sur une outreach list non demandée. Aucun chemin immédiat vers le livrable promis."
+    }
+  ]
+}

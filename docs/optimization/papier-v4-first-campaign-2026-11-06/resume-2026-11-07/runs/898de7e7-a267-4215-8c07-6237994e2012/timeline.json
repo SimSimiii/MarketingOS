@@ -1,0 +1,1196 @@
+{
+  "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+  "events": [
+    {
+      "type": "execution_started",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Request: Write exactly one email. Write an acquisition email in English. Give a new customer a specific reason to explore Papier and one clear next step.",
+      "at": "2026-11-07T09:50:59.418017+00:00",
+      "campaign_id": "05588ddf-4ca6-4a4c-8e04-9242b72c7dc4",
+      "request": "Write exactly one email. Write an acquisition email in English. Give a new customer a specific reason to explore Papier and one clear next step."
+    },
+    {
+      "type": "phase",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Read the request as 1 email(s) - the user said so",
+      "at": "2026-11-07T09:50:59.432864+00:00",
+      "phase": "contract",
+      "count": 1,
+      "explicit": true,
+      "kind": "single_email"
+    },
+    {
+      "type": "phase",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Reusing what we already know about this business (version 1, 21 facts)",
+      "at": "2026-11-07T09:50:59.502866+00:00",
+      "phase": "knowledge",
+      "reused": true,
+      "version": 1
+    },
+    {
+      "type": "knowledge_ready",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "knowledge_compiler",
+      "step": null,
+      "level": "info",
+      "message": "Knowledge reused: 21 facts the copy may claim, 0 gap(s)",
+      "at": "2026-11-07T09:50:59.507468+00:00",
+      "reused": true,
+      "version": 1,
+      "evidence_count": 21,
+      "segments": [
+        "Planner/diary shopper organising their year",
+        "Gift buyer personalising a keepsake"
+      ],
+      "gaps": [],
+      "voice_learned": true,
+      "notes": [
+        "3 of 24 candidate fact(s) were discarded because the quote supporting them could not be found in the source.",
+        "21,469 characters of material were past the reading budget and were not read.",
+        "First-campaign knowledge covers selected pages and decision-relevant evidence. Compile sources to read them in more depth."
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Researched audience and current Relevance Dossier loaded",
+      "at": "2026-11-07T09:50:59.606005+00:00",
+      "phase": "intelligence",
+      "selected_audience": "Planner/diary shopper organising their year",
+      "audience_resolution_status": "audience_research_loaded",
+      "audience_research_id": "328b45d9-6b89-45e3-a3e6-034166498b7e",
+      "audience_research_version": 1,
+      "dossier_status": "current",
+      "dossier_id": "f79e0b6c-2104-4db5-8472-b59ced603fb1",
+      "dossier_version": 3,
+      "dossier_schema_version": 2,
+      "stale_reasons": [],
+      "legacy_fallback_used": false,
+      "qualified_subsegment": "",
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [],
+      "validation_warnings": [
+        "Publication date unknown; retrieval today does not establish current applicability. The existence of dedicated comparison content between two specific diary-year structures (mid-year vs academic-year) implies shoppers in this niche already know multiple structured solutions exist and are evaluating which variant fits, rather than being unaware a solution ca…",
+        "Publication date unknown; retrieval today does not establish current applicability. Support content exists specifically to help shoppers distinguish between the Mid-Year and Academic Year diary formats, consistent with shoppers weighing this choice before buying.",
+        "Historical sources (2021-01-02); present applicability is not corroborated. One diary owner used a front-of-book month-to-view overview to check birthdays, events and deadlines at a glance rather than paging through weekly sections.",
+        "Publication date unknown; retrieval today does not establish current applicability. Shoppers choose between binding types (hardback vs spiral-bound) and have the cover personalised as part of the purchase.",
+        "Historical sources (2021-01-02); present applicability is not corroborated. Shopping for a personalised diary is tied to the start of a new (calendar) year.",
+        "Publication date unknown; retrieval today does not establish current applicability. The academic-year diary product is framed around the start of a school/academic year running August to July.",
+        "Historical sources (2021-01-02); present applicability is not corroborated. Wanting to see birthdays, big events and deadlines quickly, without flicking through each page of the diary.",
+        "Publication date unknown; retrieval today does not establish current applicability. Academic-year diary marketing promises built-in structure for tracking deadlines and grades across the school year, plus goal and gratitude space.",
+        "Publication date unknown; retrieval today does not establish current applicability. Dedicated support content comparing Mid-Year vs Academic-Year diary formats indicates shoppers weigh this specific format choice before buying.",
+        "Publication date unknown; retrieval today does not establish current applicability. Cover personalisation is offered as a standard option across diary formats, consistent with shoppers seeking it at checkout.",
+        "Publication date unknown; retrieval today does not establish current applicability. Papier's own site/help center hosts the academic-year vs mid-year vs calendar-year diary comparison content that shoppers would consult.",
+        "Historical sources (2021-01-02); present applicability is not corroborated. Independent personal blogs publish first-person reviews of buying and personalising a Papier diary, which shoppers researching the category may encounter.",
+        "P1: Historical sources (2021-01-02); present applicability is not corroborated.",
+        "P1: Single-source problem; independent corroboration is not established.",
+        "Source coverage is partial: 2 readable page(s), 2 unavailable URL(s). Findings cover only the pages read."
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "2 third-party proof point(s) available to spend",
+      "at": "2026-11-07T09:50:59.614066+00:00",
+      "phase": "proof",
+      "proof": 2,
+      "checkable": 19,
+      "asks": []
+    },
+    {
+      "type": "phase",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "1 competitor(s) read - 0 documented difference(s); 18 unmatched captured proposition(s) need verification, not an exclusivity conclusion",
+      "at": "2026-11-07T09:50:59.791106+00:00",
+      "phase": "market",
+      "rivals": 1,
+      "open_ground": [
+        "price",
+        "price",
+        "price",
+        "price",
+        "price",
+        "price",
+        "price",
+        "price",
+        "security",
+        "proof",
+        "proof",
+        "support",
+        "other",
+        "other",
+        "other",
+        "other",
+        "other",
+        "other"
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Written to Planner/diary shopper organising their year - selected audience hypothesis; response is unmeasured",
+      "at": "2026-11-07T09:50:59.836379+00:00",
+      "phase": "audience",
+      "segment": "Planner/diary shopper organising their year",
+      "mapped": true
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Strategist: Deciding what this campaign says, and in what order",
+      "at": "2026-11-07T09:50:59.841083+00:00",
+      "agent_name": "Strategist",
+      "label": "Deciding what this campaign says, and in what order"
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "debug",
+      "message": "Sent 94,637 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-07T09:50:59.901061+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 94637
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 10,060 characters in 54.1s (29,166 in / 3,704 out)",
+      "at": "2026-11-07T09:51:53.973384+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 29166,
+      "output_tokens": 3704,
+      "cache_read_input_tokens": 4480,
+      "cost_usd": 0.312192,
+      "duration_ms": 54068.16269992851,
+      "response_chars": 10060
+    },
+    {
+      "type": "phase",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Proposition selected for the requested campaign",
+      "at": "2026-11-07T09:51:53.981079+00:00",
+      "phase": "strategy_plan",
+      "pipeline_version": 2,
+      "strategy_mode": "planned",
+      "intent": {
+        "objective": "acquisition",
+        "objective_source": "inferred",
+        "reader_relationship": "unknown",
+        "relationship_source": "inferred",
+        "announcement": "",
+        "reason_now": "",
+        "desired_action": ""
+      },
+      "plan_history": [
+        {
+          "raw_plan": {
+            "interpretation": "One acquisition email for a solution-aware planner or diary shopper, introducing Papier through its documented academic-year diary rather than assuming the reader is already a customer. The email will invite the reader to explore the academic-year diary guide before deciding whether the August-to-July format suits them.",
+            "pipeline_version": 2,
+            "strategy_mode": "planned",
+            "intent": {
+              "objective": "acquisition",
+              "objective_source": "inferred",
+              "reader_relationship": "unknown",
+              "relationship_source": "inferred",
+              "announcement": "",
+              "reason_now": "",
+              "desired_action": "Explore Papier's academic-year diary format and decide whether its built-in planning structure suits the reader's year."
+            },
+            "reader": "A planner or diary shopper considering how to organise an academic year and comparing available diary formats.",
+            "reader_segment": "Planner/diary shopper organising their year",
+            "reader_profile_override": "",
+            "reader_scope": "Solution-aware shoppers considering an August-to-July academic-year diary. Do not assume they are students, have missed deadlines, currently use another planner, or have previously bought from Papier.",
+            "fixed_cta_url": "",
+            "promise": "Papier offers an academic-year diary that brings weekly and term-level planning, deadline and grade tracking, and reflective space into one paper diary.",
+            "orientation": "Papier's academic-year diary is an August-to-July paper planner with weekly overviews, monthly spreads, term timetables, deadline and grade trackers, and space for goals and reflection.",
+            "arc": "In this single email, move the reader from recognising Papier as a stationery brand to seeing one concrete reason to explore it: an academic-year diary designed around both the practical and personal shape of the year.",
+            "sequence_rationale": "A single acquisition email should lead with the strongest documented match to the reader's planning job: the diary's built-in weekly, monthly and term structure. The CTA goes to the official guide that explains this mechanism, allowing an unknown reader to assess the format without assuming purchase readiness. Personalisation is retained as a complete alternative proposition rather than diluting the primary argument.",
+            "emails": [
+              {
+                "problem_ids": [],
+                "offer_id": "offering",
+                "action_id": "",
+                "selection_reason": "The built-in academic-year structure directly supports the selected audience's job of organising deadlines, terms and personal plans in one diary, and the official guide gives them a low-friction way to explore whether that format suits them.",
+                "next_step_url": "https://www.papier.com/thefold/articles/why-an-academic-year-diary-still-belongs-on-your-desk",
+                "destination_kind": "web",
+                "argument_issue": "",
+                "value_case": {
+                  "reader_benefit": "If the reader plans around an academic calendar, they can keep weekly priorities, term dates, deadlines, grades, goals and reflections within one year-shaped paper diary.",
+                  "mechanism": "The diary runs from August to July and combines weekly overviews and monthly spreads with term timetables, deadline and grade trackers, and dedicated space for goals, notes, gratitude and reflection.",
+                  "evidence_ids": [
+                    "E1",
+                    "E2"
+                  ],
+                  "decision_conditions": [
+                    "The documented format is an academic-year diary running from August through July; suitability for a calendar-year planning cycle is not established by this proposition."
+                  ]
+                },
+                "claim_conditions": [
+                  "Keep all capability claims specific to Papier's academic-year diary.",
+                  "Present the organisational benefit as a useful possibility, not a guaranteed customer result."
+                ],
+                "position": 1,
+                "target_audience": "Planner or diary shoppers considering an academic-year format for organising their year.",
+                "job": "Give the reader a concrete reason to explore Papier and prompt them to consider whether its August-to-July diary structure fits how they plan.",
+                "single_idea": "Papier's academic-year diary gives the year a visible structure, bringing weekly and monthly planning, term timetables, deadline and grade tracking, and reflective space into one place.",
+                "felt_need": "",
+                "status_quo": "Shoppers may be weighing academic-year, mid-year and calendar-year diary formats before choosing one.",
+                "why_it_fails": "",
+                "mechanism": "Show how the August-to-July format is built around the academic calendar, then make the value tangible through its weekly overviews, monthly spreads, term timetables, trackers and reflective sections.",
+                "alternative_ideas": [],
+                "alternative_arguments": [
+                  {
+                    "problem_ids": [],
+                    "offer_id": "offering",
+                    "action_id": "",
+                    "selection_reason": "Personalisation offers a distinct, supported reason to explore Papier for shoppers who want a diary that feels specifically theirs rather than generic.",
+                    "next_step_url": "https://www.papier.com/thefold/articles/why-an-academic-year-diary-still-belongs-on-your-desk",
+                    "destination_kind": "web",
+                    "argument_issue": "",
+                    "value_case": {
+                      "reader_benefit": "The reader can make an academic-year diary recognisably their own by putting their name and an optional personal title—such as their degree—on it.",
+                      "mechanism": "Papier applies the buyer's chosen name and optional custom diary title during the purchase flow.",
+                      "evidence_ids": [
+                        "E3"
+                      ],
+                      "decision_conditions": [
+                        "This personalisation is documented for Papier's academic-year diaries.",
+                        "The evidence does not establish support for special characters, non-standard spellings or every culturally diverse name."
+                      ]
+                    },
+                    "claim_conditions": [
+                      "Limit the proposition to documented name and diary-title personalisation.",
+                      "Do not claim that every name, alphabet or special character can be rendered accurately."
+                    ],
+                    "single_idea": "A Papier academic-year diary can carry both the reader's name and a title of their choosing, turning a practical planner into something visibly personal.",
+                    "felt_need": "",
+                    "status_quo": "",
+                    "why_it_fails": "",
+                    "mechanism": "During the purchase flow, the buyer chooses their name and may also choose the diary title itself, such as a degree name or another personal phrase.",
+                    "belief_shift": "Before: a personalised diary means little more than adding a standard name to a cover. After: Papier lets the buyer shape both the name and the diary title, within the documented academic-year range.",
+                    "evidence_ids": [
+                      "E3"
+                    ],
+                    "must_not_say": [
+                      "Do not claim accurate rendering of special characters, non-standard spellings, culturally diverse names or every alphabet.",
+                      "Do not claim Papier is the only stationery brand offering personalisation or make an unverified competitor comparison.",
+                      "Do not imply that the guide displays current inventory, pricing or every available personalisation option."
+                    ],
+                    "objection": "Will the personalisation be meaningful enough to make the diary feel like mine?",
+                    "call_to_action": "Explore the academic-year diary guide",
+                    "next_step_decision": "Decide whether name-and-title personalisation makes Papier's academic-year diary appealing enough to consider.",
+                    "next_step_value": "The guide explains that Papier's academic-year diaries can be personalised with both a name and a chosen diary title.",
+                    "next_step_evidence_ids": [
+                      "E3"
+                    ],
+                    "next_step_limit": "The guide does not establish support for every spelling, character set or current design option.",
+                    "subject_strategy": "Earn the open with the specific possibility of putting more than a name on an academic-year diary; avoid generic claims about personalised stationery."
+                  }
+                ],
+                "belief_shift": "Before: an academic-year diary is mainly a dated place to list appointments and deadlines. After: Papier's version provides built-in weekly, monthly and term structure while leaving room for goals and reflection.",
+                "evidence_ids": [
+                  "E1",
+                  "E2"
+                ],
+                "must_not_say": [
+                  "Do not promise that the diary will improve grades, eliminate overwhelm, prevent missed deadlines or save time.",
+                  "Do not claim customer adoption, popularity or outcomes; no supporting proof is assigned.",
+                  "Do not generalise these academic-year features to Papier's calendar-year or productivity planners.",
+                  "Do not imply the reader is a student, has a full schedule, has missed deadlines or currently uses an inadequate planning system.",
+                  "Do not claim competitive superiority, exclusivity or that other diary brands lack these features.",
+                  "Do not introduce the unrelated address-book returns policy or prices for other planner products.",
+                  "Do not claim the destination shows current inventory, exact pricing or every available design.",
+                  "Do not use E17 or make an FSC or sustainability claim because it is outside the campaign-safe claim list."
+                ],
+                "forbidden_evidence_ids": [
+                  "E17"
+                ],
+                "forbidden_capability_ids": [],
+                "objection": "Is an academic-year diary the right format for how I organise my year?",
+                "tone": "Warm, quietly aspirational and concrete, with one flowing description of the year's practical and personal parts followed by a short invitation to explore.",
+                "call_to_action": "Explore the academic-year diary guide",
+                "next_step_decision": "Decide whether an August-to-July diary with built-in weekly, monthly and term structure suits the reader's planning cycle.",
+                "next_step_value": "The official guide explains the academic-year format and the planning sections included in Papier's diary.",
+                "next_step_evidence_ids": [
+                  "E1",
+                  "E2"
+                ],
+                "next_step_limit": "The guide supports consideration of the academic-year format but does not establish current stock, exact prices, delivery terms or suitability for a calendar-year planning cycle.",
+                "subject_strategy": "Signal a more complete way to hold the academic year in one place, using the August-to-July structure or the combination of deadlines and reflection as the curiosity hook; avoid vague productivity promises.",
+                "must_not_reuse": [],
+                "steering": {
+                  "directions": [],
+                  "include_evidence_ids": [],
+                  "exclude_evidence_ids": [],
+                  "use": [],
+                  "avoid": [],
+                  "context_only": [],
+                  "excluded_values": []
+                }
+              }
+            ],
+            "voice_notes": "Match Papier's warm, lightly storybook register, but keep the commercial proposition clear. Use words such as plans, pages, noteworthy or magic sparingly; do not let atmosphere obscure what the diary contains.",
+            "contract": {
+              "kind": "single_email",
+              "count": 1,
+              "count_is_explicit": true,
+              "evidence": "The user explicitly requested exactly one acquisition email in English with a specific reason to explore Papier and one clear next step."
+            }
+          },
+          "effective_plan": {
+            "interpretation": "One acquisition email for a solution-aware planner or diary shopper, introducing Papier through its documented academic-year diary rather than assuming the reader is already a customer. The email will invite the reader to explore the academic-year diary guide before deciding whether the August-to-July format suits them.",
+            "pipeline_version": 2,
+            "strategy_mode": "planned",
+            "intent": {
+              "objective": "acquisition",
+              "objective_source": "inferred",
+              "reader_relationship": "unknown",
+              "relationship_source": "inferred",
+              "announcement": "",
+              "reason_now": "",
+              "desired_action": ""
+            },
+            "reader": "Selected audience: Planner/diary shopper organising their year.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): Students, teachers, or self-organisers choosing a 2026/27 academic-year or 2027 calendar-year diary/planner and personalising it with their name, ahead of the new school or calendar year.",
+            "reader_segment": "Planner/diary shopper organising their year",
+            "reader_profile_override": "",
+            "reader_scope": "",
+            "fixed_cta_url": "",
+            "promise": "Papier offers an academic-year diary that brings weekly and term-level planning, deadline and grade tracking, and reflective space into one paper diary.",
+            "orientation": "Papier's academic-year diary (Aug–Jul) is a paper diary with weekly overviews, term timetables and deadline/grade trackers that the buyer personalises with their own name and, optionally, a custom title, choosing a week-to-view or day-to-view layout and a hardback or spiral binding.",
+            "arc": "In this single email, move the reader from recognising Papier as a stationery brand to seeing one concrete reason to explore it: an academic-year diary designed around both the practical and personal shape of the year.",
+            "sequence_rationale": "A single acquisition email should lead with the strongest documented match to the reader's planning job: the diary's built-in weekly, monthly and term structure. The CTA goes to the official guide that explains this mechanism, allowing an unknown reader to assess the format without assuming purchase readiness. Personalisation is retained as a complete alternative proposition rather than diluting the primary argument.",
+            "emails": [
+              {
+                "problem_ids": [],
+                "offer_id": "offering",
+                "action_id": "",
+                "selection_reason": "The built-in academic-year structure directly supports the selected audience's job of organising deadlines, terms and personal plans in one diary, and the official guide gives them a low-friction way to explore whether that format suits them.",
+                "next_step_url": "https://www.papier.com/thefold/articles/why-an-academic-year-diary-still-belongs-on-your-desk",
+                "destination_kind": "web",
+                "argument_issue": "",
+                "value_case": {
+                  "reader_benefit": "If the reader plans around an academic calendar, they can keep weekly priorities, term dates, deadlines, grades, goals and reflections within one year-shaped paper diary.",
+                  "mechanism": "The diary runs from August to July and combines weekly overviews and monthly spreads with term timetables, deadline and grade trackers, and dedicated space for goals, notes, gratitude and reflection.",
+                  "evidence_ids": [
+                    "E1",
+                    "E2"
+                  ],
+                  "decision_conditions": [
+                    "The documented format is an academic-year diary running from August through July; suitability for a calendar-year planning cycle is not established by this proposition."
+                  ]
+                },
+                "claim_conditions": [
+                  "Keep all capability claims specific to Papier's academic-year diary.",
+                  "Present the organisational benefit as a useful possibility, not a guaranteed customer result.",
+                  "Name and optional custom diary-title personalisation is selected and applied during the purchase flow (E3).",
+                  "This fit is established for the documented academic-year (Aug–Jul) diary; the calendar-year alternative mentioned in the workflow is not covered by the selected evidence and is not required for the academic-year branch to be addressed."
+                ],
+                "position": 1,
+                "target_audience": "Planner/diary shopper organising their year",
+                "job": "Give the reader a concrete reason to explore Papier and prompt them to consider whether its August-to-July diary structure fits how they plan.",
+                "single_idea": "Papier's academic-year diary gives the year a visible structure, bringing weekly and monthly planning, term timetables, deadline and grade tracking, and reflective space into one place.",
+                "felt_need": "",
+                "status_quo": "",
+                "why_it_fails": "",
+                "mechanism": "Show how the August-to-July format is built around the academic calendar, then make the value tangible through its weekly overviews, monthly spreads, term timetables, trackers and reflective sections.",
+                "alternative_ideas": [],
+                "alternative_arguments": [
+                  {
+                    "problem_ids": [],
+                    "offer_id": "offering",
+                    "action_id": "",
+                    "selection_reason": "Personalisation offers a distinct, supported reason to explore Papier for shoppers who want a diary that feels specifically theirs rather than generic.",
+                    "next_step_url": "https://www.papier.com/thefold/articles/why-an-academic-year-diary-still-belongs-on-your-desk",
+                    "destination_kind": "web",
+                    "argument_issue": "",
+                    "value_case": {
+                      "reader_benefit": "The reader can make an academic-year diary recognisably their own by putting their name and an optional personal title—such as their degree—on it.",
+                      "mechanism": "Papier applies the buyer's chosen name and optional custom diary title during the purchase flow.",
+                      "evidence_ids": [
+                        "E3"
+                      ],
+                      "decision_conditions": [
+                        "This personalisation is documented for Papier's academic-year diaries.",
+                        "The evidence does not establish support for special characters, non-standard spellings or every culturally diverse name."
+                      ]
+                    },
+                    "claim_conditions": [
+                      "Limit the proposition to documented name and diary-title personalisation.",
+                      "Do not claim that every name, alphabet or special character can be rendered accurately.",
+                      "Name and optional custom diary-title personalisation is selected and applied during the purchase flow (E3).",
+                      "This fit is established for the documented academic-year (Aug–Jul) diary; the calendar-year alternative mentioned in the workflow is not covered by the selected evidence and is not required for the academic-year branch to be addressed.",
+                      "Problem P1 is an inferred audience hypothesis: Buyers (or people they know) with name spellings outside the standard set, or with culturally diverse names, report that personalised items in general are hard to find, making accurate name personalisation on a diary a specific draw rather than something taken for granted. Use it only conditionally (if this is relevant to the reader), not as a known current pain, behavior or outcome of the recipient. Product fit does not establish current demand or a demonstrated customer outcome.",
+                      "Historical sources (2021-01-02); present applicability is not corroborated.",
+                      "Single-source problem; independent corroboration is not established.",
+                      "E3 confirms name (and title) personalisation generally but does not state how non-standard spellings, special characters or culturally diverse names are handled, so accurate rendering for this specific sub-group is not established by the selected evidence."
+                    ],
+                    "single_idea": "A Papier academic-year diary can carry both the reader's name and a title of their choosing, turning a practical planner into something visibly personal.",
+                    "felt_need": "",
+                    "status_quo": "",
+                    "why_it_fails": "",
+                    "mechanism": "During the purchase flow, the buyer chooses their name and may also choose the diary title itself, such as a degree name or another personal phrase.",
+                    "belief_shift": "Before: a personalised diary means little more than adding a standard name to a cover. After: Papier lets the buyer shape both the name and the diary title, within the documented academic-year range.",
+                    "evidence_ids": [
+                      "E3"
+                    ],
+                    "must_not_say": [
+                      "Do not claim accurate rendering of special characters, non-standard spellings, culturally diverse names or every alphabet.",
+                      "Do not claim Papier is the only stationery brand offering personalisation or make an unverified competitor comparison.",
+                      "Do not imply that the guide displays current inventory, pricing or every available personalisation option."
+                    ],
+                    "objection": "Will the personalisation be meaningful enough to make the diary feel like mine?",
+                    "call_to_action": "Explore the academic-year diary guide",
+                    "next_step_decision": "Decide whether name-and-title personalisation makes Papier's academic-year diary appealing enough to consider.",
+                    "next_step_value": "The guide explains that Papier's academic-year diaries can be personalised with both a name and a chosen diary title.",
+                    "next_step_evidence_ids": [
+                      "E3"
+                    ],
+                    "next_step_limit": "The guide does not establish support for every spelling, character set or current design option.",
+                    "subject_strategy": "Earn the open with the specific possibility of putting more than a name on an academic-year diary; avoid generic claims about personalised stationery."
+                  }
+                ],
+                "belief_shift": "Before: an academic-year diary is mainly a dated place to list appointments and deadlines. After: Papier's version provides built-in weekly, monthly and term structure while leaving room for goals and reflection.",
+                "evidence_ids": [
+                  "E1",
+                  "E2"
+                ],
+                "must_not_say": [
+                  "Do not promise that the diary will improve grades, eliminate overwhelm, prevent missed deadlines or save time.",
+                  "Do not claim customer adoption, popularity or outcomes; no supporting proof is assigned.",
+                  "Do not generalise these academic-year features to Papier's calendar-year or productivity planners.",
+                  "Do not imply the reader is a student, has a full schedule, has missed deadlines or currently uses an inadequate planning system.",
+                  "Do not claim competitive superiority, exclusivity or that other diary brands lack these features.",
+                  "Do not introduce the unrelated address-book returns policy or prices for other planner products.",
+                  "Do not claim the destination shows current inventory, exact pricing or every available design.",
+                  "Do not use E17 or make an FSC or sustainability claim because it is outside the campaign-safe claim list."
+                ],
+                "forbidden_evidence_ids": [
+                  "E11",
+                  "E12",
+                  "E13",
+                  "E14",
+                  "E15",
+                  "E17",
+                  "E18",
+                  "E19",
+                  "E20",
+                  "E21",
+                  "E6",
+                  "E7"
+                ],
+                "forbidden_capability_ids": [],
+                "objection": "Is an academic-year diary the right format for how I organise my year?",
+                "tone": "Warm, quietly aspirational and concrete, with one flowing description of the year's practical and personal parts followed by a short invitation to explore.",
+                "call_to_action": "Explore the academic-year diary guide",
+                "next_step_decision": "Decide whether an August-to-July diary with built-in weekly, monthly and term structure suits the reader's planning cycle.",
+                "next_step_value": "The official guide explains the academic-year format and the planning sections included in Papier's diary.",
+                "next_step_evidence_ids": [
+                  "E1",
+                  "E2"
+                ],
+                "next_step_limit": "The guide supports consideration of the academic-year format but does not establish current stock, exact prices, delivery terms or suitability for a calendar-year planning cycle.",
+                "subject_strategy": "Signal a more complete way to hold the academic year in one place, using the August-to-July structure or the combination of deadlines and reflection as the curiosity hook; avoid vague productivity promises.",
+                "must_not_reuse": [],
+                "steering": {
+                  "directions": [],
+                  "include_evidence_ids": [],
+                  "exclude_evidence_ids": [],
+                  "use": [],
+                  "avoid": [],
+                  "context_only": [],
+                  "excluded_values": []
+                }
+              }
+            ],
+            "voice_notes": "Match Papier's warm, lightly storybook register, but keep the commercial proposition clear. Use words such as plans, pages, noteworthy or magic sparingly; do not let atmosphere obscure what the diary contains.",
+            "contract": {
+              "kind": "single_email",
+              "count": 1,
+              "count_is_explicit": true,
+              "evidence": "one email"
+            }
+          },
+          "changed_fields": [
+            "intent",
+            "orientation",
+            "emails"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "brief_ready",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Campaign brief: Papier offers an academic-year diary that brings weekly and term-level planning, deadline and grade tracking, and reflective space into one paper diary.",
+      "at": "2026-11-07T09:51:53.986600+00:00",
+      "reader": "Selected audience: Planner/diary shopper organising their year.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): Students, teachers, or self-organisers choosing a 2026/27 academic-year or 2027 calendar-year diary/planner and personalising it with their name, ahead of the new school or calendar year.",
+      "reader_segment": "Planner/diary shopper organising their year",
+      "promise": "Papier offers an academic-year diary that brings weekly and term-level planning, deadline and grade tracking, and reflective space into one paper diary.",
+      "arc": "In this single email, move the reader from recognising Papier as a stationery brand to seeing one concrete reason to explore it: an academic-year diary designed around both the practical and personal shape of the year.",
+      "emails": [
+        {
+          "position": 1,
+          "job": "Give the reader a concrete reason to explore Papier and prompt them to consider whether its August-to-July diary structure fits how they plan.",
+          "single_idea": "Papier's academic-year diary gives the year a visible structure, bringing weekly and monthly planning, term timetables, deadline and grade tracking, and reflective space into one place.",
+          "selection_reason": "The built-in academic-year structure directly supports the selected audience's job of organising deadlines, terms and personal plans in one diary, and the official guide gives them a low-friction way to explore whether that format suits them.",
+          "problem_ids": [],
+          "action_id": "",
+          "next_step_url": "https://www.papier.com/thefold/articles/why-an-academic-year-diary-still-belongs-on-your-desk",
+          "argument_issue": "",
+          "objection": "Is an academic-year diary the right format for how I organise my year?",
+          "evidence_ids": [
+            "E1",
+            "E2"
+          ],
+          "must_not_say": [
+            "Do not promise that the diary will improve grades, eliminate overwhelm, prevent missed deadlines or save time.",
+            "Do not claim customer adoption, popularity or outcomes; no supporting proof is assigned.",
+            "Do not generalise these academic-year features to Papier's calendar-year or productivity planners.",
+            "Do not imply the reader is a student, has a full schedule, has missed deadlines or currently uses an inadequate planning system.",
+            "Do not claim competitive superiority, exclusivity or that other diary brands lack these features.",
+            "Do not introduce the unrelated address-book returns policy or prices for other planner products.",
+            "Do not claim the destination shows current inventory, exact pricing or every available design.",
+            "Do not use E17 or make an FSC or sustainability claim because it is outside the campaign-safe claim list."
+          ],
+          "claim_conditions": [
+            "Keep all capability claims specific to Papier's academic-year diary.",
+            "Present the organisational benefit as a useful possibility, not a guaranteed customer result.",
+            "Name and optional custom diary-title personalisation is selected and applied during the purchase flow (E3).",
+            "This fit is established for the documented academic-year (Aug–Jul) diary; the calendar-year alternative mentioned in the workflow is not covered by the selected evidence and is not required for the academic-year branch to be addressed."
+          ],
+          "felt_need": "",
+          "status_quo": "",
+          "why_it_fails": "",
+          "mechanism": "Show how the August-to-July format is built around the academic calendar, then make the value tangible through its weekly overviews, monthly spreads, term timetables, trackers and reflective sections.",
+          "call_to_action": "Explore the academic-year diary guide",
+          "next_step_decision": "Decide whether an August-to-July diary with built-in weekly, monthly and term structure suits the reader's planning cycle.",
+          "next_step_value": "The official guide explains the academic-year format and the planning sections included in Papier's diary.",
+          "next_step_evidence_ids": [
+            "E1",
+            "E2"
+          ],
+          "next_step_limit": "The guide supports consideration of the academic-year format but does not establish current stock, exact prices, delivery terms or suitability for a calendar-year planning cycle.",
+          "alternative_arguments": [
+            {
+              "problem_ids": [],
+              "offer_id": "offering",
+              "action_id": "",
+              "selection_reason": "Personalisation offers a distinct, supported reason to explore Papier for shoppers who want a diary that feels specifically theirs rather than generic.",
+              "next_step_url": "https://www.papier.com/thefold/articles/why-an-academic-year-diary-still-belongs-on-your-desk",
+              "destination_kind": "web",
+              "argument_issue": "",
+              "value_case": {
+                "reader_benefit": "The reader can make an academic-year diary recognisably their own by putting their name and an optional personal title—such as their degree—on it.",
+                "mechanism": "Papier applies the buyer's chosen name and optional custom diary title during the purchase flow.",
+                "evidence_ids": [
+                  "E3"
+                ],
+                "decision_conditions": [
+                  "This personalisation is documented for Papier's academic-year diaries.",
+                  "The evidence does not establish support for special characters, non-standard spellings or every culturally diverse name."
+                ]
+              },
+              "claim_conditions": [
+                "Limit the proposition to documented name and diary-title personalisation.",
+                "Do not claim that every name, alphabet or special character can be rendered accurately.",
+                "Name and optional custom diary-title personalisation is selected and applied during the purchase flow (E3).",
+                "This fit is established for the documented academic-year (Aug–Jul) diary; the calendar-year alternative mentioned in the workflow is not covered by the selected evidence and is not required for the academic-year branch to be addressed.",
+                "Problem P1 is an inferred audience hypothesis: Buyers (or people they know) with name spellings outside the standard set, or with culturally diverse names, report that personalised items in general are hard to find, making accurate name personalisation on a diary a specific draw rather than something taken for granted. Use it only conditionally (if this is relevant to the reader), not as a known current pain, behavior or outcome of the recipient. Product fit does not establish current demand or a demonstrated customer outcome.",
+                "Historical sources (2021-01-02); present applicability is not corroborated.",
+                "Single-source problem; independent corroboration is not established.",
+                "E3 confirms name (and title) personalisation generally but does not state how non-standard spellings, special characters or culturally diverse names are handled, so accurate rendering for this specific sub-group is not established by the selected evidence."
+              ],
+              "single_idea": "A Papier academic-year diary can carry both the reader's name and a title of their choosing, turning a practical planner into something visibly personal.",
+              "felt_need": "",
+              "status_quo": "",
+              "why_it_fails": "",
+              "mechanism": "During the purchase flow, the buyer chooses their name and may also choose the diary title itself, such as a degree name or another personal phrase.",
+              "belief_shift": "Before: a personalised diary means little more than adding a standard name to a cover. After: Papier lets the buyer shape both the name and the diary title, within the documented academic-year range.",
+              "evidence_ids": [
+                "E3"
+              ],
+              "must_not_say": [
+                "Do not claim accurate rendering of special characters, non-standard spellings, culturally diverse names or every alphabet.",
+                "Do not claim Papier is the only stationery brand offering personalisation or make an unverified competitor comparison.",
+                "Do not imply that the guide displays current inventory, pricing or every available personalisation option."
+              ],
+              "objection": "Will the personalisation be meaningful enough to make the diary feel like mine?",
+              "call_to_action": "Explore the academic-year diary guide",
+              "next_step_decision": "Decide whether name-and-title personalisation makes Papier's academic-year diary appealing enough to consider.",
+              "next_step_value": "The guide explains that Papier's academic-year diaries can be personalised with both a name and a chosen diary title.",
+              "next_step_evidence_ids": [
+                "E3"
+              ],
+              "next_step_limit": "The guide does not establish support for every spelling, character set or current design option.",
+              "subject_strategy": "Earn the open with the specific possibility of putting more than a name on an academic-year diary; avoid generic claims about personalised stationery."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "phase",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Campaign intelligence applied to the normalized brief",
+      "at": "2026-11-07T09:51:53.989601+00:00",
+      "phase": "intelligence",
+      "selected_audience": "Planner/diary shopper organising their year",
+      "audience_resolution_status": "audience_research_loaded",
+      "audience_research_id": "328b45d9-6b89-45e3-a3e6-034166498b7e",
+      "audience_research_version": 1,
+      "dossier_status": "current",
+      "dossier_id": "f79e0b6c-2104-4db5-8472-b59ced603fb1",
+      "dossier_version": 3,
+      "dossier_schema_version": 2,
+      "stale_reasons": [],
+      "legacy_fallback_used": false,
+      "qualified_subsegment": "",
+      "withhold_evidence_selected": [],
+      "partial_caveats_injected": [
+        "Name and optional custom diary-title personalisation is selected and applied during the purchase flow (E3).",
+        "This fit is established for the documented academic-year (Aug–Jul) diary; the calendar-year alternative mentioned in the workflow is not covered by the selected evidence and is not required for the academic-year branch to be addressed."
+      ],
+      "validation_warnings": [
+        "Publication date unknown; retrieval today does not establish current applicability. The existence of dedicated comparison content between two specific diary-year structures (mid-year vs academic-year) implies shoppers in this niche already know multiple structured solutions exist and are evaluating which variant fits, rather than being unaware a solution ca…",
+        "Publication date unknown; retrieval today does not establish current applicability. Support content exists specifically to help shoppers distinguish between the Mid-Year and Academic Year diary formats, consistent with shoppers weighing this choice before buying.",
+        "Historical sources (2021-01-02); present applicability is not corroborated. One diary owner used a front-of-book month-to-view overview to check birthdays, events and deadlines at a glance rather than paging through weekly sections.",
+        "Publication date unknown; retrieval today does not establish current applicability. Shoppers choose between binding types (hardback vs spiral-bound) and have the cover personalised as part of the purchase.",
+        "Historical sources (2021-01-02); present applicability is not corroborated. Shopping for a personalised diary is tied to the start of a new (calendar) year.",
+        "Publication date unknown; retrieval today does not establish current applicability. The academic-year diary product is framed around the start of a school/academic year running August to July.",
+        "Historical sources (2021-01-02); present applicability is not corroborated. Wanting to see birthdays, big events and deadlines quickly, without flicking through each page of the diary.",
+        "Publication date unknown; retrieval today does not establish current applicability. Academic-year diary marketing promises built-in structure for tracking deadlines and grades across the school year, plus goal and gratitude space.",
+        "Publication date unknown; retrieval today does not establish current applicability. Dedicated support content comparing Mid-Year vs Academic-Year diary formats indicates shoppers weigh this specific format choice before buying.",
+        "Publication date unknown; retrieval today does not establish current applicability. Cover personalisation is offered as a standard option across diary formats, consistent with shoppers seeking it at checkout.",
+        "Publication date unknown; retrieval today does not establish current applicability. Papier's own site/help center hosts the academic-year vs mid-year vs calendar-year diary comparison content that shoppers would consult.",
+        "Historical sources (2021-01-02); present applicability is not corroborated. Independent personal blogs publish first-person reviews of buying and personalising a Papier diary, which shoppers researching the category may encounter.",
+        "P1: Historical sources (2021-01-02); present applicability is not corroborated.",
+        "P1: Single-source problem; independent corroboration is not established.",
+        "Source coverage is partial: 2 readable page(s), 2 unavailable URL(s). Findings cover only the pages read.",
+        "Ignored unavailable dossier ranking E6.",
+        "The proposed current alternative was not established by audience research; it remains unknown."
+      ]
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "strategist",
+      "step": 1,
+      "level": "info",
+      "message": "Strategist: 1 email(s) to Selected audience: Planner/diary shopper organising their year.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): Students, teachers, or self-organisers choosing a 2026/27 academic-year or 2027 calendar-year diary/planner and personalising it with their name, ahead of the new school or calendar year.",
+      "at": "2026-11-07T09:51:54.006003+00:00",
+      "agent_name": "Strategist",
+      "agent_execution_id": "8d389e54-0c7c-45e0-bedf-7a2bbc904ab0",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 29166,
+      "output_tokens": 3704,
+      "cache_read_input_tokens": 4480,
+      "cost_usd": 0.312192,
+      "duration_ms": 54068.16269992851,
+      "attempt": 1,
+      "summary": "1 email(s) to Selected audience: Planner/diary shopper organising their year.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): Students, teachers, or self-organisers choosing a 2026/27 academic-year or 2027 calendar-year diary/planner and personalising it with their name, ahead of the new school or calendar year.",
+      "assets_produced": []
+    },
+    {
+      "type": "phase",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": null,
+      "step": 1,
+      "level": "info",
+      "message": "Drafts will be read cold by: Planner/diary shopper organising their year",
+      "at": "2026-11-07T09:51:54.011004+00:00",
+      "phase": "strategy",
+      "segment": "Planner/diary shopper organising their year",
+      "matched": true,
+      "audience_source": "compiled"
+    },
+    {
+      "type": "phase",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": null,
+      "step": 1,
+      "level": "info",
+      "message": "Email 1 of 1: Papier's academic-year diary gives the year a visible structure, bringing weekly and monthly planning, term timetables, deadline and grade tracking, and reflective space into one place.",
+      "at": "2026-11-07T09:51:54.165262+00:00",
+      "phase": "craft",
+      "position": 1
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "info",
+      "message": "Email Writer: Email 1 · first draft",
+      "at": "2026-11-07T09:51:54.169918+00:00",
+      "agent_name": "Email Writer",
+      "label": "Email 1 · first draft",
+      "position": 1,
+      "attempt": 1
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "debug",
+      "message": "Sent 63,537 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-07T09:51:54.191064+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 63537
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 1,090 characters in 16.6s (22,713 in / 1,038 out)",
+      "at": "2026-11-07T09:52:10.771082+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 22713,
+      "output_tokens": 1038,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.155705,
+      "duration_ms": 16575.548499939032,
+      "response_chars": 1090
+    },
+    {
+      "type": "draft",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "info",
+      "message": "Email 1, draft 1: \"Give your academic year shape\"",
+      "at": "2026-11-07T09:52:10.774600+00:00",
+      "position": 1,
+      "attempt": 1,
+      "subject": "Give your academic year shape",
+      "preview_text": "Bring term dates, weekly priorities and reflection into one August-to-July diary.",
+      "greeting": "Hi there,",
+      "body": "Map term dates across the months, set weekly priorities and keep deadlines visible — with room for the goals and reflections that give the year its shape.\n\nPapier’s academic-year diary is a paper diary running from August to July. Weekly overviews, monthly spreads and term timetables bring plans together, while deadline and grade trackers give key details a dedicated place.\n\nThere’s space for notes, gratitude and personal reflection too, so practical plans and personal moments can live within the same year-shaped pages.\n\nOur guide explains the academic-year format and walks through the diary’s planning sections, helping you decide whether its August-to-July rhythm suits the way you organise your year.",
+      "call_to_action": "Explore the academic-year diary guide",
+      "sign_off": "- Papier",
+      "postscript": "",
+      "word_count": 109
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "info",
+      "message": "Email Writer: Drafted \"Give your academic year shape\"",
+      "at": "2026-11-07T09:52:10.786794+00:00",
+      "agent_name": "Email Writer",
+      "agent_execution_id": "b2b02b3c-deb4-4bae-b890-4c73eadd46ef",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 22713,
+      "output_tokens": 1038,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.155705,
+      "duration_ms": 16575.548499939032,
+      "attempt": 1,
+      "summary": "Drafted \"Give your academic year shape\"",
+      "assets_produced": []
+    },
+    {
+      "type": "gates",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "email_writer",
+      "step": 2,
+      "level": "debug",
+      "message": "Email 1: every automatic check passed",
+      "at": "2026-11-07T09:52:10.803957+00:00",
+      "position": 1,
+      "attempt": 1,
+      "passed": true
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "blind_reader",
+      "step": 3,
+      "level": "info",
+      "message": "Blind Reader: Email 1 · read cold by 1 reader(s)",
+      "at": "2026-11-07T09:52:10.808956+00:00",
+      "agent_name": "Blind Reader",
+      "label": "Email 1 · read cold by 1 reader(s)",
+      "position": 1,
+      "attempt": 1
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "blind_reader",
+      "step": 3,
+      "level": "debug",
+      "message": "Sent 12,482 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-07T09:52:10.821182+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 12482
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "blind_reader",
+      "step": 3,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 2,269 characters in 21.6s (11,653 in / 1,501 out)",
+      "at": "2026-11-07T09:52:32.408562+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11653,
+      "output_tokens": 1501,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.081115,
+      "duration_ms": 21582.51019997988,
+      "response_chars": 2269
+    },
+    {
+      "type": "review",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "blind_reader",
+      "step": 3,
+      "level": "info",
+      "message": "Email 1 read cold: 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "at": "2026-11-07T09:52:32.413495+00:00",
+      "approved": false,
+      "conversion_score": 6,
+      "understood": true,
+      "summary": "A Papier paper diary covering August to July that would organise my week, term dates, deadlines, goals and reflections in one place.",
+      "issues": [
+        "Rewrite “See your academic year at a glance” as “An August-to-July paper diary for term dates, weekly priorities and deadlines” so the product and format are immediate.",
+        "Cut “There’s space for notes, gratitude and personal reflection too, so practical plans and personal moments can live within the same year-shaped pages.” unless these sections are shown or described more concretely; “year-shaped pages” tells me little.",
+        "Rewrite “Explore the academic-year diary guide →” as “See page layouts, formats and prices →” so I know the link will answer practical buying questions."
+      ],
+      "position": 1,
+      "attempt": 1,
+      "biggest_doubt": "I understand the format, but I cannot judge whether I would actually want this diary because the email gives no price and does not show what the pages or physical design look like.",
+      "stopped_at": "",
+      "readers": [
+        {
+          "persona": "Selected audience (explicit constraints): Planner/diary shopper organising their year.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): Students, teachers, or self-organisers choosing a 2026/27 academic-year or 2027 calendar-year diary/planner and personalising it with their name, ahead of the new school or calendar year.\n\nProblem context: Buyers (or people they know) with name spellings outside the standard set, or with culturally diverse names, report that personalised items in general are hard to find, making accurate name personalisation on a diary a specific draw rather than something taken for granted. [Source limits: Historical sources (2021-01-02); present applicability is not corroborated.; Single-source problem; independent corroboration is not established.] (inferred); source: https://charlotteannebarker.com/2021/01/02/papier-diary-review/",
+          "reported": true,
+          "opened": true,
+          "pull": 6,
+          "would_act": false,
+          "what_it_sells": "A Papier paper diary covering August to July that would organise my week, term dates, deadlines, goals and reflections in one place.",
+          "understood": true,
+          "biggest_doubt": "I understand the format, but I cannot judge whether I would actually want this diary because the email gives no price and does not show what the pages or physical design look like.",
+          "stopped_at": "",
+          "fixes": [
+            "Rewrite “See your academic year at a glance” as “An August-to-July paper diary for term dates, weekly priorities and deadlines” so the product and format are immediate.",
+            "Cut “There’s space for notes, gratitude and personal reflection too, so practical plans and personal moments can live within the same year-shaped pages.” unless these sections are shown or described more concretely; “year-shaped pages” tells me little.",
+            "Rewrite “Explore the academic-year diary guide →” as “See page layouts, formats and prices →” so I know the link will answer practical buying questions."
+          ]
+        }
+      ]
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "blind_reader",
+      "step": 3,
+      "level": "info",
+      "message": "Blind Reader: Pull 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "at": "2026-11-07T09:52:32.425017+00:00",
+      "agent_name": "Blind Reader",
+      "agent_execution_id": "49580dff-9d8f-4cc1-bfa2-96591e3259c7",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11653,
+      "output_tokens": 1501,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.081115,
+      "duration_ms": 21582.51019997988,
+      "attempt": 1,
+      "summary": "Pull 6/10 - AI simulation: wants it 6/10 (uncalibrated)",
+      "assets_produced": []
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "email_writer",
+      "step": 4,
+      "level": "info",
+      "message": "Email Writer: Email 1 · rewrite 1",
+      "at": "2026-11-07T09:52:32.429151+00:00",
+      "agent_name": "Email Writer",
+      "label": "Email 1 · rewrite 1",
+      "position": 1,
+      "attempt": 2
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "email_writer",
+      "step": 4,
+      "level": "debug",
+      "message": "Sent 67,282 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-07T09:52:32.455172+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 67282
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "email_writer",
+      "step": 4,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 1,036 characters in 26.3s (23,575 in / 2,298 out)",
+      "at": "2026-11-07T09:52:58.754179+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 23575,
+      "output_tokens": 2298,
+      "cache_read_input_tokens": 4480,
+      "cost_usd": 0.225284,
+      "duration_ms": 26294.729799963534,
+      "response_chars": 1036
+    },
+    {
+      "type": "draft",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "email_writer",
+      "step": 4,
+      "level": "info",
+      "message": "Email 1, draft 2: \"Choose your academic-year diary format\"",
+      "at": "2026-11-07T09:52:58.759177+00:00",
+      "position": 1,
+      "attempt": 2,
+      "subject": "Choose your academic-year diary format",
+      "preview_text": "Explore two layouts, two bindings and the planning sections inside.",
+      "greeting": "Hi there,",
+      "body": "Papier’s academic-year diary runs from August through July, with a week-to-view or day-to-view layout. It gives the academic calendar a paper home you can make your own.\n\nChoose a hardback designed to fit comfortably into most bags, or a larger spiral with more room to write. Add your name and, if you like, a custom diary title.\n\nInside, weekly overviews, monthly spreads and term timetables sit alongside deadline and grade trackers, with dedicated space for goals, notes, gratitude and reflection. Practical plans and personal pages stay together across the same academic year.\n\nThe Papier guide explains the August-to-July format and its planning sections, so you can decide whether that rhythm belongs on your desk.",
+      "call_to_action": "Explore the academic-year diary guide",
+      "sign_off": "- Papier",
+      "postscript": "",
+      "word_count": 114
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "email_writer",
+      "step": 4,
+      "level": "info",
+      "message": "Email Writer: Rewrote as \"Choose your academic-year diary format\"",
+      "at": "2026-11-07T09:52:58.771348+00:00",
+      "agent_name": "Email Writer",
+      "agent_execution_id": "4b2ca68e-ec2d-46e7-b2cc-687b2bc4ca89",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 23575,
+      "output_tokens": 2298,
+      "cache_read_input_tokens": 4480,
+      "cost_usd": 0.225284,
+      "duration_ms": 26294.729799963534,
+      "attempt": 2,
+      "summary": "Rewrote as \"Choose your academic-year diary format\"",
+      "assets_produced": []
+    },
+    {
+      "type": "gates",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "email_writer",
+      "step": 4,
+      "level": "debug",
+      "message": "Email 1: every automatic check passed",
+      "at": "2026-11-07T09:52:58.790332+00:00",
+      "position": 1,
+      "attempt": 2,
+      "passed": true
+    },
+    {
+      "type": "agent_started",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "blind_reader",
+      "step": 5,
+      "level": "info",
+      "message": "Blind Reader: Email 1 · read cold by 1 reader(s)",
+      "at": "2026-11-07T09:52:58.793846+00:00",
+      "agent_name": "Blind Reader",
+      "label": "Email 1 · read cold by 1 reader(s)",
+      "position": 1,
+      "attempt": 2
+    },
+    {
+      "type": "model_call_started",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "blind_reader",
+      "step": 5,
+      "level": "debug",
+      "message": "Sent 12,495 characters to gpt-5.6-sol - waiting for the answer",
+      "at": "2026-11-07T09:52:58.802887+00:00",
+      "model": "gpt-5.6-sol",
+      "prompt_chars": 12495
+    },
+    {
+      "type": "model_call_finished",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "blind_reader",
+      "step": 5,
+      "level": "debug",
+      "message": "gpt-5.6-sol answered with 2,310 characters in 19.7s (11,664 in / 1,347 out)",
+      "at": "2026-11-07T09:53:18.501339+00:00",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11664,
+      "output_tokens": 1347,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.076583,
+      "duration_ms": 19693.89659992885,
+      "response_chars": 2310
+    },
+    {
+      "type": "review",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "blind_reader",
+      "step": 5,
+      "level": "info",
+      "message": "Email 1 read cold: 7/10 - AI simulation: wants it 7/10 (uncalibrated)",
+      "at": "2026-11-07T09:53:18.507371+00:00",
+      "approved": true,
+      "conversion_score": 7,
+      "understood": true,
+      "summary": "Papier sells personalised August-to-July paper diaries with different layouts and bindings, giving me one place to organise each academic week, deadlines, goals and notes.",
+      "issues": [
+        "Rewrite “Choose a hardback designed to fit comfortably into most bags, or a larger spiral with more room to write.” to give the exact dimensions of both formats instead of the vague claims “most bags” and “more room.”",
+        "Rewrite “Explore the academic-year diary guide →” as “Compare diary sizes, layouts, personalisation and prices →” so I know the next page will answer the practical buying questions.",
+        "Rewrite “Add your name and, if you like, a custom diary title.” to clarify whether I can type any spelling and which characters or length limits apply."
+      ],
+      "position": 1,
+      "attempt": 2,
+      "biggest_doubt": "I still do not know the price or exact dimensions, so I cannot judge whether either version fits my budget and how I actually carry or use a diary.",
+      "stopped_at": "",
+      "readers": [
+        {
+          "persona": "Selected audience (explicit constraints): Planner/diary shopper organising their year.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): Students, teachers, or self-organisers choosing a 2026/27 academic-year or 2027 calendar-year diary/planner and personalising it with their name, ahead of the new school or calendar year.\n\nProblem context: Buyers (or people they know) with name spellings outside the standard set, or with culturally diverse names, report that personalised items in general are hard to find, making accurate name personalisation on a diary a specific draw rather than something taken for granted. [Source limits: Historical sources (2021-01-02); present applicability is not corroborated.; Single-source problem; independent corroboration is not established.] (inferred); source: https://charlotteannebarker.com/2021/01/02/papier-diary-review/",
+          "reported": true,
+          "opened": true,
+          "pull": 7,
+          "would_act": true,
+          "what_it_sells": "Papier sells personalised August-to-July paper diaries with different layouts and bindings, giving me one place to organise each academic week, deadlines, goals and notes.",
+          "understood": true,
+          "biggest_doubt": "I still do not know the price or exact dimensions, so I cannot judge whether either version fits my budget and how I actually carry or use a diary.",
+          "stopped_at": "",
+          "fixes": [
+            "Rewrite “Choose a hardback designed to fit comfortably into most bags, or a larger spiral with more room to write.” to give the exact dimensions of both formats instead of the vague claims “most bags” and “more room.”",
+            "Rewrite “Explore the academic-year diary guide →” as “Compare diary sizes, layouts, personalisation and prices →” so I know the next page will answer the practical buying questions.",
+            "Rewrite “Add your name and, if you like, a custom diary title.” to clarify whether I can type any spelling and which characters or length limits apply."
+          ]
+        }
+      ]
+    },
+    {
+      "type": "agent_completed",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "blind_reader",
+      "step": 5,
+      "level": "info",
+      "message": "Blind Reader: Pull 7/10 - AI simulation: wants it 7/10 (uncalibrated)",
+      "at": "2026-11-07T09:53:18.516895+00:00",
+      "agent_name": "Blind Reader",
+      "agent_execution_id": "1ae50929-eab8-4080-bec3-4ee24eeaff3b",
+      "model": "gpt-5.6-sol",
+      "input_tokens": 11664,
+      "output_tokens": 1347,
+      "cache_read_input_tokens": 7936,
+      "cost_usd": 0.076583,
+      "duration_ms": 19693.89659992885,
+      "attempt": 2,
+      "summary": "Pull 7/10 - AI simulation: wants it 7/10 (uncalibrated)",
+      "assets_produced": []
+    },
+    {
+      "type": "email_ready",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": "email_writer",
+      "step": 5,
+      "level": "info",
+      "message": "Email 1 ready: \"Choose your academic-year diary format\" (pull 7/10)",
+      "at": "2026-11-07T09:53:18.529570+00:00",
+      "position": 1,
+      "subject": "Choose your academic-year diary format",
+      "pull": 7,
+      "attempts": 2,
+      "clean": true
+    },
+    {
+      "type": "campaign_report",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": null,
+      "step": 5,
+      "level": "info",
+      "message": "Request: Write exactly one email. Write an acquisition email in English. Give a new customer a specific reason to explore Papier and one clear next step.\nDelivered 1 of 1 email(s). Average simulated reader's interest (uncalibrated) 7.0/10.\n- Email 1 \"Choose your academic-year diary format\": Papier's academic-year diary gives the year a visible structure, bringing weekly and monthly planning, term timetables, deadline and grade tracking, and reflective space into one place. - pull 7/10 after 1 rewrite(s)\nEffective audience: Planner/diary shopper organising their year\nAudience context: audience_research_loaded\nPublication date unknown; retrieval today does not establish current applicability. The existence of dedicated comparison content between two specific diary-year structures (mid-year vs academic-year) implies shoppers in this niche already know multiple structured solutions exist and are evaluating which variant fits, rather than being unaware a solution ca…\nPublication date unknown; retrieval today does not establish current applicability. Support content exists specifically to help shoppers distinguish between the Mid-Year and Academic Year diary formats, consistent with shoppers weighing this choice before buying.\nHistorical sources (2021-01-02); present applicability is not corroborated. One diary owner used a front-of-book month-to-view overview to check birthdays, events and deadlines at a glance rather than paging through weekly sections.\nPublication date unknown; retrieval today does not establish current applicability. Shoppers choose between binding types (hardback vs spiral-bound) and have the cover personalised as part of the purchase.\nHistorical sources (2021-01-02); present applicability is not corroborated. Shopping for a personalised diary is tied to the start of a new (calendar) year.\nPublication date unknown; retrieval today does not establish current applicability. The academic-year diary product is framed around the start of a school/academic year running August to July.\nHistorical sources (2021-01-02); present applicability is not corroborated. Wanting to see birthdays, big events and deadlines quickly, without flicking through each page of the diary.\nPublication date unknown; retrieval today does not establish current applicability. Academic-year diary marketing promises built-in structure for tracking deadlines and grades across the school year, plus goal and gratitude space.\nPublication date unknown; retrieval today does not establish current applicability. Dedicated support content comparing Mid-Year vs Academic-Year diary formats indicates shoppers weigh this specific format choice before buying.\nPublication date unknown; retrieval today does not establish current applicability. Cover personalisation is offered as a standard option across diary formats, consistent with shoppers seeking it at checkout.\nPublication date unknown; retrieval today does not establish current applicability. Papier's own site/help center hosts the academic-year vs mid-year vs calendar-year diary comparison content that shoppers would consult.\nHistorical sources (2021-01-02); present applicability is not corroborated. Independent personal blogs publish first-person reviews of buying and personalising a Papier diary, which shoppers researching the category may encounter.\nP1: Historical sources (2021-01-02); present applicability is not corroborated.\nP1: Single-source problem; independent corroboration is not established.\nSource coverage is partial: 2 readable page(s), 2 unavailable URL(s). Findings cover only the pages read.\nIgnored unavailable dossier ranking E6.\nThe proposed current alternative was not established by audience research; it remains unknown.",
+      "at": "2026-11-07T09:53:18.536142+00:00",
+      "delivered": 1,
+      "promised": 1,
+      "average_pull": 7.0,
+      "contract_violations": [],
+      "limiting_gaps": [],
+      "below_floor": [],
+      "what_would_help_most": ""
+    },
+    {
+      "type": "phase",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": null,
+      "step": 5,
+      "level": "info",
+      "message": "1 email(s) produced - average simulated reader's interest 7.0/10 (uncalibrated)",
+      "at": "2026-11-07T09:53:18.541182+00:00",
+      "phase": "finished",
+      "status": "completed",
+      "below_floor": []
+    },
+    {
+      "type": "execution_finished",
+      "execution_id": "898de7e7-a267-4215-8c07-6237994e2012",
+      "agent_id": null,
+      "step": null,
+      "level": "info",
+      "message": "Campaign run finished: completed",
+      "at": "2026-11-07T09:53:18.571828+00:00",
+      "status": "completed",
+      "run_status": "completed",
+      "estimated_cost_usd": 0.8509,
+      "delivered": 1
+    }
+  ],
+  "last_event_id": 43,
+  "is_running": false
+}

@@ -18,6 +18,12 @@ email needs your permission to be vague.
 
 Keep the company's identity and relevant company-wide facts, but do not inventory every
 employee, their location, team-directory filters, sharing buttons or article navigation.
+{% if compact | default(false) %}
+For the first campaign, return at most 12 facts for this reading. Prioritize a concrete
+buyer task, the product mechanism and benefit, proof and a usable next step. Cover
+material price, security or setup conditions when present. Quote only the shortest
+complete passage that supports each claim, including any condition that qualifies it.
+{% endif %}
 An implementation built by a customer is not a native product capability. Keep its actual
 owner in subject and use third_party when describing the third-party tool itself.
 
@@ -35,6 +41,12 @@ its own.
 **`claim` is the same fact in a form a writer could put in a sentence**, with the numbers and
 names intact. Never round, never soften, never strengthen. If the page says "up to 40%", the
 claim says "up to 40%" — not "40%".
+
+Extract independently useful operations as separate claims even when they appear in one
+paragraph or plan card. For example, an invitation to view or comment is a collaboration
+capability, separate from a project quota or a credit allowance in the same card. Keep the
+plan condition when applicable. Treat the billing unit as an offer claim in its own right
+when a source states what the customer pays for, rather than burying it in a feature.
 
 **`document_id`** is the id attribute of the document the quote came from.
 
@@ -72,7 +84,8 @@ enough header text to identify the company and plan for each amount. When a tabl
 short excerpt cannot establish those bindings, record the ambiguity in `limitations`
 instead of reconstructing a standalone feature price.
 
-**`kind`** — `metric` for measurable results, `price` for costs and plans, `testimonial` for
+**`kind`** — `metric` for quantified results, including figures reported in a named customer
+story (keep attribution, scope and missing measurement details), `price` for costs and plans, `testimonial` for
 something a customer said, `customer` for a named user, `integration` for what it connects to,
 `feature` for a specific capability, `guarantee` for promises, `certification` for compliance,
 `award` for recognition.

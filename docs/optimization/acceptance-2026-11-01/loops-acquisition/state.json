@@ -1,0 +1,240 @@
+{
+  "runs": [
+    {
+      "execution_id": "97fa658f-b0f0-418e-858c-68bd6bc70df7",
+      "campaign_id": "8a09fddd-f0dc-4aae-93a3-6ca64a6bca9b",
+      "status": "completed",
+      "launched_at": "2026-11-02T06:01:55.175833+00:00",
+      "code_revision": "working-tree",
+      "outcome_status": "degraded",
+      "needs_review": true,
+      "review_reasons": [
+        "The run retained drafts after an interrupted step.",
+        "Some drafts retain unresolved strategy or review findings.",
+        "Some drafts still need editorial review."
+      ],
+      "last_checked_at": "2026-11-02T06:14:07.794848+00:00",
+      "result_dir": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\runs\\97fa658f-b0f0-418e-858c-68bd6bc70df7",
+      "estimated_cost_usd": 2.6376,
+      "completed_at": "2026-11-02T06:14:00.743335Z"
+    },
+    {
+      "execution_id": "8a3f9561-820a-42a8-9406-295255c120d4",
+      "campaign_id": "8a09fddd-f0dc-4aae-93a3-6ca64a6bca9b",
+      "status": "completed",
+      "launched_at": "2026-11-02T06:23:58.387567+00:00",
+      "code_revision": "working-tree",
+      "outcome_status": "degraded",
+      "needs_review": true,
+      "review_reasons": [
+        "Some drafts retain unresolved strategy or review findings."
+      ],
+      "last_checked_at": "2026-11-02T06:28:50.110939+00:00",
+      "result_dir": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\runs\\8a3f9561-820a-42a8-9406-295255c120d4",
+      "estimated_cost_usd": 3.3556,
+      "completed_at": "2026-11-02T06:28:48.801560Z"
+    }
+  ],
+  "steps": {
+    "create": {
+      "started_at": "20261101T002605685021Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261101T002605685021Z-create.json"
+    },
+    "ingest": {
+      "started_at": "20261101T002608546022Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261101T002608546022Z-ingest.json"
+    },
+    "compile": {
+      "started_at": "20261101T002634391592Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261101T002634391592Z-compile.json"
+    },
+    "compile-quota-resume": {
+      "started_at": "20261101T015700195495Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261101T015700195495Z-compile.json"
+    },
+    "scan-concurrency-clear": {
+      "started_at": "20261101T020305709839Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261101T020305709839Z-scan.json"
+    },
+    "map": {
+      "started_at": "20261101T020638948614Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261101T020638948614Z-map.json"
+    },
+    "map-claude-reconnected": {
+      "started_at": "20261101T035537221800Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261101T035537221800Z-map.json"
+    },
+    "select-first": {
+      "started_at": "20261101T235529311562Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261101T235529311562Z-select-first.json"
+    },
+    "research": {
+      "started_at": "20261101T235531835111Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261101T235531835111Z-research.json"
+    },
+    "dossier": {
+      "started_at": "20261102T000100404764Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261102T000100404764Z-dossier.json"
+    },
+    "campaign": {
+      "started_at": "20261102T000437205506Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261102T000437205506Z-campaign.json"
+    },
+    "ingest-documentation-coverage": {
+      "started_at": "20261102T012710108070Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261102T012710108070Z-ingest.json"
+    },
+    "compile-documentation-coverage": {
+      "started_at": "20261102T012741918092Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261102T012741918092Z-compile.json"
+    },
+    "derive-documentation-coverage": {
+      "started_at": "20261102T053224864133Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261102T053224864133Z-derive.json"
+    },
+    "map-documentation-fit-recheck": {
+      "started_at": "20261102T053227567525Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261102T053227567525Z-map.json"
+    },
+    "research-documentation-coverage": {
+      "started_at": "20261102T053550004331Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261102T053550004331Z-research.json"
+    },
+    "dossier-documentation-coverage": {
+      "started_at": "20261102T054155212625Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261102T054155212625Z-dossier.json"
+    },
+    "dossier-alternative-scope18": {
+      "started_at": "20261102T055256462532Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261102T055256462532Z-dossier.json"
+    },
+    "policy-supported-premise-gpt": {
+      "started_at": "20261102T062340586432Z",
+      "snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261102T062340586432Z-policy.json"
+    }
+  },
+  "last_snapshot": "docs\\optimization\\acceptance-2026-11-01\\loops-acquisition\\steps\\20261102T064217224081Z-capture.json",
+  "acceptance_review": {
+    "status": "usable_after_minor_revision",
+    "score": 89,
+    "score_components": [
+      25,
+      18,
+      16,
+      13,
+      9,
+      8
+    ],
+    "execution_id": "8a3f9561-820a-42a8-9406-295255c120d4",
+    "selected_revision_id": "100eb4e7-75b4-4c52-8f99-3717772ea213",
+    "delivered": 1,
+    "promised": 1,
+    "readiness": "GO_NARROW, current, Supabase only; no override",
+    "strengths": [
+      "Auth sending and onboarding contact sync explained as separate useful paths",
+      "Source-backed implementation conditions retained; documented inspection before account or deployment"
+    ],
+    "remaining_defect": "Subject is functional rather than striking; advisory CTA label matcher flags an official URL despite correct destination.",
+    "minor_changes": "Clarify independent routes with existing implementation facts, remove distracting rate-limit paragraph, keep same argument and guide CTA.",
+    "stage_scores_out_of_10": {
+      "ingestion": 9,
+      "compilation": 9,
+      "capabilities": 8,
+      "competitors": 7,
+      "positioning": 7,
+      "audience_map": 7,
+      "research": 7,
+      "dossier": 8,
+      "generation": 8,
+      "consultation": 8
+    },
+    "reviewed_at": "2026-11-02T06:48:20.584715+00:00",
+    "score_method": "Coordinator editorial judgment, not customer or conversion measurement"
+  },
+  "quality_history": [
+    {
+      "iteration": "coverage2-scope18-claude",
+      "execution_id": "97fa658f-b0f0-418e-858c-68bd6bc70df7",
+      "score": 70,
+      "score_components": [
+        22,
+        18,
+        9,
+        7,
+        9,
+        5
+      ],
+      "comparable": false,
+      "track": "knowledge2/scope18 Claude retained draft, interrupted recovery",
+      "strengths": [
+        "Documented Supabase hook route",
+        "Verified domain/template setup retained"
+      ],
+      "remaining_defect": "Opening on platform throttle implies a remedy not established, while asking for account/deployment; recovery stopped on Claude quota.",
+      "next_action": "Correct premise and use documented inspection CTA; preserve interrupted run",
+      "evidence": [
+        "runs/97fa658f-b0f0-418e-858c-68bd6bc70df7/result.json"
+      ],
+      "reviewed_at": "2026-11-02T06:48:20.584715+00:00"
+    },
+    {
+      "iteration": "supported-premise-gpt-original",
+      "execution_id": "8a3f9561-820a-42a8-9406-295255c120d4",
+      "score": 85,
+      "score_components": [
+        24,
+        18,
+        15,
+        12,
+        9,
+        7
+      ],
+      "comparable": true,
+      "track": "knowledge2/scope18 GPT",
+      "strengths": [
+        "Two documented paths",
+        "Inspection CTA with no implementation commitment"
+      ],
+      "remaining_defect": "Rate-limit detour distracts; independent paths need a clearer concise description.",
+      "next_action": "One bounded minor revision",
+      "evidence": [
+        "runs/8a3f9561-820a-42a8-9406-295255c120d4/result.json"
+      ],
+      "reviewed_at": "2026-11-02T06:48:20.584715+00:00",
+      "delta_vs_previous_comparable": null
+    },
+    {
+      "iteration": "supported-premise-gpt-selected",
+      "execution_id": "8a3f9561-820a-42a8-9406-295255c120d4",
+      "revision_id": "100eb4e7-75b4-4c52-8f99-3717772ea213",
+      "score": 89,
+      "score_components": [
+        25,
+        18,
+        16,
+        13,
+        9,
+        8
+      ],
+      "comparable": true,
+      "track": "knowledge2/scope18 GPT",
+      "strengths": [
+        "Auth sending and onboarding contact sync explained as separate useful paths",
+        "Source-backed implementation conditions retained; documented inspection before account or deployment"
+      ],
+      "remaining_defect": "Subject is functional rather than striking; advisory CTA label matcher flags an official URL despite correct destination.",
+      "next_action": "Accepted for fixed audit; no further model runs",
+      "evidence": [
+        "runs/8a3f9561-820a-42a8-9406-295255c120d4/result.json"
+      ],
+      "reviewed_at": "2026-11-02T06:48:20.584715+00:00",
+      "delta_vs_previous_comparable": 4
+    }
+  ],
+  "quality_best": {
+    "iteration": "supported-premise-gpt-selected",
+    "score": 89,
+    "execution_id": "8a3f9561-820a-42a8-9406-295255c120d4",
+    "track": "knowledge2/scope18 GPT"
+  }
+}

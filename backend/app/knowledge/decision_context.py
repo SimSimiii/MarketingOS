@@ -10,6 +10,8 @@ from app.knowledge.ledger import Evidence, EvidenceLedger, category_of, context_
 
 _STOP = frozenset({"this", "that", "with", "from", "your", "their", "have", "will", "email", "write", "exactly", "product", "people", "which", "about"})
 _RELATED = (
+    (r"\b(?:rate[ -]+limit\w*|throttl\w*|send(?:ing)?[ -]+limit\w*|volume)\b",
+     "emails per second hourly daily sending limits free paid plan allowance"),
     (r"\b(?:cost\w*|pric\w*|afford\w*|expensive|budget\w*)\b",
      "annual yearly billing discount renewal cancellation free tier"),
     (r"\b(?:trust\w*|accura\w*|counting|counts|numbers)\b",

@@ -31,6 +31,7 @@ def _implemented_role_ids() -> set[str]:
     from app.market.linkedin import TARGETING_ROLE_ID as LINKEDIN_TARGETING
     from app.marketing import (
         critic,
+        grounding,
         reader,
         sequence,
         strategist,
@@ -42,6 +43,7 @@ def _implemented_role_ids() -> set[str]:
 
     return {
         compiler.ROLE_ID,
+        grounding.ROLE_ID,
         LINKEDIN_RESEARCH,
         LINKEDIN_TARGETING,
         LINKEDIN_WRITER,

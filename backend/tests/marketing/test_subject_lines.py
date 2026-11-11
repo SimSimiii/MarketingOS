@@ -128,7 +128,8 @@ def test_an_option_too_long_for_an_inbox_is_not_sendable():
     sent back for a rewrite that costs a whole turn."""
     assert SubjectOption(subject="x" * 66, preview="fine").sendable is False
     assert SubjectOption(subject="fine", preview="x" * 111).sendable is False
-    assert SubjectOption(subject="same words", preview="Same words").sendable is False
+    assert SubjectOption(subject="same words", preview="Same words").sendable is True
+    assert SubjectOption(subject="same words", preview="same words").sendable is False
     assert SubjectOption(subject="fine", preview="extends it").sendable is True
 
 

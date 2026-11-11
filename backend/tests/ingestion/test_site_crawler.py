@@ -15,6 +15,55 @@ from app.ingestion.loaders.site_crawler import SiteCrawler
 FILLER = "<p>" + ("Something worth reading about the product. " * 12) + "</p>"
 
 
+@pytest.mark.asyncio
+async def test_linked_manifest_reaches_operational_guide_within_page_budget():
+    pages = {
+        "https://example.com/": FILLER + '<a href="/docs">Docs</a>',
+        "https://example.com/docs": FILLER + '<a href="/docs/llms.txt">Index</a>' +
+            ''.join(f'<a href="/docs/sdk-{i}">SDK</a>' for i in range(10)),
+        "https://example.com/docs/llms.txt": (
+            '[Auth guide](https://example.com/docs/integrations/auth.md)\n'
+            '[Other company](https://elsewhere.example/integrations/auth.md)\n'
+            '[Private](http://127.0.0.1/admin)'
+        ),
+        "https://example.com/docs/integrations/auth.md": FILLER,
+        **{f"https://example.com/docs/sdk-{i}": FILLER for i in range(10)},
+    }
+    calls = []
+
+    def handler(request):
+        calls.append(str(request.url))
+        return httpx.Response(200, text=pages[str(request.url)])
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as http:
+        docs = await SiteCrawler(http, max_pages=6).crawl("https://example.com/")
+    assert len(calls) <= 6
+    assert "https://example.com/docs/integrations/auth.md" in {d.source for d in docs}
+    assert not any(d.source.endswith('llms.txt') for d in docs)
+    assert not any('elsewhere' in url or '127.0.0.1' in url for url in calls)
+
+
+@pytest.mark.asyncio
+async def test_focused_crawl_keeps_price_and_deduplicates_document_representations():
+    pages = {
+        "https://example.com/": FILLER + '<a href="/pricing">Pricing</a><a href="/docs">Docs</a>',
+        "https://example.com/pricing": FILLER,
+        "https://example.com/docs": FILLER + '<a href="/docs/llms.txt">Index</a>',
+        "https://example.com/docs/llms.txt": (
+            '[Auth guide](https://example.com/docs/integrations/auth.md)\n'
+            '[Auth guide HTML](https://example.com/docs/integrations/auth)\n'
+            '[Other SDK](https://example.com/docs/sdk.md)'
+        ),
+        "https://example.com/docs/integrations/auth.md": FILLER,
+        "https://example.com/docs/integrations/auth": FILLER,
+        "https://example.com/docs/sdk.md": FILLER,
+    }
+    async with client(pages) as http:
+        docs = await SiteCrawler(http, max_pages=5, preserve_overview=True).crawl("https://example.com/", focus="Auth")
+    assert any(d.source.endswith('/pricing') for d in docs)
+    assert sum('/integrations/auth' in d.source for d in docs) == 1
+
+
 def test_pricing_priority_does_not_confuse_planner_products_with_billing():
     assert priority_of("https://x.com/fr/pricing") == 100
     assert priority_of("https://x.com/plans") == 100
@@ -158,12 +207,13 @@ async def test_documentation_hub_is_followed_without_manual_guide_urls():
         "https://example.com/": f'{FILLER}<a href="/help">Help</a>',
         "https://example.com/help": f'{FILLER}<a href="/help/install">Install</a>',
         "https://example.com/help/install": f'{FILLER}<p>Add one script to your site.</p><a href="/help/install/more">More</a>',
-        "https://example.com/help/install/more": FILLER,
+        "https://example.com/help/install/more": FILLER + '<a href="/help/install/more/deep">Deep</a>',
     }
     documents = await SiteCrawler(client=client(pages)).crawl("https://example.com/")
     sources = {document.source for document in documents}
     assert "https://example.com/help/install" in sources
-    assert "https://example.com/help/install/more" not in sources
+    assert "https://example.com/help/install/more" in sources
+    assert "https://example.com/help/install/more/deep" not in sources
 
 
 @pytest.mark.asyncio

@@ -1,0 +1,2 @@
+
+7 novembre — itération 1 : 84/100, premier score sur cette piste, meilleur 84, exécution 898de7e7. Jugement éditorial interne, non comparable aux anciennes audiences. Le format scolaire, les sections et la personnalisation sont concrets et sourcés. Cinq appels de génération, pas de réserve envahissante, rendu mobile et export vérifiés. Limite : prix et dimensions exactes non établis ; email informatif plutôt que très distinctif. Résultat utilisable après revue ordinaire.

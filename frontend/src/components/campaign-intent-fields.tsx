@@ -41,5 +41,21 @@ export function CampaignIntentFields({ value, onChange }: {
       <Input id="reason-now" maxLength={4000} value={intent.reason_now ?? ""} onChange={(event) => change({ reason_now: event.target.value })}
         placeholder="An established event, availability change or useful occasion" />
     </div>
+    <details className="space-y-3 rounded-md border p-3">
+      <summary className="cursor-pointer text-sm font-medium">Verify a required fact before writing (optional)</summary>
+      <div className="space-y-2">
+        <Label htmlFor="required-fact">Question the sources must answer</Label>
+        <Input id="required-fact" maxLength={1000} value={intent.required_fact ?? ""}
+          onChange={(event) => change({ required_fact: event.target.value,
+            ...(event.target.value.trim() ? {} : { required_source_url: "" }) })}
+          placeholder="Which plan includes the Intercom integration?" />
+      </div>
+      {intent.required_fact?.trim() && <div className="space-y-2">
+        <Label htmlFor="required-source">Official source page (optional)</Label>
+        <Input id="required-source" type="url" maxLength={2048} value={intent.required_source_url ?? ""}
+          onChange={(event) => change({ required_source_url: event.target.value })} />
+        <p className="text-xs text-muted-foreground">Writing starts once a brand source answers the question.</p>
+      </div>}
+    </details>
   </div>;
 }

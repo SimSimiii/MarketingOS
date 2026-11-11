@@ -1,0 +1,75 @@
+{
+  "status": "validation_complete",
+  "runs": [
+    {
+      "code_revision": "v34",
+      "execution_id": "3fd73d86-9641-4ac2-891f-f764bce5a6f9",
+      "status": "failed",
+      "launched_at": "2026-11-09T11:39:06.727523Z",
+      "launched_from": "Default UI Fast, no override",
+      "campaign_id": "f6375955-d747-4f5b-a27d-e2d8213aaae3",
+      "outcome_status": "failed",
+      "needs_review": false,
+      "review_reasons": [],
+      "last_checked_at": "2026-11-09T12:45:21.438591+01:00",
+      "result_dir": "docs\\optimization\\transistor-cold-v34-validation-2026-11-09\\runs\\3fd73d86-9641-4ac2-891f-f764bce5a6f9",
+      "estimated_cost_usd": 2.076,
+      "completed_at": "2026-11-09T11:45:15.319198Z"
+    }
+  ],
+  "steps": {},
+  "quality_history": [
+    {
+      "execution_id": "3fd73d86-9641-4ac2-891f-f764bce5a6f9",
+      "strengths": [
+        "Automatic agency audience",
+        "Supported multi-show benefit retained in rewrite"
+      ],
+      "reason": "No delivered email",
+      "remaining_defect": "The plan required trial access and plan conditions without sufficient literal citations in the reviewer input",
+      "score": null,
+      "iteration": 1
+    },
+    {
+      "iteration": 2,
+      "revision": "v35",
+      "score": null,
+      "reason": "No delivered email after the first strategy replay",
+      "remaining_defect": "The brief prescribed unsupported quota sharing and the rewrite introduced a trial entitlement."
+    },
+    {
+      "iteration": 3,
+      "revision": "v35b",
+      "score": 81,
+      "reason": "Approved and exported one email from the archived brief, corpus and audience",
+      "strengths": [
+        "The no-per-podcast-charge benefit is tied to the paid account.",
+        "The final CTA points to the documented signup."
+      ],
+      "remaining_defect": "Some repetition. The simulated reader asked for pricing and client access details."
+    }
+  ],
+  "replays": [
+    {
+      "revision": "v35",
+      "status": "failed",
+      "result_dir": "replay-v35",
+      "calls": 7,
+      "elapsed_seconds": 290.75
+    },
+    {
+      "revision": "v35b",
+      "status": "passed",
+      "result_dir": "replay-v35b",
+      "calls": 8,
+      "elapsed_seconds": 315.578,
+      "negative_control_dir": "replay-v35b-trial-control",
+      "negative_control_rejected": true,
+      "negative_control_calls": 1,
+      "report": "docs/reviews/transistor-offer-replay-v35.md"
+    }
+  ],
+  "last_snapshot": "docs\\optimization\\transistor-cold-v34-validation-2026-11-09\\steps\\20261109T113905090014Z-capture.json",
+  "commercial_verdict": "not_worth_paying_for_on_this_case",
+  "report": "docs/reviews/transistor-validation-2026-11-09.md"
+}

@@ -1,0 +1,1123 @@
+{
+  "brand_id": "b0348434-25d4-4e8c-b8f7-d9d0e8fcd6cc",
+  "map": {
+    "summary": "3 audience(s) mapped; 0 worth exploring first. Commercial priority is a hypothesis, not a response-rate forecast.",
+    "options": {
+      "geography": "",
+      "language": "",
+      "exclusions": "",
+      "objective": "customers",
+      "mode": "refresh"
+    },
+    "validation_note": "Checked 5 pages; 0 fetch failure(s). Quotes are source-verified; interpretations and purchase intent are hypotheses.",
+    "reading": "Assessment summary. Verified quotations do not establish demand or purchase intent; commercial priority remains a hypothesis.\n- Solo newsletter writer whose list has outgrown what they can run alone: hypothesis; product compatibility supported; audience evidence limited (4 quoted source(s)); use or purchase unknown; reachability venue identified.\n- Technical creator or developer wanting to automate newsletter operations: hypothesis; product compatibility supported; audience evidence limited (1 quoted source(s)); use or purchase unknown; reachability unknown.\n- Independent writers migrating off Substack over platform policy or ownership risk: hypothesis; product compatibility unknown; audience evidence absent (0 quoted source(s)); use or purchase unknown; reachability unknown.",
+    "note": "Search budget used: 4 queries across 2 turns. Did not find a direct, dated firsthand complaint thread (e.g. Reddit r/newsletters) explicitly weighing Buttondown's Teams pricing against adding an editor, nor independent confirmation/denial of the claimed API paywall — both are coverage gaps worth a follow-up search before using either claim in outbound copy.",
+    "searched": [
+      "Buttondown API newsletter automation reddit developer",
+      "Buttondown newsletter \"add an editor\" OR \"invite a collaborator\" team subscriber growth",
+      "\"Buttondown\" newsletter switched from Substack team collaborator OR \"my co-writer\" OR \"my editor\"",
+      "site:github.com buttondown API newsletter automation project"
+    ],
+    "mapped_at": "2026-11-07T10:11:47.105761Z",
+    "segments": [
+      {
+        "name": "Solo newsletter writer whose list has outgrown what they can run alone",
+        "organization": "Independent newsletter/publication (1-3 person operation)",
+        "workflow": "Writer manages drafts, subscriber support, and sends solo; as the list grows they want an editor to review copy or an ops person to handle subscriber questions and tagging without emailing drafts back and forth or sharing billing/API access",
+        "need": "Add collaborators with scoped permissions (draft-only vs full access) without those collaborators counting toward the per-subscriber bill",
+        "buyer_role": "Newsletter owner/founder",
+        "user_role": "Owner plus invited editor/collaborator",
+        "current_alternative": "Emailing Google Docs drafts back and forth, sharing the account password, or doing without help",
+        "assessment": {
+          "compatibility": "supported",
+          "evidence_strength": "limited",
+          "findability": "verified",
+          "usage_or_purchase": "unknown",
+          "reachability": "venue_identified",
+          "counterevidence_summary": [],
+          "counterevidence": 0,
+          "priority": "hypothesis",
+          "reasons": [
+            "Buttondown's own feature page and docs confirm the exact capabilities the hypothesis needs: unlimited collaborators, role-based draft-vs-send permissions, and no subscriber-count/billing impact from team members.",
+            "All available evidence in this corpus is vendor marketing copy and FAQ language describing a hypothetical growth moment; no independent, named newsletter owner's account of actually hiring an editor for this reason was fetched.",
+            "Re-ranked on matching researched sources (4 fetched)."
+          ],
+          "unknowns": [
+            "Whether any real newsletter owner has invited a collaborator for this specific reason, versus Buttondown merely anticipating/marketing to the need.",
+            "Where to find and reach solo writers currently experiencing this scaling pain, since the only fetched pages are Buttondown's own site rather than an independent venue.",
+            "2 unsupported or duplicate quotation(s) discarded."
+          ],
+          "evidence": [
+            {
+              "claim": "Vendor describes the target pain point matching the hypothesis: solo writer needing help as the list grows.",
+              "quote": "Most newsletters start as a solo effort. But as yours grows, you'll want help — an editor to catch typos, a collaborator to manage subscribers, a teammate to handle the operational side.",
+              "url": "https://buttondown.com/features/teams",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:10:20.295069Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "Vendor copy frames the stated current alternative as emailing drafts back and forth.",
+              "quote": "Invite collaborators to review your emails before they go out. They can see your drafts, suggest changes, and help you ship with confidence. No more emailing Google Docs back and forth.",
+              "url": "https://buttondown.com/features/teams",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:10:20.295069Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "Confirms collaborators do not count toward subscriber billing, directly addressing the hypothesis's stated objection.",
+              "quote": "No. Team members are collaborators, not subscribers. They don't affect your billing at all.",
+              "url": "https://buttondown.com/features/teams",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:10:20.295069Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "Confirms role-based scoped permissions (draft-only vs full sending) exist as required.",
+              "quote": "It depends on their role. You can give collaborators full sending permissions or restrict them to drafting only.",
+              "url": "https://buttondown.com/features/teams",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:10:20.295069Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "Independent newsletter platforms provide a documented way to add multiple people to help manage a single newsletter, rather than requiring the original operator to continue running everything alone.",
+              "quote": "Buttondown’s \"Teams\" tool is for anyone who wants to allow multiple people to manage a newsletter.",
+              "url": "https://docs.buttondown.com/teams",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:12:23.454103Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "Publishing platforms assign collaborators distinct roles so drafting/content access can be separated from administrative or billing access.",
+              "quote": "Each person gets a role (Admin, Contributor, or Byline) that sets what they can access.",
+              "url": "https://support.substack.com/hc/en-us/articles/360039016832-Can-my-Substack-publication-have-multiple-authors-or-contributors",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:12:23.607838Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "Publishing platforms assign collaborators distinct roles so drafting/content access can be separated from administrative or billing access.",
+              "quote": "An admin who cannot be deleted and has access to billing details",
+              "url": "https://docs.ghost.org/staff",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:12:24.242049Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "Adding a collaborator is done through an email-based invite flow inside the newsletter platform's own settings area.",
+              "quote": "Click \"Invite colleague\". The \"Invite a colleague\" menu appears.",
+              "url": "https://docs.buttondown.com/teams",
+              "kind": "alternative",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:12:23.454103Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "Buttondown maintains a dedicated public documentation page explaining how to add team members to a newsletter account.",
+              "quote": "Buttondown’s \"Teams\" tool is for anyone who wants to allow multiple people to manage a newsletter.",
+              "url": "https://docs.buttondown.com/teams",
+              "kind": "access",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:12:23.454103Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "Substack and Ghost separately maintain public support documentation describing how an otherwise solo publication owner can add contributors or staff, indicating this workflow is documented across more than one newsletter/publishing platform.",
+              "quote": "You can add multiple contributors to your publication from",
+              "url": "https://support.substack.com/hc/en-us/articles/360039016832-Can-my-Substack-publication-have-multiple-authors-or-contributors",
+              "kind": "access",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:12:23.607838Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "Substack and Ghost separately maintain public support documentation describing how an otherwise solo publication owner can add contributors or staff, indicating this workflow is documented across more than one newsletter/publishing platform.",
+              "quote": "Staff users within Ghost have access to the admin area with varying levels of permissions for what they can do.",
+              "url": "https://docs.ghost.org/staff",
+              "kind": "access",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:12:24.242049Z",
+              "direct_buyer_voice": false
+            }
+          ]
+        },
+        "kind": "core",
+        "added_by": "cartographer",
+        "who": "Solo or near-solo newsletter writers (e.g. independent journalists, niche B2B newsletters) whose subscriber count has grown enough that one person can no longer handle writing, editing, and subscriber ops alone",
+        "why_them": "Buttondown ships a dedicated Teams feature and a blog post specifically narrating this growth moment, suggesting the vendor has already identified and sold to this exact buyer",
+        "trigger": "Newsletter growth outpaces what one person can manage solo",
+        "pains": [
+          "Drafts going back and forth by email with no shared review workflow",
+          "Fear that adding help will raise the subscriber-based bill",
+          "Need to grant limited access (drafts only) without exposing billing or API keys"
+        ],
+        "objection": "Adding editors or operational teammates will raise my subscriber count and my bill",
+        "angle": "",
+        "sophistication": "solution_aware",
+        "fit": 0,
+        "basis": "Vendor-published feature page and blog post describe this workflow in detail; no independent (non-Buttondown) firsthand account of a writer making this specific hire-an-editor decision on Buttondown was found in this search pass, so evidence strength is capped at limited.",
+        "population": "unknown",
+        "signals": [
+          "team_feature_adoption",
+          "multi_author_byline_on_newsletter",
+          "collaborator_invite_mentioned_in_support_or_docs"
+        ],
+        "where": [
+          "buttondown.com/features/teams",
+          "buttondown.com/blog/2023-03-04",
+          "docs.buttondown.com/teams"
+        ],
+        "unobvious": false,
+        "researchable": true,
+        "researchability": "medium",
+        "researchability_reasons": [
+          "3 useful observable signals and 3 specific research venues.",
+          "The audience is anchored in a concrete workflow or situation.",
+          "No clear trigger narrows the research.",
+          "No population basis is stated."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [
+            {
+              "code": "newsletter_has_multiple_named_contributors",
+              "description": "Masthead, about page, or bylines show more than one person involved in the newsletter"
+            }
+          ],
+          "required_workflow_signals": [
+            {
+              "code": "draft_review_workflow_exists",
+              "description": "Evidence of a review/approval step before sending, distinct from solo send"
+            }
+          ],
+          "required_product_capabilities": [
+            "fact_a5d11dd177c98cd1",
+            "fact_5c51fa43925561e5"
+          ],
+          "optional_signals": [
+            {
+              "code": "recent_subscriber_growth_announcement",
+              "description": ""
+            }
+          ],
+          "hard_disqualifiers": [
+            {
+              "code": "single_person_byline_only",
+              "description": "Newsletter shows no sign of any second contributor",
+              "outcome": "ADJACENT"
+            }
+          ],
+          "eligible_subsegments": [],
+          "excluded_subsegments": [],
+          "max_team_size": null
+        }
+      },
+      {
+        "name": "Technical creator or developer wanting to automate newsletter operations",
+        "organization": "Developer-run newsletter, indie SaaS changelog, or engineering team's community update",
+        "workflow": "Wants to manage subscribers, trigger sends, and build automations from their own code (CI/CD, CMS, static site generator) rather than exclusively through Buttondown's web UI",
+        "need": "A documented REST API (or generated typed client via OpenAPI) to integrate newsletter sending and subscriber management into existing tooling",
+        "buyer_role": "Developer/technical founder",
+        "user_role": "Same person or their engineering team",
+        "current_alternative": "Manual UI-based sending, or a less developer-friendly ESP's API/webhooks",
+        "assessment": {
+          "compatibility": "supported",
+          "evidence_strength": "limited",
+          "findability": "unknown",
+          "usage_or_purchase": "unknown",
+          "reachability": "unknown",
+          "counterevidence_summary": [
+            "Confirms rate limiting exists, a real constraint for heavy automation use, though framed as generous. — A rate limit is a genuine constraint for CI/CD-triggered bulk operations, though the vendor describes it as generous, so impact is likely minor rather than blocking for most use cases. Minor condition; does not exclude this audience."
+          ],
+          "counterevidence": 1,
+          "priority": "hypothesis",
+          "reasons": [
+            "Buttondown's API feature page and docs confirm all three required capabilities (generous rate limits, deliberate no-SDK/OpenAPI-spec approach, and free-plan API availability), matching a developer audience wanting code-driven control.",
+            "All evidence fetched is vendor-authored (feature page, docs); none of the cited independent GitHub repositories showing real developer usage were part of this fetch pass, so there is no corroborating independent account."
+          ],
+          "unknowns": [
+            "Whether the GitHub repositories cited in the candidate's 'where' list (e.g., the MCP server, the JSON-to-email script) represent real paying or free-tier Buttondown customers, since those pages were not fetched here.",
+            "Whether CLI-based automation (the specific capability in fact_44e3d42135cce2aa) is actually used by this audience, since no CLI-specific docs page was fetched in this pass.",
+            "3 unsupported or duplicate quotation(s) discarded.",
+            "No verified venue or example establishes findability yet.",
+            "Review the counterevidence before prioritising this audience."
+          ],
+          "evidence": [
+            {
+              "claim": "API is available on the free plan, resolving the candidate's previously flagged concern about possible paid-tier gating.",
+              "quote": "Is the API available on the free plan? Yes. The API is available on all plans, including free.",
+              "url": "https://buttondown.com/features/api",
+              "kind": "need",
+              "impact": "unknown",
+              "impact_reason": "",
+              "fetched_at": "2026-11-07T10:10:20.628722Z",
+              "direct_buyer_voice": false
+            },
+            {
+              "claim": "Confirms rate limiting exists, a real constraint for heavy automation use, though framed as generous.",
+              "quote": "Yes. The API is rate-limited to prevent abuse, but the limits are generous enough for most use cases.",
+              "url": "https://buttondown.com/features/api",
+              "kind": "counterevidence",
+              "impact": "minor",
+              "impact_reason": "A rate limit is a genuine constraint for CI/CD-triggered bulk operations, though the vendor describes it as generous, so impact is likely minor rather than blocking for most use cases.",
+              "fetched_at": "2026-11-07T10:10:20.628722Z",
+              "direct_buyer_voice": false
+            }
+          ]
+        },
+        "kind": "core",
+        "added_by": "cartographer",
+        "who": "Developers, indie hackers, and technical founders running a changelog, product update, or community newsletter who want to drive it from code rather than a dashboard",
+        "why_them": "Observable public GitHub projects (CLI scripts, Netlify functions, an MCP server) show developers actively building against Buttondown's API, not just reading about it",
+        "trigger": "Needs integrations or automation the built-in editor/dashboard doesn't cover (e.g. auto-drafting from GitHub issues, static-site builds, JSON feeds)",
+        "pains": [
+          "Wants to trigger sends from CI/CD or a static site build rather than logging into a dashboard",
+          "No official SDK means writing/generating a client themselves",
+          "Possible confusion or friction if API access is gated behind a paid tier"
+        ],
+        "objection": "Needs integrations or automation the built-in editor/dashboard doesn't cover, even while on a free plan",
+        "angle": "",
+        "sophistication": "product_aware",
+        "fit": 0,
+        "basis": "Supported by multiple independent, non-vendor GitHub repositories showing real API usage; one counterevidence point (possible paid-tier API gating) is unresolved against the supplied offer list and should be checked before using it in copy.",
+        "population": "unknown",
+        "signals": [
+          "public_repo_using_buttondown_api",
+          "cli_or_mcp_tool_built_on_buttondown",
+          "newsletter_send_triggered_by_ci_or_webhook"
+        ],
+        "where": [
+          "buttondown.com/features/api",
+          "docs.buttondown.com/api-introduction",
+          "github.com/Python-Community-News/Newsletter",
+          "github.com/The-Focus-AI/buttondown-mcp",
+          "github.com/sophiabrandt/json-to-buttondown-email"
+        ],
+        "unobvious": false,
+        "researchable": true,
+        "researchability": "medium",
+        "researchability_reasons": [
+          "3 useful observable signals and 5 specific research venues.",
+          "The audience is anchored in a concrete workflow or situation.",
+          "No clear trigger narrows the research.",
+          "No population basis is stated."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [
+            {
+              "code": "has_public_code_repo_or_integration",
+              "description": ""
+            }
+          ],
+          "required_workflow_signals": [
+            {
+              "code": "newsletter_send_or_subscriber_mgmt_automated_via_api",
+              "description": ""
+            }
+          ],
+          "required_product_capabilities": [
+            "fact_d257675494b7e596",
+            "fact_d18265c93e99e4be",
+            "fact_44e3d42135cce2aa"
+          ],
+          "optional_signals": [
+            {
+              "code": "built_or_uses_mcp_or_cli_tool_for_buttondown",
+              "description": ""
+            }
+          ],
+          "hard_disqualifiers": [
+            {
+              "code": "ui_only_usage_no_code_evidence",
+              "description": "No evidence of any code, repo, or script touching the newsletter platform",
+              "outcome": "EXCLUDED"
+            }
+          ],
+          "eligible_subsegments": [],
+          "excluded_subsegments": [],
+          "max_team_size": null
+        }
+      },
+      {
+        "name": "Independent writers migrating off Substack over platform policy or ownership risk",
+        "organization": "Independent newsletter (often tech/culture/politics) previously hosted on Substack or Mailchimp",
+        "workflow": "Writer maintains full editorial and data control; triggered to move by a specific incident (content policy dispute, pricing change, or general distrust of a growing platform) rather than by a feature gap",
+        "need": "A stable, independent newsletter host that won't change policies, get acquired, or shut down, with straightforward migration of existing subscribers",
+        "buyer_role": "Newsletter owner",
+        "user_role": "Same person",
+        "current_alternative": "Staying on Substack/Mailchimp despite dissatisfaction, or self-hosting via a static site generator",
+        "assessment": {
+          "compatibility": "unknown",
+          "evidence_strength": "absent",
+          "findability": "unknown",
+          "usage_or_purchase": "unknown",
+          "reachability": "unknown",
+          "counterevidence_summary": [],
+          "counterevidence": 0,
+          "priority": "hypothesis",
+          "reasons": [
+            "None of the four source URLs this candidate relies on (Hacker News thread, ricmac.org, eveharms.com, kottke.org) were part of the fetched corpus in this pass, so no migration-related claim can be sourced.",
+            "No product-truth facts regarding subscriber import/export, domain migration, or data portability were supplied or fetched, leaving compatibility unassessable."
+          ],
+          "unknowns": [
+            "Whether Buttondown's actual import/export or domain-migration process matches what a Substack refugee would need, since no relevant docs page was fetched.",
+            "Whether the previously cited migration posts still substantiate a 'burned by a growing platform' motivation, since they were not re-fetched or re-quoted here.",
+            "No product requirement is mapped for this audience, so compatibility is unchecked rather than doubtful.",
+            "No verified venue or example establishes findability yet."
+          ],
+          "evidence": []
+        },
+        "kind": "adjacent",
+        "added_by": "cartographer",
+        "who": "Writers previously on Substack, Mailchimp, or similar platforms who publicly documented moving their newsletter and subscriber list to Buttondown",
+        "why_them": "Directly observed migration behaviour (not hypothetical) from named individuals, matching the inferred 'burned before by a growing platform' objection",
+        "trigger": "A platform policy dispute, pricing/ownership change, or general distrust of a growing email provider",
+        "pains": [
+          "Fear that a bigger platform will change policies, pricing, or ownership underneath them",
+          "Wants full ownership/export of subscriber list",
+          "Migration friction (re-pointing DNS, re-importing subscribers)"
+        ],
+        "objection": "I've been burned before by email providers that grow, stop supporting customers, or shut down — why trust this one with my list long-term",
+        "angle": "",
+        "sophistication": "solution_aware",
+        "fit": 0,
+        "basis": "Evidence is a handful of named, dated personal blog/forum accounts of migration; no aggregated count or clear quantified population, and the specific 'distrust of long-term support' motivation is inferred rather than directly quoted in most sources found.",
+        "population": "unknown",
+        "signals": [
+          "public_migration_post_from_substack_or_mailchimp",
+          "subscriber_list_export_import_mentioned",
+          "custom_domain_archive_pointed_at_buttondown"
+        ],
+        "where": [
+          "news.ycombinator.com/item?id=29766761",
+          "ricmac.org/2024/01/26/why-i-migrated-my-newsletter-from-substack-to-eleventy-and-buttondown",
+          "eveharms.com/2024/02/13/newsletter-moved-to-buttondown",
+          "kottke.org/25/03/0046393-buttondown-makes-it-super"
+        ],
+        "unobvious": true,
+        "researchable": true,
+        "researchability": "medium",
+        "researchability_reasons": [
+          "3 useful observable signals and 4 specific research venues.",
+          "The audience is anchored in a concrete workflow or situation.",
+          "No clear trigger narrows the research.",
+          "No population basis is stated."
+        ],
+        "definition": {
+          "schema_version": 2,
+          "required_structural_signals": [
+            {
+              "code": "newsletter_previously_hosted_on_competitor_platform",
+              "description": ""
+            }
+          ],
+          "required_workflow_signals": [
+            {
+              "code": "public_statement_of_migration_or_switching_reason",
+              "description": ""
+            }
+          ],
+          "required_product_capabilities": [],
+          "optional_signals": [
+            {
+              "code": "mentions_data_ownership_or_platform_distrust",
+              "description": ""
+            }
+          ],
+          "hard_disqualifiers": [
+            {
+              "code": "newsletter_started_fresh_on_buttondown_no_migration",
+              "description": "No evidence of switching from another platform",
+              "outcome": "ADJACENT"
+            }
+          ],
+          "eligible_subsegments": [],
+          "excluded_subsegments": [],
+          "max_team_size": null
+        }
+      }
+    ]
+  },
+  "prospects": [],
+  "research": [
+    {
+      "audience_name": "Solo newsletter writer whose list has outgrown what they can run alone",
+      "audience_fingerprint": "661dba78e6906463c3d00c7d2b37bc5b46893513f3335395ae6a3d4dd4e15a69",
+      "candidate_kind": "core",
+      "definition": {
+        "schema_version": 2,
+        "required_structural_signals": [
+          {
+            "code": "newsletter_has_multiple_named_contributors",
+            "description": "Masthead, about page, or bylines show more than one person involved in the newsletter"
+          }
+        ],
+        "required_workflow_signals": [
+          {
+            "code": "draft_review_workflow_exists",
+            "description": "Evidence of a review/approval step before sending, distinct from solo send"
+          }
+        ],
+        "required_product_capabilities": [
+          "fact_a5d11dd177c98cd1",
+          "fact_5c51fa43925561e5"
+        ],
+        "optional_signals": [
+          {
+            "code": "recent_subscriber_growth_announcement",
+            "description": ""
+          }
+        ],
+        "hard_disqualifiers": [
+          {
+            "code": "single_person_byline_only",
+            "description": "Newsletter shows no sign of any second contributor",
+            "outcome": "ADJACENT"
+          }
+        ],
+        "eligible_subsegments": [],
+        "excluded_subsegments": [],
+        "max_team_size": null
+      },
+      "situation": {
+        "text": "Independent (often one-person) newsletter operations are described, in vendor and platform materials, as starting solo and then reaching a point where the sole writer wants help from an editor, a subscriber-facing collaborator, or an operations teammate; multiple independent newsletter/publishing platforms maintain documentation for adding such collaborators to an existing single-owner newsletter account.",
+        "grounding": "inferred",
+        "evidence": [
+          {
+            "source_id": "S1",
+            "quote": "Most newsletters start as a solo effort. But as yours grows, you'll want help — an editor to catch typos, a collaborator to manage subscribers, a teammate to handle the operational side."
+          },
+          {
+            "source_id": "S2",
+            "quote": "Buttondown’s \"Teams\" tool is for anyone who wants to allow multiple people to manage a newsletter."
+          }
+        ],
+        "inference_basis": "Combines a vendor's marketing framing (Tier 3, S1) of why solo writers add help with a platform doc's stated purpose for its team feature (Tier 2, S2); no Tier 1 buyer statement in the corpus independently confirms this is how the audience itself describes its situation.; Publication date unknown; retrieval today does not establish current applicability."
+      },
+      "incumbent_behaviour": [
+        {
+          "text": "Independent newsletter platforms provide a documented way to add multiple people to help manage a single newsletter, rather than requiring the original operator to continue running everything alone.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S2",
+              "quote": "Buttondown’s \"Teams\" tool is for anyone who wants to allow multiple people to manage a newsletter."
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        },
+        {
+          "text": "Publishing platforms assign collaborators distinct roles so drafting/content access can be separated from administrative or billing access.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S3",
+              "quote": "Each person gets a role (Admin, Contributor, or Byline) that sets what they can access."
+            },
+            {
+              "source_id": "S4",
+              "quote": "An admin who cannot be deleted and has access to billing details"
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        },
+        {
+          "text": "Adding a collaborator is done through an email-based invite flow inside the newsletter platform's own settings area.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S2",
+              "quote": "Click \"Invite colleague\". The \"Invite a colleague\" menu appears."
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        }
+      ],
+      "sophistication": null,
+      "sophistication_basis": null,
+      "problems": [],
+      "buyer_phrases": [],
+      "triggers": [
+        {
+          "text": "Vendor marketing frames newsletter growth as the point at which a solo writer starts wanting help from an editor, subscriber-management collaborator, or operations teammate.",
+          "grounding": "inferred",
+          "evidence": [
+            {
+              "source_id": "S1",
+              "quote": "Most newsletters start as a solo effort. But as yours grows, you'll want help — an editor to catch typos, a collaborator to manage subscribers, a teammate to handle the operational side."
+            }
+          ],
+          "inference_basis": "This is the vendor's own framing (Tier 3) of when help gets sought; no Tier 1 buyer statement in the corpus independently confirms list growth as the trigger for this specific audience.; Publication date unknown; retrieval today does not establish current applicability."
+        }
+      ],
+      "desired_outcomes": [
+        {
+          "text": "Vendor marketing frames the desired outcome as being able to give an editor access to drafts without billing access, and give a subscriber-facing collaborator access to subscribers without API access.",
+          "grounding": "inferred",
+          "evidence": [
+            {
+              "source_id": "S1",
+              "quote": "Give your editor access to drafts but not billing."
+            },
+            {
+              "source_id": "S1",
+              "quote": "Let your marketing lead manage subscribers without touching your API keys."
+            }
+          ],
+          "inference_basis": "Stated as the vendor's description of what good collaboration should look like, not a buyer's own statement of what they want.; Publication date unknown; retrieval today does not establish current applicability."
+        },
+        {
+          "text": "Across platforms, administrative/billing access is kept as a separate, distinct permission from day-to-day content or subscriber access, consistent with a preference for delegating work without exposing billing.",
+          "grounding": "inferred",
+          "evidence": [
+            {
+              "source_id": "S2",
+              "quote": "Access to settings, domain registration, billing information, lifecycle emails — pretty much everything not described above."
+            },
+            {
+              "source_id": "S4",
+              "quote": "An admin who cannot be deleted and has access to billing details"
+            }
+          ],
+          "inference_basis": "Inferred from a cross-platform design pattern (Tier 2 documentation) rather than a direct statement by this audience of what they want; treated as supporting context, not a confirmed buyer-stated outcome.; Publication date unknown; retrieval today does not establish current applicability."
+        }
+      ],
+      "signals": [
+        {
+          "text": "Collaborator-invite instructions appear in official support/help documentation on more than one independent newsletter or publishing platform.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S2",
+              "quote": "Click \"Invite colleague\". The \"Invite a colleague\" menu appears."
+            },
+            {
+              "source_id": "S3",
+              "quote": "enter the email address of the person you’d like to invite."
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        },
+        {
+          "text": "Platforms support assigning multiple named authors or byline contributors to posts on an otherwise single-author newsletter.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S4",
+              "quote": "Multiple authors can be assigned to any given post to generate bylines."
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        }
+      ],
+      "where": [
+        {
+          "text": "Buttondown's features page explicitly addresses newsletter writers moving from a solo operation to a team operation.",
+          "grounding": "inferred",
+          "evidence": [
+            {
+              "source_id": "S1",
+              "quote": "Not just going it alone any more? Buttondown has you covered."
+            }
+          ],
+          "inference_basis": "Tier 3 vendor marketing page targeting language; no Tier 1 evidence that this audience congregates there or self-describes this way.; Publication date unknown; retrieval today does not establish current applicability."
+        },
+        {
+          "text": "Buttondown maintains a dedicated public documentation page explaining how to add team members to a newsletter account.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S2",
+              "quote": "Buttondown’s \"Teams\" tool is for anyone who wants to allow multiple people to manage a newsletter."
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        },
+        {
+          "text": "Substack and Ghost separately maintain public support documentation describing how an otherwise solo publication owner can add contributors or staff, indicating this workflow is documented across more than one newsletter/publishing platform.",
+          "grounding": "grounded",
+          "evidence": [
+            {
+              "source_id": "S3",
+              "quote": "You can add multiple contributors to your publication from"
+            },
+            {
+              "source_id": "S4",
+              "quote": "Staff users within Ghost have access to the admin area with varying levels of permissions for what they can do."
+            }
+          ],
+          "inference_basis": "Publication date unknown; retrieval today does not establish current applicability."
+        }
+      ],
+      "sources": [
+        {
+          "id": "S1",
+          "requested_url": "https://buttondown.com/features/teams",
+          "final_url": "https://buttondown.com/features/teams",
+          "title": "Buttondown for Teams: Collaboration Made Easy - Buttondown",
+          "tier": 3,
+          "venue": "Buttondown (vendor page)",
+          "fetched_at": "2026-11-07T10:12:23.537408Z",
+          "published_date": null,
+          "publication_date_basis": "unknown",
+          "content_hash": "34042f7fd6ab6a0cf878e7fda9c99029a965602631cfa4a429a2a0b56b4d0e09"
+        },
+        {
+          "id": "S2",
+          "requested_url": "https://docs.buttondown.com/teams",
+          "final_url": "https://docs.buttondown.com/teams",
+          "title": "Adding people to your team | Buttondown Docs",
+          "tier": 2,
+          "venue": "Buttondown Docs",
+          "fetched_at": "2026-11-07T10:12:23.454103Z",
+          "published_date": null,
+          "publication_date_basis": "unknown",
+          "content_hash": "ea1180e27798d25e6f4ed8fd20f1ed2759d44fea8d5d27efd3bc58ce86465e49"
+        },
+        {
+          "id": "S3",
+          "requested_url": "https://support.substack.com/hc/en-us/articles/360039016832-Can-my-Substack-publication-have-multiple-authors-or-contributors",
+          "final_url": "https://support.substack.com/hc/en-us/articles/360039016832-Can-my-Substack-publication-have-multiple-authors-or-contributors",
+          "title": "Can my Substack publication have multiple authors or contributors? – Substack, Inc",
+          "tier": 2,
+          "venue": "Substack Support",
+          "fetched_at": "2026-11-07T10:12:23.607838Z",
+          "published_date": null,
+          "publication_date_basis": "unknown",
+          "content_hash": "0867fe462e150ebe760c36714386705f69ba6cee894d754ef832e56a3b1f18e9"
+        },
+        {
+          "id": "S4",
+          "requested_url": "https://ghost.org/docs/staff/",
+          "final_url": "https://docs.ghost.org/staff",
+          "title": "Staff Users - Ghost Developer Docs",
+          "tier": 2,
+          "venue": "Ghost Developer Docs",
+          "fetched_at": "2026-11-07T10:12:24.242049Z",
+          "published_date": null,
+          "publication_date_basis": "unknown",
+          "content_hash": "1e94a519ea28e495c7744322d7eb61443ea2f95cbc7946b045917db4faa11a75"
+        }
+      ],
+      "dropped_claims": 3,
+      "interpretation_warnings": [
+        "Publication date unknown; retrieval today does not establish current applicability. Independent (often one-person) newsletter operations are described, in vendor and platform materials, as starting solo and then reaching a point where the sole writer wants help from an editor, a subscriber-facing collaborator, or an operations teammate; multiple independent newsletter/publishing platforms maintain documentation for adding such collaborators to an existing single-owner newsletter account.",
+        "Publication date unknown; retrieval today does not establish current applicability. Independent newsletter platforms provide a documented way to add multiple people to help manage a single newsletter, rather than requiring the original operator to continue running everything alone.",
+        "Publication date unknown; retrieval today does not establish current applicability. Publishing platforms assign collaborators distinct roles so drafting/content access can be separated from administrative or billing access.",
+        "Publication date unknown; retrieval today does not establish current applicability. Adding a collaborator is done through an email-based invite flow inside the newsletter platform's own settings area.",
+        "Publication date unknown; retrieval today does not establish current applicability. Vendor marketing frames newsletter growth as the point at which a solo writer starts wanting help from an editor, subscriber-management collaborator, or operations teammate.",
+        "Publication date unknown; retrieval today does not establish current applicability. Vendor marketing frames the desired outcome as being able to give an editor access to drafts without billing access, and give a subscriber-facing collaborator access to subscribers without API access.",
+        "Publication date unknown; retrieval today does not establish current applicability. Across platforms, administrative/billing access is kept as a separate, distinct permission from day-to-day content or subscriber access, consistent with a preference for delegating work without exposing billing.",
+        "Publication date unknown; retrieval today does not establish current applicability. Collaborator-invite instructions appear in official support/help documentation on more than one independent newsletter or publishing platform.",
+        "Publication date unknown; retrieval today does not establish current applicability. Platforms support assigning multiple named authors or byline contributors to posts on an otherwise single-author newsletter.",
+        "Publication date unknown; retrieval today does not establish current applicability. Buttondown's features page explicitly addresses newsletter writers moving from a solo operation to a team operation.",
+        "Publication date unknown; retrieval today does not establish current applicability. Buttondown maintains a dedicated public documentation page explaining how to add team members to a newsletter account.",
+        "Publication date unknown; retrieval today does not establish current applicability. Substack and Ghost separately maintain public support documentation describing how an otherwise solo publication owner can add contributors or staff, indicating this workflow is documented across more than one newsletter/publishing platform."
+      ],
+      "researched_at": "2026-11-07T10:16:01.302891Z",
+      "id": "b703b866-3da7-42dd-a433-1b91f0aa9f7b",
+      "brand_id": "b0348434-25d4-4e8c-b8f7-d9d0e8fcd6cc",
+      "audience_key": "solo newsletter writer whose list has outgrown what they can run alone",
+      "version": 1,
+      "source_map_id": "ff80d66b-d8a8-473b-b06b-cc4b393840c2",
+      "source_map_version": 1,
+      "created_at": "2026-11-07T10:16:01.311912"
+    }
+  ],
+  "relevance": [
+    {
+      "audience_name": "Solo newsletter writer whose list has outgrown what they can run alone",
+      "status": "missing",
+      "stale_reasons": [],
+      "missing_prerequisites": [],
+      "dossier_id": null,
+      "generation_version": null,
+      "created_at": null,
+      "dossier": null
+    }
+  ],
+  "capability_profile": {
+    "schema_version": 2,
+    "version": 1,
+    "knowledge_id": "42015d9f-7524-4abf-ac88-37ed4bc4be69",
+    "knowledge_version": 1,
+    "ledger_fingerprint": "003671576d3cfc7532d9fae1a2a3f7d40d973b96b2632ccc674c7d976132aa8e",
+    "derivation_version": 3,
+    "capabilities": [
+      {
+        "id": "fact_d257675494b7e596",
+        "label": "Buttondown's API is rate-limited to prevent abuse, with limits described as generous enough for most use cases.",
+        "description": "Source: official_documentation; Subject: Buttondown API; No specific numeric rate limit is given.",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E2",
+            "claim": "Buttondown's API is rate-limited to prevent abuse, with limits described as generous enough for most use cases.",
+            "quote": "Yes. The API is rate-limited to prevent abuse, but the limits are generous enough for most use cases.",
+            "source_identifier": "https://buttondown.com/features/api"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_d18265c93e99e4be",
+        "label": "Buttondown deliberately does not offer official SDKs, choosing instead to invest in its OpenAPI spec so any caller can generate a typed client.",
+        "description": "Source: official_documentation; Subject: Buttondown API",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E3",
+            "claim": "Buttondown deliberately does not offer official SDKs, choosing instead to invest in its OpenAPI spec so any caller can generate a typed client.",
+            "quote": "No, and that's deliberate. We'd rather invest in making our [OpenAPI spec](https://docs.buttondown.com/api-introduction) as good as humanly possible — which benefits every caller regardless of language or framework — than maintain a fleet of SDKs that inevitably lag behind the API itself.",
+            "source_identifier": "https://buttondown.com/features/api"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_4f41177c6bb4c340",
+        "label": "Buttondown does not provide an official MCP server, for the same reasons it does not provide official SDKs, instead pointing users to its OpenAPI spec.",
+        "description": "Source: official_documentation; Subject: Buttondown API",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E4",
+            "claim": "Buttondown does not provide an official MCP server, for the same reasons it does not provide official SDKs, instead pointing users to its OpenAPI spec.",
+            "quote": "No, for essentially the same reasons we don't ship official SDKs: an MCP server is a thin, opinionated wrapper around our API, and we'd rather keep refining the [OpenAPI spec](https://docs.buttondown.com/api-introduction) underneath so every caller benefits.",
+            "source_identifier": "https://buttondown.com/features/api"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_5a94d0e6c9f345ca",
+        "label": "Newsletter owners can post by sending an email to a special Buttondown address from the email address they joined with, and Buttondown will send it out to subscribers; sending to a different address saves it as a draft instead.",
+        "description": "Source: official_documentation; Subject: Buttondown send-from-your-own-email feature; must send from the email address used to join Buttondown",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E10",
+            "claim": "Newsletter owners can post by sending an email to a special Buttondown address from the email address they joined with, and Buttondown will send it out to subscribers; sending to a different address saves it as a draft instead.",
+            "quote": "Send an email to `[email protected]` from the email address that you joined Buttondown with, and we'll send it out to your subscribers. Want to save it as a draft? Send it to`[email protected]` instead.",
+            "source_identifier": "https://buttondown.com/features"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_44e3d42135cce2aa",
+        "label": "Buttondown's CLI lets users script their newsletter from CI/CD pipelines, bulk-manage subscribers, and pull analytics — anything doable in the web app is doable from the command line.",
+        "description": "Source: official_documentation; Subject: Buttondown CLI",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E11",
+            "claim": "Buttondown's CLI lets users script their newsletter from CI/CD pipelines, bulk-manage subscribers, and pull analytics — anything doable in the web app is doable from the command line.",
+            "quote": "Script your newsletter from CI/CD pipelines, bulk-manage subscribers, and pull analytics — if you can do it in the web app, you can do it from the command line.",
+            "source_identifier": "https://buttondown.com/features"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_a5d11dd177c98cd1",
+        "label": "There is no limit on the number of collaborators that can be invited to a newsletter.",
+        "description": "Source: official_documentation; Subject: Buttondown for Teams",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E14",
+            "claim": "There is no limit on the number of collaborators that can be invited to a newsletter.",
+            "quote": "No. You can invite as many collaborators as you need.",
+            "source_identifier": "https://buttondown.com/features/teams"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_5c51fa43925561e5",
+        "label": "Collaborator permissions are role-based: a collaborator can be given full sending permissions or restricted to drafting only, depending on their role.",
+        "description": "Source: official_documentation; Subject: Buttondown for Teams; depends on assigned collaborator role",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E15",
+            "claim": "Collaborator permissions are role-based: a collaborator can be given full sending permissions or restricted to drafting only, depending on their role.",
+            "quote": "It depends on their role. You can give collaborators full sending permissions or restrict them to drafting only.",
+            "source_identifier": "https://buttondown.com/features/teams"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_50b047f665104f9f",
+        "label": "The maximum size of a file that can be attached to an email is two megabytes, though larger limits can sometimes be arranged by contacting Buttondown.",
+        "description": "Source: official_documentation; Subject: Buttondown email attachments; larger files only by special arrangement via email request",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E20",
+            "claim": "The maximum size of a file that can be attached to an email is two megabytes, though larger limits can sometimes be arranged by contacting Buttondown.",
+            "quote": "[### What's the maximum size of a file that I can attach?](#whats-the-maximum-size-of-a-file-that-i-can-attach) Two megabytes. (If you *really* need more than that, email us and we might be able to figure something out for you.)",
+            "source_identifier": "https://docs.buttondown.com/fancy-mode"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      },
+      {
+        "id": "fact_06fc86baa8eac503",
+        "label": "Up to 3 files can be attached to a single email; attaching more requires contacting support.",
+        "description": "Source: official_documentation; Subject: Buttondown email attachments; more than 3 attachments requires contacting support",
+        "state": "verified",
+        "evidence": [
+          {
+            "evidence_id": "E21",
+            "claim": "Up to 3 files can be attached to a single email; attaching more requires contacting support.",
+            "quote": "[### How many files can I attach to a single email?](#how-many-files-can-i-attach-to-a-single-email) You can only attach up to 3 files in a single email. If you need to attach more, [please contact us](https://buttondown.com/support).",
+            "source_identifier": "https://docs.buttondown.com/fancy-mode"
+          }
+        ],
+        "aliases": [],
+        "customer_copy_visibility": "internal",
+        "note": "Atomic product fact from the current Evidence Ledger; preserve its scope.",
+        "unlicensed_evidence_ids": [],
+        "origin": "derived"
+      }
+    ],
+    "constraints": [],
+    "claims": [
+      {
+        "text": "The Buttondown API is available on all plans, including the free plan.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E1"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown's API is rate-limited to prevent abuse, with limits described as generous enough for most use cases.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E2"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown deliberately does not offer official SDKs, choosing instead to invest in its OpenAPI spec so any caller can generate a typed client.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E3"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown does not provide an official MCP server, for the same reasons it does not provide official SDKs, instead pointing users to its OpenAPI spec.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E4"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown does not charge newsletter owners extra for having paid subscribers, so owners keep all of the revenue they make from Paid Subscriptions.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E5"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown is GDPR-compliant and does not collect any data about newsletter owners or their subscribers by default.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E6"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown will migrate a subscriber list to Buttondown for free, regardless of its size.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E7"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown's surveys get response rates 200% higher than the industry average.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E8"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown takes no cut of sponsorships sold through the platform; newsletter owners keep 100% of every sponsorship, minus Stripe's processing fee.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E9"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Newsletter owners can post by sending an email to a special Buttondown address from the email address they joined with, and Buttondown will send it out to subscribers; sending to a different address saves it as a draft instead.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E10"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown's CLI lets users script their newsletter from CI/CD pipelines, bulk-manage subscribers, and pull analytics — anything doable in the web app is doable from the command line.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E11"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown lets owners create as many distinct newsletters as they want, charging only for total subscriber count rather than per newsletter.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E12"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Team members (collaborators) do not count toward the subscriber limit and have no effect on billing.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E13"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "There is no limit on the number of collaborators that can be invited to a newsletter.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E14"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Collaborator permissions are role-based: a collaborator can be given full sending permissions or restricted to drafting only, depending on their role.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E15"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "The Teams add-on costs +$79/month.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E16"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown costs nothing for a newsletter's first 100 subscribers.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E17"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Listed prices assume sending at most one email a day to the entire subscriber base; sending more requires contacting Buttondown to discuss usage-based pricing.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E18"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Buttondown charges based on active subscribers only, not all contacts.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E19"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "The maximum size of a file that can be attached to an email is two megabytes, though larger limits can sometimes be arranged by contacting Buttondown.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E20"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Up to 3 files can be attached to a single email; attaching more requires contacting support.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E21"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      },
+      {
+        "text": "Nick Disabato of Draft said running things has been massively simpler and easier with Buttondown, with easier queuing, higher deliverability, and fewer bugs.",
+        "visibility": "customer",
+        "evidence_ids": [
+          "E22"
+        ],
+        "reason": "Licensed by the current Evidence Ledger."
+      }
+    ],
+    "id": "c0a82ee5-e00e-4425-872e-d344e908afcf",
+    "brand_id": "b0348434-25d4-4e8c-b8f7-d9d0e8fcd6cc",
+    "created_at": "2026-11-07T10:08:36.167691"
+  },
+  "note": ""
+}

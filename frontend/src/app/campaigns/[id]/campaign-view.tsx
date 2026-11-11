@@ -15,6 +15,7 @@ import { CampaignPolicySelect } from "@/components/campaign-policy-select";
 import { ExecutionRowActions } from "@/components/execution-row-actions";
 import { adviceHeadline } from "@/components/run-launcher";
 import { StatusBadge } from "@/components/status-badge";
+import { SteeringPanel } from "@/components/steering-panel";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -123,6 +124,14 @@ export function CampaignDetailView() {
               your explicit override with the execution.
             </p>
           )}
+          {generationAdvice.override_required && campaign.brand_id && (
+            <Link
+              href={`/brands/${campaign.brand_id}/knowledge`}
+              className="mt-2 inline-flex items-center gap-1 text-sm underline underline-offset-4"
+            >
+              Review or add product sources <ArrowRight className="size-3.5" />
+            </Link>
+          )}
         </Notice>
       )}
 
@@ -172,6 +181,10 @@ export function CampaignDetailView() {
         <p className="relative max-w-3xl whitespace-pre-line text-[1.0625rem] leading-[1.75] text-foreground/95 sm:text-lg">{campaign.request}</p>
         {executions.length > 0 && <p className="relative mt-5 border-t border-white/[0.07] pt-4 text-xs leading-relaxed text-muted-foreground">To change this brief, choose Duplicate in the campaign menu. Previous runs keep their original campaign context.</p>}
       </section>
+
+      {/* Optional, closed, and never in the way of Run: a campaign nobody
+          steers takes exactly the path it always did. */}
+      <SteeringPanel key={campaign.updated_at} campaign={campaign} locked={Boolean(live)} />
 
       {/* Four short answers about one campaign, in one panel. As four cards
           they took a screenful apiece and claimed the same weight as the brief

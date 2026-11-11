@@ -1,0 +1,824 @@
+{
+  "baseline": "bcf8b28a-8629-42d4-97a2-960d88a1826b",
+  "models": {
+    "strategist": "gpt-5.6-sol",
+    "email_writer": "gpt-5.6-sol",
+    "claim_reviewer": "gpt-5.6-sol",
+    "blind_reader": "gpt-5.6-sol"
+  },
+  "plan": {
+    "interpretation": "I interpreted this as a one-email acquisition introduction for a product manager or product team lead at a software company who may be evaluating how to capture product feedback from customer conversations. The reader's installed tools and current workflow are unknown, so the argument is conditional and the single next step is to get started on Canny's Free plan.",
+    "pipeline_version": 2,
+    "strategy_mode": "planned",
+    "intent": {
+      "objective": "custom",
+      "objective_source": "inferred",
+      "reader_relationship": "unknown",
+      "relationship_source": "inferred",
+      "announcement": "",
+      "reason_now": "",
+      "desired_action": ""
+    },
+    "reader": "Selected audience: Product manager or product team lead at a software company.\nResearch context describes some members of this market, not this recipient's installed tools or experiences. Follow the campaign request when it scopes the job.\nObserved situation (inferred; check applicability): People responsible for product decisions at software companies pull customer feedback from multiple channels (sales/CS calls recorded in tools like Gong, support tickets, Slack) into a central place such as a feedback portal or ProductBoard so requests can be reviewed by the product team rather than lost across departments.",
+    "reader_segment": "Product manager or product team lead at a software company",
+    "reader_profile_override": "",
+    "reader_scope": "",
+    "fixed_cta_url": "",
+    "promise": "Canny can turn customer conversations into request-level product feedback and merge duplicate requests, so product teams can work from the requests rather than whole-call links.",
+    "orientation": "Canny is customer feedback management and product roadmapping software that pulls feedback out of channels like Gong, Intercom and Slack into one place and merges duplicate requests.",
+    "arc": "In one email, move the reader from recognizing Canny as another feedback tool to seeing one concrete workflow worth trying: Autopilot extracts feature requests from conversations and merges duplicates, with Feedback Discovery available on the Free plan.",
+    "sequence_rationale": "A single acquisition email should lead with the strongest job-relevant operation, not a catalogue of plans and integrations. The request-level extraction mechanism directly addresses the documented problem with passing entire call links downstream, while the Free-plan availability lowers the commitment of the next step. The brief keeps fine-grained Slack routing, revenue-weighted prioritization, setup effort, and customer time savings outside the promise because the licensed evidence does not establish them for this path. No alternative proposition is included because the available testimonial would support a different customer's outcome more strongly than a general outcome for this reader. The single thing the user could send us that would most change this campaign is a readable copy of the unavailable Canny source page or verification of its missing details.",
+    "emails": [
+      {
+        "problem_ids": [
+          "P1"
+        ],
+        "offer_id": "offering",
+        "action_id": "action_0993e369ec8b",
+        "selection_reason": "Extracting individual feature requests from calls, tickets, and reviews addresses the documented downstream problem more directly than leading with integrations, pricing, or a broad feedback-management claim. Free-plan access gives this solution-aware reader a concrete, lower-commitment way to assess that workflow.",
+        "next_step_url": "/register",
+        "destination_kind": "web",
+        "argument_issue": "",
+        "value_case": {
+          "reader_benefit": "If customer feedback arrives through conversations and support interactions, the product team can work with extracted feature requests and consolidated duplicates instead of treating each full recording or ticket as the feedback unit.",
+          "mechanism": "Autopilot reads call transcripts, support tickets, and reviews, pulls out feature requests, and merges detected duplicates.",
+          "evidence_ids": [
+            "E8",
+            "R1",
+            "E26"
+          ],
+          "decision_conditions": [
+            "Feedback Discovery is included on the Free plan with no limit on Autopilot credits.",
+            "Tracked-user limits are separate from Autopilot credits; without a monthly spend limit, exceeding the tracked-user limit triggers an automatic tier upgrade and a prorated charge."
+          ]
+        },
+        "claim_conditions": [
+          "Present Gong, Intercom, tickets, calls, or reviews as conditional examples, not as the recipient's confirmed stack.",
+          "Keep the promise to extracting feature requests and merging duplicates; do not extend it to fine-grained hashtag routing.",
+          "When describing Free-plan access, distinguish unlimited Autopilot credits from tracked-user limits.",
+          "If the tracked-user boundary is discussed, state that exceeding it without a monthly spend limit triggers an automatic tier upgrade and prorated charge.",
+          "Do not promise: Ranking or weighting requests by account revenue/ARR on this free path",
+          "Do not promise: Replacing or removing the incumbent Gong-to-ProductBoard and hashtag routing setup",
+          "Do not promise: Any time saved or hours recovered (Hive's 2-3 hours/week is one customer's self-report, not a promise)",
+          "Do not promise: Zero disruption, no setup effort, or no added headcount",
+          "Do not promise: Routing feedback into separate hashtag-based Slack channels or buckets",
+          "Do not promise: MCP server access, which requires a paid plan",
+          "Do not promise: Ranking or weighting requests by account revenue/ARR on this free path (the $10K-vs-$500K example is a customer's own prioritization outcome, not a Free/Autopilot feature)",
+          "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit.",
+          "Autopilot extracting the individual feature request from a transcript and triaging it to the right team is documented, but routing by fine-grained hashtag into separate Slack channels or topic buckets is not established by the selected evidence; the source also has an unknown publication date, so the complaint is not corroborated as current."
+        ],
+        "position": 1,
+        "target_audience": "Product manager or product team lead at a software company",
+        "job": "Get the reader to start a Free account to assess whether Autopilot can turn their customer conversations into usable, deduplicated feature requests.",
+        "single_idea": "Canny's Autopilot pulls individual feature requests out of customer conversations and merges duplicates, giving product teams a more usable feedback unit than a link to an entire call.",
+        "felt_need": "A link to an entire call recording is not a usable unit of feedback downstream; practitioners want the specific moment or comment isolated and routed, not the whole call, and existing tooling lacks a way to auto-route by fine-grained tag/hashtag into separate channels.",
+        "status_quo": "",
+        "why_it_fails": "",
+        "mechanism": "Autopilot reads call transcripts, support tickets, and reviews, extracts feature requests, and merges detected duplicates. Feedback Discovery is available on the Free plan with no Autopilot-credit limit.",
+        "alternative_ideas": [],
+        "alternative_arguments": [],
+        "belief_shift": "Before: Canny may sound like another place to store feedback. After: Canny can create a more usable input for product review by extracting feature requests from conversations and merging duplicates, and that specific workflow is available to assess on Free.",
+        "evidence_ids": [
+          "R1",
+          "E8",
+          "E26"
+        ],
+        "must_not_say": [
+          "Do not promise ranking or weighting requests by account revenue or ARR on this Free path.",
+          "Do not promise that Canny replaces or removes an existing Gong-to-ProductBoard or hashtag-routing setup.",
+          "Do not promise any time saved or hours recovered; Hive's reported 2–3 hours per week is one customer's self-reported product-marketing outcome.",
+          "Do not promise zero disruption, no setup effort, or no added headcount.",
+          "Do not promise routing feedback into separate hashtag-based Slack channels or topic buckets.",
+          "Do not mention or promise MCP server access; it requires a paid plan and is irrelevant to this proposition.",
+          "Do not use Assembled's $10K-versus-$500K example to imply that Free or Autopilot ranks requests by revenue.",
+          "Do not claim the reader already uses Gong, Intercom, Slack, ProductBoard, spreadsheets, or any other incumbent system.",
+          "Do not claim Canny is unique, better than Productboard, or unavailable from competitors.",
+          "Do not turn the email into a plan, integration, SSO, roadmap, Portal, or project-management feature catalogue.",
+          "Do not describe Free as having unlimited tracked users or being immune from automatic paid upgrades.",
+          "Do not state or imply that every reader uses Free. Present this integration conditionally (for example, 'If you use Free...') unless the user-supplied campaign context establishes it.",
+          "Do not state or imply that every reader uses Plan. Present this integration conditionally (for example, 'If you use Plan...') unless the user-supplied campaign context establishes it."
+        ],
+        "forbidden_evidence_ids": [
+          "E1",
+          "E10",
+          "E11",
+          "E12",
+          "E13",
+          "E14",
+          "E15",
+          "E16",
+          "E17",
+          "E18",
+          "E24",
+          "E31",
+          "E32",
+          "E34",
+          "E35",
+          "E4",
+          "E5",
+          "E6",
+          "E9"
+        ],
+        "forbidden_capability_ids": [],
+        "objection": "Does starting on Free create an uncontrolled cost if feedback volume grows?",
+        "tone": "Plain, confident, and product-focused; short declarative sentences with no inflated claims.",
+        "call_to_action": "Get started free",
+        "next_step_decision": "Decide whether request-level extraction and duplicate merging are useful enough to adopt for the team's feedback intake.",
+        "next_step_value": "Registration provides access to the Free plan, where Autopilot Feedback Discovery is included with no Autopilot-credit limit.",
+        "next_step_evidence_ids": [
+          "R1"
+        ],
+        "next_step_limit": "Starting Free does not establish setup effort, fine-grained Slack routing, revenue-based prioritization, or suitability for the reader's particular source configuration. Tracked-user limits still apply, and exceeding them without a spend limit triggers an automatic paid upgrade.",
+        "subject_strategy": "Earn the open by naming the concrete improvement from whole-call links to extracted feature requests; do not lead with generic AI language, a broad integration claim, or price alone.",
+        "must_not_reuse": [],
+        "steering": {
+          "directions": [],
+          "include_evidence_ids": [],
+          "exclude_evidence_ids": [],
+          "use": [],
+          "avoid": [],
+          "context_only": [],
+          "excluded_values": []
+        }
+      }
+    ],
+    "voice_notes": "Match Canny's concise, product-led register. Let Autopilot act as the subject of concrete verbs such as reads, pulls out, and merges. Avoid describing the recipient's workflow as an established fact.",
+    "contract": {
+      "kind": "single_email",
+      "count": 1,
+      "count_is_explicit": true,
+      "evidence": "one email"
+    }
+  },
+  "versions": [
+    {
+      "attempt": 1,
+      "email": {
+        "position": 1,
+        "role": "introduction",
+        "language": "en",
+        "subject": "Turn conversations into feature requests",
+        "preview_text": "Autopilot extracts requests and merges duplicates for product review.",
+        "eyebrow": "FEEDBACK INTAKE",
+        "headline": "Give product teams requests, not recordings",
+        "greeting": "Hi there,",
+        "body": "If customer feedback arrives through calls, tickets, or reviews, Canny Autopilot reads those sources, pulls out individual feature requests, and merges detected duplicates. Your product team can review the requests themselves instead of treating each full conversation as the feedback unit.\n\nCanny is customer feedback management and product roadmapping software. It brings feedback into one place and turns conversations into organized, request-level input for product decisions.\n\nFeedback Discovery is included on Canny’s Free plan with **no Autopilot-credit limit**. Free includes **25 tracked users**, and users whose feedback Autopilot finds count toward that limit.\n\nYou can set a monthly spend limit to pause upgrades when it is reached, giving you control as feedback volume grows. Create a Free account to see whether request extraction and duplicate merging fit your team’s intake process.",
+        "call_to_action": "Get started free",
+        "sign_off": "- Canny",
+        "postscript": ""
+      },
+      "gates": {
+        "issues": [
+          {
+            "gate": "claim-review",
+            "detail": "The draft discusses the tracked-user boundary but omits the required consequence: without a monthly spend limit, exceeding the tracked-user limit automatically upgrades the account to the next tier and incurs a prorated charge for the rest of the billing period.",
+            "severity": "blocking"
+          }
+        ],
+        "semantic_review": {
+          "key": "e2a4f8428a6f114610e93d4cd67a2ff39a55e4827cba9c21766b6e00610b08b4",
+          "approved": false,
+          "decision": {
+            "verdict": "revise",
+            "claims": [
+              {
+                "text": "Turn conversations into feature requests",
+                "status": "supported",
+                "explanation": "Canny Autopilot is documented as reading conversations and extracting feature requests.",
+                "citations": [
+                  {
+                    "source_id": "E8",
+                    "quote": "Autopilot reads every call transcript, support ticket, and review, then pulls out feature requests and merges duplicates."
+                  }
+                ]
+              },
+              {
+                "text": "Autopilot extracts requests and merges duplicates for product review.",
+                "status": "supported",
+                "explanation": "The documented operation extracts feature requests and merges duplicates; presenting the resulting requests for product review is a direct functional consequence.",
+                "citations": [
+                  {
+                    "source_id": "E8",
+                    "quote": "Autopilot reads every call transcript, support ticket, and review, then pulls out feature requests and merges duplicates."
+                  },
+                  {
+                    "source_id": "proposition:benefit:1",
+                    "quote": "Autopilot automatically captures, deduplicates, and triages feedback\n\n- Read support & sales conversations\n- Triage to the right team\n- Included in all plans"
+                  }
+                ]
+              },
+              {
+                "text": "Give product teams requests, not recordings",
+                "status": "supported",
+                "explanation": "This accurately summarizes the documented extraction of feature requests from call transcripts without claiming that recordings or an incumbent system are removed.",
+                "citations": [
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "Stop relying on what people remember from calls. Autopilot reads every call transcript, support ticket, and review, then pulls out feature requests and merges duplicates."
+                  }
+                ]
+              },
+              {
+                "text": "If customer feedback arrives through calls, tickets, or reviews, Canny Autopilot reads those sources, pulls out individual feature requests, and merges detected duplicates.",
+                "status": "supported",
+                "explanation": "The conditional source examples, product owner, extraction operation, and duplicate merging are all expressly documented.",
+                "citations": [
+                  {
+                    "source_id": "E8",
+                    "quote": "Autopilot reads every call transcript, support ticket, and review, then pulls out feature requests and merges duplicates."
+                  },
+                  {
+                    "source_id": "R3",
+                    "quote": "Feedback Discovery: automatically captures feedback. It finds feedback in customer chats, sales calls, customer reviews, and more. Any detected duplicates are merged together. Users with feedback found by Autopilot count towards your tracked user count."
+                  }
+                ]
+              },
+              {
+                "text": "Your product team can review the requests themselves instead of treating each full conversation as the feedback unit.",
+                "status": "supported",
+                "explanation": "Extracting individual feature requests from each conversation directly supports using those requests, rather than the whole conversation, as the review unit.",
+                "citations": [
+                  {
+                    "source_id": "proposition:mechanism:0",
+                    "quote": "Stop relying on what people remember from calls. Autopilot reads every call transcript, support ticket, and review, then pulls out feature requests and merges duplicates."
+                  }
+                ]
+              },
+              {
+                "text": "Canny is customer feedback management and product roadmapping software.",
+                "status": "supported",
+                "explanation": "The sources describe Canny as a customer-feedback platform that centralizes feedback and informs what to build next, supporting the stated product category.",
+                "citations": [
+                  {
+                    "source_id": "proposition:product:0",
+                    "quote": "Canny centralizes customer feedback from every channel,\n ties it to the revenue behind it, and shows you what to build next"
+                  },
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "## The customer feedback platform behind thousands of revenue teams"
+                  }
+                ]
+              },
+              {
+                "text": "It brings feedback into one place and turns conversations into organized, request-level input for product decisions.",
+                "status": "supported",
+                "explanation": "Canny is documented as centralizing feedback, while Autopilot extracts, deduplicates, and triages feedback from conversations; the resulting request-level input supports product decisions.",
+                "citations": [
+                  {
+                    "source_id": "proposition:product:0",
+                    "quote": "Canny centralizes customer feedback from every channel,\n ties it to the revenue behind it, and shows you what to build next"
+                  },
+                  {
+                    "source_id": "proposition:benefit:1",
+                    "quote": "Autopilot automatically captures, deduplicates, and triages feedback\n\n- Read support & sales conversations\n- Triage to the right team\n- Included in all plans"
+                  },
+                  {
+                    "source_id": "E8",
+                    "quote": "Autopilot reads every call transcript, support ticket, and review, then pulls out feature requests and merges duplicates."
+                  }
+                ]
+              },
+              {
+                "text": "Feedback Discovery is included on Canny’s Free plan with no Autopilot-credit limit.",
+                "status": "supported",
+                "explanation": "Autopilot is included in all plans, the Free plan has no Autopilot-credit limit, and Feedback Discovery is identified as an Autopilot feature.",
+                "citations": [
+                  {
+                    "source_id": "R2",
+                    "quote": "Autopilot automatically captures, deduplicates, and triages feedback\n\n- Read support & sales conversations\n- Triage to the right team\n- Included in all plans"
+                  },
+                  {
+                    "source_id": "R1",
+                    "quote": "The Free plan has no limit on [Autopilot](https://help.canny.io/en/articles/8202451-autopilot) credits."
+                  },
+                  {
+                    "source_id": "source:1",
+                    "quote": "Autopilot refers to Canny's suite of AI-powered features:\n\nFeedback Discovery: automatically captures feedback. It finds feedback in customer chats, sales calls, customer reviews, and more. Any detected duplicates are merged together. Users with feedback found by Autopilot count towards your tracked user count."
+                  }
+                ]
+              },
+              {
+                "text": "Free includes 25 tracked users, and users whose feedback Autopilot finds count toward that limit.",
+                "status": "supported",
+                "explanation": "Both the Free-plan quota and the treatment of users found by Autopilot are expressly documented.",
+                "citations": [
+                  {
+                    "source_id": "offer:offer_f411a1fb6275",
+                    "quote": "### Free\n\nFor teams getting started with AI-powered feedback capture\n\n[Get started](/register) \n\nWhat you get:\n\n- 25 tracked users\n- Automatic feedback capture\n- Unlimited feedback"
+                  },
+                  {
+                    "source_id": "R3",
+                    "quote": "Feedback Discovery: automatically captures feedback. It finds feedback in customer chats, sales calls, customer reviews, and more. Any detected duplicates are merged together. Users with feedback found by Autopilot count towards your tracked user count."
+                  }
+                ]
+              },
+              {
+                "text": "You can set a monthly spend limit to pause upgrades when it is reached, giving you control as feedback volume grows.",
+                "status": "supported",
+                "explanation": "The pricing FAQ expressly permits a monthly spend limit and says upgrades pause once that limit is reached.",
+                "citations": [
+                  {
+                    "source_id": "E25",
+                    "quote": "Running a high-volume B2C/consumer product? Reach out-we offer custom tracked user limits for larger scale feedback programs. - Can I set a monthly spend limit? Yes, you’re always in control. You can set a monthly spend limit, and we’ll pause upgrades once you hit it. We’ll notify you when you hit your limit."
+                  }
+                ]
+              },
+              {
+                "text": "Create a Free account to see whether request extraction and duplicate merging fit your team’s intake process.",
+                "status": "supported",
+                "explanation": "The registration route is documented for the Free plan, where Autopilot is included without an Autopilot-credit limit and performs the stated workflow.",
+                "citations": [
+                  {
+                    "source_id": "offer:offer_f411a1fb6275",
+                    "quote": "### Free\n\nFor teams getting started with AI-powered feedback capture\n\n[Get started](/register) \n\nWhat you get:\n\n- 25 tracked users\n- Automatic feedback capture\n- Unlimited feedback"
+                  },
+                  {
+                    "source_id": "R1",
+                    "quote": "The Free plan has no limit on [Autopilot](https://help.canny.io/en/articles/8202451-autopilot) credits."
+                  },
+                  {
+                    "source_id": "R2",
+                    "quote": "Autopilot automatically captures, deduplicates, and triages feedback\n\n- Read support & sales conversations\n- Triage to the right team\n- Included in all plans"
+                  }
+                ]
+              },
+              {
+                "text": "Get started free →",
+                "status": "supported",
+                "explanation": "The supplied Canny page documents a Free-plan registration action at /register.",
+                "citations": [
+                  {
+                    "source_id": "offer:offer_f411a1fb6275",
+                    "quote": "### Free\n\nFor teams getting started with AI-powered feedback capture\n\n[Get started](/register) \n\nWhat you get:\n\n- 25 tracked users\n- Automatic feedback capture\n- Unlimited feedback"
+                  },
+                  {
+                    "source_id": "proposition:product:0",
+                    "quote": "[Request a demo](/request-demo)[Get started free](/register)\n\nNo credit card required"
+                  }
+                ]
+              },
+              {
+                "text": "- Canny",
+                "status": "supported",
+                "explanation": "The email concerns and is signed by the documented Canny product owner.",
+                "citations": [
+                  {
+                    "source_id": "proposition:action:1",
+                    "quote": "Written by Canny"
+                  }
+                ]
+              }
+            ],
+            "findings": [
+              {
+                "text": "Free includes 25 tracked users, and users whose feedback Autopilot finds count toward that limit.\n\nYou can set a monthly spend limit to pause upgrades when it is reached, giving you control as feedback volume grows.",
+                "kind": "instruction",
+                "explanation": "The draft discusses the tracked-user boundary but omits the required consequence: without a monthly spend limit, exceeding the tracked-user limit automatically upgrades the account to the next tier and incurs a prorated charge for the rest of the billing period."
+              }
+            ],
+            "summary": "The factual assertions and Free-registration payoff are supported. Revision is required because the draft discusses the tracked-user limit without stating the mandated automatic-upgrade and prorated-charge consequence when no monthly spend limit is set.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The draft preserves the intended benefit: product teams receive extracted, deduplicated feature requests from conversations, tickets, and reviews instead of relying on each full conversation as the feedback unit.",
+              "original_passage": "If customer feedback arrives through calls, tickets, or reviews, Canny Autopilot reads those sources, pulls out individual feature requests, and merges detected duplicates. Your product team can review the requests themselves instead of treating each full conversation as the feedback unit.",
+              "revised_passage": ""
+            }
+          },
+          "version": 3
+        }
+      },
+      "read": {
+        "reads": [
+          {
+            "opened": true,
+            "stopped_at": "",
+            "what_it_sells": "Canny offers customer-feedback and roadmapping software that would extract individual feature requests from conversations, tickets, and reviews, merge duplicates, and put the resulting requests in one place for product review.",
+            "understood": true,
+            "situation_matches": true,
+            "relevance_feedback": "The role fit is explicit: I lead product work at a software company, and the email conditionally addresses feedback arriving through several channels. The broader profile documents this as a real product-management workflow and identifies full recordings as poor downstream feedback units. However, it does not establish that my team currently has this workflow, uses any named source, or needs to change it now.",
+            "assumed_experiences": [
+              "Profile-supported: I am responsible for product decisions at a software company.",
+              "Email-only and conditional: customer feedback reaches my team through calls, tickets, or reviews.",
+              "Email-only: full conversations are currently being handled as feedback units rather than individual requests.",
+              "Email-only: duplicate requests create enough review work to make automatic merging useful.",
+              "Unknown: my current feedback repository, integrations, volume, and willingness to replace or supplement an existing process."
+            ],
+            "problem_now": "Request-level extraction and duplicate merging address a documented product-feedback problem, so the premise is relevant. Whether it is a problem for my team right now, at meaningful volume, is unknown; the profile establishes neither urgency nor our current intake process.",
+            "biggest_doubt": "I cannot tell whether Canny can ingest the particular sources my team uses or how much connection, permission, and review setup is required before its extracted requests become usable. The unexplained reference to pausing upgrades also makes the Free plan's billing behavior less reassuring than intended.",
+            "would_act": false,
+            "to_click_it_would_have_to": "I would have clicked if this email had told me which source types or connectors the Free plan supports and what the smallest test requires—for example, connecting one source or importing one conversation without changing our existing workflow.",
+            "pull": 6,
+            "fixes": [
+              "Rewrite “If customer feedback arrives through calls, tickets, or reviews, Canny Autopilot reads those sources” to specify how those sources are connected or imported and which ones can be tested on the Free plan.",
+              "Rewrite “It brings feedback into one place” to say where the extracted requests appear and what I can do with them during review; the current line repeats the general promise.",
+              "Cut or clarify “You can set a monthly spend limit to pause upgrades when it is reached” because it introduces unexplained automatic upgrades and billing mechanics before I understand the trial setup.",
+              "Rewrite “Create a Free account to see whether request extraction and duplicate merging fit your team’s intake process” as a concrete first test, including the minimum source, permissions, and setup required."
+            ],
+            "material_revision": "Explain the operating path from a source to a reviewable request: how I connect or import feedback, where extracted requests appear, and what the product team can review or approve before anything enters the organized feedback set. Without that, I understand the promise but cannot picture testing it safely within our current intake process.",
+            "persona": "Selected audience (explicit constraints): Product manager or product team lead at a software company.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): People responsible for product decisions at software companies pull customer feedback from multiple channels (sales/CS calls recorded in tools like Gong, support tickets, Slack) into a central place such as a feedback portal or ProductBoard so requests can be reviewed by the product team rather than lost across departments.\nSource: https://visioneers.gong.io/configuring-gong-76/can-i-use-gong-to-capture-product-feedback-and-connect-that-to-a-slack-channel-145; quote: In addition, we’re using our [ProductBoard integration](https://integrations.gong.io/integrations/productboard) to send highlights to ProductBoard, where our Product team reviews suggestions and feedback.\nSource: https://craft.io/blog/product-feedback-management/; quote: It connects the voice of the customer to the product backlog, to prioritization decisions, and ultimately to what ships on the roadmap.\nProblem context: A link to an entire call recording is not a usable unit of feedback downstream; practitioners want the specific moment or comment isolated and routed, not the whole call, and existing tooling lacks a way to auto-route by fine-grained tag/hashtag into separate channels. [Source limits: Publication date unknown; retrieval today does not establish current applicability.; Single-source problem; independent corroboration is not established.]; source: https://visioneers.gong.io/configuring-gong-76/can-i-use-gong-to-capture-product-feedback-and-connect-that-to-a-slack-channel-145",
+            "reported": true,
+            "opens_in_100": null,
+            "clicks_in_100": null
+          }
+        ]
+      }
+    },
+    {
+      "attempt": 2,
+      "email": {
+        "position": 1,
+        "role": "free-plan acquisition",
+        "language": "en",
+        "subject": "Connect one source to Autopilot",
+        "preview_text": "Test request extraction and duplicate merging with supported sources on Free.",
+        "eyebrow": "PRODUCT FEEDBACK",
+        "headline": "Turn one connected source into reviewable requests",
+        "greeting": "Hi there,",
+        "body": "On Canny’s Free plan, connect a supported source such as Gong, Intercom, or Zendesk. Autopilot reads call transcripts and support tickets, pulls out individual feature requests, merges detected duplicates, and triages the feedback to the right team.\n\nCanny is customer feedback management and product roadmapping software. Instead of passing around a full call link or ticket, your product team can review the extracted, deduplicated requests in one place.\n\nFree includes 25 tracked users, and people whose feedback Autopilot finds count toward that total. Autopilot credits have no limit.\n\nSet a monthly spend limit and upgrades pause when you hit it. Without one, exceeding the tracked-user limit automatically moves the account to the next tier, with a prorated charge for the rest of the billing period.\n\nRegistration opens the Free plan, with no credit card required.",
+        "call_to_action": "Get started free",
+        "sign_off": "- Canny",
+        "postscript": ""
+      },
+      "gates": {
+        "issues": [
+          {
+            "gate": "claim-review",
+            "detail": "\"Canny is customer feedback management and product roadmapping software.\": The supplied evidence establishes customer-feedback management and says Canny helps determine what to build next, but no literal source identifies Canny as product roadmapping software or documents a roadmapping capability sufficiently to entail the complete category claim.",
+            "severity": "blocking"
+          },
+          {
+            "gate": "claim-review",
+            "detail": "The customer-feedback category is supported, but the supplied literal evidence does not fully establish the additional product-roadmapping-software classification. This source gap prevents full approval.",
+            "severity": "blocking"
+          }
+        ],
+        "semantic_review": {
+          "key": "0eedc9ce2a5ca26004c4b10a144515b8261e8b8e36fa92b238682084d9927acb",
+          "approved": false,
+          "decision": {
+            "verdict": "uncertain",
+            "claims": [
+              {
+                "text": "Subject: Connect one source to Autopilot",
+                "status": "supported",
+                "explanation": "Canny documents multiple Autopilot sources, so connecting one supported source is consistent with the documented capability.",
+                "citations": [
+                  {
+                    "source_id": "E28",
+                    "quote": "Autopilot sourcesIntercom, Zendesk, Freshdesk, Gong, Zoom, and more"
+                  }
+                ]
+              },
+              {
+                "text": "Preview text: Test request extraction and duplicate merging with supported sources on Free.",
+                "status": "supported",
+                "explanation": "Autopilot extracts feature requests and merges duplicates, is included in all plans, and lists supported sources including Gong, Intercom, and Zendesk.",
+                "citations": [
+                  {
+                    "source_id": "E8",
+                    "quote": "Autopilot reads every call transcript, support ticket, and review, then pulls out feature requests and merges duplicates."
+                  },
+                  {
+                    "source_id": "R2",
+                    "quote": "Autopilot automatically captures, deduplicates, and triages feedback\n\n- Read support & sales conversations\n- Triage to the right team\n- Included in all plans"
+                  },
+                  {
+                    "source_id": "E28",
+                    "quote": "Autopilot sourcesIntercom, Zendesk, Freshdesk, Gong, Zoom, and more"
+                  }
+                ]
+              },
+              {
+                "text": "Turn one connected source into reviewable requests",
+                "status": "supported",
+                "explanation": "The documented workflow reads source material, extracts feature requests, merges duplicates, and centralizes customer feedback for downstream use.",
+                "citations": [
+                  {
+                    "source_id": "E8",
+                    "quote": "Autopilot reads every call transcript, support ticket, and review, then pulls out feature requests and merges duplicates."
+                  },
+                  {
+                    "source_id": "proposition:product:0",
+                    "quote": "Canny centralizes customer feedback from every channel,\n ties it to the revenue behind it, and shows you what to build next"
+                  }
+                ]
+              },
+              {
+                "text": "On Canny’s Free plan, connect a supported source such as Gong, Intercom, or Zendesk.",
+                "status": "supported",
+                "explanation": "Gong, Intercom, and Zendesk are documented Autopilot sources, and Autopilot is included in all plans, which includes Free.",
+                "citations": [
+                  {
+                    "source_id": "E28",
+                    "quote": "Autopilot sourcesIntercom, Zendesk, Freshdesk, Gong, Zoom, and more"
+                  },
+                  {
+                    "source_id": "R2",
+                    "quote": "Autopilot automatically captures, deduplicates, and triages feedback\n\n- Read support & sales conversations\n- Triage to the right team\n- Included in all plans"
+                  }
+                ]
+              },
+              {
+                "text": "Autopilot reads call transcripts and support tickets, pulls out individual feature requests, merges detected duplicates, and triages the feedback to the right team.",
+                "status": "supported",
+                "explanation": "The cited sources jointly document reading transcripts and tickets, extracting feature requests, merging duplicates, and triaging feedback to the right team.",
+                "citations": [
+                  {
+                    "source_id": "E8",
+                    "quote": "Autopilot reads every call transcript, support ticket, and review, then pulls out feature requests and merges duplicates."
+                  },
+                  {
+                    "source_id": "R2",
+                    "quote": "Autopilot automatically captures, deduplicates, and triages feedback\n\n- Read support & sales conversations\n- Triage to the right team\n- Included in all plans"
+                  }
+                ]
+              },
+              {
+                "text": "Canny is customer feedback management and product roadmapping software.",
+                "status": "uncertain",
+                "explanation": "The supplied evidence establishes customer-feedback management and says Canny helps determine what to build next, but no literal source identifies Canny as product roadmapping software or documents a roadmapping capability sufficiently to entail the complete category claim.",
+                "citations": [
+                  {
+                    "source_id": "proposition:product:0",
+                    "quote": "Canny centralizes customer feedback from every channel,\n ties it to the revenue behind it, and shows you what to build next"
+                  },
+                  {
+                    "source_id": "proposition:product:1",
+                    "quote": "## The customer feedback platform behind thousands of revenue teams"
+                  }
+                ]
+              },
+              {
+                "text": "Instead of passing around a full call link or ticket, your product team can review the extracted, deduplicated requests in one place.",
+                "status": "supported",
+                "explanation": "This is a reasonable consequence of documented request extraction and deduplication within a platform that centralizes customer feedback; it does not assert a measured outcome.",
+                "citations": [
+                  {
+                    "source_id": "E8",
+                    "quote": "Autopilot reads every call transcript, support ticket, and review, then pulls out feature requests and merges duplicates."
+                  },
+                  {
+                    "source_id": "proposition:product:0",
+                    "quote": "Canny centralizes customer feedback from every channel,\n ties it to the revenue behind it, and shows you what to build next"
+                  }
+                ]
+              },
+              {
+                "text": "Free includes 25 tracked users, and people whose feedback Autopilot finds count toward that total.",
+                "status": "supported",
+                "explanation": "The Free plan's 25-user allowance and the rule that users found by Autopilot count as tracked users are both stated directly.",
+                "citations": [
+                  {
+                    "source_id": "E21",
+                    "quote": "25 tracked users"
+                  },
+                  {
+                    "source_id": "R3",
+                    "quote": "Feedback Discovery: automatically captures feedback. It finds feedback in customer chats, sales calls, customer reviews, and more. Any detected duplicates are merged together. Users with feedback found by Autopilot count towards your tracked user count."
+                  }
+                ]
+              },
+              {
+                "text": "Autopilot credits have no limit.",
+                "status": "supported",
+                "explanation": "In the surrounding Free-plan context, this accurately states that the Free plan has no limit on Autopilot credits.",
+                "citations": [
+                  {
+                    "source_id": "R1",
+                    "quote": "The Free plan has no limit on [Autopilot](https://help.canny.io/en/articles/8202451-autopilot) credits."
+                  }
+                ]
+              },
+              {
+                "text": "Set a monthly spend limit and upgrades pause when you hit it.",
+                "status": "supported",
+                "explanation": "Canny explicitly documents an optional monthly spend limit that pauses upgrades when reached.",
+                "citations": [
+                  {
+                    "source_id": "E25",
+                    "quote": "Running a high-volume B2C/consumer product? Reach out-we offer custom tracked user limits for larger scale feedback programs. - Can I set a monthly spend limit? Yes, you’re always in control. You can set a monthly spend limit, and we’ll pause upgrades once you hit it. We’ll notify you when you hit your limit."
+                  }
+                ]
+              },
+              {
+                "text": "Without one, exceeding the tracked-user limit automatically moves the account to the next tier, with a prorated charge for the rest of the billing period.",
+                "status": "supported",
+                "explanation": "The sentence retains the documented prerequisite—no monthly spend limit—and accurately states the automatic upgrade and prorated charge.",
+                "citations": [
+                  {
+                    "source_id": "E26",
+                    "quote": "Once your limit is hit, Canny will stop tracking feedback from new users. You can update or remove your limit anytime. - What happens if I go over my tracked user limit? If you haven’t set a monthly spend limit, we’ll automatically upgrade you to the next tier once you exceed your limit. You’ll be charged a prorated amount for the remainder of your billing period."
+                  }
+                ]
+              },
+              {
+                "text": "Registration opens the Free plan, with no credit card required.",
+                "status": "supported",
+                "explanation": "The Free offer links its Get started action to /register, while the product source explicitly labels that route Get started free and states that no credit card is required.",
+                "citations": [
+                  {
+                    "source_id": "offer:offer_f411a1fb6275",
+                    "quote": "### Free\n\nFor teams getting started with AI-powered feedback capture\n\n[Get started](/register)"
+                  },
+                  {
+                    "source_id": "proposition:product:0",
+                    "quote": "[Request a demo](/request-demo)[Get started free](/register)\n\nNo credit card required"
+                  }
+                ]
+              },
+              {
+                "text": "Get started free →",
+                "status": "supported",
+                "explanation": "The documented CTA uses the same wording and links to the selected /register destination.",
+                "citations": [
+                  {
+                    "source_id": "proposition:product:0",
+                    "quote": "[Request a demo](/request-demo)[Get started free](/register)\n\nNo credit card required"
+                  }
+                ]
+              },
+              {
+                "text": "- Canny",
+                "status": "supported",
+                "explanation": "The supplied first-party sources identify Canny as the product and publisher represented by the email.",
+                "citations": [
+                  {
+                    "source_id": "proposition:action:1",
+                    "quote": "Written by Canny"
+                  }
+                ]
+              }
+            ],
+            "findings": [
+              {
+                "text": "Canny is customer feedback management and product roadmapping software.",
+                "kind": "factual",
+                "explanation": "The customer-feedback category is supported, but the supplied literal evidence does not fully establish the additional product-roadmapping-software classification. This source gap prevents full approval."
+              }
+            ],
+            "summary": "All offer, Free-plan, source compatibility, Autopilot workflow, quota, billing, registration, and CTA assertions are supported. The sole unresolved assertion is the classification of Canny as product roadmapping software; the supplied evidence only establishes customer-feedback management and a general ability to inform what to build next.",
+            "benefit_retention": {
+              "status": "preserved",
+              "explanation": "The draft retains the required useful consequence: supported conversations and tickets become extracted, deduplicated feature requests that product teams can review, while preserving the Free-plan tracked-user and upgrade conditions.",
+              "original_passage": "Autopilot extracting the individual feature request from a transcript and triaging it to the right team is documented",
+              "revised_passage": "Autopilot reads call transcripts and support tickets, pulls out individual feature requests, merges detected duplicates, and triages the feedback to the right team."
+            }
+          },
+          "version": 3
+        }
+      },
+      "read": {
+        "reads": [
+          {
+            "opened": true,
+            "stopped_at": "",
+            "what_it_sells": "Canny offers feedback-management and roadmapping software that connects to a call or support source, extracts individual feature requests, merges duplicates, and gives my product team one place to review them.",
+            "understood": true,
+            "situation_matches": null,
+            "relevance_feedback": "The role fits: I am responsible for product decisions, and isolating usable requests from calls or tickets could support that work. However, the profile only identifies this as an observed market problem; it does not establish that I use Gong, Intercom, Zendesk, or currently lose feedback across departments. The email presents those tools and that workflow as the premise, so applicability to my team remains unknown.",
+            "assumed_experiences": [
+              "Profile-supported: I am a product manager or product team lead at a software company.",
+              "Email-only: my team uses at least one supported source such as Gong, Intercom, or Zendesk.",
+              "Email-only: our call transcripts or support tickets contain feature requests worth extracting.",
+              "Email-only: duplicate requests and routing feedback to the correct team are current workflow problems.",
+              "Email-only: connecting a company data source is an acceptable first test for me."
+            ],
+            "problem_now": "Turning whole calls or tickets into reviewable requests is a credible product-workflow problem, but the profile does not establish that it affects my team now or with any urgency.",
+            "biggest_doubt": "I cannot tell how much setup and data access the test requires, how I review or correct Autopilot's extraction and duplicate decisions, or whether connecting a live customer-data source is the only way to evaluate it. The automatic paid-tier language also adds billing concern before I have seen the output quality.",
+            "would_act": false,
+            "to_click_it_would_have_to": "I would have clicked if this email had told me whether I could test one transcript or ticket without granting ongoing access to a live source, and preview or approve the extracted requests before anything is merged or routed.",
+            "pull": 6,
+            "fixes": [
+              "Rewrite \"On Canny’s Free plan, connect a supported source such as Gong, Intercom, or Zendesk\" to state the exact first test: whether I must authorize a live integration or can upload one sample transcript or ticket.",
+              "Rewrite \"Autopilot reads call transcripts and support tickets, pulls out individual feature requests, merges detected duplicates, and triages the feedback to the right team\" to explain whether I can review, edit, or reject its extraction, merge, and routing decisions.",
+              "Cut or simplify \"Set a monthly spend limit and upgrades pause when you hit it. Without one, exceeding the tracked-user limit automatically moves the account to the next tier, with a prorated charge for the rest of the billing period.\" It makes a no-card Free trial sound capable of creating an automatic charge without explaining when payment details enter the process.",
+              "Clarify \"Free includes 25 tracked users, and people whose feedback Autopilot finds count toward that total\" with a concrete example of what causes a person to be counted."
+            ],
+            "material_revision": "Explain the review operation between extraction and routing: whether I can inspect, correct, approve, or reject individual requests and proposed duplicate merges. Without that, I can picture the automation but not how my product team safely turns its output into decisions.",
+            "persona": "Selected audience (explicit constraints): Product manager or product team lead at a software company.\nThe context and problem reports below describe observed members of this market, not established experiences or installed tools of this recipient. The campaign request controls which job this email addresses; do not require a link to an unrequested integration in your doubts or click requirements.\nObserved context (inferred; applicability must be checked): People responsible for product decisions at software companies pull customer feedback from multiple channels (sales/CS calls recorded in tools like Gong, support tickets, Slack) into a central place such as a feedback portal or ProductBoard so requests can be reviewed by the product team rather than lost across departments.\nSource: https://visioneers.gong.io/configuring-gong-76/can-i-use-gong-to-capture-product-feedback-and-connect-that-to-a-slack-channel-145; quote: In addition, we’re using our [ProductBoard integration](https://integrations.gong.io/integrations/productboard) to send highlights to ProductBoard, where our Product team reviews suggestions and feedback.\nSource: https://craft.io/blog/product-feedback-management/; quote: It connects the voice of the customer to the product backlog, to prioritization decisions, and ultimately to what ships on the roadmap.\nProblem context: A link to an entire call recording is not a usable unit of feedback downstream; practitioners want the specific moment or comment isolated and routed, not the whole call, and existing tooling lacks a way to auto-route by fine-grained tag/hashtag into separate channels. [Source limits: Publication date unknown; retrieval today does not establish current applicability.; Single-source problem; independent corroboration is not established.]; source: https://visioneers.gong.io/configuring-gong-76/can-i-use-gong-to-capture-product-feedback-and-connect-that-to-a-slack-channel-145",
+            "reported": true,
+            "opens_in_100": null,
+            "clicks_in_100": null
+          }
+        ]
+      }
+    }
+  ],
+  "passed": false,
+  "selected_attempt": 1,
+  "selected_brief": {
+    "problem_ids": [
+      "P1"
+    ],
+    "offer_id": "offering",
+    "action_id": "action_0993e369ec8b",
+    "selection_reason": "Extracting individual feature requests from calls, tickets, and reviews addresses the documented downstream problem more directly than leading with integrations, pricing, or a broad feedback-management claim. Free-plan access gives this solution-aware reader a concrete, lower-commitment way to assess that workflow.",
+    "next_step_url": "/register",
+    "destination_kind": "web",
+    "argument_issue": "",
+    "value_case": {
+      "reader_benefit": "If customer feedback arrives through conversations and support interactions, the product team can work with extracted feature requests and consolidated duplicates instead of treating each full recording or ticket as the feedback unit.",
+      "mechanism": "Autopilot reads call transcripts, support tickets, and reviews, pulls out feature requests, and merges detected duplicates.",
+      "evidence_ids": [
+        "E8",
+        "R1",
+        "E26"
+      ],
+      "decision_conditions": [
+        "Feedback Discovery is included on the Free plan with no limit on Autopilot credits.",
+        "Tracked-user limits are separate from Autopilot credits; without a monthly spend limit, exceeding the tracked-user limit triggers an automatic tier upgrade and a prorated charge."
+      ]
+    },
+    "claim_conditions": [
+      "Present Gong, Intercom, tickets, calls, or reviews as conditional examples, not as the recipient's confirmed stack.",
+      "Keep the promise to extracting feature requests and merging duplicates; do not extend it to fine-grained hashtag routing.",
+      "When describing Free-plan access, distinguish unlimited Autopilot credits from tracked-user limits.",
+      "If the tracked-user boundary is discussed, state that exceeding it without a monthly spend limit triggers an automatic tier upgrade and prorated charge.",
+      "Do not promise: Ranking or weighting requests by account revenue/ARR on this free path",
+      "Do not promise: Replacing or removing the incumbent Gong-to-ProductBoard and hashtag routing setup",
+      "Do not promise: Any time saved or hours recovered (Hive's 2-3 hours/week is one customer's self-report, not a promise)",
+      "Do not promise: Zero disruption, no setup effort, or no added headcount",
+      "Do not promise: Routing feedback into separate hashtag-based Slack channels or buckets",
+      "Do not promise: MCP server access, which requires a paid plan",
+      "Do not promise: Ranking or weighting requests by account revenue/ARR on this free path (the $10K-vs-$500K example is a customer's own prioritization outcome, not a Free/Autopilot feature)",
+      "This is a documented-use draft, not proof of the broader audience hypothesis or recipient fit.",
+      "Autopilot extracting the individual feature request from a transcript and triaging it to the right team is documented, but routing by fine-grained hashtag into separate Slack channels or topic buckets is not established by the selected evidence; the source also has an unknown publication date, so the complaint is not corroborated as current."
+    ],
+    "position": 1,
+    "target_audience": "Product manager or product team lead at a software company",
+    "job": "Get the reader to start a Free account to assess whether Autopilot can turn their customer conversations into usable, deduplicated feature requests.",
+    "single_idea": "Canny's Autopilot pulls individual feature requests out of customer conversations and merges duplicates, giving product teams a more usable feedback unit than a link to an entire call.",
+    "felt_need": "A link to an entire call recording is not a usable unit of feedback downstream; practitioners want the specific moment or comment isolated and routed, not the whole call, and existing tooling lacks a way to auto-route by fine-grained tag/hashtag into separate channels.",
+    "status_quo": "",
+    "why_it_fails": "",
+    "mechanism": "Autopilot reads call transcripts, support tickets, and reviews, extracts feature requests, and merges detected duplicates. Feedback Discovery is available on the Free plan with no Autopilot-credit limit.",
+    "alternative_ideas": [],
+    "alternative_arguments": [],
+    "belief_shift": "Before: Canny may sound like another place to store feedback. After: Canny can create a more usable input for product review by extracting feature requests from conversations and merging duplicates, and that specific workflow is available to assess on Free.",
+    "evidence_ids": [
+      "R1",
+      "E8",
+      "E26"
+    ],
+    "must_not_say": [
+      "Do not promise ranking or weighting requests by account revenue or ARR on this Free path.",
+      "Do not promise that Canny replaces or removes an existing Gong-to-ProductBoard or hashtag-routing setup.",
+      "Do not promise any time saved or hours recovered; Hive's reported 2–3 hours per week is one customer's self-reported product-marketing outcome.",
+      "Do not promise zero disruption, no setup effort, or no added headcount.",
+      "Do not promise routing feedback into separate hashtag-based Slack channels or topic buckets.",
+      "Do not mention or promise MCP server access; it requires a paid plan and is irrelevant to this proposition.",
+      "Do not use Assembled's $10K-versus-$500K example to imply that Free or Autopilot ranks requests by revenue.",
+      "Do not claim the reader already uses Gong, Intercom, Slack, ProductBoard, spreadsheets, or any other incumbent system.",
+      "Do not claim Canny is unique, better than Productboard, or unavailable from competitors.",
+      "Do not turn the email into a plan, integration, SSO, roadmap, Portal, or project-management feature catalogue.",
+      "Do not describe Free as having unlimited tracked users or being immune from automatic paid upgrades.",
+      "Do not state or imply that every reader uses Free. Present this integration conditionally (for example, 'If you use Free...') unless the user-supplied campaign context establishes it.",
+      "Do not state or imply that every reader uses Plan. Present this integration conditionally (for example, 'If you use Plan...') unless the user-supplied campaign context establishes it."
+    ],
+    "forbidden_evidence_ids": [
+      "E1",
+      "E10",
+      "E11",
+      "E12",
+      "E13",
+      "E14",
+      "E15",
+      "E16",
+      "E17",
+      "E18",
+      "E24",
+      "E31",
+      "E32",
+      "E34",
+      "E35",
+      "E4",
+      "E5",
+      "E6",
+      "E9"
+    ],
+    "forbidden_capability_ids": [],
+    "objection": "Does starting on Free create an uncontrolled cost if feedback volume grows?",
+    "tone": "Plain, confident, and product-focused; short declarative sentences with no inflated claims.",
+    "call_to_action": "Get started free",
+    "next_step_decision": "Decide whether request-level extraction and duplicate merging are useful enough to adopt for the team's feedback intake.",
+    "next_step_value": "Registration provides access to the Free plan, where Autopilot Feedback Discovery is included with no Autopilot-credit limit.",
+    "next_step_evidence_ids": [
+      "R1"
+    ],
+    "next_step_limit": "Starting Free does not establish setup effort, fine-grained Slack routing, revenue-based prioritization, or suitability for the reader's particular source configuration. Tracked-user limits still apply, and exceeding them without a spend limit triggers an automatic paid upgrade.",
+    "subject_strategy": "Earn the open by naming the concrete improvement from whole-call links to extracted feature requests; do not lead with generic AI language, a broad integration claim, or price alone.",
+    "must_not_reuse": [],
+    "steering": {
+      "directions": [],
+      "include_evidence_ids": [],
+      "exclude_evidence_ids": [],
+      "use": [],
+      "avoid": [],
+      "context_only": [],
+      "excluded_values": []
+    }
+  },
+  "landed": false,
+  "calls": 7,
+  "elapsed_seconds": 320.157
+}

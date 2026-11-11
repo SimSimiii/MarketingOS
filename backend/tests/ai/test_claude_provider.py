@@ -261,6 +261,16 @@ def _cli_command_for(options) -> list[str]:
     return transport._build_command()
 
 
+def test_bounded_preparation_effort_reaches_the_cli_without_changing_the_model():
+    provider = ClaudeProvider("sonnet")
+    request = AIRequest(model="sonnet", effort="medium")
+    command = _cli_command_for(provider._options(request, "Read the supplied facts."))
+    assert command[command.index("--effort") + 1] == "medium"
+    assert command[command.index("--model") + 1] == "sonnet"
+    default_command = _cli_command_for(provider._options(AIRequest(model="sonnet"), "Same facts."))
+    assert "--effort" not in default_command
+
+
 @pytest.mark.asyncio
 async def test_a_campaign_call_has_every_built_in_tool_disabled(monkeypatch):
     """A call that writes or judges copy needs no tool, so it must be handed

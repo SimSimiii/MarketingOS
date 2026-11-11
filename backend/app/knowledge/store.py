@@ -16,7 +16,8 @@ from sqlmodel import Session
 
 from app.ingestion.documents import SourceType
 from app.knowledge.artifacts import KnowledgeArtifacts
-from app.knowledge.corpus import Document, SourceCorpus, fold
+from app.knowledge.corpus import Document, SourceCorpus, contains_quote, fold
+from app.knowledge.ledger import EvidenceKind, preserve_billing_uncertainty
 from app.models.campaign import Campaign
 from app.models.knowledge_artifacts import KnowledgeArtifactSet
 from app.models.knowledge_document import KnowledgeDocument
@@ -106,19 +107,40 @@ def refresh_provenance(artifacts: KnowledgeArtifacts, documents: list[KnowledgeD
     documents = current_documents(documents)
     fingerprint = fingerprint_source_context(documents)
     if artifacts.source_context_fingerprint == fingerprint:
-        return artifacts
+        # Apply the new safety boundary to cached prices without rescanning
+        # every unchanged quotation or repurchasing compilation.
+        by_id = {str(doc.id): doc for doc in documents}
+        by_source = {doc.source_url or doc.title: doc for doc in documents}
+        changes = {}
+        for index, entry in enumerate(artifacts.evidence.entries):
+            if entry.kind is not EvidenceKind.PRICE:
+                continue
+            source = by_id.get(entry.document_id) or by_source.get(entry.source)
+            if source is not None:
+                bounded = preserve_billing_uncertainty(entry, source.content)
+                if bounded != entry:
+                    changes[index] = bounded
+        if not changes:
+            return artifacts
+        updated = artifacts.model_copy(deep=True)
+        for index, bounded in changes.items():
+            updated.evidence.entries[index] = bounded
+        return updated
     updated = artifacts.model_copy(deep=True)
     material = [(doc, fold(doc.content)) for doc in documents]
     metadata_changed = bool(artifacts.source_context_fingerprint)
     for entry in updated.evidence.entries:
-        quote = fold(entry.verbatim)
-        matching = [doc for doc, text in material if len(quote) >= 12 and quote in text]
+        matching = [doc for doc, text in material
+                    if len(entry.verbatim.strip()) >= 12 and contains_quote(entry.verbatim, text, normalized=True)]
         entry.source_references = [{"document_id": str(doc.id), "source": doc.source_url or doc.title,
                                     "source_type": str(doc.source_type)}
                                    for doc in sorted(matching, key=lambda doc: (doc.source_url or doc.title, str(doc.id)))]
         original = next((doc for doc in matching if str(doc.id) == entry.document_id), None)
         if original is not None:
             entry.source = original.source_url or original.title
+        source = original or next((doc for doc in matching if doc.source_url == entry.source), None)
+        if source is not None:
+            entry.context = preserve_billing_uncertainty(entry, source.content).context
         if metadata_changed and matching and entry.context is not None:
             entry.context.verification = "source_metadata_changed_review_required"
     updated.source_context_fingerprint = fingerprint

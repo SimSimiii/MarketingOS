@@ -3,7 +3,7 @@
 import re
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 CampaignObjective = Literal["announcement", "acquisition", "activation", "recovery", "nurture", "custom"]
 ReaderRelationship = Literal["unknown", "cold", "subscriber", "prospect", "customer"]
@@ -19,6 +19,14 @@ class CampaignIntent(BaseModel):
     announcement: str = Field(default="", max_length=6000)
     reason_now: str = Field(default="", max_length=4000)
     desired_action: str = Field(default="", max_length=2000)
+    required_fact: str = Field(default="", max_length=1000)
+    required_source_url: str = Field(default="", max_length=2048)
+
+    @model_validator(mode="after")
+    def _required_source_has_a_question(self) -> "CampaignIntent":
+        if self.required_source_url.strip() and not self.required_fact.strip():
+            raise ValueError("Enter the fact to check before selecting a source page.")
+        return self
 
     def render(self) -> str:
         lines = [
@@ -32,6 +40,8 @@ class CampaignIntent(BaseModel):
             lines.append(f"User-provided reason for timing: {self.reason_now}")
         if self.desired_action:
             lines.append(f"User-requested next action: {self.desired_action}")
+        if self.required_fact.strip():
+            lines.append(f"User's required evidence question: {self.required_fact.strip()}")
         lines.append({
             "announcement": "Present the offering or stated change and its concrete relevance. A launch template alone establishes no release date or novelty. Do not turn this into a documentation tutorial by default.",
             "acquisition": "Earn a relevant first conversation or evaluation. Do not invent the recipient's pain, installed tools or past failures.",

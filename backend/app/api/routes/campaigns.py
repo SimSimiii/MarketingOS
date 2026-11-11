@@ -5,6 +5,7 @@ from fastapi import APIRouter, HTTPException, Query, status
 from app.ai.roles import InvalidOverrideError
 from app.api.deps import CampaignServiceDep
 from app.core.config import get_settings
+from app.marketing.steering import CampaignSteering, SteeringCheck
 from app.schemas.campaign import (
     CampaignBriefUpdate,
     CampaignCreateRequest,
@@ -115,6 +116,30 @@ def update_campaign_policy(
     except (InvalidOverrideError, ValueError) as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from exc
     return CampaignRead.model_validate(updated)
+
+
+@router.get("/{campaign_id}/steering", response_model=SteeringCheck)
+def get_campaign_steering(campaign_id: UUID, service: CampaignServiceDep) -> SteeringCheck:
+    """What the analyses offer to steer, each with its status, and what the
+    saved choices collide on. Free: nothing here calls a model."""
+    campaign = service.get_campaign(campaign_id)
+    if campaign is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Campaign not found")
+    return service.steering_check(campaign)
+
+
+@router.put("/{campaign_id}/steering", response_model=SteeringCheck)
+def update_campaign_steering(
+    campaign_id: UUID, data: CampaignSteering, service: CampaignServiceDep
+) -> SteeringCheck:
+    """Save optional content choices. An empty body clears them."""
+    campaign = service.get_campaign(campaign_id)
+    if campaign is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Campaign not found")
+    try:
+        return service.update_steering(campaign, data)
+    except CampaignAlreadyRunningError as exc:
+        raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
 
 
 @router.get("/{campaign_id}/forecast", response_model=RunForecast)

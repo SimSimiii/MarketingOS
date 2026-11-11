@@ -136,11 +136,17 @@ def email_forecast(policy: ExecutionPolicy) -> Forecast:
 
     low = common + readers
     high = common + candidates * readers + (ballot if candidates > 1 else 0)
+    # Independent source review for each distinct draft. The high includes
+    # ModelSession's bounded JSON repair; exact-text reuse spends no call.
+    low += 1
+    high += 2 * candidates
 
     # Every rewrite the policy allows: a writer turn, a cold read, a duel
     # against the version it would replace, and a critique to drive the next
     # one.
-    high += policy.max_revisions * (1 + readers + ballot + (1 if policy.critic_enabled else 0))
+    high += policy.max_revisions * (3 + readers + ballot + (1 if policy.critic_enabled else 0))
+    if policy.subject_variants:
+        high += 2  # only the selected new subject/preview gets source-reviewed
     return Forecast(low=low, high=high)
 
 
@@ -153,7 +159,7 @@ def rework_forecast(policy: ExecutionPolicy, emails: int) -> Forecast:
     if emails < 2 or not policy.sequence_pass:
         return Forecast(low=0, high=0)
     readers = _readers(policy)
-    per_rework = 1 + readers + _ballot(policy)
+    per_rework = 3 + readers + _ballot(policy)
     reworks = min(policy.max_sequence_reworks, emails)
     return Forecast(low=1, high=1 + reworks * per_rework)
 
@@ -164,6 +170,8 @@ def forecast(
     material_chars: int = 0,
     knowledge_reused: bool = False,
     direct_eligible: bool | None = False,
+    focused_activation: bool = False,
+    required_fact: bool = False,
 ) -> Forecast:
     """Every model call one run of this campaign can make.
 
@@ -172,22 +180,19 @@ def forecast(
     emails, which is a failure rather than a step.
     """
     total = compile_forecast(policy, material_chars, knowledge_reused)
+    preflight = Forecast(low=1, high=4) if required_fact else Forecast(low=0, high=0)
+    # One draft and one possible repair. Each writer and reviewer can retry
+    # malformed output once on the focused activation path.
+    activation = Forecast(low=2, high=8)
     if direct_eligible is True:
-        return total + Forecast(low=2, high=2)
+        if focused_activation:
+            return total + preflight + activation
+        return total + preflight + Forecast(low=3, high=4)
     if contract.kind is DeliverableKind.LINKEDIN_MESSAGE:
-        # Knowledge, one Strategist call, and the writer - which buys a second
-        # turn when its own draft failed a check. No cold read, no duel, no
-        # critic and no sequence pass: that whole apparatus grades email copy,
-        # and this channel does not have it. See
-        # `EmailCampaignPipeline._phase_message`.
-        #
-        # The second turn is bought more often than the word "failed" suggests,
-        # and deliberately so: with no reader in this channel, the free checks
-        # are the only thing that ever sends a message back, and half of what
-        # they catch is copy that could ship and should not. The ceiling is
-        # unchanged - there was never a third turn - so this spends more of the
-        # range the user was already quoted rather than more than it.
-        return total + Forecast(low=2, high=4)
+        # Strategy plus up to two writer/source-review pairs. Each source
+        # review includes the runtime's bounded JSON repair in the ceiling.
+        # There is no cold panel, duel or sequence review for this channel.
+        return total + Forecast(low=3, high=8)
     emails = max(1, contract.count)
     per_email = email_forecast(policy)
     total += Forecast(low=per_email.low * emails, high=per_email.high * emails)
@@ -202,10 +207,11 @@ def forecast(
         # fresh strategy, and one fresh craft pass for every email. The floor
         # stays unchanged because a landed campaign does none of this. The
         # pipeline never invokes recovery twice, so this ceiling is bounded.
-        total += Forecast(low=0, high=2 + 2 + per_email.high * emails)
+        total += Forecast(low=0, high=2 + 2 + (per_email.high + 2) * emails)
     if direct_eligible is None and policy.strategy_mode != "planned" and contract.kind is DeliverableKind.SINGLE_EMAIL:
         # Before compilation the licensed actions are unknown. Keep the full
         # planned ceiling; do not sell a two-call promise we cannot yet know.
-        total = Forecast(low=total.compile_low + 2, high=total.high,
+        total = Forecast(low=total.compile_low + (activation.low if focused_activation else 3),
+                         high=max(total.high, total.compile_high + activation.high) if focused_activation else total.high,
                          compile_low=total.compile_low, compile_high=total.compile_high)
-    return total
+    return total + preflight

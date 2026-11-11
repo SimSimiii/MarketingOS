@@ -78,6 +78,9 @@ class AIRequest(BaseModel):
     #: a text call has nothing to loop on. Left to the provider's own default
     #: when unset.
     max_turns: int | None = None
+    #: Optional effort hint for bounded preparation. Unsupported providers or
+    #: models may keep their default; this never changes the selected model.
+    effort: Literal["low", "medium", "high"] | None = None
 
 
 class AIUsage(BaseModel):
@@ -135,9 +138,10 @@ class ProviderCallError(RuntimeError):
     while a server-side interruption may genuinely clear on retry.
     """
 
-    def __init__(self, message: str, *, retryable: bool) -> None:
+    def __init__(self, message: str, *, retryable: bool, user_message: str = "") -> None:
         super().__init__(message)
         self.retryable = retryable
+        self.user_message = user_message
 
 
 class AIProvider(ABC):

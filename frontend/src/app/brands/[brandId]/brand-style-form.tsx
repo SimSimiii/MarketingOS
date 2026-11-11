@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { Check } from "lucide-react";
+import { Check, Globe } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,28 +11,54 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/lib/api-client";
+import { DEFAULT_ACCENT, emailColours, type EmailColours } from "@/lib/email-colour";
 import type { Brand } from "@/lib/types";
 import { refreshPage } from "@/lib/page-data";
-
-const DEFAULT_ACCENT = "#1a56db";
 
 /** The few things a branded email needs to look like it came from someone.
  *
  * Deliberately five fields. A full design system would be a second product,
  * and every one of these is something the owner can answer in a sentence —
- * anything left empty still renders, in the typographic tier that is the
- * right answer for cold mail anyway.
+ * anything left empty still renders, with the brand's name as a wordmark.
  *
  * It matters that this exists at all: the renderer has supported logos,
  * colour, buttons and footers since it was written, and until there was a
  * form for them every email the system produced came out plain because there
- * was nothing to brand it with. */
+ * was nothing to brand it with. Crawling the brand's site now fills the logo
+ * and colour it declares; "Read from website" shows them here first. */
 export function BrandStyleForm({ brand }: { brand: Brand }) {
   const [logoUrl, setLogoUrl] = useState(brand.logo_url ?? "");
-  const [color, setColor] = useState(brand.primary_color ?? DEFAULT_ACCENT);
+  // Empty rather than the default blue, so saving the footer does not also
+  // store a colour nobody chose - which would stop the site's own colour
+  // from ever being picked up.
+  const [color, setColor] = useState(brand.primary_color ?? "");
   const [footer, setFooter] = useState((brand.footer_lines ?? []).join("\n"));
   const [unsubscribe, setUnsubscribe] = useState(brand.unsubscribe_url ?? "");
   const [saving, setSaving] = useState(false);
+  const [reading, setReading] = useState(false);
+
+  async function readSite() {
+    setReading(true);
+    try {
+      const found = await api.detectBrandStyle(brand.id);
+      if (found.logo_url) setLogoUrl(found.logo_url);
+      if (found.primary_color) setColor(found.primary_color);
+      const things = [found.logo_url && "a logo", found.primary_color && "a colour"].filter(Boolean);
+      const description = found.notes.join(" ") || undefined;
+      if (things.length > 0) {
+        toast.success(
+          `Found ${things.join(" and ")} on the site. Save to use ${things.length > 1 ? "them" : "it"}.`,
+          { description },
+        );
+      } else {
+        toast.info("The site declares nothing an email can use.", { description });
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not read the site");
+    } finally {
+      setReading(false);
+    }
+  }
 
   async function save() {
     setSaving(true);
@@ -55,7 +81,7 @@ export function BrandStyleForm({ brand }: { brand: Brand }) {
     }
   }
 
-  const accent = /^#[0-9a-fA-F]{6}$/.test(color.trim()) ? color.trim() : DEFAULT_ACCENT;
+  const colours = emailColours(color);
   const footerLines = footer.split("\n").map((line) => line.trim()).filter(Boolean);
 
   return (
@@ -104,7 +130,8 @@ export function BrandStyleForm({ brand }: { brand: Brand }) {
               />
             </div>
             <p className="text-xs text-muted-foreground">
-              Links, the button, and the rule beside a highlighted offer.
+              Links, the button, and the rule beside a highlighted offer. A colour too light to
+              read on white is darkened for text, and the button label turns dark.
             </p>
           </div>
         </div>
@@ -139,7 +166,15 @@ export function BrandStyleForm({ brand }: { brand: Brand }) {
           </p>
         </div>
 
-        <div className="flex justify-end border-t border-hairline pt-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-hairline pt-4">
+          {brand.website_url ? (
+            <Button variant="outline" onClick={readSite} disabled={reading}>
+              <Globe aria-hidden="true" />
+              {reading ? "Reading the site…" : "Read from website"}
+            </Button>
+          ) : (
+            <span />
+          )}
           <Button onClick={save} disabled={saving}>
             <Check aria-hidden="true" />
             {saving ? "Saving…" : "Save appearance"}
@@ -150,7 +185,7 @@ export function BrandStyleForm({ brand }: { brand: Brand }) {
     <EmailPreview
       brandName={brand.name}
       logoUrl={logoUrl.trim()}
-      accent={accent}
+      colours={colours}
       footerLines={footerLines}
       unsubscribe={Boolean(unsubscribe.trim())}
     />
@@ -168,13 +203,13 @@ export function BrandStyleForm({ brand }: { brand: Brand }) {
 function EmailPreview({
   brandName,
   logoUrl,
-  accent,
+  colours,
   footerLines,
   unsubscribe,
 }: {
   brandName: string;
   logoUrl: string;
-  accent: string;
+  colours: EmailColours;
   footerLines: string[];
   unsubscribe: boolean;
 }) {
@@ -193,7 +228,8 @@ function EmailPreview({
           <span className="ml-3 truncate text-[0.6875rem] text-neutral-500">Inbox · {brandName}</span>
         </div>
         <div className="p-5">
-          <div className="rounded-xl bg-white p-6 shadow-sm">
+          <div className="overflow-hidden rounded-xl bg-white p-6 pt-0 shadow-sm">
+            <div className="-mx-6 mb-6 h-1" style={{ backgroundColor: colours.fill }} />
             <div className="mb-5 flex h-9 items-center">
               {showLogo ? (
                 // eslint-disable-next-line @next/next/no-img-element -- a user-supplied URL on any host
@@ -204,7 +240,7 @@ function EmailPreview({
                   onError={() => setBrokenLogo(logoUrl)}
                 />
               ) : (
-                <span className="text-base font-semibold text-neutral-900">{brandName}</span>
+                <span className="text-lg font-extrabold tracking-wide text-neutral-900">{brandName}</span>
               )}
             </div>
             <div className="space-y-2" aria-hidden="true">
@@ -212,17 +248,17 @@ function EmailPreview({
               <div className="h-2.5 w-full rounded-full bg-neutral-200" />
               <div className="h-2.5 w-4/5 rounded-full bg-neutral-200" />
             </div>
-            <div className="my-5 border-l-[3px] py-1 pl-3" style={{ borderColor: accent }}>
+            <div className="my-5 border-l-[3px] py-1 pl-3" style={{ borderColor: colours.accent }}>
               <div className="h-2.5 w-3/4 rounded-full bg-neutral-200" aria-hidden="true" />
             </div>
             <span
-              className="inline-block rounded-md px-4 py-2 text-xs font-semibold text-white"
-              style={{ backgroundColor: accent }}
+              className="inline-block rounded-md px-4 py-2 text-xs font-semibold"
+              style={{ backgroundColor: colours.fill, color: colours.onFill }}
             >
               Call to action
             </span>
             <p className="mt-4 text-xs text-neutral-500">
-              Links look <span className="underline" style={{ color: accent }}>like this</span>.
+              Links look <span className="underline" style={{ color: colours.accent }}>like this</span>.
             </p>
           </div>
           <div className="space-y-0.5 px-2 pt-4 text-center text-[0.6875rem] leading-relaxed text-neutral-500">

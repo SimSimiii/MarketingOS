@@ -1,0 +1,1338 @@
+{
+  "version": 1,
+  "compiled_at": "2026-11-09T11:34:16.379041Z",
+  "evidence_count": 34,
+  "segments": [
+    "New podcaster with an existing audience elsewhere",
+    "Network or agency running multiple shows"
+  ],
+  "gaps": [
+    "Some linked source pages could not be read; the corpus is partial: https://transistor.fm/ - Use only the readable captured facts; do not infer missing prices, features or proof."
+  ],
+  "voice_learned": true,
+  "artifacts": {
+    "business": {
+      "company_name": "Transistor",
+      "what_it_does": "Hosts and distributes audio and video podcasts, publishing them to Apple Podcasts, Spotify, YouTube and other listening apps from a single upload.",
+      "category": "Podcast hosting platform",
+      "business_model": "subscription",
+      "facts": [
+        {
+          "statement": "Starter plan is $19/month, includes unlimited podcasts, 20,000 monthly audio downloads, and 50 private podcast subscribers",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://transistor.fm/",
+            "quote": "## Starter Publish audio podcasts everywhere.",
+            "document_id": null,
+            "evidence_id": "E13",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "Professional plan is $49/month, includes video podcast publishing, 100,000 monthly audio downloads, 500 GB file storage, 500 private podcast subscribers, and dynamic ads",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://transistor.fm/",
+            "quote": "## Professional Publish audio and video podcasts.",
+            "document_id": null,
+            "evidence_id": "E16",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "Business plan is $99/month, includes 250,000 monthly audio downloads, 1 TB file storage, 3,000 private podcast subscribers, and removes Transistor branding",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://transistor.fm/",
+            "quote": "## Business More capacity for growing podcasts.",
+            "document_id": null,
+            "evidence_id": "E20",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "Transistor offers a 14-day free trial",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://transistor.fm/",
+            "quote": "Start 14-day **free trial**",
+            "document_id": null,
+            "evidence_id": "E23",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "A private podcast gives each subscriber their own unique RSS feed, identified by email address, so the creator controls exactly who can listen",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://support.transistor.fm/en/article/what-are-private-podcast-subscribers-12lzzka/",
+            "quote": "A private podcast works differently: every subscriber gets their own unique RSS feed, so you control exactly who can listen and can see what each person listens to.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "Enterprise plan includes from 6,000 private podcast subscribers; no price is published in the material",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://support.transistor.fm/en/article/what-are-private-podcast-subscribers-12lzzka/",
+            "quote": "| Enterprise | from 6,000 |",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "Ali Abdaal used Transistor to host his podcast Deep Dive, which hit #1 on Apple Podcasts' Education charts and also ranked on Spotify podcast charts",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://transistor.fm/customers/ali/",
+            "quote": "he's already hit #1 on the Apple Podcasts' Education charts",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "case_study"
+          }
+        },
+        {
+          "statement": "The Transistor API is built around the JSON:API specification and authenticates requests with an x-api-key HTTP header",
+          "grounding": "grounded",
+          "provenance": {
+            "source": "https://developers.transistor.fm/",
+            "quote": "The Transistor API uses API keys to authenticate all requests... Each API request must include an HTTP header x-api-key with its value being your API key.",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "statement": "Transistor's multi-podcast hosting (one account, unlimited shows) likely appeals to podcast networks or agencies managing several shows under one subscription",
+          "grounding": "inferred",
+          "provenance": null
+        },
+        {
+          "statement": "A new podcaster with an existing audience on another platform (YouTube, newsletter, social) is a good-fit buyer, since the launch-tips content centers on cross-promoting to an existing following",
+          "grounding": "inferred",
+          "provenance": null
+        }
+      ],
+      "vocabulary": [
+        "podcast hosting",
+        "distribution",
+        "private podcast subscribers",
+        "monthly audio downloads",
+        "dynamic ads",
+        "RSS feed",
+        "podcast website",
+        "collaborators",
+        "episodes",
+        "trailer episode",
+        "video podcasting",
+        "network website",
+        "embeddable player",
+        "upload once, distribute everywhere",
+        "unlimited podcasts"
+      ]
+    },
+    "offer": {
+      "plans": [
+        {
+          "name": "Starter",
+          "price": "$19/mo",
+          "includes": [
+            "Unlimited podcasts",
+            "20,000 monthly audio downloads",
+            "50 private podcast subscribers",
+            "Live customer support",
+            "Advanced analytics",
+            "API + MCP access",
+            "Built-in podcast website",
+            "Podcast network website"
+          ],
+          "id": "",
+          "provenance": {
+            "source": "https://transistor.fm/",
+            "quote": "## Starter Publish audio podcasts everywhere. ... **$19**/mo",
+            "document_id": null,
+            "evidence_id": "E13",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "name": "Professional",
+          "price": "$49/mo",
+          "includes": [
+            "Video podcast publishing",
+            "100,000 monthly audio downloads",
+            "500 GB file storage",
+            "500 private podcast subscribers",
+            "Dynamic ads"
+          ],
+          "id": "",
+          "provenance": {
+            "source": "https://transistor.fm/",
+            "quote": "## Professional Publish audio and video podcasts.",
+            "document_id": null,
+            "evidence_id": "E16",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "name": "Business",
+          "price": "$99/mo",
+          "includes": [
+            "250,000 monthly audio downloads",
+            "1 TB file storage",
+            "3,000 private podcast subscribers",
+            "Removes Transistor branding"
+          ],
+          "id": "",
+          "provenance": {
+            "source": "https://transistor.fm/",
+            "quote": "## Business More capacity for growing podcasts.",
+            "document_id": null,
+            "evidence_id": "E20",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "name": "Enterprise",
+          "price": "",
+          "includes": [
+            "From 6,000 private podcast subscribers"
+          ],
+          "id": "",
+          "provenance": {
+            "source": "https://support.transistor.fm/en/article/what-are-private-podcast-subscribers-12lzzka/",
+            "quote": "| Enterprise | from 6,000 |",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        }
+      ],
+      "free_entry": "14-day free trial",
+      "guarantees": [],
+      "calls_to_action": [
+        {
+          "label": "Start 14-day free trial",
+          "intent": "start a free trial of Transistor",
+          "url": "https://dashboard.transistor.fm/signup",
+          "id": "",
+          "evidence_ids": [
+            "E23"
+          ],
+          "provenance": {
+            "source": "https://transistor.fm/",
+            "quote": "Start 14-day **free trial**",
+            "document_id": null,
+            "evidence_id": "E23",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "label": "Buy now — Starter",
+          "intent": "purchase the Starter plan directly",
+          "url": "https://dashboard.transistor.fm/signup#starter-monthly",
+          "id": "",
+          "evidence_ids": [
+            "E13"
+          ],
+          "provenance": {
+            "source": "https://transistor.fm/pricing/",
+            "quote": "[Buy now — Starter](https://dashboard.transistor.fm/signup#starter-monthly)",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        },
+        {
+          "label": "Chat with us",
+          "intent": "ask sales/support questions before signing up",
+          "url": null,
+          "id": "",
+          "evidence_ids": [],
+          "provenance": {
+            "source": "https://transistor.fm/",
+            "quote": "[Chat with us](#crisp/)",
+            "document_id": null,
+            "evidence_id": "",
+            "source_kind": "vendor_copy"
+          }
+        }
+      ],
+      "purchase_motion": "self-serve"
+    },
+    "evidence": {
+      "entries": [
+        {
+          "id": "E1",
+          "kind": "feature",
+          "claim": "The Transistor API uses API keys to authenticate all requests, sent via an HTTP header named x-api-key",
+          "verbatim": "The Transistor API uses API keys to authenticate all requests. Your API keys can be viewed and reset in the [Account Area](https://dashboard.transistor.fm/account) of your Transistor Dashboard. Each API request must include an HTTP header `x-api-key` with its value being your API key.",
+          "source": "https://developers.transistor.fm/",
+          "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical",
+          "context": {
+            "subject": "Transistor API",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+              "source": "https://developers.transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E2",
+          "kind": "feature",
+          "claim": "API requests are rate-limited to 10 requests per 10 seconds; exceeding this returns a 429 HTTP error code and blocks access for 10 seconds",
+          "verbatim": "API requests are rate-limited to 10 requests per 10 seconds. If this limit is exceeded, you will be receive a `429` HTTP error code, and access will be blocked for 10 seconds.",
+          "source": "https://developers.transistor.fm/",
+          "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical",
+          "context": {
+            "subject": "Transistor API",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+              "source": "https://developers.transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E3",
+          "kind": "feature",
+          "claim": "The Transistor API is built around the JSON:API specification",
+          "verbatim": "The Transistor API is built around the [JSON:API](https://jsonapi.org) specification.",
+          "source": "https://developers.transistor.fm/",
+          "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical",
+          "context": {
+            "subject": "Transistor API",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+              "source": "https://developers.transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E4",
+          "kind": "feature",
+          "claim": "The API supports sparse fieldsets, letting a request specify only particular fields to return, e.g. fields[episode][]=title&fields[episode][]=media_url",
+          "verbatim": "Let's say you want to retrieve an Episode but only return the title and media\\_url. In your request you can specify `fields[episode][]=title&fields[episode][]=media_url`.",
+          "source": "https://developers.transistor.fm/",
+          "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical",
+          "context": {
+            "subject": "Transistor API",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+              "source": "https://developers.transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E5",
+          "kind": "feature",
+          "claim": "The API supports including a resource's related resources in one request, e.g. include[]=show, and this can be combined with sparse fieldsets",
+          "verbatim": "You can also return a resource's related resources in one single API request instead of multiuple requests. For example, you may want to retrieve an Episode, but also include its parent Show resource. In your request you can specify `include[]=show`.",
+          "source": "https://developers.transistor.fm/",
+          "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical",
+          "context": {
+            "subject": "Transistor API",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+              "source": "https://developers.transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E6",
+          "kind": "feature",
+          "claim": "The Get show analytics endpoint (GET /v1/analytics/:id) retrieves downloads-per-day for an entire podcast and defaults to the last 14 days if no date range is given",
+          "verbatim": "Retrieve analytics of downloads per day for an entire podcast. Defaults to the last 14 days.",
+          "source": "https://developers.transistor.fm/",
+          "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product",
+          "context": {
+            "subject": "Transistor API show analytics endpoint",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "no start_date/end_date supplied",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+              "source": "https://developers.transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E7",
+          "kind": "feature",
+          "claim": "The Get all episode analytics endpoint (GET /v1/analytics/:id/episodes) retrieves downloads-per-day for all episodes of a podcast and defaults to the last 7 days",
+          "verbatim": "Retrieve analytics of downloads per day for all episodes of a podcast. Defaults to the last 7 days.",
+          "source": "https://developers.transistor.fm/",
+          "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product",
+          "context": {
+            "subject": "Transistor API episode analytics endpoint",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "no start_date/end_date supplied",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+              "source": "https://developers.transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E8",
+          "kind": "feature",
+          "claim": "The Get single episode analytics endpoint (GET /v1/analytics/episodes/:id) retrieves downloads-per-day for a single episode and defaults to the last 14 days",
+          "verbatim": "Retrieve analytics of downloads per day for a single episode. Defaults to the last 14 days.",
+          "source": "https://developers.transistor.fm/",
+          "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product",
+          "context": {
+            "subject": "Transistor API single episode analytics endpoint",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "no start_date/end_date supplied",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+              "source": "https://developers.transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E9",
+          "kind": "feature",
+          "claim": "The Get episodes endpoint (GET /v1/episodes) retrieves a paginated list of episodes ordered by published date, filterable by show_id, query, and status (draft, scheduled, or published)",
+          "verbatim": "Retrieve a paginated list of episodes ordered by published date.",
+          "source": "https://developers.transistor.fm/",
+          "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product",
+          "context": {
+            "subject": "Transistor API episodes list endpoint",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+              "source": "https://developers.transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E10",
+          "kind": "feature",
+          "claim": "Episodes can be filtered by status: one of draft, scheduled, or published",
+          "verbatim": "| status | String | One of draft scheduled published | Publishing status: published, scheduled, or draft |",
+          "source": "https://developers.transistor.fm/",
+          "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product",
+          "context": {
+            "subject": "Transistor API episodes list endpoint",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+              "source": "https://developers.transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E11",
+          "kind": "feature",
+          "claim": "Episode list results default to descending order (newest first) and default to 10 resources per page starting at page 0",
+          "verbatim": "| order | String | One of desc asc Default: desc | Return order of episodes. Newest first (desc), or oldest first (asc) |",
+          "source": "https://developers.transistor.fm/",
+          "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product",
+          "context": {
+            "subject": "Transistor API episodes list endpoint",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+              "source": "https://developers.transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E12",
+          "kind": "feature",
+          "claim": "The episodes list endpoint paginates with a default page number of 0 and a default of 10 resources per page",
+          "verbatim": "| pagination[page] | Integer | Default: 0 | Page number | | pagination[per] | Integer | Default: 10 | Resources per page |",
+          "source": "https://developers.transistor.fm/",
+          "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product",
+          "context": {
+            "subject": "Transistor API episodes list endpoint",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "c24c394e-cb06-462c-8e7e-a96b619449fa",
+              "source": "https://developers.transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E13",
+          "kind": "price",
+          "claim": "Starter plan is $19/month, includes unlimited podcasts, 20,000 monthly audio downloads, and 50 private podcast subscribers",
+          "verbatim": "## Starter Publish audio podcasts everywhere.",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial",
+          "context": {
+            "subject": "Transistor Starter plan",
+            "source_kind": "official_documentation",
+            "claim_scope": "offer",
+            "conditions": "Billed monthly, prices in USD",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            },
+            {
+              "document_id": "d48e56f9-888e-4f23-806d-cdde221c31e8",
+              "source": "https://transistor.fm/pricing/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E14",
+          "kind": "feature",
+          "claim": "Starter plan includes 20,000 monthly audio downloads",
+          "verbatim": "[**20,000** monthly audio downloads](https://support.transistor.fm/en/article/what-constitutes-a-podcast-download-stream-listen-kv1em2/)",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial",
+          "context": {
+            "subject": "Transistor Starter plan",
+            "source_kind": "official_documentation",
+            "claim_scope": "offer",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            },
+            {
+              "document_id": "d48e56f9-888e-4f23-806d-cdde221c31e8",
+              "source": "https://transistor.fm/pricing/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E15",
+          "kind": "feature",
+          "claim": "Starter plan includes 50 private podcast subscribers",
+          "verbatim": "[**50** private podcast subscribers](https://support.transistor.fm/en/article/what-are-private-podcast-subscribers-12lzzka/)",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial",
+          "context": {
+            "subject": "Transistor Starter plan",
+            "source_kind": "official_documentation",
+            "claim_scope": "offer",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            },
+            {
+              "document_id": "d48e56f9-888e-4f23-806d-cdde221c31e8",
+              "source": "https://transistor.fm/pricing/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E16",
+          "kind": "price",
+          "claim": "Professional plan is $49/month, includes video podcast publishing, 100,000 monthly audio downloads, 500 GB file storage, 500 private podcast subscribers, and dynamic ads",
+          "verbatim": "## Professional Publish audio and video podcasts.",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial",
+          "context": {
+            "subject": "Transistor Professional plan",
+            "source_kind": "official_documentation",
+            "claim_scope": "offer",
+            "conditions": "Billed monthly, prices in USD",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            },
+            {
+              "document_id": "d48e56f9-888e-4f23-806d-cdde221c31e8",
+              "source": "https://transistor.fm/pricing/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E17",
+          "kind": "feature",
+          "claim": "Professional plan includes 100,000 monthly audio downloads",
+          "verbatim": "[**100,000** monthly audio downloads](https://support.transistor.fm/en/article/what-constitutes-a-podcast-download-stream-listen-kv1em2/)",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial",
+          "context": {
+            "subject": "Transistor Professional plan",
+            "source_kind": "official_documentation",
+            "claim_scope": "offer",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            },
+            {
+              "document_id": "d48e56f9-888e-4f23-806d-cdde221c31e8",
+              "source": "https://transistor.fm/pricing/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E18",
+          "kind": "feature",
+          "claim": "Professional plan includes 500 GB of file storage",
+          "verbatim": "**500 GB** of file storage",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial",
+          "context": {
+            "subject": "Transistor Professional plan",
+            "source_kind": "official_documentation",
+            "claim_scope": "offer",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            },
+            {
+              "document_id": "d48e56f9-888e-4f23-806d-cdde221c31e8",
+              "source": "https://transistor.fm/pricing/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E19",
+          "kind": "feature",
+          "claim": "Professional plan supports dynamic ads (pre-roll, mid-roll, post-roll)",
+          "verbatim": "[Dynamic ads (pre-roll, mid-roll, post-roll)](https://transistor.fm/features/dynamic-ads/)",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product",
+          "context": {
+            "subject": "Transistor Professional plan",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "Professional plan and above",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            },
+            {
+              "document_id": "d48e56f9-888e-4f23-806d-cdde221c31e8",
+              "source": "https://transistor.fm/pricing/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E20",
+          "kind": "price",
+          "claim": "Business plan is $99/month, includes 250,000 monthly audio downloads, 1 TB file storage, 3,000 private podcast subscribers, and removes Transistor branding",
+          "verbatim": "## Business More capacity for growing podcasts.",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial",
+          "context": {
+            "subject": "Transistor Business plan",
+            "source_kind": "official_documentation",
+            "claim_scope": "offer",
+            "conditions": "Billed monthly, prices in USD",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            },
+            {
+              "document_id": "d48e56f9-888e-4f23-806d-cdde221c31e8",
+              "source": "https://transistor.fm/pricing/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E21",
+          "kind": "feature",
+          "claim": "Business plan includes 3,000 private podcast subscribers",
+          "verbatim": "[**3,000** private podcast subscribers](https://support.transistor.fm/en/article/what-are-private-podcast-subscribers-12lzzka/)",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial",
+          "context": {
+            "subject": "Transistor Business plan",
+            "source_kind": "official_documentation",
+            "claim_scope": "offer",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            },
+            {
+              "document_id": "d48e56f9-888e-4f23-806d-cdde221c31e8",
+              "source": "https://transistor.fm/pricing/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E22",
+          "kind": "feature",
+          "claim": "Business plan removes Transistor branding",
+          "verbatim": "Remove Transistor branding",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product",
+          "context": {
+            "subject": "Transistor Business plan",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "Business plan only",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            },
+            {
+              "document_id": "d48e56f9-888e-4f23-806d-cdde221c31e8",
+              "source": "https://transistor.fm/pricing/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E23",
+          "kind": "guarantee",
+          "claim": "Transistor offers a 14-day free trial",
+          "verbatim": "Start 14-day **free trial**",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "commercial",
+          "context": {
+            "subject": "Transistor",
+            "source_kind": "official_documentation",
+            "claim_scope": "offer",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E24",
+          "kind": "feature",
+          "claim": "Transistor does not charge extra for creating additional podcasts on one account",
+          "verbatim": "We don't charge you for creating additional podcasts.",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product",
+          "context": {
+            "subject": "Transistor",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E25",
+          "kind": "feature",
+          "claim": "Transistor generates a website automatically for a podcast after choosing a design",
+          "verbatim": "Choose a design and we'll automatically generate a website for your show.",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product",
+          "context": {
+            "subject": "Transistor",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E26",
+          "kind": "feature",
+          "claim": "Transistor's analytics show average downloads per episode, popular podcast apps, number of subscribers, and trends",
+          "verbatim": "See your average downloads per episode, popular podcast apps, number of subscribers, trends.",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product",
+          "context": {
+            "subject": "Transistor",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E27",
+          "kind": "feature",
+          "claim": "Transistor supports private, members-only podcasts for a company or online community",
+          "verbatim": "Host a members-only podcast for your company or online community.",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "product",
+          "context": {
+            "subject": "Transistor",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            },
+            {
+              "document_id": "438a1178-ecd4-4776-a1c4-eedde161bfd6",
+              "source": "https://transistor.fm/features/video/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E28",
+          "kind": "integration",
+          "claim": "Transistor distributes podcasts to Apple Podcasts, Spotify, YouTube, Overcast, Pocket Casts, and many more",
+          "verbatim": "Get your podcast on Apple Podcasts, Spotify, YouTube, Overcast, Pocket Casts, and many more!",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical",
+          "context": {
+            "subject": "Transistor",
+            "source_kind": "official_documentation",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E29",
+          "kind": "metric",
+          "claim": "Transistor has hosted more than 40,000 podcasts since launching in 2018",
+          "verbatim": "2018 : Launched 40,000+ : Podcasts hosted",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "moderate",
+          "user_attested": false,
+          "category": "proof",
+          "context": {
+            "subject": "Transistor",
+            "source_kind": "vendor_statement",
+            "claim_scope": "capability",
+            "conditions": "",
+            "temporal_scope": "since 2018",
+            "limitations": "Undated cumulative figure",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E30",
+          "kind": "award",
+          "claim": "Transistor won the Quill Award for Best Podcast Hosting",
+          "verbatim": "Winner of Quill Awards**Best Podcast Hosting**",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "trust",
+          "context": {
+            "subject": "Transistor",
+            "source_kind": "vendor_statement",
+            "claim_scope": "launch",
+            "conditions": "",
+            "temporal_scope": "",
+            "limitations": "Date of award not given",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E31",
+          "kind": "testimonial",
+          "claim": "Nathan Barry of Kit says 'Transistor is 100% the way to go' when asked which podcast host he recommends",
+          "verbatim": "When people ask me which podcast host I recommend, I say: 'Transistor is 100% the way to go.'",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof",
+          "context": {
+            "subject": "Nathan Barry, Kit",
+            "source_kind": "customer_statement",
+            "claim_scope": "customer_outcome",
+            "conditions": "Customer since 2019",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E32",
+          "kind": "testimonial",
+          "claim": "Stephen Robles says Transistor is his favorite podcasting platform and that HLS video lets him distribute shows in all formats his audience wants from one place",
+          "verbatim": "I’ve hosted multiple shows with Transistor for years and it’s far and away my favorite podcasting platform. They continually add useful features, and now with HLS video I can distribute my shows in all the formats my audience desires from one place.",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof",
+          "context": {
+            "subject": "Stephen Robles, beard.fm",
+            "source_kind": "customer_statement",
+            "claim_scope": "customer_outcome",
+            "conditions": "Customer since 2022",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            },
+            {
+              "document_id": "438a1178-ecd4-4776-a1c4-eedde161bfd6",
+              "source": "https://transistor.fm/features/video/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E33",
+          "kind": "customer",
+          "claim": "Ali Abdaal is a named Transistor customer since 2021",
+          "verbatim": "**Ali Abdaal**YouTuber, Podcaster, AuthorCustomer since 2021",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "proof",
+          "context": {
+            "subject": "Ali Abdaal",
+            "source_kind": "customer_statement",
+            "claim_scope": "customer_outcome",
+            "conditions": "Customer since 2021",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            }
+          ]
+        },
+        {
+          "id": "E34",
+          "kind": "testimonial",
+          "claim": "Dan Schoonmaker of CasterKit says Transistor integrates with Zapier",
+          "verbatim": "I also like that they integrate with Zapier.",
+          "source": "https://transistor.fm/",
+          "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+          "strength": "strong",
+          "user_attested": false,
+          "category": "technical",
+          "context": {
+            "subject": "Dan Schoonmaker, CasterKit",
+            "source_kind": "customer_statement",
+            "claim_scope": "customer_outcome",
+            "conditions": "Customer since 2020",
+            "temporal_scope": "",
+            "limitations": "",
+            "verification": "quote_verified_in_material"
+          },
+          "source_references": [
+            {
+              "document_id": "7926076b-6030-42ff-b105-814700dc3337",
+              "source": "https://transistor.fm/",
+              "source_type": "website"
+            },
+            {
+              "document_id": "d48e56f9-888e-4f23-806d-cdde221c31e8",
+              "source": "https://transistor.fm/pricing/",
+              "source_type": "website"
+            }
+          ]
+        }
+      ]
+    },
+    "voice": {
+      "learned": true,
+      "tone": "Plain and practical, quietly confident, never hypey — explains how things work rather than selling how great they are",
+      "rhythm": "Short, direct sentences; one idea per sentence, often grouped as a numbered or bulleted how-to list; paragraphs stay to two or three sentences",
+      "person": "Writes as 'we' for the product/company; occasional direct address to the reader as 'you'",
+      "greetings": [],
+      "sign_offs": [],
+      "exemplars": [
+        "Since his launch, he's already hit #1 on the Apple Podcasts' Education charts:",
+        "A public podcast has one RSS feed that you share as widely as possible. A private podcast works differently: every subscriber gets their own unique RSS feed, so you control exactly who can listen and can see what each person listens to.",
+        "You make the podcast. Transistor takes care of getting it out into the world. Upload your finished audio or video, add a title and show notes, then publish right away or schedule your episode for later."
+      ],
+      "prefer_words": [
+        "everywhere",
+        "upload",
+        "publish",
+        "distribute",
+        "feed"
+      ],
+      "avoid_words": []
+    },
+    "audience": {
+      "segments": [
+        {
+          "name": "New podcaster with an existing audience elsewhere",
+          "situation": "Has a following on YouTube, a newsletter or social media and wants to launch a podcast that reaches #1 on category charts quickly, as Ali Abdaal did with Deep Dive",
+          "situation_grounding": "inferred",
+          "situation_provenance": [
+            {
+              "source": "https://transistor.fm/customers/ali/",
+              "quote": "Announce your launch on every platform where you have an audience",
+              "document_id": null,
+              "evidence_id": "",
+              "source_kind": "case_study"
+            }
+          ],
+          "job_to_be_done": "Launch and distribute a new podcast across Apple, Spotify and YouTube while cross-promoting it to an existing audience",
+          "trigger": "Deciding to extend a personal brand into podcast format",
+          "sophistication": "problem_aware",
+          "pains": []
+        },
+        {
+          "name": "Network or agency running multiple shows",
+          "situation": "Manages several podcasts (or clients' podcasts) and wants one hosting subscription instead of paying per show",
+          "situation_grounding": "inferred",
+          "situation_provenance": [],
+          "job_to_be_done": "Host, distribute and manage multiple podcast feeds and collaborators under one account",
+          "trigger": "Starting a second show or taking on a new client podcast",
+          "sophistication": "solution_aware",
+          "pains": []
+        }
+      ],
+      "objections": []
+    },
+    "gaps": {
+      "gaps": [
+        {
+          "id": "G-source-bea888460f17",
+          "missing": "Some linked source pages could not be read; the corpus is partial: https://transistor.fm/",
+          "impact": "Use only the readable captured facts; do not infer missing prices, features or proof.",
+          "question": "Can this source be supplied in a readable form or its missing details verified?",
+          "severity": "significant",
+          "answer": ""
+        }
+      ]
+    },
+    "version": 1,
+    "compiled_at": "2026-11-09T11:34:16.379041Z",
+    "source_document_ids": [
+      "438a1178-ecd4-4776-a1c4-eedde161bfd6",
+      "b5976f09-e838-4e36-95c6-621608b5a13a",
+      "cb4302fc-945e-4e53-944b-07d3c3f2ae98",
+      "9dd7aa8a-d780-49fc-a7d3-01808fb486d0",
+      "397e40dd-117c-4a56-a845-b97c86805f63",
+      "c24c394e-cb06-462c-8e7e-a96b619449fa",
+      "d48e56f9-888e-4f23-806d-cdde221c31e8",
+      "7926076b-6030-42ff-b105-814700dc3337"
+    ],
+    "source_context_fingerprint": "d07bc3f35db112b757e1919ed6d3dcf307d5c533ebfc006a1ee2ef630c752983",
+    "notes": [
+      "3 of 37 candidate fact(s) were discarded because the quote supporting them could not be found in the source.",
+      "70,104 characters of material were past the reading budget and were not read.",
+      "First-campaign knowledge covers selected pages and decision-relevant evidence. Compile sources to read them in more depth."
+    ]
+  }
+}

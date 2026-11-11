@@ -1,11 +1,13 @@
 import hashlib
 import logging
+import re
 import tempfile
+from datetime import UTC, datetime
 from functools import cached_property
 from pathlib import Path
 from uuid import UUID
 
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from app.auth.principal import Principal
 from app.core.config import get_settings
@@ -15,8 +17,10 @@ from app.ingestion.assets.store import InMemoryAssetStore
 from app.ingestion.chunkers.heading_chunker import HeadingChunker
 from app.ingestion.documents import KnowledgeDocument as IngestedDocument
 from app.ingestion.documents import SourceType
+from app.ingestion.loaders.brand_logo import usable_logo
 from app.ingestion.loaders.registry import default_registry, detect_source_type
 from app.ingestion.loaders.site_crawler import DEFAULT_MAX_PAGES, SiteCrawler
+from app.ingestion.loaders.site_identity import SiteIdentity, same_site
 from app.ingestion.multimodal_pipeline import MultimodalIngestionPipeline
 from app.ingestion.normalizers.default_normalizer import DefaultNormalizer
 from app.ingestion.ocr.tesseract_provider import TesseractOCRProvider
@@ -28,6 +32,7 @@ from app.knowledge.store import ArtifactScope, ArtifactStore
 from app.models.brand import Brand
 from app.models.campaign import Campaign
 from app.models.knowledge_document import KnowledgeDocument
+from app.repositories.brand_repository import BrandRepository
 from app.repositories.knowledge_repository import KnowledgeDocumentRepository
 
 logger = logging.getLogger("marketingos.knowledge")
@@ -52,6 +57,7 @@ class KnowledgeService:
     """
 
     def __init__(self, session: Session, principal: Principal | None = None) -> None:
+        self._session = session
         self._principal = principal
         self._documents = KnowledgeDocumentRepository(session, principal)
         self._artifacts = ArtifactStore(session)
@@ -131,13 +137,81 @@ class KnowledgeService:
         brand_id: UUID | None,
         max_pages: int,
     ) -> list[KnowledgeDocument]:
-        pages = await SiteCrawler(max_pages=max_pages).crawl(url)
+        # Re-reading an existing brand should spend the same crawl budget on
+        # the audiences the user already selected, without asking for URLs or
+        # copying hypotheses into product facts.
+        focus = ""
+        if campaign_id is not None:
+            campaign = self._session.get(Campaign, campaign_id)
+            if campaign is not None:
+                focus = campaign.audience_segment or campaign.target_market or ""
+        elif brand_id is not None:
+            campaigns = self._session.exec(
+                select(Campaign).where(Campaign.brand_id == brand_id)
+                .order_by(Campaign.updated_at.desc()).limit(3)
+            ).all()
+            focus = " ".join(dict.fromkeys(
+                c.audience_segment or c.target_market or "" for c in campaigns
+            ))[:1500]
+        # Named stacks discriminate among guides better than generic words
+        # like "app", "email" or "team" shared by every integration.
+        names = [word for word in re.findall(r"\b[A-Z][a-z]+(?:[A-Z][a-z]+)*\b", focus)
+                 if len(word) > 2 and word.lower() not in {"the", "for", "and", "les", "une"}]
+        focus = " ".join(dict.fromkeys(names)) or focus
+        crawler = SiteCrawler(max_pages=max_pages, preserve_overview=True)
+        pages = await crawler.crawl(url, focus=focus) if focus else await crawler.crawl(url)
         documents: list[KnowledgeDocument] = []
         for raw in pages:
             ingested = await self._pipeline.ingest_raw(raw)
             documents.append(self._persist(ingested, campaign_id, brand_id, None))
         logger.info("crawled %s into %d document(s)", url, len(documents))
+        if brand_id is not None and pages:
+            await self._adopt_identity(brand_id, pages[0].source, pages[0].metadata.get("identity"))
         return documents
+
+    async def _adopt_identity(self, brand_id: UUID, page_url: str, identity: object) -> None:
+        """Give a brand the logo and colour its own site declares, where it
+        has none yet.
+
+        Without this every branded email starts as a name in bold and a
+        stock blue until somebody finds the appearance page, and nobody does
+        before the first run. Only empty fields are filled, so a value the
+        owner chose is never replaced - and only from the brand's own site:
+        a press article or a partner's page filed under the brand declares
+        somebody else's logo.
+        """
+        brands = BrandRepository(self._documents.session, self._principal)
+        brand = brands.get(brand_id)
+        found = SiteIdentity.from_metadata(identity)
+        if brand is None or not brand.website_url or not same_site(page_url, brand.website_url):
+            return
+        changed = False
+        if not brand.logo_url and found.logo_url and await usable_logo(found.logo_url):
+            brand.logo_url, changed = found.logo_url, True
+        if not brand.primary_color and found.theme_color:
+            brand.primary_color, changed = found.theme_color, True
+        if changed:
+            brand.updated_at = datetime.now(UTC)
+            brands.update(brand)
+            logger.info("brand %s takes its logo and colour from %s", brand_id, page_url)
+
+    async def refresh_imported_logo(self, brand: Brand) -> bool:
+        """Old imports may contain a now-dead logo. Keep owner-selected URLs."""
+        if not brand.logo_url or not brand.website_url:
+            return False
+        documents = self._artifacts.source_documents(ArtifactScope(brand_id=brand.id))
+        imported = any(
+            doc.source_url and same_site(doc.source_url, brand.website_url)
+            and SiteIdentity.from_metadata((doc.document_metadata or {}).get("identity")).logo_url == brand.logo_url
+            for doc in documents
+        )
+        if not imported or await usable_logo(brand.logo_url):
+            return False
+        brand.logo_url = None
+        brand.updated_at = datetime.now(UTC)
+        self._session.add(brand)
+        self._session.commit()
+        return True
 
     async def ingest_upload(
         self,
@@ -261,7 +335,11 @@ class KnowledgeService:
             if already is not None:
                 if ingested.source == SourceType.WEBSITE and ingested.url == already.source_url:
                     refreshed = dict(already.document_metadata or {})
-                    for key, default in (("content_issues", []), ("crawl_unreadable_urls", []), ("rendered", False)):
+                    # The page's look can change while its words do not - a
+                    # new product photograph, a new logo - and a page read
+                    # before identity was recorded gets it on the next crawl.
+                    for key, default in (("content_issues", []), ("crawl_unreadable_urls", []), ("rendered", False),
+                                         ("identity", {})):
                         refreshed[key] = metadata.get(key, default)
                     if refreshed != already.document_metadata:
                         already.document_metadata = refreshed

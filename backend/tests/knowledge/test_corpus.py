@@ -1,6 +1,16 @@
 """Retrieval, which is what replaced newest-first truncation."""
 
-from app.knowledge.corpus import Document, SourceCorpus, split_document
+from app.knowledge.corpus import Document, SourceCorpus, contains_quote, split_document
+
+
+def test_plain_visible_link_words_are_real_quotes_but_invented_targets_are_not():
+    source = "You can [manage subscribers](/subscribers), [send emails](https://docs.example/send), and create automations from your own code."
+    assert contains_quote("You can manage subscribers, send emails, and create automations from your own code.", source)
+    assert contains_quote("send emails", source)
+    assert not contains_quote("You can send emails and manage subscribers.", source)
+    assert not contains_quote("You can manage subscribers and guarantee delivery.", source)
+    assert not contains_quote("[send emails](https://attacker.example/send)", source)
+    assert not contains_quote("https://attacker.example/send", source)
 
 PRICING = """# Pricing
 

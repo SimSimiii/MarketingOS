@@ -1,9 +1,30 @@
-from typing import Annotated
+from typing import Annotated, Literal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, StringConstraints
 
+from app.marketing.gates import GateIssue
+from app.marketing.grounding import GroundingDecision
 from app.schemas.types import UtcDatetime
+
+
+class DraftReviewRequest(BaseModel):
+    text: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=16000)]
+    destination: HttpUrl | None = None
+
+
+class DraftReviewRead(BaseModel):
+    approved: bool
+    decision: GroundingDecision | None = None
+    issues: list[GateIssue]
+    sources: dict[str, str] = Field(default_factory=dict)
+
+
+class DraftReviewJobRead(BaseModel):
+    id: UUID
+    state: Literal["running", "completed", "failed"]
+    result: DraftReviewRead | None = None
+    error: str = ""
 
 
 class BrandCreateRequest(BaseModel):
@@ -15,14 +36,26 @@ class BrandStyleUpdate(BaseModel):
     """How this brand's email looks once it is rendered.
 
     Every field optional, and a brand with none of them set still produces a
-    good email - it renders in the typographic tier, which is the right
-    default for the cold sequences this system mostly writes anyway.
+    good email - its name set as a wordmark, a neutral blue. Crawling the
+    brand's own site fills the logo and colour it declares, when it declares
+    usable ones; see app.ingestion.loaders.site_identity.
     """
 
     logo_url: str | None = None
     primary_color: str | None = None
     footer_lines: list[str] | None = None
     unsubscribe_url: str | None = None
+
+
+class BrandIdentityRead(BaseModel):
+    """What the brand's own site declares about its look - a suggestion for
+    the appearance form, never saved by the request that found it."""
+
+    logo_url: str | None = None
+    primary_color: str | None = None
+    #: Why something the site declared was not used, in words the owner can
+    #: act on - "the logo is an SVG", "the theme colour is too pale".
+    notes: list[str] = []
 
 
 class BrandRead(BaseModel):

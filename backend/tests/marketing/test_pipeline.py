@@ -109,6 +109,7 @@ def bake_off_only(**overrides) -> ExecutionPolicy:
 async def test_final_gate_failure_is_not_delivered(
     provider: RoleScriptedProvider, request_fixture: CampaignRequest
 ):
+    provider.review("Unsupported 987 seconds claim.")
     provider.set_default(
         "email_writer",
         varied_draft(1).replace("nine seconds", "987 seconds"),
@@ -526,6 +527,27 @@ async def test_a_draft_that_did_not_land_is_rewritten_against_the_reader(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("resolved", [True, False])
+async def test_material_reader_feedback_uses_the_fast_rewrite_budget(
+    provider: RoleScriptedProvider, request_fixture: CampaignRequest, resolved: bool,
+):
+    provider.set_default("strategist", campaign_brief(1))
+    reason = "Explain what the reviewer can do with the shared result."
+    first_read = blind_read(pull=7, material_revision=reason)
+    provider.push("blind_reader", first_read, blind_read(pull=7) if resolved else first_read)
+
+    pipeline, _ = build(provider, PRESETS["fast"])
+    result = await pipeline.run(request_fixture)
+    outcome = result.outcomes[0]
+
+    assert len(outcome.versions) == 2
+    assert outcome.best.attempt == (2 if resolved else 1)
+    assert reason in provider.requests_for("email_writer")[1].messages[0].content
+    assert provider.calls_by_role["claim_reviewer"] == 2
+    assert bool(result.report.emails[0].unresolved) is not resolved
+
+
+@pytest.mark.asyncio
 async def test_a_rewrite_that_came_back_worse_is_thrown_away(
     provider: RoleScriptedProvider, request_fixture: CampaignRequest
 ):
@@ -607,6 +629,7 @@ async def test_an_unsupported_claim_blocks_the_email_and_is_named_to_the_writer(
 ):
     """The gate is the anti-hallucination mechanism: no model is asked whether
     the number is real."""
+    provider.review('The claimed "47 minutes" has no source.')
     provider.set_default("strategist", campaign_brief(1))
     provider.push(
         "email_writer",
@@ -1114,6 +1137,8 @@ async def test_repetition_inside_the_sequence_is_caught_while_writing(
 ):
     """The overlap check runs on every draft against the emails already
     accepted, so a repeat never survives to the sequence pass."""
+    provider.push("sequence_reviewer", json.dumps({"notes": [{"position": 2, "problem": "repeats the first email", "fix": "develop another argument"}], "summary": "Email 2 repeats email 1."}))
+    provider.push("blind_reader", blind_read(pull=8), blind_read(pull=8), blind_read(pull=9))
     provider.set_default("strategist", campaign_brief(2))
     same = email_draft()
     provider.push("email_writer", same, same, varied_draft(2))
@@ -1122,9 +1147,8 @@ async def test_repetition_inside_the_sequence_is_caught_while_writing(
     result = await pipeline.run(request_fixture)
 
     second = result.outcomes[1]
-    assert not second.versions[0].gates.passed
-    assert "already appears in email 1" in second.versions[0].gates.render()
-    assert second.best.attempt == 2, "the repeat is rewritten before it ships"
+    assert second.versions[0].gates.passed, "lexical overlap does not veto delivery"
+    assert second.best.attempt == 2, "the sequence model requested a rewrite"
 
 
 @pytest.mark.asyncio
@@ -1187,6 +1211,7 @@ async def test_no_model_call_is_ever_spent_on_deciding_what_runs_next(
         "conversion_critic",
         "sequence_reviewer",
         "knowledge_compiler",
+        "claim_reviewer",
     }
     assert "director" not in provider.calls_by_role
 
@@ -1598,6 +1623,7 @@ async def test_late_provider_failure_keeps_checked_draft_and_stops(
 async def test_provider_failure_cannot_rescue_a_factually_blocked_draft(
     provider: RoleScriptedProvider, request_fixture: CampaignRequest,
 ):
+    provider.review("The 987 seconds claim is unsupported.")
     provider.set_default("strategist", campaign_brief(1))
     provider.set_default("email_writer", email_draft(body="Our product guarantees 98765 percent growth."))
     provider.set_default("conversion_critic", FAIL)

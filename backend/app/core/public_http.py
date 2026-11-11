@@ -74,7 +74,14 @@ async def fetch_render_resource(client: httpx.AsyncClient, url: str) -> httpx.Re
     return await _fetch_document(client, url, render_resource=True)
 
 
-async def _fetch_document(client: httpx.AsyncClient, url: str, *, render_resource: bool) -> httpx.Response:
+async def fetch_image(client: httpx.AsyncClient, url: str) -> httpx.Response:
+    """Declared brand images have the same public-address and size limits."""
+    return await _fetch_document(client, url, render_resource=False, image=True)
+
+
+async def _fetch_document(
+    client: httpx.AsyncClient, url: str, *, render_resource: bool, image: bool = False,
+) -> httpx.Response:
     try:
         async with asyncio.timeout(30):
             for _ in range(MAX_REDIRECTS + 1):
@@ -94,6 +101,8 @@ async def _fetch_document(client: httpx.AsyncClient, url: str, *, render_resourc
                     ) + (("text/javascript", "application/javascript", "application/x-javascript",
                           "text/ecmascript", "application/ecmascript", "text/css", "application/json")
                          if render_resource else ())
+                    if image:
+                        allowed_types = ("image/png", "image/jpeg", "image/gif", "image/webp")
                     if content_type and content_type not in allowed_types:
                         raise LoaderError("The URL did not return a text document")
                     if response.headers.get("content-encoding", "identity") != "identity":

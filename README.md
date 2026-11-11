@@ -222,12 +222,18 @@ business is, what can be proven, how it sounds — are three independent questio
 same pages, so they are asked at once rather than one at a time; only the audience pass has
 real inputs and waits for them.
 
-**Claims are checked, not trusted.** Every fact the compiler records carries the verbatim
-source text that supports it, and a deterministic gate reads every finished draft back:
-every number, price, quotation and URL must be licensed by that inventory or by the user's
-own material. "Never invent a statistic" stops being an instruction in a prompt and
-becomes a property of the output. The compiler is held to the same rule — an entry whose
-quote is not really in the source is discarded before it can poison anything downstream.
+**Meaning is checked by an independent source reviewer.** Every distinct draft,
+rewrite, local adjustment and selected new subject is reviewed against literal
+sources by a model separate from the writer. It checks qualitative capabilities,
+prices and billing, quotes, ownership, user directions and claim scope. Code
+checks fields, configured merge tags, source references, literal citations and
+the identity of the exact text/context reviewed. It does not decide whether an
+acronym is shouting or a short plan name means a different product. Style remains
+advisory. Missing or invalid review is not approval. This is probabilistic source
+judgment, not a guarantee of factual correctness. Each distinct draft adds one
+bounded review, with at most the runtime's normal JSON repair; the forecast
+includes it. Exact unchanged text/context can reuse its own receipt. The old
+regex gates remain available for diagnosis and evaluation only.
 
 Both of those comparisons are typography-blind, and that was not cosmetic. Every published
 page has been through a CMS that made its apostrophes curly and its ranges en dashes, and a
@@ -245,23 +251,12 @@ invitation to test, the objection named precisely) rather than being left to pla
 can only be hedged or invented. The user is told the one thing they could send that would
 change the answer.
 
-**And the same check points both ways.** The evidence gate stops the copy claiming more than
-the material supports; nothing used to notice copy that supported *nothing*. An email could
-pass every check, spend none of the facts the Strategist assigned it, and ship — and getting
-those facts onto the page is what the crawl, the ledger, the quote verification and the
-per-email evidence assignment are all *for*. That gap was measured rather than assumed: on the
-judge bench, an email with its whole proof paragraph deleted (nothing invented, no gate
-tripped) took half the votes against the original. The instrument that decides what ships
-could not see the one thing the system exists to put there.
-
-So whether the figure, the name or the quotation reached the page is now checked in code, for
-nothing, on every draft — see `backend/app/marketing/substantiation.py`. It is advisory to the
-writer, because a business with no proof is written from mechanism on purpose and blocking
-would fail exactly the emails that were right to be written that way. It is *not* advisory to
-the loop: a rewrite that carries strictly less of what the email was built on does not take the
-title, whatever the readers vote, because losing the evidence is not a matter of taste. The
-receipt says which emails argue from nothing, and `proof on the page` is a benchmark line that
-no drifting judge can move.
+**Evidence use remains visible.** The substantiation instrument reports which
+assigned facts it could match in a draft. These lexical counters are diagnostic,
+not factual approval or a veto on a paraphrased rewrite. The source reviewer
+judges entailment; the critic and preference reader judge whether the argument
+uses its evidence persuasively. A user's explicit inclusion/exclusion belongs
+in the source review, not a substring rule.
 
 **Three checks asked whether the copy was true, well-formed and grounded. None asked whether
 it was *different*.** An email can pass every one of them, first time, and still be the email
@@ -382,8 +377,8 @@ in, answering each reader's last objection by removing whatever made the copy sp
 which is how a rewrite comes back with the same subject line and a flatter body. Which
 argument lands is not derivable from the brief, so it is decided by asking. From there the
 winner is rewritten up to a bounded number of times, and a rewrite is kept only if it
-actually scored better. Only the deterministic checks can block; taste never blocks, or a
-run spends its budget arguing with a model about a sentence.
+actually scored better. Mechanical checks and the independent AI source review
+control delivery. Editorial taste stays advisory, with bounded rewrites.
 
 **A number nobody gave is not a score.** The floor is real: a campaign whose copy a cold
 reader said they would not click is reported as degraded, with the positions named, because

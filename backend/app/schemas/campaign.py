@@ -1,15 +1,23 @@
 from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_serializer
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StringConstraints,
+    computed_field,
+    field_serializer,
+)
 
 from app.api.public_output import public_output
 from app.core.config import get_settings
 from app.market.qualification import CompanyQualification
 from app.market.relevance import CampaignReadiness, CampaignRecommendation
-from app.marketing.intent import CampaignIntent
+from app.marketing.intent import CampaignIntent, infer_intent
 from app.marketing.policy import PolicyPreset, StrategyMode
-from app.marketing.render_html import EmailTier
+from app.marketing.render_html import EmailTier, resolve_tier
+from app.marketing.steering import CampaignSteering
 from app.models.enums import AssetType, CampaignStatus, ExecutionStatus
 from app.schemas.linkedin import LinkedInChannel
 from app.schemas.types import UtcDatetime
@@ -73,6 +81,9 @@ class CampaignCreateRequest(BaseModel):
     #: still applies - the brand, the audience, the sender, the preset - and
     #: the run plans with the same Strategist before writing. None is email.
     channel: LinkedInChannel | None = None
+    #: Optional content choices - see app.marketing.steering. Never required:
+    #: a campaign created without it runs exactly as it always did.
+    steering: CampaignSteering | None = None
 
 
 class CampaignBriefUpdate(BaseModel):
@@ -113,6 +124,7 @@ class CampaignRead(BaseModel):
     cta_url: str | None = None
     #: The LinkedIn channel this campaign delivers for, or None for email.
     channel: LinkedInChannel | None = None
+    steering: CampaignSteering | None = None
     status: CampaignStatus
     archived_at: UtcDatetime | None
     policy: dict | None
@@ -133,6 +145,18 @@ class CampaignRead(BaseModel):
     @field_serializer("policy")
     def hide_policy_details(self, value: dict | None) -> dict | None:
         return public_output(value)
+
+    @computed_field
+    @property
+    def email_tier(self) -> EmailTier:
+        """What the emails will render as: the stored choice, or the default
+        `resolve_tier` picks when there is none. Sent so the console shows the
+        look a reader will get rather than re-deriving the rule itself."""
+        return resolve_tier(
+            (self.policy or {}).get("email_tier"),
+            has_brand=self.brand_id is not None,
+            relationship=(self.intent or infer_intent(self.request)).reader_relationship,
+        )
 
 
 class CampaignPolicyUpdate(BaseModel):
@@ -187,6 +211,46 @@ class GeneratedAssetRead(BaseModel):
     position: int
     asset_metadata: dict | None
     created_at: UtcDatetime
+
+
+class EmailRevisionCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    instruction: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=500)]
+    #: The proposal being adjusted further, or None to adjust the original.
+    base_revision_id: UUID | None = None
+
+
+class EmailRevisionRead(BaseModel):
+    """One proposal and the checks run on its own text."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    asset_id: UUID
+    base_revision_id: UUID | None = None
+    instruction: str
+    state: str
+    email: dict | None = None
+    content: str
+    content_html: str | None = None
+    checks: dict | None = None
+    attempts: int
+    error: str
+    created_at: UtcDatetime
+    completed_at: UtcDatetime | None = None
+    decided_at: UtcDatetime | None = None
+
+
+class EmailRevisionHistory(BaseModel):
+    asset: GeneratedAssetRead
+    original_title: str
+    original_content: str
+    selected_revision_id: UUID | None = None
+    revisions: list[EmailRevisionRead]
+    max_revisions: int
+    #: False in credit billing mode; the page then explains rather than offers.
+    available: bool
+    reason: str = ""
 
 
 class AgentExecutionRead(BaseModel):

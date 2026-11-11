@@ -1,0 +1,115 @@
+{
+  "status": "completed",
+  "execution_id": "f2b5486b-5e43-484d-b214-4474309dfecb",
+  "elapsed_seconds": 96.0,
+  "review": "reviewed",
+  "run_status": "degraded",
+  "quality_history": [
+    {
+      "score": 62,
+      "grid": [
+        24,
+        9,
+        6,
+        10,
+        5,
+        8
+      ],
+      "verdict": "not_sellable_for_selected_need",
+      "strengths": [
+        "Limite14pouces sourcée E703, pas de capacité inventée.",
+        "Réserve produit conservée, rendu sans débordement."
+      ],
+      "remaining_defect": "Ne résout pas ordinateur+repas+gourde; email de vérification au lieu d’un argument d’achat, chute artificielle.",
+      "iteration": 1,
+      "execution_id": "f64543bb-0733-4a75-8be2-1d9970e9f6a8",
+      "comparable": true,
+      "evidence": [
+        "assets.json",
+        "execution.json",
+        "knowledge.json",
+        "calls.json"
+      ],
+      "next_action": "include in cross-brand verdict"
+    },
+    {
+      "iteration": 2,
+      "execution_id": "013514ae-10a4-44b9-99dc-6972cae7045a",
+      "case": "cabaia-benefit",
+      "score": 60,
+      "grid": [
+        24,
+        9,
+        5,
+        10,
+        4,
+        8
+      ],
+      "comparable": true,
+      "remaining_defect": "Missing simultaneous laptop/lunch/bottle capacity remains; copy mostly caveats.",
+      "strengths": [
+        "Source boundaries preserved; explicit scope retained"
+      ],
+      "evidence": [
+        "execution.json",
+        "assets.json",
+        "knowledge.json",
+        "render-checks.json"
+      ],
+      "next_action": "Compare final structured-mechanism run"
+    },
+    {
+      "iteration": 3,
+      "execution_id": "f2b5486b-5e43-484d-b214-4474309dfecb",
+      "case": "cabaia-benefit-v2",
+      "score": 62,
+      "grid": [
+        24,
+        9,
+        6,
+        10,
+        5,
+        8
+      ],
+      "comparable": true,
+      "remaining_defect": "Documented laptop pocket only; selected full carrying need is unproven. Not sellable for this need.",
+      "strengths": [
+        "Source boundaries preserved; explicit scope retained"
+      ],
+      "evidence": [
+        "execution.json",
+        "assets.json",
+        "knowledge.json",
+        "render-checks.json"
+      ],
+      "next_action": "Do not invent missing capacity; requires product evidence or another target"
+    }
+  ],
+  "quality_best": {
+    "score": 62,
+    "grid": [
+      24,
+      9,
+      6,
+      10,
+      5,
+      8
+    ],
+    "verdict": "not_sellable_for_selected_need",
+    "strengths": [
+      "Limite14pouces sourcée E703, pas de capacité inventée.",
+      "Réserve produit conservée, rendu sans débordement."
+    ],
+    "remaining_defect": "Ne résout pas ordinateur+repas+gourde; email de vérification au lieu d’un argument d’achat, chute artificielle.",
+    "iteration": 1,
+    "execution_id": "f64543bb-0733-4a75-8be2-1d9970e9f6a8",
+    "comparable": true,
+    "evidence": [
+      "assets.json",
+      "execution.json",
+      "knowledge.json",
+      "calls.json"
+    ],
+    "next_action": "include in cross-brand verdict"
+  }
+}
